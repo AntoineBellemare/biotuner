@@ -2,4 +2,5 @@
 # Biotuner
 Python toolbox that incorporates tools from biological signal processing and musical computation to transform biosignals into microtonal musical structures
 
-[Biotuner_pipeline.pdf](https://github.com/AntoineBellemare/biotuner/files/6512808/Biotuner_pipeline.pdf)
+![20210512_214349](https://user-images.githubusercontent.com/49297774/118917786-9e7b8b00-b8ff-11eb-9f3f-61876791cf87.jpg)
+
