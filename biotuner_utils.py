@@ -1,51 +1,86 @@
+#!bin/bash
+"""Collection of operations on timeseries."""
 import numpy as np
 from PyEMD import EMD, EEMD
 from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 import seaborn as sbn
 from scipy import stats
-from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 
 
-#This function calculates the 15 ratios (with the possibility to bound them between 1 and 2) derived from the 6 peaks
-def compute_peak_ratios(peaks, rebound = True, octave = 2, sub = True):
+def compute_peak_ratios(peaks, rebound=True, octave=2, sub=True):
+    """
+    Ratios between peaks.
+
+    This function calculates the 15 ratios (with the possibility to bound them
+    between 1 and 2) derived from the 6 peaks.
+
+    peaks: List (type?)
+        peaks represent blahblah.
+    rebound: boolean
+        Defaults to True. False will blahblah.
+    ocatve: int
+        Arbitrary wanted number of octaves. Defaults to 2.
+    sub: boolean
+        Defaults to True. blahblah.
+    """
+    # What are we doing here ? iterating through successive peaks
     ratios = []
     peak_ratios_rebound = []
     for p1 in peaks:
         for p2 in peaks:
+
+            # Which problem do you avoid here ?
             try:
                 ratio_temp = p2/p1
-            
             except ZeroDivisionError:
                 ratio_temp = p2/0.01
-                
-            if sub == False:
+
+            # comment what initialization you do in 1 line
+            if sub is False:
                 if ratio_temp < 1:
                     ratio_temp = None
+            # comment what initialization you do in 1 line
             if ratio_temp == 1:
                 ratio_temp = None
             ratios.append(ratio_temp)
 
+        # I imagine there's a reason why you reinit with array
         peak_ratios = np.array(ratios)
-        peak_ratios = [i for i in peak_ratios if i]
+        peak_ratios = [i for i in peak_ratios if i]  # dealing with NaNs ?
         peak_ratios = list(set(peak_ratios))
-    if rebound == True:
+
+    # If rebound is given, blahblah
+    if rebound is True:
         for peak in peak_ratios:
+            # will do this if a given peak ratio is over specified octave
             if peak > octave:
                 while peak > octave:
                     peak = peak/octave
                 peak_ratios_rebound.append(peak)
+            # will do this if a given peak ratio is under specified octave
             if peak < octave:
                 while peak < 1:
                     peak = peak*octave
                 peak_ratios_rebound.append(peak)
+
+    # Preparing outputs
     peak_ratios_rebound = np.array(peak_ratios_rebound)
     peak_ratios_rebound = [i for i in peak_ratios_rebound if i]
     peak_ratios = sorted(peak_ratios)
     peak_ratios_rebound = sorted(list(set(peak_ratios_rebound)))
+
     return peak_ratios, peak_ratios_rebound
 
-def rebound(x, low = 1, high = 2, octave = 2):
+
+def rebound(x, low=1, high=2, octave=2):
+    """
+    Recalculates x based on given octave bounds.
+
+    x: int
+        represents a peak value
+    ...
+    """
     while x > high:
         x = x/octave
     while x < low:
@@ -177,7 +212,7 @@ def phaseScrambleTS(ts):
     phase_fs = np.arctan2(fs[2::2], fs[1:-1:2])
     phase_fsr = phase_fs.copy()
     np.random.shuffle(phase_fsr)
-    # use broadcasting and ravel to interleave the real and imaginary components. 
+    # use broadcasting and ravel to interleave the real and imaginary components.
     # The first and last elements in the fourier array don't have any phase information, and thus don't change
     fsrp = np.sqrt(pow_fs[:, np.newaxis]) * np.c_[np.cos(phase_fsr), np.sin(phase_fsr)]
     fsrp = np.r_[fs[0], fsrp.ravel(), fs[-1]]
@@ -300,7 +335,7 @@ def correlated_noise_surrogates(self, original_data):
                                                      axis=1)))
 
 ## This function takes instantaneous frequencies (IF) from Hilbert-Huang Transform (HH) as an array in the form of [time, freqs]
-## and outputs the average euler consonance for the whole time series (euler_tot) and the number of moments frequencies had consonance 
+## and outputs the average euler consonance for the whole time series (euler_tot) and the number of moments frequencies had consonance
 ## below euler threshold (euler_tresh)
 def HH_cons (IF, euler_tresh = 100, mult = 10):
     euler_tot = []
@@ -308,7 +343,7 @@ def HH_cons (IF, euler_tresh = 100, mult = 10):
     euler_good = []
     for t in range(len(IF)):
         freqs = [int(np.round(x*mult)) for x in IF[t]]
-        
+
         for i in freqs:
             if i <= 0:
                 #print('negative')
@@ -349,29 +384,29 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         m = 'Harmonic similarity of scale'
     if metric == 'HarmFit':
         m = 'Harmonic fitness between peaks'
-        
+
 
     plt.rcParams['axes.facecolor'] = 'black'
     fig = plt.figure(figsize=(14,10))
-    colors = ['cyan', 'goldenrod', 'yellow', 'deeppink', 'white'] 
-    
+    colors = ['cyan', 'goldenrod', 'yellow', 'deeppink', 'white']
+
     xcoords = []
-    
-    
+
+
     for dim in dimensions:
         labs = labs
         if dim == 0:
             dimension = 'channels'
         if dim == 1:
             dimension = 'trials'
-        
-        
+
+
         for d, color, enum in zip(dist, colors, range(len(dist))):
             #d = d[~np.isnan(d)]
             print(d.shape)
 
             if dimensions == [0]:
-                
+
                 sbn.distplot(d, color =color)
                 secure_random = secrets.SystemRandom()
                 if len(d) < len(ref):
@@ -396,7 +431,7 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
                 #    plt.axvline(x=xc, c='white')
 
 
-        fig.legend(labels=[labs[0], labs[1]], 
+        fig.legend(labels=[labs[0], labs[1]],
                    loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')
         plt.xlabel(m, fontsize = '16')
         plt.ylabel('Proportion of samples', fontsize = '16')
@@ -405,8 +440,8 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and pink noise signals across ' + dimension, fontsize = '22')
         fig.savefig('{}_distribution_s{}-bloc{}_EMD_adapt-{}_{}.png'.format(metric, subject, run, adapt, dimension), dpi=300)
         plt.clf()
-        
-        
+
+
 def getPairs(peaks):
     out = []
     for i in range(len(peaks)-1):
