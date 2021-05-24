@@ -8,39 +8,39 @@ import seaborn as sbn
 from scipy import stats
 
 
-def compute_peak_ratios(peaks, rebound=True, octave=2, sub=True):
+def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
     """
     Ratios between peaks.
 
-    This function calculates the 15 ratios (with the possibility to bound them
-    between 1 and 2) derived from the 6 peaks.
+    This function calculates all the ratios (with the possibility to bound them
+    between 1 and 2) derived from input peaks.
 
-    peaks: List (type?)
-        peaks represent blahblah.
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
     rebound: boolean
-        Defaults to True. False will blahblah.
-    ocatve: int
+        Defaults to True. False will output unbounded ratios
+    octave: int
         Arbitrary wanted number of octaves. Defaults to 2.
     sub: boolean
-        Defaults to True. blahblah.
+        Defaults to False. True will include ratios below the unison (1)
     """
-    # What are we doing here ? iterating through successive peaks
+    # Iterating through successive peaks
     ratios = []
-    peak_ratios_rebound = []
+    peak_ratios_final = []
     for p1 in peaks:
         for p2 in peaks:
 
-            # Which problem do you avoid here ?
+            # If a peak of value '0' is present, we skip this ratio computation
             try:
                 ratio_temp = p2/p1
             except ZeroDivisionError:
-                ratio_temp = p2/0.01
+                pass
 
-            # comment what initialization you do in 1 line
+            # When sub is set to False, only ratios with numerators higher than denominators are consider
             if sub is False:
                 if ratio_temp < 1:
                     ratio_temp = None
-            # comment what initialization you do in 1 line
+            # Ratios of 1 correspond to a peak divided by itself and are therefore not considered
             if ratio_temp == 1:
                 ratio_temp = None
             ratios.append(ratio_temp)
@@ -48,29 +48,30 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=True):
         # I imagine there's a reason why you reinit with array
         peak_ratios = np.array(ratios)
         peak_ratios = [i for i in peak_ratios if i]  # dealing with NaNs ?
-        peak_ratios = list(set(peak_ratios))
-
-    # If rebound is given, blahblah
+        peak_ratios = sorted(list(set(peak_ratios)))
+        ratios_final = peak_ratios.copy()
+    
+    # If rebound is given, all the ratios are constrained between the unison and the octave
     if rebound is True:
         for peak in peak_ratios:
-            # will do this if a given peak ratio is over specified octave
+
+            # will divide the ratio by the octave until it reaches a value under the octave
             if peak > octave:
                 while peak > octave:
                     peak = peak/octave
-                peak_ratios_rebound.append(peak)
-            # will do this if a given peak ratio is under specified octave
+                peak_ratios_final.append(peak)
+            # will multiply the ratio by the octave until it reaches a value over the unison (1)
             if peak < octave:
                 while peak < 1:
                     peak = peak*octave
-                peak_ratios_rebound.append(peak)
+                peak_ratios_final.append(peak)
+        # Preparing output
+        peak_ratios_final = np.array(peak_ratios_final)
+        peak_ratios_final = [i for i in peak_ratios_final if i]
+        ratios_final = sorted(list(set(peak_ratios_final)))
+    
 
-    # Preparing outputs
-    peak_ratios_rebound = np.array(peak_ratios_rebound)
-    peak_ratios_rebound = [i for i in peak_ratios_rebound if i]
-    peak_ratios = sorted(peak_ratios)
-    peak_ratios_rebound = sorted(list(set(peak_ratios_rebound)))
-
-    return peak_ratios, peak_ratios_rebound
+    return ratios_final
 
 
 def rebound(x, low=1, high=2, octave=2):
@@ -79,7 +80,12 @@ def rebound(x, low=1, high=2, octave=2):
 
     x: int
         represents a peak value
-    ...
+    low: int
+        Lower bound. Defaults to 1. 
+    high: int
+        Higher bound. Defaults to 2.
+    octave: int
+        Value of an octave
     """
     while x > high:
         x = x/octave
@@ -381,4 +387,4 @@ def scale2frac (scale, maxdenom = 1000):
         num.append(frac.numerator)
         den.append(frac.denominator)
         scale_frac.append(frac)
-    return scale_frac, array(num), array(den)
+    return scale_frac, np.array(num), np.array(den)

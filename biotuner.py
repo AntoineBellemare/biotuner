@@ -10,9 +10,26 @@ from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 
 #EXTENDED PEAKS from expansions#
 
-    #This function takes a list of frequency peaks as input and computes the desired number of harmonics
-#with the formula: x + 2x + 3x ... + nx
+    
 def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up = 0):
+    """
+    Natural harmonics
+
+    This function takes a list of frequency peaks as input and computes the desired number of harmonics
+    with the formula: x, 2x, 3x ..., nx
+
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    n_harmonics: int
+        Number of harmonics to compute
+    n_oct_up: int
+        Defaults to 0. Corresponds to the number of octave the peaks are shifted 
+    
+    Returns
+    -------
+    multi_harmonics: array
+        (n_peaks, n_harmonics + 1)
+    """
     n_harmonics = n_harmonics + 2
     multi_harmonics = []
     multi_harmonics_rebound = []
@@ -32,42 +49,76 @@ def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up = 0):
 
     return multi_harmonics
 
-#This function takes a list of frequency peaks as input and computes the desired number of harmonics
-#with the formula: x + x/2 + x/3 ... + x/n
-def EEG_harmonics_div(peaks, n_harmonics, n_oct_up = 0):
+
+def EEG_harmonics_div(peaks, n_harmonics, n_oct_up = 0, mode = 'div'):
+    """
+    Natural sub-harmonics
+
+    This function takes a list of frequency peaks as input and computes the desired number of harmonics
+    with using division: 
+
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    n_harmonics: int
+        Number of harmonics to compute
+    n_oct_up: int
+        Defaults to 0. Corresponds to the number of octave the peaks are shifted 
+    mode: str
+        Defaults to 'div'.
+        'div': x, x/2, x/3 ..., x/n
+        'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
+        'div_sub': x, (x-x/2), (x-x/3), ... (x-x/n)
+    Returns
+    -------
+    div_harmonics: array
+        (n_peaks, n_harmonics + 1)
+    div_harmonics_bounded: array
+        (n_peaks, n_harmonics + 1)
+    """
     n_harmonics = n_harmonics + 2
-    multi_harmonics = []
-    multi_harmonics_sub = []
+    div_harmonics = []
     for p in peaks:
-
         harmonics = []
-        harmonics_sub = []
         p = p * (2**n_oct_up)
-        i = 2
+        i = 1
         harm_temp = p
-        harm_temp_sub = p
         while i < n_harmonics:
-            harm_temp = harm_temp + (p/i)
-            harm_temp_sub = abs(harm_temp_sub - (p/i))
+            if mode == 'div':
+                harm_temp = (p/i)
+            if mode == 'div_add':
+                harm_temp = p + (p/i)
+            if mode == 'div_sub':
+                harm_temp = p - (p/i)
             harmonics.append(harm_temp)
-            harmonics_sub.append(harm_temp_sub)
             i+=1
-        multi_harmonics.append(harmonics)
-        multi_harmonics_sub.append(harmonics_sub)
-    multi_harmonics = np.array(multi_harmonics)
-    multi_harmonics_bounded = multi_harmonics.copy()
-    multi_harmonics_sub = np.array(multi_harmonics_sub)
-    multi_harmonics_sub_bounded = multi_harmonics_sub.copy()
+        div_harmonics.append(harmonics)
+    div_harmonics = np.array(div_harmonics)
+    div_harmonics_bounded = div_harmonics.copy()
     #Rebound the result between 1 and 2
-    for i in range(len(multi_harmonics_bounded)):
-        for j in range(len(multi_harmonics_bounded[0])):
-            multi_harmonics_bounded[i][j] = rebound(multi_harmonics_bounded[i][j])
-            multi_harmonics_sub_bounded[i][j] = rebound(multi_harmonics_sub_bounded[i][j])
-    return multi_harmonics, multi_harmonics_bounded, multi_harmonics_sub, multi_harmonics_sub_bounded
+    for i in range(len(div_harmonics_bounded)):
+        for j in range(len(div_harmonics_bounded[i])):
+            div_harmonics_bounded[i][j] = rebound(div_harmonics_bounded[i][j])
+    return div_harmonics, div_harmonics_bounded
 
-#This function computes harmonics of a list of peaks and compares the lists of harmonics pairwise to find fitting
-#between the harmonic series
-def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult'):
+
+def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = 'div'):
+    """
+    This function computes harmonics of a list of peaks and compares the lists of harmonics pairwise to find fitting
+    between the harmonic series
+
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    n_harm: int
+        Number of harmonics to compute
+    bounds: int
+        Minimum distance (in Hz) between two frequencies to consider a fit
+    function: str
+        Defaults to 'mult'.
+        'mult' will use natural harmonics
+        'div' will use natural sub-harmonics
+    div_mode: str
+        Defaults to 'div'. See EEG_harmonics_div function.
+    """
     from itertools import combinations
     peak_bands = []
     for i in range(len(peaks)):
@@ -75,7 +126,7 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult'):
     if function == 'mult':
         multi_harmonics = EEG_harmonics_mult(peaks, n_harm)
     elif function == 'div':
-        multi_harmonics, x, y, z = EEG_harmonics_div(peaks, n_harm)
+        multi_harmonics, x = EEG_harmonics_div(peaks, n_harm, mode = div_mode)
     #print(multi_harmonics)
     list_peaks = list(combinations(peak_bands,2))
     #print(list_peaks)
@@ -94,7 +145,33 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult'):
 #EXTENDED PEAKS from restrictions#
 
 def consonance_peaks (peaks, limit):
-    print(peaks)
+    """
+    This function computes consonance (for a given ratio a/b, consonance corresponds to (a+b)/(a*b)) between peaks
+
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    limit: float
+        minimum consonance value to keep associated pairs of peaks
+        
+        Comparisons with familiar ratios:
+        Unison-frequency ratio 1:1 yields a value of 2
+        Octave-frequency ratio 2:1 yields a value of 1.5
+        Perfect 5th-frequency ratio 3:2 yields a value of 0.833
+        Perfect 4th-frequency ratio 4:3 yields a value of 0.583
+        Major 6th-frequency ratio 5:3 yields a value of 0.533
+        Major 3rd-frequency ratio 5:4 yields a value of 0.45
+        Minor 3rd-frequency ratio 5:6 yields a value of 0.366
+        Minor 6th-frequency ratio 5:8 yields a value of 0.325
+        Major 2nd-frequency ratio 8:9 yields a value of 0.236
+        Major 7th-frequency ratio 8:15 yields a value of 0.192
+        Minor 7th-frequency ratio 9:16 yields a value of 0.174
+        Minor 2nd-frequency ratio 15:16 yields a value of 0.129
+        
+    Returns
+    -------
+    
+    consonance:
+    """
     from fractions import Fraction
     consonance_ = []
     peaks2keep = []
@@ -203,6 +280,7 @@ def consonant_ratios (peaks, limit, sub = False):
     consonance = np.array(consonance_)
     consonance = [i for i in consonance if i]
     return cons_ratios, consonance
+
 #SCALE CONSTRUCTION#
     ####################################   N-TET (one ratio)  ##############################################################
 
@@ -430,62 +508,6 @@ def dissmeasure(fvec, amp, model='min'):
 
     return D
 
-'''
-def diss_curve (freqs, amps, denom=1000, max_ratio=2, method = 'min'):
-    from numpy import array, linspace, empty, concatenate
-    from scipy.signal import argrelextrema
-    from fractions import Fraction
-    freqs = np.array(freqs)
-    r_low = 1
-    alpharange = max_ratio
-    method = method
-
-    n = 1000
-    diss = empty(n)
-    a = concatenate((amps, amps))
-    for i, alpha in enumerate(linspace(r_low, alpharange, n)):
-        f = concatenate((freqs, alpha*freqs))
-        d = dissmeasure(f, a, method)
-        diss[i] = d
-    plt.figure(figsize=(14, 6))
-    plt.plot(linspace(r_low, alpharange, len(diss)), diss)
-    plt.xscale('log')
-    plt.xlim(r_low, alpharange)
-
-    plt.xlabel('frequency ratio')
-    plt.ylabel('sensory dissonance')
-
-
-    diss_minima = argrelextrema(diss, np.less)
-    print(diss_minima)
-    intervals = []
-    for d in range(len(diss_minima[0])):
-        
-        frac = Fraction(diss_minima[0][d]/(n/(max_ratio-1))+1).limit_denominator(denom)
-        frac = (frac.numerator, frac.denominator)
-        intervals.append(frac)
-
-    
-    intervals.append((2, 1))
-    ratios = [i[0]/i[1] for i in intervals]
-    a = 1
-    ratios_euler = [a]+ratios
-    ratios_euler = [int(round(num, 2)*1000) for num in ratios]
-    euler_score = euler(*ratios_euler)
-    plt.text(1.9, 1.5, 'Euler = '+str(int(euler_score)), horizontalalignment = 'center',
-      verticalalignment='center', fontsize = 16)
-    for n, d in intervals:
-        plt.axvline(n/d, color='silver')
-
-    #plt.yticks([])
-    plt.minorticks_off()
-    plt.xticks([n/d for n, d in intervals],
-               ['{}/{}'.format(n, d) for n, d in intervals], fontsize = 13)
-    plt.yticks(fontsize = 13)
-    plt.tight_layout()
-    plt.show()
-    return intervals, ratios, euler_score/len(diss_minima), np.average(diss)
-'''
 #Input: peaks and amplitudes
 def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method = 'min', plot = True):
     from numpy import array, linspace, empty, concatenate
