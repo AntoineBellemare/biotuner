@@ -1,0 +1,7 @@
+scipy
+numpy
+mne
+pandas
+fractions
+math
+itertools 
