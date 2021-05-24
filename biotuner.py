@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 
 
-#EXTENDED PEAKS from expansions#
+'''EXTENDED PEAKS from expansions
+'''
 
     
 def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up = 0):
@@ -142,11 +143,12 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = '
         harm_fit = list(dict.fromkeys(harm_fit))
     return harm_fit
 
-#EXTENDED PEAKS from restrictions#
+'''EXTENDED PEAKS from restrictions
+'''
 
 def consonance_peaks (peaks, limit):
     """
-    This function computes consonance (for a given ratio a/b, consonance corresponds to (a+b)/(a*b)) between peaks
+    This function computes consonance (for a given ratio a/b, when a < 2b, consonance corresponds to (a+b)/(a*b)) between peaks
 
     peaks: List (float)
         Peaks represent local maximum in a spectrum
@@ -170,7 +172,15 @@ def consonance_peaks (peaks, limit):
     Returns
     -------
     
-    consonance:
+    consonance: List (float)
+        consonance scores for each pairs of consonant peaks
+    cons_pairs: List of lists (float)
+        list of lists of each pairs of consonant peaks
+    cons_peaks: List (float)
+        list of consonant peaks (no doublons)
+    cons_tot: float
+        averaged consonance value for each pairs of peaks
+        
     """
     from fractions import Fraction
     consonance_ = []
@@ -200,7 +210,7 @@ def consonance_peaks (peaks, limit):
             if p2x != None:
                 peaks2keep_temp.extend([p2, p1])
             consonance_.append(cons_)
-            peaks2keep.append(peaks2keep_temp)
+            peaks2keep.append(np.round(peaks2keep_temp,3))
         cons_pairs = np.array(peaks2keep)
         cons_pairs = [x for x in cons_pairs if x]
         consonance = np.array(consonance_)
@@ -210,9 +220,24 @@ def consonance_peaks (peaks, limit):
         #consonance = list(set(consonance))
     return consonance, cons_pairs, cons_peaks, np.average(cons_tot)
 
-## Function that keeps the frequencies that are the most consonant with others
-##Takes pairs of frequencies that are consonant (output of the 'compute consonance' function)
+
 def multi_consonance(cons_pairs, n_freqs = 5):
+    """
+    ## Function that keeps the frequencies that are the most consonant with others
+    ##Takes pairs of frequencies that are consonant (output of the 'compute consonance' function)
+
+    cons_pairs: List of lists (float)
+        list of lists of each pairs of consonant peaks
+    n_freqs: int
+        maximum number of consonant freqs to keep
+    
+    Returns
+    -------
+    
+    freqs_related: List (float)
+        peaks that are consonant with at least two other peaks, starting with the peak that is 
+        consonant with the maximum number of other peaks
+    """
     freqs_dup = list(itertools.chain(*cons_pairs))
     pairs_temp = list(itertools.chain.from_iterable(cons_pairs))
     freqs_nodup = list(dict.fromkeys(pairs_temp))
@@ -225,40 +250,7 @@ def multi_consonance(cons_pairs, n_freqs = 5):
 
 # Function that computes integer ratios from peaks with higher consonance
 # Needs at least two pairs of values
-'''
-def consonant_ (cons_peaks):
-    from fractions import Fraction
-    cons_integer = []
-    for i in range(len(cons_peaks)):
-        a = cons_peaks[i][0]
-        b = cons_peaks[i][1]
-        if a > b:
-            while a > (b):
-                a = a/2
-        if a < b:
-            while b > (a):
-                b = b/2
-        cons_temp = Fraction(a/b).limit_denominator(1000)
-        num = cons_temp.numerator
-        denom = cons_temp.denominator
-        frac_list = [num, denom]
-        frac = tuple(frac_list)
-        cons_integer.append(frac)
-    consonant_integers = np.array(cons_integer).squeeze()
-    cons_ratios = []
-    for j in range(len(consonant_integers)):
-        cons_ratios.append((consonant_integers[j][0])/(consonant_integers[j][1]))
-    consonant_ratios = np.array(cons_ratios)
-    cons_rat = []
-    for i in consonant_ratios:
-        if i not in cons_rat:
-            cons_rat.append(i)
-    try:
-        cons_rat.remove(1.0)
-    except (ValueError, TypeError, NameError):
-        pass
-    return consonant_integers, cons_rat
-'''
+
 def consonant_ratios (peaks, limit, sub = False):
     from fractions import Fraction
     consonance_ = []
@@ -281,17 +273,39 @@ def consonant_ratios (peaks, limit, sub = False):
     consonance = [i for i in consonance if i]
     return cons_ratios, consonance
 
-#SCALE CONSTRUCTION#
+'''SCALE CONSTRUCTION#
     ####################################   N-TET (one ratio)  ##############################################################
 
+'''
 
-    #Oct_subdiv
-#Argument 1 : a ratio in the form of a float or a fraction
-#Argument 2 : bounds between which the octave should fall
-#Argument 3 : value of the octave
-#Argument 4 : number of octave subdivisions
-
-def oct_subdiv(ratio,bounds,octave,n):
+def oct_subdiv(ratio, bounds = 1.01365 ,octave = 2 ,n = 5):
+    '''
+    N-TET tuning from Generator Interval
+    This function uses a generator interval to suggest numbers of steps to divide the octave, 
+    so the given interval will be approximately present (bounds) in the steps of the N-TET tuning.
+    
+    ratio: float
+        ratio that corresponds to the generator_interval
+        e.g.: by giving the fifth (3/2) as generator interval, this function will suggest to subdivide the octave in 12, 53, ...
+    bounds: float 
+        Defaults to 1.01365 (Pythagorean comma)
+        approximation of the octave corresponding to the acceptable distance between the ratio of the generator interval after 
+        multiple iterations and the octave value.
+    octave: int
+        Defaults to 2
+        value of the octave
+    n: int
+        Defaults to 5
+        number of suggested octave subdivisions
+        
+    Returns
+    -------
+    
+    Octdiv: List (int)
+        list of N-TET tunings corresponding to dividing the octave in equal steps
+    Octvalue: List (float)
+        list of the approximations of the octave for each N-TET tuning
+    '''
     Octdiv, Octvalue, i = [], [], 1
     ratios = []
     while len(Octdiv) < n:
@@ -307,11 +321,35 @@ def oct_subdiv(ratio,bounds,octave,n):
             Octvalue.append(ratio_mult)
         else:
             continue
-    return Octdiv, Octvalue, ratios
+    return Octdiv, Octvalue
 
 
 
-def compare_oct_div(Octdiv = 53, Octdiv2 = 12, bounds = 0.01, octave = 2):
+def compare_oct_div(Octdiv = 12, Octdiv2 = 53, bounds = 0.005, octave = 2):
+    '''
+    Function that compare steps for two N-TET tunings and return matching ratios and corresponding degrees
+    
+    Octdiv: int
+        Defaults to 12.
+        first N-TET tuning number of steps
+    Octdiv2: int
+        Defaults to 53.
+        second N-TET tuning number of steps
+    bounds: float 
+        Defaults to 0.005
+        Maximum distance between 1 ratio of Octdiv and 1 ratio of Octdiv2 to consider a match
+    octave: int
+        Defaults to 2
+        value of the octave
+        
+    Returns
+    -------
+    
+    Octdiv: List (int)
+        list of N-TET tunings corresponding to dividing the octave in equal steps
+    Octvalue: List (float)
+        list of the approximations of the octave for each N-TET tuning
+    '''
     ListOctdiv = []
     ListOctdiv2 = []
     OctdivSum = 1
