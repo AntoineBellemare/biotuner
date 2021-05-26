@@ -210,11 +210,11 @@ def consonance_peaks (peaks, limit):
             if p2x != None:
                 peaks2keep_temp.extend([p2, p1])
             consonance_.append(cons_)
-            peaks2keep.append(np.round(peaks2keep_temp,3))
-        cons_pairs = np.array(peaks2keep)
-        cons_pairs = [x for x in cons_pairs if x]
-        consonance = np.array(consonance_)
-        consonance = [i for i in consonance if i]
+            peaks2keep.append(peaks2keep_temp)
+        #cons_pairs = np.array(peaks2keep)
+        cons_pairs = [x for x in peaks2keep if x]
+        #consonance = np.array(consonance_)
+        consonance = [i for i in consonance_ if i]
         cons_peaks = list(itertools.chain(*cons_pairs))
         cons_peaks = list(set(cons_peaks))
         #consonance = list(set(consonance))
@@ -255,7 +255,7 @@ def consonant_ratios (peaks, limit, sub = False):
     from fractions import Fraction
     consonance_ = []
     ratios2keep = []
-    a, ratios = compute_peak_ratios(peaks, sub = sub)
+    ratios = compute_peak_ratios(peaks, sub = sub)
     for ratio in ratios:
         frac = Fraction(ratio).limit_denominator(1000)
         cons_ = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
@@ -278,16 +278,16 @@ def consonant_ratios (peaks, limit, sub = False):
 
 '''
 
-def oct_subdiv(ratio, bounds = 1.01365 ,octave = 2 ,n = 5):
+def oct_subdiv(ratio, octave_limit = 1.01365 ,octave = 2 ,n = 5):
     '''
     N-TET tuning from Generator Interval
     This function uses a generator interval to suggest numbers of steps to divide the octave, 
-    so the given interval will be approximately present (bounds) in the steps of the N-TET tuning.
+    so the given interval will be approximately present (octave_limit) in the steps of the N-TET tuning.
     
     ratio: float
         ratio that corresponds to the generator_interval
         e.g.: by giving the fifth (3/2) as generator interval, this function will suggest to subdivide the octave in 12, 53, ...
-    bounds: float 
+    octave_limit: float 
         Defaults to 1.01365 (Pythagorean comma)
         approximation of the octave corresponding to the acceptable distance between the ratio of the generator interval after 
         multiple iterations and the octave value.
@@ -316,7 +316,7 @@ def oct_subdiv(ratio, bounds = 1.01365 ,octave = 2 ,n = 5):
         rescale_ratio = ratio_mult - round(ratio_mult)
         ratios.append(ratio_mult)
         i+=1
-        if -bounds < rescale_ratio < bounds:
+        if -octave_limit < rescale_ratio < octave_limit:
             Octdiv.append(i-1)
             Octvalue.append(ratio_mult)
         else:
@@ -377,40 +377,65 @@ def compare_oct_div(Octdiv = 12, Octdiv2 = 53, bounds = 0.005, octave = 2):
     return Matching_harmonics
 
 
-##Here we use the most consonant peaks ratios as input of oct_subdiv function. Each consonant ratio
-##leads to a list of possible octave subdivisions. These lists are compared and optimal octave subdivisions are
-##determined.
+
 
 #Output1: octave subdivisions
 #Output2: ratios that led to Output1
 
-def multi_oct_subdiv (peaks, max_sub, octave_limit):
+def multi_oct_subdiv (peaks, max_sub = 100, octave_limit = 1.01365, octave = 2, n_scales = 10):
+    '''
+    This function uses the most consonant peaks ratios as input of oct_subdiv function. Each consonant ratio
+    leads to a list of possible octave subdivisions. These lists are compared and optimal octave subdivisions are
+    determined.
+    
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    max_sub: int
+        Defaults to 100.
+        Maximum number of intervals in N-TET tuning suggestions.
+    octave_limit: float 
+        Defaults to 1.01365 (Pythagorean comma).
+        Approximation of the octave corresponding to the acceptable distance between the ratio of the generator interval after 
+        multiple iterations and the octave value.
+    octave: int
+        Defaults to 2.
+        value of the octave
+    n_scales: int
+        Defaults to 10.
+        Number of N-TET tunings to compute for each generator interval (ratio).
+        
+    Returns
+    -------
+    
+    multi_oct_div: List (int)
+        List of octave subdivisions that fit with multiple generator intervals.
+    ratios: List (float)
+        list of the generator intervals for which at least 1 N-TET tuning match with another generator interval.  
+    '''
     import itertools
     from collections import Counter
     a, b, pairs, cons = consonance_peaks(peaks, 0.01)
-    c, ratios = consonant_ratios(b)
-
+    ratios, cons = consonant_ratios(peaks, 0.01)
     list_oct_div = []
     for i in range(len(ratios)):
-        list_temp, no, no2 = oct_subdiv(ratios[i], octave_limit, 2, 30)
+        list_temp, no= oct_subdiv(ratios[i], octave_limit, octave, n_scales)
         list_oct_div.append(list_temp)
-
-
     counts = Counter(list(itertools.chain(*list_oct_div)))
     oct_div_temp = []
     for k, v in counts.items():
         if v > 1:
             oct_div_temp.append(k)
     oct_div_temp = np.sort(oct_div_temp)
-    oct_div_final = []
+    multi_oct_div = []
     for i in range(len(oct_div_temp)):
         if oct_div_temp[i] < max_sub:
-            oct_div_final.append(oct_div_temp[i])
-    return oct_div_final, ratios
+            multi_oct_div.append(oct_div_temp[i])
+    return multi_oct_div, ratios
 
 
-
-    ########################################   METRICS    ############################################################
+'''
+    ########################################   PEAKS METRICS    ############################################################
+'''
 
 #Consonance#
 #Input: peaks
@@ -420,6 +445,9 @@ def euler(*numbers):
     Return the "degree of sweetness" of a musical interval or chord expressed
     as a ratio of frequencies a:b:c, according to Euler's formula
     Greater values indicate more dissonance
+    
+    numbers: List (int)
+        frequencies
     """
     factors = prime_factors(lcm(*reduced_form(*numbers)))
     return 1 + sum(p - 1 for p in factors)
@@ -744,7 +772,7 @@ def compute_peaks_ts (data, peaks_function = 'EMD', FREQ_BANDS = None, precision
             amps_temp.append(a)
             
         peaks_temp = np.flip(peaks_temp)
-        amps_temp = np.flip(amps_temps)
+        amps_temp = np.flip(amps_temp)
     except:
         pass
     if peaks_function == 'HH1D_max':

@@ -112,7 +112,9 @@ def compute_peaks_raw(eeg_data, FREQ_BANDS, sf=1000, nperseg = 0, nfft = 0, prec
     #print(nperseg)
     for minf, maxf in FREQ_BANDS:
         freqs, psd = scipy.signal.welch(eeg_data, sf, nfft = nfft, nperseg = nperseg, average = average)
+        
         psd = 10. * np.log10(psd) 
+        print(psd)
         bin_size = (sf/2)/len(freqs)
         min_index = int(minf/bin_size)
         max_index = int(maxf/bin_size)
@@ -136,12 +138,14 @@ def compute_peak(eeg_data, sf=1000, nperseg = 0, nfft = 0, precision = 0.25, ave
     import scipy
     freqs, psd = scipy.signal.welch(eeg_data, sf, nfft = nfft, nperseg = nperseg, average = average)
     psd = 10. * np.log10(psd) 
+    print(psd)
     bin_size = (sf/2)/len(freqs)
     #min_index = int(minf/bin_size)
     #max_index = int(maxf/bin_size)
     index_max = np.argmax(np.array(psd))
     FREQS = np.array(freqs[index_max])
     amps = np.array(psd[index_max])
+    
     return FREQS, amps
 
 def alpha2bands(a):
