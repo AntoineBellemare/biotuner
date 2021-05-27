@@ -388,3 +388,21 @@ def scale2frac (scale, maxdenom = 1000):
         den.append(frac.denominator)
         scale_frac.append(frac)
     return scale_frac, np.array(num), np.array(den)
+
+
+def peaks_to_amps (peaks, freqs, amps, sf):
+    bin_size = np.round((sf/2)/len(freqs), 3)
+    amps_out = []
+    #print(amps.shape)
+    for p in peaks:
+        #print(p)
+        index = int(p/bin_size)
+        amp = amps[index]
+        amps_out.append(amp)
+    return amps_out
+
+def NTET_ratios (n_steps):
+    steps = []
+    for s in range(n_steps):
+        steps.append(2**(s/n_steps))
+    return steps
