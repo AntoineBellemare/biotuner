@@ -406,3 +406,35 @@ def NTET_ratios (n_steps):
     for s in range(n_steps):
         steps.append(2**(s/n_steps))
     return steps
+
+'''Spectromorphology functions'''
+
+import pyACA
+
+def computeFeatureCl(afAudioData, cFeatureName, f_s, window=4000, overlap=1):
+
+    # compute feature
+    [v, t] = pyACA.computeFeature(cFeatureName, afAudioData, f_s, None, window, overlap)
+
+    return (v, t)
+
+def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, overlap = 1, in_cut =None, out_cut = None):
+    if in_cut == None:
+        in_cut = int(sf/2)
+    if out_cut == None:
+        out_cut = int(len(IMFs[0])-(sf/2))
+    if window == None:
+        window = int(sf/2)
+    spectro_IMF = []
+    for e in IMFs:
+        f, t = computeFeatureCl(e, method, sf, window, overlap)
+        
+        #[f,t] = pyACA.computePitch('TimeAcf', e, 1000, afWindow=None, iBlockLength=1000, iHopLength=200)
+        #df[i] = np.squeeze(f)
+        if method == 'SpectralCentroid':
+            spectro_IMF.append(f[0][in_cut:out_cut])
+        if method == 'SpectralFlux':
+            spectro_IMF.append(f[in_cut:out_cut])
+    spectro_IMF = np.array(spectro_IMF)
+    return spectro_IMF
+

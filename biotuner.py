@@ -273,6 +273,28 @@ def consonant_ratios (peaks, limit, sub = False):
     consonance = [i for i in consonance if i]
     return cons_ratios, consonance
 
+
+def timepoint_consonance (data, limit = 0.2, min_notes = 3, method = 'cons'):
+    import itertools
+    data = np.moveaxis(data, 0, 1)
+    out = []
+    for peaks in data:
+        if method == 'cons':
+            cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
+            out.append(peaks_cons)
+        if method == 'euler':
+            peaks_ =  [int(np.round(p, 2)*100) for p in peaks]
+            #print(peaks_)
+            eul = euler(*peaks_)
+            #print(eul)
+            if eul < limit:
+                out.append(list(peaks))
+    out = [x for x in out if x != []]
+    #if method == 'cons':
+    out = list(out for out,_ in itertools.groupby(out))
+    out = [x for x in out if len(x)>=min_notes]
+    return out
+
 '''SCALE CONSTRUCTION#
     ####################################   N-TET (one ratio)  ##############################################################
 
@@ -575,7 +597,7 @@ def dissmeasure(fvec, amp, model='min'):
     return D
 
 #Input: peaks and amplitudes
-def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method = 'min', plot = True):
+def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method = 'min', plot = True, n_tet_grid = None):
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
@@ -591,7 +613,8 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method 
         d = dissmeasure(f, a, method)
         diss[i] = d
     diss_minima = argrelextrema(diss, np.less)
-    #print(diss_minima)
+    
+    
     intervals = []
     for d in range(len(diss_minima[0])):        
         frac = Fraction(diss_minima[0][d]/(n/(max_ratio-1))+1).limit_denominator(denom)
@@ -600,30 +623,40 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method 
     intervals.append((2, 1))
     ratios = [i[0]/i[1] for i in intervals]
     ratios_sim = [np.round(r, 2) for r in ratios] #round ratios for similarity measures of harmonic series
-    print(ratios_sim)
+    #print(ratios_sim)
     dyad_sims = ratios2harmsim(ratios[:-1]) # compute dyads similarities with natural harmonic series
     dyad_sims
     a = 1
     ratios_euler = [a]+ratios
+    
     ratios_euler = [int(round(num, 2)*1000) for num in ratios]
     euler_score = None
     if consonance == True:
         euler_score = euler(*ratios_euler)
+        
         euler_score = euler_score/len(diss_minima)
     else:
         euler_score = 'NaN'
     #print(euler_score)
+    
     if plot == True:
         plt.figure(figsize=(14, 6))
         plt.plot(linspace(r_low, alpharange, len(diss)), diss)
-        plt.xscale('log')
+        plt.xscale('linear')
         plt.xlim(r_low, alpharange)
-        plt.text(1.9, 1.5, 'Euler = '+str(int(euler_score)), horizontalalignment = 'center',
+        try:
+            plt.text(1.9, 1.5, 'Euler = '+str(int(euler_score)), horizontalalignment = 'center',
         verticalalignment='center', fontsize = 16)
+        except:
+            pass
         for n, d in intervals:
             plt.axvline(n/d, color='silver')
-
-        #plt.yticks([])
+        # Plot N-TET grid
+        if n_tet_grid != None:
+            n_tet = NTET_ratios(n_tet_grid)
+        for n in n_tet :
+            plt.axvline(n, color='red', linestyle = '--')
+        # Plot scale ticks
         plt.minorticks_off()
         plt.xticks([n/d for n, d in intervals],
                    ['{}/{}'.format(n, d) for n, d in intervals], fontsize = 13)
