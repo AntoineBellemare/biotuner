@@ -128,7 +128,15 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = '
         multi_harmonics = EEG_harmonics_mult(peaks, n_harm)
     elif function == 'div':
         multi_harmonics, x = EEG_harmonics_div(peaks, n_harm, mode = div_mode)
-    #print(multi_harmonics)
+    elif function == 'exp':
+        multi_harmonics = []
+        increments = []
+        for h in range(n_harm+1):
+            h += 1 
+            multi_harmonics.append([i**h for i in peaks])
+        multi_harmonics = np.array(multi_harmonics)
+        multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+    print(np.array(multi_harmonics).shape)
     list_peaks = list(combinations(peak_bands,2))
     #print(list_peaks)
     harm_temp = []
@@ -713,9 +721,10 @@ from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 from scipy.stats import norm
 from scipy.signal import argrelextrema, detrend
 
-def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, plot_tenney = False):
+def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, plot_tenney = False, octave = 2):
     fracs, numerators, denominators = scale2frac(ratios)
     ratios = numerators / denominators
+    #print(ratios)
     #ratios = np.interp(ratios, (ratios.min(), ratios.max()), (1, 10))
     bendetti_heights = numerators * denominators
     tenney_heights = log2(bendetti_heights)
@@ -736,7 +745,6 @@ def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, p
     
     # Next, we need to ensure a distance `d` between adjacent ratios
     M = len(bendetti_heights)
-    #print(M)
 
     delta = 0.00001
     indices = ones(M, dtype=bool)
@@ -752,8 +760,8 @@ def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, p
     ratios = ratios[indices]
     M = len(tenney_heights)
     #print(M)
-    
-    x_ratios = arange(1, 2, res)
+    #print('hello')
+    x_ratios = arange(1, octave, res)
     _, HE = compute_harmonic_entropy_domain_integral(ratios, x_ratios, spread=spread)
     #_, HE = compute_harmonic_entropy_simple_weights(numerators, denominators, x_ratios, spread=0.01)
     ind = argrelextrema(HE, numpy.less)
@@ -765,7 +773,7 @@ def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, p
         ax.plot(x_ratios, HE)
         # ax.plot(x_ratios, HE_simple)
         ax.scatter(HE_minima[0], HE_minima[1], color='k', s=4)
-        ax.set_xlim(1, 2)
+        ax.set_xlim(1, octave)
         plt.show()
     return HE_minima, np.average(HE)
 
