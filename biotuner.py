@@ -282,7 +282,36 @@ def consonant_ratios (peaks, limit, sub = False):
     return cons_ratios, consonance
 
 
-def timepoint_consonance (data, limit = 0.2, min_notes = 3, method = 'cons'):
+def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
+     """
+    ## Function that keeps moments of consonance from multiple time series of peak frequencies
+
+    data: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of frequencies
+    method: str
+        Defaults to 'cons'
+        'cons' will compute pairwise consonance between frequency peaks in the form of (a+b)/(a*b)
+        'euler' will compute Euler's gradus suavitatis
+    limit: float
+        limit of consonance under which the set of frequencies are not retained
+        When method = 'cons'
+             --> See consonance_peaks method's doc to refer consonance values to common intervals 
+        When method = 'euler'
+             --> Major (4:5:6) = 9
+                 Minor (10:12:15) = 9
+                 Major 7th (8:10:12:15) = 10
+                 Minor 7th (10:12:15:18) = 11
+                 Diminish (20:24:29) = 38 
+    min_notes: int
+        minimum number of consonant frequencies in the chords. Only relevant when method is set to 'cons'. 
+    Returns
+    -------
+    
+    chords: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of consonant frequencies
+    """
     import itertools
     data = np.moveaxis(data, 0, 1)
     out = []
@@ -300,8 +329,8 @@ def timepoint_consonance (data, limit = 0.2, min_notes = 3, method = 'cons'):
     out = [x for x in out if x != []]
     #if method == 'cons':
     out = list(out for out,_ in itertools.groupby(out))
-    out = [x for x in out if len(x)>=min_notes]
-    return out
+    chords = [x for x in out if len(x)>=min_notes]
+    return chords
 
 '''SCALE CONSTRUCTION#
     ####################################   N-TET (one ratio)  ##############################################################
@@ -483,7 +512,17 @@ def euler(*numbers):
     return 1 + sum(p - 1 for p in factors)
 
 #Input: peaks
-def tenneyHeight(peaks):
+def tenneyHeight(peaks, avg = True):
+    """
+    Tenney Height is a measure of inharmonicity calculated on two frequencies (a/b) reduced in their simplest form. 
+    It can also be called the log product complexity of a given interval.
+    
+    peaks: List (float)
+        frequencies
+    avg: Boolean
+        Default to True
+        When set to True, all tenney heights are averaged
+    """
     pairs = getPairs(peaks)
     pairs
     tenney = []
@@ -496,10 +535,28 @@ def tenneyHeight(peaks):
         x = frac.numerator
         y = frac.denominator
         tenney.append(log2(x*y))
-    return np.average(tenney)
+    if avg == True:
+        tenney = np.average(tenney)
+    return tenney
 
 
 def peaks_to_metrics (peaks, n_harm = 10):
+    '''
+    This function compute different metrics on peak frequencies.
+    
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    n_harm: int
+        Number of harmonics to compute for 'harm_fit' metric
+        
+    Returns
+    -------
+    
+    metrics: dict (float)
+        Dictionary of values associated to metrics names
+    metrics_list: List (float)
+        list of peaks metrics values in the order: 'cons', 'euler', 'tenney', 'harm_fit'  
+    '''
     peaks = list(peaks)
     metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0}   
     metrics['harm_fit'] = len(harmonic_fit(peaks, n_harm = n_harm))
@@ -519,6 +576,13 @@ def peaks_to_metrics (peaks, n_harm = 10):
    Implemented from Gill and Purves (2009)'''
 
 def dyad_similarity(f1, f2):
+    '''
+    This function compute the similarity between a dyad of frequencies and the natural harmonic series 
+    f1: float
+        first frequency
+    f2: float
+        second frequency
+    '''
     frac = Fraction(f1/f2).limit_denominator(1000)
     x = frac.numerator
     y = frac.denominator
