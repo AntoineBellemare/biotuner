@@ -283,7 +283,7 @@ def consonant_ratios (peaks, limit, sub = False):
 
 
 def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
-     """
+    """
     ## Function that keeps moments of consonance from multiple time series of peak frequencies
 
     data: List of lists (float)
@@ -311,14 +311,20 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
     chords: List of lists (float)
         Axis 0 represents moments in time
         Axis 1 represents the sets of consonant frequencies
+    positions: List (int)
+        positions on Axis 0
     """
-    import itertools
+    
     data = np.moveaxis(data, 0, 1)
+    print('NAN', np.argwhere(np.isnan(data)))
     out = []
-    for peaks in data:
+    positions = []
+    for count, peaks in enumerate(data):
         if method == 'cons':
             cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
             out.append(peaks_cons)
+            if len(list(set(peaks_cons))) >= min_notes:
+                positions.append(count)
         if method == 'euler':
             peaks_ =  [int(np.round(p, 2)*100) for p in peaks]
             #print(peaks_)
@@ -326,11 +332,12 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
             #print(eul)
             if eul < limit:
                 out.append(list(peaks))
+                positions.append(count)
     out = [x for x in out if x != []]
     #if method == 'cons':
     out = list(out for out,_ in itertools.groupby(out))
     chords = [x for x in out if len(x)>=min_notes]
-    return chords
+    return chords, positions
 
 '''SCALE CONSTRUCTION#
     ####################################   N-TET (one ratio)  ##############################################################
