@@ -94,9 +94,30 @@ def rebound(x, low=1, high=2, octave=2):
     return x
 
 def nth_root (num, root):
+    '''
+    This function computes the ratio associated with one step of a N-TET scale
+    
+    num: int
+        value of the octave
+    root: int
+        number of steps in the N-TET scale
+    '''
     answer = num**(1/root)
     return answer
 
+def NTET_steps (octave, step, NTET):
+    '''
+    This function computes the ratio associated with a specific step of a N-TET scale
+    
+    octave: int
+        value of the octave
+    step: int
+        value of the step
+    NTET: int
+        number of steps in the N-TET scale
+    '''
+    answer = octave**(step/NTET)
+    return answer
 
 #Function that compares lists (i.e. peak harmonics)
 def compareLists(list1, list2, bounds):
@@ -401,11 +422,15 @@ def peaks_to_amps (peaks, freqs, amps, sf):
         amps_out.append(amp)
     return amps_out
 
-def NTET_ratios (n_steps):
+def NTET_ratios (n_steps, max_ratio):
     steps = []
     for s in range(n_steps):
         steps.append(2**(s/n_steps))
-    return steps
+    steps_out = []
+    for j in range(max_ratio-1):
+        steps_out.append([i+j for i in steps])
+    steps_out = sum(steps_out, [])
+    return steps_out
 
 '''Spectromorphology functions'''
 

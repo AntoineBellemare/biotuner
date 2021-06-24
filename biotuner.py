@@ -6,7 +6,11 @@ from biotuner_utils import *
 from biotuner_offline import *
 import matplotlib.pyplot as plt
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
-
+import pytuning
+from math import gcd
+from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
+from scipy.stats import norm
+from scipy.signal import argrelextrema, detrend
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -231,8 +235,8 @@ def consonance_peaks (peaks, limit):
 
 def multi_consonance(cons_pairs, n_freqs = 5):
     """
-    ## Function that keeps the frequencies that are the most consonant with others
-    ##Takes pairs of frequencies that are consonant (output of the 'compute consonance' function)
+    Function that keeps the frequencies that are the most consonant with others
+    Takes pairs of frequencies that are consonant (output of the 'compute consonance' function)
 
     cons_pairs: List of lists (float)
         list of lists of each pairs of consonant peaks
@@ -256,10 +260,29 @@ def multi_consonance(cons_pairs, n_freqs = 5):
     return freqs_related
 
 
-# Function that computes integer ratios from peaks with higher consonance
-# Needs at least two pairs of values
+
 
 def consonant_ratios (peaks, limit, sub = False):
+    """
+    Function that computes integer ratios from peaks with higher consonance
+    Needs at least two pairs of values
+    
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    limit: float
+        minimum consonance value to keep associated pairs of peaks
+    sub: boolean
+        Defaults to False
+        When set to True, include ratios a/b when a < b.
+    
+    Returns
+    -------
+    
+    cons_ratios: List (float)
+        list of consonant ratios
+    consonance: List (float)
+        list of associated consonance values
+    """
     from fractions import Fraction
     consonance_ = []
     ratios2keep = []
@@ -344,7 +367,7 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
 
 '''
 
-def oct_subdiv(ratio, octave_limit = 1.01365 ,octave = 2 ,n = 5):
+def oct_subdiv(ratio, octave_limit = 0.01365 ,octave = 2 ,n = 5):
     '''
     N-TET tuning from Generator Interval
     This function uses a generator interval to suggest numbers of steps to divide the octave, 
@@ -354,7 +377,7 @@ def oct_subdiv(ratio, octave_limit = 1.01365 ,octave = 2 ,n = 5):
         ratio that corresponds to the generator_interval
         e.g.: by giving the fifth (3/2) as generator interval, this function will suggest to subdivide the octave in 12, 53, ...
     octave_limit: float 
-        Defaults to 1.01365 (Pythagorean comma)
+        Defaults to 0.01365 (Pythagorean comma)
         approximation of the octave corresponding to the acceptable distance between the ratio of the generator interval after 
         multiple iterations and the octave value.
     octave: int
@@ -411,10 +434,10 @@ def compare_oct_div(Octdiv = 12, Octdiv2 = 53, bounds = 0.005, octave = 2):
     Returns
     -------
     
-    Octdiv: List (int)
-        list of N-TET tunings corresponding to dividing the octave in equal steps
-    Octvalue: List (float)
-        list of the approximations of the octave for each N-TET tuning
+    avg_ratios: List (float)
+        list of ratios corresponding to the shared steps in the two N-TET tunings
+    shared_steps: List of tuples
+        the two elements of each tuple corresponds to the scale steps sharing the same interval in the two N-TET tunings
     '''
     ListOctdiv = []
     ListOctdiv2 = []
@@ -422,25 +445,22 @@ def compare_oct_div(Octdiv = 12, Octdiv2 = 53, bounds = 0.005, octave = 2):
     OctdivSum2 = 1
     i = 1
     i2 = 1
-    Matching_harmonics = []
-    #HARMONIC_RATIOS = [1, 1.0595, 1.1225, 1.1892, 1.2599, 1.3348, 1.4142, 1.4983, 1.5874, 1.6818, 1.7818, 1.8897]
     while OctdivSum < octave:
         OctdivSum =(nth_root(octave, Octdiv))**i
         i+=1
         ListOctdiv.append(OctdivSum)
-    #print(ListOctdiv)
-
     while OctdivSum2 < octave:
         OctdivSum2 =(nth_root(octave, Octdiv2))**i2
         i2+=1
         ListOctdiv2.append(OctdivSum2)
-    #print(ListOctdiv2)
+    shared_steps = []
+    avg_ratios = []
     for i, n in enumerate(ListOctdiv):
         for j, harm in enumerate(ListOctdiv2):
             if harm-bounds < n < harm+bounds:
-                Matching_harmonics.append([n, i+1, harm, j+1])
-    Matching_harmonics = np.array(Matching_harmonics)
-    return Matching_harmonics
+                shared_steps.append((i+1, j+1))
+                avg_ratios.append((n+harm)/2)
+    return avg_ratios, shared_steps
 
 
 
@@ -549,7 +569,7 @@ def tenneyHeight(peaks, avg = True):
 
 def peaks_to_metrics (peaks, n_harm = 10):
     '''
-    This function compute different metrics on peak frequencies.
+    This function computes different metrics on peak frequencies.
     
     peaks: List (float)
         Peaks represent local maximum in a spectrum
@@ -584,7 +604,7 @@ def peaks_to_metrics (peaks, n_harm = 10):
 
 def dyad_similarity(f1, f2):
     '''
-    This function compute the similarity between a dyad of frequencies and the natural harmonic series 
+    This function computes the similarity between a dyad of frequencies and the natural harmonic series 
     f1: float
         first frequency
     f2: float
@@ -598,17 +618,37 @@ def dyad_similarity(f1, f2):
 
 #Input: ratios (list of floats) 
 def ratios2harmsim (ratios):
-    dyads = getPairs(ratios)
+    '''
+    This function computes the similarity for each ratio of a list
+    ratios: List (float)
+        list of frequency ratios (forming a scale)
+        
+    Returns
+    ---------
+    similarity: List (float)
+        list of percentage of similarity for each ratios
+    '''
+    fracs = []
+    for r in ratios:
+        fracs.append(Fraction(r).limit_denominator(1000))
     sims = []
-    for d in dyads:
-        sims.append(dyad_similarity(d[0], d[1]))
+    for f in fracs:
+        sims.append(dyad_similarity(f.numerator, f.denominator))
     similarity = np.array(sims)
     return similarity
 
-'''Metrics from PyTuning library (https://pytuning.readthedocs.io/en/0.7.2/metrics.html)
-   Smaller values are more consonant'''
 
 def PyTuning_metrics(scale, maxdenom):
+    '''
+    This function computes the scale metrics of the PyTuning library (https://pytuning.readthedocs.io/en/0.7.2/metrics.html)
+    Smaller values are more consonant
+    
+    scale: List (float)
+        List of ratios corresponding to scale steps
+    maxdenom: int
+        Maximum value of the denominator for each step's fraction
+    
+    '''
     scale_frac, num, denom = scale2frac(scale, maxdenom)
     metrics = pytuning.metrics.all_metrics(scale_frac)
     sum_p_q = metrics['sum_p_q']
@@ -619,6 +659,20 @@ def PyTuning_metrics(scale, maxdenom):
     return sum_p_q, sum_distinct_intervals, metric_3, sum_p_q_for_all_intervals, sum_q_for_all_intervals
 
 def scale_to_metrics(scale):
+    '''
+    This function computes the scale metrics of the PyTuning library and other scale metrics
+    
+    scale: List (float)
+        List of ratios corresponding to scale steps
+        
+    Returns
+    ----------
+    
+    scale_metrics: dictionary
+        keys correspond to metrics names
+    scale_metrics_list: List (float)
+        List of values corresponding to all computed metrics (in the same order as dictionary)
+    '''
     scale_frac, num, denom = scale2frac(scale, maxdenom=1000)
     scale_metrics = pytuning.metrics.all_metrics(scale_frac)
     scale_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(scale)), 2)
@@ -676,7 +730,52 @@ def dissmeasure(fvec, amp, model='min'):
     return D
 
 #Input: peaks and amplitudes
-def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method = 'min', plot = True, n_tet_grid = None):
+def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler = True, method = 'min', plot = True, n_tet_grid = None):
+    '''
+    This function computes the dissonance curve and related metrics for a given set of frequencies (freqs) and amplitudes (amps)
+    
+    freqs: List (float)
+        list of frequencies associated with spectral peaks
+    amps: List (float)
+        list of amplitudes associated with freqs (must be same lenght)
+    denom: int
+        Defaults to 1000.
+        Highest value for the denominator of each interval
+    max_ratio: int
+        Defaults to 2.
+        Value of the maximum ratio
+        Set to 2 for a span of 1 octave
+        Set to 4 for a span of 2 octaves
+        Set to 8 for a span of 3 octaves
+        Set to 2**n for a span of n octaves
+    euler: Boolean
+        Defaults to True
+        When set to True, compute the Euler Gradus Suavitatis for the derived scale
+    method: str
+        Defaults to 'min'
+        Can be set to 'min' or 'product'. Refer to dissmeasure function for more information.
+    plot: boolean
+        Defaults to True
+        When set to True, a plot of the dissonance curve will be generated
+    n_tet_grid: int
+        Defaults to None
+        When an integer is given, dotted lines will be add to the plot a steps of the given N-TET scale 
+    
+    Returns
+    -------
+
+    intervals: List of tuples
+        Each tuple corresponds to the numerator and the denominator of each scale step ratio
+    ratios: List (float)
+        list of ratios that constitute the scale
+    euler_score: int
+        value of consonance of the scale
+    diss: float
+        value of averaged dissonance of the total curve
+    dyad_sims: List (float)
+        list of dyad similarities for each ratio of the scale
+        
+    '''
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
@@ -706,17 +805,15 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method 
     dyad_sims = ratios2harmsim(ratios[:-1]) # compute dyads similarities with natural harmonic series
     dyad_sims
     a = 1
-    ratios_euler = [a]+ratios
-    
+    ratios_euler = [a]+ratios    
     ratios_euler = [int(round(num, 2)*1000) for num in ratios]
     euler_score = None
-    if consonance == True:
+    if euler == True:
         euler_score = euler(*ratios_euler)
         
         euler_score = euler_score/len(diss_minima)
     else:
         euler_score = 'NaN'
-    #print(euler_score)
     
     if plot == True:
         plt.figure(figsize=(14, 6))
@@ -732,7 +829,7 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, consonance = True, method 
             plt.axvline(n/d, color='silver')
         # Plot N-TET grid
         if n_tet_grid != None:
-            n_tet = NTET_ratios(n_tet_grid)
+            n_tet = NTET_ratios(n_tet_grid, max_ratio = max_ratio)
         for n in n_tet :
             plt.axvline(n, color='red', linestyle = '--')
         # Plot scale ticks
@@ -786,13 +883,37 @@ def compute_harmonic_entropy_simple_weights(numerators, denominators, ratio_inte
     return weight_ratios, HE
 
 
-from math import gcd
-import numpy
-from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
-from scipy.stats import norm
-from scipy.signal import argrelextrema, detrend
-
 def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, plot_tenney = False, octave = 2):
+    '''
+    Harmonic entropy is a measure of the uncertainty in pitch perception, and it provides a physical correlate of tonalness, 
+    one aspect of the psychoacoustic concept of dissonance (Sethares). High tonalness corresponds to low entropy and low tonalness
+    corresponds to high entropy.
+    
+    ratios: List (float)
+        ratios between each pairs of frequency peaks
+    res: float
+        Defaults to 0.001
+        resolution of the ratio steps
+    spread: float
+        Default to 0.01
+    plot_entropy: boolean
+        Defaults to True
+        When set to True, plot the harmonic entropy curve
+    plot_tenney: boolean
+        Defaults to False
+        When set to True, plot the tenney heights (y-axis) across ratios (x-axis)
+    octave: int
+        Defaults to 2
+        Value of the maximum interval ratio
+        
+    Returns
+    ----------
+    HE_minima: List (float)
+        List of ratios corresponding to minima of the harmonic entropy curve
+    HE: float
+        Value of the averaged harmonic entropy
+        
+    '''
     fracs, numerators, denominators = scale2frac(ratios)
     ratios = numerators / denominators
     #print(ratios)
