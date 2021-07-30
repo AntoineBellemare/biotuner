@@ -463,3 +463,33 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
     spectro_IMF = np.array(spectro_IMF)
     return spectro_IMF
 
+
+def butter_bandpass(lowcut,highcut,fs,order=8):
+    nyq = 0.5*fs
+    low = lowcut/nyq
+    high = highcut/nyq
+
+    b,a = butter(order, [low, high], btype='band')
+    return b,a
+
+def butter_bandpass_filter(data,lowcut,highcut,fs,order=8):
+    b,a = butter_bandpass(lowcut,highcut,fs,order=order)
+    return lfilter(b,a,data) 
+
+
+def ratios_harmonics (ratios, n_harms = 1):
+    ratios_harms = []
+    for h in range(n_harms):
+        h += 1 
+        ratios_harms.append([i*h for i in ratios])
+    ratios_harms = [i for sublist in ratios_harms for i in sublist]
+    return ratios_harms
+
+def ratios_increments (ratios, n_inc = 1):
+    ratios_harms = []
+    for h in range(n_inc):
+        h += 1 
+        ratios_harms.append([i**h for i in ratios])
+    ratios_harms = [i for sublist in ratios_harms for i in sublist]
+    ratios_harms = list(set(ratios_harms))
+    return ratios_harms

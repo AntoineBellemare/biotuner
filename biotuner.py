@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import scipy
 from fractions import Fraction
 import itertools
 from biotuner_utils import *
@@ -11,6 +12,7 @@ from math import gcd
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 from scipy.stats import norm
 from scipy.signal import argrelextrema, detrend
+import scipy.signal as ss
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -730,7 +732,7 @@ def dissmeasure(fvec, amp, model='min'):
     return D
 
 #Input: peaks and amplitudes
-def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler = True, method = 'min', plot = True, n_tet_grid = None):
+def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler_comp = True, method = 'min', plot = True, n_tet_grid = None):
     '''
     This function computes the dissonance curve and related metrics for a given set of frequencies (freqs) and amplitudes (amps)
     
@@ -807,8 +809,9 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler = True, method = 'mi
     a = 1
     ratios_euler = [a]+ratios    
     ratios_euler = [int(round(num, 2)*1000) for num in ratios]
+    print(ratios_euler)
     euler_score = None
-    if euler == True:
+    if euler_comp == True:
         euler_score = euler(*ratios_euler)
         
         euler_score = euler_score/len(diss_minima)
@@ -846,7 +849,7 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler = True, method = 'mi
 def compute_harmonic_entropy_domain_integral(ratios, ratio_interval, spread=0.01, min_tol=1e-15):
     
     # The first step is to pre-sort the ratios to speed up computation
-    ind = numpy.argsort(ratios)
+    ind = np.argsort(ratios)
     weight_ratios = ratios[ind]
     
     centers = (weight_ratios[:-1] + weight_ratios[1:]) / 2
@@ -857,7 +860,7 @@ def compute_harmonic_entropy_domain_integral(ratios, ratio_interval, spread=0.01
     for i, x in enumerate(ratio_interval):
         P = diff(concatenate(([0], norm.cdf(log2(centers), loc=log2(x), scale=spread), [1])))
         ind = P > min_tol
-        HE[i] = -numpy.sum(P[ind] * log2(P[ind]))
+        HE[i] = -np.sum(P[ind] * log2(P[ind]))
     
     return weight_ratios, HE
 
@@ -865,7 +868,7 @@ def compute_harmonic_entropy_simple_weights(numerators, denominators, ratio_inte
     
     # The first step is to pre-sort the ratios to speed up computation
     ratios = numerators / denominators
-    ind = numpy.argsort(ratios)
+    ind = np.argsort(ratios)
     numerators = numerators[ind]
     denominators = denominators[ind]
     weight_ratios = ratios[ind]
@@ -877,8 +880,8 @@ def compute_harmonic_entropy_simple_weights(numerators, denominators, ratio_inte
         P = norm.pdf(log2(weight_ratios), loc=log2(x), scale=spread) / sqrt(numerators * denominators)
         ind = P > min_tol
         P = P[ind]
-        P /= numpy.sum(P)
-        HE[i] = -numpy.sum(P * log2(P))
+        P /= np.sum(P)
+        HE[i] = -np.sum(P * log2(P))
     
     return weight_ratios, HE
 
@@ -956,7 +959,7 @@ def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, p
     x_ratios = arange(1, octave, res)
     _, HE = compute_harmonic_entropy_domain_integral(ratios, x_ratios, spread=spread)
     #_, HE = compute_harmonic_entropy_simple_weights(numerators, denominators, x_ratios, spread=0.01)
-    ind = argrelextrema(HE, numpy.less)
+    ind = argrelextrema(HE, np.less)
     HE_minima = (x_ratios[ind], HE[ind])
     if plot_entropy == True:  
         fig = plt.figure(figsize=(10, 4), dpi=150)
@@ -1043,6 +1046,78 @@ def compute_peaks_ts (data, peaks_function = 'EMD', FREQ_BANDS = None, precision
 
 
 
+def extract_all_peaks (data, sf, precision, max_freq = None):
+    if max_freq == None:
+        max_freq = sf/2
+    mult = 1/precision
+    nperseg = sf*mult
+    nfft = nperseg
+    freqs, psd = scipy.signal.welch(data, sf, nfft = nfft, nperseg = nperseg, average = 'median')
+    psd = 10. * np.log10(psd)
+    indexes = ss.find_peaks(psd, height=None, threshold=None, distance=10, prominence=None, width=2, wlen=None, rel_height=0.5, plateau_size=None)
+    peaks = []
+    amps = []
+    for i in indexes[0]:
+        peaks.append(freqs[i])
+        amps.append(psd[i])
+    peaks = np.around(np.array(peaks), 5)
+    peaks = list(peaks)
+    peaks = [p for p in peaks if p<=max_freq]
+    return peaks, amps
+
+def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 2):
+    n_total = []
+    harm_ = []
+    harm_peaks = []
+    max_n = []
+    max_peaks = []
+    max_amps = []
+    harmonics = []
+    harmonic_peaks = []
+    harm_peaks_fit = []
+    for p, a in zip(peaks, amps):
+        n = 0
+        harm_temp = []
+        harm_peaks_temp = []
+        if p < max_freq and p > min_freq:
+            
+            for p2 in peaks:
+                if p2 == p:
+                    ratio = 0.1 #arbitrary value to set ratio value to non integer
+                if p2 > p:
+                    ratio = p2/p
+                    harm = ratio
+                if p2 < p:
+                    ratio = p/p2    
+                    harm = -ratio
+                if ratio.is_integer():
+                    n += 1
+
+                    harm_temp.append(harm)
+
+                    harm_peaks_temp.append(p)
+                    harm_peaks_temp.append(p2)
+        n_total.append(n)
+        harm_.append(harm_temp)
+        harm_peaks.append(list(set(harm_peaks_temp)))
+        if n >= min_harms:
+            max_n.append(n)
+            max_peaks.append(p)
+            max_amps.append(a)
+            #print(harm_peaks)
+            harmonics.append(harm_temp)
+            harmonic_peaks.append(harm_peaks)
+            harm_peaks_fit.append([p, harm_temp, list(set(harm_peaks_temp))])
+    max_n = np.array(max_n)
+    max_peaks = np.array(max_peaks)
+    max_amps = np.array(max_amps)
+    harmonics = np.array(harmonics)
+    harmonic_peaks = np.array(harmonic_peaks)
+    #harm_peaks_fit = np.array(harm_peaks_fit)
+
+    #max_indexes = np.argsort(n_total)[-10:]
+    
+    return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 
 '''OLD sanity_check_code'''
