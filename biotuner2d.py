@@ -48,6 +48,7 @@ def surrogate_signal_matrices(data, surr_type = 'pink', low_cut = 0.5, high_cut 
             for j in range(len(data[i])):
                 data[i][j] = surrogate_signal(data[i][j], surr_type = surr_type, low_cut = low_cut, high_cut = high_cut, sf = sf)
     return data
+
 def compute_peaks_matrices (data, peaks_function = 'EMD', precision = 0.25, sf = 1000, max_freq = 80, save = True, suffix = 'default'):
     if np.ndim(data) == 2:
         peaks_tot = []
