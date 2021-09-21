@@ -230,7 +230,8 @@ def consonance_peaks (peaks, limit):
         #consonance = np.array(consonance_)
         consonance = [i for i in consonance_ if i]
         cons_peaks = list(itertools.chain(*cons_pairs))
-        cons_peaks = list(set(cons_peaks))
+        cons_peaks = [np.round(c, 2) for c in cons_peaks]
+        cons_peaks = list(set(cons_peaks))  
         #consonance = list(set(consonance))
     return consonance, cons_pairs, cons_peaks, np.average(cons_tot)
 
@@ -1120,7 +1121,51 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
     return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 
+def cepstrum(signal, sample_freq, plot_cepstrum = False):
+    windowed_signal = signal
+    dt = 1/sample_freq
+    freq_vector = np.fft.rfftfreq(frame_size, d=dt)
+    X = np.fft.rfft(windowed_signal)
+    log_X = np.log(np.abs(X))
+
+    cepstrum = np.fft.rfft(log_X)
+    cepstrum = smooth(cepstrum, 10)
+    df = freq_vector[1] - freq_vector[0]
+    quefrency_vector = np.fft.rfftfreq(log_X.size, df)
+    quefrency_vector = smooth(quefrency_vector, 10)
+
+    if plot_cepstrum == True:
+        fig, ax = plt.subplots()
+        ax.plot(freq_vector, log_X)
+        ax.set_xlabel('frequency (Hz)')
+        ax.set_title('Fourier spectrum')
+        ax.set_xlim(0, 50)
+        fig, ax = plt.subplots()
+        ax.plot(quefrency_vector, np.abs(cepstrum))
+        ax.set_xlabel('quefrency (s)')
+        ax.set_title('cepstrum')
+        ax.set_xlim(0.02, 0.5)
+        ax.set_ylim(0, 200)
+    return cepstrum, quefrency_vector
+
+
+def cepstral_peaks (cepstrum, quefrency_vector, max_time, min_time):
+
+    indexes = ss.find_peaks(cepstrum, height=None, threshold=None, distance=None, prominence=None, width=3, wlen=None, rel_height=0.5,         plateau_size=None)
+    #print(indexes[0])
+    peaks = []
+    amps = []
+    for i in indexes[0]:
+        if quefrency_vector[i] < max_time and quefrency_vector[i] > min_time:
+            amps.append(np.abs(cepstrum)[i])
+            peaks.append(quefrency_vector[i])
+    peaks = np.around(np.array(peaks), 3)
+    peaks = list(peaks)
+    #peaks = [p for p in peaks if p<=max_freq]
+    peaks = [1/p for p in peaks]
+    return peaks, amps
 '''OLD sanity_check_code'''
+#--------------------------------------------------------------------------------------------------------------------------------------
 
 def extract_peaks_EEGvsNOISE (epochs, conditions, peaks_function = 'EMD', HH=False, run = '0', sub = '0', precision = 0.25, alphaband = [[7, 13]]):
     par = ['Image_on_par_high', 'Image_on_par_mid', 'Image_on_par_low']

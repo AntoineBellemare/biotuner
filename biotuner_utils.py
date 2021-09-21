@@ -6,6 +6,8 @@ from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 import seaborn as sbn
 from scipy import stats
+import pygame, pygame.sndarray
+import scipy.signal
 
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
@@ -493,3 +495,109 @@ def ratios_increments (ratios, n_inc = 1):
     ratios_harms = [i for sublist in ratios_harms for i in sublist]
     ratios_harms = list(set(ratios_harms))
     return ratios_harms
+
+
+def smooth(x,window_len=11,window='hanning'):
+    """smooth the data using a window with requested size.
+    
+    This method is based on the convolution of a scaled window with the signal.
+    The signal is prepared by introducing reflected copies of the signal 
+    (with the window size) in both ends so that transient parts are minimized
+    in the begining and end part of the output signal.
+    
+    input:
+        x: the input signal 
+        window_len: the dimension of the smoothing window; should be an odd integer
+        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+            flat window will produce a moving average smoothing.
+
+    output:
+        the smoothed signal
+        
+    example:
+
+    t=linspace(-2,2,0.1)
+    x=sin(t)+randn(len(t))*0.1
+    y=smooth(x)
+    
+    see also: 
+    
+    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
+    scipy.signal.lfilter
+ 
+    TODO: the window parameter could be the window itself if an array instead of a string
+    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
+    """
+
+    #if x.ndim != 1:
+        #raise ValueError, "smooth only accepts 1 dimension arrays."
+
+    #if x.size < window_len:
+        #raise ValueError, "Input vector needs to be bigger than window size."
+
+
+    #if window_len<3:
+        #return x
+
+
+    #if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        #raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+
+
+    s=np.r_[x[window_len-1:0:-1],x,x[-2:-window_len-1:-1]]
+    #print(len(s))
+    if window == 'flat': #moving average
+        w=np.ones(window_len,'d')
+    else:
+        w=eval('np.'+window+'(window_len)')
+
+    y=np.convolve(w/w.sum(),s,mode='valid')
+    return y
+
+
+
+sample_rate = 44100
+pygame.init()
+pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+   
+def sine_wave(hz, peak, n_samples=sample_rate):
+    """Compute N samples of a sine wave with given frequency and peak amplitude.
+       Defaults to one second.
+    """
+    length = sample_rate / float(hz)
+    omega = np.pi * 2 / length
+    xvalues = np.arange(int(length)) * omega
+    onecycle = peak * np.sin(xvalues)
+    return np.resize(onecycle, (n_samples,)).astype(np.int16)
+
+def square_wave(hz, peak, duty_cycle=.5, n_samples=sample_rate):
+    """Compute N samples of a sine wave with given frequency and peak amplitude.
+       Defaults to one second.
+    """
+    t = np.linspace(0, 1, 500 * 440/hz, endpoint=False)
+    wave = scipy.signal.square(2 * np.pi * 5 * t, duty=duty_cycle)
+    wave = np.resize(wave, (n_samples,))
+    return (peak / 2 * wave.astype(np.int16))
+
+waveform=sine_wave
+def make_chord(hz, ratios):
+    """Make a chord based on a list of frequency ratios."""
+    sampling = 2048
+    chord = waveform(hz, sampling)
+    for r in ratios[1:]:
+        chord = sum([chord, sine_wave(hz * r / ratios[0], sampling)])
+    return chord
+
+def major_triad(hz):
+    return make_chord(hz, [4, 5, 6])
+
+def listen_scale (scale, fund, length):
+    scale = [1]+scale
+    for s in scale:
+        freq = fund*s
+        print(freq)
+        note = make_chord(freq, [1])
+        note = np.ascontiguousarray(np.vstack([note,note]).T)
+        sound = pygame.sndarray.make_sound(note)
+        sound.play(loops=0, maxtime=0, fade_ms=0)
+        pygame.time.wait(int(sound.get_length() * length))
