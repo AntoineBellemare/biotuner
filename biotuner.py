@@ -142,20 +142,25 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = '
             multi_harmonics.append([i**h for i in peaks])
         multi_harmonics = np.array(multi_harmonics)
         multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
-    print(np.array(multi_harmonics).shape)
+    #print(np.array(multi_harmonics).shape)
     list_peaks = list(combinations(peak_bands,2))
     #print(list_peaks)
     harm_temp = []
+    harm_list1 = []
+    harm_list2 = []
     for i in range(len(list_peaks)):
-        harms, b, c = compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
+        harms, b, c, d, e = compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
         harm_temp.append(harms)
+        harm_list1.append(d)
+        harm_list2.append(e)
     harm_fit = np.array(harm_temp).squeeze()
 
     if len(peak_bands) > 2:
         harm_fit = list(itertools.chain.from_iterable(harm_fit))
         harm_fit = [round(num, 3) for num in harm_fit]
         harm_fit = list(dict.fromkeys(harm_fit))
-    return harm_fit
+        harm_fit = list(set(harm_fit))
+    return harm_fit, harm_list1, harm_list2
 
 '''EXTENDED PEAKS from restrictions
 '''
@@ -212,6 +217,10 @@ def consonance_peaks (peaks, limit):
             if p1x < p2x:
                 while p2x > p1x:
                     p2x = p2x/2
+            if p1x < 0.1:
+                p1x = 0.06
+            if p2x < 0.1:
+                p2x = 0.06  #random  number to avoid division by 0
             ratio = Fraction(p2x/p1x).limit_denominator(1000)
             cons_ = (ratio.numerator + ratio.denominator)/(ratio.numerator * ratio.denominator)
             if cons_ < 1 :
@@ -588,8 +597,12 @@ def peaks_to_metrics (peaks, n_harm = 10):
         list of peaks metrics values in the order: 'cons', 'euler', 'tenney', 'harm_fit'  
     '''
     peaks = list(peaks)
-    metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0}   
-    metrics['harm_fit'] = len(harmonic_fit(peaks, n_harm = n_harm))
+    metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0}
+    harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks, n_harm = n_harm)
+    metrics['harm_pos1'] = harm_pos1
+    metrics['harm_pos2'] = harm_pos2
+    
+    metrics['harm_fit'] = len(harm_fit)
 
     a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
     peaks_highfreq  = [int(p*1000) for p in peaks]
@@ -1124,7 +1137,7 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
 def cepstrum(signal, sample_freq, plot_cepstrum = False):
     windowed_signal = signal
     dt = 1/sample_freq
-    freq_vector = np.fft.rfftfreq(frame_size, d=dt)
+    freq_vector = np.fft.rfftfreq(len(windowed_signal), d=dt)
     X = np.fft.rfft(windowed_signal)
     log_X = np.log(np.abs(X))
 
@@ -1352,7 +1365,7 @@ def peaks2diss (freqs_amps, cond_name, ref=0, adjust = True, method = 'EMD', s =
             tenney_t = tenneyHeight(list(peaks[t][ch]))
             print('euler', e_temp)
             na, harm_ratios = compute_peak_ratios(peaks[t][ch], sub=False)
-            harm_fit = harmonic_fit(peaks[t][ch], 50, 0.1)
+            harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks[t][ch], 50, 0.1)
             harm_sim = ratios2harmsim(harm_ratios)
             if a == True:
                 euler_temp.append(e_temp*ratio)

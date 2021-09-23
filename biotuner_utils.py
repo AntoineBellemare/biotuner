@@ -8,6 +8,10 @@ import seaborn as sbn
 from scipy import stats
 import pygame, pygame.sndarray
 import scipy.signal
+import functools
+import itertools
+import operator
+
 
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
@@ -33,11 +37,13 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
         for p2 in peaks:
 
             # If a peak of value '0' is present, we skip this ratio computation
+            if p1 < 0.1:
+                p1 = 0.1
             try:
                 ratio_temp = p2/p1
-            except ZeroDivisionError:
+            except:
                 pass
-
+                
             # When sub is set to False, only ratios with numerators higher than denominators are consider
             if sub is False:
                 if ratio_temp < 1:
@@ -89,9 +95,9 @@ def rebound(x, low=1, high=2, octave=2):
     octave: int
         Value of an octave
     """
-    while x > high:
+    while x >= high:
         x = x/octave
-    while x < low:
+    while x <= low:
         x = x*octave
     return x
 
@@ -125,11 +131,15 @@ def NTET_steps (octave, step, NTET):
 def compareLists(list1, list2, bounds):
     matching = []
     matching_pos = []
+    matching_pos1 = []
+    matching_pos2 = []
     for i, l1 in enumerate(list1):
         for j, l2 in enumerate(list2):
             if l2-bounds < l1 < l2+bounds:
                 matching.append((l1+l2)/2)
                 matching_pos.append([(l1+l2)/2, i+1, j+1])
+                matching_pos1.append([list1[0], i+1])
+                matching_pos2.append([list2[0], j+1])
     matching = np.array(matching)
     matching_pos = np.array(matching_pos)
     ratios_temp = []
@@ -140,7 +150,7 @@ def compareLists(list1, list2, bounds):
         else:
             ratios_temp.append(matching_pos[i][2]/matching_pos[i][1])
     matching_pos_ratios = np.array(ratios_temp)
-    return matching, matching_pos, matching_pos_ratios
+    return matching, matching_pos, matching_pos_ratios, matching_pos1, matching_pos2
 
 def create_SCL(scale, fname):
     #Output SCL files
@@ -399,7 +409,8 @@ def getPairs(peaks):
             out.append([a, j])
     return out
 
-
+def functools_reduce(a):
+    return functools.reduce(operator.concat, a)
 
 def scale2frac (scale, maxdenom = 1000):
     num = []
@@ -412,6 +423,12 @@ def scale2frac (scale, maxdenom = 1000):
         scale_frac.append(frac)
     return scale_frac, np.array(num), np.array(den)
 
+def ratio2frac (ratio, maxdenom = 1000):
+    
+    frac = Fraction(ratio).limit_denominator(maxdenom)
+    num = frac.numerator
+    den = frac.denominator
+    return [num, den]
 
 def peaks_to_amps (peaks, freqs, amps, sf):
     bin_size = np.round((sf/2)/len(freqs), 3)
@@ -423,6 +440,14 @@ def peaks_to_amps (peaks, freqs, amps, sf):
         amp = amps[index]
         amps_out.append(amp)
     return amps_out
+
+def harmonic_tuning (list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
+    ratios = []
+    for i in list_harmonics:
+        ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
+    ratios = list(set(ratios))
+    ratios = list(np.sort(np.array(ratios)))
+    return ratios
 
 def NTET_ratios (n_steps, max_ratio):
     steps = []

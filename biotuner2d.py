@@ -8,6 +8,7 @@ from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 import secrets
 from biotuner import *
 from biotuner_utils import *
+from biotuner_object import *
 
 
 '''BIOTUNER 2D'''
@@ -127,28 +128,55 @@ def peaks_to_metrics_matrices (peaks, n_harm = 10):
         metrics_dict['harm_fit'] = harm_fit
     return np.array([cons, euler, tenney, harm_fit]), metrics_dict
 
+def graph_surrogates(data, conditions, metric_to_graph, peaks_function, savefolder, run):
+    peaks_avg_tot = []
+    metric_tot = []
+    for c in conditions:
+        if c != 'eeg':
+            data_ = surrogate_signal_matrices(data, surr_type = c, low_cut = 0.5, high_cut = 150, sf = 1000)
+        else:
+            data_ = data
+        peaks_avg = []
+        metric = []
+        for t in range(len(data_)):
+            _data_ = data_[t][:]
+            biotuning = biotuner(1000, peaks_function = peaks_function, precision = 0.1, n_harm = 10,
+                            ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
+            biotuning.peaks_extraction(_data_, ratios_extension = True, max_freq = 50)
+            biotuning.compute_peaks_metrics()
+            peaks_avg.append(np.average(biotuning.peaks))
+            metric.append(biotuning.peaks_metrics[metric_to_graph])
+        metric_tot.append(metric)
+        peaks_avg_tot.append(np.average(peaks_avg))
+        print(run)
+
+    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', run = run, adapt = 'False')
+    
+    
 
 def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False'):
+    #print(len(dist), len(dist[0]), len(dist[1]), len(dist[2]), len(dist[3]))
     #if ref == None:
     #    ref = dist[0]
-    if metric == 'diss':
+    if metric == 'dissonance':
         m = 'Dissonance (From Sethares (2005))'
     if metric == 'euler':
         m = 'Consonance (Euler <Gradus Suavitatis>)'
     if metric == 'diss_euler':
         m = 'Consonance (Euler <Gradus Suavitatis>) of dissonant minima'
-    if metric == 'Nratios':
+    if metric == 'diss_n_steps':
         m = 'Number of dissonant minima'
     if metric == 'tenney':
         m = 'Tenney Height'
-    if metric == 'HarmSim':
+    if metric == 'harmsim':
         m = 'Harmonic similarity of peaks'
-    if metric == 'HarmSimDiss':
+    if metric == 'diss_harm_sim':
         m = 'Harmonic similarity of scale'
     if metric == 'harm_fit':
         m = 'Harmonic fitness between peaks'
     if metric == 'cons':
         m = 'Averaged consonance of all paired peaks ratios'
+
         
 
     plt.rcParams['axes.facecolor'] = 'black'
@@ -161,9 +189,9 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
     for dim in dimensions:
         labs = labs
         if dim == 0:
-            dimension = 'channels'
-        if dim == 1:
             dimension = 'trials'
+        if dim == 1:
+            dimension = 'channels'
         
         
         for d, color, enum in zip(dist, colors, range(len(dist))):
@@ -185,7 +213,7 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
                 if len(ref) < len(d):
                     d = secure_random.sample(list(d), len(ref))
                 t, p = stats.ttest_rel(np.nanmean(ref, dim), np.nanmean(d, dim))
-                print(p)
+                
             if p < 0.05:
                 labs[enum] = labs[enum]+' *'
                 #xcoords.append(np.average(d))
@@ -206,6 +234,6 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         plt.ylabel('Proportion of samples', fontsize = '16')
         #plt.xlim([0.25, 0.7])
         plt.grid(color='white', linestyle='-.', linewidth=0.7)
-        plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and pink noise signals across ' + dimension, fontsize = '22')
+        plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '22')
         fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_EMD_adapt-{}_{}.png'.format(metric, subject, run, adapt, dimension), dpi=300)
         plt.clf()
