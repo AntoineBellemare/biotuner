@@ -430,6 +430,12 @@ def ratio2frac (ratio, maxdenom = 1000):
     den = frac.denominator
     return [num, den]
 
+def frac2scale (scale):
+    scale_ratio = []
+    for step in scale:
+        scale_ratio.append(float(step))
+    return scale_ratio
+
 def peaks_to_amps (peaks, freqs, amps, sf):
     bin_size = np.round((sf/2)/len(freqs), 3)
     amps_out = []
@@ -441,13 +447,6 @@ def peaks_to_amps (peaks, freqs, amps, sf):
         amps_out.append(amp)
     return amps_out
 
-def harmonic_tuning (list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
-    ratios = []
-    for i in list_harmonics:
-        ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
-    ratios = list(set(ratios))
-    ratios = list(np.sort(np.array(ratios)))
-    return ratios
 
 def NTET_ratios (n_steps, max_ratio):
     steps = []

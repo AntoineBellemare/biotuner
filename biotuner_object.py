@@ -8,6 +8,7 @@ from fooof.plts.annotate import plot_annotated_model
 from fooof.bands import Bands
 from fooof.analysis import get_band_peak_fm, get_band_peak_fg
 import scipy.signal
+from pytuning import create_euler_fokker_scale
 
 class biotuner(object):
     
@@ -191,6 +192,7 @@ class biotuner(object):
             self.extended_peaks_ratios = [np.round(r, 2) for r in self.extended_peaks_ratios]
             self.extended_peaks_ratios = list(set(self.extended_peaks_ratios))
             self.extended_peaks_ratios_cons, b = consonant_ratios (self.extended_peaks, scale_cons_limit, sub = False)
+    
     def ratios_extension (self, ratios, ratio_fit_bounds = 0.001):
         if self.ratios_harms == True:
             ratios_harms_ = ratios_harmonics(ratios, self.ratios_n_harms)
@@ -329,8 +331,20 @@ class biotuner(object):
         '''
     
     
+    def euler_fokker_scale(self, intervals):
+        multiplicities = [1 for x in intervals]
+        scale = create_euler_fokker_scale(intervals, multiplicities)
+        self.euler_fokker = scale
+        return scale
     
-    
+    def harmonic_tuning (self, list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
+        ratios = []
+        for i in list_harmonics:
+            ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
+        ratios = list(set(ratios))
+        ratios = list(np.sort(np.array(ratios)))
+        self.harmonic_tuning = ratios
+        return ratios
     '''Methods called by the peaks_extraction method'''
     
     def compute_peak(self, eeg_data, sf=1000, nperseg = 0, nfft = 0, precision = 0.25, average = 'median'):

@@ -13,6 +13,7 @@ from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 from scipy.stats import norm
 from scipy.signal import argrelextrema, detrend
 import scipy.signal as ss
+from pytuning import create_euler_fokker_scale
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -700,7 +701,21 @@ def scale_to_metrics(scale):
         scale_metrics_list.append(value)
     return scale_metrics, scale_metrics_list
 
+'''Scale construction'''
 
+def harmonic_tuning (list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
+    ratios = []
+    for i in list_harmonics:
+        ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
+    ratios = list(set(ratios))
+    ratios = list(np.sort(np.array(ratios)))
+    return ratios
+
+def euler_fokker_scale(intervals):
+        #intervals = b[1:5]
+        multiplicities = [1 for x in intervals]
+        scale = create_euler_fokker_scale(intervals, multiplicities)
+        return scale
 #Dissonance
 def dissmeasure(fvec, amp, model='min'):
     """
