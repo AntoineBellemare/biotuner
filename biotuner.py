@@ -274,7 +274,7 @@ def multi_consonance(cons_pairs, n_freqs = 5):
 
 
 
-def consonant_ratios (peaks, limit, sub = False):
+def consonant_ratios (peaks, limit, sub = False, input_type = 'peaks'):
     """
     Function that computes integer ratios from peaks with higher consonance
     Needs at least two pairs of values
@@ -298,7 +298,10 @@ def consonant_ratios (peaks, limit, sub = False):
     from fractions import Fraction
     consonance_ = []
     ratios2keep = []
-    ratios = compute_peak_ratios(peaks, sub = sub)
+    if input_type == 'peaks':
+        ratios = compute_peak_ratios(peaks, sub = sub)
+    if input_type == 'ratios':
+        ratios = peaks
     for ratio in ratios:
         frac = Fraction(ratio).limit_denominator(1000)
         cons_ = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
@@ -308,8 +311,8 @@ def consonant_ratios (peaks, limit, sub = False):
     #print(ratios2keep)
     
     ratios2keep = np.array(np.round(ratios2keep, 3))
-    ratios2keep = list(set(ratios2keep))
-    cons_ratios = np.array(ratios2keep)
+    cons_ratios = np.sort(list(set(ratios2keep)))
+    #cons_ratios = np.array(ratios2keep)
     #ratios = []
     #ratios = [ratios.append(x) for x in ratios2keep if x not in ratios]
     consonance = np.array(consonance_)

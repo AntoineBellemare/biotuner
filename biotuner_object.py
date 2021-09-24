@@ -137,7 +137,7 @@ class biotuner(object):
 
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = 2, sub = compute_sub_ratios)
         
-        a, b, self.peaks_ratios_cons, cons = consonance_peaks (self.peaks_ratios, limit = scale_cons_limit)
+        self.peaks_ratios_cons, b = consonant_ratios (self.peaks, limit = scale_cons_limit)
         if ratios_extension == True:
             a, b, c = self.ratios_extension(self.peaks_ratios)
             if a != None:
@@ -190,7 +190,7 @@ class biotuner(object):
                     self.extended_peaks_ratios_inc_fit = c
             self.extended_peaks_ratios = [np.round(r, 2) for r in self.extended_peaks_ratios]
             self.extended_peaks_ratios = list(set(self.extended_peaks_ratios))
-            a, b, self.extended_peaks_ratios_cons, cons = consonance_peaks (self.extended_peaks_ratios, limit = scale_cons_limit)
+            self.extended_peaks_ratios_cons, b = consonant_ratios (self.extended_peaks, scale_cons_limit, sub = False)
     def ratios_extension (self, ratios, ratio_fit_bounds = 0.001):
         if self.ratios_harms == True:
             ratios_harms_ = ratios_harmonics(ratios, self.ratios_n_harms)
@@ -248,13 +248,13 @@ class biotuner(object):
         peaks = list(self.peaks)        
         metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0, 'harmsim':0}   
         harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
-        metrics['harm_pos1'] = harm_pos1
-        metrics['harm_pos2'] = harm_pos2
+        #metrics['harm_pos1'] = harm_pos1
+        #metrics['harm_pos2'] = harm_pos2
         metrics['harm_fit'] = len(harm_fit)
         a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
         peaks_euler = [int(round(num, 2)*1000) for num in peaks]
         
-        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF':
+        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'harmonic_peaks':
             try:
 
                 metrics['euler'] = euler(*peaks_euler)
@@ -263,6 +263,8 @@ class biotuner(object):
                 pass
         metrics['tenney'] = tenneyHeight(peaks)
         metrics['harmsim'] = np.average(ratios2harmsim(self.peaks_ratios[:-1]))
+        if self.peaks_function == 'harmonic_peaks':
+            metrics['n_harmonic_peaks'] = self.n_harmonic_peaks
         metrics_list = []
         for value in metrics.values():
             metrics_list.append(value)
@@ -288,7 +290,7 @@ class biotuner(object):
         intervals, self.diss_scale, euler_diss, diss, harm_sim_diss = diss_curve (peaks, amps, denom=denom,
                                                                                   max_ratio=max_ratio, euler_comp = euler_comp,
                                                                                   method = method, plot = plot, n_tet_grid = n_tet_grid)
-        a, b, self.diss_scale_cons, cons = consonance_peaks (self.diss_scale, limit= scale_cons_limit)          
+        self.diss_scale_cons, b = consonant_ratios (self.diss_scale, scale_cons_limit, sub = False, input_type = 'ratios')      
         print('intervals', intervals)
         self.scale_metrics['diss_euler'] = euler_diss
         self.scale_metrics['dissonance'] = diss
@@ -313,7 +315,7 @@ class biotuner(object):
             
         HE_scale, HE = harmonic_entropy(ratios, res = res, spread = spread, plot_entropy = plot_entropy, plot_tenney = plot_tenney, octave = octave)
         self.HE_scale = HE_scale[0]
-        a, b, self.HE_scale_cons, cons = consonance_peaks (self.HE_scale, limit = scale_cons_limit)
+        self.HE_scale_cons, b = consonant_ratios (self.HE_scale, scale_cons_limit, sub = False, input_type = 'ratios')  
         self.scale_metrics['HE'] = HE
         self.scale_metrics['HE_n_steps'] = len(self.HE_scale)  
         self.scale_metrics['HE_harm_sim'] = np.average(ratios2harmsim(list(self.HE_scale)))
@@ -467,6 +469,7 @@ class biotuner(object):
             list_harmonics = [h for h in list_harmonics if h <= 128]
             list_harmonics = np.sort(list_harmonics)
             self.all_harmonics = list_harmonics
+            self.n_harmonic_peaks = len(peaks_temp)
         if peaks_function == 'cepstrum':
             cepstrum_, quefrency_vector = cepstrum(self.data, self.sf)
             peaks_temp, amps_temp = cepstral_peaks(cepstrum_, quefrency_vector, 0.4, 0.02)          
@@ -488,6 +491,26 @@ class biotuner(object):
                 try:
                     peaks_temp.append(fm.peak_params_[p][0])
                     amps_temp.append(fm.peak_params_[p][1])
+                except:
+                    pass
+            peaks_temp = [np.round(p, 2) for p in peaks_temp]
+        if peaks_function == 'FOOOF_EEMD':
+            nfft = sf/precision
+            nperseg = sf/precision
+            IMFs = EMD_eeg(data)[1:6]
+            self.IMFs = IMFs
+            peaks_temp = []
+            amps_temp = []
+            for imf in IMFs:
+                freqs1, psd = scipy.signal.welch(imf, sf, nfft = nfft, nperseg = nperseg)
+                self.freqs = freqs1
+                self.psd = psd
+                fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=10, min_peak_height=0.2)
+                freq_range = [(sf/len(data))*2, 45]
+                fm.fit(freqs1, psd, freq_range)
+                try:
+                    peaks_temp.append(fm.peak_params_[0][0])
+                    amps_temp.append(fm.peak_params_[0][1])
                 except:
                     pass
             peaks_temp = [np.round(p, 2) for p in peaks_temp]

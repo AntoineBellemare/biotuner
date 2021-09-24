@@ -176,6 +176,8 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         m = 'Harmonic fitness between peaks'
     if metric == 'cons':
         m = 'Averaged consonance of all paired peaks ratios'
+    if metric == 'n_harmonic_peaks':
+        m = 'Number of harmonic peaks'
 
         
 
