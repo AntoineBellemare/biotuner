@@ -11,6 +11,8 @@ import scipy.signal
 import functools
 import itertools
 import operator
+import sys
+sys.setrecursionlimit(120000)
 
 
 
@@ -133,6 +135,7 @@ def compareLists(list1, list2, bounds):
     matching_pos = []
     matching_pos1 = []
     matching_pos2 = []
+    positions = []
     for i, l1 in enumerate(list1):
         for j, l2 in enumerate(list2):
             if l2-bounds < l1 < l2+bounds:
@@ -140,6 +143,8 @@ def compareLists(list1, list2, bounds):
                 matching_pos.append([(l1+l2)/2, i+1, j+1])
                 matching_pos1.append([list1[0], i+1])
                 matching_pos2.append([list2[0], j+1])
+                positions.append(i+1)
+                positions.append(j+1)
     matching = np.array(matching)
     matching_pos = np.array(matching_pos)
     ratios_temp = []
@@ -150,7 +155,7 @@ def compareLists(list1, list2, bounds):
         else:
             ratios_temp.append(matching_pos[i][2]/matching_pos[i][1])
     matching_pos_ratios = np.array(ratios_temp)
-    return matching, matching_pos, matching_pos_ratios, matching_pos1, matching_pos2
+    return matching, matching_pos, matching_pos_ratios, matching_pos1, matching_pos2, positions
 
 def create_SCL(scale, fname):
     #Output SCL files
@@ -625,3 +630,49 @@ def listen_scale (scale, fund, length):
         sound = pygame.sndarray.make_sound(note)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
+        
+def horogram_tree_steps (ratio1, ratio2, steps = 10, limit = 1000):
+    ratios_list = [ratio1, ratio2]
+    s = 0
+    while s < steps:
+        ratio3 = horogram_tree(ratio1, ratio2, limit)
+        ratios_list.append(ratio3)
+        ratio1 = ratio2
+        ratio2 = ratio3
+        s += 1
+    frac_list = [ratio2frac(x) for x in ratios_list]
+    return frac_list, ratios_list
+        
+
+def horogram_tree (ratio1, ratio2, limit):
+    a = Fraction(ratio1).limit_denominator(limit).numerator
+    b = Fraction(ratio1).limit_denominator(limit).denominator
+    c = Fraction(ratio2).limit_denominator(limit).numerator
+    d = Fraction(ratio2).limit_denominator(limit).denominator
+    next_step = (a+c)/(b+d)
+    return next_step
+        
+def phi_convergent_point (ratio1, ratio2):
+    Phi = (1 + 5 ** 0.5) / 2
+    a = Fraction(ratio1).limit_denominator(1000).numerator
+    b = Fraction(ratio1).limit_denominator(1000).denominator
+    c = Fraction(ratio2).limit_denominator(1000).numerator
+    d = Fraction(ratio2).limit_denominator(1000).denominator
+    convergent_point = (c*Phi+a)/(d*Phi+b)
+    return convergent_point
+
+def Stern_Brocot(n,a=0,b=1,c=1,d=1):
+    if(a+b+c+d>n):
+        return 0
+    x=Stern_Brocot(n,a+c,b+d,c,d)
+    y=Stern_Brocot(n,a,b,a+c,b+d)
+    if(x==0):
+        if(y==0):
+            return [a+c,b+d]
+        else:
+            return [a+c]+[b+d]+y
+    else:
+        if(y==0):
+            return [a+c]+[b+d]+x
+        else:
+            return [a+c]+[b+d]+x+y

@@ -161,7 +161,7 @@ class biotuner(object):
         if scale_cons_limit == None:
             scale_cons_limit = self.scale_cons_limit
         if method == 'harmonic_fit':
-            extended_peaks, ex_peaks_harm1, ex_peaks_harm2 = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
+            extended_peaks, _, _, harmonics, _ = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
             self.extended_peaks = np.sort(list(self.peaks)+list(set(extended_peaks)))
         if method == 'consonant':
             consonance, cons_pairs, cons_peaks, cons_metric = consonance_peaks (peaks, limit = cons_limit)
@@ -170,11 +170,11 @@ class biotuner(object):
             consonance, cons_pairs, cons_peaks, cons_metric = consonance_peaks (peaks, limit = cons_limit)
             self.extended_peaks = np.sort(np.round(multi_consonance(cons_pairs, n_freqs = 10), 3))
         if method == 'consonant_harmonic_fit':
-            extended_peaks, ex_peaks_harm1, ex_peaks_harm2 = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
+            extended_peaks, _, _, harmonics, _ = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
             consonance, cons_pairs, cons_peaks, cons_metric = consonance_peaks (extended_peaks, limit = cons_limit)
             self.extended_peaks = np.sort(np.round(cons_peaks, 3))    
         if method == 'multi_consonant_harmonic_fit':
-            extended_peaks, ex_peaks_harm1, ex_peaks_harm2 = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
+            extended_peaks, _, _, harmonics, _ = harmonic_fit(peaks, n_harm, function = harm_function, div_mode = div_mode, bounds = harm_bounds)
             consonance, cons_pairs, cons_peaks, cons_metric = consonance_peaks (extended_peaks, limit = cons_limit)
             self.extended_peaks = np.sort(np.round(multi_consonance(cons_pairs, n_freqs = 10), 3))
         self.extended_peaks = [i for i in self.extended_peaks if i<self.sf/2]
@@ -203,7 +203,7 @@ class biotuner(object):
         else: 
             ratios_inc_ = None
         if self.ratios_inc_fit == True:
-            ratios_inc_fit_, ratios_inc_pos1, ratios_inc_pos2 = harmonic_fit(ratios, self.ratios_n_harms, function = 'exp', bounds = ratio_fit_bounds)
+            ratios_inc_fit_, _, _, ratios_inc_fit_pos, _ = harmonic_fit(ratios, self.ratios_n_harms, function = 'exp', bounds = ratio_fit_bounds)
         else: 
             ratios_inc_fit_ = None
         return ratios_harms_, ratios_inc_, ratios_inc_fit_
@@ -249,9 +249,9 @@ class biotuner(object):
             
         peaks = list(self.peaks)        
         metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0, 'harmsim':0}   
-        harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
-        #metrics['harm_pos1'] = harm_pos1
-        #metrics['harm_pos2'] = harm_pos2
+        harm_fit, _, _, harm_pos, common_harm_pos = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
+        metrics['harm_pos'] = harm_pos
+        metrics['common_harm_pos'] = common_harm_pos
         metrics['harm_fit'] = len(harm_fit)
         a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
         peaks_euler = [int(round(num, 2)*1000) for num in peaks]
@@ -343,8 +343,17 @@ class biotuner(object):
             ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
         ratios = list(set(ratios))
         ratios = list(np.sort(np.array(ratios)))
-        self.harmonic_tuning = ratios
+        self.harmonic_tuning_ = ratios
         return ratios
+    
+    def harmonic_fit_tuning (self, n_harm = 128, bounds = 0.1, n_common_harms = 128):
+        
+        _, _, _, harmonics, common_harmonics = harmonic_fit(self.peaks, n_harm =n_harm, 
+                                                            bounds = bounds, n_common_harms = n_common_harms)
+        self.harmonic_fit_tuning_ = harmonic_tuning(common_harmonics)
+        return self.harmonic_fit_tuning_
+    
+    
     '''Methods called by the peaks_extraction method'''
     
     def compute_peak(self, eeg_data, sf=1000, nperseg = 0, nfft = 0, precision = 0.25, average = 'median'):

@@ -14,6 +14,8 @@ from scipy.stats import norm
 from scipy.signal import argrelextrema, detrend
 import scipy.signal as ss
 from pytuning import create_euler_fokker_scale
+from collections import Counter
+from functools import reduce
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -109,7 +111,7 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up = 0, mode = 'div'):
     return div_harmonics, div_harmonics_bounded
 
 
-def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = 'div'):
+def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = 'div', n_common_harms = 5):
     """
     This function computes harmonics of a list of peaks and compares the lists of harmonics pairwise to find fitting
     between the harmonic series
@@ -149,19 +151,24 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = '
     harm_temp = []
     harm_list1 = []
     harm_list2 = []
+    harm_list = []
+    harmonics = []
     for i in range(len(list_peaks)):
-        harms, b, c, d, e = compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
+        harms, _, _, d, e, harm_list = compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
         harm_temp.append(harms)
         harm_list1.append(d)
         harm_list2.append(e)
+        harmonics.append(harm_list)
     harm_fit = np.array(harm_temp).squeeze()
-
+    harmonics = reduce(lambda x, y: x+y, harmonics)
+    most_common_harmonics= [h for h, h_count in Counter(harmonics).most_common(n_common_harms) if h_count > 1]
+    harmonics = list(np.sort(list(set(harmonics))))
     if len(peak_bands) > 2:
         harm_fit = list(itertools.chain.from_iterable(harm_fit))
         harm_fit = [round(num, 3) for num in harm_fit]
         harm_fit = list(dict.fromkeys(harm_fit))
         harm_fit = list(set(harm_fit))
-    return harm_fit, harm_list1, harm_list2
+    return harm_fit, harm_list1, harm_list2, harmonics, most_common_harmonics
 
 '''EXTENDED PEAKS from restrictions
 '''
@@ -484,7 +491,7 @@ def compare_oct_div(Octdiv = 12, Octdiv2 = 53, bounds = 0.005, octave = 2):
 #Output1: octave subdivisions
 #Output2: ratios that led to Output1
 
-def multi_oct_subdiv (peaks, max_sub = 100, octave_limit = 1.01365, octave = 2, n_scales = 10):
+def multi_oct_subdiv (peaks, max_sub = 100, octave_limit = 1.01365, octave = 2, n_scales = 10, cons_limit = 0.1):
     '''
     This function uses the most consonant peaks ratios as input of oct_subdiv function. Each consonant ratio
     leads to a list of possible octave subdivisions. These lists are compared and optimal octave subdivisions are
@@ -516,11 +523,11 @@ def multi_oct_subdiv (peaks, max_sub = 100, octave_limit = 1.01365, octave = 2, 
     '''
     import itertools
     from collections import Counter
-    a, b, pairs, cons = consonance_peaks(peaks, 0.01)
-    ratios, cons = consonant_ratios(peaks, 0.01)
+    #a, b, pairs, cons = consonance_peaks(peaks, cons_limit)
+    ratios, cons = consonant_ratios(peaks, cons_limit)
     list_oct_div = []
     for i in range(len(ratios)):
-        list_temp, no= oct_subdiv(ratios[i], octave_limit, octave, n_scales)
+        list_temp, _ = oct_subdiv(ratios[i], octave_limit, octave, n_scales)
         list_oct_div.append(list_temp)
     counts = Counter(list(itertools.chain(*list_oct_div)))
     oct_div_temp = []
@@ -716,6 +723,16 @@ def euler_fokker_scale(intervals):
         multiplicities = [1 for x in intervals]
         scale = create_euler_fokker_scale(intervals, multiplicities)
         return scale
+    
+def equal_temp_tuning (interval = 3/2, steps = 12, octave = 2):
+    scale = []
+    for s in range(steps):
+        s += 1
+        degree = interval**s
+        while degree > octave:
+            degree = degree/octave
+        scale.append(degree)
+    return scale
 #Dissonance
 def dissmeasure(fvec, amp, model='min'):
     """
