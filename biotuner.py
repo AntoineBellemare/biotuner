@@ -16,6 +16,7 @@ import scipy.signal as ss
 from pytuning import create_euler_fokker_scale
 from collections import Counter
 from functools import reduce
+from pytuning.utilities import normalize_interval
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -128,6 +129,11 @@ def harmonic_fit(peaks, n_harm = 10, bounds = 1, function = 'mult', div_mode = '
         'div' will use natural sub-harmonics
     div_mode: str
         Defaults to 'div'. See EEG_harmonics_div function.
+        
+    Returns
+    -------
+    
+    
     """
     from itertools import combinations
     peak_bands = []
@@ -282,7 +288,7 @@ def multi_consonance(cons_pairs, n_freqs = 5):
 
 
 
-def consonant_ratios (peaks, limit, sub = False, input_type = 'peaks'):
+def consonant_ratios (peaks, limit, sub = False, input_type = 'peaks', metric = 'cons'):
     """
     Function that computes integer ratios from peaks with higher consonance
     Needs at least two pairs of values
@@ -312,7 +318,10 @@ def consonant_ratios (peaks, limit, sub = False, input_type = 'peaks'):
         ratios = peaks
     for ratio in ratios:
         frac = Fraction(ratio).limit_denominator(1000)
-        cons_ = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
+        if metric == 'cons':
+            cons_ = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
+        if metric == 'harmsim':
+            cons_ = dyad_similarity(ratio)
         if cons_ > limit :
             consonance_.append(cons_)
             ratios2keep.append(ratio)
@@ -366,6 +375,7 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
     out = []
     positions = []
     for count, peaks in enumerate(data):
+        peaks = [x for x in peaks if x >= 0]
         if method == 'cons':
             cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
             out.append(peaks_cons)
@@ -385,8 +395,222 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
     chords = [x for x in out if len(x)>=min_notes]
     return chords, positions
 
-'''SCALE CONSTRUCTION#
-    ####################################   N-TET (one ratio)  ##############################################################
+
+'''
+    ########################################   PEAKS METRICS    ############################################################
+'''
+
+#Consonance#
+#Input: peaks
+
+
+def consonance (ratio, limit = 1000):
+    ''' Compute metric of consonance from a single ratio of frequency
+    
+    ratio: float
+    limit: int
+        Defaults to 1000
+        Maximum value of the denominator of the fraction representing the ratio  
+    '''
+    ratio = Fraction(float(ratio)).limit_denominator(limit)
+    cons = (ratio.numerator + ratio.denominator)/(ratio.numerator * ratio.denominator)
+    return cons
+
+def euler(*numbers):
+    """
+    Euler's "gradus suavitatis" (degree of sweetness) function
+    Return the "degree of sweetness" of a musical interval or chord expressed
+    as a ratio of frequencies a:b:c, according to Euler's formula
+    Greater values indicate more dissonance
+    
+    numbers: List (int)
+        frequencies
+    """
+    factors = prime_factors(lcm(*reduced_form(*numbers)))
+    return 1 + sum(p - 1 for p in factors)
+
+#Input: peaks
+def tenneyHeight(peaks, avg = True):
+    """
+    Tenney Height is a measure of inharmonicity calculated on two frequencies (a/b) reduced in their simplest form. 
+    It can also be called the log product complexity of a given interval.
+    
+    peaks: List (float)
+        frequencies
+    avg: Boolean
+        Default to True
+        When set to True, all tenney heights are averaged
+    """
+    pairs = getPairs(peaks)
+    pairs
+    tenney = []
+    for p in pairs:
+        try:
+            frac = Fraction(p[0]/p[1]).limit_denominator(1000)
+        except ZeroDivisionError:
+            p[1] = 0.01
+            frac = Fraction(p[0]/p[1]).limit_denominator(1000)
+        x = frac.numerator
+        y = frac.denominator
+        tenney.append(log2(x*y))
+    if avg == True:
+        tenney = np.average(tenney)
+    return tenney
+
+
+def peaks_to_metrics (peaks, n_harm = 10):
+    '''
+    This function computes different metrics on peak frequencies.
+    
+    peaks: List (float)
+        Peaks represent local maximum in a spectrum
+    n_harm: int
+        Number of harmonics to compute for 'harm_fit' metric
+        
+    Returns
+    -------
+    
+    metrics: dict (float)
+        Dictionary of values associated to metrics names
+    metrics_list: List (float)
+        list of peaks metrics values in the order: 'cons', 'euler', 'tenney', 'harm_fit'  
+    '''
+    peaks = list(peaks)
+    metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0}
+    harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks, n_harm = n_harm)
+    metrics['harm_pos1'] = harm_pos1
+    metrics['harm_pos2'] = harm_pos2
+    
+    metrics['harm_fit'] = len(harm_fit)
+
+    a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
+    peaks_highfreq  = [int(p*1000) for p in peaks]
+    
+    metrics['euler'] = euler(*peaks_highfreq)
+    metrics['tenney'] = tenneyHeight(peaks_highfreq) 
+    metrics_list = []
+    for value in metrics.values():
+        metrics_list.append(value)
+    return metrics, metrics_list
+
+
+def metric_denom(ratio):
+    '''Function that computes the denominator of the normalized ratio
+    ratio: float
+    '''
+    
+    ratio = sp.Rational(ratio).limit_denominator(10000)
+    normalized_degree = normalize_interval(ratio)
+    y = int(sp.fraction(normalized_degree)[1])
+    return y
+
+
+'''SCALE METRICS'''
+'''Metric of harmonic similarity represents the degree of similarity between a scale and the natural harmonic series ###
+   Implemented from Gill and Purves (2009)'''
+
+def dyad_similarity(ratio):
+    '''
+    This function computes the similarity between a dyad of frequencies and the natural harmonic series 
+    ratio: float
+        frequency ratio
+    '''
+    frac = Fraction(float(ratio)).limit_denominator(1000)
+    x = frac.numerator
+    y = frac.denominator
+    z = ((x+y-1)/(x*y))*100
+    return z
+
+#Input: ratios (list of floats) 
+def ratios2harmsim (ratios):
+    '''
+    This function computes the similarity for each ratio of a list
+    ratios: List (float)
+        list of frequency ratios (forming a scale)
+        
+    Returns
+    ---------
+    similarity: List (float)
+        list of percentage of similarity for each ratios
+    '''
+    fracs = []
+    for r in ratios:
+        fracs.append(Fraction(r).limit_denominator(1000))
+    sims = []
+    for f in fracs:
+        sims.append(dyad_similarity(f.numerator/f.denominator))
+    similarity = np.array(sims)
+    return similarity
+
+def scale_cons_matrix (scale, function):
+    '''
+    This function gives a metric of a scale corresponding to the averaged metric for each pairs of ratios (matrix)
+    scale: List (float)
+    function: function
+        possible functions: dyad_similarity
+        consonance
+        metric_denom
+        
+    '''
+    metric_values = []
+    mode_values = []
+    for index1 in range(len(scale)):
+        for index2 in range(len(scale)):
+            if scale[index1] > scale[index2]:  #not include the diagonale in the computation of the avg. consonance
+                entry = scale[index1]/scale[index2]
+                #print(entry_value, scale[index1], scale[index2])
+                mode_values.append([scale[index1], scale[index2]])
+                metric_values.append(function(entry))
+    return np.average(metric_values)
+
+def PyTuning_metrics(scale, maxdenom):
+    '''
+    This function computes the scale metrics of the PyTuning library (https://pytuning.readthedocs.io/en/0.7.2/metrics.html)
+    Smaller values are more consonant
+    
+    scale: List (float)
+        List of ratios corresponding to scale steps
+    maxdenom: int
+        Maximum value of the denominator for each step's fraction
+    
+    '''
+    scale_frac, num, denom = scale2frac(scale, maxdenom)
+    metrics = pytuning.metrics.all_metrics(scale_frac)
+    sum_p_q = metrics['sum_p_q']
+    sum_distinct_intervals = metrics['sum_distinct_intervals']
+    metric_3 = metrics['metric_3']
+    sum_p_q_for_all_intervals = metrics['sum_p_q_for_all_intervals']
+    sum_q_for_all_intervals = metrics['sum_q_for_all_intervals']
+    return sum_p_q, sum_distinct_intervals, metric_3, sum_p_q_for_all_intervals, sum_q_for_all_intervals
+
+def scale_to_metrics(scale):
+    '''
+    This function computes the scale metrics of the PyTuning library and other scale metrics
+    
+    scale: List (float)
+        List of ratios corresponding to scale steps
+        
+    Returns
+    ----------
+    
+    scale_metrics: dictionary
+        keys correspond to metrics names
+    scale_metrics_list: List (float)
+        List of values corresponding to all computed metrics (in the same order as dictionary)
+    '''
+    scale_frac, num, denom = scale2frac(scale, maxdenom=1000)
+    scale_metrics = pytuning.metrics.all_metrics(scale_frac)
+    scale_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(scale)), 2)
+    scale_metrics['matrix_harm_sim'] = scale_cons_matrix(scale, dyad_similarity)
+    scale_metrics['matrix_cons'] = scale_cons_matrix(scale, consonance)
+    scale_metrics_list = []
+    for value in scale_metrics.values():
+        scale_metrics_list.append(value)
+    return scale_metrics, scale_metrics_list
+
+
+'''
+    ####################################   SCALE CONSTRUCTION  ##############################################################
 
 '''
 
@@ -541,176 +765,16 @@ def multi_oct_subdiv (peaks, max_sub = 100, octave_limit = 1.01365, octave = 2, 
             multi_oct_div.append(oct_div_temp[i])
     return multi_oct_div, ratios
 
-
-'''
-    ########################################   PEAKS METRICS    ############################################################
-'''
-
-#Consonance#
-#Input: peaks
-def euler(*numbers):
-    """
-    Euler's "gradus suavitatis" (degree of sweetness) function
-    Return the "degree of sweetness" of a musical interval or chord expressed
-    as a ratio of frequencies a:b:c, according to Euler's formula
-    Greater values indicate more dissonance
-    
-    numbers: List (int)
-        frequencies
-    """
-    factors = prime_factors(lcm(*reduced_form(*numbers)))
-    return 1 + sum(p - 1 for p in factors)
-
-#Input: peaks
-def tenneyHeight(peaks, avg = True):
-    """
-    Tenney Height is a measure of inharmonicity calculated on two frequencies (a/b) reduced in their simplest form. 
-    It can also be called the log product complexity of a given interval.
-    
-    peaks: List (float)
-        frequencies
-    avg: Boolean
-        Default to True
-        When set to True, all tenney heights are averaged
-    """
-    pairs = getPairs(peaks)
-    pairs
-    tenney = []
-    for p in pairs:
-        try:
-            frac = Fraction(p[0]/p[1]).limit_denominator(1000)
-        except ZeroDivisionError:
-            p[1] = 0.01
-            frac = Fraction(p[0]/p[1]).limit_denominator(1000)
-        x = frac.numerator
-        y = frac.denominator
-        tenney.append(log2(x*y))
-    if avg == True:
-        tenney = np.average(tenney)
-    return tenney
-
-
-def peaks_to_metrics (peaks, n_harm = 10):
-    '''
-    This function computes different metrics on peak frequencies.
-    
-    peaks: List (float)
-        Peaks represent local maximum in a spectrum
-    n_harm: int
-        Number of harmonics to compute for 'harm_fit' metric
-        
-    Returns
-    -------
-    
-    metrics: dict (float)
-        Dictionary of values associated to metrics names
-    metrics_list: List (float)
-        list of peaks metrics values in the order: 'cons', 'euler', 'tenney', 'harm_fit'  
-    '''
-    peaks = list(peaks)
-    metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0}
-    harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks, n_harm = n_harm)
-    metrics['harm_pos1'] = harm_pos1
-    metrics['harm_pos2'] = harm_pos2
-    
-    metrics['harm_fit'] = len(harm_fit)
-
-    a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
-    peaks_highfreq  = [int(p*1000) for p in peaks]
-    
-    metrics['euler'] = euler(*peaks_highfreq)
-    metrics['tenney'] = tenneyHeight(peaks_highfreq) 
-    metrics_list = []
-    for value in metrics.values():
-        metrics_list.append(value)
-    return metrics, metrics_list
-
-'''SCALE METRICS'''
-'''Metric of harmonic similarity represents the degree of similarity between a scale and the natural harmonic series ###
-   Implemented from Gill and Purves (2009)'''
-
-def dyad_similarity(f1, f2):
-    '''
-    This function computes the similarity between a dyad of frequencies and the natural harmonic series 
-    f1: float
-        first frequency
-    f2: float
-        second frequency
-    '''
-    frac = Fraction(f1/f2).limit_denominator(1000)
-    x = frac.numerator
-    y = frac.denominator
-    z = ((x+y-1)/(x*y))*100
-    return z
-
-#Input: ratios (list of floats) 
-def ratios2harmsim (ratios):
-    '''
-    This function computes the similarity for each ratio of a list
-    ratios: List (float)
-        list of frequency ratios (forming a scale)
-        
-    Returns
-    ---------
-    similarity: List (float)
-        list of percentage of similarity for each ratios
-    '''
-    fracs = []
-    for r in ratios:
-        fracs.append(Fraction(r).limit_denominator(1000))
-    sims = []
-    for f in fracs:
-        sims.append(dyad_similarity(f.numerator, f.denominator))
-    similarity = np.array(sims)
-    return similarity
-
-
-def PyTuning_metrics(scale, maxdenom):
-    '''
-    This function computes the scale metrics of the PyTuning library (https://pytuning.readthedocs.io/en/0.7.2/metrics.html)
-    Smaller values are more consonant
-    
-    scale: List (float)
-        List of ratios corresponding to scale steps
-    maxdenom: int
-        Maximum value of the denominator for each step's fraction
-    
-    '''
-    scale_frac, num, denom = scale2frac(scale, maxdenom)
-    metrics = pytuning.metrics.all_metrics(scale_frac)
-    sum_p_q = metrics['sum_p_q']
-    sum_distinct_intervals = metrics['sum_distinct_intervals']
-    metric_3 = metrics['metric_3']
-    sum_p_q_for_all_intervals = metrics['sum_p_q_for_all_intervals']
-    sum_q_for_all_intervals = metrics['sum_q_for_all_intervals']
-    return sum_p_q, sum_distinct_intervals, metric_3, sum_p_q_for_all_intervals, sum_q_for_all_intervals
-
-def scale_to_metrics(scale):
-    '''
-    This function computes the scale metrics of the PyTuning library and other scale metrics
-    
-    scale: List (float)
-        List of ratios corresponding to scale steps
-        
-    Returns
-    ----------
-    
-    scale_metrics: dictionary
-        keys correspond to metrics names
-    scale_metrics_list: List (float)
-        List of values corresponding to all computed metrics (in the same order as dictionary)
-    '''
-    scale_frac, num, denom = scale2frac(scale, maxdenom=1000)
-    scale_metrics = pytuning.metrics.all_metrics(scale_frac)
-    scale_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(scale)), 2)
-    scale_metrics_list = []
-    for value in scale_metrics.values():
-        scale_metrics_list.append(value)
-    return scale_metrics, scale_metrics_list
-
-'''Scale construction'''
-
 def harmonic_tuning (list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
+    '''
+    Function that computes a tuning based on a list of harmonic positions
+    
+    list_harmonics: List (int)
+        harmonic positions to use in the scale construction
+    octave: int
+    min_ratio: float
+    max_ratio: float
+    '''
     ratios = []
     for i in list_harmonics:
         ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
@@ -718,13 +782,30 @@ def harmonic_tuning (list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
     ratios = list(np.sort(np.array(ratios)))
     return ratios
 
-def euler_fokker_scale(intervals):
-        #intervals = b[1:5]
-        multiplicities = [1 for x in intervals]
-        scale = create_euler_fokker_scale(intervals, multiplicities)
-        return scale
+def euler_fokker_scale(intervals, n = 1):
+    '''
+    Function that takes as input a series of intervals and derives a Euler Fokker Genera scale
+    intervals: List (float)
+    n: int
+        Defaults to 1
+        number of times the interval is used in the scale generation
+    '''
+    multiplicities = [n for x in intervals]
+    scale = create_euler_fokker_scale(intervals, multiplicities)
+    return scale
     
 def equal_temp_tuning (interval = 3/2, steps = 12, octave = 2):
+    '''
+    Function that takes a generator interval and derives a N-TET tuning
+    interval: float
+        Generator interval
+    steps: int
+        Defaults to 12 (12-TET)
+        Number of steps in the scale
+    octave: int
+        Defaults to 2
+        Value of the octave
+    '''
     scale = []
     for s in range(steps):
         s += 1
@@ -733,6 +814,42 @@ def equal_temp_tuning (interval = 3/2, steps = 12, octave = 2):
             degree = degree/octave
         scale.append(degree)
     return scale
+
+
+#function that takes two ratios a input (boundaries of )
+#The mediant corresponds to the interval where small and large steps are equal.
+
+def tuning_range_to_MOS (frac1, frac2, octave = 2, max_denom_in = 100, max_denom_out = 100):
+    gen1 = octave**(frac1)
+    gen2 = octave**(frac2)
+    a = Fraction(frac1).limit_denominator(max_denom_in).numerator
+    b = Fraction(frac1).limit_denominator(max_denom_in).denominator
+    c = Fraction(frac2).limit_denominator(max_denom_in).numerator
+    d = Fraction(frac2).limit_denominator(max_denom_in).denominator
+    print(a, b, c, d)
+    mediant = (a+c)/(b+d)
+    mediant_frac = sp.Rational((a+c)/(b+d)).limit_denominator(max_denom_out)
+    gen_interval = octave**(mediant)
+    gen_interval_frac = sp.Rational(octave**(mediant)).limit_denominator(max_denom_out)
+    MOS_signature = [d, b]
+    invert_MOS_signature = [b, d]
+    
+    
+    return mediant, mediant_frac, gen_interval, gen_interval_frac, MOS_signature, invert_MOS_signature
+
+
+#def tuning_embedding ()
+
+def stern_brocot_to_generator_interval (ratio, octave = 2):
+    gen_interval = octave**(ratio)
+    return gen_interval
+
+
+def gen_interval_to_stern_brocot (gen):
+    root_ratio = log2(gen)
+    return root_ratio
+
+
 #Dissonance
 def dissmeasure(fvec, amp, model='min'):
     """
@@ -1022,12 +1139,61 @@ def harmonic_entropy (ratios, res = 0.001, spread = 0.01, plot_entropy = True, p
     return HE_minima, np.average(HE)
 
 
+'''Scale reduction'''
+
+def scale_reduction (scale, mode_n_steps, function):
+    '''
+    Function that reduces the number of steps in a scale according to the consonance between pairs of ratios
+    scale: List (float)
+        scale to reduce
+    mode_n_steps: int
+        number of steps of the reduced scale
+    function: function
+        function used to compute the consonance between pairs of ratios
+        Choose between: consonance, dyad_similarity, metric_denom
+    '''
+    metric_values = []
+    mode_values = []
+    for index1 in range(len(scale)):
+        for index2 in range(len(scale)):
+            if scale[index1] > scale[index2]:  #not include the diagonale in the computation of the avg. consonance
+                entry = scale[index1]/scale[index2]
+                #print(entry_value, scale[index1], scale[index2])
+                mode_values.append([scale[index1], scale[index2]])
+                #if function == metric_denom:
+                #    metric_values.append(int(function(sp.Rational(entry).limit_denominator(1000))))
+                #else:
+                metric_values.append(function(entry))
+    if function == metric_denom:
+        cons_ratios = [x for _, x in sorted(zip(metric_values, mode_values))]
+    else:
+        cons_ratios = [x for _, x in sorted(zip(metric_values, mode_values))][::-1]
+    i = 0
+    mode_ = []
+    mode_out = []
+    while len(mode_out) < mode_n_steps: 
+        cons_temp = cons_ratios[i]  
+        mode_.append(cons_temp)
+        mode_out_temp = [item for sublist in mode_ for item in sublist]
+        mode_out = list(set(mode_out_temp[0:mode_n_steps+2]))
+        i +=1
+    mode_metric = []
+    for index1 in range(len(mode_out)):
+        for index2 in range(len(mode_out)):
+            if mode_out[index1] > mode_out[index2]:
+                entry = mode_out[index1]/mode_out[index2]
+                #if function == metric_denom:
+                #    mode_metric.append(int(function(sp.Rational(entry).limit_denominator(1000))))
+                #else:
+                mode_metric.append(function(entry))
+    return np.average(metric_values), mode_out, np.average(mode_metric)
+
+
 ###PEAKS###
 import emd
 from PyEMD import EMD, EEMD
 from scipy.signal import butter, lfilter
 import colorednoise as cn
-
 #PEAKS FUNCTIONS
 #HH1D_weightAVG (Hilbert-Huang 1D): takes the average of all the instantaneous frequencies weighted by power
 #HH1D_max: takes the frequency bin that has the maximum power value 
@@ -1212,349 +1378,166 @@ def cepstral_peaks (cepstrum, quefrency_vector, max_time, min_time):
     #peaks = [p for p in peaks if p<=max_freq]
     peaks = [1/p for p in peaks]
     return peaks, amps
-'''OLD sanity_check_code'''
-#--------------------------------------------------------------------------------------------------------------------------------------
 
-def extract_peaks_EEGvsNOISE (epochs, conditions, peaks_function = 'EMD', HH=False, run = '0', sub = '0', precision = 0.25, alphaband = [[7, 13]]):
-    par = ['Image_on_par_high', 'Image_on_par_mid', 'Image_on_par_low']
-    high = ['Image_on_par_high', 'Image_on_nopar_high', 'early_high', 'late_high', 'nopar_high']
-    mid = ['Image_on_par_mid', 'Image_on_nopar_mid', 'early_mid', 'late_mid', 'nopar_mid']
-    low = ['Image_on_par_low', 'Image_on_nopar_low', 'early_low', 'late_low', 'nopar_low']
-    nopar = ['Image_on_nopar_high', 'Image_on_nopar_mid', 'Image_on_nopar_low']
-    early = ['early_high', 'early_low', 'early_mid']
-    late = ['late_high','late_low', 'late_mid']
-    par_rt = early+late
-    nopar_rt = ['nopar_high', 'nopar_low', 'nopar_mid']
-    epochs_data = epochs.get_data()
-    for c in conditions:
-        if c == 'high':
-            epochs_data = epochs['Image_on_par_high', 'Image_on_nopar_high', 'early_high', 'late_high', 'nopar_high'].get_data()
-        if c == 'mid':
-            epochs_data = epochs['Image_on_par_mid', 'Image_on_nopar_mid', 'early_mid', 'late_mid', 'nopar_mid'].get_data()
-        if c == 'low':
-            epochs_data = epochs['Image_on_par_low', 'Image_on_nopar_low', 'early_low', 'late_low', 'nopar_low'].get_data()
-        if c == 'par':
-            epochs_data = epochs[par].get_data()
-        if c == 'par_rt':
-            epochs_data = epochs[par_rt].get_data()
-        if c == 'nopar':
-            epochs_data = epochs[nopar].get_data()
-        if c == 'nopar_rt':
-            epochs_data = epochs[nopar_rt].get_data()
-        if c == 'early':
-            epochs_data = epochs[early].get_data()
-        if c == 'late':
-            epochs_data = epochs[late].get_data()
-        if c == 'pink':
-            epochs_data = epochs.get_data()
-            beta = 1
-        if c == 'white':
-            epochs_data = epochs.get_data()
-            beta = 0
-        if c == 'brown':
-            epochs_data = epochs.get_data()
-            beta = 2
-        if c == 'blue':
-            epochs_data = epochs.get_data()
-            beta = -1
-        peaks_tot = []
-        amps_tot = []
-        ## variables for Hilbert-Huang
-        inds_tot = []
-        euler_tot = []
-        e_tot_ts = []
-        IF_avg_tot = []
-        for trial in range(len(epochs_data)):
-            peaks_trial = []
-            amps_trial = []
-            ## variables for Hilbert-Huang
-            inds_trial = []
-            euler_trial = []
-            e_tot_trial = []
-            IF_avg_trial = []
-            for ch in range(len(epochs_data[0])):
-                #if :
-                if c == 'eeg' or c =='high' or c =='mid' or c =='low' or c == 'par' or c == 'par_rt' or c =='nopar' or c =='nopar_rt' or c =='late' or c =='early':
-                    data = epochs_data[trial][ch]
-                if c == 'AAFT':
-                    data = epochs_data[trial][ch]
-                    indexes = [x for x in range(len(data))]
-                    data = np.stack((data, indexes))
-                    data = AAFT_surrogates(Surrogates, data)
-                    data = data[0]
-                    data = butter_bandpass_filter(data, 0.5, 150, 1000, 4)
-                if c == 'phase':
-                    phase_temp = epochs_data[trial][ch]
-                    data = phaseScrambleTS(phase_temp)
-                    data = butter_bandpass_filter(data, 0.5, 150, 1000, 4)
-                if c == 'shuffle':
-                    data = epochs_data[trial][ch]
-                    np.random.shuffle(data)
-                if c == 'white' or c == 'pink' or c == 'brown' or c == 'blue':
-                    #print('noise data')
-                    data = cn.powerlaw_psd_gaussian(beta, len(epochs_data[0][0]))
-                    data = butter_bandpass_filter(data, 0.5, 150, 1000, 4)
-                if peaks_function == 'adapt':
-                    p, a = compute_peaks_raw(data, alphaband, precision = precision, average = 'median')
-                    print(p)
-                    FREQ_BANDS = alpha2bands(p)
-                    print(FREQ_BANDS)
-                    peaks_temp, amps_temp = compute_peaks_raw(data, FREQ_BANDS, precision = precision, average = 'median')
-                if peaks_function == 'fixed':
-                    peaks_temp, amps_temp = compute_peaks_raw(data, FREQ_BANDS, precision = precision, average = 'median')
-                if peaks_function == 'EMD':
-                    #print('hello')
-                    if HH == False:
-                        IMFs = EMD_eeg(data)[1:6]
-                        peaks_temp = []
-                        amps_temp = []
-                        peaks_avg_temp = []
-                        for imf in range(len(IMFs)):
-                            p, a = compute_peak(IMFs[imf], precision = precision, average = 'median')
-                            #print(p)
-                            peaks_temp.append(p)
-                            amps_temp.append(a)
-                    if HH == True:
-                        imf = emd.sift.sift(data)
-                        IP, IF, IA = emd.spectra.frequency_transform(imf[:, 1:6], 1000, 'nht')
-                        IF_avg_trial.append(IF)
-                        e_good, cons_ind, e_tot = HH_cons(IF, euler_tresh = 30, mult = 10)
-                        inds_temp = len(cons_ind)
-                        euler_temp = np.average(e_good)
-                
-                if HH == False:
-                    peaks_trial.append(peaks_temp)
-                    amps_trial.append(amps_temp)
-                if HH == True:
-                    inds_trial.append(inds_temp)
-                    euler_trial.append(euler_temp)
-                    e_tot_trial.append(e_tot)
-            if HH == False:
-                peaks_tot.append(peaks_trial)
-                amps_tot.append(amps_trial)
-            if HH == True:
-                inds_tot.append(inds_trial)
-                euler_tot.append(euler_trial)
-                e_tot_ts.append(e_tot_trial)
-                IF_avg_tot.append(IF_avg_trial)
-        if HH == False:
-            peaks = np.array(peaks_tot)
-            amps = np.array(amps_tot)
-            np.save('s{}_peaks_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), peaks)
-            np.save('s{}_amps_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), amps)
-        if HH == True:
-            inds = np.array(inds_tot)
-            eul = np.array(euler_tot)
-            eul_ts = np.array(e_tot_ts)
-            np.save('s{}_n_cons_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), inds)
-            np.save('s{}_eulerGood_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), eul)
-            np.save('s{}_eulerTS_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), eul_ts)
-            np.save('s{}_IFavg_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), IF_avg_tot)
+'''--------------------------------------------------------Biorhythms-----------------------------------------------------------------'''
+
+
+def scale2euclid(scale, max_denom = 10, mode = 'normal'):
+    euclid_patterns = []
+    frac, num, denom = scale2frac(scale)
+    if mode == 'normal':
+        for n, d in zip(num, denom):
+            if d <= max_denom:
+                try:
+                    euclid_patterns.append(bjorklund(n, d))
+                except:
+                    pass
+    if mode == 'full':
+        for d, n in zip(num, denom):
+            if d <= max_denom:
+                steps = d*n
+                try:
+                    euclid_patterns.append(bjorklund(steps, d))
+                    euclid_patterns.append(bjorklund(steps, n))
+                except:
+                    pass
+    return euclid_patterns
+
+def invert_ratio(ratio, n_steps_down, limit_denom = 64):
+    inverted_ratio = 1/(ratio)
+    i = 2
+    if n_steps_down >= 1:
+        while i <= n_steps_down:
+
+            inverted_ratio = inverted_ratio/ratio
+            i+=1
+
+    
+    frac = sp.Rational(inverted_ratio).limit_denominator(limit_denom)
+    return frac, inverted_ratio
+
+def binome2euclid(binome, n_steps_down = 1, limit_denom = 64):
+    euclid_patterns = []
+    fracs = []
+    new_binome = []
+    new_frac1, b1 = invert_ratio(binome[0], n_steps_down, limit_denom = limit_denom)
+    new_frac2, b2 = invert_ratio(binome[1], n_steps_down, limit_denom = limit_denom)
+    new_binome.append(b1)
+    new_binome.append(b2)
+    frac, num, denom = scale2frac(new_binome, limit_denom)
+    if denom[0] != denom[1]:
+        new_denom = denom[0]*denom[1]
+        #print('denom', new_denom)
+        #print('num1', num[0]*denom[1])
+        #print('num2', num[1]*denom[0])
+        try:
+            euclid_patterns.append(bjorklund(new_denom, num[0]*denom[1]))
+            euclid_patterns.append(bjorklund(new_denom, num[1]*denom[0]))
+        except:
+            pass
+        
+    else:
+        new_denom = denom[0]
+        
+        try:
+            euclid_patterns.append(bjorklund(new_denom, num[0]))
+            euclid_patterns.append(bjorklund(new_denom, num[1]))
+        except:
+            pass
+        
+    return euclid_patterns, [new_frac1, new_frac2], [[num[0]*denom[1], new_denom], [num[1]*denom[0], new_denom]]
+
+
+def consonant_euclid (scale, n_steps_down, limit_denom, limit_cons, limit_denom_final):
+    
+    pairs = getPairs(scale)
+    new_steps = []
+    euclid_final = []
+    for p in pairs:
+        euclid, fracs, new_ratios = binome2euclid(p, n_steps_down, limit_denom)
+        #print('new_ratios', new_ratios)
+        new_steps.append(new_ratios[0][1])
+    pairs_steps = getPairs(new_steps)
+    cons_steps = []
+    for steps in pairs_steps:   
+        #print(steps)
+        try:
+            steps1 = Fraction(steps[0]/steps[1]).limit_denominator(steps[1]).numerator
+            steps2 = Fraction(steps[0]/steps[1]).limit_denominator(steps[1]).denominator
+            #print(steps1, steps2)
+            cons = (steps1 + steps2)/(steps1 * steps2)
+            if cons >= limit_cons and steps[0] <= limit_denom_final and steps[1] <= limit_denom_final:
+                cons_steps.append(steps[0])
+                cons_steps.append(steps[1])
+        except:
+            continue
+    for p in pairs:
+        euclid, fracs, new_ratios = binome2euclid(p, n_steps_down, limit_denom)
+        if new_ratios[0][1] in cons_steps:
             
-            
-            
-def peaks2diss (freqs_amps, cond_name, ref=0, adjust = True, method = 'EMD', s = 0, run = 0, save = True):
-    try:
-        if ref.any() == None:
-            ref = freqs_amps[0]
-    except:
-        pass
-    a = adjust
-    peaks = freqs_amps[0]
-    peaks_diss = freqs_amps[0]
-    amps = freqs_amps[1]
-    ratio = np.round(np.average(ref)/np.average(peaks), 2)
-    if a == True:
-        peaks_diss = peaks_diss*ratio
-    euler_tot = []
-    tenney_tot = []
-    diss_tot = []
-    euler_diss_tot = []
-    ratios_tot = []
-    harm_sim_diss_tot = []
-    harm_sim_tot = []
-    harm_fit_tot = []
-    for t in range(len(peaks)):
+            try:
+                euclid_final.append(euclid[0])
+                euclid_final.append(euclid[1]) #exception for when only one euclid has been computed (when limit_denom is very low, chances to have a division by zero)
+            except:
+                pass
+    euclid_final = sorted(euclid_final)
+    euclid_final = [euclid_final[i] for i in range(len(euclid_final)) if i == 0 or euclid_final[i] != euclid_final[i-1]]
+    return euclid_final, cons_steps
 
-        euler_temp = []
-        tenney_temp = []
-        diss_temp = []
-        euler_diss_temp = []
-        ratios_temp = []
-        harm_sim_diss_temp = []
-        harm_sim_temp = []
-        harm_fit_temp = []
-        for ch in range(len(peaks[t])):
-            #if a == True:
-            #    ratio = np.round(np.average(ref[0][ch])/np.average(peaks[t][ch]), 2)
-            #    peaks_diss[t][ch] = np.array(peaks[t][ch])*ratio
-            f_temp = [int(np.round(p*128)) for p in peaks_diss[t][ch]]
-            a_temp = [(float(i)-min(amps[t][ch]))/(max(amps[t][ch])-min(amps[t][ch])) for i in amps[t][ch]]
-            a_temp = np.interp(a_temp, (np.array(a_temp).min(), np.array(a_temp).max()), (0.3, 0.7))
-            ints_t, rats_t, euler_diss_t, diss_t, harm_sim_d = diss_curve_noplot(f_temp,a_temp, denom=1000, max_ratio=2, consonance = True)
-            
-            e_temp = [int(x*100) for x in peaks[t][ch]]
-            #if pairwise == True:
-                #pairs = getPairs(peaks[t][ch])
-            e_temp = euler(*e_temp)
-            tenney_t = tenneyHeight(list(peaks[t][ch]))
-            print('euler', e_temp)
-            na, harm_ratios = compute_peak_ratios(peaks[t][ch], sub=False)
-            harm_fit, harm_pos1, harm_pos2 = harmonic_fit(peaks[t][ch], 50, 0.1)
-            harm_sim = ratios2harmsim(harm_ratios)
-            if a == True:
-                euler_temp.append(e_temp*ratio)
-                tenney_temp.append(tenney_t*ratio)
-            if a == False:
-                euler_temp.append(e_temp)
-                tenney_temp.append(tenney_t)
-            euler_diss_temp.append(euler_diss_t)
-            ratios_temp.append(len(rats_t))
-            diss_temp.append(diss_t)
-            harm_sim_diss_temp.append(np.nanmean(harm_sim_d))
-            harm_sim_temp.append(np.average(harm_sim))
-            harm_fit_temp.append(len(harm_fit))
-        euler_tot.append(euler_temp)
-        tenney_tot.append(tenney_temp)
-        diss_tot.append(diss_temp)
-        ratios_tot.append(ratios_temp)
-        euler_diss_tot.append(euler_diss_temp)
-        harm_sim_diss_tot.append(harm_sim_diss_temp)
-        harm_sim_tot.append(harm_sim_temp)
-        harm_fit_tot.append(harm_fit_temp)
-    euler_final = np.array(euler_tot)
-    tenney_final = np.array(tenney_tot)
-    diss_final = np.array(diss_tot)
-    euler_diss_final = np.array(euler_diss_tot)
-    ratios_final = np.array(ratios_tot)
-    harm_sim_diss_final = np.array(harm_sim_diss_tot)
-    harm_sim_final = np.array(harm_sim_tot)
-    harm_fit_final = np.array(harm_fit_tot)
-    if save == True:
-        np.save('s{}_euler_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method,str(a)), euler_final)
-        np.save('s{}_tenney_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method,str(a)), tenney_final)
-        np.save('s{}_diss_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method,str(a)), diss_final)
-        np.save('s{}_diss_euler_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name),method, str(a)), euler_diss_final)
-        np.save('s{}_Nratios_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method, str(a)), ratios_final)
-        np.save('s{}_HarmSimDiss_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method, str(a)), harm_sim_diss_final)
-        np.save('s{}_HarmSim_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method, str(a)), harm_sim_final)
-        np.save('s{}_HarmFit_RT_run{}_{}_{}_adapt-{}'.format(str(s), str(run), str(cond_name), method, str(a)), harm_fit_final)
-    return euler_final, tenney_final, diss_final, euler_diss_final, ratios_final, harm_sim_diss_final, harm_sim_final
+def interval_vector(euclid):
+    indexes = [index+1 for index, char in enumerate(euclid) if char == 1]
+    length = len(euclid)+1
+    vector = [t - s for s, t in zip(indexes, indexes[1:])]
+    vector = vector+[length-indexes[-1]]
+    return vector
 
+def bjorklund(steps, pulses):
+    steps = int(steps)
+    pulses = int(pulses)
+    if pulses > steps:
+        raise ValueError    
+    pattern = []    
+    counts = []
+    remainders = []
+    divisor = steps - pulses
+    remainders.append(pulses)
+    level = 0
+    while True:
+        counts.append(divisor // remainders[level])
+        remainders.append(divisor % remainders[level])
+        divisor = remainders[level]
+        level = level + 1
+        if remainders[level] <= 1:
+            break
+    counts.append(divisor)
+    
+    def build(level):
+        if level == -1:
+            pattern.append(0)
+        elif level == -2:
+            pattern.append(1)         
+        else:
+            for i in range(0, counts[level]):
+                build(level - 1)
+            if remainders[level] != 0:
+                build(level - 2)
+    
+    build(level)
+    i = pattern.index(1)
+    pattern = pattern[i:] + pattern[0:i]
+    return pattern
 
+def interval_vec_to_string (interval_vectors):
+    strings = []
+    for i in interval_vectors:
+        strings.append('E('+str(len(i))+','+str(sum(i))+')')
+    return strings
 
-
-
-
-def extract_peaks_sleep (epochs_data, condition, sf = 1000, peaks_function = 'EMD', HH=False, run = '0', sub = '0', precision = 0.25, alphaband = [[7, 13]]):
-    c = condition
-    if c == 'pink':
-        beta = 1
-    if c == 'white':
-        beta = 0
-    if c == 'brown':
-        beta = 2
-    if c == 'blue':
-        beta = -1
-    peaks_tot = []
-    amps_tot = []
-    ## variables for Hilbert-Huang
-    inds_tot = []
-    euler_tot = []
-    e_tot_ts = []
-    IF_avg_tot = []
-    for trial in range(len(epochs_data)):
-        peaks_trial = []
-        amps_trial = []
-        ## variables for Hilbert-Huang
-        inds_trial = []
-        euler_trial = []
-        e_tot_trial = []
-        IF_avg_trial = []
-        for ch in range(len(epochs_data[0])):
-            #if :
-            if c == 'eeg' or c =='high' or c =='mid' or c =='low' or c == 'par' or c =='nopar' or c =='nopar_rt' or c =='late' or c =='early' or c=='wake' or c=='stage1' or c=='stage2' or c=='stage3' or c=='stage4' or c=='dream':
-                data = epochs_data[trial][ch]
-                data = data.astype('float64')
-                print(data.shape)
-            if c == 'AAFT':
-                data = epochs_data[trial][ch]
-                indexes = [x for x in range(len(data))]
-                data = np.stack((data, indexes))
-                data = AAFT_surrogates(Surrogates, data)
-                data = data[0]
-                data = butter_bandpass_filter(data, 0.5, 150, sf, 4)
-            if c == 'phase':
-                phase_temp = epochs_data[trial][ch]
-                data = phaseScrambleTS(phase_temp)
-                data = butter_bandpass_filter(data, 0.5, 150, sf, 4)
-            if c == 'shuffle':
-                data = epochs_data[trial][ch]
-                np.random.shuffle(data)
-            if c == 'white' or c == 'pink' or c == 'brown' or c == 'blue':
-                #print('noise data')
-                data = cn.powerlaw_psd_gaussian(beta, len(epochs_data[0][0]))
-                data = butter_bandpass_filter(data, 0.5, 150, sf, 4)
-            if peaks_function == 'adapt':
-                p, a = compute_peaks_raw(data, alphaband, sf = sf, precision = precision, average = 'median')
-                print(p)
-                FREQ_BANDS = alpha2bands(p)
-                print(FREQ_BANDS)
-                peaks_temp, amps_temp = compute_peaks_raw(data, FREQ_BANDS, sf = sf, precision = precision, average = 'median')
-            if peaks_function == 'fixed':
-                peaks_temp, amps_temp = compute_peaks_raw(data, FREQ_BANDS, sf = sf, precision = precision, average = 'median')
-            if peaks_function == 'EMD':
-                #print('hello')
-                if HH == False:
-                    IMFs = EMD_eeg(data)[0:5]
-                    print(IMFs.shape)
-                    peaks_temp = []
-                    amps_temp = []
-                    peaks_avg_temp = []
-                    for imf in range(len(IMFs)):
-                        p, a = compute_peak(IMFs[imf], sf = sf, precision = precision, average = 'median')
-                        p = p.tolist()
-                        a = a.tolist()
-                        peaks_temp.append(p)
-                        print(peaks_temp)
-                        amps_temp.append(a)
-                if HH == True:
-                    imf = emd.sift.sift(data)
-                    IP, IF, IA = emd.spectra.frequency_transform(imf[:, 1:6], 1000, 'nht')
-                    IF_avg_trial.append(IF)
-                    e_good, cons_ind, e_tot = HH_cons(IF, euler_tresh = 30, mult = 10)
-                    inds_temp = len(cons_ind)
-                    euler_temp = np.average(e_good)
-
-            if HH == False:
-
-                peaks_trial.append(peaks_temp)
-
-                amps_trial.append(amps_temp)
-            if HH == True:
-                inds_trial.append(inds_temp)
-                euler_trial.append(euler_temp)
-                e_tot_trial.append(e_tot)
-        if HH == False:
-            peaks_tot.append(peaks_trial)
-            amps_tot.append(amps_trial)
-        if HH == True:
-            inds_tot.append(inds_trial)
-            euler_tot.append(euler_trial)
-            e_tot_ts.append(e_tot_trial)
-            IF_avg_tot.append(IF_avg_trial)
-    if HH == False:
-        peaks = np.array(peaks_tot)
-        amps = np.array(amps_tot)
-        np.save('s{}_peaks_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), peaks)
-        np.save('s{}_amps_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), amps)
-    if HH == True:
-        inds = np.array(inds_tot)
-        eul = np.array(euler_tot)
-        eul_ts = np.array(e_tot_ts)
-        np.save('s{}_n_cons_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), inds)
-        np.save('s{}_eulerGood_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), eul)
-        np.save('s{}_eulerTS_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), eul_ts)
-        np.save('s{}_IFavg_RT_run{}_{}_{}'.format(sub, str(run), peaks_function, c), IF_avg_tot)
-
-
+def euclid_string_to_referent (strings, dict_rhythms):
+    referent = []
+    for s in strings:
+        if s in dict_rhythms.keys():
+            referent.append(dict_rhythms[s])
+        else:
+            referent.append('None')
+    return referent

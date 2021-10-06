@@ -102,23 +102,40 @@ class biotuner(object):
        Generates self.peaks and self.peaks_ratios attributes'''
 
     def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, 
-                          compute_sub_ratios = None, ratios_extension = False, scale_cons_limit = None):
+                          compute_sub_ratios = None, ratios_extension = False, scale_cons_limit = None, octave = 2, ratios_n_harms = None):
         '''
         
         Arguments
         -------------
-        
         data: 1d array (float)
             biosignal to analyse
             
         peaks_function: refer to __init__
         
-        FREQ_BANDS: 
+        compute_sub_ratios: True
+            If set to True, will include peaks ratios (x/y) when x < y
+        
+        FREQ_BANDS: List of lists (float)
+            Each list within the list of lists sets the lower and upper limit of a frequency band
+        
         Attributes
         -------------
         self.peaks: List (float)
             List of frequency peaks
-            
+        self.amps: List (float)
+            List of peaks amplitude
+        self.peaks_ratios: List (float)
+            List of ratios between all pairs of peaks
+        self.peaks_ratios_cons: List (float)
+            List of consonant peaks ratios 
+        self.peaks_ratios_harm: List (float)
+            List of peaks ratios and their harmonics
+        self.peaks_ratios_inc: List (float)
+            List of peaks ratios and their increments (ratios**n)
+        self.peaks_ratios_inc_bound: List (float)
+            List of peaks ratios and their increments (ratios**n) bounded within one octave
+        self.peaks_ratios_inc_fit: List (float)
+            List of peaks ratios and their increments (ratios**n) 
         '''
         
         self.data = data
@@ -132,22 +149,25 @@ class biotuner(object):
             compute_sub_ratios = self.compute_sub_ratios
         if scale_cons_limit == None:
             scale_cons_limit = self.scale_cons_limit
+        if ratios_n_harms == None:
+            ratios_n_harms = self.ratios_n_harms
         self.peaks, self.amps = self.compute_peaks_ts (data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision = precision, 
                                                        sf = sf, min_freq = min_freq, max_freq = max_freq, min_harms = min_harms)
 
 
-        self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = 2, sub = compute_sub_ratios)
+        self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
         
         self.peaks_ratios_cons, b = consonant_ratios (self.peaks, limit = scale_cons_limit)
         if ratios_extension == True:
-            a, b, c = self.ratios_extension(self.peaks_ratios)
+            a, b, c = self.ratios_extension(self.peaks_ratios, ratios_n_harms = ratios_n_harms)
             if a != None:
                 self.peaks_ratios_harms = a
             if b != None:
                 self.peaks_ratios_inc = b
-                self.peaks_ratios_inc_bound = [rebound(x) for x in b]
+                self.peaks_ratios_inc_bound = [rebound(x, low = 1, high = octave, octave = octave) for x in b]
             if c != None:
                 self.peaks_ratios_inc_fit = c
+    
     '''Generates self.extended_peaks and self.extended_peaks_ratios attributes'''
     
     def peaks_extension (self, peaks = None, n_harm = None, method = None, harm_function = 'mult', div_mode = 'add',
@@ -192,18 +212,21 @@ class biotuner(object):
             self.extended_peaks_ratios = [np.round(r, 2) for r in self.extended_peaks_ratios]
             self.extended_peaks_ratios = list(set(self.extended_peaks_ratios))
             self.extended_peaks_ratios_cons, b = consonant_ratios (self.extended_peaks, scale_cons_limit, sub = False)
+        return self.extended_peaks, self.extended_peaks_ratios
     
-    def ratios_extension (self, ratios, ratio_fit_bounds = 0.001):
+    def ratios_extension (self, ratios, ratio_fit_bounds = 0.001, ratios_n_harms = None):
+        if ratios_n_harms == None:
+            ratios_n_harms = self.ratios_n_harms
         if self.ratios_harms == True:
-            ratios_harms_ = ratios_harmonics(ratios, self.ratios_n_harms)
+            ratios_harms_ = ratios_harmonics(ratios, ratios_n_harms)
         else: 
             ratios_harms_ = None
         if self.ratios_inc == True:
-            ratios_inc_ = ratios_increments(ratios, self.ratios_n_harms)
+            ratios_inc_ = ratios_increments(ratios, ratios_n_harms)
         else: 
             ratios_inc_ = None
         if self.ratios_inc_fit == True:
-            ratios_inc_fit_, _, _, ratios_inc_fit_pos, _ = harmonic_fit(ratios, self.ratios_n_harms, function = 'exp', bounds = ratio_fit_bounds)
+            ratios_inc_fit_, _, _, ratios_inc_fit_pos, _ = harmonic_fit(ratios, ratios_n_harms, function = 'exp', bounds = ratio_fit_bounds)
         else: 
             ratios_inc_fit_ = None
         return ratios_harms_, ratios_inc_, ratios_inc_fit_
@@ -230,7 +253,8 @@ class biotuner(object):
             self.SpectralFlux = self.spectro_EMD
         if comp_chords == True:
             self.spectro_chords, spectro_chord_pos = timepoint_consonance(self.spectro_EMD, method = cons_chord_method, 
-                                                                               limit = cons_limit, min_notes = min_notes)  
+                                                                           limit = cons_limit, min_notes = min_notes) 
+            self.spectro_chords = [l[::-1] for l in self.spectro_chords]
         if graph == True:
             data = np.moveaxis(self.spectro_EMD, 0, 1)
             ax = sbn.lineplot(data=data[10:-10, :], dashes = False)
@@ -331,9 +355,9 @@ class biotuner(object):
         '''
     
     
-    def euler_fokker_scale(self, intervals):
+    def euler_fokker_scale(self, intervals, octave = 2):
         multiplicities = [1 for x in intervals]
-        scale = create_euler_fokker_scale(intervals, multiplicities)
+        scale = create_euler_fokker_scale(intervals, multiplicities, octave)
         self.euler_fokker = scale
         return scale
     
@@ -445,7 +469,7 @@ class biotuner(object):
             peaks_temp = []
             amps_temp = []
             for imf in range(len(IMFs)):
-                p, a = self.compute_peak(IMFs[imf], precision = precision, average = 'median')
+                p, a = self.compute_peak(IMFs[imf], sf = self.sf, precision = precision, average = 'median')
                 peaks_temp.append(p)
 
                 amps_temp.append(a)
@@ -502,7 +526,7 @@ class biotuner(object):
         if peaks_function == 'FOOOF':
             nfft = sf/precision
             nperseg = sf/precision
-            freqs1, psd = scipy.signal.welch(data, sf, nfft = nfft, nperseg = nperseg)
+            freqs1, psd = scipy.signal.welch(data, self.sf, nfft = nfft, nperseg = nperseg)
             self.freqs = freqs1
             self.psd = psd
             fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=10, min_peak_height=0.2)

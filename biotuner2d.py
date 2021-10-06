@@ -143,6 +143,7 @@ def graph_surrogates(data, conditions, metric_to_graph, peaks_function, savefold
             biotuning = biotuner(1000, peaks_function = peaks_function, precision = 0.1, n_harm = 10,
                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
             biotuning.peaks_extraction(_data_, ratios_extension = True, max_freq = 50)
+            print(biotuning.peaks)
             biotuning.compute_peaks_metrics()
             peaks_avg.append(np.average(biotuning.peaks))
             metric.append(biotuning.peaks_metrics[metric_to_graph])
@@ -154,7 +155,7 @@ def graph_surrogates(data, conditions, metric_to_graph, peaks_function, savefold
     
     
 
-def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False'):
+def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False', peak_function = 'EEMD'):
     #print(len(dist), len(dist[0]), len(dist[1]), len(dist[2]), len(dist[3]))
     #if ref == None:
     #    ref = dist[0]
@@ -237,5 +238,5 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         #plt.xlim([0.25, 0.7])
         plt.grid(color='white', linestyle='-.', linewidth=0.7)
         plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '22')
-        fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_EMD_adapt-{}_{}.png'.format(metric, subject, run, adapt, dimension), dpi=300)
+        fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_EMD_adapt-{}_{}_{}.png'.format(metric, subject, run, adapt, dimension, peak_function), dpi=300)
         plt.clf()

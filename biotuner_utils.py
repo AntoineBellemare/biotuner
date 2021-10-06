@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 import seaborn as sbn
 from scipy import stats
 import pygame, pygame.sndarray
+import pytuning
+from pytuning import *
 import scipy.signal
+import sympy as sp
 import functools
 import itertools
 import operator
@@ -86,7 +89,7 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
 
 def rebound(x, low=1, high=2, octave=2):
     """
-    Recalculates x based on given octave bounds.
+    Rescale x within given octave bounds.
 
     x: int
         represents a peak value
@@ -102,6 +105,9 @@ def rebound(x, low=1, high=2, octave=2):
     while x <= low:
         x = x*octave
     return x
+
+def rebound_list(x_list, low=1, high=2, octave=2):
+    return [rebound(x, low, high, octave) for x in x_list] 
 
 def nth_root (num, root):
     '''
@@ -185,6 +191,16 @@ def gcd(*numbers):
         return a
 
     return reduce(gcd, numbers)
+
+def gcd_n(*args):
+    i = 1
+    x = args[0]
+
+    while i < len(args):
+        x = gcd(x, args[i])
+        i += 1
+    return x
+
 def reduced_form(*numbers):
     """
     Return a tuple of numbers which is the reduced form of the input,
@@ -407,10 +423,11 @@ def HH_cons (IF, euler_tresh = 100, mult = 10):
     return euler_good, cons_ind, euler_tot
 
 def getPairs(peaks):
+    peaks_ = peaks.copy()
     out = []
-    for i in range(len(peaks)-1):
-        a = peaks.pop(i-i)
-        for j in peaks:
+    for i in range(len(peaks_)-1):
+        a = peaks_.pop(i-i)
+        for j in peaks_:
             out.append([a, j])
     return out
 
@@ -423,10 +440,20 @@ def scale2frac (scale, maxdenom = 1000):
     scale_frac = []
     for step in scale:
         frac = Fraction(step).limit_denominator(maxdenom)
+        frac_ = sp.Rational(step).limit_denominator(maxdenom)
         num.append(frac.numerator)
         den.append(frac.denominator)
-        scale_frac.append(frac)
+        scale_frac.append(frac_)
     return scale_frac, np.array(num), np.array(den)
+
+def sort_scale_by_consonance(scale):
+    cons_tot = []
+    for step in scale:
+        frac = Fraction(step).limit_denominator(1000)
+        cons = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
+        cons_tot.append(cons)
+    sorted_scale = list(np.flip([x for _,x in sorted(zip(cons_tot,scale))]))
+    return sorted_scale
 
 def ratio2frac (ratio, maxdenom = 1000):
     
@@ -452,6 +479,31 @@ def peaks_to_amps (peaks, freqs, amps, sf):
         amps_out.append(amp)
     return amps_out
 
+def chords_to_ratios(chords, harm_limit = 2, spread = True):
+    chords_ratios = []
+    chords_ratios_bounded = []
+    for chord in chords:
+        chord = sorted(chord)
+        if harm_limit != None:
+            if spread == True: #will allow each note to be within the defined harm_limit of the previous note 
+                for note in range(len(chord)):
+                    while chord[note] > chord[note-1]*harm_limit:
+                        chord[note] = chord[note]/2
+            if spread == False: #will allow each note to be within the defined harm_limit of the first note
+                for note in range(len(chord)):
+                    while chord[note] > chord[0]*2:
+                        chord[note] = chord[note]/2
+        chord = sorted([np.round(n, 1) for n in chord])
+        chord = [int(n*10) for n in chord]
+        gcd_chord = 2 #arbitrary number that is higher than 1
+        while gcd_chord > 1:
+            gcd_chord = gcd_n(*chord)
+            if gcd_chord > 1:
+                chord = [int(note/gcd_chord) for note in chord]
+        chord_bounded = [c/chord[0] for c in chord]
+        chords_ratios_bounded.append(chord_bounded)
+        chords_ratios.append(chord)
+    return chords_ratios, chords_ratios_bounded
 
 def NTET_ratios (n_steps, max_ratio):
     steps = []
@@ -462,6 +514,63 @@ def NTET_ratios (n_steps, max_ratio):
         steps_out.append([i+j for i in steps])
     steps_out = sum(steps_out, [])
     return steps_out
+
+def bjorklund(steps, pulses):
+    '''From https://github.com/brianhouse/bjorklund'''
+    steps = int(steps)
+    pulses = int(pulses)
+    if pulses > steps:
+        raise ValueError    
+    pattern = []    
+    counts = []
+    remainders = []
+    divisor = steps - pulses
+    remainders.append(pulses)
+    level = 0
+    while True:
+        counts.append(divisor // remainders[level])
+        remainders.append(divisor % remainders[level])
+        divisor = remainders[level]
+        level = level + 1
+        if remainders[level] <= 1:
+            break
+    counts.append(divisor)
+    
+    def build(level):
+        if level == -1:
+            pattern.append(0)
+        elif level == -2:
+            pattern.append(1)         
+        else:
+            for i in range(0, counts[level]):
+                build(level - 1)
+            if remainders[level] != 0:
+                build(level - 2)
+    
+    build(level)
+    i = pattern.index(1)
+    pattern = pattern[i:] + pattern[0:i]
+    return pattern
+
+def scale2euclid(scale, min_denom = 10, mode = 'normal'):
+    euclid_patterns = []
+    frac, num, denom = scale2frac(scale)
+    if mode == 'normal':
+        for n, d in zip(num, denom):
+            if d <= min_denom:
+                n = n-d  
+                try:
+                    euclid_patterns.append(bjorklund(d, n))
+                except:
+                    pass
+    if mode == 'inverted':
+        for n, d in zip(num, denom):
+            if d <= min_denom:
+                try:
+                    euclid_patterns.append(bjorklund(n, d))
+                except:
+                    pass
+    return euclid_patterns
 
 '''Spectromorphology functions'''
 
@@ -621,6 +730,7 @@ def major_triad(hz):
     return make_chord(hz, [4, 5, 6])
 
 def listen_scale (scale, fund, length):
+    print('Scale:', scale)
     scale = [1]+scale
     for s in scale:
         freq = fund*s
@@ -628,6 +738,18 @@ def listen_scale (scale, fund, length):
         note = make_chord(freq, [1])
         note = np.ascontiguousarray(np.vstack([note,note]).T)
         sound = pygame.sndarray.make_sound(note)
+        sound.play(loops=0, maxtime=0, fade_ms=0)
+        pygame.time.wait(int(sound.get_length() * length))
+        
+def listen_chords (chords, mult = 10, length = 500):
+    #chords = np.around(chords, 3)
+    print('Chords:', chords)
+
+    for c in chords:
+        c = [i*mult for i in c]
+        chord = make_chord(c[0], c[1:])
+        chord = np.ascontiguousarray(np.vstack([chord,chord]).T)
+        sound = pygame.sndarray.make_sound(chord)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
         
@@ -676,3 +798,41 @@ def Stern_Brocot(n,a=0,b=1,c=1,d=1):
             return [a+c]+[b+d]+x
         else:
             return [a+c]+[b+d]+x+y
+        
+def scale_interval_names(scale, reduce = False):
+    try:
+        type = scale[0].dtype == 'float64'
+        if type == True:
+            scale, _, _ = scale2frac(scale)   
+    except:
+        pass
+    interval_names = []
+    for step in scale:
+        name = pytuning.utilities.ratio_to_name(step)
+        if reduce == True and name != None:
+            interval_names.append([step, name])
+        if reduce == False:
+            interval_names.append([step, name])
+    return interval_names
+
+''' Continued fractions '''
+
+import math
+
+def contFrac(x, k):
+    cf = []
+    q = math.floor(x)
+    cf.append(q)
+    x = x - q
+    i = 0
+    while x != 0 and i < k:
+        q = math.floor(1 / x)
+        cf.append(q)
+        x = 1 / x - q
+        i = i + 1
+    return cf
+
+def convergents (interval):
+    value = log2(interval)
+    convergents = list(contfrac.convergents(value))
+    return convergents
