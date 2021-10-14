@@ -21,7 +21,7 @@ class biotuner(object):
     biotuning.peaks_metrics()
     '''
     
-    def __init__(self, sf, peaks_function = 'EEMD', precision = 0.1, compute_sub_ratios = False, 
+    def __init__(self, sf, data = None, peaks_function = 'EEMD', precision = 0.1, compute_sub_ratios = False, 
                  n_harm = 10, harm_function = 'mult', extension_method = 'consonant_harmonic_fit',
                  ratios_n_harms = 5, ratios_harms = False, ratios_inc = False, ratios_inc_fit = False,
                 scale_cons_limit = 0.1):
@@ -78,6 +78,9 @@ class biotuner(object):
             When set to True, a fit between exponentials (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
         
         '''
+        '''Initializing data'''
+        if type(data) != type(None):
+            self.data = data
         self.sf = sf
         '''Initializing arguments for peak extraction'''
         self.peaks_function = peaks_function
@@ -361,7 +364,7 @@ class biotuner(object):
         self.euler_fokker = scale
         return scale
     
-    def harmonic_tuning (self, list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
+    def harmonic_tuning(self, list_harmonics, octave = 2, min_ratio = 1, max_ratio = 2):
         ratios = []
         for i in list_harmonics:
             ratios.append(rebound(1*i, min_ratio, max_ratio, octave))
@@ -370,14 +373,23 @@ class biotuner(object):
         self.harmonic_tuning_ = ratios
         return ratios
     
-    def harmonic_fit_tuning (self, n_harm = 128, bounds = 0.1, n_common_harms = 128):
+    def harmonic_fit_tuning(self, n_harm = 128, bounds = 0.1, n_common_harms = 128):
         
         _, _, _, harmonics, common_harmonics = harmonic_fit(self.peaks, n_harm =n_harm, 
                                                             bounds = bounds, n_common_harms = n_common_harms)
         self.harmonic_fit_tuning_ = harmonic_tuning(common_harmonics)
         return self.harmonic_fit_tuning_
     
-    
+    def pac(self, sf=None, method = 'duprelatour', n_values = 10, drive_precision = 0.05, max_drive_freq = 6, min_drive_freq = 3
+                   , sig_precision = 1, max_sig_freq = 50, min_sig_freq = 8, 
+                   low_fq_width = 0.5, high_fq_width = 1, plot = False):
+        if sf==None:
+            sf = self.sf
+        self.pac_freqs = pac_frequencies(self.data, sf, method = method, n_values = n_values , drive_precision = drive_precision,
+                                         max_drive_freq = max_drive_freq,min_drive_freq = min_drive_freq , sig_precision = sig_precision, 
+                                         max_sig_freq = max_sig_freq, min_sig_freq =min_sig_freq, low_fq_width = low_fq_width, high_fq_width
+                                         = high_fq_width, plot = plot)
+        return self.pac_freqs
     '''Methods called by the peaks_extraction method'''
     
     def compute_peak(self, eeg_data, sf=1000, nperseg = 0, nfft = 0, precision = 0.25, average = 'median'):

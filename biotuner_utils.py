@@ -15,6 +15,7 @@ import functools
 import itertools
 import operator
 import sys
+import bottleneck as bn
 sys.setrecursionlimit(120000)
 
 
@@ -235,6 +236,11 @@ def prime_factors(n):
         lastresult /= c
 
     return factors
+
+def top_n_indexes(arr, n):
+    idx = bn.argpartition(arr, arr.size-n, axis=None)[-n:]
+    width = arr.shape[1]
+    return [divmod(i, width) for i in idx]
 
 
 def EMD_eeg (eeg_data):
@@ -576,7 +582,7 @@ def scale2euclid(scale, min_denom = 10, mode = 'normal'):
 
 import pyACA
 
-def computeFeatureCl(afAudioData, cFeatureName, f_s, window=4000, overlap=1):
+def computeFeatureCl_new(afAudioData, cFeatureName, f_s, window=4000, overlap=1):
 
     # compute feature
     [v, t] = pyACA.computeFeature(cFeatureName, afAudioData, f_s, None, window, overlap)
@@ -592,12 +598,11 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
         window = int(sf/2)
     spectro_IMF = []
     for e in IMFs:
-        f, t = computeFeatureCl(e, method, sf, window, overlap)
-        
+        f, t = computeFeatureCl_new(e, method, sf, window, overlap)
         #[f,t] = pyACA.computePitch('TimeAcf', e, 1000, afWindow=None, iBlockLength=1000, iHopLength=200)
         #df[i] = np.squeeze(f)
         if method == 'SpectralCentroid':
-            spectro_IMF.append(f[0][in_cut:out_cut])
+            spectro_IMF.append(f[in_cut:out_cut])
         if method == 'SpectralFlux':
             spectro_IMF.append(f[in_cut:out_cut])
     spectro_IMF = np.array(spectro_IMF)

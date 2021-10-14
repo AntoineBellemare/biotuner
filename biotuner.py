@@ -17,6 +17,10 @@ from pytuning import create_euler_fokker_scale
 from collections import Counter
 from functools import reduce
 from pytuning.utilities import normalize_interval
+from pactools import Comodulogram, REFERENCES
+
+
+'''---------------------------------------------------------Extended peaks-------------------------------------------------------------'''
 
 '''EXTENDED PEAKS from expansions
 '''
@@ -397,7 +401,7 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
 
 
 '''
-    ########################################   PEAKS METRICS    ############################################################
+    ##################################################   PEAKS METRICS    ############################################################
 '''
 
 #Consonance#
@@ -610,7 +614,7 @@ def scale_to_metrics(scale):
 
 
 '''
-    ####################################   SCALE CONSTRUCTION  ##############################################################
+    ################################################   SCALE CONSTRUCTION  ##############################################################
 
 '''
 
@@ -1189,7 +1193,7 @@ def scale_reduction (scale, mode_n_steps, function):
     return np.average(metric_values), mode_out, np.average(mode_metric)
 
 
-###PEAKS###
+'''------------------------------------------------------Peaks extraction--------------------------------------------------------------'''
 import emd
 from PyEMD import EMD, EEMD
 from scipy.signal import butter, lfilter
@@ -1378,6 +1382,33 @@ def cepstral_peaks (cepstrum, quefrency_vector, max_time, min_time):
     #peaks = [p for p in peaks if p<=max_freq]
     peaks = [1/p for p in peaks]
     return peaks, amps
+
+
+'''--------------------------------------------------Phase-Amplitude Coupling-----------------------------------------------------------'''
+
+
+def pac_frequencies(ts, sf, method = 'duprelatour', n_values = 10, drive_precision = 0.05, max_drive_freq = 6, min_drive_freq = 3
+                   , sig_precision = 1, max_sig_freq = 50, min_sig_freq = 8, 
+                   low_fq_width = 0.5, high_fq_width = 1, plot = False):
+    
+    drive_steps = int(((max_drive_freq-min_drive_freq)/drive_precision)+1)
+    low_fq_range = np.linspace(min_drive_freq, max_drive_freq, drive_steps)   
+    sig_steps = int(((max_sig_freq-min_sig_freq)/sig_precision)+1)
+    high_fq_range = np.linspace(min_sig_freq, max_sig_freq, sig_steps)
+    
+    estimator = Comodulogram(fs=sf, low_fq_range=low_fq_range,
+                             low_fq_width=low_fq_width, high_fq_width = high_fq_width, 
+                             high_fq_range = high_fq_range, method=method,
+                             progress_bar=False)
+    estimator.fit(ts)
+    indexes = top_n_indexes(estimator.comod_, n_values)[::-1]
+    pac_freqs = []
+    for i in indexes:
+        pac_freqs.append([low_fq_range[i[0]], high_fq_range[i[1]]])
+    
+    if plot == True:
+        estimator.plot(titles=[REFERENCES[method]])
+    return pac_freqs
 
 '''--------------------------------------------------------Biorhythms-----------------------------------------------------------------'''
 
