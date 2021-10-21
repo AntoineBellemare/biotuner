@@ -10,7 +10,7 @@ Python toolbox that incorporates tools from biological signal processing and mus
 pip install biotuner
 ```
 
-# Minimal usecase
+# Minimal use case
 
 ```python
 biotuning = biotuner(sf = 1000)
