@@ -23,7 +23,7 @@ class biotuner(object):
     
     def __init__(self, sf, data = None, peaks_function = 'EEMD', precision = 0.1, compute_sub_ratios = False, 
                  n_harm = 10, harm_function = 'mult', extension_method = 'consonant_harmonic_fit',
-                 ratios_n_harms = 5, ratios_harms = False, ratios_inc = False, ratios_inc_fit = False,
+                 ratios_n_harms = 5, ratios_harms = False, ratios_inc = True, ratios_inc_fit = False,
                 scale_cons_limit = 0.1):
         '''
         sf: int
@@ -71,7 +71,7 @@ class biotuner(object):
             Defaults to False.
             When set to True, harmonics (x*1, x*2, x*3...,x*n) of specified ratios will be computed.
         ratios_inc: boolean
-            Defaults to False.
+            Defaults to True.
             When set to True, exponentials (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
         ratios_inc_fit: boolean
             Defaults to False.
@@ -104,8 +104,9 @@ class biotuner(object):
     '''First method to use. Requires data as input argument
        Generates self.peaks and self.peaks_ratios attributes'''
 
-    def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, 
-                          compute_sub_ratios = None, ratios_extension = False, scale_cons_limit = None, octave = 2, ratios_n_harms = None, harm_limit = 128):
+    def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 60,
+                          min_harms = 2, compute_sub_ratios = None, ratios_extension = False, ratios_n_harms = None, scale_cons_limit =
+                          None, octave = 2, harm_limit = 128):
         '''
         
         Arguments
@@ -115,12 +116,51 @@ class biotuner(object):
             
         peaks_function: refer to __init__
         
-        compute_sub_ratios: True
+        compute_sub_ratios: Boolean
             If set to True, will include peaks ratios (x/y) when x < y
         
         FREQ_BANDS: List of lists (float)
             Each list within the list of lists sets the lower and upper limit of a frequency band
         
+        precision: float
+            Defaults to None
+            precision of the peaks (in Hz)
+            When HH1D_max is used, bins are in log scale.
+            
+        min_freq: float
+            Defaults to 1
+            minimum frequency value to be considered as a peak
+            Used with 'harmonic_peaks' and 'HH1D_max' peaks functions
+            
+        max_freq: float
+            Defaults to 60
+            maximum frequency value to be considered as a peak
+            Used with 'harmonic_peaks' and 'HH1D_max' peaks functions
+            
+        min_harms: int
+            Defaults to 2
+            minimum number of harmonics to consider a peak frequency using the 'harmonic_peaks' function
+            
+        ratios_extension: Boolean
+            Defaults to False
+            When set to True, peaks_ratios harmonics and increments are computed
+        
+        ratios_n_harms: int
+            Defaults to None
+            number of harmonics or increments to use in ratios_extension method
+        
+        scale_cons_limit: float
+            Defaults to None
+            minimal value of consonance to be reach for a peaks ratio to be included in the peaks_ratios_cons attribute
+        
+        octave: float
+            Defaults to 2
+            value of the octave
+            
+        harm_limit: int
+            Default to 128
+            maximum harmonic position to keep when the 'harmonic_peaks' method is used
+            
         Attributes
         -------------
         self.peaks: List (float)
@@ -131,6 +171,7 @@ class biotuner(object):
             List of ratios between all pairs of peaks
         self.peaks_ratios_cons: List (float)
             List of consonant peaks ratios 
+        ----------If ratios_extension = True:----------
         self.peaks_ratios_harm: List (float)
             List of peaks ratios and their harmonics
         self.peaks_ratios_inc: List (float)
@@ -495,7 +536,7 @@ class biotuner(object):
             IMFs = np.moveaxis(IMFs, 0, 1)
             IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:6], sf, 'nht')
             precision_hh = precision*2
-            low = 1
+            low = min_freq
             high = max_freq
             steps = int((high-low)/precision_hh)
             edges, bins = emd.spectra.define_hist_bins(low, high, steps, 'log')
