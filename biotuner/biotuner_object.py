@@ -1,5 +1,6 @@
-from biotuner_functions import *
-from biotuner_utils import *
+import biotuner
+from biotuner.biotuner_functions import *
+from biotuner.biotuner_utils import *
 from fooof import FOOOF
 from fooof.sim.gen import gen_power_spectrum
 from fooof.sim.utils import set_random_seed

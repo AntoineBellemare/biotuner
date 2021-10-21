@@ -3,8 +3,8 @@ import math
 import scipy
 from fractions import Fraction
 import itertools
-from biotuner_utils import *
-from biotuner_offline import *
+import biotuner
+from biotuner.biotuner_utils import *
 import matplotlib.pyplot as plt
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 import pytuning

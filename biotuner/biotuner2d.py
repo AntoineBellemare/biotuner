@@ -6,9 +6,10 @@ import seaborn as sbn
 from scipy import stats
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 import secrets
-from biotuner_functions import *
-from biotuner_utils import *
-from biotuner_object import *
+import biotuner
+from biotuner.biotuner_functions import *
+from biotuner.biotuner_utils import *
+from biotuner.biotuner_object import *
 
 
 '''BIOTUNER 2D'''
