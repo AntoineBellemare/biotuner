@@ -20,4 +20,4 @@ biotuning.peaks_extraction(data)
 ## PyTuning issue
 
 If you have a problem with the PyTuning library when it uses Sympy functions, you could replace the file 'constant.py' in 
-'C:\Users\[xxx]\Anaconda3\envs\[xxx]\Lib\site-packages\pytuning' with the one found in 'biotuner\examples'
+'C:\Users\[xxx]\Anaconda3\envs\[xxx]\Lib\site-packages\pytuning' with the one found in the 'examples' folder
