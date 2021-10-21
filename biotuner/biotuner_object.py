@@ -1,4 +1,4 @@
-from biotuner import *
+from biotuner_functions import *
 from biotuner_utils import *
 from fooof import FOOOF
 from fooof.sim.gen import gen_power_spectrum

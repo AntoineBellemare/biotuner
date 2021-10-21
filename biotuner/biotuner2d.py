@@ -6,7 +6,7 @@ import seaborn as sbn
 from scipy import stats
 from numpy import array, zeros, ones, arange, log2, sqrt, diff, concatenate
 import secrets
-from biotuner import *
+from biotuner_functions import *
 from biotuner_utils import *
 from biotuner_object import *
 
