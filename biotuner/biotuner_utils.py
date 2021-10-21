@@ -585,7 +585,10 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
         #[f,t] = pyACA.computePitch('TimeAcf', e, 1000, afWindow=None, iBlockLength=1000, iHopLength=200)
         #df[i] = np.squeeze(f)
         if method == 'SpectralCentroid':
-            spectro_IMF.append(f[0][in_cut:out_cut])
+	    try:
+                spectro_IMF.append(f[0][in_cut:out_cut])
+            except:
+                spectro_IMF.append(f[in_cut:out_cut])
         if method == 'SpectralFlux':
             spectro_IMF.append(f[in_cut:out_cut])
     spectro_IMF = np.array(spectro_IMF)
