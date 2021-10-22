@@ -10,11 +10,13 @@ Python toolbox that incorporates tools from biological signal processing and mus
 pip install biotuner
 ```
 
-# Minimal use case
+# Simple use case
 
 ```python
-biotuning = biotuner(sf = 1000)
-biotuning.peaks_extraction(data)
+biotuning = biotuner(sf = 1000) #initialize the object
+biotuning.peaks_extraction(data) #extract spectral peaks
+biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
+
 ```
 
 ## PyTuning issue
