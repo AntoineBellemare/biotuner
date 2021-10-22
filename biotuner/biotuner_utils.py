@@ -487,6 +487,20 @@ def peaks_to_amps (peaks, freqs, amps, sf):
         amps_out.append(amp)
     return amps_out
 
+
+def alpha2bands(a):
+    np.float(a)
+    center_freqs = [a/4, a/2, a, a*2, a*4]
+    g_up = 1.618
+    g_down = 0.618
+    FREQ_BANDS = []
+    for f in center_freqs:
+        down = np.round((f/2)*1.618, 1)
+        up = np.round((f*2)*0.618, 1)
+        band = [down, up]
+        FREQ_BANDS.append(band)
+    return FREQ_BANDS
+
 def chords_to_ratios(chords, harm_limit = 2, spread = True):
     chords_ratios = []
     chords_ratios_bounded = []
