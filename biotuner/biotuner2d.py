@@ -129,34 +129,34 @@ def peaks_to_metrics_matrices (peaks, n_harm = 10):
         metrics_dict['harm_fit'] = harm_fit
     return np.array([cons, euler, tenney, harm_fit]), metrics_dict
 
-def graph_surrogates(data, conditions, metric_to_graph, peaks_function, savefolder, run):
+def graph_surrogates(data, sf, conditions, metric_to_graph, peaks_function, precision, savefolder, run, low_cut = 0.5, high_cut = 150):
     peaks_avg_tot = []
     metric_tot = []
     for c in conditions:
         if c != 'eeg':
-            data_ = surrogate_signal_matrices(data, surr_type = c, low_cut = 0.5, high_cut = 150, sf = 1000)
+            data_ = surrogate_signal_matrices(data, surr_type = c, low_cut = low_cut, high_cut = high_cut, sf = sf)
         else:
-            data_ = data
+            data_ = butter_bandpass_filter(data, low_cut, high_cut, sf, 4)
         peaks_avg = []
         metric = []
         for t in range(len(data_)):
             _data_ = data_[t][:]
-            biotuning = biotuner(1000, peaks_function = peaks_function, precision = 0.1, n_harm = 10,
+            biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
             biotuning.peaks_extraction(_data_, ratios_extension = True, max_freq = 50)
-            print(biotuning.peaks)
+            #print(biotuning.peaks)
             biotuning.compute_peaks_metrics()
             peaks_avg.append(np.average(biotuning.peaks))
             metric.append(biotuning.peaks_metrics[metric_to_graph])
         metric_tot.append(metric)
         peaks_avg_tot.append(np.average(peaks_avg))
-        print(run)
+        #print(run)
 
-    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', run = run, adapt = 'False')
+    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', run = run, adapt = 'False', peaks_function = peaks_function)
     
     
 
-def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False', peak_function = 'EEMD'):
+def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False', peaks_function = 'EEMD'):
     #print(len(dist), len(dist[0]), len(dist[1]), len(dist[2]), len(dist[3]))
     #if ref == None:
     #    ref = dist[0]
@@ -185,7 +185,7 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
 
     plt.rcParams['axes.facecolor'] = 'black'
     fig = plt.figure(figsize=(14,10))
-    colors = ['cyan', 'deeppink', 'white', 'yellow', 'orange'] 
+    colors = ['cyan', 'deeppink', 'white', 'yellow', 'blue', 'orange'] 
     
     xcoords = []
     
@@ -200,7 +200,9 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         
         for d, color, enum in zip(dist, colors, range(len(dist))):
             #d = d[~np.isnan(d)]
-            #print(d.shape)
+            
+            d = [x for x in d if str(x) != 'nan']
+            ref = [x for x in ref if str(x) != 'nan']
             if dimensions == [0]:
                 sbn.distplot(d, color =color)
                 secure_random = secrets.SystemRandom()
@@ -208,7 +210,10 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
                     ref = secure_random.sample(list(ref), len(d))
                 if len(ref) < len(d):
                     d = secure_random.sample(list(d), len(ref))
+                #print('d', d)
+                #print('ref', ref)
                 t, p = stats.ttest_rel(d, ref)
+                #print('p value', p)
             if dimensions != [0]:
                 sbn.distplot(np.nanmean(d, dim), color =color)
                 secure_random = secrets.SystemRandom()
@@ -233,13 +238,20 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
                    loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')
         if len(labs) == 4:
             fig.legend(labels=[labs[0], labs[1], labs[2], labs[3]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')                    
+                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')  
+        if len(labs) == 5:
+            fig.legend(labels=[labs[0], labs[1], labs[2], labs[3], labs[4]], 
+                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white') 
+        if len(labs) == 6:
+            fig.legend(labels=[labs[0], labs[1], labs[2], labs[3], labs[4], labs[5]], 
+                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white') 
         plt.xlabel(m, fontsize = '16')
         plt.ylabel('Proportion of samples', fontsize = '16')
         #plt.xlim([0.25, 0.7])
         plt.grid(color='white', linestyle='-.', linewidth=0.7)
         plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '22')
-        fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_EMD_adapt-{}_{}_{}.png'.format(metric, subject, run, adapt, dimension, peak_function), dpi=300)
+        
+        fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_{}_{}.png'.format(metric, subject, run, dimension, peaks_function), dpi=300)
         plt.clf()
         
         
@@ -311,3 +323,36 @@ def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1):
     plt.tight_layout()
     plt.show()
     return diss_minima_tot
+
+def graph_conditions(data, sf, conditions, metric_to_graph, peaks_function, precision, savefolder, run, FREQ_BANDS = None):
+    def remove_zeros(list_):
+        for x in range(len(list_)):
+            if list_[x] == 0.:
+                list_[x] = 0.1 
+        return list_
+    peaks_avg_tot = []
+    metric_tot = []
+    for cond in range(len(data)):
+        data_ = data[cond]
+        peaks_avg = []
+        metric = []
+        for t in range(len(data_)):
+            _data_ = data_[t][:]
+            biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
+                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
+            print('data', _data_.shape)
+            biotuning.peaks_extraction(np.array(_data_,dtype='float64'), ratios_extension = True, max_freq = 50, min_harms = 2,
+                                      FREQ_BANDS = FREQ_BANDS)
+            biotuning.peaks = remove_zeros(biotuning.peaks)[0:10]
+            print('peaks', biotuning.peaks)
+            biotuning.compute_peaks_metrics()
+            peaks_avg.append(np.average(biotuning.peaks))
+            #print(biotuning.peaks_metrics)
+            metric.append(biotuning.peaks_metrics[metric_to_graph])
+        metric_tot.append(metric)
+        peaks_avg_tot.append(np.average(peaks_avg))
+        #print(run)
+
+    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], 
+               labs = conditions, savefolder = savefolder, subject = '2', run = run, adapt = 'False', 
+               peak_function = peaks_function)

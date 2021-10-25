@@ -196,8 +196,9 @@ class biotuner(object):
             scale_cons_limit = self.scale_cons_limit
         if ratios_n_harms == None:
             ratios_n_harms = self.ratios_n_harms
-        self.peaks, self.amps = self.compute_peaks_ts (data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision = precision, 
-                                                       sf = sf, min_freq = min_freq, max_freq = max_freq, min_harms = min_harms, harm_limit = harm_limit)
+        self.peaks, self.amps = self.compute_peaks_ts (data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision =
+                                                       precision, sf = sf, min_freq = min_freq, max_freq = max_freq, min_harms = min_harms,
+                                                       harm_limit = harm_limit)
 
 
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
@@ -503,8 +504,10 @@ class biotuner(object):
         peaks = [p for p in peaks if p<=max_freq]
         return peaks, amps
 
-    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = 1000, min_freq = 1, max_freq = 80, min_harms = 2, harm_limit = 128):
+    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, harm_limit = 128):
         alphaband = [[7, 12]]
+        if sf == None:
+            sf = self.sf
         try:
             if FREQ_BANDS == None:
                 FREQ_BANDS = [[2, 3.55], [3.55, 7.15], [7.15, 14.3], [14.3, 28.55], [28.55, 49.4]]
@@ -523,7 +526,7 @@ class biotuner(object):
             peaks_temp = []
             amps_temp = []
             for imf in range(len(IMFs)):
-                p, a = self.compute_peak(IMFs[imf], sf = self.sf, precision = precision, average = 'median')
+                p, a = self.compute_peak(IMFs[imf], sf = sf, precision = precision, average = 'median')
                 peaks_temp.append(p)
 
                 amps_temp.append(a)
@@ -615,6 +618,7 @@ class biotuner(object):
                 except:
                     pass
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
+        peaks_temp = [0.1 if x==0 else x for x in peaks_temp]
         peaks = np.array(peaks_temp)
         peaks = np.around(peaks, 3)
         amps = np.array(amps_temp)
