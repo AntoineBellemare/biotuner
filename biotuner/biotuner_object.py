@@ -326,9 +326,8 @@ class biotuner(object):
         a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
         peaks_euler = [int(round(num, 2)*1000) for num in peaks]
         
-        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'harmonic_peaks':
+        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'FOOOF_EEMD' and self.peaks_function != 'harmonic_peaks':
             try:
-
                 metrics['euler'] = euler(*peaks_euler)
 
             except:

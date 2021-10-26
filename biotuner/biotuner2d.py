@@ -10,6 +10,7 @@ import biotuner
 from biotuner.biotuner_functions import *
 from biotuner.biotuner_utils import *
 from biotuner.biotuner_object import *
+#from biotuner_object import *
 
 
 '''BIOTUNER 2D'''
@@ -151,7 +152,7 @@ def graph_surrogates(data, sf, conditions, metric_to_graph, peaks_function, prec
         metric_tot.append(metric)
         peaks_avg_tot.append(np.average(peaks_avg))
         #print(run)
-
+    print(peaks_function, peaks_avg_tot)
     graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', run = run, adapt = 'False', peaks_function = peaks_function)
     
     
