@@ -613,6 +613,26 @@ def scale_to_metrics(scale):
     return scale_metrics, scale_metrics_list
 
 
+def scale_consonance (scale, function, rounding = 4):
+    '''
+    Function that gives the average consonance of each scale interval
+    scale: List (float)
+        scale to reduce
+    function: function
+        function used to compute the consonance between pairs of ratios
+        Choose between: consonance, dyad_similarity, metric_denom
+    '''
+    metric_values = []
+    mode_values = []
+    for index1 in range(len(scale)):
+        metric_value = []
+        for index2 in range(len(scale)):          
+            entry = scale[index1]/scale[index2]
+            mode_values.append([scale[index1], scale[index2]])
+            metric_value.append(function(entry))
+        metric_values.append(np.average(metric_value))    
+    return metric_values
+
 '''
     ################################################   SCALE CONSTRUCTION  ##############################################################
 
@@ -979,7 +999,7 @@ def diss_curve (freqs, amps, denom=1000, max_ratio=2, euler_comp = True, method 
     a = 1
     ratios_euler = [a]+ratios    
     ratios_euler = [int(round(num, 2)*1000) for num in ratios]
-    print(ratios_euler)
+    #print(ratios_euler)
     euler_score = None
     if euler_comp == True:
         euler_score = euler(*ratios_euler)
@@ -1314,12 +1334,13 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
                     n += 1
 
                     harm_temp.append(harm)
-
-                    harm_peaks_temp.append(p)
-                    harm_peaks_temp.append(p2)
+                    if p not in harm_peaks_temp:
+                        harm_peaks_temp.append(p)
+                    if p2 not in harm_peaks_temp:
+                        harm_peaks_temp.append(p2)
         n_total.append(n)
         harm_.append(harm_temp)
-        harm_peaks.append(list(set(harm_peaks_temp)))
+        harm_peaks.append(harm_peaks_temp)
         if n >= min_harms:
             max_n.append(n)
             max_peaks.append(p)
@@ -1327,7 +1348,9 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
             #print(harm_peaks)
             harmonics.append(harm_temp)
             harmonic_peaks.append(harm_peaks)
-            harm_peaks_fit.append([p, harm_temp, list(set(harm_peaks_temp))])
+            harm_peaks_fit.append([p, harm_temp, harm_peaks_temp])
+    for i in range(len(harm_peaks_fit)):
+        harm_peaks_fit[i][2] = sorted(harm_peaks_fit[i][2])
     max_n = np.array(max_n)
     max_peaks = np.array(max_peaks)
     max_amps = np.array(max_amps)

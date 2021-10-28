@@ -110,6 +110,13 @@ def rebound(x, low=1, high=2, octave=2):
 def rebound_list(x_list, low=1, high=2, octave=2):
     return [rebound(x, low, high, octave) for x in x_list] 
 
+
+def sum_list(l):
+    sum = 0
+    for x in l:
+        sum += x
+    return sum
+
 def nth_root (num, root):
     '''
     This function computes the ratio associated with one step of a N-TET scale
@@ -373,8 +380,8 @@ def correlated_noise_surrogates(self, original_data):
     :rtype: 2D array [index, time]
     :return: The surrogate time series.
     """
-    if self.silence_level <= 1:
-        print("Generating correlated noise surrogates...")
+    #if self.silence_level <= 1:
+    #    print("Generating correlated noise surrogates...")
 
     #  Calculate FFT of original_data time series
     #  The FFT of the original_data data has to be calculated only once,
@@ -401,6 +408,39 @@ def correlated_noise_surrogates(self, original_data):
     #  is due to numerical errors.
     return np.ascontiguousarray(np.real(np.fft.irfft(surrogates, n=n_time,
                                                      axis=1)))
+
+'''from: https://github.com/narayanps/NolinearTimeSeriesAnalysis/blob/master/SurrogateModule.py'''
+
+def UnivariateSurrogatesTFT(data_f,MaxIter=1,fc=5):
+    import numpy
+    xs=data_f.copy()
+    xs.sort() #sorted amplitude stored
+    pwx=numpy.abs(numpy.fft.fft(data_f)) # amplitude of fourier transform of orig
+    phi = numpy.angle(numpy.fft.fft(data_f))
+    Len=phi.shape[0]
+    #data_f.shape=(-1,1)
+    xsur = numpy.random.permutation(data_f) #random permutation as starting point
+    #xsur.shape = (1,-1)
+    #print(data_f.shape[0])
+    Fc =  numpy.round(fc*data_f.shape[0])
+    #print(Fc)
+    for i in range(MaxIter):
+        phi_surr = numpy.angle(numpy.fft.fft(xsur))
+        #print(phi_surr.shape)
+        #print(phi.shape)
+        phi_surr[1:Fc] = phi[1:Fc]
+        phi_surr[Len-Fc+1:Len] = phi[Len-Fc+1:Len]
+        phi_surr[0] = 0.0
+        new_len = int(Len/2)
+
+        phi_surr[new_len] = 0.0 
+              
+        fftsurx = pwx*numpy.exp(1j*phi_surr)
+        xoutb = numpy.real(numpy.fft.ifft(fftsurx))
+        ranks = xoutb.argsort(axis=0)
+        xsur[ranks] = xs
+    return(xsur)
+
 
 ## This function takes instantaneous frequencies (IF) from Hilbert-Huang Transform (HH) as an array in the form of [time, freqs]
 ## and outputs the average euler consonance for the whole time series (euler_tot) and the number of moments frequencies had consonance
@@ -703,6 +743,22 @@ sample_rate = 44100
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
    
+    
+def generate_signal(sf, time_end, freqs, amps, show=False, theta = 0, color = 'blue'):
+    time = np.arange(0,time_end, 1/sf)
+    sine_tot  = []
+    for i in range(len(freqs)):
+        sinewave = amps[i] * np.sin(2 * np.pi * freqs[i] * time + theta)
+        sine_tot.append(sinewave)
+    sine_tot = sum_list(sine_tot)
+    if show == True:
+        
+        ax = plt.gca()
+        ax.set_facecolor('xkcd:black')
+        plt.plot(time, sine_tot, color = color)
+    return sine_tot
+
+
 def sine_wave(hz, peak, n_samples=sample_rate):
     """Compute N samples of a sine wave with given frequency and peak amplitude.
        Defaults to one second.

@@ -16,19 +16,23 @@ from biotuner.biotuner_object import *
 '''BIOTUNER 2D'''
 
 
-def surrogate_signal(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf = 1000):
+def surrogate_signal(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf = 1000, TFT_freq = 5):
     if surr_type == 'AAFT':
         indexes = [x for x in range(len(data))]
-        data = np.stack((data, indexes))
-        data = AAFT_surrogates(Surrogates, data)
-        data = data[0]
-        data = butter_bandpass_filter(data, low_cut, high_cut, sf, 4)
+        data_ = np.stack((data, indexes))
+        data_ = AAFT_surrogates(Surrogates, data_)
+        data_ = data_[0]
+        data_ = butter_bandpass_filter(data_, low_cut, high_cut, sf, 4)
+    if surr_type == 'TFT':
+        data_ = UnivariateSurrogatesTFT(data,1,fc=TFT_freq)
     if surr_type == 'phase':
         len_data = len(data)
-        data = phaseScrambleTS(data)
-        data = butter_bandpass_filter(data[0:len_data], low_cut, high_cut, sf, 4)
+        data_ = phaseScrambleTS(data)
+        data_ = butter_bandpass_filter(data_[0:len_data], low_cut, high_cut, sf, 4)
     if surr_type == 'shuffle':
-        np.random.shuffle(data)
+        data_ = data.copy()
+        np.random.shuffle(data_)
+        data_ = butter_bandpass_filter(data_, low_cut, high_cut, sf, 4)
     if surr_type == 'white':
         beta = 0 
     if surr_type == 'pink':
@@ -38,19 +42,20 @@ def surrogate_signal(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf
     if surr_type == 'blue':
         beta  = -1
     if surr_type == 'white' or surr_type == 'pink' or surr_type == 'brown' or surr_type == 'blue':
-        data = cn.powerlaw_psd_gaussian(beta, len(data))
-        data = butter_bandpass_filter(data, low_cut, high_cut, sf, 4)
-    return data
+        data_ = cn.powerlaw_psd_gaussian(beta, len(data))
+        data_ = butter_bandpass_filter(data_, low_cut, high_cut, sf, 4)
+    return data_
     
 def surrogate_signal_matrices(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf = 1000):
+    data_ = data.copy()
     if np.ndim(data) == 2:
         for i in range(len(data)):
-            data[i] = surrogate_signal(data[i], surr_type = surr_type, low_cut = low_cut, high_cut = high_cut, sf = sf)
+            data_[i] = surrogate_signal(data[i], surr_type = surr_type, low_cut = low_cut, high_cut = high_cut, sf = sf)
     if np.ndim(data) == 3:
         for i in range(len(data)):
             for j in range(len(data[i])):
-                data[i][j] = surrogate_signal(data[i][j], surr_type = surr_type, low_cut = low_cut, high_cut = high_cut, sf = sf)
-    return data
+                data_[i][j] = surrogate_signal(data[i][j], surr_type = surr_type, low_cut = low_cut, high_cut = high_cut, sf = sf)
+    return data_
 
 def compute_peaks_matrices (data, peaks_function = 'EMD', precision = 0.25, sf = 1000, max_freq = 80, save = True, suffix = 'default'):
     if np.ndim(data) == 2:
@@ -130,7 +135,9 @@ def peaks_to_metrics_matrices (peaks, n_harm = 10):
         metrics_dict['harm_fit'] = harm_fit
     return np.array([cons, euler, tenney, harm_fit]), metrics_dict
 
-def graph_surrogates(data, sf, conditions, metric_to_graph, peaks_function, precision, savefolder, run, low_cut = 0.5, high_cut = 150):
+def graph_surrogates(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = 'harmsim', peaks_function = 'adapt', 
+                     precision = 0.5, savefolder = None, tag = '-', low_cut = 0.5, high_cut = 150, colors = None, 
+                     display = False, save = True, n_harmonic_peaks = 5, min_harms = 2):
     peaks_avg_tot = []
     metric_tot = []
     for c in conditions:
@@ -144,20 +151,32 @@ def graph_surrogates(data, sf, conditions, metric_to_graph, peaks_function, prec
             _data_ = data_[t][:]
             biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
-            biotuning.peaks_extraction(_data_, ratios_extension = True, max_freq = 50)
+            biotuning.peaks_extraction(_data_, ratios_extension = False, max_freq = 60,min_harms = min_harms)
+            if peaks_function == 'harmonic_peaks':
+                biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
+                biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
             #print(biotuning.peaks)
             biotuning.compute_peaks_metrics()
             peaks_avg.append(np.average(biotuning.peaks))
-            metric.append(biotuning.peaks_metrics[metric_to_graph])
+            try:
+                metric.append(biotuning.peaks_metrics[metric_to_graph])
+            except:
+                if metric_to_graph == 'sum_p_q' or metric_to_graph =='sum_distinct_intervals' or metric_to_graph == 'metric_3' 'sum_p_q_for_all_intervals' or metric_to_graph =='sum_q_for_all_intervals' or metric_to_graph == 'matrix_harm_sim' or metric_to_graph =='matrix_cons':
+                    scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
+                    #print(scale_metrics[metric_to_graph])
+                    metric.append(float(scale_metrics[metric_to_graph]))
+                if metric_to_graph == 'dissonance' or metric_to_graph == 'diss_n_steps' or metric_to_graph == 'diss_harm_sim':
+                    biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
+                    metric.append(biotuning.scale_metrics[metric_to_graph])
         metric_tot.append(metric)
         peaks_avg_tot.append(np.average(peaks_avg))
         #print(run)
-    print(peaks_function, peaks_avg_tot)
-    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', run = run, adapt = 'False', peaks_function = peaks_function)
+    print(peaks_function, ' peaks freqs ', peaks_avg_tot)
+    graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], labs = conditions, savefolder = savefolder,         subject = '2', tag = tag, adapt = 'False', peaks_function = peaks_function, colors = colors, display = display, save = save)
     
     
 
-def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', run = '0', adapt = 'False', peaks_function = 'EEMD'):
+def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', tag = '0', adapt = 'False', peaks_function = 'EEMD', colors = None, display = False, save = True):
     #print(len(dist), len(dist[0]), len(dist[1]), len(dist[2]), len(dist[3]))
     #if ref == None:
     #    ref = dist[0]
@@ -169,24 +188,45 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         m = 'Consonance (Euler <Gradus Suavitatis>) of dissonant minima'
     if metric == 'diss_n_steps':
         m = 'Number of dissonant minima'
+    if metric == 'diss_harm_sim':
+        m = 'Harmonic similarity of scale derived from dissonance curve'
     if metric == 'tenney':
         m = 'Tenney Height'
     if metric == 'harmsim':
         m = 'Harmonic similarity of peaks'
     if metric == 'diss_harm_sim':
-        m = 'Harmonic similarity of scale'
+        m = 'Harmonic similarity of diss scale'
     if metric == 'harm_fit':
         m = 'Harmonic fitness between peaks'
     if metric == 'cons':
         m = 'Averaged consonance of all paired peaks ratios'
     if metric == 'n_harmonic_peaks':
         m = 'Number of harmonic peaks'
-
+    if metric == 'matrix_harm_sim':
+        m = 'Harmonic similarity of peaks ratios intervals'
+    if metric == 'matrix_cons':
+        m = 'Consonance of peaks ratios intervals'
+    if metric == 'metric_3':
+        m = 'Pytuning consonance metric'
+    if metric == 'sum_distinct_intervals':
+        m = 'Sum of distinct intervals' 
+    if metric == 'sum_p_q_for_all_intervals':
+        m = 'Sum of num and denom for all intervals' 
+    if metric == 'sum_q_for_all_intervals':
+        m = 'Sum of denom for all intervals' 
+        
+        
+        
         
 
     plt.rcParams['axes.facecolor'] = 'black'
-    fig = plt.figure(figsize=(14,10))
-    colors = ['cyan', 'deeppink', 'white', 'yellow', 'blue', 'orange'] 
+    if display == True:
+        fig = plt.figure(figsize=(11,7))
+    else:
+        fig = plt.figure(figsize=(14,10))
+        
+    if colors == None:
+        colors = ['cyan', 'deeppink', 'white', 'yellow', 'blue', 'orange', 'red'] 
     
     xcoords = []
     
@@ -233,27 +273,31 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
 
         if len(labs) == 2:
             fig.legend(labels=[labs[0], labs[1]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')
+                   loc = [0.69, 0.65], fontsize = 15, facecolor = 'white')
         if len(labs) == 3:
             fig.legend(labels=[labs[0], labs[1], labs[2]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')
+                   loc = [0.69, 0.65], fontsize = 15, facecolor = 'white')
         if len(labs) == 4:
             fig.legend(labels=[labs[0], labs[1], labs[2], labs[3]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white')  
+                   loc = [0.69, 0.65], fontsize = 15, facecolor = 'white')  
         if len(labs) == 5:
             fig.legend(labels=[labs[0], labs[1], labs[2], labs[3], labs[4]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white') 
+                   loc = [0.69, 0.63], fontsize = 15, facecolor = 'white') 
         if len(labs) == 6:
             fig.legend(labels=[labs[0], labs[1], labs[2], labs[3], labs[4], labs[5]], 
-                   loc = [0.66, 0.68], fontsize = 16, facecolor = 'white') 
+                   loc = [0.69, 0.62], fontsize = 15, facecolor = 'white') 
         plt.xlabel(m, fontsize = '16')
         plt.ylabel('Proportion of samples', fontsize = '16')
         #plt.xlim([0.25, 0.7])
         plt.grid(color='white', linestyle='-.', linewidth=0.7)
-        plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '22')
+        plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '20')
         
-        fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_{}_{}.png'.format(metric, subject, run, dimension, peaks_function), dpi=300)
-        plt.clf()
+        if save == True:
+            fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_{}_{}.png'.format(metric, subject, tag, dimension, peaks_function), dpi=300)
+            plt.clf()
+        if display == True:
+            plt.rcParams["figure.figsize"] = (5,3)
+            plt.show()
         
         
 def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1):

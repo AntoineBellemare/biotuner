@@ -1,6 +1,7 @@
 import biotuner
 from biotuner.biotuner_functions import *
 from biotuner.biotuner_utils import *
+#from biotuner_utils import *
 from fooof import FOOOF
 from fooof.sim.gen import gen_power_spectrum
 from fooof.sim.utils import set_random_seed
@@ -106,7 +107,7 @@ class biotuner(object):
        Generates self.peaks and self.peaks_ratios attributes'''
 
     def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 60,
-                          min_harms = 2, compute_sub_ratios = None, ratios_extension = False, ratios_n_harms = None, scale_cons_limit =
+                          min_harms = 2, compute_sub_ratios = False, ratios_extension = False, ratios_n_harms = None, scale_cons_limit =
                           None, octave = 2, harm_limit = 128):
         '''
         
@@ -196,10 +197,12 @@ class biotuner(object):
             scale_cons_limit = self.scale_cons_limit
         if ratios_n_harms == None:
             ratios_n_harms = self.ratios_n_harms
+        self.octave = octave
+        self.compute_sub_ratios = compute_sub_ratios
         self.peaks, self.amps = self.compute_peaks_ts (data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision =
                                                        precision, sf = sf, min_freq = min_freq, max_freq = max_freq, min_harms = min_harms,
                                                        harm_limit = harm_limit)
-
+        
 
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
         
@@ -317,23 +320,28 @@ class biotuner(object):
         if n_harm == None:
             n_harm = self.n_harm
             
-        peaks = list(self.peaks)        
+        peaks = list(self.peaks)
+        peaks_ratios = compute_peak_ratios(peaks, rebound = True, octave = self.octave, sub = self.compute_sub_ratios)
         metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0, 'harmsim':0}   
         harm_fit, _, _, harm_pos, common_harm_pos = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
         metrics['harm_pos'] = harm_pos
         metrics['common_harm_pos'] = common_harm_pos
-        metrics['harm_fit'] = len(harm_fit)
+        try:
+            metrics['harm_fit'] = len(harm_fit)
+        except:
+            pass
         a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
         peaks_euler = [int(round(num, 2)*1000) for num in peaks]
         
-        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'FOOOF_EEMD' and self.peaks_function != 'harmonic_peaks':
+        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'harmonic_peaks':
             try:
+
                 metrics['euler'] = euler(*peaks_euler)
 
             except:
                 pass
         metrics['tenney'] = tenneyHeight(peaks)
-        metrics['harmsim'] = np.average(ratios2harmsim(self.peaks_ratios[:-1]))
+        metrics['harmsim'] = np.average(ratios2harmsim(peaks_ratios))
         if self.peaks_function == 'harmonic_peaks':
             metrics['n_harmonic_peaks'] = self.n_harmonic_peaks
         metrics_list = []
@@ -559,11 +567,11 @@ class biotuner(object):
         #if peaks_function == 'HH1D_weightAVG':
 
         if peaks_function == 'adapt':
-            p, a = self.compute_peaks_raw(data, alphaband, precision = precision, average = 'median')
+            p, a = self.compute_peaks_raw(data, alphaband, sf = sf, precision = precision, average = 'median')
             FREQ_BANDS = alpha2bands(p)
-            peaks_temp, amps_temp = self.compute_peaks_raw(data, FREQ_BANDS, precision = precision, average = 'median')
+            peaks_temp, amps_temp = self.compute_peaks_raw(data, FREQ_BANDS, sf = sf, precision = precision, average = 'median')
         if peaks_function == 'fixed':
-            peaks_temp, amps_temp = self.compute_peaks_raw(data, FREQ_BANDS, precision = precision, average = 'median')
+            peaks_temp, amps_temp = self.compute_peaks_raw(data, FREQ_BANDS, sf = sf, precision = precision, average = 'median')
         if peaks_function == 'harmonic_peaks':
             p, a = self.extract_all_peaks(data, sf, precision, max_freq = sf/2)
             max_n, peaks_temp, amps_temp, self.harmonics, harm_peaks, harm_peaks_fit = harmonic_peaks_fit (p, a, min_freq, max_freq, min_harms = min_harms, harm_limit = harm_limit)
@@ -573,8 +581,11 @@ class biotuner(object):
             list_harmonics = np.sort(list_harmonics)
             self.all_harmonics = list_harmonics
             self.n_harmonic_peaks = len(peaks_temp)
+            self.harm_peaks_fit = harm_peaks_fit 
         if peaks_function == 'cepstrum':
             cepstrum_, quefrency_vector = cepstrum(self.data, self.sf)
+            max_time = 1/min_freq
+            min_time = 1/max_freq
             peaks_temp, amps_temp = cepstral_peaks(cepstrum_, quefrency_vector, 0.4, 0.02)          
             peaks_temp = list(np.flip(peaks_temp))
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
