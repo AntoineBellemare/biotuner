@@ -108,7 +108,7 @@ class biotuner(object):
 
     def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 60,
                           min_harms = 2, compute_sub_ratios = False, ratios_extension = False, ratios_n_harms = None, scale_cons_limit =
-                          None, octave = 2, harm_limit = 128):
+                          None, octave = 2, harm_limit=128, n_peaks_FOOOF=5, nIMFs=5):
         '''
         
         Arguments
@@ -160,8 +160,16 @@ class biotuner(object):
             value of the octave
             
         harm_limit: int
-            Default to 128
+            Defaults to 128
             maximum harmonic position to keep when the 'harmonic_peaks' method is used
+        
+        n_peaks_FOOOF: int
+            Defaults to 5
+            number of peaks when using 'FOOOF' peaks function. Peaks are chosen based on their amplitude.
+        
+        nIMFs: int
+            Defaults to 5
+            number of intrinsic mode functions to keep when using 'EEMD' or 'EMD' peaks function
             
         Attributes
         -------------
@@ -198,12 +206,13 @@ class biotuner(object):
         if ratios_n_harms == None:
             ratios_n_harms = self.ratios_n_harms
         self.octave = octave
+        self.nIMFs = nIMFs
         self.compute_sub_ratios = compute_sub_ratios
-        self.peaks, self.amps = self.compute_peaks_ts (data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision =
+        self.peaks, self.amps = self.compute_peaks_ts(data, peaks_function = peaks_function, FREQ_BANDS = FREQ_BANDS, precision =
                                                        precision, sf = sf, min_freq = min_freq, max_freq = max_freq, min_harms = min_harms,
-                                                       harm_limit = harm_limit)
+                                                       harm_limit = harm_limit, n_peaks = n_peaks_FOOOF)
         
-
+        #print(self.peaks)
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
         
         self.peaks_ratios_cons, b = consonant_ratios (self.peaks, limit = scale_cons_limit)
@@ -294,7 +303,7 @@ class biotuner(object):
         if window == None:
             window = int(sf/2)
             
-        spectro_EMD = EMD_to_spectromorph(IMFs, 1000, method = method, window = window, overlap = overlap)
+        spectro_EMD = EMD_to_spectromorph(IMFs, sf, method = method, window = window, overlap = overlap)
         self.spectro_EMD = np.round(spectro_EMD, 1)
         if method == 'SpectralCentroid':
             self.SpectralCentroid = self.spectro_EMD
@@ -307,7 +316,7 @@ class biotuner(object):
         if graph == True:
             data = np.moveaxis(self.spectro_EMD, 0, 1)
             ax = sbn.lineplot(data=data[10:-10, :], dashes = False)
-            print('2')
+            #print('2')
             ax.set(xlabel='Time Windows', ylabel=method)
             ax.set_yscale('log')
             plt.legend(scatterpoints=1, frameon=True, labelspacing=1, title='EMDs', loc = 'best')
@@ -323,10 +332,10 @@ class biotuner(object):
         peaks = list(self.peaks)
         peaks_ratios = compute_peak_ratios(peaks, rebound = True, octave = self.octave, sub = self.compute_sub_ratios)
         metrics = {'cons' : 0, 'euler' : 0, 'tenney': 0, 'harm_fit': 0, 'harmsim':0}   
-        harm_fit, _, _, harm_pos, common_harm_pos = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
-        metrics['harm_pos'] = harm_pos
-        metrics['common_harm_pos'] = common_harm_pos
         try:
+            harm_fit, _, _, harm_pos, common_harm_pos = harmonic_fit(peaks, n_harm = n_harm, bounds = harm_bounds)
+            metrics['harm_pos'] = harm_pos
+            metrics['common_harm_pos'] = common_harm_pos
             metrics['harm_fit'] = len(harm_fit)
         except:
             pass
@@ -370,7 +379,7 @@ class biotuner(object):
                                                                                   max_ratio=max_ratio, euler_comp = euler_comp,
                                                                                   method = method, plot = plot, n_tet_grid = n_tet_grid)
         self.diss_scale_cons, b = consonant_ratios (self.diss_scale, scale_cons_limit, sub = False, input_type = 'ratios')      
-        print('intervals', intervals)
+        #print('intervals', intervals)
         self.scale_metrics['diss_euler'] = euler_diss
         self.scale_metrics['dissonance'] = diss
         self.scale_metrics['diss_harm_sim'] = np.average(harm_sim_diss)
@@ -511,24 +520,28 @@ class biotuner(object):
         peaks = [p for p in peaks if p<=max_freq]
         return peaks, amps
 
-    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, harm_limit = 128):
+    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, harm_limit = 128, n_peaks = 5, nIMFs=None):
         alphaband = [[7, 12]]
         if sf == None:
             sf = self.sf
+        if nIMFs == None:
+            nIMFs = self.nIMFs
         try:
             if FREQ_BANDS == None:
                 FREQ_BANDS = [[2, 3.55], [3.55, 7.15], [7.15, 14.3], [14.3, 28.55], [28.55, 49.4]]
         except:
             pass
         if peaks_function == 'EEMD':
-            IMFs = EMD_eeg(data)[1:6]
+            IMFs = EMD_eeg(data)
             self.IMFs = IMFs
+            IMFs = IMFs[1:nIMFs+1]
         if peaks_function == 'EMD':
             data = np.interp(data, (data.min(), data.max()), (0, +1))
             IMFs = emd.sift.sift(data)
             #IMFs = emd.sift.ensemble_sift(data)
-            IMFs = np.moveaxis(IMFs, 0, 1)[1:6]
+            IMFs = np.moveaxis(IMFs, 0, 1)
             self.IMFs = IMFs
+            IMFs = IMFs[1:nIMFs+1]
         try:
             peaks_temp = []
             amps_temp = []
@@ -575,7 +588,8 @@ class biotuner(object):
         if peaks_function == 'harmonic_peaks':
             p, a = self.extract_all_peaks(data, sf, precision, max_freq = sf/2)
             max_n, peaks_temp, amps_temp, self.harmonics, harm_peaks, harm_peaks_fit = harmonic_peaks_fit (p, a, min_freq, max_freq, min_harms = min_harms, harm_limit = harm_limit)
-            list_harmonics = functools_reduce(self.harmonics)
+            #list_harmonics = functools_reduce(self.harmonics)
+            list_harmonics = np.concatenate(self.harmonics)
             list_harmonics = list(set(abs(np.array(list_harmonics))))
             list_harmonics = [h for h in list_harmonics if h <= harm_limit]
             list_harmonics = np.sort(list_harmonics)
@@ -596,7 +610,7 @@ class biotuner(object):
             freqs1, psd = scipy.signal.welch(data, self.sf, nfft = nfft, nperseg = nperseg)
             self.freqs = freqs1
             self.psd = psd
-            fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=10, min_peak_height=0.2)
+            fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=100, min_peak_height=0.2)
             freq_range = [(sf/len(data))*2, 45]
             fm.fit(freqs1, psd, freq_range)
             peaks_temp = []
@@ -607,6 +621,8 @@ class biotuner(object):
                     amps_temp.append(fm.peak_params_[p][1])
                 except:
                     pass
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
         if peaks_function == 'FOOOF_EEMD':
             nfft = sf/precision

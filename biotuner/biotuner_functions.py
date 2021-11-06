@@ -375,13 +375,14 @@ def timepoint_consonance (data, method = 'cons', limit = 0.2, min_notes = 3):
     """
     
     data = np.moveaxis(data, 0, 1)
-    print('NAN', np.argwhere(np.isnan(data)))
+    #print('NAN', np.argwhere(np.isnan(data)))
     out = []
     positions = []
     for count, peaks in enumerate(data):
         peaks = [x for x in peaks if x >= 0]
         if method == 'cons':
             cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
+            #print(peaks_cons)
             out.append(peaks_cons)
             if len(list(set(peaks_cons))) >= min_notes:
                 positions.append(count)
@@ -1331,13 +1332,13 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
                     ratio = p/p2    
                     harm = -ratio
                 if ratio.is_integer():
-                    n += 1
-
-                    harm_temp.append(harm)
-                    if p not in harm_peaks_temp:
-                        harm_peaks_temp.append(p)
-                    if p2 not in harm_peaks_temp:
-                        harm_peaks_temp.append(p2)
+                    if harm <= harm_limit:
+                        n += 1
+                        harm_temp.append(harm)
+                        if p not in harm_peaks_temp:
+                            harm_peaks_temp.append(p)
+                        if p2 not in harm_peaks_temp:
+                                harm_peaks_temp.append(p2)
         n_total.append(n)
         harm_.append(harm_temp)
         harm_peaks.append(harm_peaks_temp)
@@ -1345,7 +1346,7 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
             max_n.append(n)
             max_peaks.append(p)
             max_amps.append(a)
-            #print(harm_peaks)
+            #print(harm_temp)
             harmonics.append(harm_temp)
             harmonic_peaks.append(harm_peaks)
             harm_peaks_fit.append([p, harm_temp, harm_peaks_temp])
@@ -1355,8 +1356,7 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
     max_peaks = np.array(max_peaks)
     max_amps = np.array(max_amps)
     harmonics = np.array(harmonics)
-    for l in range(len(harmonics)):
-        harmonics[l] = [x for x in harmonics[l] if x < harm_limit]
+    #print(harmonics.shape)
     harmonic_peaks = np.array(harmonic_peaks)
     #harm_peaks_fit = np.array(harm_peaks_fit)
 

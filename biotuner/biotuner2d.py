@@ -10,6 +10,7 @@ import biotuner
 from biotuner.biotuner_functions import *
 from biotuner.biotuner_utils import *
 from biotuner.biotuner_object import *
+import pandas as pd
 #from biotuner_object import *
 
 
@@ -20,7 +21,7 @@ def surrogate_signal(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf
     if surr_type == 'AAFT':
         indexes = [x for x in range(len(data))]
         data_ = np.stack((data, indexes))
-        data_ = AAFT_surrogates(Surrogates, data_)
+        data_ = AAFT_surrogates(data_)
         data_ = data_[0]
         data_ = butter_bandpass_filter(data_, low_cut, high_cut, sf, 4)
     if surr_type == 'TFT':
@@ -137,7 +138,8 @@ def peaks_to_metrics_matrices (peaks, n_harm = 10):
 
 def graph_surrogates(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = 'harmsim', peaks_function = 'adapt', 
                      precision = 0.5, savefolder = None, tag = '-', low_cut = 0.5, high_cut = 150, colors = None, 
-                     display = False, save = True, n_harmonic_peaks = 5, min_harms = 2):
+                     display = False, save = True, n_harmonic_peaks = 5, min_harms = 2, min_notes = 3, 
+                    cons_limit = 0.1, max_freq=60,FREQ_BANDS = None, title=None):
     peaks_avg_tot = []
     metric_tot = []
     for c in conditions:
@@ -151,7 +153,7 @@ def graph_surrogates(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = '
             _data_ = data_[t][:]
             biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
-            biotuning.peaks_extraction(_data_, ratios_extension = False, max_freq = 60,min_harms = min_harms)
+            biotuning.peaks_extraction(_data_, ratios_extension = False, max_freq = max_freq,min_harms = min_harms,n_peaks_FOOOF=5)
             if peaks_function == 'harmonic_peaks':
                 biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
                 biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
@@ -168,6 +170,14 @@ def graph_surrogates(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = '
                 if metric_to_graph == 'dissonance' or metric_to_graph == 'diss_n_steps' or metric_to_graph == 'diss_harm_sim':
                     biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
                     metric.append(biotuning.scale_metrics[metric_to_graph])
+                if metric_to_graph == 'n_spectro_chords':
+                    biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
+                                                   cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                   graph = False)
+                    metric.append(len(biotuning.spectro_chords))
+                if metric_to_graph == 'n_IF_chords':
+                    chords, positions = timepoint_consonance (biotuning.IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
+                    metric.append(len(chords))
         metric_tot.append(metric)
         peaks_avg_tot.append(np.average(peaks_avg))
         #print(run)
@@ -176,7 +186,7 @@ def graph_surrogates(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = '
     
     
 
-def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', tag = '0', adapt = 'False', peaks_function = 'EEMD', colors = None, display = False, save = True):
+def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['eeg', 'phase', 'AAFT', 'pink', 'white'], savefolder = '\\', subject = '0', tag = '0', adapt = 'False', peaks_function = 'EEMD', colors = None, display = False, save = True, title=None):
     #print(len(dist), len(dist[0]), len(dist[1]), len(dist[2]), len(dist[3]))
     #if ref == None:
     #    ref = dist[0]
@@ -214,6 +224,12 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         m = 'Sum of num and denom for all intervals' 
     if metric == 'sum_q_for_all_intervals':
         m = 'Sum of denom for all intervals' 
+    if metric == 'n_spectro_chords':
+        m = 'Number of spectral chords'
+    if metric == 'n_IF_chords':
+        m = 'Number of instantaneous frequencies chords'
+    if metric == 'peaks':
+        m = 'Average peaks frequency'
         
         
         
@@ -246,6 +262,7 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
             ref = [x for x in ref if str(x) != 'nan']
             if dimensions == [0]:
                 sbn.distplot(d, color =color)
+                #DEPRECATED, WILL USE THIS: sbn.displot(biotuning.peaks, color ='red',kind="kde", fill=True)
                 secure_random = secrets.SystemRandom()
                 if len(d) < len(ref):
                     ref = secure_random.sample(list(ref), len(d))
@@ -290,8 +307,11 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
         plt.ylabel('Proportion of samples', fontsize = '16')
         #plt.xlim([0.25, 0.7])
         plt.grid(color='white', linestyle='-.', linewidth=0.7)
-        plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '20')
-        
+        #if 'pink' in labs or 'brown' in labs or 'white' in labs or 'blue' in labs: 
+        if title==None:
+            plt.suptitle('Comparing ' + m+ ' \nfor EEG, surrogate data, and noise signals across ' + dimension, fontsize = '20')
+        else:
+            plt.suptitle(title, fontsize='20')
         if save == True:
             fig.savefig(savefolder+'{}_distribution_s{}-bloc{}_{}_{}.png'.format(metric, subject, tag, dimension, peaks_function), dpi=300)
             plt.clf()
@@ -369,7 +389,10 @@ def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1):
     plt.show()
     return diss_minima_tot
 
-def graph_conditions(data, sf, conditions, metric_to_graph, peaks_function, precision, savefolder, run, FREQ_BANDS = None):
+def graph_conditions(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = 'harmsim', peaks_function = 'adapt', 
+                     precision = 0.5, savefolder = None, tag = '-', low_cut = 0.5, high_cut = 150, colors = None, 
+                     display = False, save = True, n_harmonic_peaks = 5, min_harms = 2, FREQ_BANDS = None,min_notes = 3, 
+                    cons_limit = 0.1, max_freq=60, title=None):
     def remove_zeros(list_):
         for x in range(len(list_)):
             if list_[x] == 0.:
@@ -378,26 +401,160 @@ def graph_conditions(data, sf, conditions, metric_to_graph, peaks_function, prec
     peaks_avg_tot = []
     metric_tot = []
     for cond in range(len(data)):
+        print(conditions[cond])
         data_ = data[cond]
         peaks_avg = []
         metric = []
         for t in range(len(data_)):
-            _data_ = data_[t][:]
-            biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
-                             ratios_n_harms = 10, ratios_inc_fit = False, ratios_inc = False) # Initialize biotuner object
-            print('data', _data_.shape)
-            biotuning.peaks_extraction(np.array(_data_,dtype='float64'), ratios_extension = True, max_freq = 50, min_harms = 2,
-                                      FREQ_BANDS = FREQ_BANDS)
-            biotuning.peaks = remove_zeros(biotuning.peaks)[0:10]
-            print('peaks', biotuning.peaks)
-            biotuning.compute_peaks_metrics()
-            peaks_avg.append(np.average(biotuning.peaks))
-            #print(biotuning.peaks_metrics)
-            metric.append(biotuning.peaks_metrics[metric_to_graph])
+            try:
+                _data_ = data_[t][:]
+                biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
+                                ratios_n_harms=10, ratios_inc_fit=False, ratios_inc=False) # Initialize biotuner object
+                #print(_data_.shape)
+                biotuning.peaks_extraction(_data_, ratios_extension = False, max_freq = max_freq ,min_harms = min_harms, FREQ_BANDS=FREQ_BANDS)
+                if peaks_function == 'harmonic_peaks':
+                    biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
+                    biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
+                #print(biotuning.peaks)
+                biotuning.compute_peaks_metrics()
+                peaks_avg.append(np.average(biotuning.peaks))
+                try:
+                    metric.append(biotuning.peaks_metrics[metric_to_graph])
+                except:
+                    if metric_to_graph == 'peaks':
+                        metric.append(np.average(biotuning.peaks))
+                        
+                    if metric_to_graph == 'sum_p_q' or metric_to_graph =='sum_distinct_intervals' or metric_to_graph == 'metric_3' 'sum_p_q_for_all_intervals' or metric_to_graph =='sum_q_for_all_intervals' or metric_to_graph == 'matrix_harm_sim' or metric_to_graph =='matrix_cons':
+                        scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
+                        #print(scale_metrics[metric_to_graph])
+                        metric.append(float(scale_metrics[metric_to_graph]))
+                    if metric_to_graph == 'dissonance' or metric_to_graph == 'diss_n_steps' or metric_to_graph == 'diss_harm_sim':
+                        biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
+                        metric.append(biotuning.scale_metrics[metric_to_graph])
+                    if metric_to_graph == 'n_spectro_chords':
+                        biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
+                                                       cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                       graph = False)
+                        metric.append(len(biotuning.spectro_chords))
+                    if metric_to_graph == 'n_IF_chords':
+                        IF = np.round(biotuning.IF, 2)
+                        chords, positions = timepoint_consonance (IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
+                        metric.append(len(chords))
+            except:
+                pass
         metric_tot.append(metric)
         peaks_avg_tot.append(np.average(peaks_avg))
         #print(run)
-
+    print(peaks_function, ' peaks freqs ', peaks_avg_tot)
     graph_dist(metric_tot, metric = metric_to_graph, ref = metric_tot[0], dimensions = [0], 
-               labs = conditions, savefolder = savefolder, subject = '2', run = run, adapt = 'False', 
-               peak_function = peaks_function)
+               labs = conditions, savefolder = savefolder,         subject = '2', tag = tag, adapt = 'False', peaks_function = peaks_function, colors = colors, display = display, save = save, title=title)
+    
+    
+    
+def compare_corr_metrics_peaks(data, sf, peaks_functions=['fixed', 'EMD'], precision=0.5, FREQ_BANDS=None, 
+                              chords_multiple_metrics=True, min_notes = 3, cons_limit = 0.1):
+    df_corr_total = pd.DataFrame()
+    df_metrics_total = []
+    for i in range(len(peaks_functions)):
+        print(peaks_functions[i])
+        df_metrics = compare_metrics(data, sf, peaks_function=peaks_functions[i], precision=precision, FREQ_BANDS=FREQ_BANDS)
+        df_corr = df_metrics.corr()
+        df_corr = df_corr.rename({'peaks': peaks_functions[i]}, axis=0)
+        df_peaks = abs(df_corr.iloc[0])
+        if i == 0:
+            df_peaks_tot = df_peaks
+        else:
+            df_peaks_tot = pd.concat([df_peaks_tot,df_peaks], axis=1, ignore_index=False)
+        df_metrics_total.append(df_metrics)
+    return df_peaks_tot, df_metrics_total
+
+
+def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefolder = None, tag = '-', 
+                          low_cut = 0.5, high_cut = 150, display = False, save = True, n_harmonic_peaks = 5, 
+                          min_harms = 2, FREQ_BANDS = None,min_notes = 3, cons_limit = 0.1, max_freq=60,
+                   chords_multiple_metrics=True, add_cons=0.3, add_notes=2):
+    df = pd.DataFrame()
+    
+    peaks = []
+    sum_p_q = []
+    sum_distinct_intervals = []
+    matrix_harm_sim = []
+    matrix_cons = []
+    sum_q_for_all_intervals = []
+    dissonance = []
+    diss_n_steps = []
+    n_spec_chords = []
+    n_spec_chords_cons = []
+    n_spec_chords_cons_notes = []
+    harmsim = []
+    cons = []
+    tenney = []
+    #print('hello')
+    for t in range(len(data)):
+        try:
+            
+            _data_ = data[t]
+            #print(_data_)
+            biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
+                            ratios_n_harms=10, ratios_inc_fit=False, ratios_inc=False) # Initialize biotuner object
+            biotuning.peaks_extraction(_data_, ratios_extension = False, max_freq = max_freq ,min_harms = min_harms, FREQ_BANDS=FREQ_BANDS)
+            if peaks_function == 'harmonic_peaks':
+                biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
+                biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
+            #print(biotuning.peaks)
+            biotuning.compute_peaks_metrics()
+            #peaks_avg.append(np.average(biotuning.peaks))
+            scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
+            biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
+
+            biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
+                                                   cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                   graph = False)
+            n_spec_chords.append(len(biotuning.spectro_chords))
+            if chords_multiple_metrics ==True:
+
+                biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
+                                                   cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                   graph = False)
+                n_spec_chords_cons.append(len(biotuning.spectro_chords))
+                biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes+add_notes,
+                                                   cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                   graph = False)
+                n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
+            #print(peaks)
+            peaks.append(np.average(biotuning.peaks))       
+            sum_p_q.append(float(scale_metrics['sum_p_q']))
+            sum_distinct_intervals.append(float(scale_metrics['sum_distinct_intervals']))
+            matrix_harm_sim.append(float(scale_metrics['matrix_harm_sim']))
+            matrix_cons.append(float(scale_metrics['matrix_cons']))           
+            sum_q_for_all_intervals.append(float(scale_metrics['sum_q_for_all_intervals']))
+            dissonance.append(biotuning.scale_metrics['dissonance'])
+            diss_n_steps.append(biotuning.scale_metrics['diss_n_steps'])                              
+            cons.append(biotuning.peaks_metrics['cons'])
+            harmsim.append(biotuning.peaks_metrics['harmsim'])
+            tenney.append(biotuning.peaks_metrics['tenney'])
+                
+            '''if metric_to_graph == 'n_IF_chords':
+                    IF = np.round(biotuning.IF, 2)
+                    chords, positions = timepoint_consonance (IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
+                    metric.append(len(chords))'''
+        except:
+              pass
+    #print(peaks)
+    df['peaks'] = peaks
+    df['cons'] = cons                                       
+    df['harmsim'] = harmsim                                       
+    df['tenney'] = tenney
+    df['spectro_chords'] = n_spec_chords
+    if chords_multiple_metrics ==True:
+        df['spectro_chords_cons'] = n_spec_chords_cons
+        df['spectro_chords_cons+'] = n_spec_chords_cons_notes
+    df['diss_n_steps'] = diss_n_steps                                      
+    df['dissonance'] = dissonance                                       
+    df['matrix_cons'] = matrix_cons                                       
+    df['matrix_harm_sim'] = matrix_harm_sim
+    df['sum_q_for_all_intervals'] = sum_q_for_all_intervals                                       
+    df['sum_distinct_intervals'] = sum_distinct_intervals                                       
+    df['sum_p_q'] = sum_p_q
+                                           
+    return df
