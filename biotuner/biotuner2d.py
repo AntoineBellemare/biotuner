@@ -457,7 +457,8 @@ def compare_corr_metrics_peaks(data, sf, peaks_functions=['fixed', 'EMD'], preci
     df_metrics_total = []
     for i in range(len(peaks_functions)):
         print(peaks_functions[i])
-        df_metrics = compare_metrics(data, sf, peaks_function=peaks_functions[i], precision=precision, FREQ_BANDS=FREQ_BANDS)
+        df_metrics = compare_metrics(data, sf, peaks_function=peaks_functions[i], precision=precision, FREQ_BANDS=FREQ_BANDS, 
+                                    chords_multiple_metrics=chords_multiple_metrics)
         df_corr = df_metrics.corr()
         df_corr = df_corr.rename({'peaks': peaks_functions[i]}, axis=0)
         df_peaks = abs(df_corr.iloc[0])
@@ -489,6 +490,7 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     harmsim = []
     cons = []
     tenney = []
+    harm_fit = []
     #print('hello')
     for t in range(len(data)):
         try:
@@ -506,21 +508,25 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
             #peaks_avg.append(np.average(biotuning.peaks))
             scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
             biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
-
+            
             biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
                                                    cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
                                                    graph = False)
+            
+
             n_spec_chords.append(len(biotuning.spectro_chords))
             if chords_multiple_metrics ==True:
-
+            
                 biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
                                                    cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
                                                    graph = False)
+                
                 n_spec_chords_cons.append(len(biotuning.spectro_chords))
                 biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes+add_notes,
                                                    cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
                                                    graph = False)
                 n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
+                
             #print(peaks)
             peaks.append(np.average(biotuning.peaks))       
             sum_p_q.append(float(scale_metrics['sum_p_q']))
@@ -531,6 +537,7 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
             dissonance.append(biotuning.scale_metrics['dissonance'])
             diss_n_steps.append(biotuning.scale_metrics['diss_n_steps'])                              
             cons.append(biotuning.peaks_metrics['cons'])
+            harm_fit.append(biotuning.peaks_metrics['harm_fit'])
             harmsim.append(biotuning.peaks_metrics['harmsim'])
             tenney.append(biotuning.peaks_metrics['tenney'])
                 
@@ -543,7 +550,8 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     #print(peaks)
     df['peaks'] = peaks
     df['cons'] = cons                                       
-    df['harmsim'] = harmsim                                       
+    df['harmsim'] = harmsim   
+    df['harm_fit'] = harm_fit   
     df['tenney'] = tenney
     df['spectro_chords'] = n_spec_chords
     if chords_multiple_metrics ==True:
@@ -558,3 +566,24 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     df['sum_p_q'] = sum_p_q
                                            
     return df
+
+
+def ttest_all_metrics(data1, data2):
+    list_metrics = list(data1[1].head())
+    ttest_all = pd.DataFrame()
+    for function, function_name in zip(range(len(EEG_metrics)), peaks_functions):
+        metrics_ = []
+        for metric in list_metrics:
+            a = data1[function][metric]
+            b = data2[function][metric]
+            a = [x for x in a if str(x) != 'nan']
+            b = [x for x in b if str(x) != 'nan']
+            if len(a) > len(b):
+                a = a[0:len(b)]
+            if len(b) > len(a):
+                b = b[0:len(a)]
+            t, p = stats.ttest_rel(a, b)
+            metrics_.append(p)
+        ttest_all[function_name]=metrics_
+    ttest_all = ttest_all.set_axis(list_metrics, axis='index')
+    return ttest_all
