@@ -329,7 +329,7 @@ def AAFT_surrogates(original_data):
 
     #  Phase randomize rescaled data
     phase_randomized_data = \
-        correlated_noise_surrogates(rescaled_data)
+        correlated_noise_surrogates(self, rescaled_data)
 
     #  Rescale back to amplitude distribution of original data
     sorted_original = original_data.copy()
@@ -342,7 +342,7 @@ def AAFT_surrogates(original_data):
 
     return rescaled_data
 
-def correlated_noise_surrogates(original_data):
+def correlated_noise_surrogates(self, original_data):
     """
     Return Fourier surrogates.
 
@@ -392,8 +392,8 @@ def correlated_noise_surrogates(original_data):
     #    surrogates = self._original_data_fft
     #else:
     surrogates = np.fft.rfft(original_data, axis=1)
-    original_data_fft = surrogates
-    fft_cached = True
+    self._original_data_fft = surrogates
+    self._fft_cached = True
 
     #  Get shapes
     (N, n_time) = original_data.shape
@@ -401,7 +401,7 @@ def correlated_noise_surrogates(original_data):
 
     #  Generate random phases uniformly distributed in the
     #  interval [0, 2*Pi]
-    phases = np.random.uniform(low=0, high=2 * np.pi, size=(N, len_phase))
+    phases = random.uniform(low=0, high=2 * np.pi, size=(N, len_phase))
 
     #  Add random phases uniformly distributed in the interval [0, 2*Pi]
     surrogates *= np.exp(1j * phases)
@@ -646,6 +646,8 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
             except:
                 spectro_IMF.append(f[in_cut:out_cut])
         if method == 'SpectralFlux':
+            spectro_IMF.append(f[in_cut:out_cut])
+        else:
             spectro_IMF.append(f[in_cut:out_cut])
     spectro_IMF = np.array(spectro_IMF)
     return spectro_IMF
@@ -899,73 +901,3 @@ def convergents (interval):
     value = log2(interval)
     convergents = list(contfrac.convergents(value))
     return convergents
-
-
-def combine_dims(a, start=0, count=2):
-    s = a.shape
-    return np.reshape(a, s[:start] + (-1,) + s[start+count:])
-
-def slice_data(data, sf, window=1):
-    if np.ndim(data) == 1:
-        window_len = int(window*sf)
-        n_windows = int(len(data)/window_len)
-        
-        data_sliced = []
-        for i in range(n_windows):
-            start_idx = i*window_len
-            stop_idx = start_idx + window_len
-            data_sliced.append(data[start_idx:stop_idx])
-    if np.ndim(data) == 2:
-        window_len = int(window*sf)
-        n_windows = int(len(data[0])/window_len)
-        data_sliced = []
-        for i in range(len(data)):
-            data_sliced_temp = []
-            for j in range(n_windows):
-                start_idx = j*window_len
-                stop_idx = start_idx + window_len
-                data_sliced_temp.append(data[i][start_idx:stop_idx])
-            data_sliced.append(data_sliced_temp)
-        data_sliced = combine_dims(np.array(data_sliced), 0, 2)
-    return np.array(data_sliced)
-
-def resample_2d (data, sf, target_sf):
-    sf_ratio = sf/target_sf
-    data_crop = []
-    for i in range(len(data)):
-        resampled = signal.resample(data[i], int(len(data[i])/sf_ratio))#[1000:1000+(len(EEG_data[0]))]                         
-        data_crop.append(resampled)
-    return np.array(data_crop)
-
-def equate_dimensions(data1_, data2_):
-    if len(data1_)>len(data2_):
-        data1 = data1_[0:len(data2_)]
-        data2 = data2_
-    else:
-        data2 = data2_[0:len(data1_)]
-        data1 = data1_
-    if len(data1[0])>len(data2[0]):
-        data1_new = []
-        for i in range(len(data1)):
-            data1_new.append(data1[i][0:len(data2[0])])
-        data1 = np.array(data1_new)
-    else:
-        data2_new = []
-        for i in range(len(data2)):
-            data2_new.append(data2[i][0:len(data1[0])])
-        data2 = np.array(data2_new)
-    return data1, data2
-
-def generate_ecg_dataset(duration, sf, n_trials, noise_amp=0.2, noise_frequency = [5, 10, 50, 70], artifacts_amp=0.2, mode='ecg'):
-    ecg_sim = []
-    n_trials = n_trials
-    n=0
-    while n < n_trials:
-        ecg = nk.ecg_simulate(duration=duration, sampling_rate=sf)
-        if mode == 'noise':
-            ecg= np.zeros(len(ecg))
-        ecg = nk.signal_distort(ecg, sampling_rate=1000,noise_amplitude=noise_amp, noise_frequency=noise_frequency, 
-                                artifacts_amplitude=artifacts_amp, artifacts_frequency=50)
-        ecg_sim.append(ecg)
-        n+=1
-    return np.array(ecg_sim)
