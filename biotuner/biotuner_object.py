@@ -533,14 +533,14 @@ class biotuner(object):
             pass
         if peaks_function == 'EEMD':
             IMFs = EMD_eeg(data)
-            self.IMFs = IMFs
+            self.IMFs = IMFs[1:nIMFs+1]
             IMFs = IMFs[1:nIMFs+1]
         if peaks_function == 'EMD':
             data = np.interp(data, (data.min(), data.max()), (0, +1))
             IMFs = emd.sift.sift(data)
             #IMFs = emd.sift.ensemble_sift(data)
             IMFs = np.moveaxis(IMFs, 0, 1)
-            self.IMFs = IMFs
+            self.IMFs = IMFs[1:nIMFs+1]
             IMFs = IMFs[1:nIMFs+1]
         try:
             peaks_temp = []
