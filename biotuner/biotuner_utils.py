@@ -329,7 +329,7 @@ def AAFT_surrogates(original_data):
 
     #  Phase randomize rescaled data
     phase_randomized_data = \
-        correlated_noise_surrogates(self, rescaled_data)
+        correlated_noise_surrogates(rescaled_data)
 
     #  Rescale back to amplitude distribution of original data
     sorted_original = original_data.copy()
@@ -342,7 +342,7 @@ def AAFT_surrogates(original_data):
 
     return rescaled_data
 
-def correlated_noise_surrogates(self, original_data):
+def correlated_noise_surrogates(original_data):
     """
     Return Fourier surrogates.
 
@@ -392,8 +392,8 @@ def correlated_noise_surrogates(self, original_data):
     #    surrogates = self._original_data_fft
     #else:
     surrogates = np.fft.rfft(original_data, axis=1)
-    self._original_data_fft = surrogates
-    self._fft_cached = True
+    _original_data_fft = surrogates
+    _fft_cached = True
 
     #  Get shapes
     (N, n_time) = original_data.shape
