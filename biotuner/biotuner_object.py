@@ -108,7 +108,7 @@ class biotuner(object):
 
     def peaks_extraction (self, data, peaks_function = None, FREQ_BANDS = None, precision = None, sf = None, min_freq = 1, max_freq = 60,
                           min_harms = 2, compute_sub_ratios = False, ratios_extension = False, ratios_n_harms = None, scale_cons_limit =
-                          None, octave = 2, harm_limit=128, n_peaks_FOOOF=5, nIMFs=5):
+                          None, octave = 2, harm_limit=128, n_peaks=5, nIMFs=5):
         '''
         
         Arguments
@@ -594,7 +594,7 @@ class biotuner(object):
         if peaks_function == 'HH1D_max':
             IMFs = EMD_eeg(data)
             IMFs = np.moveaxis(IMFs, 0, 1)
-            IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:6], sf, 'nht')
+            IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:nIMFs+1], sf, 'nht')
             precision_hh = precision*2
             low = min_freq
             high = max_freq
@@ -643,13 +643,19 @@ class biotuner(object):
             self.n_harmonic_peaks = len(peaks_temp)
             self.harm_peaks_fit = harm_peaks_fit 
         if peaks_function == 'cepstrum':
-            cepstrum_, quefrency_vector = cepstrum(self.data, self.sf, min_freq=min_freq, max_freq=max_freq)
+            if graph == True:
+                plot_cepstrum = True
+            if graph == False:
+                plot_cepstrum = False
+            cepstrum_, quefrency_vector = cepstrum(self.data, self.sf, min_freq=min_freq, max_freq=max_freq, plot_cepstrum=plot_cepstrum)
             max_time = 1/min_freq
             min_time = 1/max_freq
-            peaks_temp, amps_temp = cepstral_peaks(cepstrum_, quefrency_vector, 1/min_freq, 1/max_freq)          
-            peaks_temp = list(np.flip(peaks_temp))
-            peaks_temp = [np.round(p, 2) for p in peaks_temp]
-            amps_temp = list(np.flip(amps_temp))
+            peaks_temp_, amps_temp_ = cepstral_peaks(cepstrum_, quefrency_vector, 1/min_freq, 1/max_freq)          
+            peaks_temp_ = list(np.flip(peaks_temp_))
+            peaks_temp_ = [np.round(p, 2) for p in peaks_temp_]
+            amps_temp_ = list(np.flip(amps_temp_))
+            peaks_temp = [x for _, x in sorted(zip(amps_temp_, peaks_temp_))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
         if peaks_function == 'FOOOF':
             nfft = sf/precision
             nperseg = sf/precision
