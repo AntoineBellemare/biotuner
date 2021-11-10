@@ -1365,7 +1365,7 @@ def harmonic_peaks_fit (peaks, amps, min_freq = 0.5, max_freq = 30, min_harms = 
     return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 
-def cepstrum(signal, sample_freq, plot_cepstrum = False):
+def cepstrum(signal, sample_freq, plot_cepstrum = False, min_freq=1.5, max_freq=80):
     windowed_signal = signal
     dt = 1/sample_freq
     freq_vector = np.fft.rfftfreq(len(windowed_signal), d=dt)
@@ -1383,12 +1383,12 @@ def cepstrum(signal, sample_freq, plot_cepstrum = False):
         ax.plot(freq_vector, log_X)
         ax.set_xlabel('frequency (Hz)')
         ax.set_title('Fourier spectrum')
-        ax.set_xlim(0, 50)
+        ax.set_xlim(0, max_freq)
         fig, ax = plt.subplots()
         ax.plot(quefrency_vector, np.abs(cepstrum))
         ax.set_xlabel('quefrency (s)')
         ax.set_title('cepstrum')
-        ax.set_xlim(0.02, 0.5)
+        ax.set_xlim(1/max_freq, 1/min_freq)
         ax.set_ylim(0, 200)
     return cepstrum, quefrency_vector
 

@@ -520,7 +520,7 @@ class biotuner(object):
         peaks = [p for p in peaks if p<=max_freq]
         return peaks, amps
 
-    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = None, min_freq = 1, max_freq = 80, min_harms = 2, harm_limit = 128, n_peaks = 5, nIMFs=None):
+    def compute_peaks_ts (self, data, peaks_function = 'EMD', FREQ_BANDS = None, precision = 0.25, sf = None, min_freq=1, max_freq=80, min_harms = 2, harm_limit = 128, n_peaks = 5, nIMFs=None):
         alphaband = [[7, 12]]
         if sf == None:
             sf = self.sf
@@ -643,10 +643,10 @@ class biotuner(object):
             self.n_harmonic_peaks = len(peaks_temp)
             self.harm_peaks_fit = harm_peaks_fit 
         if peaks_function == 'cepstrum':
-            cepstrum_, quefrency_vector = cepstrum(self.data, self.sf)
+            cepstrum_, quefrency_vector = cepstrum(self.data, self.sf, min_freq=min_freq, max_freq=max_freq)
             max_time = 1/min_freq
             min_time = 1/max_freq
-            peaks_temp, amps_temp = cepstral_peaks(cepstrum_, quefrency_vector, 0.4, 0.02)          
+            peaks_temp, amps_temp = cepstral_peaks(cepstrum_, quefrency_vector, 1/min_freq, 1/max_freq)          
             peaks_temp = list(np.flip(peaks_temp))
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
             amps_temp = list(np.flip(amps_temp))
