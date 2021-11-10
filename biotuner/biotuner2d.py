@@ -484,9 +484,10 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     sum_q_for_all_intervals = []
     dissonance = []
     diss_n_steps = []
-    n_spec_chords = []
-    n_spec_chords_cons = []
-    n_spec_chords_cons_notes = []
+    if peaks_function == 'EEMD' or peaks_function == 'EMD':
+        n_spec_chords = []
+        n_spec_chords_cons = []
+        n_spec_chords_cons_notes = []
     harmsim = []
     cons = []
     tenney = []
@@ -509,23 +510,24 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
             scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
             biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
             
-            biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
-                                                   cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
-                                                   graph = False)
-            
-
-            n_spec_chords.append(len(biotuning.spectro_chords))
-            if chords_multiple_metrics ==True:
-            
+            if peaks_function == 'EEMD' or peaks_function == 'EMD':
                 biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
-                                                   cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
-                                                   graph = False)
-                
-                n_spec_chords_cons.append(len(biotuning.spectro_chords))
-                biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes+add_notes,
-                                                   cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
-                                                   graph = False)
-                n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
+                                                       cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                       graph = False)
+
+
+                n_spec_chords.append(len(biotuning.spectro_chords))
+                if chords_multiple_metrics ==True:
+
+                    biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
+                                                       cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                       graph = False)
+
+                    n_spec_chords_cons.append(len(biotuning.spectro_chords))
+                    biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes+add_notes,
+                                                       cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
+                                                       graph = False)
+                    n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
                 
             #print(peaks)
             peaks.append(np.average(biotuning.peaks))       
@@ -553,10 +555,11 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     df['harmsim'] = harmsim   
     df['harm_fit'] = harm_fit   
     df['tenney'] = tenney
-    df['spectro_chords'] = n_spec_chords
-    if chords_multiple_metrics ==True:
-        df['spectro_chords_cons'] = n_spec_chords_cons
-        df['spectro_chords_cons+'] = n_spec_chords_cons_notes
+    if peaks_function == 'EEMD' or peaks_function == 'EMD':
+        df['spectro_chords'] = n_spec_chords
+        if chords_multiple_metrics ==True:
+            df['spectro_chords_cons'] = n_spec_chords_cons
+            df['spectro_chords_cons+'] = n_spec_chords_cons_notes
     df['diss_n_steps'] = diss_n_steps                                      
     df['dissonance'] = dissonance                                       
     df['matrix_cons'] = matrix_cons                                       

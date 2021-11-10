@@ -535,6 +535,22 @@ class biotuner(object):
             IMFs = EMD_eeg(data)
             self.IMFs = IMFs[1:nIMFs+1]
             IMFs = IMFs[1:nIMFs+1]
+            if graph == True:
+                t = np.linspace(0, len(data), len(data))  
+                nIMFs = len(IMFs)
+                plt.figure(figsize=(12,9))
+                plt.subplot(nIMFs+1, 1, 1)
+                plt.plot(t, data, 'r')
+                for n in range(nIMFs):
+                    plt.subplot(nIMFs+1, 1, n+2)
+                    plt.plot(t, IMFs[n], 'darkcyan')
+                    plt.ylabel("eIMF %i" %(n+1))
+                    plt.locator_params(axis='y', nbins=5)
+
+                plt.xlabel("Time [samples]")
+                plt.tight_layout()
+                plt.savefig('eemd_example', dpi=120)
+                plt.show()
         if peaks_function == 'EMD':
             data = np.interp(data, (data.min(), data.max()), (0, +1))
             IMFs = emd.sift.sift(data)
@@ -542,6 +558,26 @@ class biotuner(object):
             IMFs = np.moveaxis(IMFs, 0, 1)
             self.IMFs = IMFs[1:nIMFs+1]
             IMFs = IMFs[1:nIMFs+1]
+            if graph == True:
+                t = np.linspace(0, len(data), len(data))
+                eIMFs = biotuning.IMFs
+                nIMFs = len(biotuning.IMFs)
+
+
+                plt.figure(figsize=(12,9))
+                plt.subplot(nIMFs+1, 1, 1)
+                plt.plot(t, data, 'r')
+
+                for n in range(nIMFs):
+                    plt.subplot(nIMFs+1, 1, n+2)
+                    plt.plot(t, eIMFs[n], 'darkcyan')
+                    plt.ylabel("eIMF %i" %(n+1))
+                    plt.locator_params(axis='y', nbins=1)
+
+                plt.xlabel("Time [samples]")
+                plt.tight_layout()
+                plt.savefig('eemd_example', dpi=120)
+                plt.show()
         try:
             peaks_temp = []
             amps_temp = []
@@ -577,6 +613,16 @@ class biotuner(object):
                 amps_temp.append(spec[e][max_power])
             peaks_temp = np.flip(peaks_temp)
             amps_temp = np.flip(amps_temp)
+            peaks_temp = [np.round(p, 2) for p in peaks_temp]
+            amps_temp = [np.round(a, 2) for a in amps_temp]
+            if graph == True:
+                plt.figure(figsize=(8, 4))
+                plt.plot(bins, spec)
+                plt.xlim(min_freq, max_freq)
+                plt.xscale('log')
+                plt.xlabel('Frequency (Hz)')
+                plt.title('IA-weighted\nHilbert-Huang Transform')
+                plt.legend(['IMF-1', 'IMF-2', 'IMF-3', 'IMF-4', 'IMF-5', 'IMF-6', 'IMF-7'])
         #if peaks_function == 'HH1D_weightAVG':
 
         if peaks_function == 'adapt':
@@ -613,6 +659,8 @@ class biotuner(object):
             fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=100, min_peak_height=0.2)
             freq_range = [(sf/len(data))*2, 45]
             fm.fit(freqs1, psd, freq_range)
+            if graph == True:
+                fm.report(freqs1, psd, freq_range)
             peaks_temp = []
             amps_temp = []
             for p in range(len(fm.peak_params_)):
@@ -638,12 +686,17 @@ class biotuner(object):
                 fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=10, min_peak_height=0.2)
                 freq_range = [(sf/len(data))*2, 45]
                 fm.fit(freqs1, psd, freq_range)
+                if graph == True:
+                    fm.report(freqs1, psd, freq_range)
+                peaks_temp_EMD = fm.peak_params_[:, 0]
+                amps_temp_EMD = fm.peak_params_[:, 1]
                 try:
-                    peaks_temp.append(fm.peak_params_[0][0])
-                    amps_temp.append(fm.peak_params_[0][1])
+                    peaks_temp.append([x for _, x in sorted(zip(amps_temp_EMD, peaks_temp_EMD))][::-1][0:1])
+                    amps_temp.apend(sorted(amps_temp_EMD)[::-1][0:1])
                 except:
                     pass
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
+            
         peaks_temp = [0.1 if x==0 else x for x in peaks_temp]
         peaks = np.array(peaks_temp)
         peaks = np.around(peaks, 3)
