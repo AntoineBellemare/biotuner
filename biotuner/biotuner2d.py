@@ -650,3 +650,84 @@ def ttest_all_metrics(data1, data2, function_name):
     ttest_all[function_name]=metrics_
     ttest_all = ttest_all.set_axis(list_metrics, axis='index')
     return ttest_all
+
+
+def combine_dims(a, start=0, count=2):
+    s = a.shape
+    return np.reshape(a, s[:start] + (-1,) + s[start+count:])
+
+def slice_data(data, sf, window=1):
+    if np.ndim(data) == 1:
+        window_len = int(window*sf)
+        n_windows = int(len(data)/window_len)
+
+        data_sliced = []
+        for i in range(n_windows):
+            start_idx = i*window_len
+            stop_idx = start_idx + window_len
+            data_sliced.append(data[start_idx:stop_idx])
+    if np.ndim(data) == 2:
+        window_len = int(window*sf)
+        n_windows = int(len(data[0])/window_len)
+        data_sliced = []
+        for i in range(len(data)):
+            data_sliced_temp = []
+            for j in range(n_windows):
+                start_idx = j*window_len
+                stop_idx = start_idx + window_len
+                data_sliced_temp.append(data[i][start_idx:stop_idx])
+            data_sliced.append(data_sliced_temp)
+        data_sliced = combine_dims(np.array(data_sliced), 0, 2)
+    return np.array(data_sliced)
+
+def resample_2d (data, sf, target_sf):
+    sf_ratio = sf/target_sf
+    data_crop = []
+    for i in range(len(data)):
+        resampled = signal.resample(data[i], int(len(data[i])/sf_ratio))             
+        data_crop.append(resampled)
+    return np.array(data_crop)
+
+def equate_dimensions(data1_, data2_):
+    if len(data1_)>len(data2_):
+        data1 = data1_[0:len(data2_)]
+        data2 = data2_
+    else:
+        data2 = data2_[0:len(data1_)]
+        data1 = data1_
+    if len(data1[0])>len(data2[0]):
+        data1_new = []
+        for i in range(len(data1)):
+            data1_new.append(data1[i][0:len(data2[0])])        
+        data1 = np.array(data1_new)
+    else:
+        data2_new = []
+        for i in range(len(data2)):
+            data2_new.append(data2[i][0:len(data1[0])])
+        data2 = np.array(data2_new)
+    return data1, data2
+
+        
+def slice_data(data, sf, window=1):
+    if np.ndim(data) == 1:
+        window_len = int(window*sf)
+        n_windows = int(len(data)/window_len)
+
+        data_sliced = []
+        for i in range(n_windows):
+            start_idx = i*window_len
+            stop_idx = start_idx + window_len
+            data_sliced.append(data[start_idx:stop_idx])
+    if np.ndim(data) == 2:
+        window_len = int(window*sf)
+        n_windows = int(len(data[0])/window_len)
+        data_sliced = []
+        for i in range(len(data)):
+            data_sliced_temp = []
+            for j in range(n_windows):
+                start_idx = j*window_len
+                stop_idx = start_idx + window_len
+                data_sliced_temp.append(data[i][start_idx:stop_idx])
+            data_sliced.append(data_sliced_temp)
+        data_sliced = combine_dims(np.array(data_sliced), 0, 2)
+    return np.array(data_sliced)
