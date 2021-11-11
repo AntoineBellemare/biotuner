@@ -451,25 +451,6 @@ def graph_conditions(data, sf, conditions = ['eeg', 'pink'], metric_to_graph = '
     
     
     
-def compare_corr_metrics_peaks(data, sf, peaks_functions=['fixed', 'EMD'], precision=0.5, FREQ_BANDS=None, 
-                              chords_multiple_metrics=True, min_notes = 3, cons_limit = 0.1):
-    df_corr_total = pd.DataFrame()
-    df_metrics_total = []
-    for i in range(len(peaks_functions)):
-        print(peaks_functions[i])
-        df_metrics = compare_metrics(data, sf, peaks_function=peaks_functions[i], precision=precision, FREQ_BANDS=FREQ_BANDS, 
-                                    chords_multiple_metrics=chords_multiple_metrics)
-        df_corr = df_metrics.corr()
-        df_corr = df_corr.rename({'peaks': peaks_functions[i]}, axis=0)
-        df_peaks = abs(df_corr.iloc[0])
-        if i == 0:
-            df_peaks_tot = df_peaks
-        else:
-            df_peaks_tot = pd.concat([df_peaks_tot,df_peaks], axis=1, ignore_index=False)
-        df_metrics_total.append(df_metrics)
-    return df_peaks_tot, df_metrics_total
-
-
 def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefolder = None, tag = '-', 
                           low_cut = 0.5, high_cut = 150, display = False, save = True, n_harmonic_peaks = 5, 
                           min_harms = 2, FREQ_BANDS = None,min_notes = 3, cons_limit = 0.1, max_freq=60,
@@ -494,8 +475,8 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
     harm_fit = []
     #print('hello')
     for t in range(len(data)):
+
         try:
-            
             _data_ = data[t]
             #print(_data_)
             biotuning = biotuner(sf, peaks_function = peaks_function, precision = precision, n_harm = 10,
@@ -504,12 +485,12 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
             if peaks_function == 'harmonic_peaks':
                 biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
                 biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
-            #print(biotuning.peaks)
+            #print(biotuning.peaks, biotuning.amps)
             biotuning.compute_peaks_metrics()
             #peaks_avg.append(np.average(biotuning.peaks))
             scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
             biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
-            
+
             if peaks_function == 'EEMD' or peaks_function == 'EMD':
                 biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
                                                        cons_limit = cons_limit, cons_chord_method = 'cons', window = 500, overlap = 1, 
@@ -528,7 +509,7 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
                                                        cons_limit = cons_limit+add_cons, cons_chord_method = 'cons', window = 500, overlap = 1, 
                                                        graph = False)
                     n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
-                
+
             #print(peaks)
             peaks.append(np.average(biotuning.peaks))       
             sum_p_q.append(float(scale_metrics['sum_p_q']))
@@ -542,7 +523,7 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
             harm_fit.append(biotuning.peaks_metrics['harm_fit'])
             harmsim.append(biotuning.peaks_metrics['harmsim'])
             tenney.append(biotuning.peaks_metrics['tenney'])
-                
+
             '''if metric_to_graph == 'n_IF_chords':
                     IF = np.round(biotuning.IF, 2)
                     chords, positions = timepoint_consonance (IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
@@ -570,11 +551,42 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
                                            
     return df
 
+def compare_corr_metrics_peaks(data, sf, peaks_functions=['fixed', 'EMD'], precision=0.5, FREQ_BANDS=None, 
+                              chords_multiple_metrics=True, min_notes = 3, cons_limit = 0.1):
+    df_corr_total = pd.DataFrame()
+    df_metrics_total = []
+    for i in range(len(peaks_functions)):
+        print(peaks_functions[i])
+        df_metrics = compare_metrics(data, sf, peaks_function=peaks_functions[i], precision=precision, FREQ_BANDS=FREQ_BANDS, 
+                                    chords_multiple_metrics=chords_multiple_metrics)
+        
+        
+        df_p = calculate_pvalues(df_metrics)
+        df_p = df_p.rename({'peaks': peaks_functions[i]}, axis=0)
+        df_corr = df_metrics.corr()
+        df_corr = df_corr.rename({'peaks': peaks_functions[i]}, axis=0)
+        df_peaks = abs(df_p.iloc[0])
+        if i == 0:
+            df_peaks_tot = df_peaks
+        else:
+            df_peaks_tot = pd.concat([df_peaks_tot,df_peaks], axis=1, ignore_index=False)
+        df_metrics_total.append(df_metrics)
+    return df_peaks_tot, df_metrics_total
 
-def ttest_all_metrics(data1, data2):
-    list_metrics = list(data1[1].head())
+
+def ttest_all_metrics_all_functions(data1, data2, peaks_functions):
+    
+    list_metrics = list(data1[0].columns)
+    if 'EMD' in peaks_functions:
+        ind_ = peaks_functions.index('EMD')
+        list_metrics_EMD = list(data1[ind_].columns)
+    if 'EEMD' in peaks_functions:
+        ind_ = peaks_functions.index('EEMD')
+        list_metrics_EMD = list(data1[ind_].columns)
     ttest_all = pd.DataFrame()
-    for function, function_name in zip(range(len(EEG_metrics)), peaks_functions):
+    for function, function_name in zip(range(len(peaks_functions)), peaks_functions):
+        if function_name == 'EMD' or function_name == 'EEMD':
+            list_metrics = list_metrics_EMD
         metrics_ = []
         for metric in list_metrics:
             a = data1[function][metric]
@@ -588,5 +600,53 @@ def ttest_all_metrics(data1, data2):
             t, p = stats.ttest_rel(a, b)
             metrics_.append(p)
         ttest_all[function_name]=metrics_
+    ttest_all = ttest_all.set_axis(list_metrics, axis='index')
+    return ttest_all
+
+def plot_ttest_all_metrics(ttest_all, peaks_function, labels = ['EEG', 'ECG'], peaks_corr1=None, peaks_corr2=None,
+                           color='darkred', save=False):
+
+    fig, ax = plt.subplots(figsize=(15,10))
+    plt.setp(ax.get_xticklabels(), rotation=25, horizontalalignment='right')
+    plt.title('Results of t test comparing '+labels[0]+' and '+labels[1]+' signals using '+peaks_function, fontsize=22)
+    plt.xlabel('Harmonicity metrics', fontsize=16)
+    plt.xticks(fontsize= 14)
+    plt.yticks(fontsize= 14)
+    plt.ylabel('p value',  fontsize=16)
+    plt.axhline(y=0.05, color='r', linestyle='--')
+
+    plt.plot(ttest_all[peaks_function], color=color, label=peaks_function, linewidth=3)
+    #if peaks_corr1 != None and peaks_corr2 != None:
+    x_position1 = list(range(len(peaks_corr1[peaks_function])))
+    #x_position1 = [x+1 for x in x_position1]
+    x_position2 = list(range(len(peaks_corr2[peaks_function])))
+    #x_position2 = [x+1 for x in x_position2]
+    plt.scatter(x_position1, peaks_corr1[peaks_function],
+                color='darkblue', label=labels[0]+' corr with peaks', s=150)
+    plt.scatter(x_position2, peaks_corr2[peaks_function],
+                color='darkorange', label=labels[1]+' corr with peaks', s=150)
+    plt.grid()
+    plt.legend(loc='upper right', fontsize=14)
+    plt.show
+    if save==True:
+        plt.savefig('ttest_'+labels[0]+'_'+labels[1]+'_'+peaks_function+'.jpg', dpi=300, facecolor='w')
+
+        
+def ttest_all_metrics(data1, data2, function_name):
+    list_metrics = list(data1.columns)
+    ttest_all = pd.DataFrame()
+    metrics_ = []
+    for metric in list_metrics:
+        a = data1[metric]
+        b = data2[metric]
+        a = [x for x in a if str(x) != 'nan']
+        b = [x for x in b if str(x) != 'nan']
+        if len(a) > len(b):
+            a = a[0:len(b)]
+        if len(b) > len(a):
+            b = b[0:len(a)]
+        t, p = stats.ttest_rel(a, b)
+        metrics_.append(p)
+    ttest_all[function_name]=metrics_
     ttest_all = ttest_all.set_axis(list_metrics, axis='index')
     return ttest_all

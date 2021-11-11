@@ -18,6 +18,8 @@ import sys
 import bottleneck as bn
 from scipy import signal
 import neurokit2 as nk
+import pandas as pd
+from scipy.stats import pearsonr
 sys.setrecursionlimit(120000)
 
 
@@ -401,7 +403,7 @@ def correlated_noise_surrogates(original_data):
 
     #  Generate random phases uniformly distributed in the
     #  interval [0, 2*Pi]
-    phases = random.uniform(low=0, high=2 * np.pi, size=(N, len_phase))
+    phases = np.random.uniform(low=0, high=2 * np.pi, size=(N, len_phase))
 
     #  Add random phases uniformly distributed in the interval [0, 2*Pi]
     surrogates *= np.exp(1j * phases)
@@ -620,7 +622,6 @@ def bjorklund(steps, pulses):
 '''Spectromorphology functions'''
 
 import pyACA
-
 def computeFeatureCl_new(afAudioData, cFeatureName, f_s, window=4000, overlap=1):
 
     # compute feature
@@ -640,15 +641,15 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
         f, t = computeFeatureCl_new(e, method, sf, window, overlap)
         #[f,t] = pyACA.computePitch('TimeAcf', e, 1000, afWindow=None, iBlockLength=1000, iHopLength=200)
         #df[i] = np.squeeze(f)
-        if method == 'SpectralCentroid':
-            try:
-                spectro_IMF.append(f[0][in_cut:out_cut])
-            except:
-                spectro_IMF.append(f[in_cut:out_cut])
-        if method == 'SpectralFlux':
+        #if method == 'SpectralCentroid':
+        try:
+            spectro_IMF.append(f[0][in_cut:out_cut])
+        except:
             spectro_IMF.append(f[in_cut:out_cut])
-        else:
-            spectro_IMF.append(f[in_cut:out_cut])
+        #if method == 'SpectralFlux':
+        #    spectro_IMF.append(f[in_cut:out_cut])
+        #else:
+        #    spectro_IMF.append(f[in_cut:out_cut])
     spectro_IMF = np.array(spectro_IMF)
     return spectro_IMF
 
@@ -901,3 +902,12 @@ def convergents (interval):
     value = log2(interval)
     convergents = list(contfrac.convergents(value))
     return convergents
+
+def calculate_pvalues(df):
+    df = df.dropna()._get_numeric_data()
+    dfcols = pd.DataFrame(columns=df.columns)
+    pvalues = dfcols.transpose().join(dfcols, how='outer')
+    for r in df.columns:
+        for c in df.columns:
+            pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
+    return pvalues
