@@ -667,7 +667,7 @@ class biotuner(object):
             self.freqs = freqs1
             self.psd = psd
             fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=50, min_peak_height=0.2)
-            freq_range = [(sf/len(data))*2, 45]
+            freq_range = [(sf/len(data))*2, max_freq]
             fm.fit(freqs1, psd, freq_range)
             if graph == True:
                 fm.report(freqs1, psd, freq_range)
@@ -679,7 +679,7 @@ class biotuner(object):
                     amps_temp.append(fm.peak_params_[p][1])
                 except:
                     pass
-            print(peaks_temp)
+            #print(peaks_temp)
             peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
@@ -695,17 +695,19 @@ class biotuner(object):
                 self.freqs = freqs1
                 self.psd = psd
                 fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=10, min_peak_height=0.2)
-                freq_range = [(sf/len(data))*2, 45]
+                freq_range = [(sf/len(data))*2, max_freq]
                 fm.fit(freqs1, psd, freq_range)
                 if graph == True:
                     fm.report(freqs1, psd, freq_range)
                 peaks_temp_EMD = fm.peak_params_[:, 0]
                 amps_temp_EMD = fm.peak_params_[:, 1]
+                #print('peaks', peaks_temp_EMD, 'amps', amps_temp_EMD)
                 try:
                     peaks_temp.append([x for _, x in sorted(zip(amps_temp_EMD, peaks_temp_EMD))][::-1][0:1])
                     amps_temp.append(sorted(amps_temp_EMD)[::-1][0:1])
                 except:
-                    pass
+                    print('No peaks detected')
+                
             peaks_temp = [np.round(p, 2) for p in peaks_temp]
             peaks_temp = [item for sublist in peaks_temp for item in sublist]
             amps_temp = [item for sublist in amps_temp for item in sublist]
