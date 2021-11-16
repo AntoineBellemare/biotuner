@@ -218,7 +218,6 @@ class biotuner(object):
         
         #print(self.peaks)
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
-        
         self.peaks_ratios_cons, b = consonant_ratios (self.peaks, limit = scale_cons_limit)
         if ratios_extension == True:
             a, b, c = self.ratios_extension(self.peaks_ratios, ratios_n_harms = ratios_n_harms)
@@ -346,7 +345,7 @@ class biotuner(object):
         a, b, c, metrics['cons'] = consonance_peaks (peaks, 0.1)
         peaks_euler = [int(round(num, 2)*1000) for num in peaks]
         
-        if self.peaks_function != 'cepstrum' and self.peaks_function != 'FOOOF' and self.peaks_function != 'harmonic_peaks':
+        if self.peaks_function == 'fixed' or self.peaks_function == 'adapt' or self.peaks_function == 'EMD' or self.peaks_function == 'EEMD':
             try:
 
                 metrics['euler'] = euler(*peaks_euler)
@@ -607,7 +606,7 @@ class biotuner(object):
             self.IF = np.moveaxis(IF, 0 ,1)
             # Compute the 1d Hilbert-Huang transform (power over carrier frequency)
             spec = emd.spectra.hilberthuang_1d(IF, IA, edges)
-            
+            #print('spec', spec.shape)
             spec = np.moveaxis(spec, 0, 1)
             peaks_temp = []
             amps_temp = []
