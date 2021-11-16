@@ -495,14 +495,11 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
         if peaks_function == 'harmonic_peaks':
             biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
             biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
-        print('b', biotuning.peaks, biotuning.amps)
+        #print('b', biotuning.peaks, biotuning.amps)
         biotuning.compute_peaks_metrics()
-        print('c')
         #peaks_avg.append(np.average(biotuning.peaks))
         scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
-        print('d')
         biotuning.compute_diss_curve(plot = False, input_type = 'peaks', denom = 100, max_ratio = 2, n_tet_grid = 12)
-        print('e')
         if peaks_function == 'EEMD' or peaks_function == 'EMD':
             if chords_metrics == True:
                 biotuning.compute_spectromorph(comp_chords = True, method = 'SpectralCentroid', min_notes = min_notes,
