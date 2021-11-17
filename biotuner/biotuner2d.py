@@ -521,13 +521,13 @@ def compare_metrics(data, sf, peaks_function = 'adapt', precision = 0.5, savefol
                     n_spec_chords_cons_notes.append(len(biotuning.spectro_chords))
         if peaks_function == 'HH1D_max':
             if chords_metrics == True:
-                chords, positions = timepoint_consonance (biotuning_IF.IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
+                chords, positions = timepoint_consonance (biotuning.IF, method = 'cons', limit = cons_limit, min_notes = min_notes)
                 n_IF_chords.append(len(chords))
                 if chords_multiple_metrics ==True:
-                    chords2, positions2 = timepoint_consonance (biotuning_IF.IF, method = 'cons', limit = cons_limit+add_cons, 
+                    chords2, positions2 = timepoint_consonance (biotuning.IF, method = 'cons', limit = cons_limit+add_cons, 
                                                                 min_notes = min_notes)
                     n_IF_chords_cons.append(len(chords2))
-                    chords3, positions3 = timepoint_consonance (biotuning_IF.IF, method = 'cons', limit = cons_limit+add_cons, 
+                    chords3, positions3 = timepoint_consonance (biotuning.IF, method = 'cons', limit = cons_limit+add_cons, 
                                                                 min_notes = min_notes+add_notes)
                     n_IF_chords_cons_notes.append(len(chords3))
         #print(peaks)
