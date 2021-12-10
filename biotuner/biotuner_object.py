@@ -218,6 +218,7 @@ class biotuner(object):
         
         #print(self.peaks)
         self.peaks_ratios = compute_peak_ratios(self.peaks, rebound = True, octave = octave, sub = compute_sub_ratios)
+        #print('peaks_ratios', self.peaks_ratios)
         self.peaks_ratios_cons, b = consonant_ratios (self.peaks, limit = scale_cons_limit)
         if ratios_extension == True:
             a, b, c = self.ratios_extension(self.peaks_ratios, ratios_n_harms = ratios_n_harms)

@@ -563,7 +563,6 @@ def scale_cons_matrix (scale, function):
         for index2 in range(len(scale)):
             if scale[index1] > scale[index2]:  #not include the diagonale in the computation of the avg. consonance
                 entry = scale[index1]/scale[index2]
-                #print(entry_value, scale[index1], scale[index2])
                 mode_values.append([scale[index1], scale[index2]])
                 metric_values.append(function(entry))
     return np.average(metric_values)
