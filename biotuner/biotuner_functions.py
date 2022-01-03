@@ -1617,3 +1617,8 @@ def euclid_string_to_referent (strings, dict_rhythms):
         else:
             referent.append('None')
     return referent
+
+def euclid_long_to_short(pattern):
+    steps = len(pattern)
+    hits = pattern.count(1)
+    return [hits, steps]
