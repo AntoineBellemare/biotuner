@@ -503,7 +503,7 @@ class biotuner(object):
         amps = np.array(amp_temp)
         return FREQS, amps
     
-    def extract_all_peaks (self, data, sf, precision, max_freq = None):
+    def extract_all_peaks (self, data, sf, precision, max_freq = None, width=2, rel_height=0.5):
         if max_freq == None:
             max_freq = sf/2
         mult = 1/precision
@@ -513,7 +513,7 @@ class biotuner(object):
         psd = 10. * np.log10(psd)
         self.freqs = freqs
         self.psd = psd
-        indexes = ss.find_peaks(psd, height=None, threshold=None, distance=10, prominence=None, width=2, wlen=None, rel_height=0.5, plateau_size=None)
+        indexes = ss.find_peaks(psd, height=None, threshold=None, distance=10, prominence=None, width=width, wlen=None, rel_height=rel_height, plateau_size=None)
         peaks = []
         amps = []
         for i in indexes[0]:

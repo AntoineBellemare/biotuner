@@ -818,7 +818,7 @@ def euler_fokker_scale(intervals, n = 1):
     scale = create_euler_fokker_scale(intervals, multiplicities)
     return scale
     
-def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2):
+def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2, harmonic_min = 0):
     '''
     Function that takes a generator interval and derives a tuning based on its stacking.
     interval: float
@@ -832,11 +832,13 @@ def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2):
     '''
     scale = []
     for s in range(steps):
-        s += 1
-        degree = interval**s
+        degree = interval**harmonic_min
         while degree > octave:
             degree = degree/octave
+        while degree < octave/2:
+            degree = degree*octave
         scale.append(degree)
+        harmonic_min += 1
     return sorted(scale)
 
 
@@ -1286,7 +1288,7 @@ def compute_peaks_ts (data, peaks_function = 'EMD', FREQ_BANDS = None, precision
 
 
 
-def extract_all_peaks (data, sf, precision, max_freq = None):
+def extract_all_peaks (data, sf, precision, max_freq = None, width=2, rel_height=0.5, prominence=None):
     if max_freq == None:
         max_freq = sf/2
     mult = 1/precision
@@ -1294,7 +1296,7 @@ def extract_all_peaks (data, sf, precision, max_freq = None):
     nfft = nperseg
     freqs, psd = scipy.signal.welch(data, sf, nfft = nfft, nperseg = nperseg, average = 'median')
     psd = 10. * np.log10(psd)
-    indexes = ss.find_peaks(psd, height=None, threshold=None, distance=10, prominence=None, width=2, wlen=None, rel_height=0.5, plateau_size=None)
+    indexes = ss.find_peaks(psd, height=None, threshold=None, distance=10, prominence=prominence, width=width, wlen=None, rel_height=rel_height, plateau_size=None)
     peaks = []
     amps = []
     for i in indexes[0]:
@@ -1453,6 +1455,15 @@ def pac_mode(pac_freqs, n, function = dyad_similarity):
     _, mode, _ = scale_reduction(scale_from_pairs(pac_freqs), mode_n_steps = n, function = function)
     return sorted(mode)
 
+def compute_sidebands(carrier, modulator, order=2):
+    sidebands=[]
+    i=1
+    while i<=order:
+        if carrier-modulator*i > 0:
+            sidebands.append(np.round(carrier-modulator*i, 3))
+            sidebands.append(np.round(carrier+modulator*i, 3))
+        i+=1
+    return np.sort(sidebands)
 
 '''--------------------------------------------------------Biorhythms-----------------------------------------------------------------'''
 
