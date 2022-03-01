@@ -1,12 +1,10 @@
 #!bin/bash
 """Collection of operations on timeseries."""
 import numpy as np
-from PyEMD import EMD, EEMD
 from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
-import seaborn as sbn
-from scipy import stats
-import pygame, pygame.sndarray
+import pygame
+import pygame.sndarray
 import pytuning
 from pytuning import *
 import scipy.signal
@@ -16,20 +14,28 @@ import itertools
 import operator
 import sys
 import bottleneck as bn
-from scipy import signal
-import neurokit2 as nk
 import pandas as pd
 from scipy.stats import pearsonr
+from fractions import Fraction
+from functools import reduce
+import math
+from scipy.fftpack import rfft, irfft
+try:
+    from pyunicorn.timeseries.surrogates import *
+    from pyunicorn.timeseries import RecurrenceNetwork
+except:
+    pass
 sys.setrecursionlimit(120000)
 
+
+'''SIMPLE MUSICAL COMPUTATIONS'''
 
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
     """
-    Ratios between peaks.
-
     This function calculates all the ratios (with the possibility to bound them
     between 1 and 2) derived from input peaks.
+
 
     peaks: List (float)
         Peaks represent local maximum in a spectrum
@@ -53,7 +59,7 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
                 ratio_temp = p2/p1
             except:
                 pass
-                
+
             # When sub is set to False, only ratios with numerators higher than denominators are consider
             if sub is False:
                 if ratio_temp < 1:
@@ -68,7 +74,7 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
         peak_ratios = [i for i in peak_ratios if i]  # dealing with NaNs ?
         peak_ratios = sorted(list(set(peak_ratios)))
         ratios_final = peak_ratios.copy()
-    
+
     # If rebound is given, all the ratios are constrained between the unison and the octave
     if rebound is True:
         for peak in peak_ratios:
@@ -87,44 +93,13 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
         peak_ratios_final = np.array(peak_ratios_final)
         peak_ratios_final = [i for i in peak_ratios_final if i]
         ratios_final = sorted(list(set(peak_ratios_final)))
-    
-
     return ratios_final
 
 
-def rebound(x, low=1, high=2, octave=2):
-    """
-    Rescale x within given octave bounds.
-
-    x: int
-        represents a peak value
-    low: int
-        Lower bound. Defaults to 1. 
-    high: int
-        Higher bound. Defaults to 2.
-    octave: int
-        Value of an octave
-    """
-    while x >= high:
-        x = x/octave
-    while x <= low:
-        x = x*octave
-    return x
-
-def rebound_list(x_list, low=1, high=2, octave=2):
-    return [rebound(x, low, high, octave) for x in x_list] 
-
-
-def sum_list(l):
-    sum = 0
-    for x in l:
-        sum += x
-    return sum
-
-def nth_root (num, root):
+def nth_root(num, root):
     '''
     This function computes the ratio associated with one step of a N-TET scale
-    
+
     num: int
         value of the octave
     root: int
@@ -133,10 +108,11 @@ def nth_root (num, root):
     answer = num**(1/root)
     return answer
 
-def NTET_steps (octave, step, NTET):
+
+def NTET_steps(octave, step, NTET):
     '''
     This function computes the ratio associated with a specific step of a N-TET scale
-    
+
     octave: int
         value of the octave
     step: int
@@ -147,48 +123,33 @@ def NTET_steps (octave, step, NTET):
     answer = octave**(step/NTET)
     return answer
 
-#Function that compares lists (i.e. peak harmonics)
-def compareLists(list1, list2, bounds):
-    matching = []
-    matching_pos = []
-    matching_pos1 = []
-    matching_pos2 = []
-    positions = []
-    for i, l1 in enumerate(list1):
-        for j, l2 in enumerate(list2):
-            if l2-bounds < l1 < l2+bounds:
-                matching.append((l1+l2)/2)
-                matching_pos.append([(l1+l2)/2, i+1, j+1])
-                matching_pos1.append([list1[0], i+1])
-                matching_pos2.append([list2[0], j+1])
-                positions.append(i+1)
-                positions.append(j+1)
-    matching = np.array(matching)
-    matching_pos = np.array(matching_pos)
-    ratios_temp = []
-    for i in range(len(matching_pos)):
-        if matching_pos[i][1]>matching_pos[i][2]:
-            ratios_temp.append(matching_pos[i][1]/matching_pos[i][2])
-            #print(matching_pos[i][0])
-        else:
-            ratios_temp.append(matching_pos[i][2]/matching_pos[i][1])
-    matching_pos_ratios = np.array(ratios_temp)
-    return matching, matching_pos, matching_pos_ratios, matching_pos1, matching_pos2, positions
 
-def create_SCL(scale, fname):
-    #Output SCL files
-    from pytuning.scales.pythagorean import create_pythagorean_scale
-    from pytuning.tuning_tables import create_scala_tuning
-    #scale = create_pythagorean_scale()
-    table = create_scala_tuning(scale,fname)
-    outF = open(fname+'.scl', "w")
-    outF.writelines(table)
-    outF.close()
-    return
+def NTET_ratios(n_steps, max_ratio):
+    steps = []
+    for s in range(n_steps):
+        steps.append(2**(s/n_steps))
+    steps_out = []
+    for j in range(max_ratio-1):
+        steps_out.append([i+j for i in steps])
+    steps_out = sum(steps_out, [])
+    return steps_out
 
-from fractions import Fraction
-from math import log
-from functools import reduce
+
+def scale_from_pairs(pairs):
+    return[rebound((x[1]/x[0])) for x in pairs]
+
+def flatten(t):
+    return [item for sublist in t for item in sublist]
+
+
+def pairs_most_frequent(pairs, n):
+    drive_freqs = [x[0] for x in pairs]
+    signal_freqs = [x[1]for x in pairs]
+    drive_dict = {k: v for k, v in sorted(Counter(drive_freqs).items(), key=lambda item: item[1])}
+    max_drive = list(drive_dict)[::-1][0:n]
+    signal_dict = {k: v for k, v in sorted(Counter(signal_freqs).items(), key=lambda item: item[1])}
+    max_signal = list(signal_dict)[::-1][0:n]
+    return [max_signal, max_drive]
 
 def gcd(*numbers):
     """
@@ -204,6 +165,7 @@ def gcd(*numbers):
 
     return reduce(gcd, numbers)
 
+
 def gcd_n(*args):
     i = 1
     x = args[0]
@@ -213,12 +175,15 @@ def gcd_n(*args):
         i += 1
     return x
 
+
 def reduced_form(*numbers):
     """
     Return a tuple of numbers which is the reduced form of the input,
     which is a list of integers
     """
     return tuple(int(a // gcd(*numbers)) for a in numbers)
+
+
 def lcm(*numbers):
     """
     Return the least common multiple of the given integers
@@ -230,6 +195,7 @@ def lcm(*numbers):
 
     # LCM(a, b, c, d) = LCM(a, LCM(b, LCM(c, d)))
     return reduce(lcm, numbers)
+
 
 def prime_factors(n):
     """
@@ -248,26 +214,6 @@ def prime_factors(n):
 
     return factors
 
-def top_n_indexes(arr, n):
-    idx = bn.argpartition(arr, arr.size-n, axis=None)[-n:]
-    width = arr.shape[1]
-    return [divmod(i, width) for i in idx]
-
-def scale_from_pairs(pairs):   
-    return[rebound((x[1]/x[0])) for x in pairs]
-
-def EMD_eeg (eeg_data):
-    s = np.interp(eeg_data, (eeg_data.min(), eeg_data.max()), (0, +1))
-    eemd = EEMD()
-    t = np.linspace(0, 1, len(eeg_data))
-    # Say we want detect extrema using parabolic method
-    emd = eemd.EMD
-    emd.extrema_detection="parabol"
-    eIMFs = EMD().emd(s,t)
-    #eIMFs = eemd.eemd(S, t)
-    nIMFs = eIMFs.shape[0]
-    return eIMFs
-
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -276,12 +222,199 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     b, a = butter(order, [low, high], btype='band')
     return b, a
 
+
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     y = lfilter(b, a, data)
     return y
 
-from scipy.fftpack import rfft, irfft
+
+def scale2frac(scale, maxdenom=1000):
+    num = []
+    den = []
+    scale_frac = []
+    for step in scale:
+        frac = Fraction(step).limit_denominator(maxdenom)
+        frac_ = sp.Rational(step).limit_denominator(maxdenom)
+        num.append(frac.numerator)
+        den.append(frac.denominator)
+        scale_frac.append(frac_)
+    return scale_frac, np.array(num), np.array(den)
+
+
+def sort_scale_by_consonance(scale):
+    cons_tot = []
+    for step in scale:
+        cons = compute_consonance(step)
+        cons_tot.append(cons)
+    sorted_scale = list(np.flip([x for _, x in sorted(zip(cons_tot, scale))]))
+    return sorted_scale
+
+
+def ratio2frac(ratio, maxdenom=1000):
+    frac = Fraction(ratio).limit_denominator(maxdenom)
+    num = frac.numerator
+    den = frac.denominator
+    return [num, den]
+
+
+def frac2scale(scale):
+    scale_ratio = []
+    for step in scale:
+        scale_ratio.append(float(step))
+    return scale_ratio
+
+
+def peaks_to_amps(peaks, freqs, amps, sf):
+    bin_size = np.round((sf/2)/len(freqs), 3)
+    amps_out = []
+    for p in peaks:
+        index = int(p/bin_size)
+        amp = amps[index]
+        amps_out.append(amp)
+    return amps_out
+
+
+def alpha2bands(a):
+    np.float(a)
+    center_freqs = [a/4, a/2, a, a*2, a*4]
+    FREQ_BANDS = []
+    for f in center_freqs:
+        down = np.round((f/2)*1.618, 1)
+        up = np.round((f*2)*0.618, 1)
+        band = [down, up]
+        FREQ_BANDS.append(band)
+    return FREQ_BANDS
+
+
+def chords_to_ratios(chords, harm_limit=2, spread=True):
+    chords_ratios = []
+    chords_ratios_bounded = []
+    for chord in chords:
+        chord = sorted(chord)
+        if harm_limit != None:
+            if spread == True: #will allow each note to be within the defined harm_limit of the previous note
+                for note in range(len(chord)):
+                    while chord[note] > chord[note-1]*harm_limit:
+                        chord[note] = chord[note]/2
+            if spread == False: #will allow each note to be within the defined harm_limit of the first note
+                for note in range(len(chord)):
+                    while chord[note] > chord[0]*2:
+                        chord[note] = chord[note]/2
+        chord = sorted([np.round(n, 1) for n in chord])
+        chord = [int(n*10) for n in chord]
+        gcd_chord = 2 #arbitrary number that is higher than 1
+        while gcd_chord > 1:
+            gcd_chord = gcd_n(*chord)
+            if gcd_chord > 1:
+                chord = [int(note/gcd_chord) for note in chord]
+        chord_bounded = [c/chord[0] for c in chord]
+        chords_ratios_bounded.append(chord_bounded)
+        chords_ratios.append(chord)
+    return chords_ratios, chords_ratios_bounded
+
+
+'''DATA MANIPULATION'''
+
+
+def rebound(x, low=1, high=2, octave=2):
+    """
+    Rescale x within given octave bounds.
+
+    x: int
+        represents a peak value
+    low: int
+        Lower bound. Defaults to 1.
+    high: int
+        Higher bound. Defaults to 2.
+    octave: int
+        Value of an octave
+    """
+    while x >= high:
+        x = x/octave
+    while x <= low:
+        x = x*octave
+    return x
+
+def rebound_list(x_list, low=1, high=2, octave=2):
+    return [rebound(x, low, high, octave) for x in x_list]
+
+
+def sum_list(l):
+    sum = 0
+    for x in l:
+        sum += x
+    return sum
+
+# Function that compares lists (i.e. peak harmonics)
+def compareLists(list1, list2, bounds):
+    matching = []
+    matching_pos = []
+    positions = []
+    for i, l1 in enumerate(list1):
+        for j, l2 in enumerate(list2):
+            if l2-bounds < l1 < l2+bounds:
+                matching.append((l1+l2)/2)
+                matching_pos.append([(l1+l2)/2, i+1, j+1])
+                positions.append(i+1)
+                positions.append(j+1)
+    matching = np.array(matching)
+    matching_pos = np.array(matching_pos)
+    ratios_temp = []
+    for i in range(len(matching_pos)):
+        if matching_pos[i][1] > matching_pos[i][2]:
+            ratios_temp.append(matching_pos[i][1]/matching_pos[i][2])
+        else:
+            ratios_temp.append(matching_pos[i][2]/matching_pos[i][1])
+    matching_pos_ratios = np.array(ratios_temp)
+    return matching, list(set(positions)), matching_pos, matching_pos_ratios
+
+
+def top_n_indexes(arr, n):
+    idx = bn.argpartition(arr, arr.size-n, axis=None)[-n:]
+    width = arr.shape[1]
+    return [divmod(i, width) for i in idx]
+
+def __get_norm(norm):
+    if norm == 0 or norm is None:
+        return None, None
+    else:
+        try:
+            norm1, norm2 = norm
+        except TypeError:
+            norm1 = norm2 = norm
+        return norm1, norm2
+
+
+def __freq_ind(freq, f0):
+    try:
+        return [np.argmin(np.abs(freq - f)) for f in f0]
+    except TypeError:
+        return np.argmin(np.abs(freq - f0))
+
+
+def __product_other_freqs(spec, indices, synthetic=(), t=None):
+    p1 = np.prod([amplitude * np.exp(2j * np.pi * freq * t + phase)
+                  for (freq, amplitude, phase) in synthetic], axis=0)
+    p2 = np.prod(spec[:, indices[len(synthetic):]], axis=1)
+    return p1 * p2
+
+
+def getPairs(peaks):
+    peaks_ = peaks.copy()
+    out = []
+    for i in range(len(peaks_)-1):
+        a = peaks_.pop(i-i)
+        for j in peaks_:
+            out.append([a, j])
+    return out
+
+
+def functools_reduce(a):
+    return functools.reduce(operator.concat, a)
+
+
+'''SURROGATES'''
 
 def phaseScrambleTS(ts):
     """Returns a TS: original TS power is preserved; TS phase is shuffled."""
@@ -299,13 +432,6 @@ def phaseScrambleTS(ts):
     return tsr
 
 
-##Surrogate data testing using Pyunicorn
-try:
-    from pyunicorn.timeseries.surrogates import *
-    from pyunicorn.timeseries import RecurrenceNetwork
-except:
-    pass
-#Surrogates.silence_level = 1
 def AAFT_surrogates(original_data):
     """
     Return surrogates using the amplitude adjusted Fourier transform
@@ -343,6 +469,7 @@ def AAFT_surrogates(original_data):
         rescaled_data[i, :] = sorted_original[i, ranks[i, :]]
 
     return rescaled_data
+
 
 def correlated_noise_surrogates(original_data):
     """
@@ -415,6 +542,7 @@ def correlated_noise_surrogates(original_data):
 
 '''from: https://github.com/narayanps/NolinearTimeSeriesAnalysis/blob/master/SurrogateModule.py'''
 
+
 def UnivariateSurrogatesTFT(data_f,MaxIter=1,fc=5):
     import numpy
     xs=data_f.copy()
@@ -437,8 +565,8 @@ def UnivariateSurrogatesTFT(data_f,MaxIter=1,fc=5):
         phi_surr[0] = 0.0
         new_len = int(Len/2)
 
-        phi_surr[new_len] = 0.0 
-              
+        phi_surr[new_len] = 0.0
+
         fftsurx = pwx*numpy.exp(1j*phi_surr)
         xoutb = numpy.real(numpy.fft.ifft(fftsurx))
         ranks = xoutb.argsort(axis=0)
@@ -449,6 +577,8 @@ def UnivariateSurrogatesTFT(data_f,MaxIter=1,fc=5):
 ## This function takes instantaneous frequencies (IF) from Hilbert-Huang Transform (HH) as an array in the form of [time, freqs]
 ## and outputs the average euler consonance for the whole time series (euler_tot) and the number of moments frequencies had consonance
 ## below euler threshold (euler_tresh)
+
+
 def HH_cons (IF, euler_tresh = 100, mult = 10):
     euler_tot = []
     cons_ind = []
@@ -474,149 +604,17 @@ def HH_cons (IF, euler_tresh = 100, mult = 10):
         euler_tot.append(e_temp)
     return euler_good, cons_ind, euler_tot
 
-def getPairs(peaks):
-    peaks_ = peaks.copy()
-    out = []
-    for i in range(len(peaks_)-1):
-        a = peaks_.pop(i-i)
-        for j in peaks_:
-            out.append([a, j])
-    return out
 
-def functools_reduce(a):
-    return functools.reduce(operator.concat, a)
-
-def scale2frac (scale, maxdenom = 1000):
-    num = []
-    den = []
-    scale_frac = []
-    for step in scale:
-        frac = Fraction(step).limit_denominator(maxdenom)
-        frac_ = sp.Rational(step).limit_denominator(maxdenom)
-        num.append(frac.numerator)
-        den.append(frac.denominator)
-        scale_frac.append(frac_)
-    return scale_frac, np.array(num), np.array(den)
-
-def sort_scale_by_consonance(scale):
-    cons_tot = []
-    for step in scale:
-        frac = Fraction(step).limit_denominator(1000)
-        cons = (frac.numerator + frac.denominator)/(frac.numerator * frac.denominator)
-        cons_tot.append(cons)
-    sorted_scale = list(np.flip([x for _,x in sorted(zip(cons_tot,scale))]))
-    return sorted_scale
-
-def ratio2frac (ratio, maxdenom = 1000):
-    
-    frac = Fraction(ratio).limit_denominator(maxdenom)
-    num = frac.numerator
-    den = frac.denominator
-    return [num, den]
-
-def frac2scale (scale):
-    scale_ratio = []
-    for step in scale:
-        scale_ratio.append(float(step))
-    return scale_ratio
-
-def peaks_to_amps (peaks, freqs, amps, sf):
-    bin_size = np.round((sf/2)/len(freqs), 3)
-    amps_out = []
-    #print(amps.shape)
-    for p in peaks:
-        #print(p)
-        index = int(p/bin_size)
-        amp = amps[index]
-        amps_out.append(amp)
-    return amps_out
-
-
-def alpha2bands(a):
-    np.float(a)
-    center_freqs = [a/4, a/2, a, a*2, a*4]
-    g_up = 1.618
-    g_down = 0.618
-    FREQ_BANDS = []
-    for f in center_freqs:
-        down = np.round((f/2)*1.618, 1)
-        up = np.round((f*2)*0.618, 1)
-        band = [down, up]
-        FREQ_BANDS.append(band)
-    return FREQ_BANDS
-
-def chords_to_ratios(chords, harm_limit = 2, spread = True):
-    chords_ratios = []
-    chords_ratios_bounded = []
-    for chord in chords:
-        chord = sorted(chord)
-        if harm_limit != None:
-            if spread == True: #will allow each note to be within the defined harm_limit of the previous note 
-                for note in range(len(chord)):
-                    while chord[note] > chord[note-1]*harm_limit:
-                        chord[note] = chord[note]/2
-            if spread == False: #will allow each note to be within the defined harm_limit of the first note
-                for note in range(len(chord)):
-                    while chord[note] > chord[0]*2:
-                        chord[note] = chord[note]/2
-        chord = sorted([np.round(n, 1) for n in chord])
-        chord = [int(n*10) for n in chord]
-        gcd_chord = 2 #arbitrary number that is higher than 1
-        while gcd_chord > 1:
-            gcd_chord = gcd_n(*chord)
-            if gcd_chord > 1:
-                chord = [int(note/gcd_chord) for note in chord]
-        chord_bounded = [c/chord[0] for c in chord]
-        chords_ratios_bounded.append(chord_bounded)
-        chords_ratios.append(chord)
-    return chords_ratios, chords_ratios_bounded
-
-def NTET_ratios (n_steps, max_ratio):
-    steps = []
-    for s in range(n_steps):
-        steps.append(2**(s/n_steps))
-    steps_out = []
-    for j in range(max_ratio-1):
-        steps_out.append([i+j for i in steps])
-    steps_out = sum(steps_out, [])
-    return steps_out
-
-def bjorklund(steps, pulses):
-    '''From https://github.com/brianhouse/bjorklund'''
-    steps = int(steps)
-    pulses = int(pulses)
-    if pulses > steps:
-        raise ValueError    
-    pattern = []    
-    counts = []
-    remainders = []
-    divisor = steps - pulses
-    remainders.append(pulses)
-    level = 0
-    while True:
-        counts.append(divisor // remainders[level])
-        remainders.append(divisor % remainders[level])
-        divisor = remainders[level]
-        level = level + 1
-        if remainders[level] <= 1:
-            break
-    counts.append(divisor)
-    
-    def build(level):
-        if level == -1:
-            pattern.append(0)
-        elif level == -2:
-            pattern.append(1)         
-        else:
-            for i in range(0, counts[level]):
-                build(level - 1)
-            if remainders[level] != 0:
-                build(level - 2)
-    
-    build(level)
-    i = pattern.index(1)
-    pattern = pattern[i:] + pattern[0:i]
-    return pattern
+def create_SCL(scale, fname):
+    #Output SCL files
+    from pytuning.scales.pythagorean import create_pythagorean_scale
+    from pytuning.tuning_tables import create_scala_tuning
+    #scale = create_pythagorean_scale()
+    table = create_scala_tuning(scale,fname)
+    outF = open(fname+'.scl', "w")
+    outF.writelines(table)
+    outF.close()
+    return
 
 
 '''Spectromorphology functions'''
@@ -654,86 +652,45 @@ def EMD_to_spectromorph (IMFs,  sf, method = "SpectralCentroid", window = None, 
     return spectro_IMF
 
 
-def butter_bandpass(lowcut,highcut,fs,order=8):
-    nyq = 0.5*fs
-    low = lowcut/nyq
-    high = highcut/nyq
-
-    b,a = butter(order, [low, high], btype='band')
-    return b,a
-
-def butter_bandpass_filter(data,lowcut,highcut,fs,order=8):
-    b,a = butter_bandpass(lowcut,highcut,fs,order=order)
-    return lfilter(b,a,data) 
-
-
-def ratios_harmonics (ratios, n_harms = 1):
+def ratios_harmonics(ratios, n_harms=1):
     ratios_harms = []
     for h in range(n_harms):
-        h += 1 
+        h += 1
         ratios_harms.append([i*h for i in ratios])
     ratios_harms = [i for sublist in ratios_harms for i in sublist]
     return ratios_harms
 
-def ratios_increments (ratios, n_inc = 1):
+
+def ratios_increments(ratios, n_inc=1):
     ratios_harms = []
     for h in range(n_inc):
-        h += 1 
+        h += 1
         ratios_harms.append([i**h for i in ratios])
     ratios_harms = [i for sublist in ratios_harms for i in sublist]
     ratios_harms = list(set(ratios_harms))
     return ratios_harms
 
 
-def smooth(x,window_len=11,window='hanning'):
+def smooth(x, window_len=11, window='hanning'):
     """smooth the data using a window with requested size.
-    
+
     This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal 
+    The signal is prepared by introducing reflected copies of the signal
     (with the window size) in both ends so that transient parts are minimized
     in the begining and end part of the output signal.
-    
+
     input:
-        x: the input signal 
+        x: the input signal
         window_len: the dimension of the smoothing window; should be an odd integer
         window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
 
     output:
         the smoothed signal
-        
-    example:
 
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-    
-    see also: 
-    
-    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
-    scipy.signal.lfilter
- 
-    TODO: the window parameter could be the window itself if an array instead of a string
     NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
-
-    #if x.ndim != 1:
-        #raise ValueError, "smooth only accepts 1 dimension arrays."
-
-    #if x.size < window_len:
-        #raise ValueError, "Input vector needs to be bigger than window size."
-
-
-    #if window_len<3:
-        #return x
-
-
-    #if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        #raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
-
-
     s=np.r_[x[window_len-1:0:-1],x,x[-2:-window_len-1:-1]]
-    #print(len(s))
     if window == 'flat': #moving average
         w=np.ones(window_len,'d')
     else:
@@ -743,13 +700,147 @@ def smooth(x,window_len=11,window='hanning'):
     return y
 
 
+'''MOMENTS OF SYMMETRY'''
+
+
+def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100,
+                        max_denom_out=100):
+    """
+    Function that takes two ratios a input (boundaries of )
+    The mediant corresponds to the interval where
+    small and large steps are equal.
+
+    Parameters
+    ----------
+    frac1 : type
+        Description of parameter `frac1`.
+    frac2 : type
+        Description of parameter `frac2`.
+    octave : type
+        Description of parameter `octave`.
+    max_denom_in : type
+        Description of parameter `max_denom_in`.
+    max_denom_out : type
+        Description of parameter `max_denom_out`.
+
+    Returns
+    -------
+    tuning_range_to_MOS
+        Description of returned object.
+
+    """
+    a = Fraction(frac1).limit_denominator(max_denom_in).numerator
+    b = Fraction(frac1).limit_denominator(max_denom_in).denominator
+    c = Fraction(frac2).limit_denominator(max_denom_in).numerator
+    d = Fraction(frac2).limit_denominator(max_denom_in).denominator
+    print(a, b, c, d)
+    mediant = (a+c)/(b+d)
+    mediant_frac = sp.Rational((a+c)/(b+d)).limit_denominator(max_denom_out)
+    gen_interval = octave**(mediant)
+    gen_interval_frac = sp.Rational(octave**(mediant)).limit_denominator(max_denom_out)
+    MOS_signature = [d, b]
+    invert_MOS_signature = [b, d]
+    return mediant, mediant_frac, gen_interval, gen_interval_frac, MOS_signature, invert_MOS_signature
+
+
+def stern_brocot_to_generator_interval(ratio, octave=2):
+    """
+    Converts a fraction in the stern-brocot tree to
+    a generator interval for moment of symmetry tunings
+
+    Parameters
+    ----------
+    ratio : float
+        stern-brocot ratio
+    octave : float
+        Reference period.
+
+    Returns
+    -------
+    gen_interval : float
+        Generator interval
+
+    """
+    gen_interval = octave**(ratio)
+    return gen_interval
+
+
+def gen_interval_to_stern_brocot(gen):
+    """
+    Convert a generator interval to fraction in the stern-brocot tree.
+
+    Parameters
+    ----------
+    gen : float
+        Generator interval.
+
+    Returns
+    -------
+    root_ratio : float
+        Fraction in the stern-brocot tree.
+
+    """
+    root_ratio = log2(gen)
+    return root_ratio
+
+
+def horogram_tree_steps(ratio1, ratio2, steps=10, limit=1000):
+    ratios_list = [ratio1, ratio2]
+    s = 0
+    while s < steps:
+        ratio3 = horogram_tree(ratio1, ratio2, limit)
+        ratios_list.append(ratio3)
+        ratio1 = ratio2
+        ratio2 = ratio3
+        s += 1
+    frac_list = [ratio2frac(x) for x in ratios_list]
+    return frac_list, ratios_list
+
+
+def horogram_tree(ratio1, ratio2, limit):
+    a = Fraction(ratio1).limit_denominator(limit).numerator
+    b = Fraction(ratio1).limit_denominator(limit).denominator
+    c = Fraction(ratio2).limit_denominator(limit).numerator
+    d = Fraction(ratio2).limit_denominator(limit).denominator
+    next_step = (a+c)/(b+d)
+    return next_step
+
+def phi_convergent_point(ratio1, ratio2):
+    Phi = (1 + 5 ** 0.5) / 2
+    a = Fraction(ratio1).limit_denominator(1000).numerator
+    b = Fraction(ratio1).limit_denominator(1000).denominator
+    c = Fraction(ratio2).limit_denominator(1000).numerator
+    d = Fraction(ratio2).limit_denominator(1000).denominator
+    convergent_point = (c*Phi+a)/(d*Phi+b)
+    return convergent_point
+
+
+def Stern_Brocot(n, a=0, b=1, c=1, d=1):
+    if(a+b+c+d > n):
+        return 0
+    x=Stern_Brocot(n,a+c,b+d,c,d)
+    y=Stern_Brocot(n,a,b,a+c,b+d)
+    if(x==0):
+        if(y==0):
+            return [a+c,b+d]
+        else:
+            return [a+c]+[b+d]+y
+    else:
+        if(y==0):
+            return [a+c]+[b+d]+x
+        else:
+            return [a+c]+[b+d]+x+y
+
+
+'''GENERATE AUDIO'''
+
 
 sample_rate = 44100
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
-   
-    
-def generate_signal(sf, time_end, freqs, amps, show=False, theta = 0, color = 'blue'):
+
+
+def generate_signal(sf, time_end, freqs, amps, show=False, theta=0, color='blue'):
     time = np.arange(0,time_end, 1/sf)
     sine_tot  = []
     for i in range(len(freqs)):
@@ -757,7 +848,7 @@ def generate_signal(sf, time_end, freqs, amps, show=False, theta = 0, color = 'b
         sine_tot.append(sinewave)
     sine_tot = sum_list(sine_tot)
     if show == True:
-        
+
         ax = plt.gca()
         ax.set_facecolor('xkcd:black')
         plt.plot(time, sine_tot, color = color)
@@ -806,7 +897,7 @@ def listen_scale (scale, fund, length):
         sound = pygame.sndarray.make_sound(note)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
-        
+
 def listen_chords (chords, mult = 10, length = 500):
     #chords = np.around(chords, 3)
     print('Chords:', chords)
@@ -818,58 +909,13 @@ def listen_chords (chords, mult = 10, length = 500):
         sound = pygame.sndarray.make_sound(chord)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
-        
-def horogram_tree_steps (ratio1, ratio2, steps = 10, limit = 1000):
-    ratios_list = [ratio1, ratio2]
-    s = 0
-    while s < steps:
-        ratio3 = horogram_tree(ratio1, ratio2, limit)
-        ratios_list.append(ratio3)
-        ratio1 = ratio2
-        ratio2 = ratio3
-        s += 1
-    frac_list = [ratio2frac(x) for x in ratios_list]
-    return frac_list, ratios_list
-        
 
-def horogram_tree (ratio1, ratio2, limit):
-    a = Fraction(ratio1).limit_denominator(limit).numerator
-    b = Fraction(ratio1).limit_denominator(limit).denominator
-    c = Fraction(ratio2).limit_denominator(limit).numerator
-    d = Fraction(ratio2).limit_denominator(limit).denominator
-    next_step = (a+c)/(b+d)
-    return next_step
-        
-def phi_convergent_point (ratio1, ratio2):
-    Phi = (1 + 5 ** 0.5) / 2
-    a = Fraction(ratio1).limit_denominator(1000).numerator
-    b = Fraction(ratio1).limit_denominator(1000).denominator
-    c = Fraction(ratio2).limit_denominator(1000).numerator
-    d = Fraction(ratio2).limit_denominator(1000).denominator
-    convergent_point = (c*Phi+a)/(d*Phi+b)
-    return convergent_point
 
-def Stern_Brocot(n,a=0,b=1,c=1,d=1):
-    if(a+b+c+d>n):
-        return 0
-    x=Stern_Brocot(n,a+c,b+d,c,d)
-    y=Stern_Brocot(n,a,b,a+c,b+d)
-    if(x==0):
-        if(y==0):
-            return [a+c,b+d]
-        else:
-            return [a+c]+[b+d]+y
-    else:
-        if(y==0):
-            return [a+c]+[b+d]+x
-        else:
-            return [a+c]+[b+d]+x+y
-        
 def scale_interval_names(scale, reduce = False):
     try:
         type = scale[0].dtype == 'float64'
         if type == True:
-            scale, _, _ = scale2frac(scale)   
+            scale, _, _ = scale2frac(scale)
     except:
         pass
     interval_names = []
@@ -883,7 +929,6 @@ def scale_interval_names(scale, reduce = False):
 
 ''' Continued fractions '''
 
-import math
 
 def contFrac(x, k):
     cf = []
@@ -912,3 +957,66 @@ def calculate_pvalues(df):
         for c in df.columns:
             pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
     return pvalues
+
+
+
+def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3):
+
+    """
+    Function that keeps moments of consonance
+    from multiple time series of peak frequencies
+
+    Parameters
+    ----------
+    data: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of frequencies
+    method: str
+        Defaults to 'cons'
+        'cons': will compute pairwise consonance between
+               frequency peaks in the form of (a+b)/(a*b)
+        'euler': will compute Euler's gradus suavitatis
+    limit: float
+        limit of consonance under which the set of frequencies are not retained
+        When method = 'cons'
+             --> See consonance_peaks method's doc to refer to
+                 consonance values to common intervals
+        When method = 'euler'
+             --> Major (4:5:6) = 9
+                 Minor (10:12:15) = 9
+                 Major 7th (8:10:12:15) = 10
+                 Minor 7th (10:12:15:18) = 11
+                 Diminish (20:24:29) = 38
+    min_notes: int
+        minimum number of consonant frequencies in the chords.
+        Only relevant when method is set to 'cons'.
+
+    Returns
+    -------
+    chords: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of consonant frequencies
+    positions: List (int)
+        positions on Axis 0
+    """
+
+    data = np.moveaxis(data, 0, 1)
+    out = []
+    positions = []
+    for count, peaks in enumerate(data):
+        peaks = [x for x in peaks if x >= 0]
+        if method == 'cons':
+            cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
+            out.append(peaks_cons)
+            if len(list(set(peaks_cons))) >= min_notes:
+                positions.append(count)
+        if method == 'euler':
+            peaks_ = [int(np.round(p, 2)*100) for p in peaks]
+            eul = euler(*peaks_)
+            if eul < limit:
+                out.append(list(peaks))
+                positions.append(count)
+    out = [x for x in out if x != []]
+    out = list(out for out, _ in itertools.groupby(out))
+    chords = [x for x in out if len(x) >= min_notes]
+    return chords, positions
