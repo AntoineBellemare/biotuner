@@ -2,6 +2,7 @@ import numpy as np
 from fractions import Fraction
 from collections import Counter
 import sympy as sp
+from biotuner.biotuner_utils import scale2frac, getPairs
 
 
 '''--------------------------------------------------------Biorhythms-----------------------------------------------------------------'''

@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 import sys
-from biotuner.utils import nth_root, rebound, NTET_ratios, scale2frac
+from biotuner.biotuner_utils import nth_root, rebound, NTET_ratios, scale2frac
 from biotuner.peaks_extension import consonant_ratios
-from biotuner.metrics import ratios2harmsim, euler
+from biotuner.metrics import ratios2harmsim, euler, dyad_similarity, metric_denom
 from pytuning import create_euler_fokker_scale
 import itertools
 from collections import Counter

@@ -8,7 +8,7 @@ import sys
 from biotuner.biotuner_utils import smooth, top_n_indexes, __get_norm
 from biotuner.biotuner_utils import __product_other_freqs, __freq_ind
 from pactools import Comodulogram
-from pactools.reference import Reference
+from pactools.references import Reference
 from scipy.fftpack import next_fast_len
 from scipy.signal import spectrogram
 sys.setrecursionlimit(120000)
@@ -91,11 +91,12 @@ def EMD_eeg(data, method='EMD', graph=False, extrema_detection='simple'):
 
 
 def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
-                        FREQ_BANDS=None, nperseg=None, nfft=None,
-                        noverlap=None,
+                        FREQ_BANDS=None, average='median',
+                        noverlap=None, nperseg=None, nfft=None,
                         find_peaks_method='maxima', width=2,
                         rel_height=0.7, prominence=1,
-                        out_type='all', extended_returns=True):
+                        out_type='all', extended_returns=True,
+                        ):
     """
     Extract frequency peaks using Welch's method
     for periodograms computation.
@@ -114,6 +115,9 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
     FREQ_BANDS : List of lists
         Each sublist contains the
         minimum and maximum values for each frequency band.
+    average : str
+        {'mean', 'median'}
+        Method to use when averaging periodograms. Defaults to median’.
     nperseg : int
         Length of each segment.
     nfft : int
@@ -152,7 +156,7 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         nperseg = sf*mult
         nfft = nperseg
     freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg,
-                                    average='median', noverlap=noverlap)
+                                    average=average, noverlap=noverlap)
     psd = 10. * np.log10(psd)
     if out_type == 'all':
         if find_peaks_method == 'maxima':
@@ -174,13 +178,12 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         index_max = np.argmax(np.array(psd))
         peaks = freqs[index_max]
         peaks = np.around(peaks, 5)
-        peaks = [peaks]
+        #peaks = [peaks]
         amps = psd[index_max]
     if out_type == 'bands':
         peaks = []
         amps = []
         for minf, maxf in FREQ_BANDS:
-            psd = 10. * np.log10(psd)
             bin_size = (sf/2)/len(freqs)
             min_index = int(minf/bin_size)
             max_index = int(maxf/bin_size)
@@ -198,9 +201,14 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
 
 
 def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
+                  nperseg=None, nfft=None,
                   n_peaks=5, extended_returns=False, graph=False):
-    nfft = sf/precision
-    nperseg = sf/precision
+
+    if nperseg is None:
+        mult = 1/precision
+        nfft = sf*mult
+        nperseg = nfft
+        noverlap = nperseg//10
     freqs1, psd = scipy.signal.welch(data, sf, nfft=nfft,
                                      nperseg=nperseg, noverlap=noverlap)
     fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=50,
@@ -544,25 +552,27 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
                              noverlap=None, method='bicoherence',
                              flim1=(2, 50), flim2=(2, 50), graph=False):
     if method == 'bispectrum':
-        dim = 1
+        norm = 0
     if method == 'bicoherence':
-        dim = 2
+        norm = 2
     if nperseg is None:
         nperseg = sf
     if noverlap is None:
         noverlap = sf//10
     nfft = int(sf*(1/precision))
     kw = dict(nperseg=nperseg, noverlap=noverlap, nfft=nfft)
-    freq1, freq2, bispec = polycoherence(data, 1000, norm=2,
-                                         **kw, flim1=(2, 20), flim2=(2, 20),
-                                         dim=dim)
+    freq1, freq2, bispec = polycoherence(data, 1000, norm=norm,
+                                         **kw, flim1=flim1, flim2=flim2,
+                                         dim=2)
     indexes = top_n_indexes(bispec, 20)[::-1]
     poly_freqs = []
+    poly_amps = []
     for i in indexes:
         poly_freqs.append([freq1[i[0]], freq2[i[1]]])
+        poly_amps.append([abs(bispec[i[0], i[0]]), abs(bispec[i[0], i[0]])])
     if graph is True:
         plot_polycoherence(freq1, freq2, bispec)
-    return poly_freqs
+    return poly_freqs, poly_amps
 
 
 '''HARMONIC PEAKS SELECTION
@@ -645,6 +655,56 @@ def harmonic_peaks_fit(peaks, amps, min_freq=0.5, max_freq=30,
     harmonics = np.array(harmonics)
     harmonic_peaks = np.array(harmonic_peaks)
     return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
+
+
+def compute_IMs(f1, f2, n):
+    '''
+    InterModulation components: sum or subtraction of any non-zero integer
+    multiple of the input frequencies
+    '''
+    IMs = []
+    orders = []
+    for i in range(-n-1, n+1):
+        for j in range(-n-1, n+1):
+            IMs.append(f1*j+f2*i)
+            orders.append(j+i)
+            IMs.append(np.abs(f1*j-f2*i))
+            orders.append(j+i)
+    IMs = [x for _,x in sorted(zip(orders,IMs))]
+    orders = sorted(orders)
+    return IMs, orders
+
+
+def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2):
+    '''
+    This function computes the intermodulation components (IMCs) for each pairs
+    of peaks and compare the IMCs with peaks values. If a pair of peaks has
+    a number of IMCs equals to or higher than parameter min_IMs, these peaks
+    and the associated IMCs are stored in IMs_all dictionary.
+    '''
+    EIMs = []
+    orders = []
+    IMCs_all = {'IMs': [], 'peaks': [], 'n_IMs': [], 'orders': []}
+    for p, a in zip(peaks, amps):
+        IMs_temp = []
+        orders_temp = []
+        for p2 in peaks:
+            if p2 > p:
+                IMs, orders_ = compute_IMs(p, p2, order)
+                IMs_temp.append(IMs)
+                orders_temp.append(orders_)
+                IMs_all_ = list(set(IMs) & set(peaks))
+                if len(IMs_all_) > min_IMs - 1:
+                    IMCs_all['IMs'].append(IMs_all_)
+                    IMCs_all['peaks'].append([p, p2])
+                    IMCs_all['n_IMs'].append(len(IMs_all_))
+                    IMCs_all['orders'].append(orders)
+        IMs_temp = [item for sublist in IMs_temp for item in sublist]
+        orders_temp = [item for sublist in orders_temp for item in sublist]
+        EIMs_temp = list(set(IMs_temp) & set(peaks))
+        EIMs.append(EIMs_temp)
+        n_IM_peaks = len(IMCs_all['IMs'])
+    return EIMs, IMCs_all, n_IM_peaks
 
 
 def compute_sidebands(carrier, modulator, order=2):

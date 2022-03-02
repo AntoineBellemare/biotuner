@@ -2,11 +2,13 @@ import numpy as np
 from fractions import Fraction
 import pytuning
 from pytuning.utilities import normalize_interval
-from biotuner_utils import reduced_form, lcm, prime_factors, getPairs
+import biotuner.biotuner_utils
 from numpy import log2
 import sympy as sp
-from biotuner_utils import scale2frac
-
+import biotuner.peaks_extension
+import itertools
+import seaborn as sbn
+import matplotlib.pyplot as plt
 
 '''PEAKS METRICS'''
 
@@ -50,7 +52,7 @@ def euler(*numbers):
         Euler Gradus Suavitatis.
 
     """
-    factors = prime_factors(lcm(*reduced_form(*numbers)))
+    factors = biotuner.biotuner_utils.prime_factors(biotuner.biotuner_utils.lcm(*biotuner.biotuner_utils.reduced_form(*numbers)))
     return 1 + sum(p - 1 for p in factors)
 
 
@@ -73,7 +75,7 @@ def tenneyHeight(peaks, avg=True):
     tenney : float
         Tenney Height
     """
-    pairs = getPairs(peaks)
+    pairs = biotuner.biotuner_utils.getPairs(peaks)
     pairs
     tenney = []
     for p in pairs:
@@ -188,7 +190,7 @@ def tuning_cons_matrix(tuning, function, ratio_type='pos_harm'):
     '''
     metric_values = []
     metric_values_per_step = []
-    for index1 in range(len()):
+    for index1 in range(len(tuning)):
         for index2 in range(len(tuning)):
             metric_values_temp = []
             if tuning[index1] != tuning[index2]:  # not include the diagonale
@@ -230,10 +232,83 @@ def tuning_to_metrics(tuning, maxdenom=1000):
         List of values corresponding to all computed metrics
         (in the same order as dictionary)
     '''
-    tuning_frac, num, denom = scale2frac(tuning, maxdenom=maxdenom)
+    tuning_frac, num, denom = biotuner.biotuner_utils.scale2frac(tuning, maxdenom=maxdenom)
     tuning_metrics = pytuning.metrics.all_metrics(tuning_frac)
     tuning_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(tuning)), 2)
-    tuning_metrics['matrix_harm_sim'] = tuning_cons_matrix(tuning, dyad_similarity)
-    tuning_metrics['matrix_cons'] = tuning_cons_matrix(tuning, compute_consonance)
-    tuning_metrics['matrix_denom'] = tuning_cons_matrix(tuning, metric_denom)
+    _, tuning_metrics['matrix_harm_sim'] = tuning_cons_matrix(tuning, dyad_similarity)
+    _, tuning_metrics['matrix_cons'] = tuning_cons_matrix(tuning, compute_consonance)
+    _, tuning_metrics['matrix_denom'] = tuning_cons_matrix(tuning, metric_denom)
     return tuning_metrics
+
+def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
+                         graph=False):
+
+    """
+    Function that keeps moments of consonance
+    from multiple time series of peak frequencies
+
+    Parameters
+    ----------
+    data: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of frequencies
+    method: str
+        Defaults to 'cons'
+        'cons': will compute pairwise consonance between
+               frequency peaks in the form of (a+b)/(a*b)
+        'euler': will compute Euler's gradus suavitatis
+    limit: float
+        limit of consonance under which the set of frequencies are not retained
+        When method = 'cons'
+             --> See consonance_peaks method's doc to refer to
+                 consonance values to common intervals
+        When method = 'euler'
+             --> Major (4:5:6) = 9
+                 Minor (10:12:15) = 9
+                 Major 7th (8:10:12:15) = 10
+                 Minor 7th (10:12:15:18) = 11
+                 Diminish (20:24:29) = 38
+    min_notes: int
+        minimum number of consonant frequencies in the chords.
+        Only relevant when method is set to 'cons'.
+
+    Returns
+    -------
+    chords: List of lists (float)
+        Axis 0 represents moments in time
+        Axis 1 represents the sets of consonant frequencies
+    positions: List (int)
+        positions on Axis 0
+    """
+
+    data = np.moveaxis(data, 0, 1)
+    out = []
+    positions = []
+    for count, peaks in enumerate(data):
+        peaks = [x for x in peaks if x >= 0]
+        if method == 'cons':
+            cons, b, peaks_cons, d = biotuner.peaks_extension.consonance_peaks(peaks, limit)
+            out.append(peaks_cons)
+            if len(list(set(peaks_cons))) >= min_notes:
+                positions.append(count)
+        if method == 'euler':
+            peaks_ = [int(np.round(p, 2)*100) for p in peaks]
+            eul = euler(*peaks_)
+            if eul < limit:
+                out.append(list(peaks))
+                positions.append(count)
+    out = [x for x in out if x != []]
+    out = list(out for out, _ in itertools.groupby(out))
+    chords = [x for x in out if len(x) >= min_notes]
+    chords = [e[::-1] for e in chords]
+    if graph is True:
+        ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
+        #print('2')
+        ax.set(xlabel='Time Windows', ylabel=method)
+        ax.set_yscale('log')
+        plt.legend(scatterpoints=1, frameon=True, labelspacing=1, title='EMDs', loc = 'best',
+        labels = ['EMD1', 'EMD2', 'EMD3', 'EMD4', 'EMD5', 'EMD6'])
+        for xc in positions:
+            plt.axvline(x=xc, c='black', linestyle = 'dotted')
+        plt.show()
+    return chords, positions

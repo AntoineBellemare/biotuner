@@ -1,10 +1,10 @@
 
 import numpy as np
 import itertools
-from biotuner.biotuner_utils import rebound, compute_peak_ratios, compareLists
+import biotuner.biotuner_utils
 from collections import Counter
 from functools import reduce
-from biotuner.metrics import compute_consonance, dyad_similarity
+import biotuner.metrics
 
 '''EXTENDED PEAKS from expansions
    (finding new peaks based on harmonic structure)
@@ -102,7 +102,7 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
     # Rebound the result between 1 and 2
     for i in range(len(div_harmonics_bounded)):
         for j in range(len(div_harmonics_bounded[i])):
-            div_harmonics_bounded[i][j] = rebound(div_harmonics_bounded[i][j])
+            div_harmonics_bounded[i][j] = biotuner.biotuner_utils.rebound(div_harmonics_bounded[i][j])
     return div_harmonics, div_harmonics_bounded
 
 
@@ -164,14 +164,14 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
     matching_positions = []
     harmonics_pos = []
     for i in range(len(list_peaks)):
-        harms, harm_pos, matching_pos, _ = compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
+        harms, harm_pos, matching_pos, _ = biotuner.biotuner_utils.compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
         harm_temp.append(harms)
         harmonics_pos.append(harm_pos)
         if len(matching_pos) > 0:
             for j in matching_pos:
                 matching_positions.append(j)
     matching_positions = [list(i) for i in matching_positions]
-    harm_fit = np.array(harm_temp).squeeze()
+    harm_fit = np.array(harm_temp, dtype=object).squeeze()
     harmonics_pos = reduce(lambda x, y: x+y, harmonics_pos)
     most_common_harmonics = [h for h, h_count in Counter(harmonics_pos).most_common(n_common_harms) if h_count > 1]
     harmonics_pos = list(np.sort(list(set(harmonics_pos))))
@@ -242,10 +242,10 @@ def consonance_peaks(peaks, limit):
                 p1x = 0.06
             if p2x < 0.1:
                 p2x = 0.06  # random  number to avoid division by 0
-            cons_ = compute_consonance(p2x/p1x)
+            cons_ = biotuner.metrics.compute_consonance(p2x/p1x)
             if cons_ < 1:
                 cons_tot.append(cons_)
-            if cons_ > 1 or cons_ < limit:
+            if cons_ < limit or cons_ == 2:
                 cons_ = None
                 cons_ = None
                 p2x = None
@@ -324,14 +324,14 @@ def consonant_ratios(data, limit, sub=False, input_type='peaks',
     consonance_ = []
     ratios2keep = []
     if input_type == 'peaks':
-        ratios = compute_peak_ratios(data, sub=sub)
+        ratios = biotuner.biotuner_utils.compute_peak_ratios(data, sub=sub)
     if input_type == 'ratios':
         ratios = data
     for ratio in ratios:
         if metric == 'cons':
-            cons_ = compute_consonance(ratio)
+            cons_ = biotuner.metrics.compute_consonance(ratio)
         if metric == 'harmsim':
-            cons_ = dyad_similarity(ratio)
+            cons_ = biotuner.metrics.dyad_similarity(ratio)
         if cons_ > limit:
             consonance_.append(cons_)
             ratios2keep.append(ratio)

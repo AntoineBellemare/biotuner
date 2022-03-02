@@ -19,7 +19,9 @@ from scipy.stats import pearsonr
 from fractions import Fraction
 from functools import reduce
 import math
+from collections import Counter
 from scipy.fftpack import rfft, irfft
+import biotuner.metrics
 try:
     from pyunicorn.timeseries.surrogates import *
     from pyunicorn.timeseries import RecurrenceNetwork
@@ -245,7 +247,7 @@ def scale2frac(scale, maxdenom=1000):
 def sort_scale_by_consonance(scale):
     cons_tot = []
     for step in scale:
-        cons = compute_consonance(step)
+        cons = biotuner.metrics.compute_consonance(step)
         cons_tot.append(cons)
     sorted_scale = list(np.flip([x for _, x in sorted(zip(cons_tot, scale))]))
     return sorted_scale
@@ -957,66 +959,3 @@ def calculate_pvalues(df):
         for c in df.columns:
             pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
     return pvalues
-
-
-
-def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3):
-
-    """
-    Function that keeps moments of consonance
-    from multiple time series of peak frequencies
-
-    Parameters
-    ----------
-    data: List of lists (float)
-        Axis 0 represents moments in time
-        Axis 1 represents the sets of frequencies
-    method: str
-        Defaults to 'cons'
-        'cons': will compute pairwise consonance between
-               frequency peaks in the form of (a+b)/(a*b)
-        'euler': will compute Euler's gradus suavitatis
-    limit: float
-        limit of consonance under which the set of frequencies are not retained
-        When method = 'cons'
-             --> See consonance_peaks method's doc to refer to
-                 consonance values to common intervals
-        When method = 'euler'
-             --> Major (4:5:6) = 9
-                 Minor (10:12:15) = 9
-                 Major 7th (8:10:12:15) = 10
-                 Minor 7th (10:12:15:18) = 11
-                 Diminish (20:24:29) = 38
-    min_notes: int
-        minimum number of consonant frequencies in the chords.
-        Only relevant when method is set to 'cons'.
-
-    Returns
-    -------
-    chords: List of lists (float)
-        Axis 0 represents moments in time
-        Axis 1 represents the sets of consonant frequencies
-    positions: List (int)
-        positions on Axis 0
-    """
-
-    data = np.moveaxis(data, 0, 1)
-    out = []
-    positions = []
-    for count, peaks in enumerate(data):
-        peaks = [x for x in peaks if x >= 0]
-        if method == 'cons':
-            cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
-            out.append(peaks_cons)
-            if len(list(set(peaks_cons))) >= min_notes:
-                positions.append(count)
-        if method == 'euler':
-            peaks_ = [int(np.round(p, 2)*100) for p in peaks]
-            eul = euler(*peaks_)
-            if eul < limit:
-                out.append(list(peaks))
-                positions.append(count)
-    out = [x for x in out if x != []]
-    out = list(out for out, _ in itertools.groupby(out))
-    chords = [x for x in out if len(x) >= min_notes]
-    return chords, positions
