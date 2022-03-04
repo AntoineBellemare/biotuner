@@ -14,7 +14,7 @@ pip install biotuner
 
 ```python
 biotuning = biotuner(sf = 1000) #initialize the object
-biotuning.peaks_extraction(data) #extract spectral peaks
+biotuning.peaks_extraction(data, peaks_function='FOOOF') #extract spectral peaks
 biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
 
 ```
