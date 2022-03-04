@@ -23,3 +23,7 @@ biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
 
 If you have a problem with the PyTuning library when it uses Sympy functions, you could replace the file 'constant.py' in 
 'C:\Users\[xxx]\Anaconda3\envs\[xxx]\Lib\site-packages\pytuning' with the one found in the 'examples' folder
+
+## Peaks extraction methods
+
+![biotuner_peaks_extraction](https://user-images.githubusercontent.com/49297774/156813349-ddcd40d0-57c9-41f2-b62a-7cbb4213e515.jpg)
