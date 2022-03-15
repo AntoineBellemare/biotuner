@@ -175,7 +175,7 @@ def multi_oct_subdiv(peaks, max_sub=100, octave_limit=1.01365, octave=2,
 
 def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
     '''
-    Function that computes a tuning based on a list of harmonic positions
+    Generates a tuning based on a list of harmonic positions.
 
     Parameters
     ----------
@@ -184,11 +184,15 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
     octave: int
         value of the period reference
     min_ratio: float
+        Defaults to 1.
+        Value of the unison.
     max_ratio: float
+        Defaults to 2.
+        Value of the octave.
 
     Returns
     -------
-    ratios : List of float
+    ratios : List (float)
         Generated tuning.
     '''
     ratios = []
@@ -199,10 +203,10 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
     return ratios
 
 
-def euler_fokker_scale(intervals, n=1):
+def euler_fokker_scale(intervals, n=1, octave=2):
     '''
     Function that takes as input a series of intervals
-    and derives a Euler Fokker Genera scale
+    and derives a Euler Fokker Genera scale. Usually,
 
     Parameters
     ----------
@@ -216,8 +220,8 @@ def euler_fokker_scale(intervals, n=1):
     ratios : List of float
         Generated tuning.
     '''
-    multiplicities = [n for x in intervals]
-    scale = create_euler_fokker_scale(intervals, multiplicities)
+    multiplicities = [n for x in intervals]  # Each factor is used once.
+    scale = create_euler_fokker_scale(intervals, multiplicities, octave=octave)
     return scale
 
 
@@ -345,8 +349,8 @@ def diss_curve(freqs, amps, denom=1000, max_ratio=2, euler_comp=True,
         When set to True, compute the Euler Gradus Suavitatis
         for the derived scale
     method: str
+        {'min', 'product'}
         Defaults to 'min'
-        Can be set to 'min' or 'product'.
         Refer to dissmeasure function for more information.
     plot: boolean
         Defaults to True

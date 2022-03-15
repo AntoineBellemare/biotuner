@@ -128,7 +128,7 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
         Defaults to 'div'. See EEG_harmonics_div function.
     n_common_harms: int
         minimum number of times the harmonic is found
-        to be sent to most_common_harmonics output
+        to be sent to most_common_harmonics output.
 
     Returns
     -------

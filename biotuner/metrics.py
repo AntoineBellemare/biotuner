@@ -240,6 +240,7 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     _, tuning_metrics['matrix_denom'] = tuning_cons_matrix(tuning, metric_denom)
     return tuning_metrics
 
+
 def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
                          graph=False):
 
@@ -303,12 +304,12 @@ def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
     chords = [e[::-1] for e in chords]
     if graph is True:
         ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
-        #print('2')
         ax.set(xlabel='Time Windows', ylabel=method)
         ax.set_yscale('log')
-        plt.legend(scatterpoints=1, frameon=True, labelspacing=1, title='EMDs', loc = 'best',
-        labels = ['EMD1', 'EMD2', 'EMD3', 'EMD4', 'EMD5', 'EMD6'])
+        plt.legend(scatterpoints=1, frameon=True, labelspacing=1,
+                   title='EMDs', loc='best',
+                   labels=['EMD1', 'EMD2', 'EMD3', 'EMD4', 'EMD5', 'EMD6'])
         for xc in positions:
-            plt.axvline(x=xc, c='black', linestyle = 'dotted')
+            plt.axvline(x=xc, c='black', linestyle='dotted')
         plt.show()
     return chords, positions

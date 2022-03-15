@@ -178,19 +178,20 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         index_max = np.argmax(np.array(psd))
         peaks = freqs[index_max]
         peaks = np.around(peaks, 5)
-        #peaks = [peaks]
         amps = psd[index_max]
     if out_type == 'bands':
         peaks = []
         amps = []
+        idx_max = []
         for minf, maxf in FREQ_BANDS:
             bin_size = (sf/2)/len(freqs)
             min_index = int(minf/bin_size)
             max_index = int(maxf/bin_size)
             index_max = np.argmax(np.array(psd[min_index:max_index]))
-            print('Index_max: all zeros indicate 1/f trend', index_max)
+            idx_max.append(index_max)
             peaks.append(freqs[min_index+index_max])
             amps.append(psd[min_index+index_max])
+        print('Index_max: all zeros indicate 1/f trend', idx_max)
     if out_type != 'single':
         peaks = np.around(np.array(peaks), 5)
         peaks = list(peaks)
@@ -453,11 +454,13 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
     estimator.fit(ts)
     indexes = top_n_indexes(estimator.comod_, n_values)[::-1]
     pac_freqs = []
+    pac_coupling = []
     for i in indexes:
         pac_freqs.append([low_fq_range[i[0]], high_fq_range[i[1]]])
+        pac_coupling.append([estimator.comod_[i[0]], estimator.comod_[i[1]]])
     if plot is True:
-        estimator.plot(titles=[Reference[method]])
-    return pac_freqs
+        estimator.plot()
+    return pac_freqs, pac_coupling
 
 
 def _polycoherence_2d(data, fs, *ofreqs, norm=2, flim1=None, flim2=None,
@@ -564,6 +567,10 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
     freq1, freq2, bispec = polycoherence(data, 1000, norm=norm,
                                          **kw, flim1=flim1, flim2=flim2,
                                          dim=2)
+    for i in range(len(bispec)):
+        for j in range(len(bispec[i])):
+            if str(np.real(bispec[i][j])) == 'inf':
+                bispec[i][j] = 0
     indexes = top_n_indexes(bispec, 20)[::-1]
     poly_freqs = []
     poly_amps = []
