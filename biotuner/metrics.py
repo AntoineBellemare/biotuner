@@ -170,10 +170,7 @@ def tuning_cons_matrix(tuning, function, ratio_type='pos_harm'):
     ----------
     tuning: List (float)
     function: function
-        choice:
-        -dyad_similarity
-        -consonance
-        -metric_denom
+        {'dyad_similarity', 'consonance', 'metric_denom'}
     ratio_type: str
         Default to 'pos_harm'
         choice:

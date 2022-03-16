@@ -288,7 +288,7 @@ def multi_consonance(cons_pairs, n_freqs=5):
     f_count = []
     for f in freqs_nodup:
         f_count.append(freqs_dup.count(f))
-    freqs_related = [x for _,x in sorted(zip(f_count, freqs_nodup))][-(n_freqs):][::-1]
+    freqs_related = [x for _, x in sorted(zip(f_count, freqs_nodup))][-(n_freqs):][::-1]
     return freqs_related
 
 

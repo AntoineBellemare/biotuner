@@ -4,7 +4,7 @@ from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
 from biotuner.peaks_extraction import HilbertHuang1D, harmonic_peaks_fit, cepstrum, cepstral_peaks, EMD_eeg
 import numpy as np
-from biotuner.peaks_extraction import extract_welch_peaks, compute_FOOOF, polyspectrum_frequencies, pac_frequencies
+from biotuner.peaks_extraction import extract_welch_peaks, compute_FOOOF, polyspectrum_frequencies, pac_frequencies, endogenous_intermodulations
 from biotuner.biotuner_utils import flatten, pairs_most_frequent, compute_peak_ratios, alpha2bands, rebound, prime_factor, peaks_to_amps, EMD_to_spectromorph, ratios_harmonics, ratios_increments
 from biotuner.metrics import euler, tenneyHeight, timepoint_consonance,ratios2harmsim
 from biotuner.peaks_extension import consonant_ratios, harmonic_fit, consonance_peaks, multi_consonance
@@ -12,7 +12,8 @@ from biotuner.scale_construction import diss_curve, harmonic_entropy, harmonic_t
 from biotuner.dictionaries import *
 from biotuner.scale_construction import *
 from biotuner.rhythm_construction import *
-from biotuner.vizs import graph_psd_peaks
+from biotuner.vizs import graph_psd_peaks, graphEMD_welch
+from matplotlib.pyplot import figure
 import seaborn as sbn
 
 
@@ -66,7 +67,7 @@ class biotuner(object):
                       'FOOOF' is applied to remove the aperiodic
                       component and find physiologically relevant
                       spectral peaks.
-            ##### EMPIRICAL MODE DECOMPOSITION BASED PEAK EXTRACTION #####
+            ##### SIGNAL DECOMPOSITION BASED PEAK EXTRACTION #####
             'EMD': Intrinsic Mode Functions (IMFs) are derived with
                    Empirical Mode Decomposition (EMD)
                    PSD is computed on each IMF using Welch. Peaks correspond
@@ -85,6 +86,12 @@ class biotuner(object):
             'HH1D_avg' : Weighted average values of the 1D Hilbert-Huang
                          transform on each IMF using EMD.
             'HH1D_FOOOF' :
+            'SSA' : Singular Spectrum Analysis.
+                    The name "singular spectrum analysis" relates to the
+                    spectrum of eigenvalues in a singular value decomposition
+                    of a covariance matrix. PSD is computed on each IMF
+                    using Welch. Peaks correspond to frequency bins with
+                    the highest power.
             ##### SECOND-ORDER STATISTICAL PEAK EXTRACTION #####
             'cepstrum': Peak frequencies of the cepstrum
                         (inverse Fourier transform (IFT) of the logarithm
@@ -178,7 +185,8 @@ class biotuner(object):
                          ratios_extension=False, ratios_n_harms=None,
                          scale_cons_limit=None, octave=2, harm_limit=128,
                          n_peaks=5, nIMFs=5, graph=False, nfft=None,
-                         noverlap=None, nperseg=None):
+                         noverlap=None, nperseg=None, max_harm_freq=None,
+                         EIMC_order=3, min_IMs=2):
         '''
         The peaks_extraction method is central to the use of the Biotuner.
         It uses a time series as input and extract spectral peaks based on
@@ -242,6 +250,14 @@ class biotuner(object):
             Defaults to False
             when set to True, a graph will accompanies the peak extraction
             method (except for 'fixed' and 'adapt').
+        max_harm_freq : int
+            Maximum frequency value of the find peaks function
+            when harmonic_peaks or EIMC peaks extraction method is used.
+        EIMC_order : int
+            Maximum order of the Intermodulation Components.
+        min_IMs : int
+            Minimal number of Intermodulation Components to select the
+            associated pair of peaks.
 
         Attributes
         ----------
@@ -291,7 +307,10 @@ class biotuner(object):
                                             harm_limit=harm_limit,
                                             n_peaks=n_peaks, graph=graph,
                                             nfft=nfft, nperseg=nperseg,
-                                            noverlap=noverlap)
+                                            noverlap=noverlap,
+                                            max_harm_freq=max_harm_freq,
+                                            EIMC_order=EIMC_order,
+                                            min_IMs=min_IMs)
 
         self.peaks = peaks
         self.amps = amps
@@ -950,7 +969,8 @@ class biotuner(object):
                          precision=0.25, sf=None, min_freq=1, max_freq=80,
                          min_harms=2, harm_limit=128, n_peaks=5, nIMFs=None,
                          graph=False, noverlap=None, average='median',
-                         nfft=None, nperseg=None, max_harm_freq=None):
+                         nfft=None, nperseg=None, max_harm_freq=None,
+                         EIMC_order=3, min_IMs=2):
         """
         Extract peak frequencies. This method is called by the
         peaks_extraction method.
@@ -1007,6 +1027,12 @@ class biotuner(object):
         max_harm_freq : int
             Maximum frequency value of the find peaks function
             when harmonic_peaks or EIMC peaks extraction method is used.
+        EIMC_order : int
+            Maximum order of the Intermodulation Components.
+        min_IMs : int
+            Minimal number of Intermodulation Components to select the
+            associated pair of peaks.
+
         Attributes
         ----------
         self.freqs : array
@@ -1020,11 +1046,16 @@ class biotuner(object):
         self.IF : array (nIMFs, numDataPoints)
             instantaneous frequencies for each IMF.
             Only when 'HH1D_max' is used as peaks extraction method.
+        self.all_harmonics : List (int)
+            List of all harmonic positions when
+            harmonic_peaks method is used.
 
         Returns
         -------
-        type
-            Description of returned object.
+        peaks : List (float)
+            List of peaks frequencies.
+        amps : List (float)
+            List of amplitudes associated with peaks frequencies.
         """
         alphaband = [[7, 12]]
         if sf is None:
@@ -1042,15 +1073,19 @@ class biotuner(object):
         if peaks_function == 'adapt':
             p, a = extract_welch_peaks(data, sf=sf, FREQ_BANDS=alphaband,
                                        out_type='bands', precision=precision,
-                                       average=average, extended_returns=False)
+                                       average=average, extended_returns=False,
+                                       nperseg=nperseg, noverlap=noverlap,
+                                       nfft=nfft)
             FREQ_BANDS = alpha2bands(p[0])
             peaks_temp, amps_temp, self.freqs, self.psd = extract_welch_peaks(data, sf=sf, FREQ_BANDS=FREQ_BANDS,
                                                                               out_type='bands', precision=precision,
-                                                                              average=average, extended_returns=True)
+                                                                              average=average, extended_returns=True,
+                                                                              nperseg=nperseg, noverlap=noverlap,
+                                                                              nfft=nfft)
             if graph is True:
                 graph_psd_peaks(self.freqs, self.psd, peaks_temp,
-                                xmin=min_freq, xmax=max_freq)
-
+                                xmin=min_freq, xmax=max_freq,
+                                color='darkblue', method=peaks_function)
         if peaks_function == 'fixed':
             peaks_temp, amps_temp, self.freqs, self.psd = extract_welch_peaks(data, sf=sf, FREQ_BANDS=FREQ_BANDS,
                                                                               out_type='bands', precision=precision,
@@ -1059,7 +1094,8 @@ class biotuner(object):
                                                                               nperseg=nperseg)
             if graph is True:
                 graph_psd_peaks(self.freqs, self.psd, peaks_temp,
-                                xmin=min_freq, xmax=max_freq)
+                                xmin=min_freq, xmax=max_freq,
+                                color='darkred', method=peaks_function)
         if peaks_function == 'FOOOF':
             peaks_temp, amps_temp, self.freqs, self.psd = compute_FOOOF(data, sf, precision=precision,
                                                                         max_freq=max_freq, noverlap=None,
@@ -1074,18 +1110,33 @@ class biotuner(object):
             try:
                 peaks_temp = []
                 amps_temp = []
+                freqs_all = []
+                psd_all = []
                 for imf in range(len(IMFs)):
-                    p, a, self.freqs, self.psd = extract_welch_peaks(IMFs[imf], sf=sf,
-                                                                     precision=precision,
-                                                                     average=average,
-                                                                     extended_returns=True,
-                                                                     out_type='single')
+                    p, a, freqs, psd = extract_welch_peaks(IMFs[imf], sf=sf,
+                                                           precision=precision,
+                                                           average=average,
+                                                           extended_returns=True,
+                                                           out_type='single',
+                                                           nperseg=nperseg,
+                                                           noverlap=noverlap,
+                                                           nfft=nfft)
+
+                    freqs_all.append(freqs)
+                    psd_all.append(psd)
                     peaks_temp.append(p)
                     amps_temp.append(a)
                 peaks_temp = np.flip(peaks_temp)
                 amps_temp = np.flip(amps_temp)
             except:
                 pass
+            if graph is True:
+                graphEMD_welch(freqs_all, psd_all, peaks=peaks_temp,
+                               raw_data=self.data,
+                               FREQ_BANDS=FREQ_BANDS,
+                               sf=sf, nfft=nfft, nperseg=nperseg,
+                               noverlap=noverlap, min_freq=min_freq,
+                               max_freq=max_freq)
 
         if peaks_function == 'EEMD_FOOOF':
             nfft = sf/precision
@@ -1137,28 +1188,67 @@ class biotuner(object):
                                                    flim1=(min_freq, max_freq),
                                                    flim2=(min_freq, max_freq),
                                                    graph=graph)
+            #ax[0].plot(200, 210, 'go', label='marker only')  # use this to plot a single point
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
-            common_amps = flatten(pairs_most_frequent(amps, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
-            amps_temp = list(np.sort(list(set(common_amps)))) #####TO CHANGE
+            peaks_temp = [p for p in peaks_temp if p < max_freq]
+            amp_idx = []
+            for i in peaks_temp:
+                amp_idx.append(flatten(freqs).index(i))
+            amps_temp = np.array(flatten(amps))[amp_idx]
+            amps_temp = list(amps_temp)
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
         if peaks_function == 'harmonic_peaks':
             p, a, self.freqs, self.psd = extract_welch_peaks(data, sf,
                                                              precision=precision,
                                                              max_freq=max_harm_freq,
                                                              extended_returns=True,
-                                                             out_type='all')
-            max_n, peaks_temp, amps_temp, self.harmonics, harm_peaks, harm_peaks_fit = harmonic_peaks_fit(p, a, min_freq,
-                                                                                                          max_freq, min_harms=min_harms,
-                                                                                                          harm_limit=harm_limit)
-            list_harmonics = np.concatenate(self.harmonics)
+                                                             out_type='all',
+                                                             nperseg=nperseg,
+                                                             noverlap=noverlap,
+                                                             nfft=nfft)
+            max_n, peaks_temp, amps_temp, harms, harm_peaks, harm_peaks_fit = harmonic_peaks_fit(p, a, min_freq,
+                                                                                                 max_freq, min_harms=min_harms,
+                                                                                                 harm_limit=harm_limit)
+            list_harmonics = np.concatenate(harms)
             list_harmonics = list(set(abs(np.array(list_harmonics))))
             list_harmonics = [h for h in list_harmonics if h <= harm_limit]
             list_harmonics = np.sort(list_harmonics)
             self.all_harmonics = list_harmonics
             self.harm_peaks_fit = harm_peaks_fit
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
             if graph is True:
                 graph_psd_peaks(self.freqs, self.psd, peaks_temp,
-                                xmin=min_freq, xmax=max_freq)
+                                xmin=min_freq, xmax=max_freq,
+                                color='lightseagreen', method=peaks_function)
+        if peaks_function == 'EIMC':
+            p, a, self.freqs, self.psd = extract_welch_peaks(data, sf,
+                                                             precision=precision,
+                                                             max_freq=max_harm_freq,
+                                                             extended_returns=True,
+                                                             out_type='all',
+                                                             nperseg=nperseg,
+                                                             noverlap=noverlap,
+                                                             nfft=nfft)
+            IMC, self.EIMC_all, n = endogenous_intermodulations(p, a,
+                                                                order=EIMC_order,
+                                                                min_IMs=min_IMs)
+            IMC_freq = pairs_most_frequent(self.EIMC_all['peaks'], n_peaks)
+            common_freqs = flatten(IMC_freq)
+            peaks_temp = list(np.sort(list(set(common_freqs))))
+            peaks_temp = [p for p in peaks_temp if p < max_freq]
+            amp_idx = []
+            for i in peaks_temp:
+                amp_idx.append(flatten(self.EIMC_all['peaks']).index(i))
+            amps_temp = np.array(flatten(self.EIMC_all['amps']))[amp_idx]
+            amps_temp = list(amps_temp)
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+            if graph is True:
+                graph_psd_peaks(self.freqs, self.psd, peaks_temp,
+                                xmin=min_freq, xmax=max_freq,
+                                color='darkgoldenrod', method=peaks_function)
         if peaks_function == 'PAC':
             freqs, amps = self.pac(sf=sf, method='duprelatour',
                                    n_values=n_peaks,
@@ -1171,10 +1261,15 @@ class biotuner(object):
                                    low_fq_width=0.5, high_fq_width=1,
                                    plot=graph)
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
-            #common_amps = flatten(pairs_most_frequent(amps, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
-            #amps_temp = list(np.sort(list(set(common_amps))))  # TO CHANGE
-            amps_temp = peaks_temp
+            peaks_temp = [p for p in peaks_temp if p < max_freq]
+            amp_idx = []
+            for i in peaks_temp:
+                amp_idx.append(flatten(freqs).index(i))
+            amps_temp = np.array(flatten(amps))[amp_idx]
+            amps_temp = list(amps_temp)
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
         if peaks_function == 'cepstrum':
             cepstrum_, quefrency_vector = cepstrum(self.data, self.sf,
                                                    min_freq=min_freq,

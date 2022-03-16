@@ -661,7 +661,19 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4,
     return tuning_consonance, mode_out, mode_consonance
 
 
-def pac_mode(pac_freqs, n, function=dyad_similarity):
+def create_mode(tuning, n_steps, function):
+    sets = list(findsubsets(scale, n_steps))
+    metric_values = []
+    for s in sets:
+        _, met = tuning_cons_matrix(s, function)
+        metric_values.append(met)
+    idx = np.argmax(metric_values)
+    mode = sets[idx]
+    return mode
+
+
+def pac_mode(pac_freqs, n, function=dyad_similarity,
+             method='subset'):
     """Short summary.
 
     Parameters
@@ -672,13 +684,20 @@ def pac_mode(pac_freqs, n, function=dyad_similarity):
         Description of parameter `n`.
     function : type
         Description of parameter `function`.
-
+    method : str
+        {'pairwise', 'subset'}
     Returns
     -------
     type
         Description of returned object.
 
     """
-    _, mode, _ = tuning_reduction(scale_from_pairs(pac_freqs), mode_n_steps=n,
-                                  function=function)
+    if method == 'pairwise':
+        _, mode, _ = tuning_reduction(scale_from_pairs(pac_freqs),
+                                      mode_n_steps=n,
+                                      function=function)
+    if method == 'subset':
+        mode = create_mode(scale_from_pairs(pac_freqs),
+                           mode_n_steps=n,
+                           function=function)
     return sorted(mode)

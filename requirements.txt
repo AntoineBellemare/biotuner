@@ -11,3 +11,4 @@ colorednoise
 fooof
 emd
 emd-signal
+pyts

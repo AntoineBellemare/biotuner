@@ -143,6 +143,8 @@ def scale_from_pairs(pairs):
 def flatten(t):
     return [item for sublist in t for item in sublist]
 
+def findsubsets(S,m):
+    return set(itertools.combinations(S, m))
 
 def pairs_most_frequent(pairs, n):
     drive_freqs = [x[0] for x in pairs]

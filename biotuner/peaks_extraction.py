@@ -7,10 +7,11 @@ from fooof import FOOOF
 import sys
 from biotuner.biotuner_utils import smooth, top_n_indexes, __get_norm
 from biotuner.biotuner_utils import __product_other_freqs, __freq_ind
+from biotuner.vizs import plot_polycoherence
 from pactools import Comodulogram
-from pactools.references import Reference
 from scipy.fftpack import next_fast_len
 from scipy.signal import spectrogram
+from pyts.decomposition import SingularSpectrumAnalysis
 sys.setrecursionlimit(120000)
 
 
@@ -84,6 +85,30 @@ def EMD_eeg(data, method='EMD', graph=False, extrema_detection='simple'):
         plt.show()
     return eIMFs
 
+def SSA_EEG(data, n_components=3, graph=False):
+    ssa = SingularSpectrumAnalysis(window_size=20, groups=None)
+    X = (data, (range(len(data))))
+    X_ssa = ssa.fit_transform(X)
+    if graph is True:
+        plt.figure(figsize=(16, 6))
+        ax1 = plt.subplot(121)
+        ax1.plot(X[0], label='Original', color='darkblue')
+        ax1.legend(loc='best', fontsize=14)
+        plt.xlabel('Samples', size=14)
+        plt.ylabel('Amplitude', size=14)
+        ax2 = plt.subplot(122)
+        color_list = ['darkgoldenrod', 'red', 'darkcyan', 'indigo', 'magenta']
+        for i, c in zip(range(len(X_ssa[0][0:n_components])), color_list):
+            ax2.plot(X_ssa[0, i], '--', label='SSA {0}'.format(i + 1), color=c)
+            plt.xlabel('Samples', size=14)
+            plt.ylabel('Amplitude', size=14)
+            #plt.ylim([-0.0000001, 0.0000001])
+        ax2.legend(loc='best', fontsize=14)
+        plt.suptitle('Singular Spectrum Analysis', fontsize=20)
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.88)
+        plt.show()
+    return X_ssa
 
 '''PEAKS EXTRACTION METHODS
    Take time series as input
@@ -536,21 +561,6 @@ def polycoherence(data, *args, dim=2, **kwargs):
     return f(data, *args, **kwargs)
 
 
-def plot_polycoherence(freq1, freq2, bicoh):
-    """
-    Plot polycoherence (i.e. return values of polycoherence with dim=2)
-    """
-    df1 = freq1[1] - freq1[0]
-    df2 = freq2[1] - freq2[0]
-    freq1 = np.append(freq1, freq1[-1] + df1) - 0.5 * df1
-    freq2 = np.append(freq2, freq2[-1] + df2) - 0.5 * df2
-    plt.figure()
-    plt.pcolormesh(freq2, freq1, np.abs(bicoh))
-    plt.xlabel('freq (Hz)')
-    plt.ylabel('freq (Hz)')
-    plt.colorbar()
-
-
 def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
                              noverlap=None, method='bicoherence',
                              flim1=(2, 50), flim2=(2, 50), graph=False):
@@ -677,12 +687,12 @@ def compute_IMs(f1, f2, n):
             orders.append(j+i)
             IMs.append(np.abs(f1*j-f2*i))
             orders.append(j+i)
-    IMs = [x for _,x in sorted(zip(orders,IMs))]
+    IMs = [x for _, x in sorted(zip(orders, IMs))]
     orders = sorted(orders)
     return IMs, orders
 
 
-def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2):
+def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     '''
     This function computes the intermodulation components (IMCs) for each pairs
     of peaks and compare the IMCs with peaks values. If a pair of peaks has
@@ -690,22 +700,24 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2):
     and the associated IMCs are stored in IMs_all dictionary.
     '''
     EIMs = []
-    orders = []
-    IMCs_all = {'IMs': [], 'peaks': [], 'n_IMs': [], 'orders': []}
+    IMCs_all = {'IMs': [], 'peaks': [], 'n_IMs': [], 'orders': [],
+                'amps': []}
     for p, a in zip(peaks, amps):
         IMs_temp = []
         orders_temp = []
-        for p2 in peaks:
+        for p2, a2 in zip(peaks, amps):
             if p2 > p:
-                IMs, orders_ = compute_IMs(p, p2, order)
-                IMs_temp.append(IMs)
-                orders_temp.append(orders_)
-                IMs_all_ = list(set(IMs) & set(peaks))
-                if len(IMs_all_) > min_IMs - 1:
-                    IMCs_all['IMs'].append(IMs_all_)
-                    IMCs_all['peaks'].append([p, p2])
-                    IMCs_all['n_IMs'].append(len(IMs_all_))
-                    IMCs_all['orders'].append(orders)
+                if p < max_freq and p2 < max_freq:
+                    IMs, orders_ = compute_IMs(p, p2, order)
+                    IMs_temp.append(IMs)
+                    orders_temp.append(orders_)
+                    IMs_all_ = list(set(IMs) & set(peaks))
+                    if len(IMs_all_) > min_IMs - 1:
+                        IMCs_all['IMs'].append(IMs_all_)
+                        IMCs_all['peaks'].append([p, p2])
+                        IMCs_all['amps'].append([a, a2])
+                        IMCs_all['n_IMs'].append(len(IMs_all_))
+                        IMCs_all['orders'].append(orders_temp)
         IMs_temp = [item for sublist in IMs_temp for item in sublist]
         orders_temp = [item for sublist in orders_temp for item in sublist]
         EIMs_temp = list(set(IMs_temp) & set(peaks))
