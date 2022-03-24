@@ -1095,7 +1095,8 @@ class biotuner(object):
             if graph is True:
                 graph_psd_peaks(self.freqs, self.psd, peaks_temp,
                                 xmin=min_freq, xmax=max_freq,
-                                color='darkred', method=peaks_function)
+                                color='darkred', method=peaks_function,
+                                precision=precision)
         if peaks_function == 'FOOOF':
             peaks_temp, amps_temp, self.freqs, self.psd = compute_FOOOF(data, sf, precision=precision,
                                                                         max_freq=max_freq, noverlap=None,

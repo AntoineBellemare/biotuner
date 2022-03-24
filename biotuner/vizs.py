@@ -5,6 +5,7 @@ import matplotlib.colors as mcolors
 from biotuner.biotuner_utils import scale2frac
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.signal
 
 
 def lissajous_curves(tuning):
@@ -63,12 +64,15 @@ def plot_polycoherence(freq1, freq2, bicoh):
 
 def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
                    sf, nfft, nperseg, noverlap, min_freq=1,
-                   max_freq=60):
+                   max_freq=60, precision=0.5):
     plt.rcParams["figure.figsize"] = (13, 8)
     color_line = ['aqua', 'darkturquoise', 'darkcyan', 'darkslategrey', 'black']
     for i in range(len(freqs_all)):
         plt.plot(freqs_all[i], psd_all[i], color=color_line[i])
 
+    mult = 1/precision
+    nperseg = sf*mult
+    nfft = nperseg
     freqs_full, psd_full = scipy.signal.welch(raw_data, sf,
                                               nfft=nfft,
                                               nperseg=nperseg,
@@ -94,11 +98,14 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
                     length=6, width=4)
     plt.tick_params(axis='both', which='minor', labelsize=10,
                     length=6, width=4)
-    #plt.yscale('log')
+    # plt.yscale('log')
     plt.xscale('log')
 
+    psd_full = np.interp(psd_full, (psd_full.min(), psd_full.max()),
+                         (-35, 0))
     plt.plot(freqs_full, psd_full,
-             color='deeppink', linestyle='dashed')
+             color='deeppink', linestyle='dashed',
+             label='raw data')
 
     alpha = [0.6, 0.63, 0.66, 0.69, 0.72]
     shadow = 0.9
