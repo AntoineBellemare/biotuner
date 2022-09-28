@@ -323,7 +323,7 @@ def graph_dist(dist, metric = 'diss', ref = None, dimensions = [0, 1], labs = ['
             plt.show()
 
 
-def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1):
+def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_grid=None):
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
@@ -388,6 +388,10 @@ def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1):
     plt.xticks([n/d for n, d in intervals],
                ['{}/{}'.format(n, d) for n, d in intervals], fontsize = 14)
     plt.yticks(fontsize = 14)
+    if n_tet_grid is not None:
+        n_tet = NTET_ratios(n_tet_grid, max_ratio=max_ratio)
+    for n in n_tet:
+        plt.axvline(n, color='red', linestyle='--')
     plt.tight_layout()
     plt.show()
     return diss_minima_tot

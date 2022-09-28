@@ -121,7 +121,7 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
                         find_peaks_method='maxima', width=2,
                         rel_height=0.7, prominence=1,
                         out_type='all', extended_returns=True,
-                        ):
+                        min_freq=1):
     """
     Extract frequency peaks using Welch's method
     for periodograms computation.
@@ -221,6 +221,7 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         peaks = np.around(np.array(peaks), 5)
         peaks = list(peaks)
         peaks = [p for p in peaks if p <= max_freq]
+        peaks = [p for p in peaks if p >= min_freq]
     if extended_returns is True:
         return peaks, amps, freqs, psd
     return peaks, amps

@@ -9,6 +9,7 @@ import biotuner.peaks_extension
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
+from itertools import combinations
 
 '''PEAKS METRICS'''
 
@@ -310,3 +311,54 @@ def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
             plt.axvline(x=xc, c='black', linestyle='dotted')
         plt.show()
     return chords, positions
+
+def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
+    subharms = []
+    subharms_tot = []
+    delta_t = []
+    common_subs = []
+    for i in chord:
+        s_ = []
+        for j in range(1, n_harmonics+1):
+            s_.append(1000/(i/j))
+        subharms.append(s_)
+    
+    combi = np.array(list(itertools.product(subharms[0],subharms[1],subharms[2], subharms[3], subharms[4])))
+    print(combi.shape)
+    for group in range(len(combi)):
+        triplets = list(combinations(combi[group], 3))
+        for t in triplets:
+            s1 = t[0]
+            s2 = t[1]
+            s3 = t[2]
+            if np.abs(s1-s2) < delta_lim and np.abs(s1-s3) < delta_lim and np.abs(s2-s3) < delta_lim:
+                delta_t_ = np.abs(np.min([s1-s2, s1-s3, s2-s3]))
+                common_subs_ = np.mean([s1, s2, s3])
+                if delta_t_ not in delta_t:
+                    delta_t.append(delta_t_)
+                if common_subs_ not in common_subs:
+                    common_subs.append(common_subs_)
+    delta_temp = []
+    harm_temp = []
+    overall_temp = []
+    subharm_tension = []
+    c=c
+    if len(delta_t) > 0:
+        try:
+            for i in range(len(delta_t)):
+                delta_norm = delta_t[i]/common_subs[i]
+                delta_temp.append(delta_norm)
+                harm_temp.append(1/delta_norm)
+                overall_temp.append((1/common_subs[i])*(delta_t[i]))
+            try:
+                print(overall_temp)
+                #print((1/sum(overall_temp))**(1/c))
+                subharm_tension.append(((sum(overall_temp))/len(delta_t)))
+            except ZeroDivisionError:
+                subharm_tension.append(None)
+        except IndexError:
+            subharm_tension = 'NaN'
+    if len(delta_t) == 0:
+        subharm_tension = 'NaN'
+    subharm_tension
+    return common_subs, delta_t, subharm_tension, harm_temp

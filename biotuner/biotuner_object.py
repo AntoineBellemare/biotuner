@@ -6,7 +6,7 @@ from biotuner.peaks_extraction import HilbertHuang1D, harmonic_peaks_fit, cepstr
 import numpy as np
 from biotuner.peaks_extraction import extract_welch_peaks, compute_FOOOF, polyspectrum_frequencies, pac_frequencies, endogenous_intermodulations
 from biotuner.biotuner_utils import flatten, pairs_most_frequent, compute_peak_ratios, alpha2bands, rebound, prime_factor, peaks_to_amps, EMD_to_spectromorph, ratios_harmonics, ratios_increments
-from biotuner.metrics import euler, tenneyHeight, timepoint_consonance,ratios2harmsim
+from biotuner.metrics import euler, tenneyHeight, timepoint_consonance,ratios2harmsim, compute_subharmonics_5notes
 from biotuner.peaks_extension import consonant_ratios, harmonic_fit, consonance_peaks, multi_consonance
 from biotuner.scale_construction import diss_curve, harmonic_entropy, harmonic_tuning
 from biotuner.dictionaries import *
@@ -17,7 +17,7 @@ from matplotlib.pyplot import figure
 import seaborn as sbn
 
 
-class biotuner(object):
+class compute_biotuner(object):
     '''
     Class used to derive peaks information, musical tunings, rhythms
     and related metrics from time series
@@ -593,7 +593,7 @@ class biotuner(object):
                            labels=['EMD1', 'EMD2', 'EMD3', 'EMD4', 'EMD5'])
                 plt.show()
 
-    def compute_peaks_metrics(self, n_harm=None, harm_bounds=0.5):
+    def compute_peaks_metrics(self, n_harm=None, harm_bounds=0.5, delta_lim=20):
         """
         This function computes consonance metrics on peaks attribute.
 
@@ -642,6 +642,8 @@ class biotuner(object):
                 pass
         metrics['tenney'] = tenneyHeight(peaks)
         metrics['harmsim'] = np.average(ratios2harmsim(peaks_ratios))
+        _, _, subharm, _ = compute_subharmonics_5notes(peaks, n_harm, delta_lim, c=2.1)
+        metrics['subharm_tension'] = subharm
         if spf == 'harmonic_peaks':
             metrics['n_harmonic_peaks'] = self.n_harmonic_peaks
         self.peaks_metrics = metrics
@@ -1208,7 +1210,7 @@ class biotuner(object):
                                                              out_type='all',
                                                              nperseg=nperseg,
                                                              noverlap=noverlap,
-                                                             nfft=nfft)
+                                                             nfft=nfft, min_freq=min_freq)
             max_n, peaks_temp, amps_temp, harms, harm_peaks, harm_peaks_fit = harmonic_peaks_fit(p, a, min_freq,
                                                                                                  max_freq, min_harms=min_harms,
                                                                                                  harm_limit=harm_limit)
@@ -1231,7 +1233,7 @@ class biotuner(object):
                                                              out_type='all',
                                                              nperseg=nperseg,
                                                              noverlap=noverlap,
-                                                             nfft=nfft)
+                                                             nfft=nfft, min_freq=min_freq)
             IMC, self.EIMC_all, n = endogenous_intermodulations(p, a,
                                                                 order=EIMC_order,
                                                                 min_IMs=min_IMs)

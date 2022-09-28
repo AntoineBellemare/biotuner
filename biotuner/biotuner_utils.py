@@ -491,7 +491,7 @@ def AAFT_surrogates(original_data):
 
 
 def correlated_noise_surrogates(original_data):
-    """
+    '''
     Return Fourier surrogates.
 
     Generate surrogates by Fourier transforming the :attr:`original_data`
@@ -529,7 +529,7 @@ def correlated_noise_surrogates(original_data):
     :arg original_data: The original time series.
     :rtype: 2D array [index, time]
     :return: The surrogate time series.
-    """
+    '''
     #if self.silence_level <= 1:
     #    print("Generating correlated noise surrogates...")
 

@@ -2,7 +2,7 @@ from numpy import sin, pi, linspace
 from pylab import plot, subplot
 from matplotlib.pyplot import figure
 import matplotlib.colors as mcolors
-from biotuner.biotuner_utils import scale2frac
+from biotuner.biotuner_utils import scale2frac, NTET_ratios
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
@@ -34,7 +34,9 @@ def graph_psd_peaks(freqs, psd, peaks, xmin, xmax, color='deeppink',
     ax.plot(freqs, psd, color=color)
     plt.xlim([xmin, xmax])
     # plt.xscale('log')
-    plt.ylim([-150, -100])
+    ymin = int(np.min(psd))
+    ymax = int(np.max(psd))
+    plt.ylim([ymin, ymax])
     plt.xlabel('Frequency (Hertz)', size=14)
     plt.ylabel('PSD [V**2/Hz]', size=14)
     if method is not None:
