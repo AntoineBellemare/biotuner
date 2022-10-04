@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+harm_tuning1.scl
+  7
+!
+203.91000
+297.51302
+386.31371
+701.95500
+968.82591
+1088.26871
+1200.00000

@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+tuning_diss_curve_1.scl
+  7
+!
+434.12203
+636.08489
+701.95500
+764.29750
+962.88005
+1136.52606
+1200.00000
