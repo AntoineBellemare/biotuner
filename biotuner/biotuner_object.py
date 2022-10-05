@@ -2,7 +2,7 @@ from fooof import FOOOF
 import scipy.signal
 from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
-from biotuner.peaks_extraction import HilbertHuang1D, harmonic_peaks_fit, cepstrum, cepstral_peaks, EMD_eeg
+from biotuner.peaks_extraction import HilbertHuang1D, harmonic_recurrence, cepstrum, cepstral_peaks, EMD_eeg
 import numpy as np
 from biotuner.peaks_extraction import extract_welch_peaks, compute_FOOOF, polyspectrum_frequencies, pac_frequencies, endogenous_intermodulations
 from biotuner.biotuner_utils import flatten, pairs_most_frequent, compute_peak_ratios, alpha2bands, rebound, prime_factor, peaks_to_amps, EMD_to_spectromorph, ratios_harmonics, ratios_increments
@@ -15,12 +15,13 @@ from biotuner.rhythm_construction import *
 from biotuner.vizs import graph_psd_peaks, graphEMD_welch
 from matplotlib.pyplot import figure
 import seaborn as sbn
+import pygame
 
 
 class compute_biotuner(object):
     '''
     Class used to derive peaks information, musical tunings, rhythms
-    and related metrics from time series
+    and related harmonicity metrics from time series
     (EEG, ECG, EMG, gravitational waves, noise)
 
     Example of use:
@@ -89,9 +90,7 @@ class compute_biotuner(object):
             'SSA' : Singular Spectrum Analysis.
                     The name "singular spectrum analysis" relates to the
                     spectrum of eigenvalues in a singular value decomposition
-                    of a covariance matrix. PSD is computed on each IMF
-                    using Welch. Peaks correspond to frequency bins with
-                    the highest power.
+                    of a covariance matrix.
             ##### SECOND-ORDER STATISTICAL PEAK EXTRACTION #####
             'cepstrum': Peak frequencies of the cepstrum
                         (inverse Fourier transform (IFT) of the logarithm
@@ -642,7 +641,8 @@ class compute_biotuner(object):
                 pass
         metrics['tenney'] = tenneyHeight(peaks)
         metrics['harmsim'] = np.average(ratios2harmsim(peaks_ratios))
-        _, _, subharm, _ = compute_subharmonics_5notes(peaks, n_harm, delta_lim, c=2.1)
+        _, _, subharm, _ = compute_subharmonics_5notes(peaks, n_harm,
+                                                       delta_lim, c=2.1)
         metrics['subharm_tension'] = subharm
         if spf == 'harmonic_peaks':
             metrics['n_harmonic_peaks'] = self.n_harmonic_peaks
@@ -1211,7 +1211,7 @@ class compute_biotuner(object):
                                                              nperseg=nperseg,
                                                              noverlap=noverlap,
                                                              nfft=nfft, min_freq=min_freq)
-            max_n, peaks_temp, amps_temp, harms, harm_peaks, harm_peaks_fit = harmonic_peaks_fit(p, a, min_freq,
+            max_n, peaks_temp, amps_temp, harms, harm_peaks, harm_peaks_fit = harmonic_recurrence(p, a, min_freq,
                                                                                                  max_freq, min_harms=min_harms,
                                                                                                  harm_limit=harm_limit)
             list_harmonics = np.concatenate(harms)
@@ -1296,18 +1296,20 @@ class compute_biotuner(object):
 
     '''Listening methods'''
 
-    def listen_scale (self, scale, fund = 250, length = 500):
+    def listen_scale(self, scale, fund=250, length=500):
         if scale == 'peaks':
             scale = self.peaks_ratios
         if scale == 'diss':
             try:
                 scale = self.diss_scale
             except:
+                print('No Dissonance Curve scale available')
                 pass
         if scale == 'HE':
             try:
                 scale = list(self.HE_scale)
             except:
+                print('No Harmonic Entropy scale available')
                 pass
         scale = np.around(scale, 3)
         print('Scale:', scale)
@@ -1316,27 +1318,33 @@ class compute_biotuner(object):
         for s in scale:
             freq = fund*s
             note = make_chord(freq, [1])
-            note = np.ascontiguousarray(np.vstack([note,note]).T)
+            note = np.ascontiguousarray(np.vstack([note, note]).T)
             sound = pygame.sndarray.make_sound(note)
             sound.play(loops=0, maxtime=0, fade_ms=0)
             pygame.time.wait(int(sound.get_length() * length))
 
     '''Generic method to fit all Biotuner methods'''
 
-    def fit_all(self, data, compute_diss = True, compute_HE = True, compute_peaks_extension = True):
-        biotuning = biotuner(self.sf, peaks_function = self.peaks_function, precision = self.precision, n_harm = self.n_harm)
+    def fit_all(self, data, compute_diss=True, compute_HE=True,
+                compute_peaks_extension=True):
+        biotuning = compute_biotuner(self.sf,
+                                     peaks_function=self.peaks_function,
+                                     precision=self.precision,
+                                     n_harm=self.n_harm)
         biotuning.peaks_extraction(data)
         biotuning.compute_peaks_metrics()
-        if compute_diss == True:
-            biotuning.compute_diss_curve(input_type = 'peaks', plot = False)
-        if compute_peaks_extension == True:
-            biotuning.peaks_extension(method = 'multi_consonant_harmonic_fit', harm_function = 'mult', cons_limit = 0.01)
-        if compute_HE == True:
-            biotuning.compute_harmonic_entropy(input_type = 'extended_peaks', plot_entropy = False)
+        if compute_diss is True:
+            biotuning.compute_diss_curve(input_type='peaks', plot=False)
+        if compute_peaks_extension is True:
+            biotuning.peaks_extension(method='multi_consonant_harmonic_fit',
+                                      harm_function='mult', cons_limit=0.01)
+        if compute_HE is True:
+            biotuning.compute_harmonic_entropy(input_type='extended_peaks',
+                                               plot_entropy=False)
         return biotuning
 
     def info(self, metrics=False, scales=False, whatever=False):
-        if metrics == True:
+        if metrics is True:
             print('METRICS')
             print(vars(self))
 

@@ -230,12 +230,16 @@ def tuning_to_metrics(tuning, maxdenom=1000):
         List of values corresponding to all computed metrics
         (in the same order as dictionary)
     '''
-    tuning_frac, num, denom = biotuner.biotuner_utils.scale2frac(tuning, maxdenom=maxdenom)
+    tuning_frac, num, denom = biotuner.biotuner_utils.scale2frac(tuning,
+                                                                 maxdenom=maxdenom)
     tuning_metrics = pytuning.metrics.all_metrics(tuning_frac)
     tuning_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(tuning)), 2)
-    _, tuning_metrics['matrix_harm_sim'] = tuning_cons_matrix(tuning, dyad_similarity)
-    _, tuning_metrics['matrix_cons'] = tuning_cons_matrix(tuning, compute_consonance)
-    _, tuning_metrics['matrix_denom'] = tuning_cons_matrix(tuning, metric_denom)
+    _, tuning_metrics['matrix_harm_sim'] = tuning_cons_matrix(tuning,
+                                                              dyad_similarity)
+    _, tuning_metrics['matrix_cons'] = tuning_cons_matrix(tuning,
+                                                          compute_consonance)
+    _, tuning_metrics['matrix_denom'] = tuning_cons_matrix(tuning,
+                                                           metric_denom)
     return tuning_metrics
 
 
@@ -312,9 +316,29 @@ def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
         plt.show()
     return chords, positions
 
+
 def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
+    """This function computes the subharmonic tension (Chan et al., 2019)
+       for a set of 5 frequencies, based on the common subharmonics of a
+       minimum of 3 frequencies.
+
+    Parameters
+    ----------
+    chord : List (float)
+        Values of the set of frequencies to compute subharmonic tension on`.
+    n_harmonics : int
+        Number of subharmonics to compute for each frequency.
+    delta_lim : float
+        Maximal distance between subharmonics of different Frequencies
+        to consider them as common subharmonics.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     subharms = []
-    subharms_tot = []
     delta_t = []
     common_subs = []
     for i in chord:
@@ -322,9 +346,8 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
         for j in range(1, n_harmonics+1):
             s_.append(1000/(i/j))
         subharms.append(s_)
-    
+
     combi = np.array(list(itertools.product(subharms[0],subharms[1],subharms[2], subharms[3], subharms[4])))
-    print(combi.shape)
     for group in range(len(combi)):
         triplets = list(combinations(combi[group], 3))
         for t in triplets:
@@ -342,7 +365,6 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
     harm_temp = []
     overall_temp = []
     subharm_tension = []
-    c=c
     if len(delta_t) > 0:
         try:
             for i in range(len(delta_t)):
@@ -351,11 +373,9 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
                 harm_temp.append(1/delta_norm)
                 overall_temp.append((1/common_subs[i])*(delta_t[i]))
             try:
-                print(overall_temp)
-                #print((1/sum(overall_temp))**(1/c))
                 subharm_tension.append(((sum(overall_temp))/len(delta_t)))
             except ZeroDivisionError:
-                subharm_tension.append(None)
+                subharm_tension.append('NaN')
         except IndexError:
             subharm_tension = 'NaN'
     if len(delta_t) == 0:

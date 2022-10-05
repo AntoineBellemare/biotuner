@@ -85,6 +85,7 @@ def EMD_eeg(data, method='EMD', graph=False, extrema_detection='simple'):
         plt.show()
     return eIMFs
 
+
 def SSA_EEG(data, n_components=3, graph=False):
     ssa = SingularSpectrumAnalysis(window_size=20, groups=None)
     X = (data, (range(len(data))))
@@ -102,13 +103,13 @@ def SSA_EEG(data, n_components=3, graph=False):
             ax2.plot(X_ssa[0, i], '--', label='SSA {0}'.format(i + 1), color=c)
             plt.xlabel('Samples', size=14)
             plt.ylabel('Amplitude', size=14)
-            #plt.ylim([-0.0000001, 0.0000001])
         ax2.legend(loc='best', fontsize=14)
         plt.suptitle('Singular Spectrum Analysis', fontsize=20)
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
         plt.show()
     return X_ssa
+
 
 '''PEAKS EXTRACTION METHODS
    Take time series as input
@@ -135,6 +136,8 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
     precision : float
         Size of a frequency bin in Hertz.
         Defaults to 0.5Hz
+    min_freq : float
+        Minimum frequency to consider when out_type='all'.
     max_freq : float
         Maximum frequency to consider when out_type='all'.
     FREQ_BANDS : List of lists
@@ -154,23 +157,33 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         If None, noverlap = nperseg // 2. Defaults to None.
     find_peaks_method : str
         {'maxima', 'wavelet'}
-    width : type
-        Description of parameter `width`.
-    rel_height : type
-        Description of parameter `rel_height`.
+    width : int
+        Required width of peaks in samples.
+    rel_height : float
+        Chooses the relative height at which the peak width is measured as a
+        percentage of its prominence. 1.0 calculates the width of the peak at
+        its lowest contour line while 0.5 evaluates at half the
+        prominence height.
     prominence : type
-        Description of parameter `prominence`.
-    out_type : type
-        Description of parameter `out_type`.
-    extended_returns : type
-        Description of parameter `extended_returns`.
+        Required prominence of peaks.
+    out_type : str
+        {'single', 'bands', 'all'}
+        Defines how many peaks are outputed.
+    extended_returns : Boolean
+        Defaults to True.
+        Defines if psd and frequency bins values are outputed along
+        the peaks and amplitudes.
 
     Returns
     -------
-    peak : float
+    peak : List(float)
         Frequency value.
-    amp : float
+    amp : List(float)
         Amplitude value.
+    freqs: Array
+        Frequency bins
+    psd: Array
+        Power spectrum density of each frequency bin
 
     """
 
@@ -230,20 +243,69 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
 def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
                   nperseg=None, nfft=None,
                   n_peaks=5, extended_returns=False, graph=False):
+    """FOOOF conceives of a model of the power spectrum as a combination of
+       two distinct functional processes:
+       - An aperiodic component, reflecting 1/f like characteristics
+       - A variable number of periodic components (putative oscillations),
+         as peaks rising above the aperiodic component.
+
+    Parameters
+    ----------
+    data : array (numDataPoints,)
+        Single time series.
+    sf : int
+        Sampling frequency.
+    precision : float
+        Size of a frequency bin in Hertz.
+        Defaults to 0.5Hz
+    max_freq : float
+        Maximum frequency to consider as a peak.
+    noverlap : int
+        Number of points to overlap between segments.
+        If None, noverlap = nperseg // 2. Defaults to None.
+    nperseg : int
+        Length of each segment.
+    nfft : int
+        Length of the FFT used, if a zero padded FFT is desired.
+        If None, the FFT length is nperseg.
+        Defaults to None.
+    n_peaks : int
+        Maximum number of peaks. If FOOOF finds higher number of peaks,
+        the peaks with highest amplitude will be retained.
+    extended_returns : Boolean
+        Defaults to False.
+        Defines if psd and frequency bins values are outputed along
+        the peaks and amplitudes.
+    graph : Boolean
+        Defaults to False.
+        Defines if a graph is generated.
+
+    Returns
+    -------
+    peaks : List(float)
+        Frequency values.
+    amps : List(float)
+        Amplitude values.
+    freqs: Array
+        Frequency bins
+    psd: Array
+        Power spectrum density of each frequency bin
+
+    """
 
     if nperseg is None:
         mult = 1/precision
         nfft = sf*mult
         nperseg = nfft
         noverlap = nperseg//10
-    freqs1, psd = scipy.signal.welch(data, sf, nfft=nfft,
-                                     nperseg=nperseg, noverlap=noverlap)
+    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft,
+                                    nperseg=nperseg, noverlap=noverlap)
     fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=50,
                min_peak_height=0.2)
     freq_range = [(sf/len(data))*2, max_freq]
-    fm.fit(freqs1, psd, freq_range)
+    fm.fit(freqs, psd, freq_range)
     if graph is True:
-        fm.report(freqs1, psd, freq_range)
+        fm.report(freqs, psd, freq_range)
     peaks_temp = []
     amps_temp = []
     for p in range(len(fm.peak_params_)):
@@ -254,11 +316,11 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
             print('no peaks were found')
             pass
     peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
-    amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
-    peaks_temp = [np.round(p, 2) for p in peaks_temp]
+    amps = sorted(amps_temp)[::-1][0:n_peaks]
+    peaks = [np.round(p, 2) for p in peaks_temp]
     if extended_returns is True:
-        return peaks_temp, amps_temp, freqs1, psd
-    return peaks_temp, amps_temp
+        return peaks, amps, freqs, psd
+    return peaks, amps
 
 
 '''HARMONIC-PEAKS EXTRACTION METHODS
@@ -268,29 +330,43 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
 
 def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
                    precision=0.1, bin_spread='log'):
-    """Short summary.
+    """The Hilbert-Huang transform provides a description of how the energy
+       or power within a signal is distributed across frequency.
+       The distributions are based on the instantaneous frequency and
+       amplitude of a signal.
 
     Parameters
     ----------
-    data : type
-        Description of parameter `data`.
-    sf : type
-        Description of parameter `sf`.
-    graph : type
-        Description of parameter `graph`.
-    nIMFs : type
-        Description of parameter `nIMFs`.
-    min_freq : type
-        Description of parameter `min_freq`.
-    max_freq : type
-        Description of parameter `max_freq`.
-    precision : type
-        Description of parameter `precision`.
+    data : array (numDataPoints,)
+        Single time series.
+    sf : int
+        Sampling frequency.
+    graph : Boolean
+        Defaults to False.
+        Defines if a graph is generated.
+    nIMFs : int
+        Number of intrinsic mode functions (IMFs) to keep when
+        Empirical Mode Decomposition (EMD) is computed.
+    min_freq : float
+        Minimum frequency to consider.
+    max_freq : float
+        Maximum frequency to consider.
+    precision : float
+        Value in Hertz corresponding to the minimal step between two
+        frequency bins.
 
     Returns
     -------
-    type
-        Description of returned object.
+    IF: array (numDataPoints,nIMFs)
+        instantaneous frequencies associated with each IMF.
+    peaks : List(float)
+        Frequency values.
+    amps : List(float)
+        Amplitude values.
+    spec: array (nIMFs, nbins)
+        Power associated with all bins for each IMF
+    bins: array (nIMFs, nbins)
+        Frequency bins for each IMF
 
     """
     IMFs = EMD_eeg(data, method='EMD')
@@ -320,8 +396,8 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         amps_temp.append(spec[e][max_power])
     peaks_temp = np.flip(peaks_temp)
     amps_temp = np.flip(amps_temp)
-    peaks_temp = [np.round(p, 2) for p in peaks_temp]
-    amps_temp = [np.round(a, 2) for a in amps_temp]
+    peaks = [np.round(p, 2) for p in peaks_temp]
+    amps = [np.round(a, 2) for a in amps_temp]
     bins_ = []
     for i in range(len(spec)):
         bins_.append(bins)
@@ -335,34 +411,40 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         plt.title('IA-weighted\nHilbert-Huang Transform')
         plt.legend(['IMF-1', 'IMF-2', 'IMF-3', 'IMF-4',
                    'IMF-5', 'IMF-6', 'IMF-7'])
-    return IF, peaks_temp, amps_temp, spec, bins_
+    return IF, peaks, amps, np.array(spec), np.array(bins_)
 
 
-def cepstrum(signal, sample_freq, plot_cepstrum=False,
+def cepstrum(signal, sf, plot_cepstrum=False,
              min_freq=1.5, max_freq=80):
-    """Short summary.
+    """The cepstrum is the result of computing the
+       inverse Fourier transform (IFT) of the logarithm of
+       the estimated signal spectrum. The method is a tool for
+       investigating periodic structures in frequency spectra.
 
     Parameters
     ----------
-    signal : type
-        Description of parameter `signal`.
-    sample_freq : type
-        Description of parameter `sample_freq`.
-    plot_cepstrum : type
-        Description of parameter `plot_cepstrum`.
-    min_freq : type
-        Description of parameter `min_freq`.
-    max_freq : type
-        Description of parameter `max_freq`.
+    signal : array (numDataPoints,)
+        Single time series.
+    sf : int
+        Sampling frequency.
+    plot_cepstrum : Boolean
+        Defaults to False.
+        Determines wether a plot is generated.
+    min_freq : float
+        Minimum frequency to consider.
+    max_freq : float
+        Maximum frequency to consider.
 
     Returns
     -------
-    type
-        Description of returned object.
+    cepstrum: array (nbins,)
+        Power of the cepstrum for each quefrency.
+    quefrency_vector: array(nbins,)
+        Values of each quefrency bins.
 
     """
     windowed_signal = signal
-    dt = 1/sample_freq
+    dt = 1/sf
     freq_vector = np.fft.rfftfreq(len(windowed_signal), d=dt)
     X = np.fft.rfft(windowed_signal)
     log_X = np.log(np.abs(X))
@@ -389,23 +471,25 @@ def cepstrum(signal, sample_freq, plot_cepstrum=False,
 
 
 def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
-    """Short summary.
+    """This function extract cepstral peaks based on the cepstrum function.
 
     Parameters
     ----------
-    cepstrum : type
-        Description of parameter `cepstrum`.
-    quefrency_vector : type
-        Description of parameter `quefrency_vector`.
-    max_time : type
-        Description of parameter `max_time`.
-    min_time : type
-        Description of parameter `min_time`.
+    cepstrum : array
+        Values of cepstrum power across all quefrency bins.
+    quefrency_vector : array
+        Values of all the quefrency bins.
+    max_time : float
+        Maximum value of the quefrency to keep in ms.
+    min_time : float
+        Minimum value of the quefrency to keep in ms.
 
     Returns
     -------
-    type
-        Description of returned object.
+    peaks : List(float)
+        Quefrency values.
+    amps : List(float)
+        Amplitude values.
 
     """
 
@@ -429,41 +513,47 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
                     drive_precision=0.05, max_drive_freq=6, min_drive_freq=3,
                     sig_precision=1, max_sig_freq=50, min_sig_freq=8,
                     low_fq_width=0.5, high_fq_width=1, plot=False):
-    """Short summary.
+    """A function to compute the comodulogram for phase-amplitude coupling.
 
     Parameters
     ----------
-    ts : type
-        Description of parameter `ts`.
-    sf : type
-        Description of parameter `sf`.
-    method : type
-        Description of parameter `method`.
-    n_values : type
-        Description of parameter `n_values`.
-    drive_precision : type
-        Description of parameter `drive_precision`.
-    max_drive_freq : type
-        Description of parameter `max_drive_freq`.
-    min_drive_freq : type
-        Description of parameter `min_drive_freq`.
-    sig_precision : type
-        Description of parameter `sig_precision`.
-    max_sig_freq : type
-        Description of parameter `max_sig_freq`.
-    min_sig_freq : type
-        Description of parameter `min_sig_freq`.
-    low_fq_width : type
-        Description of parameter `low_fq_width`.
-    high_fq_width : type
-        Description of parameter `high_fq_width`.
-    plot : type
-        Description of parameter `plot`.
+    ts : array (numDataPoints,)
+        Single time series.
+    sf : int
+        Sampling frequency.
+    method : str
+        {'ozkurt', 'canolty', 'tort', 'penny', 'vanwijk', 'duprelatour',
+         'colgin','sigl', 'bispectrum'}
+    n_values : int
+        Number of pairs of drive and modulated frequencies to keep.
+    drive_precision : float
+        Value (hertz) of one frequency bin of the phase signal.
+    max_drive_freq : float
+        Minimum value (hertz) of the phase signal.
+    min_drive_freq : float
+        Maximum value (hertz) of the phase signal.
+    sig_precision : float
+        Value (hertz) of one frequency bin of the amplitude signal.
+    max_sig_freq : float
+        Maximum value (hertz) of the amplitude signal.
+    min_sig_freq : float
+        Minimum value (hertz) of the amplitude signal.
+    low_fq_width : float
+        Bandwidth of the band-pass filter (phase signal).
+    high_fq_width : float
+        Bandwidth of the band-pass filter (amplitude signal).
+    plot : Boolean
+        Defaults to False.
+        Determines if a plot of the comodulogram is created.
 
     Returns
     -------
-    type
-        Description of returned object.
+    pac_freqs: List of lists
+        Each sublist correspond to pairs of frequencies for the
+        phase and amplitude signals with maximal coupling value.
+    pac_coupling: List
+        Coupling values associated with each pairs of phase and amplitude
+        frequencies.
 
     """
 
@@ -483,7 +573,7 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
     pac_coupling = []
     for i in indexes:
         pac_freqs.append([low_fq_range[i[0]], high_fq_range[i[1]]])
-        pac_coupling.append([estimator.comod_[i[0]], estimator.comod_[i[1]]])
+        pac_coupling.append(estimator.comod_[i[0]][i[1]])
     if plot is True:
         estimator.plot()
     return pac_freqs, pac_coupling
@@ -565,6 +655,37 @@ def polycoherence(data, *args, dim=2, **kwargs):
 def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
                              noverlap=None, method='bicoherence',
                              flim1=(2, 50), flim2=(2, 50), graph=False):
+    """Short summary.
+
+    Parameters
+    ----------
+    data : type
+        Description of parameter `data`.
+    sf : type
+        Description of parameter `sf`.
+    precision : type
+        Description of parameter `precision`.
+    n_values : type
+        Description of parameter `n_values`.
+    nperseg : type
+        Description of parameter `nperseg`.
+    noverlap : type
+        Description of parameter `noverlap`.
+    method : type
+        Description of parameter `method`.
+    flim1 : type
+        Description of parameter `flim1`.
+    flim2 : type
+        Description of parameter `flim2`.
+    graph : type
+        Description of parameter `graph`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     if method == 'bispectrum':
         norm = 0
     if method == 'bicoherence':
@@ -582,12 +703,12 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
         for j in range(len(bispec[i])):
             if str(np.real(bispec[i][j])) == 'inf':
                 bispec[i][j] = 0
-    indexes = top_n_indexes(bispec, 20)[::-1]
+    indexes = top_n_indexes(np.real(bispec), n_values)[::-1]
     poly_freqs = []
     poly_amps = []
     for i in indexes:
         poly_freqs.append([freq1[i[0]], freq2[i[1]]])
-        poly_amps.append([abs(bispec[i[0], i[0]]), abs(bispec[i[0], i[0]])])
+        poly_amps.append([abs(bispec[i[0], i[1]])])
     if graph is True:
         plot_polycoherence(freq1, freq2, bispec)
     return poly_freqs, poly_amps
@@ -598,7 +719,7 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
    and output selected harmonic peaks'''
 
 
-def harmonic_peaks_fit(peaks, amps, min_freq=0.5, max_freq=30,
+def harmonic_recurrence(peaks, amps, min_freq=0.5, max_freq=30,
                        min_harms=2, harm_limit=128):
     """This algorithm.
 

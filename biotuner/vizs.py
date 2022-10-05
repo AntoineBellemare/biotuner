@@ -46,7 +46,7 @@ def graph_psd_peaks(freqs, psd, peaks, xmin, xmax, color='deeppink',
         plt.title('Power Spectrum Density and peaks positions', size=18)
     for xc in peaks:
         plt.axvline(x=xc, c='black', linestyle='dotted')
-        
+
 
 
 

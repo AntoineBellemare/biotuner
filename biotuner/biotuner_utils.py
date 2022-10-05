@@ -113,7 +113,8 @@ def nth_root(num, root):
 
 def NTET_steps(octave, step, NTET):
     '''
-    This function computes the ratio associated with a specific step of a N-TET scale
+    This function computes the ratio associated with a specific step
+    of a N-TET scale
 
     octave: int
         value of the octave
@@ -140,11 +141,14 @@ def NTET_ratios(n_steps, max_ratio):
 def scale_from_pairs(pairs):
     return[rebound((x[1]/x[0])) for x in pairs]
 
+
 def flatten(t):
     return [item for sublist in t for item in sublist]
 
-def findsubsets(S,m):
+
+def findsubsets(S, m):
     return set(itertools.combinations(S, m))
+
 
 def pairs_most_frequent(pairs, n):
     drive_freqs = [x[0] for x in pairs]
