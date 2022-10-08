@@ -77,8 +77,10 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
     -------
     div_harmonics: array
         (n_peaks, n_harmonics + 1)
+        Harmonic values in hertz.
     div_harmonics_bounded: array
         (n_peaks, n_harmonics + 1)
+        Harmonic values bounded between unison (1) and octave (2).
     """
     n_harmonics = n_harmonics + 2
     div_harmonics = []
@@ -98,12 +100,12 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
             i += 1
         div_harmonics.append(harmonics)
     div_harmonics = np.array(div_harmonics)
-    div_harmonics_bounded = div_harmonics.copy()
+    div_harm_bound = div_harmonics.copy()
     # Rebound the result between 1 and 2
-    for i in range(len(div_harmonics_bounded)):
-        for j in range(len(div_harmonics_bounded[i])):
-            div_harmonics_bounded[i][j] = biotuner.biotuner_utils.rebound(div_harmonics_bounded[i][j])
-    return div_harmonics, div_harmonics_bounded
+    for i in range(len(div_harm_bound)):
+        for j in range(len(div_harm_bound[i])):
+            div_harm_bound[i][j] = biotuner.biotuner_utils.rebound(div_harm_bound[i][j])
+    return div_harmonics, div_harm_bound
 
 
 def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
@@ -173,7 +175,8 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
     matching_positions = [list(i) for i in matching_positions]
     harm_fit = np.array(harm_temp, dtype=object).squeeze()
     harmonics_pos = reduce(lambda x, y: x+y, harmonics_pos)
-    most_common_harmonics = [h for h, h_count in Counter(harmonics_pos).most_common(n_common_harms) if h_count > 1]
+    most_common_harmonics = [h for h, h_count in Counter(harmonics_pos)
+                             .most_common(n_common_harms) if h_count > 1]
     harmonics_pos = list(np.sort(list(set(harmonics_pos))))
     if len(peak_bands) > 2:
         harm_fit = list(itertools.chain.from_iterable(harm_fit))
@@ -288,7 +291,9 @@ def multi_consonance(cons_pairs, n_freqs=5):
     f_count = []
     for f in freqs_nodup:
         f_count.append(freqs_dup.count(f))
-    freqs_related = [x for _, x in sorted(zip(f_count, freqs_nodup))][-(n_freqs):][::-1]
+    freqs_related = [x for _, x in sorted(zip(
+                                              f_count,
+                                              freqs_nodup))][-(n_freqs):][::-1]
     return freqs_related
 
 

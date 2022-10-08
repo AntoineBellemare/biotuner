@@ -116,13 +116,13 @@ def SSA_EEG(data, n_components=3, graph=False):
    and output list of spectral peaks'''
 
 
-def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
+def extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=None,
                         FREQ_BANDS=None, average='median',
                         noverlap=None, nperseg=None, nfft=None,
                         find_peaks_method='maxima', width=2,
                         rel_height=0.7, prominence=1,
                         out_type='all', extended_returns=True,
-                        min_freq=1):
+                        ):
     """
     Extract frequency peaks using Welch's method
     for periodograms computation.
@@ -134,9 +134,11 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
     sf : int
         Sampling frequency.
     precision : float
+        Defaults to 0.5.
         Size of a frequency bin in Hertz.
         Defaults to 0.5Hz
     min_freq : float
+        Defaults to 1
         Minimum frequency to consider when out_type='all'.
     max_freq : float
         Maximum frequency to consider when out_type='all'.
@@ -144,6 +146,7 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         Each sublist contains the
         minimum and maximum values for each frequency band.
     average : str
+        Defaults to 'median'.
         {'mean', 'median'}
         Method to use when averaging periodograms. Defaults to median’.
     nperseg : int
@@ -156,17 +159,22 @@ def extract_welch_peaks(data, sf, precision=0.5, max_freq=None,
         Number of points to overlap between segments.
         If None, noverlap = nperseg // 2. Defaults to None.
     find_peaks_method : str
+        Defaults to 'maxima'.
         {'maxima', 'wavelet'}
     width : int
+        Defaults to 2
         Required width of peaks in samples.
     rel_height : float
+        Defaults to 0.7
         Chooses the relative height at which the peak width is measured as a
         percentage of its prominence. 1.0 calculates the width of the peak at
         its lowest contour line while 0.5 evaluates at half the
         prominence height.
     prominence : type
+        Defaults to 1
         Required prominence of peaks.
     out_type : str
+        Defaults to 'all'.
         {'single', 'bands', 'all'}
         Defines how many peaks are outputed.
     extended_returns : Boolean
@@ -256,9 +264,11 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
     sf : int
         Sampling frequency.
     precision : float
+        Defaults to 0.1
         Size of a frequency bin in Hertz.
         Defaults to 0.5Hz
     max_freq : float
+        Defaults to 80
         Maximum frequency to consider as a peak.
     noverlap : int
         Number of points to overlap between segments.
@@ -270,6 +280,7 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
         If None, the FFT length is nperseg.
         Defaults to None.
     n_peaks : int
+        Defaults to 5
         Maximum number of peaks. If FOOOF finds higher number of peaks,
         the peaks with highest amplitude will be retained.
     extended_returns : Boolean
@@ -315,7 +326,8 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
         except:
             print('no peaks were found')
             pass
-    peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+    peaks_temp = [x for _, x in sorted(zip(amps_temp,
+                                           peaks_temp))][::-1][0:n_peaks]
     amps = sorted(amps_temp)[::-1][0:n_peaks]
     peaks = [np.round(p, 2) for p in peaks_temp]
     if extended_returns is True:
@@ -345,15 +357,22 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         Defaults to False.
         Defines if a graph is generated.
     nIMFs : int
+        Defaults to 5
         Number of intrinsic mode functions (IMFs) to keep when
         Empirical Mode Decomposition (EMD) is computed.
     min_freq : float
+        Defaults to 1
         Minimum frequency to consider.
     max_freq : float
+        Defaults to 80
         Maximum frequency to consider.
     precision : float
+        Defaults to 0.1
         Value in Hertz corresponding to the minimal step between two
         frequency bins.
+    bin_spread: str
+        Defaults to 'log'.
+        {'linear','log'}
 
     Returns
     -------
@@ -431,8 +450,10 @@ def cepstrum(signal, sf, plot_cepstrum=False,
         Defaults to False.
         Determines wether a plot is generated.
     min_freq : float
+        Defaults to 1.5
         Minimum frequency to consider.
     max_freq : float
+        Defaults to 80
         Maximum frequency to consider.
 
     Returns
@@ -513,7 +534,8 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
                     drive_precision=0.05, max_drive_freq=6, min_drive_freq=3,
                     sig_precision=1, max_sig_freq=50, min_sig_freq=8,
                     low_fq_width=0.5, high_fq_width=1, plot=False):
-    """A function to compute the comodulogram for phase-amplitude coupling.
+    """A function to compute the comodulogram for phase-amplitude coupling
+       and extract the pairs of peaks with maximum coupling value.
 
     Parameters
     ----------
@@ -525,22 +547,31 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
         {'ozkurt', 'canolty', 'tort', 'penny', 'vanwijk', 'duprelatour',
          'colgin','sigl', 'bispectrum'}
     n_values : int
+        Defaults to 10
         Number of pairs of drive and modulated frequencies to keep.
     drive_precision : float
+        Defaults to 0.05
         Value (hertz) of one frequency bin of the phase signal.
     max_drive_freq : float
+        Defaults to 6
         Minimum value (hertz) of the phase signal.
     min_drive_freq : float
+        Defaults to 3
         Maximum value (hertz) of the phase signal.
     sig_precision : float
+        Defaults to 1
         Value (hertz) of one frequency bin of the amplitude signal.
     max_sig_freq : float
+        Defaults to 50
         Maximum value (hertz) of the amplitude signal.
     min_sig_freq : float
+        Defaults to 8
         Minimum value (hertz) of the amplitude signal.
     low_fq_width : float
+        Defaults to 0.5
         Bandwidth of the band-pass filter (phase signal).
     high_fq_width : float
+        Defaults to 1
         Bandwidth of the band-pass filter (amplitude signal).
     plot : Boolean
         Defaults to False.
@@ -719,24 +750,31 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
    and output selected harmonic peaks'''
 
 
-def harmonic_recurrence(peaks, amps, min_freq=0.5, max_freq=30,
-                       min_harms=2, harm_limit=128):
-    """This algorithm.
+def harmonic_recurrence(peaks, amps, min_freq=1, max_freq=30,
+                        min_harms=2, harm_limit=128):
+    """The harmonic series of each peak is compared to all other peaks
+       to identify those that have the highest recurrence in the spectrum.
+       Hence, selected peaks are the ones that have a maximum number of
+       harmonics that match other peaks in the spectrum.
 
     Parameters
     ----------
-    peaks : type
-        Description of parameter `peaks`.
+    peaks : List
+        List of spectral peaks.
     amps : type
         Description of parameter `amps`.
-    min_freq : type
-        Description of parameter `min_freq`.
-    max_freq : type
-        Description of parameter `max_freq`.
-    min_harms : type
-        Description of parameter `min_harms`.
-    harm_limit : type
-        Description of parameter `harm_limit`.
+    min_freq : float
+        Default to 1.
+        Minimum peak of frequency to consider.
+    max_freq : float
+        Default to 30.
+        Maximum peak of frequency to consider.
+    min_harms : int
+        Default to 2.
+        Minimum number of harmonic recurrence to keep a peak.
+    harm_limit : int
+        Default to 128.
+        Higher harmonic to consider.
 
     Returns
     -------
@@ -793,22 +831,39 @@ def harmonic_recurrence(peaks, amps, min_freq=0.5, max_freq=30,
     max_amps = np.array(max_amps)
     harmonics = np.array(harmonics)
     harmonic_peaks = np.array(harmonic_peaks)
-    return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
+    return (max_n, max_peaks, max_amps, harmonics, harmonic_peaks,
+            harm_peaks_fit)
 
 
 def compute_IMs(f1, f2, n):
-    '''
-    InterModulation components: sum or subtraction of any non-zero integer
-    multiple of the input frequencies
-    '''
+    """InterModulation components: sum or subtraction of any non-zero integer
+       multiple of the input frequencies.
+
+    Parameters
+    ----------
+    f1 : float
+        Frequency 1.
+    f2 : float
+        Frequency 2.
+    n : int
+        Order of the intermodulation component.
+
+    Returns
+    -------
+    IMs: List
+        List of all intermodulation components.
+    order: List
+        Order associated with IMs.
+
+    """
     IMs = []
     orders = []
-    for i in range(-n-1, n+1):
-        for j in range(-n-1, n+1):
+    for i in range(-n, n+1):
+        for j in range(-n, n+1):
             IMs.append(f1*j+f2*i)
-            orders.append(j+i)
+            orders.append(j)
             IMs.append(np.abs(f1*j-f2*i))
-            orders.append(j+i)
+            orders.append(j)
     IMs = [x for _, x in sorted(zip(orders, IMs))]
     orders = sorted(orders)
     return IMs, orders

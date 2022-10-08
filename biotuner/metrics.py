@@ -5,7 +5,8 @@ from pytuning.utilities import normalize_interval
 import biotuner.biotuner_utils
 from numpy import log2
 import sympy as sp
-import biotuner.peaks_extension
+from biotuner.peaks_extension import consonance_peaks
+from biotuner.biotuner_utils import scale2frac
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -32,7 +33,9 @@ def compute_consonance(ratio, limit=1000):
         consonance value
     '''
     ratio = Fraction(float(ratio)).limit_denominator(limit)
-    cons = (ratio.numerator + ratio.denominator)/(ratio.numerator * ratio.denominator)
+    a = (ratio.numerator + ratio.denominator)
+    b = (ratio.numerator * ratio.denominator)
+    cons = a/b
     return cons
 
 
@@ -53,7 +56,9 @@ def euler(*numbers):
         Euler Gradus Suavitatis.
 
     """
-    factors = biotuner.biotuner_utils.prime_factors(biotuner.biotuner_utils.lcm(*biotuner.biotuner_utils.reduced_form(*numbers)))
+    factors = biotuner.biotuner_utils.prime_factors(
+                       biotuner.biotuner_utils.lcm(
+                        *biotuner.biotuner_utils.reduced_form(*numbers)))
     return 1 + sum(p - 1 for p in factors)
 
 
@@ -221,6 +226,9 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     ----------
     tuning: List (float)
         List of ratios corresponding to tuning steps
+    maxdenom: int
+        Defaults to 1000.
+        Maximum denominator of the fraction representing each tuning step.
 
     Returns
     ----------
@@ -230,10 +238,10 @@ def tuning_to_metrics(tuning, maxdenom=1000):
         List of values corresponding to all computed metrics
         (in the same order as dictionary)
     '''
-    tuning_frac, num, denom = biotuner.biotuner_utils.scale2frac(tuning,
-                                                                 maxdenom=maxdenom)
+    tuning_frac, num, denom = scale2frac(tuning, maxdenom=maxdenom)
     tuning_metrics = pytuning.metrics.all_metrics(tuning_frac)
-    tuning_metrics['harm_sim'] = np.round(np.average(ratios2harmsim(tuning)), 2)
+    tuning_metrics['harm_sim'] = np.round(np.average(
+                                           ratios2harmsim(tuning)), 2)
     _, tuning_metrics['matrix_harm_sim'] = tuning_cons_matrix(tuning,
                                                               dyad_similarity)
     _, tuning_metrics['matrix_cons'] = tuning_cons_matrix(tuning,
@@ -290,7 +298,7 @@ def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
     for count, peaks in enumerate(data):
         peaks = [x for x in peaks if x >= 0]
         if method == 'cons':
-            cons, b, peaks_cons, d = biotuner.peaks_extension.consonance_peaks(peaks, limit)
+            cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
             out.append(peaks_cons)
             if len(list(set(peaks_cons))) >= min_notes:
                 positions.append(count)
@@ -347,14 +355,21 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
             s_.append(1000/(i/j))
         subharms.append(s_)
 
-    combi = np.array(list(itertools.product(subharms[0],subharms[1],subharms[2], subharms[3], subharms[4])))
+    combi = np.array(list(itertools.product(
+                                            subharms[0],
+                                            subharms[1],
+                                            subharms[2],
+                                            subharms[3],
+                                            subharms[4])))
     for group in range(len(combi)):
         triplets = list(combinations(combi[group], 3))
         for t in triplets:
             s1 = t[0]
             s2 = t[1]
             s3 = t[2]
-            if np.abs(s1-s2) < delta_lim and np.abs(s1-s3) < delta_lim and np.abs(s2-s3) < delta_lim:
+            if (
+                 np.abs(s1-s2) < delta_lim and np.abs(s1-s3) < delta_lim and
+                 np.abs(s2-s3) < delta_lim):
                 delta_t_ = np.abs(np.min([s1-s2, s1-s3, s2-s3]))
                 common_subs_ = np.mean([s1, s2, s3])
                 if delta_t_ not in delta_t:

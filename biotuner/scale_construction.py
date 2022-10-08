@@ -1,11 +1,14 @@
 #!bin/bash
 import numpy as np
 import matplotlib.pyplot as plt
-import sympy as sp
 import sys
-from biotuner.biotuner_utils import nth_root, rebound, NTET_ratios, scale2frac
+from biotuner.biotuner_utils import (nth_root, rebound,
+                                     NTET_ratios, scale2frac,
+                                     findsubsets, scale_from_pairs)
 from biotuner.peaks_extension import consonant_ratios
-from biotuner.metrics import ratios2harmsim, euler, dyad_similarity, metric_denom
+from biotuner.metrics import (ratios2harmsim, euler,
+                              dyad_similarity, metric_denom,
+                              tuning_cons_matrix)
 from pytuning import create_euler_fokker_scale
 import itertools
 from collections import Counter
@@ -389,7 +392,8 @@ def diss_curve(freqs, amps, denom=1000, max_ratio=2, euler_comp=True,
     diss_minima = argrelextrema(diss, np.less)
     intervals = []
     for d in range(len(diss_minima[0])):
-        frac = Fraction(diss_minima[0][d]/(n/(max_ratio-1))+1).limit_denominator(denom)
+        frac = Fraction(diss_minima[0][d]
+                        / (n/(max_ratio-1))+1).limit_denominator(denom)
         frac = (frac.numerator, frac.denominator)
         intervals.append(frac)
     intervals.append((2, 1))
@@ -422,8 +426,8 @@ def diss_curve(freqs, amps, denom=1000, max_ratio=2, euler_comp=True,
         # Plot N-TET grid
         if n_tet_grid is not None:
             n_tet = NTET_ratios(n_tet_grid, max_ratio=max_ratio)
-        for n in n_tet:
-            plt.axvline(n, color='red', linestyle='--')
+            for n in n_tet:
+                plt.axvline(n, color='red', linestyle='--')
         # Plot scale ticks
         plt.minorticks_off()
         plt.xticks([n/d for n, d in intervals],
@@ -469,7 +473,10 @@ def compute_harmonic_entropy_domain_integral(ratios, ratio_interval,
     N = len(ratio_interval)
     HE = np.zeros(N)
     for i, x in enumerate(ratio_interval):
-        P = np.diff(concatenate(([0], norm.cdf(log2(centers), loc=log2(x), scale=spread), [1])))
+        P = np.diff(concatenate(([0],
+                                 norm.cdf(log2(centers),
+                                          loc=log2(x),
+                                          scale=spread), [1])))
         ind = P > min_tol
         HE[i] = -np.sum(P[ind] * log2(P[ind]))
 
@@ -490,7 +497,9 @@ def compute_harmonic_entropy_simple_weights(numerators, denominators,
     N = len(ratio_interval)
     HE = np.zeros(N)
     for i, x in enumerate(ratio_interval):
-        P = norm.pdf(log2(weight_ratios), loc=log2(x), scale=spread) / sqrt(numerators * denominators)
+        P = norm.pdf(log2(weight_ratios),
+                     loc=log2(x),
+                     scale=spread) / np.sqrt(numerators * denominators)
         ind = P > min_tol
         P = P[ind]
         P /= np.sum(P)
@@ -567,8 +576,12 @@ def harmonic_entropy(ratios, res=0.001, spread=0.01, plot_entropy=True,
     ratios = ratios[indices]
     M = len(tenney_heights)
     x_ratios = np.arange(1, octave, res)
-    _, HE = compute_harmonic_entropy_domain_integral(ratios, x_ratios, spread=spread)
-    #_, HE = compute_harmonic_entropy_simple_weights(numerators, denominators, x_ratios, spread=0.01)
+    _, HE = compute_harmonic_entropy_domain_integral(ratios,
+                                                     x_ratios,
+                                                     spread=spread)
+    # HE = compute_harmonic_entropy_simple_weights(numerators,
+    #                                                denominators,
+    #                                                x_ratios, spread=0.01)
     ind = argrelextrema(HE, np.less)
     HE_minima = (x_ratios[ind], HE[ind])
     if plot_entropy is True:
@@ -639,7 +652,8 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4,
     if function == metric_denom:
         cons_ratios = [x for _, x in sorted(zip(tuning_values, mode_values))]
     else:
-        cons_ratios = [x for _, x in sorted(zip(tuning_values, mode_values))][::-1]
+        cons_ratios = [x for _, x in sorted(zip(tuning_values,
+                                                mode_values))][::-1]
     i = 0
     mode_ = []
     mode_out = []
@@ -648,7 +662,8 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4,
         mode_.append(cons_temp)
         mode_out_temp = [item for sublist in mode_ for item in sublist]
         mode_out_temp = [np.round(x, rounding) for x in mode_out_temp]
-        mode_out = sorted(set(mode_out_temp), key=mode_out_temp.index)[0:mode_n_steps]
+        mode_out = sorted(set(mode_out_temp),
+                          key=mode_out_temp.index)[0:mode_n_steps]
         i += 1
     mode_metric = []
     for index1 in range(len(mode_out)):
@@ -662,7 +677,7 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4,
 
 
 def create_mode(tuning, n_steps, function):
-    sets = list(findsubsets(scale, n_steps))
+    sets = list(findsubsets(tuning, n_steps))
     metric_values = []
     for s in sets:
         _, met = tuning_cons_matrix(s, function)
