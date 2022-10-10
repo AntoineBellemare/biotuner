@@ -616,16 +616,16 @@ class compute_biotuner(object):
 
         spectro_EMD = EMD_to_spectromorph(IMFs, sf, method=method,
                                           window=window, overlap=overlap)
-        spectro_EMD = np.round(spectro_EMD, 1)
         if comp_chords is True:
             (self.spectro_chords,
              spectro_chord_pos) = timepoint_consonance(spectro_EMD,
                                                        method=cons_chord_method,
                                                        limit=cons_limit,
-                                                       min_notes=min_notes,
+                                                        min_notes=min_notes,
                                                        graph=graph)
         self.spectro_EMD = spectro_EMD
         if graph is True:
+            plt.clf()
             if comp_chords is False:
                 data = np.moveaxis(self.spectro_EMD, 0, 1)
                 ax = sbn.lineplot(data=data[10:-10, :], dashes=False)

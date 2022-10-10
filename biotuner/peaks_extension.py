@@ -1,7 +1,7 @@
 
 import numpy as np
 import itertools
-import biotuner.biotuner_utils
+from biotuner.biotuner_utils import rebound, compareLists
 from collections import Counter
 from functools import reduce
 import biotuner.metrics
@@ -31,7 +31,7 @@ def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up=0):
 
     Returns
     -------
-    multi_harmonics: array
+    multi_harmonics : array
         (n_peaks, n_harmonics + 1)
     """
 
@@ -61,13 +61,13 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
 
     Parameters
     ----------
-    peaks: List (float)
+    peaks : List (float)
         Peaks represent local maximum in a spectrum
-    n_harmonics: int
+    n_harmonics : int
         Number of harmonics to compute
-    n_oct_up: int
+    n_oct_up : int
         Defaults to 0. The number of octave the peaks are shifted
-    mode: str
+    mode : str
         Defaults to 'div'.
         'div': x, x/2, x/3 ..., x/n
         'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
@@ -75,10 +75,10 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
 
     Returns
     -------
-    div_harmonics: array
+    div_harmonics : array
         (n_peaks, n_harmonics + 1)
         Harmonic values in hertz.
-    div_harmonics_bounded: array
+    div_harmonics_bounded : array
         (n_peaks, n_harmonics + 1)
         Harmonic values bounded between unison (1) and octave (2).
     """
@@ -104,7 +104,7 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
     # Rebound the result between 1 and 2
     for i in range(len(div_harm_bound)):
         for j in range(len(div_harm_bound[i])):
-            div_harm_bound[i][j] = biotuner.biotuner_utils.rebound(div_harm_bound[i][j])
+            div_harm_bound[i][j] = rebound(div_harm_bound[i][j])
     return div_harmonics, div_harm_bound
 
 
@@ -116,31 +116,31 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
 
     Parameters
     ----------
-    peaks: List (float)
+    peaks : List (float)
         Spectral peaks represent local maximum in a spectrum
-    n_harm: int
+    n_harm : int
         Number of harmonics to compute
-    bounds: int
+    bounds : int
         Minimum distance (in Hz) between two frequencies to consider a fit
-    function: str
+    function : str
         Defaults to 'mult'.
         'mult' will use natural harmonics
         'div' will use natural sub-harmonics
-    div_mode: str
+    div_mode : str
         Defaults to 'div'. See EEG_harmonics_div function.
-    n_common_harms: int
+    n_common_harms : int
         minimum number of times the harmonic is found
         to be sent to most_common_harmonics output.
 
     Returns
     -------
-    harm_fit: List
+    harm_fit : List
         Frequencies of the harmonics that match
-    harmonics_pos: List
+    harmonics_pos : List
         Positions of the harmonics that match
-    most_common_harmonics: List
+    most_common_harmonics : List
         harmonics that are at least present for ''n_common_harms'' times
-    matching_positions: List of lists
+    matching_positions : List of lists
         Each sublist corresponds to an harmonic fit,
         the first number is the frequency and the two
         others are harmonic positions.
@@ -166,7 +166,12 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
     matching_positions = []
     harmonics_pos = []
     for i in range(len(list_peaks)):
-        harms, harm_pos, matching_pos, _ = biotuner.biotuner_utils.compareLists(multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds)
+        (harms,
+         harm_pos,
+         matching_pos,
+         _) = compareLists(multi_harmonics[list_peaks[i][0]],
+                           multi_harmonics[list_peaks[i][1]],
+                           bounds)
         harm_temp.append(harms)
         harmonics_pos.append(harm_pos)
         if len(matching_pos) > 0:
@@ -196,9 +201,9 @@ def consonance_peaks(peaks, limit):
 
     Parameters
     ----------
-    peaks: List (float)
+    peaks : List (float)
         Peaks represent local maximum in a spectrum
-    limit: float
+    limit : float
         minimum consonance value to keep associated pairs of peaks
 
         Comparisons with familiar ratios:
@@ -217,13 +222,13 @@ def consonance_peaks(peaks, limit):
 
     Returns
     -------
-    consonance: List (float)
+    consonance : List (float)
         consonance scores for each pairs of consonant peaks
-    cons_pairs: List of lists (float)
+    cons_pairs : List of lists (float)
         list of lists of each pairs of consonant peaks
-    cons_peaks: List (float)
+    cons_peaks : List (float)
         list of consonant peaks (no doublons)
-    cons_tot: float
+    cons_tot : float
         averaged consonance value for each pairs of peaks
 
     """
@@ -273,14 +278,14 @@ def multi_consonance(cons_pairs, n_freqs=5):
 
     Parameters
     ----------
-    cons_pairs: List of lists (float)
+    cons_pairs : List of lists (float)
         list of lists of each pairs of consonant peaks
-    n_freqs: int
+    n_freqs : int
         maximum number of consonant freqs to keep
 
     Returns
     -------
-    freqs_related: List (float)
+    freqs_related : List (float)
         peaks that are consonant with at least two other peaks,
         starting with the peak that is consonant with the maximum
         number of other peaks
@@ -304,26 +309,25 @@ def consonant_ratios(data, limit, sub=False, input_type='peaks',
 
     Parameters
     ----------
-    data: List (float)
+    data : List (float)
         Data can whether be frequency values or frequency ratios
-    limit: float
+    limit : float
         minimum consonance value to keep associated pairs of peaks
-    sub: boolean
+    sub : boolean
         Defaults to False
         When set to True, include ratios a/b when a < b.
-    input_type: str
+    input_type : str
         Defaults to 'peaks'.
         Choose between 'peaks' and 'ratios'.
-    metric: str
+    metric : str
         Defaults to 'cons'.
         Choose between 'cons' and 'harmsim'.
 
     Returns
     -------
-
-    cons_ratios: List (float)
+    cons_ratios : List (float)
         list of consonant ratios
-    consonance: List (float)
+    consonance : List (float)
         list of associated consonance values
     """
     consonance_ = []

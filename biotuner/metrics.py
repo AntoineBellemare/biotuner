@@ -291,7 +291,7 @@ def timepoint_consonance(data, method='cons', limit=0.2, min_notes=3,
     positions: List (int)
         positions on Axis 0
     """
-
+    data = np.round(data, 2)
     data = np.moveaxis(data, 0, 1)
     out = []
     positions = []

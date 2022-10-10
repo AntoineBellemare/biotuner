@@ -716,3 +716,135 @@ def pac_mode(pac_freqs, n, function=dyad_similarity,
                            mode_n_steps=n,
                            function=function)
     return sorted(mode)
+
+
+'''--------------------------MOMENTS OF SYMMETRY---------------------------'''
+
+
+def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100,
+                        max_denom_out=100):
+    """
+    Function that takes two ratios a input (boundaries of )
+    The mediant corresponds to the interval where
+    small and large steps are equal.
+
+    Parameters
+    ----------
+    frac1 : type
+        Description of parameter `frac1`.
+    frac2 : type
+        Description of parameter `frac2`.
+    octave : type
+        Description of parameter `octave`.
+    max_denom_in : type
+        Description of parameter `max_denom_in`.
+    max_denom_out : type
+        Description of parameter `max_denom_out`.
+
+    Returns
+    -------
+    tuning_range_to_MOS
+        Description of returned object.
+
+    """
+    a = Fraction(frac1).limit_denominator(max_denom_in).numerator
+    b = Fraction(frac1).limit_denominator(max_denom_in).denominator
+    c = Fraction(frac2).limit_denominator(max_denom_in).numerator
+    d = Fraction(frac2).limit_denominator(max_denom_in).denominator
+    print(a, b, c, d)
+    mediant = (a+c)/(b+d)
+    mediant_frac = sp.Rational((a+c)/(b+d)).limit_denominator(max_denom_out)
+    gen_interval = octave**(mediant)
+    gen_interval_frac = sp.Rational(octave**(mediant)).limit_denominator(max_denom_out)
+    MOS_signature = [d, b]
+    invert_MOS_signature = [b, d]
+    return mediant, mediant_frac, gen_interval, gen_interval_frac, MOS_signature, invert_MOS_signature
+
+
+def stern_brocot_to_generator_interval(ratio, octave=2):
+    """
+    Converts a fraction in the stern-brocot tree to
+    a generator interval for moment of symmetry tunings
+
+    Parameters
+    ----------
+    ratio : float
+        stern-brocot ratio
+    octave : float
+        Reference period.
+
+    Returns
+    -------
+    gen_interval : float
+        Generator interval
+
+    """
+    gen_interval = octave**(ratio)
+    return gen_interval
+
+
+def gen_interval_to_stern_brocot(gen):
+    """
+    Convert a generator interval to fraction in the stern-brocot tree.
+
+    Parameters
+    ----------
+    gen : float
+        Generator interval.
+
+    Returns
+    -------
+    root_ratio : float
+        Fraction in the stern-brocot tree.
+
+    """
+    root_ratio = log2(gen)
+    return root_ratio
+
+
+def horogram_tree_steps(ratio1, ratio2, steps=10, limit=1000):
+    ratios_list = [ratio1, ratio2]
+    s = 0
+    while s < steps:
+        ratio3 = horogram_tree(ratio1, ratio2, limit)
+        ratios_list.append(ratio3)
+        ratio1 = ratio2
+        ratio2 = ratio3
+        s += 1
+    frac_list = [ratio2frac(x) for x in ratios_list]
+    return frac_list, ratios_list
+
+
+def horogram_tree(ratio1, ratio2, limit):
+    a = Fraction(ratio1).limit_denominator(limit).numerator
+    b = Fraction(ratio1).limit_denominator(limit).denominator
+    c = Fraction(ratio2).limit_denominator(limit).numerator
+    d = Fraction(ratio2).limit_denominator(limit).denominator
+    next_step = (a+c)/(b+d)
+    return next_step
+
+def phi_convergent_point(ratio1, ratio2):
+    Phi = (1 + 5 ** 0.5) / 2
+    a = Fraction(ratio1).limit_denominator(1000).numerator
+    b = Fraction(ratio1).limit_denominator(1000).denominator
+    c = Fraction(ratio2).limit_denominator(1000).numerator
+    d = Fraction(ratio2).limit_denominator(1000).denominator
+    convergent_point = (c*Phi+a)/(d*Phi+b)
+    return convergent_point
+
+
+def Stern_Brocot(n, a=0, b=1, c=1, d=1):
+    if(a+b+c+d > n):
+        return 0
+    x=Stern_Brocot(n,a+c,b+d,c,d)
+    y=Stern_Brocot(n,a,b,a+c,b+d)
+    if(x==0):
+        if(y==0):
+            return [a+c,b+d]
+        else:
+            return [a+c]+[b+d]+y
+    else:
+        if(y==0):
+            return [a+c]+[b+d]+x
+        else:
+            return [a+c]+[b+d]+x+y

@@ -188,9 +188,9 @@ def extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=None,
         Frequency value.
     amp : List(float)
         Amplitude value.
-    freqs: Array
+    freqs : Array
         Frequency bins
-    psd: Array
+    psd : Array
         Power spectrum density of each frequency bin
 
     """
@@ -297,9 +297,9 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
         Frequency values.
     amps : List(float)
         Amplitude values.
-    freqs: Array
+    freqs : Array
         Frequency bins
-    psd: Array
+    psd : Array
         Power spectrum density of each frequency bin
 
     """
@@ -370,21 +370,21 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         Defaults to 0.1
         Value in Hertz corresponding to the minimal step between two
         frequency bins.
-    bin_spread: str
+    bin_spread : str
         Defaults to 'log'.
         {'linear','log'}
 
     Returns
     -------
-    IF: array (numDataPoints,nIMFs)
+    IF : array (numDataPoints,nIMFs)
         instantaneous frequencies associated with each IMF.
     peaks : List(float)
         Frequency values.
     amps : List(float)
         Amplitude values.
-    spec: array (nIMFs, nbins)
+    spec : array (nIMFs, nbins)
         Power associated with all bins for each IMF
-    bins: array (nIMFs, nbins)
+    bins : array (nIMFs, nbins)
         Frequency bins for each IMF
 
     """
@@ -458,9 +458,9 @@ def cepstrum(signal, sf, plot_cepstrum=False,
 
     Returns
     -------
-    cepstrum: array (nbins,)
+    cepstrum : array (nbins,)
         Power of the cepstrum for each quefrency.
-    quefrency_vector: array(nbins,)
+    quefrency_vector : array(nbins,)
         Values of each quefrency bins.
 
     """
@@ -579,10 +579,10 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
 
     Returns
     -------
-    pac_freqs: List of lists
+    pac_freqs : List of lists
         Each sublist correspond to pairs of frequencies for the
         phase and amplitude signals with maximal coupling value.
-    pac_coupling: List
+    pac_coupling : List
         Coupling values associated with each pairs of phase and amplitude
         frequencies.
 
@@ -850,9 +850,9 @@ def compute_IMs(f1, f2, n):
 
     Returns
     -------
-    IMs: List
+    IMs : List
         List of all intermodulation components.
-    order: List
+    order : List
         Order associated with IMs.
 
     """
@@ -932,8 +932,10 @@ def compute_sidebands(carrier, modulator, order=2):
 
 
 
+# https://github.com/voicesauce/opensauce-python/blob/master/opensauce/shrp.py
 
-'''EXPERIMENTAL / work-in-progress'''
+'''
+EXPERIMENTAL / work-in-progress
 # from https://homepage.univie.ac.at/christian.herbst/python/dsp_util_8py_source.html#l03455
 def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
     tolerancePercent = 5, maxOctaveCost = 0.25, maxOctaveJumpCost = 0.3,
@@ -1024,3 +1026,4 @@ def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
      exit(1)
 
     return arrT, arrFoFinal, arrPeriod, arrFo
+'''
