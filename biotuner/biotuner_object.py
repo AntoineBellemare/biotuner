@@ -621,7 +621,7 @@ class compute_biotuner(object):
              spectro_chord_pos) = timepoint_consonance(spectro_EMD,
                                                        method=cons_chord_method,
                                                        limit=cons_limit,
-                                                        min_notes=min_notes,
+                                                       min_notes=min_notes,
                                                        graph=graph)
         self.spectro_EMD = spectro_EMD
         if graph is True:

@@ -736,7 +736,19 @@ def convergents(interval):
 
 
 def phaseScrambleTS(ts):
-    """Returns a TS: original TS power is preserved; TS phase is shuffled."""
+    """Returns a TS: original TS power is preserved; TS phase is shuffled.
+
+    Parameters
+    ----------
+    ts : 1d array (numDataPoints, )
+        Oriinal time series.
+
+    Returns
+    -------
+    tsr : array (numDataPoints)
+        Phase scrabled time series.
+
+    """
     fs = rfft(ts)
     # rfft returns real and imaginary components
     # in adjacent elements of a real array
@@ -756,16 +768,17 @@ def phaseScrambleTS(ts):
 
 
 def AAFT_surrogates(original_data):
-    """
-    Return surrogates using the amplitude adjusted Fourier transform
-    method.
+    """Return surrogates using the amplitude adjusted Fourier transform
+       method.
 
-    Reference: [Schreiber2000]_
+    Parameters
+    ----------
+    original_data : 2D array (data, index)
+        The original time series.
 
-    :type original_data: 2D array [index, time]
-    :arg original_data: The original time series.
-    :rtype: 2D array [index, time]
-    :return: The surrogate time series.
+    Returns
+    -------
+    rescaled_data : 2D array (surrogate, index)
     """
     #  Create sorted Gaussian reference series
     gaussian = np.random.randn(original_data.shape[0], original_data.shape[1])
@@ -886,56 +899,52 @@ def computeFeatureCl_new(afAudioData, cFeatureName,
 
 def EMD_to_spectromorph(IMFs, sf, method="SpectralCentroid", window=None,
                         overlap=1, in_cut=None, out_cut=None):
-    """Short summary.
+    """Calculate spectromorphological metrics on intrinsic mode functions
+       derived using Empirical Mode Decomposition.
 
     Parameters
     ----------
-    IMFs : type
-        Description of parameter `IMFs`.
-    sf : type
-        Description of parameter `sf`.
+    IMFs : array (nIMFs, numDataPoints)
+        Input data.
+    sf : int
+        Sampling frequency of the original signal.
     method : str
+        Defaults to 'SpectralCentroid'.
         {'SpectralCentroid', 'SpectralCrestFactor', 'SpectralDecrease',
          'SpectralFlatness', 'SpectralFlux', 'SpectralKurtosis',
          'SpectralMfccs', 'SpectralPitchChroma', 'SpectralRolloff',
          'SpectralSkewness', 'SpectralSlope', 'SpectralSpread',
          'SpectralTonalPowerRatio', 'TimeAcfCoeff', 'TimeMaxAcf',
          'TimePeakEnvelope', 'TimeRms', 'TimeStd', 'TimeZeroCrossingRate'}
-    window : type
-        Description of parameter `window`.
-    overlap : type
-        Description of parameter `overlap`.
-    in_cut : type
-        Description of parameter `in_cut`.
+    window : int
+        Length of the moving window in samples.
+    overlap : int
+        Overlap between each moving window in samples.
+    in_cut : int
+        Number of samples to remove at the beginning.
     out_cut : type
-        Description of parameter `out_cut`.
+        Number of samples to remove at the end.
 
     Returns
     -------
-    type
-        Description of returned object.
+    spectro_IMF : (nIMFs, numSpectroPoints)
+        Spectromorphological metric for each IMF.
 
     """
+    # remove 0.1 second at the beginning and the end of the signal.
     if in_cut is None:
-        in_cut = int(sf/2)
+        in_cut = int(sf/10)
     if out_cut is None:
-        out_cut = int(len(IMFs[0])-(sf/2))
+        out_cut = int(len(IMFs[0])-(sf/10))
     if window is None:
         window = int(sf/2)
     spectro_IMF = []
     for e in IMFs:
         f, t = computeFeatureCl_new(e, method, sf, window, overlap)
-        #[f,t] = pyACA.computePitch('TimeAcf', e, 1000, afWindow=None, iBlockLength=1000, iHopLength=200)
-        #df[i] = np.squeeze(f)
-        #if method == 'SpectralCentroid':
         try:
             spectro_IMF.append(f[0][in_cut:out_cut])
         except:
             spectro_IMF.append(f[in_cut:out_cut])
-        #if method == 'SpectralFlux':
-        #    spectro_IMF.append(f[in_cut:out_cut])
-        #else:
-        #    spectro_IMF.append(f[in_cut:out_cut])
     spectro_IMF = np.array(spectro_IMF)
     return spectro_IMF
 
@@ -948,18 +957,18 @@ pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
 
-def generate_signal(sf, time_end, freqs, amps, show=False, theta=0, color='blue'):
-    time = np.arange(0,time_end, 1/sf)
-    sine_tot  = []
+def generate_signal(sf, time_end, freqs, amps, show=False,
+                    theta=0, color='blue'):
+    time = np.arange(0, time_end, 1/sf)
+    sine_tot = []
     for i in range(len(freqs)):
         sinewave = amps[i] * np.sin(2 * np.pi * freqs[i] * time + theta)
         sine_tot.append(sinewave)
     sine_tot = sum_list(sine_tot)
-    if show == True:
-
+    if show is True:
         ax = plt.gca()
         ax.set_facecolor('xkcd:black')
-        plt.plot(time, sine_tot, color = color)
+        plt.plot(time, sine_tot, color=color)
     return sine_tot
 
 
@@ -972,6 +981,7 @@ def sine_wave(hz, peak, n_samples=sample_rate):
     xvalues = np.arange(int(length)) * omega
     onecycle = peak * np.sin(xvalues)
     return np.resize(onecycle, (n_samples,)).astype(np.int16)
+
 
 def square_wave(hz, peak, duty_cycle=.5, n_samples=sample_rate):
     """Compute N samples of a sine wave with given frequency and peak amplitude.
@@ -1002,13 +1012,13 @@ def smooth(x, window_len=11, window='hanning'):
 
     NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
-    s=np.r_[x[window_len-1:0:-1],x,x[-2:-window_len-1:-1]]
-    if window == 'flat': #moving average
-        w=np.ones(window_len,'d')
+    s = np.r_[x[window_len-1:0:-1], x, x[-2:-window_len-1:-1]]
+    if window == 'flat':  # moving average
+        w = np.ones(window_len, 'd')
     else:
-        w=eval('np.'+window+'(window_len)')
+        w = eval('np.'+window+'(window_len)')
 
-    y=np.convolve(w/w.sum(),s,mode='valid')
+    y = np.convolve(w/w.sum(), s, mode='valid')
     return y
 
 
@@ -1034,29 +1044,31 @@ def make_chord(hz, ratios):
         chord = sum([chord, sine_wave(hz * r / ratios[0], sampling)])
     return chord
 
+
 def major_triad(hz):
     return make_chord(hz, [4, 5, 6])
 
-def listen_scale (scale, fund, length):
+
+def listen_scale(scale, fund, length):
     print('Scale:', scale)
     scale = [1]+scale
     for s in scale:
         freq = fund*s
         print(freq)
         note = make_chord(freq, [1])
-        note = np.ascontiguousarray(np.vstack([note,note]).T)
+        note = np.ascontiguousarray(np.vstack([note, note]).T)
         sound = pygame.sndarray.make_sound(note)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
 
-def listen_chords (chords, mult = 10, length = 500):
-    #chords = np.around(chords, 3)
+
+def listen_chords(chords, mult=10, length=500):
     print('Chords:', chords)
 
     for c in chords:
         c = [i*mult for i in c]
         chord = make_chord(c[0], c[1:])
-        chord = np.ascontiguousarray(np.vstack([chord,chord]).T)
+        chord = np.ascontiguousarray(np.vstack([chord, chord]).T)
         sound = pygame.sndarray.make_sound(chord)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
@@ -1068,16 +1080,16 @@ def listen_chords (chords, mult = 10, length = 500):
 def scale_interval_names(scale, reduce=False):
     try:
         type = scale[0].dtype == 'float64'
-        if type == True:
+        if type is True:
             scale, _, _ = scale2frac(scale)
     except:
         pass
     interval_names = []
     for step in scale:
         name = pytuning.utilities.ratio_to_name(step)
-        if reduce == True and name != None:
+        if reduce is True and name is not None:
             interval_names.append([step, name])
-        if reduce == False:
+        if reduce is False:
             interval_names.append([step, name])
     return interval_names
 
@@ -1086,7 +1098,6 @@ def calculate_pvalues(df):
     df = df.dropna()._get_numeric_data()
     dfcols = pd.DataFrame(columns=df.columns)
     pvalues = dfcols.transpose().join(dfcols, how='outer')
-    #print('p_values', pvalues)
     for r in df.columns:
         for c in df.columns:
             pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
@@ -1115,15 +1126,6 @@ def alpha2bands(a):
     return FREQ_BANDS
 
 
-def sort_scale_by_consonance(scale):
-    cons_tot = []
-    for step in scale:
-        cons = biotuner.metrics.compute_consonance(step)
-        cons_tot.append(cons)
-    sorted_scale = list(np.flip([x for _, x in sorted(zip(cons_tot, scale))]))
-    return sorted_scale
-
-
 def __get_norm(norm):
     if norm == 0 or norm is None:
         return None, None
@@ -1147,6 +1149,7 @@ def __product_other_freqs(spec, indices, synthetic=(), t=None):
                   for (freq, amplitude, phase) in synthetic], axis=0)
     p2 = np.prod(spec[:, indices[len(synthetic):]], axis=1)
     return p1 * p2
+
 
 def functools_reduce(a):
     return functools.reduce(operator.concat, a)

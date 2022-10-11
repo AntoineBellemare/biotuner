@@ -21,6 +21,29 @@ from pingouin import ancova
 
 
 def surrogate_signal(data, surr_type = 'pink', low_cut = 0.5, high_cut = 150, sf = 1000, TFT_freq = 5):
+    """Short summary.
+
+    Parameters
+    ----------
+    data : type
+        Description of parameter `data`.
+    surr_type : type
+        Description of parameter `surr_type`.
+    low_cut : type
+        Description of parameter `low_cut`.
+    high_cut : type
+        Description of parameter `high_cut`.
+    sf : type
+        Description of parameter `sf`.
+    TFT_freq : type
+        Description of parameter `TFT_freq`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     if surr_type == 'AAFT':
         indexes = [x for x in range(len(data))]
         data_ = np.stack((data, indexes))
