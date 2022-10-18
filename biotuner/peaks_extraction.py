@@ -12,17 +12,18 @@ from pactools import Comodulogram
 from scipy.fftpack import next_fast_len
 from scipy.signal import spectrogram
 from pyts.decomposition import SingularSpectrumAnalysis
+
 sys.setrecursionlimit(120000)
 
 
-'''SIGNAL DECOMPOSITION METHODS
+"""SIGNAL DECOMPOSITION METHODS
    Take single time series as input
    and output multiple time series as output.
    These functions can be used to compute peaks
-   on each sub-signal,'''
+   on each sub-signal,"""
 
 
-def EMD_eeg(data, method='EMD', graph=False, extrema_detection='simple'):
+def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple"):
     """
     The Empirical Mode Decomposition is a data-adaptive multiresolution
     technique to decompose a signal into physically meaningful components,
@@ -57,31 +58,31 @@ def EMD_eeg(data, method='EMD', graph=False, extrema_detection='simple'):
     """
     s = np.interp(data, (data.min(), data.max()), (0, +1))
     t = np.linspace(0, 1, len(data))
-    if method == 'EMD':
+    if method == "EMD":
         eIMFs = EMD(extrema_detection=extrema_detection).emd(s, t)
-    if method == 'EEMD':
+    if method == "EEMD":
         eIMFs = EEMD(extrema_detection=extrema_detection).eemd(s, t)
-    if method == 'EMD_fast':
+    if method == "EMD_fast":
         eIMFs = emd.sift.sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
-    if method == 'EEMD_fast':
+    if method == "EEMD_fast":
         eIMFs = emd.sift.ensemble_sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
     if graph is True:
         t = np.linspace(0, len(data), len(data))
         nIMFs = len(eIMFs)
         plt.figure(figsize=(12, 9))
-        plt.subplot(nIMFs+1, 1, 1)
-        plt.plot(t, data, 'r')
+        plt.subplot(nIMFs + 1, 1, 1)
+        plt.plot(t, data, "r")
         for n in range(nIMFs):
-            plt.subplot(nIMFs+1, 1, n+2)
-            plt.plot(t, eIMFs[n], 'darkcyan')
-            plt.ylabel("eIMF %i" % (n+1))
-            plt.locator_params(axis='y', nbins=5)
+            plt.subplot(nIMFs + 1, 1, n + 2)
+            plt.plot(t, eIMFs[n], "darkcyan")
+            plt.ylabel("eIMF %i" % (n + 1))
+            plt.locator_params(axis="y", nbins=5)
 
         plt.xlabel("Time [samples]")
         plt.tight_layout()
-        plt.savefig('eemd_example', dpi=120)
+        plt.savefig("eemd_example", dpi=120)
         plt.show()
     return eIMFs
 
@@ -93,36 +94,47 @@ def SSA_EEG(data, n_components=3, graph=False):
     if graph is True:
         plt.figure(figsize=(16, 6))
         ax1 = plt.subplot(121)
-        ax1.plot(X[0], label='Original', color='darkblue')
-        ax1.legend(loc='best', fontsize=14)
-        plt.xlabel('Samples', size=14)
-        plt.ylabel('Amplitude', size=14)
+        ax1.plot(X[0], label="Original", color="darkblue")
+        ax1.legend(loc="best", fontsize=14)
+        plt.xlabel("Samples", size=14)
+        plt.ylabel("Amplitude", size=14)
         ax2 = plt.subplot(122)
-        color_list = ['darkgoldenrod', 'red', 'darkcyan', 'indigo', 'magenta']
+        color_list = ["darkgoldenrod", "red", "darkcyan", "indigo", "magenta"]
         for i, c in zip(range(len(X_ssa[0][0:n_components])), color_list):
-            ax2.plot(X_ssa[0, i], '--', label='SSA {0}'.format(i + 1), color=c)
-            plt.xlabel('Samples', size=14)
-            plt.ylabel('Amplitude', size=14)
-        ax2.legend(loc='best', fontsize=14)
-        plt.suptitle('Singular Spectrum Analysis', fontsize=20)
+            ax2.plot(X_ssa[0, i], "--", label="SSA {0}".format(i + 1), color=c)
+            plt.xlabel("Samples", size=14)
+            plt.ylabel("Amplitude", size=14)
+        ax2.legend(loc="best", fontsize=14)
+        plt.suptitle("Singular Spectrum Analysis", fontsize=20)
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
         plt.show()
     return X_ssa
 
 
-'''PEAKS EXTRACTION METHODS
+"""PEAKS EXTRACTION METHODS
    Take time series as input
-   and output list of spectral peaks'''
+   and output list of spectral peaks"""
 
 
-def extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=None,
-                        FREQ_BANDS=None, average='median',
-                        noverlap=None, nperseg=None, nfft=None,
-                        find_peaks_method='maxima', width=2,
-                        rel_height=0.7, prominence=1,
-                        out_type='all', extended_returns=True,
-                        ):
+def extract_welch_peaks(
+    data,
+    sf,
+    precision=0.5,
+    min_freq=1,
+    max_freq=None,
+    FREQ_BANDS=None,
+    average="median",
+    noverlap=None,
+    nperseg=None,
+    nfft=None,
+    find_peaks_method="maxima",
+    width=2,
+    rel_height=0.7,
+    prominence=1,
+    out_type="all",
+    extended_returns=True,
+):
     """
     Extract frequency peaks using Welch's method
     for periodograms computation.
@@ -196,49 +208,61 @@ def extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=None,
     """
 
     if max_freq is None:
-        max_freq = sf/2
+        max_freq = sf / 2
     if nperseg is None:
-        mult = 1/precision
-        nperseg = sf*mult
+        mult = 1 / precision
+        nperseg = sf * mult
         nfft = nperseg
-    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg,
-                                    average=average, noverlap=noverlap)
-    psd = 10. * np.log10(psd)
-    if out_type == 'all':
-        if find_peaks_method == 'maxima':
-            indexes, _ = scipy.signal.find_peaks(psd, height=None,
-                                                 threshold=None, distance=2,
-                                                 prominence=prominence,
-                                                 width=width, wlen=None,
-                                                 rel_height=rel_height,
-                                                 plateau_size=None)
-        if find_peaks_method == 'wavelet':
-            indexes = scipy.signal.find_peaks_cwt(psd, widths=[1, max_freq],
-                                                  min_length=0.5)
+    freqs, psd = scipy.signal.welch(
+                 data,
+                 sf,
+                 nfft=nfft,
+                 nperseg=nperseg,
+                 average=average,
+                 noverlap=noverlap
+                 )
+    psd = 10.0 * np.log10(psd)
+    if out_type == "all":
+        if find_peaks_method == "maxima":
+            indexes, _ = scipy.signal.find_peaks(
+                psd,
+                height=None,
+                threshold=None,
+                distance=2,
+                prominence=prominence,
+                width=width,
+                wlen=None,
+                rel_height=rel_height,
+                plateau_size=None,
+            )
+        if find_peaks_method == "wavelet":
+            indexes = scipy.signal.find_peaks_cwt(
+                psd, widths=[1, max_freq], min_length=0.5
+            )
         peaks = []
         amps = []
         for i in indexes:
             peaks.append(freqs[i])
             amps.append(psd[i])
-    if out_type == 'single':
+    if out_type == "single":
         index_max = np.argmax(np.array(psd))
         peaks = freqs[index_max]
         peaks = np.around(peaks, 5)
         amps = psd[index_max]
-    if out_type == 'bands':
+    if out_type == "bands":
         peaks = []
         amps = []
         idx_max = []
         for minf, maxf in FREQ_BANDS:
-            bin_size = (sf/2)/len(freqs)
-            min_index = int(minf/bin_size)
-            max_index = int(maxf/bin_size)
+            bin_size = (sf / 2) / len(freqs)
+            min_index = int(minf / bin_size)
+            max_index = int(maxf / bin_size)
             index_max = np.argmax(np.array(psd[min_index:max_index]))
             idx_max.append(index_max)
-            peaks.append(freqs[min_index+index_max])
-            amps.append(psd[min_index+index_max])
-        print('Index_max: all zeros indicate 1/f trend', idx_max)
-    if out_type != 'single':
+            peaks.append(freqs[min_index + index_max])
+            amps.append(psd[min_index + index_max])
+        print("Index_max: all zeros indicate 1/f trend", idx_max)
+    if out_type != "single":
         peaks = np.around(np.array(peaks), 5)
         peaks = list(peaks)
         peaks = [p for p in peaks if p <= max_freq]
@@ -248,9 +272,18 @@ def extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=None,
     return peaks, amps
 
 
-def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
-                  nperseg=None, nfft=None,
-                  n_peaks=5, extended_returns=False, graph=False):
+def compute_FOOOF(
+    data,
+    sf,
+    precision=0.1,
+    max_freq=80,
+    noverlap=None,
+    nperseg=None,
+    nfft=None,
+    n_peaks=5,
+    extended_returns=False,
+    graph=False,
+):
     """FOOOF conceives of a model of the power spectrum as a combination of
        two distinct functional processes:
        - An aperiodic component, reflecting 1/f like characteristics
@@ -305,15 +338,23 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
     """
 
     if nperseg is None:
-        mult = 1/precision
-        nfft = sf*mult
+        mult = 1 / precision
+        nfft = sf * mult
         nperseg = nfft
-        noverlap = nperseg//10
-    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft,
-                                    nperseg=nperseg, noverlap=noverlap)
-    fm = FOOOF(peak_width_limits=[precision*2, 3], max_n_peaks=50,
-               min_peak_height=0.2)
-    freq_range = [(sf/len(data))*2, max_freq]
+        noverlap = nperseg // 10
+    freqs, psd = scipy.signal.welch(
+                 data,
+                 sf,
+                 nfft=nfft,
+                 nperseg=nperseg,
+                 noverlap=noverlap
+                 )
+    fm = FOOOF(
+         peak_width_limits=[precision * 2, 3],
+         max_n_peaks=50,
+         min_peak_height=0.2
+         )
+    freq_range = [(sf / len(data)) * 2, max_freq]
     fm.fit(freqs, psd, freq_range)
     if graph is True:
         fm.report(freqs, psd, freq_range)
@@ -324,10 +365,12 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
             peaks_temp.append(fm.peak_params_[p][0])
             amps_temp.append(fm.peak_params_[p][1])
         except:
-            print('no peaks were found')
+            print("no peaks were found")
             pass
-    peaks_temp = [x for _, x in sorted(zip(amps_temp,
-                                           peaks_temp))][::-1][0:n_peaks]
+    peaks_temp.append(
+        [x for _, x in sorted(zip(amps_temp,
+                                  peaks_temp))][::-1][0:n_peaks]
+                                  )
     amps = sorted(amps_temp)[::-1][0:n_peaks]
     peaks = [np.round(p, 2) for p in peaks_temp]
     if extended_returns is True:
@@ -335,13 +378,21 @@ def compute_FOOOF(data, sf, precision=0.1, max_freq=80, noverlap=None,
     return peaks, amps
 
 
-'''HARMONIC-PEAKS EXTRACTION METHODS
+"""HARMONIC-PEAKS EXTRACTION METHODS
    Take time series as input
-   and output list of harmonic peaks'''
+   and output list of harmonic peaks"""
 
 
-def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
-                   precision=0.1, bin_spread='log'):
+def HilbertHuang1D(
+    data,
+    sf,
+    graph=False,
+    nIMFs=5,
+    min_freq=1,
+    max_freq=80,
+    precision=0.1,
+    bin_spread="log",
+):
     """The Hilbert-Huang transform provides a description of how the energy
        or power within a signal is distributed across frequency.
        The distributions are based on the instantaneous frequency and
@@ -388,17 +439,17 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         Frequency bins for each IMF
 
     """
-    IMFs = EMD_eeg(data, method='EMD')
+    IMFs = EMD_eeg(data, method="EMD")
     IMFs = np.moveaxis(IMFs, 0, 1)
-    IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:nIMFs+1], sf, 'nht')
+    IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1 : nIMFs + 1], sf, "nht")
     low = min_freq
     high = max_freq
-    range_hh = int(high-low)
-    steps = int(range_hh/precision)
-    bin_size = range_hh/steps
-    edges, bins = emd.spectra.define_hist_bins(low-(bin_size/2),
-                                               high-(bin_size/2),
-                                               steps, bin_spread)
+    range_hh = int(high - low)
+    steps = int(range_hh / precision)
+    bin_size = range_hh / steps
+    edges, bins = emd.spectra.define_hist_bins(
+        low - (bin_size / 2), high - (bin_size / 2), steps, bin_spread
+    )
     # Compute the 1d Hilbert-Huang transform (power over carrier frequency)
     freqs = []
     spec = []
@@ -425,16 +476,14 @@ def HilbertHuang1D(data, sf, graph=False, nIMFs=5, min_freq=1, max_freq=80,
         for plot in range(len(spec)):
             plt.plot(bins_[plot], spec[plot])
         plt.xlim(min_freq, max_freq)
-        plt.xscale('log')
-        plt.xlabel('Frequency (Hz)')
-        plt.title('IA-weighted\nHilbert-Huang Transform')
-        plt.legend(['IMF-1', 'IMF-2', 'IMF-3', 'IMF-4',
-                   'IMF-5', 'IMF-6', 'IMF-7'])
+        plt.xscale("log")
+        plt.xlabel("Frequency (Hz)")
+        plt.title("IA-weighted\nHilbert-Huang Transform")
+        plt.legend(["IMF-1", "IMF-2", "IMF-3", "IMF-4", "IMF-5", "IMF-6", "IMF-7"])
     return IF, peaks, amps, np.array(spec), np.array(bins_)
 
 
-def cepstrum(signal, sf, plot_cepstrum=False,
-             min_freq=1.5, max_freq=80):
+def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
     """The cepstrum is the result of computing the
        inverse Fourier transform (IFT) of the logarithm of
        the estimated signal spectrum. The method is a tool for
@@ -465,7 +514,7 @@ def cepstrum(signal, sf, plot_cepstrum=False,
 
     """
     windowed_signal = signal
-    dt = 1/sf
+    dt = 1 / sf
     freq_vector = np.fft.rfftfreq(len(windowed_signal), d=dt)
     X = np.fft.rfft(windowed_signal)
     log_X = np.log(np.abs(X))
@@ -479,14 +528,14 @@ def cepstrum(signal, sf, plot_cepstrum=False,
     if plot_cepstrum is True:
         fig, ax = plt.subplots()
         ax.plot(freq_vector, log_X)
-        ax.set_xlabel('frequency (Hz)')
-        ax.set_title('Fourier spectrum')
+        ax.set_xlabel("frequency (Hz)")
+        ax.set_title("Fourier spectrum")
         ax.set_xlim(0, max_freq)
         fig, ax = plt.subplots()
         ax.plot(quefrency_vector, np.abs(cepstrum))
-        ax.set_xlabel('quefrency (s)')
-        ax.set_title('cepstrum')
-        ax.set_xlim(1/max_freq, 1/min_freq)
+        ax.set_xlabel("quefrency (s)")
+        ax.set_title("cepstrum")
+        ax.set_xlim(1 / max_freq, 1 / min_freq)
         ax.set_ylim(0, 200)
     return cepstrum, quefrency_vector
 
@@ -514,10 +563,17 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
 
     """
 
-    indexes = scipy.signal.find_peaks(cepstrum, height=None, threshold=None,
-                                      distance=None, prominence=None, width=3,
-                                      wlen=None, rel_height=0.5,
-                                      plateau_size=None)
+    indexes = scipy.signal.find_peaks(
+        cepstrum,
+        height=None,
+        threshold=None,
+        distance=None,
+        prominence=None,
+        width=3,
+        wlen=None,
+        rel_height=0.5,
+        plateau_size=None,
+    )
     peaks = []
     amps = []
     for i in indexes[0]:
@@ -526,14 +582,25 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
             peaks.append(quefrency_vector[i])
     peaks = np.around(np.array(peaks), 3)
     peaks = list(peaks)
-    peaks = [1/p for p in peaks]
+    peaks = [1 / p for p in peaks]
     return peaks, amps
 
 
-def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
-                    drive_precision=0.05, max_drive_freq=6, min_drive_freq=3,
-                    sig_precision=1, max_sig_freq=50, min_sig_freq=8,
-                    low_fq_width=0.5, high_fq_width=1, plot=False):
+def pac_frequencies(
+    ts,
+    sf,
+    method="duprelatour",
+    n_values=10,
+    drive_precision=0.05,
+    max_drive_freq=6,
+    min_drive_freq=3,
+    sig_precision=1,
+    max_sig_freq=50,
+    min_sig_freq=8,
+    low_fq_width=0.5,
+    high_fq_width=1,
+    plot=False,
+):
     """A function to compute the comodulogram for phase-amplitude coupling
        and extract the pairs of peaks with maximum coupling value.
 
@@ -588,16 +655,20 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
 
     """
 
-    drive_steps = int(((max_drive_freq-min_drive_freq)/drive_precision)+1)
+    drive_steps = int(((max_drive_freq - min_drive_freq) / drive_precision) + 1)
     low_fq_range = np.linspace(min_drive_freq, max_drive_freq, drive_steps)
-    sig_steps = int(((max_sig_freq-min_sig_freq)/sig_precision)+1)
+    sig_steps = int(((max_sig_freq - min_sig_freq) / sig_precision) + 1)
     high_fq_range = np.linspace(min_sig_freq, max_sig_freq, sig_steps)
 
-    estimator = Comodulogram(fs=sf, low_fq_range=low_fq_range,
-                             low_fq_width=low_fq_width,
-                             high_fq_width=high_fq_width,
-                             high_fq_range=high_fq_range, method=method,
-                             progress_bar=False)
+    estimator = Comodulogram(
+        fs=sf,
+        low_fq_range=low_fq_range,
+        low_fq_width=low_fq_width,
+        high_fq_width=high_fq_width,
+        high_fq_range=high_fq_range,
+        method=method,
+        progress_bar=False,
+    )
     estimator.fit(ts)
     indexes = top_n_indexes(estimator.comod_, n_values)[::-1]
     pac_freqs = []
@@ -610,14 +681,15 @@ def pac_frequencies(ts, sf, method='duprelatour', n_values=10,
     return pac_freqs, pac_coupling
 
 
-def _polycoherence_2d(data, fs, *ofreqs, norm=2, flim1=None, flim2=None,
-                      synthetic=(), **kwargs):
+def _polycoherence_2d(
+    data, fs, *ofreqs, norm=2, flim1=None, flim2=None, synthetic=(), **kwargs
+):
     """
     Polycoherence between freqs and their sum as a function of f1 and f2
     """
     norm1, norm2 = __get_norm(norm)
-    freq, t, spec = spectrogram(data, fs=fs, mode='complex', **kwargs)
-    spec = np.require(spec, 'complex64')
+    freq, t, spec = spectrogram(data, fs=fs, mode="complex", **kwargs)
+    spec = np.require(spec, "complex64")
     spec = np.transpose(spec, [1, 0])  # transpose (f, t) -> (t, f)
     if flim1 is None:
         flim1 = (0, (np.max(freq) - np.sum(ofreqs)) / 2)
@@ -677,15 +749,24 @@ def polycoherence(data, *args, dim=2, **kwargs):
         parameters nperseg, noverlap, nfft.
     """
     N = len(data)
-    kwargs.setdefault('nperseg', N // 20)
-    kwargs.setdefault('nfft', next_fast_len(N // 10))
+    kwargs.setdefault("nperseg", N // 20)
+    kwargs.setdefault("nfft", next_fast_len(N // 10))
     f = _polycoherence_2d
     return f(data, *args, **kwargs)
 
 
-def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
-                             noverlap=None, method='bicoherence',
-                             flim1=(2, 50), flim2=(2, 50), graph=False):
+def polyspectrum_frequencies(
+    data,
+    sf,
+    precision,
+    n_values=10,
+    nperseg=None,
+    noverlap=None,
+    method="bicoherence",
+    flim1=(2, 50),
+    flim2=(2, 50),
+    graph=False,
+):
     """Short summary.
 
     Parameters
@@ -717,22 +798,22 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
         Description of returned object.
 
     """
-    if method == 'bispectrum':
+    if method == "bispectrum":
         norm = 0
-    if method == 'bicoherence':
+    if method == "bicoherence":
         norm = 2
     if nperseg is None:
         nperseg = sf
     if noverlap is None:
-        noverlap = sf//10
-    nfft = int(sf*(1/precision))
+        noverlap = sf // 10
+    nfft = int(sf * (1 / precision))
     kw = dict(nperseg=nperseg, noverlap=noverlap, nfft=nfft)
-    freq1, freq2, bispec = polycoherence(data, 1000, norm=norm,
-                                         **kw, flim1=flim1, flim2=flim2,
-                                         dim=2)
+    freq1, freq2, bispec = polycoherence(
+        data, 1000, norm=norm, **kw, flim1=flim1, flim2=flim2, dim=2
+    )
     for i in range(len(bispec)):
         for j in range(len(bispec[i])):
-            if str(np.real(bispec[i][j])) == 'inf':
+            if str(np.real(bispec[i][j])) == "inf":
                 bispec[i][j] = 0
     indexes = top_n_indexes(np.real(bispec), n_values)[::-1]
     poly_freqs = []
@@ -745,13 +826,14 @@ def polyspectrum_frequencies(data, sf, precision, n_values=10, nperseg=None,
     return poly_freqs, poly_amps
 
 
-'''HARMONIC PEAKS SELECTION
+"""HARMONIC PEAKS SELECTION
    Take list of all peaks as input
-   and output selected harmonic peaks'''
+   and output selected harmonic peaks"""
 
 
-def harmonic_recurrence(peaks, amps, min_freq=1, max_freq=30,
-                        min_harms=2, harm_limit=128):
+def harmonic_recurrence(
+    peaks, amps, min_freq=1, max_freq=30, min_harms=2, harm_limit=128
+):
     """The harmonic series of each peak is compared to all other peaks
        to identify those that have the highest recurrence in the spectrum.
        Hence, selected peaks are the ones that have a maximum number of
@@ -801,10 +883,10 @@ def harmonic_recurrence(peaks, amps, min_freq=1, max_freq=30,
                 if p2 == p:
                     ratio = 0.1  # arbitrary value to set ratio  to non integer
                 if p2 > p:
-                    ratio = p2/p
+                    ratio = p2 / p
                     harm = ratio
                 if p2 < p:
-                    ratio = p/p2
+                    ratio = p / p2
                     harm = -ratio
                 if ratio.is_integer():
                     if harm <= harm_limit:
@@ -831,8 +913,7 @@ def harmonic_recurrence(peaks, amps, min_freq=1, max_freq=30,
     max_amps = np.array(max_amps)
     harmonics = np.array(harmonics)
     harmonic_peaks = np.array(harmonic_peaks)
-    return (max_n, max_peaks, max_amps, harmonics, harmonic_peaks,
-            harm_peaks_fit)
+    return (max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit)
 
 
 def compute_IMs(f1, f2, n):
@@ -858,11 +939,11 @@ def compute_IMs(f1, f2, n):
     """
     IMs = []
     orders = []
-    for i in range(-n, n+1):
-        for j in range(-n, n+1):
-            IMs.append(f1*j+f2*i)
+    for i in range(-n, n + 1):
+        for j in range(-n, n + 1):
+            IMs.append(f1 * j + f2 * i)
             orders.append(j)
-            IMs.append(np.abs(f1*j-f2*i))
+            IMs.append(np.abs(f1 * j - f2 * i))
             orders.append(j)
     IMs = [x for _, x in sorted(zip(orders, IMs))]
     orders = sorted(orders)
@@ -870,15 +951,14 @@ def compute_IMs(f1, f2, n):
 
 
 def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
-    '''
+    """
     This function computes the intermodulation components (IMCs) for each pairs
     of peaks and compare the IMCs with peaks values. If a pair of peaks has
     a number of IMCs equals to or higher than parameter min_IMs, these peaks
     and the associated IMCs are stored in IMs_all dictionary.
-    '''
+    """
     EIMs = []
-    IMCs_all = {'IMs': [], 'peaks': [], 'n_IMs': [], 'orders': [],
-                'amps': []}
+    IMCs_all = {"IMs": [], "peaks": [], "n_IMs": [], "orders": [], "amps": []}
     for p, a in zip(peaks, amps):
         IMs_temp = []
         orders_temp = []
@@ -890,16 +970,16 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
                     orders_temp.append(orders_)
                     IMs_all_ = list(set(IMs) & set(peaks))
                     if len(IMs_all_) > min_IMs - 1:
-                        IMCs_all['IMs'].append(IMs_all_)
-                        IMCs_all['peaks'].append([p, p2])
-                        IMCs_all['amps'].append([a, a2])
-                        IMCs_all['n_IMs'].append(len(IMs_all_))
-                        IMCs_all['orders'].append(orders_temp)
+                        IMCs_all["IMs"].append(IMs_all_)
+                        IMCs_all["peaks"].append([p, p2])
+                        IMCs_all["amps"].append([a, a2])
+                        IMCs_all["n_IMs"].append(len(IMs_all_))
+                        IMCs_all["orders"].append(orders_temp)
         IMs_temp = [item for sublist in IMs_temp for item in sublist]
         orders_temp = [item for sublist in orders_temp for item in sublist]
         EIMs_temp = list(set(IMs_temp) & set(peaks))
         EIMs.append(EIMs_temp)
-        n_IM_peaks = len(IMCs_all['IMs'])
+        n_IM_peaks = len(IMCs_all["IMs"])
     return EIMs, IMCs_all, n_IM_peaks
 
 
@@ -924,17 +1004,16 @@ def compute_sidebands(carrier, modulator, order=2):
     sidebands = []
     i = 1
     while i <= order:
-        if carrier-modulator*i > 0:
-            sidebands.append(np.round(carrier-modulator*i, 3))
-            sidebands.append(np.round(carrier+modulator*i, 3))
+        if carrier - modulator * i > 0:
+            sidebands.append(np.round(carrier - modulator * i, 3))
+            sidebands.append(np.round(carrier + modulator * i, 3))
         i += 1
     return np.sort(sidebands)
 
 
-
 # https://github.com/voicesauce/opensauce-python/blob/master/opensauce/shrp.py
 
-'''
+"""
 EXPERIMENTAL / work-in-progress
 # from https://homepage.univie.ac.at/christian.herbst/python/dsp_util_8py_source.html#l03455
 def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
@@ -1026,4 +1105,4 @@ def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
      exit(1)
 
     return arrT, arrFoFinal, arrPeriod, arrFo
-'''
+"""

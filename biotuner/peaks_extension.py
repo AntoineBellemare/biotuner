@@ -1,4 +1,3 @@
-
 import numpy as np
 import itertools
 from biotuner.biotuner_utils import rebound, compareLists
@@ -6,9 +5,9 @@ from collections import Counter
 from functools import reduce
 import biotuner.metrics
 
-'''EXTENDED PEAKS from expansions
+"""EXTENDED PEAKS from expansions
    (finding new peaks based on harmonic structure)
-'''
+"""
 
 
 def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up=0):
@@ -52,7 +51,7 @@ def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up=0):
     return multi_harmonics
 
 
-def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
+def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode="div"):
     """
     Natural sub-harmonics
 
@@ -90,12 +89,12 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
         i = 1
         harm_temp = p
         while i < n_harmonics:
-            if mode == 'div':
-                harm_temp = (p/i)
-            if mode == 'div_add':
-                harm_temp = p + (p/i)
-            if mode == 'div_sub':
-                harm_temp = p - (p/i)
+            if mode == "div":
+                harm_temp = p / i
+            if mode == "div_add":
+                harm_temp = p + (p / i)
+            if mode == "div_sub":
+                harm_temp = p - (p / i)
             harmonics.append(harm_temp)
             i += 1
         div_harmonics.append(harmonics)
@@ -108,8 +107,12 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode='div'):
     return div_harmonics, div_harm_bound
 
 
-def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
-                 div_mode='div', n_common_harms=5):
+def harmonic_fit(peaks,
+                 n_harm=10,
+                 bounds=1,
+                 function="mult",
+                 div_mode="div",
+                 n_common_harms=5):
     """
     This function computes harmonics of a list of peaks and compares the lists
     of harmonics pairwise to find fitting between the harmonic series.
@@ -147,16 +150,17 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
 
     """
     from itertools import combinations
+
     peak_bands = []
     for i in range(len(peaks)):
         peak_bands.append(i)
-    if function == 'mult':
+    if function == "mult":
         multi_harmonics = EEG_harmonics_mult(peaks, n_harm)
-    elif function == 'div':
+    elif function == "div":
         multi_harmonics, x = EEG_harmonics_div(peaks, n_harm, mode=div_mode)
-    elif function == 'exp':
+    elif function == "exp":
         multi_harmonics = []
-        for h in range(n_harm+1):
+        for h in range(n_harm + 1):
             h += 1
             multi_harmonics.append([i**h for i in peaks])
         multi_harmonics = np.array(multi_harmonics)
@@ -166,12 +170,11 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
     matching_positions = []
     harmonics_pos = []
     for i in range(len(list_peaks)):
-        (harms,
-         harm_pos,
-         matching_pos,
-         _) = compareLists(multi_harmonics[list_peaks[i][0]],
-                           multi_harmonics[list_peaks[i][1]],
-                           bounds)
+        (harms, harm_pos, matching_pos, _) = compareLists(
+                                            multi_harmonics[list_peaks[i][0]],
+                                            multi_harmonics[list_peaks[i][1]],
+                                            bounds
+                                        )
         harm_temp.append(harms)
         harmonics_pos.append(harm_pos)
         if len(matching_pos) > 0:
@@ -179,9 +182,12 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
                 matching_positions.append(j)
     matching_positions = [list(i) for i in matching_positions]
     harm_fit = np.array(harm_temp, dtype=object).squeeze()
-    harmonics_pos = reduce(lambda x, y: x+y, harmonics_pos)
-    most_common_harmonics = [h for h, h_count in Counter(harmonics_pos)
-                             .most_common(n_common_harms) if h_count > 1]
+    harmonics_pos = reduce(lambda x, y: x + y, harmonics_pos)
+    most_common_harmonics = [
+        h
+        for h, h_count in Counter(harmonics_pos).most_common(n_common_harms)
+        if h_count > 1
+    ]
     harmonics_pos = list(np.sort(list(set(harmonics_pos))))
     if len(peak_bands) > 2:
         harm_fit = list(itertools.chain.from_iterable(harm_fit))
@@ -191,7 +197,7 @@ def harmonic_fit(peaks, n_harm=10, bounds=1, function='mult',
     return harm_fit, harmonics_pos, most_common_harmonics, matching_positions
 
 
-'''EXTENDED PEAKS from restrictions'''
+"""EXTENDED PEAKS from restrictions"""
 
 
 def consonance_peaks(peaks, limit):
@@ -242,15 +248,15 @@ def consonance_peaks(peaks, limit):
             p1x = p1
             if p1x > p2x:
                 while p1x > p2x:
-                    p1x = p1x/2
+                    p1x = p1x / 2
             if p1x < p2x:
                 while p2x > p1x:
-                    p2x = p2x/2
+                    p2x = p2x / 2
             if p1x < 0.1:
                 p1x = 0.06
             if p2x < 0.1:
                 p2x = 0.06  # random  number to avoid division by 0
-            cons_ = biotuner.metrics.compute_consonance(p2x/p1x)
+            cons_ = biotuner.metrics.compute_consonance(p2x / p1x)
             if cons_ < 1:
                 cons_tot.append(cons_)
             if cons_ < limit or cons_ == 2:
@@ -296,14 +302,16 @@ def multi_consonance(cons_pairs, n_freqs=5):
     f_count = []
     for f in freqs_nodup:
         f_count.append(freqs_dup.count(f))
-    freqs_related = [x for _, x in sorted(zip(
-                                              f_count,
+    freqs_related = [x for _, x in sorted(zip(f_count,
                                               freqs_nodup))][-(n_freqs):][::-1]
     return freqs_related
 
 
-def consonant_ratios(data, limit, sub=False, input_type='peaks',
-                     metric='cons'):
+def consonant_ratios(data,
+                     limit,
+                     sub=False,
+                     input_type="peaks",
+                     metric="cons"):
     """
     Function that computes integer ratios from peaks with higher consonance
 
@@ -332,14 +340,14 @@ def consonant_ratios(data, limit, sub=False, input_type='peaks',
     """
     consonance_ = []
     ratios2keep = []
-    if input_type == 'peaks':
+    if input_type == "peaks":
         ratios = biotuner.biotuner_utils.compute_peak_ratios(data, sub=sub)
-    if input_type == 'ratios':
+    if input_type == "ratios":
         ratios = data
     for ratio in ratios:
-        if metric == 'cons':
+        if metric == "cons":
             cons_ = biotuner.metrics.compute_consonance(ratio)
-        if metric == 'harmsim':
+        if metric == "harmsim":
             cons_ = biotuner.metrics.dyad_similarity(ratio)
         if cons_ > limit:
             consonance_.append(cons_)

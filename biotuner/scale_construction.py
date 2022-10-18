@@ -16,6 +16,7 @@ from numpy import linspace, empty, concatenate, log2
 from scipy.signal import argrelextrema
 from fractions import Fraction
 from scipy.stats import norm
+import contfrac
 sys.setrecursionlimit(120000)
 
 
@@ -260,6 +261,31 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2,
         tuning.append(degree)
         harmonic_min += 1
     return sorted(tuning)
+
+
+def convergents(interval):
+    """Return the convergents of the log2 of a ratio.
+       The second value represents the number of steps to divide the octave
+       while the first value represents the number of octaves up before
+       the stacke ratio arrives approximately to the octave value.
+       For example, the interval 1.5 will gives [7, 12], which means that
+       to approximate the fifth (1.5) in a NTET-tuning, you can divide the
+       octave in 12, while stacking 12 fifth will lead to the 7th octave up.
+
+    Parameters
+    ----------
+    interval : float
+        Interval to find convergent.
+
+    Returns
+    -------
+    convergents : List of lists
+        Each sublist corresponds to a pair of convergents.
+
+    """
+    value = np.log2(interval)
+    convergents = list(contfrac.convergents(value))
+    return convergents
 
 
 # Dissonance curves

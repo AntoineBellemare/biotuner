@@ -12,3 +12,4 @@ fooof
 emd
 emd-signal
 pyts
+contfrac

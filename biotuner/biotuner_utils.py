@@ -7,11 +7,9 @@ import pygame
 import pygame.sndarray
 import pytuning
 import pyACA
-from pytuning import *
 import scipy.signal
 import sympy as sp
 import functools
-import contfrac
 import itertools
 import operator
 import sys
@@ -24,15 +22,10 @@ import math
 from collections import Counter
 from scipy.fftpack import rfft, irfft
 from pytuning.tuning_tables import create_scala_tuning
-try:
-    from pyunicorn.timeseries.surrogates import *
-    from pyunicorn.timeseries import RecurrenceNetwork
-except ModuleNotFoundError:
-    pass
 sys.setrecursionlimit(120000)
 
 
-'''-----------------------PROPORTION FUNCTIONS----------------------------'''
+"""-----------------------PROPORTION FUNCTIONS----------------------------"""
 
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
@@ -66,7 +59,7 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
             if p1 < 0.1:
                 p1 = 0.1
             try:
-                ratio_temp = p2/p1
+                ratio_temp = p2 / p1
             except:
                 pass
 
@@ -96,13 +89,13 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
             # a value under the octave.
             if peak > octave:
                 while peak > octave:
-                    peak = peak/octave
+                    peak = peak / octave
                 peak_ratios_final.append(peak)
             # will multiply the ratio by the octave until it reaches
             # a value over the unison (1).
             if peak < octave:
                 while peak < 1:
-                    peak = peak*octave
+                    peak = peak * octave
                 peak_ratios_final.append(peak)
         # Preparing output
         peak_ratios_final = np.array(peak_ratios_final)
@@ -222,22 +215,22 @@ def chords_to_ratios(chords, harm_limit=2, spread=True):
             # harm_limit of the previous note
             if spread is True:
                 for note in range(len(chord)):
-                    while chord[note] > chord[note-1]*harm_limit:
-                        chord[note] = chord[note]/2
+                    while chord[note] > chord[note - 1] * harm_limit:
+                        chord[note] = chord[note] / 2
             # allow each note to be within the defined
             # harm_limit of the first note
             if spread is False:
                 for note in range(len(chord)):
-                    while chord[note] > chord[0]*harm_limit:
-                        chord[note] = chord[note]/2
+                    while chord[note] > chord[0] * harm_limit:
+                        chord[note] = chord[note] / 2
         chord = sorted([np.round(n, 1) for n in chord])
-        chord = [int(n*10) for n in chord]
+        chord = [int(n * 10) for n in chord]
         gcd_chord = 2  # arbitrary number that is higher than 1
         while gcd_chord > 1:
             gcd_chord = gcd(*chord)
             if gcd_chord > 1:
-                chord = [int(note/gcd_chord) for note in chord]
-        chord_bounded = [c/chord[0] for c in chord]
+                chord = [int(note / gcd_chord) for note in chord]
+        chord_bounded = [c / chord[0] for c in chord]
         chords_ratios_bounded.append(chord_bounded)
         chords_ratios.append(chord)
     return chords_ratios, chords_ratios_bounded
@@ -263,7 +256,7 @@ def NTET_steps(octave, step, NTET):
 
     """
 
-    answer = octave**(step/NTET)
+    answer = octave ** (step / NTET)
     return answer
 
 
@@ -288,10 +281,10 @@ def NTET_ratios(n_steps, max_ratio, octave=2):
     """
     steps = []
     for s in range(n_steps):
-        steps.append(2**(s/n_steps))
+        steps.append(2 ** (s / n_steps))
     steps_out = []
-    for j in range(max_ratio-1):
-        steps_out.append([i+j for i in steps])
+    for j in range(max_ratio - 1):
+        steps_out.append([i + j for i in steps])
     steps_out = sum(steps_out, [])
     return steps_out
 
@@ -310,7 +303,7 @@ def scale_from_pairs(pairs):
         Scale steps.
 
     """
-    scale = [rebound((x[1]/x[0])) for x in pairs]
+    scale = [rebound((x[1] / x[0])) for x in pairs]
     return scale
 
 
@@ -335,7 +328,7 @@ def ratios_harmonics(ratios, n_harms=1):
     ratios_harms = []
     for h in range(n_harms):
         h += 1
-        ratios_harms.append([i*h for i in ratios])
+        ratios_harms.append([i * h for i in ratios])
     ratios_harms = [i for sublist in ratios_harms for i in sublist]
     return ratios_harms
 
@@ -367,7 +360,7 @@ def ratios_increments(ratios, n_inc=1):
     return ratios_harms
 
 
-'''---------------------------LIST MANIPULATION--------------------------'''
+"""---------------------------LIST MANIPULATION--------------------------"""
 
 
 def flatten(t):
@@ -423,12 +416,16 @@ def pairs_most_frequent(pairs, n):
 
     """
     drive_freqs = [x[0] for x in pairs]
-    signal_freqs = [x[1]for x in pairs]
-    drive_dict = {k: v for k, v in sorted(Counter(drive_freqs).items(),
-                                          key=lambda item: item[1])}
+    signal_freqs = [x[1] for x in pairs]
+    drive_dict = {
+        k: v for k, v in sorted(Counter(drive_freqs).items(),
+                                key=lambda item: item[1])
+    }
     max_drive = list(drive_dict)[::-1][0:n]
-    signal_dict = {k: v for k, v in sorted(Counter(signal_freqs).items(),
-                                           key=lambda item: item[1])}
+    signal_dict = {
+        k: v for k, v in sorted(Counter(signal_freqs).items(),
+                                key=lambda item: item[1])
+    }
     max_signal = list(signal_dict)[::-1][0:n]
     return [max_signal, max_drive]
 
@@ -455,9 +452,9 @@ def rebound(x, low=1, high=2, octave=2):
     """
 
     while x >= high:
-        x = x/octave
+        x = x / octave
     while x <= low:
-        x = x*octave
+        x = x * octave
     return x
 
 
@@ -534,19 +531,19 @@ def compareLists(list1, list2, bounds):
     positions = []
     for i, l1 in enumerate(list1):
         for j, l2 in enumerate(list2):
-            if l2-bounds < l1 < l2+bounds:
-                matching.append((l1+l2)/2)
-                matching_pos.append([(l1+l2)/2, i+1, j+1])
-                positions.append(i+1)
-                positions.append(j+1)
+            if l2 - bounds < l1 < l2 + bounds:
+                matching.append((l1 + l2) / 2)
+                matching_pos.append([(l1 + l2) / 2, i + 1, j + 1])
+                positions.append(i + 1)
+                positions.append(j + 1)
     matching = np.array(matching)
     matching_pos = np.array(matching_pos)
     ratios_temp = []
     for i in range(len(matching_pos)):
         if matching_pos[i][1] > matching_pos[i][2]:
-            ratios_temp.append(matching_pos[i][1]/matching_pos[i][2])
+            ratios_temp.append(matching_pos[i][1] / matching_pos[i][2])
         else:
-            ratios_temp.append(matching_pos[i][2]/matching_pos[i][1])
+            ratios_temp.append(matching_pos[i][2] / matching_pos[i][1])
     matching_pos_ratios = np.array(ratios_temp)
     return matching, list(set(positions)), matching_pos, matching_pos_ratios
 
@@ -568,7 +565,7 @@ def top_n_indexes(arr, n):
         of the input array.
 
     """
-    idx = bn.argpartition(arr, arr.size-n, axis=None)[-n:]
+    idx = bn.argpartition(arr, arr.size - n, axis=None)[-n:]
     width = arr.shape[1]
     indexes = [divmod(i, width) for i in idx]
     return indexes
@@ -590,14 +587,14 @@ def getPairs(peaks):
     """
     peaks_ = peaks.copy()
     out = []
-    for i in range(len(peaks_)-1):
-        a = peaks_.pop(i-i)
+    for i in range(len(peaks_) - 1):
+        a = peaks_.pop(i - i)
         for j in peaks_:
             out.append([a, j])
     return out
 
 
-'''--------------------SIMPLE MATHEMATICAL FUNCTIONS-----------------------'''
+"""--------------------SIMPLE MATHEMATICAL FUNCTIONS-----------------------"""
 
 
 def nth_root(num, root):
@@ -616,7 +613,7 @@ def nth_root(num, root):
         nth root.
 
     """
-    answer = num**(1/root)
+    answer = num ** (1 / root)
     return answer
 
 
@@ -637,6 +634,7 @@ def gcd(*numbers):
         Greated common divisor of the input numbers.
 
     """
+
     def gcd(a, b):
         while b:
             a, b = b, a % b
@@ -646,41 +644,69 @@ def gcd(*numbers):
 
 
 def reduced_form(*numbers):
+    """Return a tuple of numbers which is the reduced form of the input,
+       which is a list of integers. Ex: [4, 8, 12, 80] -> [1, 2, 3, 20]
+
+    Parameters
+    ----------
+    *numbers : list (float)
+        List of numbers to reduce.
+
+    Returns
+    -------
+    reduce : list (int)
+        Reduced form of the input.
+
     """
-    Return a tuple of numbers which is the reduced form of the input,
-    which is a list of integers
-    """
-    return tuple(int(a // gcd(*numbers)) for a in numbers)
+    reduce = tuple(int(a // gcd(*numbers)) for a in numbers)
+    return reduce
 
 
 def lcm(*numbers):
-    """
-    Return the least common multiple of the given integers
+    """Return the least common multiple of the given integers.
+
+    Parameters
+    ----------
+    *numbers : list (float)
+        List of numbers.
+
+    Returns
+    -------
+    lcm_ : int
+        Least common multiple of the input numbers.
+
     """
     def lcm(a, b):
         if a == b == 0:
             return 0
         return (a * b) // gcd(a, b)
-
-    # LCM(a, b, c, d) = LCM(a, LCM(b, LCM(c, d)))
-    return reduce(lcm, numbers)
+    lcm_ = reduce(lcm, numbers)
+    return lcm_
 
 
 def prime_factors(n):
-    """
-    Return a list of the prime factors of the integer n.
-    Don't use this for big numbers; it's a dumb brute-force method.
+    """Return a list of the prime factors of the integer n.
+       Don't use this for big numbers; it's a dumb brute-force method.
+
+    Parameters
+    ----------
+    n : int
+        Integer to factorize.
+
+    Returns
+    -------
+    factors : list
+        List of prime factors of n.
+
     """
     factors = []
     lastresult = n
-
     while lastresult > 1:
         c = 2
         while lastresult % c > 0:
             c += 1
         factors.append(c)
         lastresult /= c
-
     return factors
 
 
@@ -713,6 +739,21 @@ def prime_factor(n):
 
 
 def contFrac(x, k):
+    """Compute the continuous fraction of a value x for k steps.
+
+    Parameters
+    ----------
+    x : float
+        Value to decompose.
+    k : int
+        Number of steps to go through.
+
+    Returns
+    -------
+    cf : list
+        List of denominators (1/cf[0] + 1/cf[1] ... +1/cf[k]).
+
+    """
     cf = []
     q = math.floor(x)
     cf.append(q)
@@ -726,13 +767,7 @@ def contFrac(x, k):
     return cf
 
 
-def convergents(interval):
-    value = np.log2(interval)
-    convergents = list(contfrac.convergents(value))
-    return convergents
-
-
-'''------------------------------SURROGATES--------------------------------'''
+"""------------------------------SURROGATES--------------------------------"""
 
 
 def phaseScrambleTS(ts):
@@ -752,7 +787,7 @@ def phaseScrambleTS(ts):
     fs = rfft(ts)
     # rfft returns real and imaginary components
     # in adjacent elements of a real array
-    pow_fs = fs[1:-1:2]**2 + fs[2::2]**2
+    pow_fs = fs[1:-1:2] ** 2 + fs[2::2] ** 2
     phase_fs = np.arctan2(fs[2::2], fs[1:-1:2])
     phase_fsr = phase_fs.copy()
     np.random.shuffle(phase_fsr)
@@ -792,8 +827,7 @@ def AAFT_surrogates(original_data):
         rescaled_data[i, :] = gaussian[i, ranks[i, :]]
 
     #  Phase randomize rescaled data
-    phase_randomized_data = \
-        correlated_noise_surrogates(rescaled_data)
+    phase_randomized_data = correlated_noise_surrogates(rescaled_data)
 
     #  Rescale back to amplitude distribution of original data
     sorted_original = original_data.copy()
@@ -808,7 +842,7 @@ def AAFT_surrogates(original_data):
 
 
 def correlated_noise_surrogates(original_data):
-    '''
+    """
     Return Fourier surrogates.
 
     Generate surrogates by Fourier transforming the :attr:`original_data`
@@ -820,7 +854,7 @@ def correlated_noise_surrogates(original_data):
     .. note::
        The amplitudes are not adjusted here, i.e., the
        individual amplitude distributions are not conserved!
-    '''
+    """
     #  Calculate FFT of original_data time series
     #  The FFT of the original_data data has to be calculated only once,
     #  so it is stored in self._original_data_fft.
@@ -838,67 +872,122 @@ def correlated_noise_surrogates(original_data):
 
     #  Calculate IFFT and take the real part, the remaining imaginary part
     #  is due to numerical errors.
-    return np.ascontiguousarray(np.real(np.fft.irfft(surrogates, n=n_time,
+    return np.ascontiguousarray(np.real(np.fft.irfft(surrogates,
+                                                     n=n_time,
                                                      axis=1)))
 
 
-'''from: https://github.com/narayanps/NolinearTimeSeriesAnalysis/blob/
-   master/SurrogateModule.py'''
+""""""
 
 
 def UnivariateSurrogatesTFT(data_f, MaxIter=1, fc=5):
-    import numpy
+    """Compute Truncated Fourier Transform of the input data.
+       from: https://github.com/narayanps/NolinearTimeSeriesAnalysis/blob/
+       master/SurrogateModule.py
+
+    Parameters
+    ----------
+    data_f : array
+        Original signal.
+    MaxIter : int
+        Defaults to 1.
+        Maximum number of iterations.
+    fc : int
+        Defaults to 5.
+        Description of parameter `fc`.
+
+    Returns
+    -------
+    xsur : array
+        Surrogate of the original signal.
+
+    """
+
     xs = data_f.copy()
     xs.sort()  # sorted amplitude stored
     # amplitude of fourier transform of orig
-    pwx = numpy.abs(numpy.fft.fft(data_f))
-    phi = numpy.angle(numpy.fft.fft(data_f))
+    pwx = np.abs(np.fft.fft(data_f))
+    phi = np.angle(np.fft.fft(data_f))
     Len = phi.shape[0]
     # data_f.shape=(-1,1)
     # random permutation as starting point
-    xsur = numpy.random.permutation(data_f)
+    xsur = np.random.permutation(data_f)
     # xsur.shape = (1,-1)
-    Fc = numpy.round(fc*data_f.shape[0])
+    Fc = np.round(fc * data_f.shape[0])
     for i in range(MaxIter):
-        phi_surr = numpy.angle(numpy.fft.fft(xsur))
+        phi_surr = np.angle(np.fft.fft(xsur))
         # print(phi_surr.shape)
         # print(phi.shape)
         phi_surr[1:Fc] = phi[1:Fc]
-        phi_surr[Len-Fc+1:Len] = phi[Len-Fc+1:Len]
+        phi_surr[Len - Fc + 1: Len] = phi[Len - Fc + 1: Len]
         phi_surr[0] = 0.0
-        new_len = int(Len/2)
+        new_len = int(Len / 2)
 
         phi_surr[new_len] = 0.0
 
-        fftsurx = pwx*numpy.exp(1j*phi_surr)
-        xoutb = numpy.real(numpy.fft.ifft(fftsurx))
+        fftsurx = pwx * np.exp(1j * phi_surr)
+        xoutb = np.real(np.fft.ifft(fftsurx))
         ranks = xoutb.argsort(axis=0)
         xsur[ranks] = xs
-    return(xsur)
+    return xsur
 
 
-def create_SCL(scale, fname):
-    table = create_scala_tuning(scale, fname)
-    outF = open(fname+'.scl', "w")
-    outF.writelines(table)
-    outF.close()
-    return
+"""----------------------SPECTROMORPHOLOGY FUNCIONS------------------------"""
 
 
-'''----------------------SPECTROMORPHOLOGY FUNCIONS------------------------'''
+def computeFeatureCl_new(
+    afAudioData,
+    cFeatureName,
+    f_s,
+    window=4000,
+    overlap=1
+     ):
+    """Calculate spectromorphological metrics on time series.
 
+    Parameters
+    ----------
+    afAudioData : array (numDataPoints, )
+        Input signal.
+    cFeatureName : str
+        {'SpectralCentroid', 'SpectralCrestFactor', 'SpectralDecrease',
+         'SpectralFlatness', 'SpectralFlux', 'SpectralKurtosis',
+         'SpectralMfccs', 'SpectralPitchChroma', 'SpectralRolloff',
+         'SpectralSkewness', 'SpectralSlope', 'SpectralSpread',
+         'SpectralTonalPowerRatio', 'TimeAcfCoeff', 'TimeMaxAcf',
+         'TimePeakEnvelope', 'TimeRms', 'TimeStd', 'TimeZeroCrossingRate'}
+    f_s : int
+        Sampling frequency.
+    window : int
+        Length of the moving window in samples.
+    overlap : int
+        Overlap between each moving window in samples.
 
-def computeFeatureCl_new(afAudioData, cFeatureName,
-                         f_s, window=4000, overlap=1):
-    [v, t] = pyACA.computeFeature(cFeatureName,
-                                  afAudioData,
-                                  f_s, None, window,
-                                  overlap)
+    Returns
+    -------
+    v : array
+        Vector of the spectromorphological metric.
+    t : array
+        Timestamps.
+    """
+    [v, t] = pyACA.computeFeature(
+                   cFeatureName,
+                   afAudioData,
+                   f_s,
+                   None,
+                   window,
+                   overlap)
     return (v, t)
 
 
-def EMD_to_spectromorph(IMFs, sf, method="SpectralCentroid", window=None,
-                        overlap=1, in_cut=None, out_cut=None):
+def EMD_to_spectromorph(
+    IMFs,
+    sf,
+    method="SpectralCentroid",
+    window=None,
+    overlap=1,
+    in_cut=None,
+    out_cut=None,
+):
     """Calculate spectromorphological metrics on intrinsic mode functions
        derived using Empirical Mode Decomposition.
 
@@ -933,11 +1022,11 @@ def EMD_to_spectromorph(IMFs, sf, method="SpectralCentroid", window=None,
     """
     # remove 0.1 second at the beginning and the end of the signal.
     if in_cut is None:
-        in_cut = int(sf/10)
+        in_cut = int(sf / 10)
     if out_cut is None:
-        out_cut = int(len(IMFs[0])-(sf/10))
+        out_cut = int(len(IMFs[0]) - (sf / 10))
     if window is None:
-        window = int(sf/2)
+        window = int(sf / 2)
     spectro_IMF = []
     for e in IMFs:
         f, t = computeFeatureCl_new(e, method, sf, window, overlap)
@@ -949,7 +1038,7 @@ def EMD_to_spectromorph(IMFs, sf, method="SpectralCentroid", window=None,
     return spectro_IMF
 
 
-'''-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------'''
+"""-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------"""
 
 
 sample_rate = 44100
@@ -957,9 +1046,10 @@ pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
 
-def generate_signal(sf, time_end, freqs, amps, show=False,
-                    theta=0, color='blue'):
-    time = np.arange(0, time_end, 1/sf)
+def generate_signal(
+    sf, time_end, freqs, amps, show=False, theta=0, color="blue"
+     ):
+    time = np.arange(0, time_end, 1 / sf)
     sine_tot = []
     for i in range(len(freqs)):
         sinewave = amps[i] * np.sin(2 * np.pi * freqs[i] * time + theta)
@@ -967,14 +1057,14 @@ def generate_signal(sf, time_end, freqs, amps, show=False,
     sine_tot = sum_list(sine_tot)
     if show is True:
         ax = plt.gca()
-        ax.set_facecolor('xkcd:black')
+        ax.set_facecolor("xkcd:black")
         plt.plot(time, sine_tot, color=color)
     return sine_tot
 
 
 def sine_wave(hz, peak, n_samples=sample_rate):
     """Compute N samples of a sine wave with given frequency and peak amplitude.
-       Defaults to one second.
+    Defaults to one second.
     """
     length = sample_rate / float(hz)
     omega = np.pi * 2 / length
@@ -983,17 +1073,17 @@ def sine_wave(hz, peak, n_samples=sample_rate):
     return np.resize(onecycle, (n_samples,)).astype(np.int16)
 
 
-def square_wave(hz, peak, duty_cycle=.5, n_samples=sample_rate):
+def square_wave(hz, peak, duty_cycle=0.5, n_samples=sample_rate):
     """Compute N samples of a sine wave with given frequency and peak amplitude.
-       Defaults to one second.
+    Defaults to one second.
     """
-    t = np.linspace(0, 1, 500 * 440/hz, endpoint=False)
+    t = np.linspace(0, 1, 500 * 440 / hz, endpoint=False)
     wave = scipy.signal.square(2 * np.pi * 5 * t, duty=duty_cycle)
     wave = np.resize(wave, (n_samples,))
-    return (peak / 2 * wave.astype(np.int16))
+    return peak / 2 * wave.astype(np.int16)
 
 
-def smooth(x, window_len=11, window='hanning'):
+def smooth(x, window_len=11, window="hanning"):
     """smooth the data using a window with requested size.
 
     This method is based on the convolution of a scaled window with the signal.
@@ -1003,22 +1093,24 @@ def smooth(x, window_len=11, window='hanning'):
 
     input:
         x: the input signal
-        window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
-            flat window will produce a moving average smoothing.
+        window_len: dimension of the smoothing window; should be an odd integer
+        window: type of window
+                {'flat', 'hanning', 'hamming', 'bartlett', 'blackman'}
+                flat window will produce a moving average smoothing.
 
     output:
         the smoothed signal
 
-    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
+    NOTE: length(output) != length(input), to correct this:
+          return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
-    s = np.r_[x[window_len-1:0:-1], x, x[-2:-window_len-1:-1]]
-    if window == 'flat':  # moving average
-        w = np.ones(window_len, 'd')
+    s = np.r_[x[window_len - 1:0:-1], x, x[-2:-window_len - 1:-1]]
+    if window == "flat":  # moving average
+        w = np.ones(window_len, "d")
     else:
-        w = eval('np.'+window+'(window_len)')
+        w = eval("np." + window + "(window_len)")
 
-    y = np.convolve(w/w.sum(), s, mode='valid')
+    y = np.convolve(w / w.sum(), s, mode="valid")
     return y
 
 
@@ -1026,7 +1118,7 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
+    b, a = butter(order, [low, high], btype="band")
     return b, a
 
 
@@ -1050,10 +1142,10 @@ def major_triad(hz):
 
 
 def listen_scale(scale, fund, length):
-    print('Scale:', scale)
-    scale = [1]+scale
+    print("Scale:", scale)
+    scale = [1] + scale
     for s in scale:
-        freq = fund*s
+        freq = fund * s
         print(freq)
         note = make_chord(freq, [1])
         note = np.ascontiguousarray(np.vstack([note, note]).T)
@@ -1063,10 +1155,10 @@ def listen_scale(scale, fund, length):
 
 
 def listen_chords(chords, mult=10, length=500):
-    print('Chords:', chords)
+    print("Chords:", chords)
 
     for c in chords:
-        c = [i*mult for i in c]
+        c = [i * mult for i in c]
         chord = make_chord(c[0], c[1:])
         chord = np.ascontiguousarray(np.vstack([chord, chord]).T)
         sound = pygame.sndarray.make_sound(chord)
@@ -1074,12 +1166,48 @@ def listen_chords(chords, mult=10, length=500):
         pygame.time.wait(int(sound.get_length() * length))
 
 
-'''-----------------------------OTHERS----------------------------------'''
+"""-----------------------------OTHERS----------------------------------"""
+
+
+def create_SCL(scale, fname):
+    """Save a scale to .scl file.
+
+    Parameters
+    ----------
+    scale : list
+        List of scale steps.
+    fname : str
+        Name of the saved file.
+
+    """
+    table = create_scala_tuning(scale, fname)
+    outF = open(fname + ".scl", "w")
+    outF.writelines(table)
+    outF.close()
+    return
 
 
 def scale_interval_names(scale, reduce=False):
+    """Gives the name of intervals in a scale based on PyTuning dictionary.
+
+    Parameters
+    ----------
+    scale : list
+        List of scale steps either in float or fraction form.
+    reduce : boolean
+        Defaults to False.
+        When set to True, output only the steps that match a key
+        in the dictionary.
+
+    Returns
+    -------
+    interval_names : list of lists
+        Each sublist contains the scale step and the corresponding
+        interval names.
+
+    """
     try:
-        type = scale[0].dtype == 'float64'
+        type = scale[0].dtype == "float64"
         if type is True:
             scale, _, _ = scale2frac(scale)
     except:
@@ -1094,33 +1222,87 @@ def scale_interval_names(scale, reduce=False):
     return interval_names
 
 
-def calculate_pvalues(df):
+def calculate_pvalues(df, method='pearson'):
+    """Calculate the correlation between each column of a DataFrame.
+
+    Parameters
+    ----------
+    df : DataFrame
+        DataFrame of values to compute correlation on.
+    method : str
+        Defaults to pearson.
+        {'pearson', 'spearman'}
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     df = df.dropna()._get_numeric_data()
     dfcols = pd.DataFrame(columns=df.columns)
-    pvalues = dfcols.transpose().join(dfcols, how='outer')
+    pvalues = dfcols.transpose().join(dfcols, how="outer")
     for r in df.columns:
         for c in df.columns:
-            pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
+            if method == 'pearson':
+                pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
+            if method == 'spearman':
+                pvalues[r][c] = round(spearmanr(df[r], df[c])[1], 4)
     return pvalues
 
 
 def peaks_to_amps(peaks, freqs, amps, sf):
-    bin_size = np.round((sf/2)/len(freqs), 3)
+    """Find the amplitudes of spectral peaks.
+
+    Parameters
+    ----------
+    peaks : list
+        Spectral peaks in Hertz.
+    freqs : list
+        All centers of frequency bins.
+    amps : list
+        All amplitudes associated with frequency bins.
+    sf : int
+        Sampling frequency.
+
+    Returns
+    -------
+    amps_out : list
+        Amplitudes of spectral peaks.
+
+    """
+    bin_size = np.round((sf / 2) / len(freqs), 3)
     amps_out = []
     for p in peaks:
-        index = int(p/bin_size)
+        index = int(p / bin_size)
         amp = amps[index]
         amps_out.append(amp)
     return amps_out
 
 
 def alpha2bands(a):
+    """Derive frequency bands for M/EEG analysis based on the alpha peak.
+       Boundaries of adjacent frequency bands are derived based on the
+       golden ratio, which optimizes the uncoupling of phases between
+       frequencies. (see: Klimesch, 2018)
+
+    Parameters
+    ----------
+    a : float
+        Alpha peak in Hertz.
+
+    Returns
+    -------
+    FREQ_BANDS : List of lists
+        Each sublist contains the boundaries of each frequency band.
+
+    """
     np.float(a)
-    center_freqs = [a/4, a/2, a, a*2, a*4]
+    center_freqs = [a / 4, a / 2, a, a * 2, a * 4]
     FREQ_BANDS = []
     for f in center_freqs:
-        down = np.round((f/2)*1.618, 1)
-        up = np.round((f*2)*0.618, 1)
+        down = np.round((f / 2) * 1.618, 1)
+        up = np.round((f * 2) * 0.618, 1)
         band = [down, up]
         FREQ_BANDS.append(band)
     return FREQ_BANDS
@@ -1145,8 +1327,13 @@ def __freq_ind(freq, f0):
 
 
 def __product_other_freqs(spec, indices, synthetic=(), t=None):
-    p1 = np.prod([amplitude * np.exp(2j * np.pi * freq * t + phase)
-                  for (freq, amplitude, phase) in synthetic], axis=0)
+    p1 = np.prod(
+        [
+            amplitude * np.exp(2j * np.pi * freq * t + phase)
+            for (freq, amplitude, phase) in synthetic
+        ],
+        axis=0,
+    )
     p2 = np.prod(spec[:, indices[len(synthetic):]], axis=1)
     return p1 * p2
 
