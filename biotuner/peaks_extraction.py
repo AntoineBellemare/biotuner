@@ -441,7 +441,7 @@ def HilbertHuang1D(
     """
     IMFs = EMD_eeg(data, method="EMD")
     IMFs = np.moveaxis(IMFs, 0, 1)
-    IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1 : nIMFs + 1], sf, "nht")
+    IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:nIMFs + 1], sf, "nht")
     low = min_freq
     high = max_freq
     range_hh = int(high - low)
