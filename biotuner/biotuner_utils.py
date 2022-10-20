@@ -1,15 +1,15 @@
 #!bin/bash
-"""Collection of operations on timeseries."""
 import numpy as np
-from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 import pygame
 import pygame.sndarray
 import pytuning
 import pyACA
+from pytuning import *
 import scipy.signal
 import sympy as sp
 import functools
+import contfrac
 import itertools
 import operator
 import sys
@@ -22,6 +22,15 @@ import math
 from collections import Counter
 from scipy.fftpack import rfft, irfft
 from pytuning.tuning_tables import create_scala_tuning
+try:
+    from pyunicorn.timeseries.surrogates import *
+    from pyunicorn.timeseries import RecurrenceNetwork
+except ModuleNotFoundError:
+    pass
+try:
+    from scipy.signal import butter, lfilter
+except ModuleNotFoundError:
+    pass
 sys.setrecursionlimit(120000)
 
 

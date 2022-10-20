@@ -23,7 +23,7 @@ sys.setrecursionlimit(120000)
    on each sub-signal,"""
 
 
-def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple"):
+def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5):
     """
     The Empirical Mode Decomposition is a data-adaptive multiresolution
     technique to decompose a signal into physically meaningful components,
@@ -70,7 +70,7 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple"):
         eIMFs = np.moveaxis(eIMFs, 0, 1)
     if graph is True:
         t = np.linspace(0, len(data), len(data))
-        nIMFs = len(eIMFs)
+        nIMFs = nIMFs
         plt.figure(figsize=(12, 9))
         plt.subplot(nIMFs + 1, 1, 1)
         plt.plot(t, data, "r")
@@ -913,7 +913,7 @@ def harmonic_recurrence(
     max_amps = np.array(max_amps)
     harmonics = np.array(harmonics)
     harmonic_peaks = np.array(harmonic_peaks)
-    return (max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit)
+    return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 
 def compute_IMs(f1, f2, n):

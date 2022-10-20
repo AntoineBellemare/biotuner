@@ -9,7 +9,7 @@ pyACA
 pactools
 colorednoise
 fooof
-emd
+emd==0.5.4
 emd-signal
 pyts
 contfrac

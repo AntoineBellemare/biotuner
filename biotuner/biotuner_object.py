@@ -1382,7 +1382,8 @@ class compute_biotuner(object):
                            data,
                            method=peaks_function,
                            graph=graph,
-                           extrema_detection="simple"
+                           extrema_detection="simple",
+                           nIMFs=nIMFs
                            )
             self.IMFs = IMFs[1:nIMFs + 1]
             IMFs = IMFs[1:nIMFs + 1]
@@ -1509,7 +1510,7 @@ class compute_biotuner(object):
                                           )
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
         if peaks_function == "harmonic_recurrence":
-            (p, a, self.freqs, self.psd) = extract_welch_peaks(
+            p, a, self.freqs, self.psd = extract_welch_peaks(
                                             data,
                                             sf,
                                             precision=precision,
@@ -1521,18 +1522,13 @@ class compute_biotuner(object):
                                             nfft=nfft,
                                             min_freq=min_freq,
                                         )
-            (max_n,
-             peaks_temp,
-             amps_temp,
-             harms,
-             harm_peaks,
-             harm_peaks_fit,
-             ) = harmonic_recurrence(p,
-                                     a,
-                                     min_freq,
-                                     max_freq,
-                                     min_harms=min_harms,
-                                     harm_limit=harm_limit)
+            print('HELLO')
+            max_n, peaks_temp, amps_temp, harms, harm_peaks, harm_peaks_fit = harmonic_recurrence(p,
+                                                                                                  a,
+                                                                                                  min_freq,
+                                                                                                  max_freq,
+                                                                                                  min_harms=min_harms,
+                                                                                                  harm_limit=harm_limit)
             list_harmonics = np.concatenate(harms)
             list_harmonics = list(set(abs(np.array(list_harmonics))))
             list_harmonics = [h for h in list_harmonics if h <= harm_limit]
@@ -1540,10 +1536,9 @@ class compute_biotuner(object):
             self.all_harmonics = list_harmonics
             self.harm_peaks_fit = harm_peaks_fit
             # Select the n peaks with highest amplitude.
-            peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp,
+            peaks_temp = [x for _, x in sorted(zip(amps_temp,
                                           peaks_temp))][::-1][0:n_peaks]
-                                          )
+                                          
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
             if graph is True:
                 graph_psd_peaks(
@@ -1635,10 +1630,10 @@ class compute_biotuner(object):
                 cepstrum_, quefrency_vector, 1 / min_freq, 1 / max_freq
             )
             peaks_temp_ = list(np.flip(peaks_temp_))
-            peaks_temp_ = [np.round(p, 2) for p in peaks_temp_]
+            peaks_temp = [np.round(p, 2) for p in peaks_temp_]
             amps_temp_ = list(np.flip(amps_temp_))
             peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp,
+                [x for _, x in sorted(zip(amps_temp_,
                                           peaks_temp))][::-1][0:n_peaks]
                                           )
             amps_temp = sorted(amps_temp_)[::-1][0:n_peaks]
