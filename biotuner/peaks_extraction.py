@@ -358,19 +358,16 @@ def compute_FOOOF(
     fm.fit(freqs, psd, freq_range)
     if graph is True:
         fm.report(freqs, psd, freq_range)
-    peaks_temp = []
+    peaks_temp_ = []
     amps_temp = []
     for p in range(len(fm.peak_params_)):
         try:
-            peaks_temp.append(fm.peak_params_[p][0])
+            peaks_temp_.append(fm.peak_params_[p][0])
             amps_temp.append(fm.peak_params_[p][1])
         except:
             print("no peaks were found")
             pass
-    peaks_temp.append(
-        [x for _, x in sorted(zip(amps_temp,
-                                  peaks_temp))][::-1][0:n_peaks]
-                                  )
+    peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp_))][::-1][0:n_peaks]
     amps = sorted(amps_temp)[::-1][0:n_peaks]
     peaks = [np.round(p, 2) for p in peaks_temp]
     if extended_returns is True:

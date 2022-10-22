@@ -43,8 +43,12 @@ from biotuner.peaks_extension import (
     consonance_peaks,
     multi_consonance,
 )
-from biotuner.scale_construction import diss_curve, harmonic_entropy, harmonic_tuning
-from biotuner.vizs import graph_psd_peaks, graphEMD_welch
+from biotuner.scale_construction import (
+    diss_curve,
+    harmonic_entropy,
+    harmonic_tuning
+)
+from biotuner.vizs import graph_psd_peaks, graphEMD_welch, graph_harm_peaks, EMD_PSD_graph
 import seaborn as sbn
 import pygame
 
@@ -119,7 +123,7 @@ class compute_biotuner(object):
                      Ensemble Empirical Mode Decomposition (EEMD).
                      PSD is computed on each IMF using Welch. Peaks correspond
                      to frequency bins with the highest power.
-            'EEMD_FOOOF' : Intrinsic Mode Functions (IMFs) are derived with
+            'EMD_FOOOF' : Intrinsic Mode Functions (IMFs) are derived with
                            Ensemble Empirical Mode Decomposition (EEMD).
                            PSD is computed on each IMF with Welch's method.
                            'FOOOF' is applied to remove the aperiodic component
@@ -382,7 +386,8 @@ class compute_biotuner(object):
         self.peaks_ratios = compute_peak_ratios(
             self.peaks, rebound=True, octave=octave, sub=compute_sub_ratios
         )
-        self.peaks_ratios_cons, b = consonant_ratios(self.peaks, limit=scale_cons_limit)
+        self.peaks_ratios_cons, b = consonant_ratios(self.peaks,
+                                                     limit=scale_cons_limit)
         if ratios_extension is True:
             a, b, c = self.ratios_extension(
                 self.peaks_ratios, ratios_n_harms=ratios_n_harms
@@ -754,7 +759,10 @@ class compute_biotuner(object):
                 pass
         metrics["tenney"] = tenneyHeight(peaks)
         metrics["harmsim"] = np.average(ratios2harmsim(peaks_ratios))
-        _, _, subharm, _ = compute_subharmonics_5notes(peaks, n_harm, delta_lim, c=2.1)
+        _, _, subharm, _ = compute_subharmonics_5notes(peaks,
+                                                       n_harm,
+                                                       delta_lim,
+                                                       c=2.1)
         metrics["subharm_tension"] = subharm
         if spf == "harmonic_recurrence":
             metrics["n_harmonic_recurrence"] = self.n_harmonic_recurrence
@@ -1325,8 +1333,8 @@ class compute_biotuner(object):
                 extrema_detection="simple",
                 nIMFs=nIMFs,
             )
-            self.IMFs = IMFs[1 : nIMFs + 1]
-            IMFs = IMFs[1 : nIMFs + 1]
+            self.IMFs = IMFs[1: nIMFs + 1]
+            IMFs = IMFs[1: nIMFs + 1]
             try:
                 peaks_temp = []
                 amps_temp = []
@@ -1351,10 +1359,11 @@ class compute_biotuner(object):
                     amps_temp.append(a)
                 peaks_temp = np.flip(peaks_temp)
                 amps_temp = np.flip(amps_temp)
+                peaks_temp = peaks_temp[-n_peaks:]
             except:
                 pass
             if graph is True:
-                graphEMD_welch(
+                '''graphEMD_welch(
                     freqs_all,
                     psd_all,
                     peaks=peaks_temp,
@@ -1366,14 +1375,20 @@ class compute_biotuner(object):
                     noverlap=noverlap,
                     min_freq=min_freq,
                     max_freq=max_freq,
-                )
+                )'''
+                EMD_PSD_graph(self.data, self.IMFs, peaks_temp, spectro='Euler', bands = None, xmin=min_freq, xmax=max_freq,
+                                  compare = True, name = '', nfft=nfft, nperseg=nperseg, noverlap=noverlap, sf=self.sf,
+                                  freqs_all=freqs_all, psd_all=psd_all, max_freq=max_freq, precision=precision)
+                #EMD_PSD_graph(peaks_temp, IMFs, freqs_all, psd_all, spectro='Euler', bands=None, xmin=1, xmax=70, plot_type = 'line',
+                #              compare=True, input_data='EEG', name='',sf=self.sf,
+                #              raw_data=self.data, precision=precision, noverlap=noverlap, save=False)
 
-        if peaks_function == "EEMD_FOOOF":
+        if peaks_function == "EMD_FOOOF":
             nfft = sf / precision
             nperseg = sf / precision
             IMFs = EMD_eeg(
-                data, method=peaks_function, graph=graph, extrema_detection="simple"
-            )[1 : nIMFs + 1]
+                data, method="EMD_fast", graph=graph, extrema_detection="simple"
+            )[1: nIMFs + 1]
             self.IMFs = IMFs
             peaks_temp = []
             amps_temp = []
@@ -1437,17 +1452,16 @@ class compute_biotuner(object):
             )
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
-            peaks_temp = [p for p in peaks_temp if p < max_freq]
-            amp_idx = []
+            peaks_temp = [p for p in peaks_temp if p < max_freq][0:n_peaks]
+            '''amp_idx = []
             for i in peaks_temp:
                 amp_idx.append(flatten(freqs).index(i))
             amps_temp = np.array(flatten(amps))[amp_idx]
             amps_temp = list(amps_temp)
             # Select the n peaks with highest amplitude.
-            peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
-            )
-            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]'''
+            amps_temp = 'NaN'
         if peaks_function == "harmonic_recurrence":
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
@@ -1478,6 +1492,7 @@ class compute_biotuner(object):
             list_harmonics = np.sort(list_harmonics)
             self.all_harmonics = list_harmonics
             self.harm_peaks_fit = harm_peaks_fit
+            self.n_harmonic_recurrence = len(harm_peaks_fit)
             # Select the n peaks with highest amplitude.
             peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
                 0:n_peaks
@@ -1485,15 +1500,11 @@ class compute_biotuner(object):
 
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
             if graph is True:
-                graph_psd_peaks(
-                    self.freqs,
-                    self.psd,
-                    peaks_temp,
-                    xmin=min_freq,
-                    xmax=max_freq,
-                    color="lightseagreen",
-                    method=peaks_function,
-                )
+                graph_harm_peaks(self.freqs, self.psd,
+                                 harm_peaks_fit, min_freq,
+                                 max_freq, color='black',
+                                 method=peaks_function, save=False,
+                                 figname='test')
         if peaks_function == "EIMC":
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
@@ -1519,9 +1530,10 @@ class compute_biotuner(object):
                 amp_idx.append(flatten(self.EIMC_all["peaks"]).index(i))
             amps_temp = np.array(flatten(self.EIMC_all["amps"]))[amp_idx]
             amps_temp = list(amps_temp)
-            peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
-            )
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
+                0:n_peaks
+            ]
+
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
             if graph is True:
                 graph_psd_peaks(
@@ -1551,15 +1563,16 @@ class compute_biotuner(object):
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
             peaks_temp = [p for p in peaks_temp if p < max_freq]
-            amp_idx = []
+            '''amp_idx = []
             for i in peaks_temp:
                 amp_idx.append(flatten(freqs).index(i))
-            amps_temp = np.array(flatten(amps))[amp_idx]
+            amps_temp = np.array(amps)[amp_idx]
             amps_temp = list(amps_temp)
-            peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
-            )
-            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
+                0:n_peaks
+            ]'''
+
+            amps_temp = 'NaN'
         if peaks_function == "cepstrum":
             cepstrum_, quefrency_vector = cepstrum(
                 self.data,
@@ -1574,11 +1587,11 @@ class compute_biotuner(object):
             peaks_temp_ = list(np.flip(peaks_temp_))
             peaks_temp = [np.round(p, 2) for p in peaks_temp_]
             amps_temp_ = list(np.flip(amps_temp_))
-            peaks_temp.append(
-                [x for _, x in sorted(zip(amps_temp_, peaks_temp))][::-1][0:n_peaks]
-            )
+            peaks_temp = [x for _, x in sorted(zip(amps_temp_, peaks_temp))][::-1][
+                0:n_peaks
+            ]
             amps_temp = sorted(amps_temp_)[::-1][0:n_peaks]
-
+        # print(peaks_temp)
         peaks_temp = [0 + precision if x == 0 else x for x in peaks_temp]
         peaks = np.array(peaks_temp)
         peaks = np.around(peaks, 3)

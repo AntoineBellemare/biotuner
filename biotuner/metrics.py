@@ -407,3 +407,56 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
         subharm_tension = "NaN"
     subharm_tension
     return common_subs, delta_t, subharm_tension, harm_temp
+
+
+def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
+
+    list_ = [list1, list2]
+    combinations = [p for p in itertools.product(*list_)]
+    sub_tension_final = []
+    #  Compute subharmonic tension for each pairs of peaks
+    #  that belong to different lists.
+    for pair in combinations:
+        subharms = []
+        delta_t = []
+        common_subs = []
+        #  Compute subharmonics for each fundamental frequency
+        for i in pair:
+            s_ = []
+            for j in range(1, n_harmonics+1):
+                s_.append(1000/(i/j))
+            subharms.append(s_)
+        #  Create pairwise combinations of subharmonics from the two lists.
+        combi = np.array(list(itertools.product(subharms[0], subharms[1])))
+        #  Iterate through all pairs to identify common subharmonics
+        for t in combi:
+            s1 = t[0]
+            s2 = t[1]
+            if np.abs(s1-s2) < delta_lim:
+                delta_t_ = np.abs(s1-s2)
+                common_subs_ = np.mean([s1, s2])
+                if delta_t_ not in delta_t:
+                    delta_t.append(delta_t_)
+                if common_subs_ not in common_subs:
+                    common_subs.append(common_subs_)
+        delta_temp = []
+        harm_temp = []
+        overall_temp = []
+        subharm_tension = []
+        c = c
+        if len(delta_t) > 0:
+            #  Iterate through common subharmonics to compute
+            #  subarmonic tension associated to a single pair of peaks.
+            for i in range(len(delta_t)):
+                delta_norm = delta_t[i]/common_subs[i]
+                delta_temp.append(delta_norm)
+                harm_temp.append(1/delta_norm)
+                overall_temp.append((1/common_subs[i])*(delta_t[i]))
+            subharm_tension.append(((sum(overall_temp))/len(delta_t)))
+
+            print('subharm_tension', np.average(subharm_tension))
+            sub_tension_final.append(np.average(subharm_tension))
+    #  Compute the overall subharmonic tension by averaging across
+    #  pairs of frequencies.
+    sub_tension_final = np.average(sub_tension_final)
+    return common_subs, delta_t, sub_tension_final, harm_temp

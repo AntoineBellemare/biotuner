@@ -133,3 +133,164 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
     plt.axvspan(30, 70, ymin=shadow, alpha=alpha[4],
                 color=color_bg[4], ec='black')
     plt.legend(loc='lower left', fontsize=16)
+
+
+def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
+                     method=None, save=False, figname='test'):
+    #psd = np.interp(psd, (psd.min(), psd.max()), (0, 0.005))
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(freqs, psd, color=color)
+    #peak_power = [psd]
+    plt.xlim([xmin, xmax])
+    # plt.xscale('log')
+    idx_min = list(freqs).index(xmin)
+    idx_max = list(freqs).index(xmax)
+    ymin = np.min(psd[idx_min:idx_max])
+    ymax = np.max(psd[idx_min:idx_max])
+    plt.ylim([ymin, ymax])
+    plt.xlabel('Frequency (Hertz)', size=14)
+    plt.ylabel('PSD [V**2/Hz]', size=14)
+    if method is not None:
+        plt.title('Power Spectrum Density and peaks positions using ' + method
+                  + ' method', size=18)
+    if method is None:
+        plt.title('Power Spectrum Density and peaks positions', size=18)
+    color_list = ['blue', 'red', 'orange', 'turquoise', 'purple']
+    y_steps = (ymax-ymin)/10
+    y_list = [ymax-(y_steps*2), ymax-(y_steps*3), ymax-(y_steps*4), ymax-(y_steps*5)]
+    npeaks = len(harm_peaks_fit)
+    #print('npeaks', npeaks)
+    for peak_info, color_harm, ys in zip(harm_peaks_fit, color_list[0:npeaks], y_list[0:npeaks]):
+        peak = peak_info[0]
+        harm_pos = [int(x) for x in peak_info[1]]
+
+        harm_freq = peak_info[2]
+        print(harm_freq, peak)
+        try:
+            harm_freq.remove(peak)
+        except ValueError:
+            pass
+
+        plt.axvline(x=peak, c=color_harm, linestyle='-')
+
+        for e, harm in enumerate(harm_freq):
+            plt.axvline(x=harm, c=color_harm, linestyle='dotted')
+            #print(harm, harm_pos[e])
+            ax.annotate(str(harm_pos[e]), (harm, ys),
+                            bbox=dict(boxstyle="square", alpha=0.2,color=color_harm),
+                            xytext=(harm+0.5, ys), fontsize=12)
+    if save is True:
+        plt.savefig(figname, dpi=300)
+
+
+##Multiple PSD##
+from PyEMD import EMD, EEMD
+import numpy as np
+import operator
+import scipy
+from random import seed
+
+
+def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands = None, xmin=1, xmax=70,
+                  compare=True, name = '', sf=1000, nfft=4096, nperseg=1024, noverlap=512,
+                  freqs_all=None, psd_all=None, max_freq=80, precision=0.5):
+
+    if bands is None:
+        bands = [[0, 3], [3, 7], [7, 12], [12, 30], [30, 70]]
+    percentage_fit = []
+    if max_freq is None:
+        max_freq = sf / 2
+    if nperseg is None:
+        mult = 1 / precision
+        nperseg = sf * mult
+        nfft = nperseg
+    #freqs_all = []
+    #psd_all = []
+    '''for e in range(len(IMFs)):
+        freqs, psd = scipy.signal.welch(IMFs[e], sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
+        freqs_all.append(freqs)
+        psd_all.append(psd)
+    freqs_all = np.array(freqs_all)
+    psd_all = np.array(psd_all)'''
+    # Stackplot with X, Y, colors value
+
+    color_line = ['aqua', 'darkturquoise', 'darkcyan', 'darkslategrey', 'black']
+    #color_line = ['darkgoldenrod', 'goldenrod', 'orange', 'gold', 'khaki']
+    color_bg = ['darkgoldenrod', 'goldenrod', 'orange', 'gold', 'khaki']
+    #color_bg = ['aqua', 'darkturquoise', 'darkcyan', 'darkslategrey', 'black']
+    idx_min = list(freqs_all[0]).index(xmin)
+    idx_max = list(freqs_all[0]).index(xmax)
+    #for i in range(len(psd_all)):
+#        psd_all[i] = np.interp(psd_all[i], (psd_all[i][idx_min:idx_max].min(), psd_all[i][idx_min:idx_max].max()), (0, 1))
+
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    #print(len(freqs_all))
+    ax.plot(freqs_all[0], psd_all[4], color = color_line[0])
+    ax.plot(freqs_all[0], psd_all[3], color = color_line[1])
+    ax.plot(freqs_all[0], psd_all[2], color = color_line[2])
+    ax.plot(freqs_all[0], psd_all[1], color = color_line[3])
+    ax.plot(freqs_all[0], psd_all[0], color = color_line[4])
+    ax.fill_between(freqs_all[0], psd_all[0], 0, color=color_line[0], alpha=.7)
+    ax.fill_between(freqs_all[1], psd_all[1], 0, color=color_line[1], alpha=.7)
+    ax.fill_between(freqs_all[2], psd_all[2], 0, color=color_line[2], alpha=.7)
+    ax.fill_between(freqs_all[3], psd_all[3], 0, color=color_line[3], alpha=.7)
+    ax.fill_between(freqs_all[4], psd_all[4], 0, color=color_line[4], alpha=.7)
+
+
+        #color_bg = ['paleturquoise', 'aqua', 'darkturquoise','darkcyan' , 'darkslategrey']
+    alpha = [0.6, 0.63, 0.66, 0.69, 0.72]
+    shadow = 0.9
+
+    ymin = np.min(psd_all[0][idx_min:idx_max])
+    ymax = np.max(psd_all[-1][idx_min:idx_max])
+    #print('YMINMAX', ymin, ymax)
+    if compare is True:
+        freqs_full, psd_full = scipy.signal.welch(eeg_data, sf, nfft = nfft, nperseg = nperseg, noverlap=noverlap)
+        psd_full = np.interp(psd_full, (psd_full[idx_min:idx_max].min(), psd_full[idx_min:idx_max].max()), (ymin, ymax))
+        ax.plot(freqs_all[0], psd_full, color = 'deeppink', linestyle='dashed')
+    plt.text(1.7, 0.0028, 'delta', horizontalalignment = 'center', fontsize=12)
+    plt.text(4.5, 0.0028, 'theta', horizontalalignment = 'center',fontsize=12)
+    plt.text(9, 0.0028, 'alpha', horizontalalignment = 'center',fontsize=12)
+    plt.text(19, 0.0028, 'beta', horizontalalignment = 'center',fontsize=12)
+    plt.text(47, 0.0028, 'gamma', horizontalalignment = 'center',fontsize=12)
+    plt.xlim([xmin, xmax])
+
+    #plt.ylim([0.000001, 0.006])
+    plt.ylim([ymin, ymax+((ymax-ymin)/3)])
+    #plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.4f}'))
+    plt.title('PSD of Empirical Mode Decomposition 1 to 5', fontsize=14)
+    plt.xlabel('Frequency')
+    plt.ylabel('Power')
+    plt.yscale('symlog')
+    plt.xscale('log')
+
+    xposition = peaks_EMD
+
+    labels = ['IMF5', 'IMF4', 'IMF3', 'IMF2', 'IMF1']
+    for p, n, band in zip(peaks_EMD, range(len(labels)), bands):
+        #print(band[0])
+        #print(band[1])
+        #print(p)
+
+        if p > band[0] and p<= band[1]:
+            #print('got it')
+            labels[n] = labels[n]+'*'
+
+    print(labels)
+    for xc,c, l in zip(xposition,color_line, labels):
+        plt.axvline(x=xc, label='{} = {}'.format(l, xc), c=c)
+    plt.axvspan(0, 3, ymin = shadow, alpha=alpha[0], color=color_bg[0], ec ='black')
+    plt.axvspan(3, 7, ymin = shadow, alpha=alpha[1], color=color_bg[1],ec ='black')
+    plt.axvspan(7, 12, ymin = shadow, alpha=alpha[2], color=color_bg[2], ec ='black')
+    plt.axvspan(12, 30, ymin = shadow, alpha=alpha[3], color=color_bg[3], ec ='black')
+    plt.axvspan(30, 70, ymin = shadow, alpha=alpha[4], color=color_bg[4], ec ='black')
+
+    plt.legend(loc='lower left')
+    plt.show()
+    #plt.savefig('PSD_EMD_multi_{}_{}_{}'.format(plot_type, input_data, name), dpi=300)
+    plt.clf()
+    #percentage_fit.append((i/(len(epochs.ch_names)*5))*100)
+    #percentage_fit = np.array(percentage_fit)
+
+    return percentage_fit
