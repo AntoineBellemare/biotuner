@@ -1317,6 +1317,18 @@ def alpha2bands(a):
     return FREQ_BANDS
 
 
+def chunk_ts(data, sf, overlap=10, precision=1):
+    overlap = 100/overlap
+    nsec = len(data)/sf
+    chunk_size = int((1/precision)*sf)
+    overlap_samp = int((chunk_size)/overlap)
+    i = 0
+    pairs = []
+    while i < len(data):
+        pairs.append((i, i+chunk_size))
+        i = i+chunk_size-overlap_samp
+    return pairs
+
 def __get_norm(norm):
     if norm == 0 or norm is None:
         return None, None

@@ -35,7 +35,7 @@ from biotuner.metrics import (
     tenneyHeight,
     timepoint_consonance,
     ratios2harmsim,
-    compute_subharmonics_5notes,
+    compute_subharmonic_tension,
 )
 from biotuner.peaks_extension import (
     consonant_ratios,
@@ -60,7 +60,7 @@ class compute_biotuner(object):
     (EEG, ECG, EMG, gravitational waves, noise, ...)
 
     Example of use:
-    biotuning = biotuner(sf = 1000)
+    biotuning = compute_biotuner(sf = 1000)
     biotuning.peaks_extraction(data)
     biotuning.peaks_extension()
     biotuning.peaks_metrics()
@@ -382,7 +382,7 @@ class compute_biotuner(object):
 
         self.peaks = peaks
         self.amps = amps
-        print("Number of peaks: ", len(peaks))
+        #print("Number of peaks: ", len(peaks))
         self.peaks_ratios = compute_peak_ratios(
             self.peaks, rebound=True, octave=octave, sub=compute_sub_ratios
         )
@@ -759,10 +759,11 @@ class compute_biotuner(object):
                 pass
         metrics["tenney"] = tenneyHeight(peaks)
         metrics["harmsim"] = np.average(ratios2harmsim(peaks_ratios))
-        _, _, subharm, _ = compute_subharmonics_5notes(peaks,
+        _, _, subharm, _ = compute_subharmonic_tension(peaks[0:5],
                                                        n_harm,
                                                        delta_lim,
-                                                       c=2.1)
+                                                       c=2.1,
+                                                       min_notes=3)
         metrics["subharm_tension"] = subharm
         if spf == "harmonic_recurrence":
             metrics["n_harmonic_recurrence"] = self.n_harmonic_recurrence
@@ -1262,6 +1263,7 @@ class compute_biotuner(object):
                 nfft=nfft,
             )
             FREQ_BANDS = alpha2bands(p[0])
+            print('Adaptive frequency bands: ', FREQ_BANDS)
             peaks_temp, amps_temp, self.freqs, self.psd = extract_welch_peaks(
                 data,
                 sf=sf,
@@ -1305,8 +1307,7 @@ class compute_biotuner(object):
                     xmin=min_freq,
                     xmax=max_freq,
                     color="darkred",
-                    method=peaks_function,
-                    precision=precision,
+                    method=peaks_function
                 )
         if peaks_function == "FOOOF":
             peaks_temp, amps_temp, self.freqs, self.psd = compute_FOOOF(

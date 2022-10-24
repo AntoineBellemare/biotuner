@@ -332,7 +332,8 @@ def timepoint_consonance(data,
     return chords, positions
 
 
-def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
+def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
+                                min_notes=2, c=2.1):
     """This function computes the subharmonic tension (Chan et al., 2019)
        for a set of 5 frequencies, based on the common subharmonics of a
        minimum of 3 frequencies.
@@ -353,39 +354,61 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
         Description of returned object.
 
     """
+    if min_notes is None:
+        min_notes = len(chord)
     subharms = []
-    delta_t = []
-    common_subs = []
     for i in chord:
         s_ = []
         for j in range(1, n_harmonics + 1):
             s_.append(1000 / (i / j))
         subharms.append(s_)
 
-    combi = np.array(
-        list(
-            itertools.product(
-                subharms[0], subharms[1], subharms[2], subharms[3], subharms[4]
+    if len(chord) == 2:
+        combi = np.array(list(itertools.product(subharms[0], subharms[1])))
+    if len(chord) == 3:
+        combi = np.array(list(itertools.product(subharms[0], subharms[1], subharms[2])))
+    if len(chord) == 4:
+        combi = np.array(list(itertools.product(subharms[0], subharms[1], subharms[2], subharms[3])))
+    if len(chord) == 5:
+        combi = np.array(
+            list(
+                itertools.product(
+                    subharms[0], subharms[1], subharms[2], subharms[3], subharms[4]
+                )
             )
         )
-    )
+    delta_t = []
+    common_subs = []
     for group in range(len(combi)):
-        triplets = list(combinations(combi[group], 3))
-        for t in triplets:
-            s1 = t[0]
-            s2 = t[1]
-            s3 = t[2]
-            if (
-                np.abs(s1 - s2) < delta_lim
-                and np.abs(s1 - s3) < delta_lim
-                and np.abs(s2 - s3) < delta_lim
-            ):
-                delta_t_ = np.abs(np.min([s1 - s2, s1 - s3, s2 - s3]))
-                common_subs_ = np.mean([s1, s2, s3])
-                if delta_t_ not in delta_t:
-                    delta_t.append(delta_t_)
-                if common_subs_ not in common_subs:
-                    common_subs.append(common_subs_)
+        if min_notes == 2:
+            doublets = list(combinations(combi[group], 2))
+            for t in doublets:
+                s1 = t[0]
+                s2 = t[1]
+                if np.abs(s1 - s2) < delta_lim:
+                    delta_t_ = np.abs(s1-s2)
+                    common_subs_ = np.mean([s1, s2])
+                    if delta_t_ not in delta_t:
+                        delta_t.append(delta_t_)
+                    if common_subs_ not in common_subs:
+                        common_subs.append(common_subs_)
+        if min_notes == 3:
+            triplets = list(combinations(combi[group], 3))
+            for t in triplets:
+                s1 = t[0]
+                s2 = t[1]
+                s3 = t[2]
+                if (
+                    np.abs(s1 - s2) < delta_lim
+                    and np.abs(s1 - s3) < delta_lim
+                    and np.abs(s2 - s3) < delta_lim
+                ):
+                    delta_t_ = np.abs(np.min([s1 - s2, s1 - s3, s2 - s3]))
+                    common_subs_ = np.mean([s1, s2, s3])
+                    if delta_t_ not in delta_t:
+                        delta_t.append(delta_t_)
+                    if common_subs_ not in common_subs:
+                        common_subs.append(common_subs_)
     delta_temp = []
     harm_temp = []
     overall_temp = []
@@ -403,7 +426,7 @@ def compute_subharmonics_5notes(chord, n_harmonics, delta_lim, c=2.1):
                 subharm_tension.append("NaN")
         except IndexError:
             subharm_tension = "NaN"
-    if len(delta_t) == 0:
+    else:
         subharm_tension = "NaN"
     subharm_tension
     return common_subs, delta_t, subharm_tension, harm_temp
@@ -454,7 +477,7 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
                 overall_temp.append((1/common_subs[i])*(delta_t[i]))
             subharm_tension.append(((sum(overall_temp))/len(delta_t)))
 
-            print('subharm_tension', np.average(subharm_tension))
+            #print('subharm_tension', np.average(subharm_tension))
             sub_tension_final.append(np.average(subharm_tension))
     #  Compute the overall subharmonic tension by averaging across
     #  pairs of frequencies.
