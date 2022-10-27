@@ -1,6 +1,8 @@
 from biotuner.biotuner_object import compute_biotuner
 #from biotuner.biotuner_utils import chunk_ts
 from matplotlib.pyplot import figure
+
+
 class transitional_harmony(object):
     """
     Class used to compute harmonic progressions

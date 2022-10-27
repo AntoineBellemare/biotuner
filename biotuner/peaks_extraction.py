@@ -134,6 +134,7 @@ def extract_welch_peaks(
     prominence=1,
     out_type="all",
     extended_returns=True,
+    smooth=1
 ):
     """
     Extract frequency peaks using Welch's method
@@ -193,6 +194,9 @@ def extract_welch_peaks(
         Defaults to True.
         Defines if psd and frequency bins values are outputed along
         the peaks and amplitudes.
+    smooth : int
+        Defaults to 1.
+        Number used to divide nfft to derive nperseg.
 
     Returns
     -------
@@ -211,8 +215,8 @@ def extract_welch_peaks(
         max_freq = sf / 2
     if nperseg is None:
         mult = 1 / precision
-        nperseg = sf * mult
-        nfft = nperseg
+        nfft = sf * mult
+        nperseg = nfft/smooth
     freqs, psd = scipy.signal.welch(
                  data,
                  sf,

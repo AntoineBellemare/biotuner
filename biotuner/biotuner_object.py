@@ -249,6 +249,7 @@ class compute_biotuner(object):
         max_harm_freq=None,
         EIMC_order=3,
         min_IMs=2,
+        smooth_fft=1
     ):
         """
         The peaks_extraction method is central to the use of the Biotuner.
@@ -321,6 +322,9 @@ class compute_biotuner(object):
         min_IMs : int
             Minimal number of Intermodulation Components to select the
             associated pair of peaks.
+        smooth_fft : int
+            Defaults to 1.
+            Number used to divide nfft to derive nperseg.
 
         Attributes
         ----------
@@ -378,6 +382,7 @@ class compute_biotuner(object):
             max_harm_freq=max_harm_freq,
             EIMC_order=EIMC_order,
             min_IMs=min_IMs,
+            smooth_fft=smooth_fft
         )
 
         self.peaks = peaks
@@ -1144,6 +1149,7 @@ class compute_biotuner(object):
         max_harm_freq=None,
         EIMC_order=3,
         min_IMs=2,
+        smooth_fft=1
     ):
         """
         Extract peak frequencies. This method is called by the
@@ -1206,6 +1212,8 @@ class compute_biotuner(object):
         min_IMs : int
             Minimal number of Intermodulation Components to select the
             associated pair of peaks.
+        smooth_fft : int
+            Number used to divide nfft to derive nperseg.
 
         Attributes
         ----------
@@ -1261,6 +1269,7 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
+                smooth=smooth_fft
             )
             FREQ_BANDS = alpha2bands(p[0])
             print('Adaptive frequency bands: ', FREQ_BANDS)
@@ -1275,6 +1284,7 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
+                smooth=smooth_fft
             )
             if graph is True:
                 graph_psd_peaks(
@@ -1298,6 +1308,7 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
+                smooth=smooth_fft
             )
             if graph is True:
                 graph_psd_peaks(
@@ -1352,6 +1363,7 @@ class compute_biotuner(object):
                         nperseg=nperseg,
                         noverlap=noverlap,
                         nfft=nfft,
+                        smooth=smooth_fft
                     )
 
                     freqs_all.append(freqs)
@@ -1475,6 +1487,7 @@ class compute_biotuner(object):
                 noverlap=noverlap,
                 nfft=nfft,
                 min_freq=min_freq,
+                smooth=smooth_fft
             )
 
             (
@@ -1487,25 +1500,29 @@ class compute_biotuner(object):
             ) = harmonic_recurrence(
                 p, a, min_freq, max_freq, min_harms=min_harms, harm_limit=harm_limit
             )
-            list_harmonics = np.concatenate(harms)
-            list_harmonics = list(set(abs(np.array(list_harmonics))))
-            list_harmonics = [h for h in list_harmonics if h <= harm_limit]
-            list_harmonics = np.sort(list_harmonics)
-            self.all_harmonics = list_harmonics
-            self.harm_peaks_fit = harm_peaks_fit
-            self.n_harmonic_recurrence = len(harm_peaks_fit)
-            # Select the n peaks with highest amplitude.
-            peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
-                0:n_peaks
-            ]
+            try:
+                list_harmonics = np.concatenate(harms)
+                list_harmonics = list(set(abs(np.array(list_harmonics))))
+                list_harmonics = [h for h in list_harmonics if h <= harm_limit]
+                list_harmonics = np.sort(list_harmonics)
+                self.all_harmonics = list_harmonics
+                self.harm_peaks_fit = harm_peaks_fit
+                self.n_harmonic_recurrence = len(harm_peaks_fit)
+                # Select the n peaks with highest amplitude.
+                peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
+                    0:n_peaks
+                ]
 
-            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
-            if graph is True:
-                graph_harm_peaks(self.freqs, self.psd,
-                                 harm_peaks_fit, min_freq,
-                                 max_freq, color='black',
-                                 method=peaks_function, save=False,
-                                 figname='test')
+                amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+                if graph is True:
+                    graph_harm_peaks(self.freqs, self.psd,
+                                     harm_peaks_fit, min_freq,
+                                     max_freq, color='black',
+                                     method=peaks_function, save=False,
+                                     figname='test')
+            except ValueError:
+                print('No peaks were detected. Consider increasing precision or number of harmonics')
+
         if peaks_function == "EIMC":
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
@@ -1518,6 +1535,7 @@ class compute_biotuner(object):
                 noverlap=noverlap,
                 nfft=nfft,
                 min_freq=min_freq,
+                smooth=smooth_fft
             )
             IMC, self.EIMC_all, n = endogenous_intermodulations(
                 p, a, order=EIMC_order, min_IMs=min_IMs
@@ -1563,7 +1581,7 @@ class compute_biotuner(object):
             )
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
-            peaks_temp = [p for p in peaks_temp if p < max_freq]
+            peaks_temp = [p for p in peaks_temp if p < max_freq][0:n_peaks]
             '''amp_idx = []
             for i in peaks_temp:
                 amp_idx.append(flatten(freqs).index(i))

@@ -458,9 +458,8 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
             if np.abs(s1-s2) < delta_lim:
                 delta_t_ = np.abs(s1-s2)
                 common_subs_ = np.mean([s1, s2])
-                if delta_t_ not in delta_t:
+                if delta_t_ not in delta_t and common_subs_ not in common_subs:
                     delta_t.append(delta_t_)
-                if common_subs_ not in common_subs:
                     common_subs.append(common_subs_)
         delta_temp = []
         harm_temp = []
