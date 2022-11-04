@@ -1,8 +1,8 @@
 #!bin/bash
 import numpy as np
 import matplotlib.pyplot as plt
-import pygame
-import pygame.sndarray
+#import pygame
+#import pygame.sndarray
 import pytuning
 import pyACA
 from pytuning import *
@@ -886,7 +886,7 @@ def correlated_noise_surrogates(original_data):
                                                      axis=1)))
 
 
-""""""
+
 
 
 def UnivariateSurrogatesTFT(data_f, MaxIter=1, fc=5):
@@ -1049,7 +1049,7 @@ def EMD_to_spectromorph(
 
 """-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------"""
 
-
+'''
 sample_rate = 44100
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
@@ -1091,7 +1091,7 @@ def square_wave(hz, peak, duty_cycle=0.5, n_samples=sample_rate):
     wave = np.resize(wave, (n_samples,))
     return peak / 2 * wave.astype(np.int16)
 
-
+'''
 def smooth(x, window_len=11, window="hanning"):
     """smooth the data using a window with requested size.
 
@@ -1136,7 +1136,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-
+'''
 def make_chord(hz, ratios):
     """Make a chord based on a list of frequency ratios."""
     sampling = 2048
@@ -1174,7 +1174,7 @@ def listen_chords(chords, mult=10, length=500):
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
 
-
+'''
 """-----------------------------OTHERS----------------------------------"""
 
 

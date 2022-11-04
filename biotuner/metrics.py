@@ -333,10 +333,10 @@ def timepoint_consonance(data,
 
 
 def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
-                                min_notes=2, c=2.1):
+                                min_notes=2):
     """This function computes the subharmonic tension (Chan et al., 2019)
-       for a set of 5 frequencies, based on the common subharmonics of a
-       minimum of 3 frequencies.
+       for a set of frequencies, based on the common subharmonics of a
+       minimum of 2 or 3 frequencies.
 
     Parameters
     ----------
@@ -347,6 +347,10 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
     delta_lim : float
         Maximal distance between subharmonics of different Frequencies
         to consider them as common subharmonics.
+    min_notes : int
+        Defaults to 2.
+        Minimal number of notes to consider common subharmonics.
+        Choose between 2 or 3.
 
     Returns
     -------

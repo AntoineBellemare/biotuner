@@ -28,7 +28,7 @@ from biotuner.biotuner_utils import (
     EMD_to_spectromorph,
     ratios_harmonics,
     ratios_increments,
-    make_chord,
+    
 )
 from biotuner.metrics import (
     euler,
@@ -50,7 +50,7 @@ from biotuner.scale_construction import (
 )
 from biotuner.vizs import graph_psd_peaks, graphEMD_welch, graph_harm_peaks, EMD_PSD_graph
 import seaborn as sbn
-import pygame
+#import pygame
 
 
 class compute_biotuner(object):
@@ -767,7 +767,6 @@ class compute_biotuner(object):
         _, _, subharm, _ = compute_subharmonic_tension(peaks[0:5],
                                                        n_harm,
                                                        delta_lim,
-                                                       c=2.1,
                                                        min_notes=3)
         metrics["subharm_tension"] = subharm
         if spf == "harmonic_recurrence":
@@ -1619,7 +1618,7 @@ class compute_biotuner(object):
 
     """Listening methods"""
 
-    def listen_scale(self, scale, fund=250, length=500):
+    '''def listen_scale(self, scale, fund=250, length=500):
         if scale == "peaks":
             scale = self.peaks_ratios
         if scale == "diss":
@@ -1681,3 +1680,4 @@ class compute_biotuner(object):
         else:
             print(vars(self))
         return
+'''

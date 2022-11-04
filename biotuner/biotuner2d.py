@@ -491,81 +491,81 @@ def graph_dist(
             plt.show()
 
 
-def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_grid=None, labels=None):
+def diss_curve_multi(freqs, amps, denom=10, max_ratio=2, bound=0.1, n_tet_grid=None):
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
+
     plt.figure(figsize=(18, 8))
     diss_minima_tot = []
-    for fr, am, lab in zip(freqs, amps, labels):
-        freqs = np.array([x*128 for x in fr])
+    for fr, am in zip(freqs, amps):
+        freqs = np.array([x * 128 for x in fr])
         am = np.interp(am, (np.array(am).min(), np.array(am).max()), (0.3, 0.7))
         r_low = 1
         alpharange = max_ratio
-        method = 'min'
+        method = "min"
 
         n = 1000
         diss = empty(n)
         a = concatenate((am, am))
         for i, alpha in enumerate(linspace(r_low, alpharange, n)):
-            f = concatenate((freqs, alpha*freqs))
+            f = concatenate((freqs, alpha * freqs))
             d = dissmeasure(f, a, method)
             diss[i] = d
 
-
-        plt.plot(linspace(r_low, alpharange, len(diss)), diss, label=lab)
-        plt.xscale('log')
+        plt.plot(linspace(r_low, alpharange, len(diss)), diss)
+        plt.xscale("log")
         plt.xlim(r_low, alpharange)
 
-        plt.xlabel('frequency ratio')
-        plt.ylabel('sensory dissonance')
-
+        plt.xlabel("frequency ratio")
+        plt.ylabel("sensory dissonance")
 
         diss_minima = argrelextrema(diss, np.less)
         diss_minima_tot.append(list(diss_minima[0]))
-        #print(diss_minima)
+        # print(diss_minima)
 
     diss_tot = [item for sublist in diss_minima_tot for item in sublist]
     diss_tot.sort()
     new_minima = []
 
-    for i in range(len(diss_tot)-1):
-        if (diss_tot[i+1] - diss_tot[i]) < bound:
-            new_minima.append((diss_tot[i]+diss_tot[i+1])/2)
-    #print(new_minima)
+    for i in range(len(diss_tot) - 1):
+        if (diss_tot[i + 1] - diss_tot[i]) < bound:
+            new_minima.append((diss_tot[i] + diss_tot[i + 1]) / 2)
+    # print(new_minima)
     intervals = []
     for d in range(len(new_minima)):
-        #print(new_minima[d])
-        frac = Fraction(new_minima[d]/(n/(max_ratio-1))+1).limit_denominator(denom)
+        # print(new_minima[d])
+        frac = Fraction(new_minima[d] / (n / (max_ratio - 1)) + 1).limit_denominator(
+            denom
+        )
         print(frac)
         frac = (frac.numerator, frac.denominator)
         intervals.append(frac)
 
-    #intervals = [(123, 100), (147, 100), (159, 100), (9, 5), (2, 1)]
+    # intervals = [(123, 100), (147, 100), (159, 100), (9, 5), (2, 1)]
     intervals.append((2, 1))
-    #print(intervals)
+    # print(intervals)
     for n, d in intervals:
-        plt.axvline(n/d, color='silver')
-    plt.axvline(1.001, linewidth=1, color='black')
+        plt.axvline(n / d, color="silver")
+    plt.axvline(1.001, linewidth=1, color="black")
     ax = plt.gca()
-    ax.set_facecolor('white')
-    ax.axhline(linewidth=1, color='black')
+    ax.set_facecolor("white")
+    ax.axhline(linewidth=1, color="black")
 
-    plt.xscale('linear')
+    plt.xscale("linear")
     plt.minorticks_off()
-    plt.xticks([n/d for n, d in intervals],
-               ['{}/{}'.format(n, d) for n, d in intervals], fontsize = 14)
-    plt.yticks(fontsize = 14)
+    plt.xticks(
+        [n / d for n, d in intervals],
+        ["{}/{}".format(n, d) for n, d in intervals],
+        fontsize=14,
+    )
+    plt.yticks(fontsize=14)
     if n_tet_grid is not None:
         n_tet = NTET_ratios(n_tet_grid, max_ratio=max_ratio)
     for n in n_tet:
-        plt.axvline(n, color='red', linestyle='--')
+        plt.axvline(n, color="red", linestyle="--")
     plt.tight_layout()
-    leg = plt.legend(fontsize=12, title='Electrode')
-    leg.set_title('Electrodes',prop={'size':18})
-    #plt.legend()
-    plt.savefig('diss_curve_multi_electrodes_1.png', dpi=300)
-    #plt.show()
+    plt.show()
     return diss_minima_tot
 
 

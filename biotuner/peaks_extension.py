@@ -170,7 +170,7 @@ def harmonic_fit(peaks,
     matching_positions = []
     harmonics_pos = []
     for i in range(len(list_peaks)):
-        harms, harm_pos, matching_pos, _ = compareLists(
+        (harms, harm_pos, matching_pos, _) = compareLists(
                                             multi_harmonics[list_peaks[i][0]],
                                             multi_harmonics[list_peaks[i][1]],
                                             bounds
