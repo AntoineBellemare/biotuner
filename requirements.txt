@@ -2,7 +2,7 @@ numpy
 matplotlib
 seaborn
 pygame
-git+https://github.com/AntoineBellemare/PyTuning.git
+pytuning
 mne
 bottleneck
 pyACA
