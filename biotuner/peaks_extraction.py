@@ -912,8 +912,8 @@ def harmonic_recurrence(
     max_n = np.array(max_n)
     max_peaks = np.array(max_peaks)
     max_amps = np.array(max_amps)
-    harmonics = np.array(harmonics)
-    harmonic_peaks = np.array(harmonic_peaks)
+    harmonics = np.array(harmonics, dtype=object)
+    harmonic_peaks = np.array(harmonic_peaks, dtype=object)
     return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 

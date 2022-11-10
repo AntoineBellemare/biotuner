@@ -2,6 +2,7 @@ from fooof import FOOOF
 import scipy.signal
 from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
+from itertools import combinations
 from biotuner.peaks_extraction import (
     HilbertHuang1D,
     harmonic_recurrence,
@@ -16,6 +17,7 @@ from biotuner.peaks_extraction import (
     polyspectrum_frequencies,
     pac_frequencies,
     endogenous_intermodulations,
+    polycoherence,
 )
 from biotuner.biotuner_utils import (
     flatten,
@@ -29,6 +31,7 @@ from biotuner.biotuner_utils import (
     ratios_harmonics,
     ratios_increments,
     make_chord,
+    scale_from_pairs,
 )
 from biotuner.metrics import (
     euler,
@@ -36,6 +39,7 @@ from biotuner.metrics import (
     timepoint_consonance,
     ratios2harmsim,
     compute_subharmonic_tension,
+    dyad_similarity,
 )
 from biotuner.peaks_extension import (
     consonant_ratios,
@@ -767,7 +771,6 @@ class compute_biotuner(object):
         _, _, subharm, _ = compute_subharmonic_tension(peaks[0:5],
                                                        n_harm,
                                                        delta_lim,
-                                                       c=2.1,
                                                        min_notes=3)
         metrics["subharm_tension"] = subharm
         if spf == "harmonic_recurrence":
@@ -1616,6 +1619,57 @@ class compute_biotuner(object):
         peaks = np.around(peaks, 3)
         amps = np.array(amps_temp)
         return peaks, amps
+
+    def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth=2):
+        if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
+            print('Peaks extraction function {} is not compatible with resonance metrics'.format(self.peaks_function))
+        if len(self.peaks) < 1:
+            print('No peaks in the biotuner object. Please use peaks_extraction method first')
+        if self.precision is not None:
+            mult = 1 / self.precision
+            nfft = int(self.sf * mult)
+            nperseg = int(nfft/smooth)
+        max_peak = np.max(self.peaks)
+        freq1, freq2, bispec = polycoherence(
+                self.data, self.sf, norm=2, flim1=[1, max_peak+self.precision], flim2=[1, max_peak+self.precision], dim=2,
+                nperseg=nperseg, nfft=nfft)
+
+        pairs = list(combinations(self.peaks, 2))
+
+        harm_sim = []
+        bicor = []
+        weighted_bicor = []
+        resonant_freqs = []
+        harm_sim_all = []
+        bicor_all = []
+        for pair in pairs:
+            if pair[0] > pair[1]:
+                ratio = pair[0]/pair[1]
+            if pair[0] < pair[1]:
+                ratio = pair[1]/pair[0]
+            harm_sim_ = dyad_similarity(ratio)
+            idx1 = list(freq1).index(pair[0])
+            idx2 = list(freq1).index(pair[1])
+            bicor_ = np.real(bispec[idx1][idx2])
+            if bicor_ < 1:
+                harm_sim_all.append(harm_sim_)
+                bicor_all.append(bicor_)
+            if harm_sim_ > harm_thresh:
+                if bicor_ < 1:
+                    bicor.append(bicor_)
+                    harm_sim.append(harm_sim_)
+                    weighted_bicor.append((harm_sim_/100)*bicor_)
+                    if bicor_ > PPC_thresh:
+                        resonant_freqs.append((pair[0], pair[1]))
+        # resonance = np.corrcoef(harm_sim, bicor)[0][1]
+        resonance_ = np.mean(weighted_bicor)
+        self.resonance = resonance_
+        self.resonant_freqs = resonant_freqs
+        scale = scale_from_pairs(resonant_freqs)
+        self.res_tuning = np.sort(list(set(scale)))
+
+        return resonance_, resonant_freqs, harm_sim_all, bicor_all
+
 
     """Listening methods"""
 
