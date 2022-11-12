@@ -38,28 +38,28 @@ def oct_subdiv(ratio, octave_limit=0.01365, octave=2, n=5):
 
     Parameters
     ----------
-    ratio: float
+    ratio : float
         ratio that corresponds to the generator_interval
         e.g.: by giving the fifth (3/2) as generator interval,
         this function will suggest to subdivide the octave in 12, 53, ...
-    octave_limit: float
+    octave_limit : float
         Defaults to 0.01365 (Pythagorean comma)
         approximation of the octave corresponding to the acceptable distance
         between the ratio of the generator interval after
         multiple iterations and the octave value.
-    octave: int
+    octave : int
         Defaults to 2
         value of the octave
-    n: int
+    n : int
         Defaults to 5
         number of suggested octave subdivisions
 
     Returns
     -------
-    Octdiv: List (int)
+    Octdiv : List (int)
         list of N-TET tunings according to
         the generator interval
-    Octvalue: List (float)
+    Octvalue : List (float)
         list of the approximations of the octave for each N-TET tuning
     """
     Octdiv, Octvalue, i = [], [], 1
@@ -87,26 +87,26 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
 
     Parameters
     ----------
-    Octdiv: int
+    Octdiv : int
         Defaults to 12.
         first N-TET tuning number of steps
-    Octdiv2: int
+    Octdiv2 : int
         Defaults to 53.
         second N-TET tuning number of steps
-    bounds: float
+    bounds : float
         Defaults to 0.005
         Maximum distance between one ratio of Octdiv
         and one ratio of Octdiv2 to consider a match
-    octave: int
+    octave : int
         Defaults to 2
         value of the octave
 
     Returns
     -------
-    avg_ratios: List (float)
+    avg_ratios : List (float)
         list of ratios corresponding to
         the shared steps in the two N-TET tunings
-    shared_steps: List of tuples
+    shared_steps : List (tuples)
         the two elements of each tuple corresponds to the
         tuning steps sharing the same interval in the two N-TET tunings
     """
@@ -135,7 +135,11 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
 
 
 def multi_oct_subdiv(
-    peaks, max_sub=100, octave_limit=1.01365, octave=2, n_scales=10, cons_limit=0.1
+    peaks, max_sub=100,
+    octave_limit=1.01365,
+    octave=2,
+    n_scales=10,
+    cons_limit=0.1
 ):
     """
     This function uses the most consonant peaks ratios as input of
@@ -145,28 +149,28 @@ def multi_oct_subdiv(
 
     Parameters
     ----------
-    peaks: List (float)
+    peaks : List (float)
         Peaks represent local maximum in a spectrum
-    max_sub: int
+    max_sub : int
         Defaults to 100.
         Maximum number of intervals in N-TET tuning suggestions.
-    octave_limit: float
+    octave_limit : float
         Defaults to 1.01365 (Pythagorean comma).
         Approximation of the octave corresponding to the acceptable distance
         between the ratio of the generator interval after
         multiple iterations and the octave value.
-    octave: int
+    octave : int
         Defaults to 2.
         value of the octave
-    n_scales: int
+    n_scales : int
         Defaults to 10.
         Number of N-TET tunings to compute for each generator interval (ratio).
 
     Returns
     -------
-    multi_oct_div: List (int)
+    multi_oct_div : List (int)
         List of octave subdivisions that fit with multiple generator intervals.
-    ratios: List (float)
+    ratios : List (float)
         list of the generator intervals for which at least 1 N-TET tuning
         matches with another generator interval.
     """
@@ -194,14 +198,14 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
 
     Parameters
     ----------
-    list_harmonics: List (int)
+    list_harmonics : List (int)
         harmonic positions to use in the scale construction
-    octave: int
+    octave : int
         value of the period reference
-    min_ratio: float
+    min_ratio : float
         Defaults to 1.
         Value of the unison.
-    max_ratio: float
+    max_ratio : float
         Defaults to 2.
         Value of the octave.
 
@@ -225,8 +229,8 @@ def euler_fokker_scale(intervals, n=1, octave=2):
 
     Parameters
     ----------
-    intervals: List (float)
-    n: int
+    intervals : List (float)
+    n : int
         Defaults to 1
         number of times the interval is used in the scale generation
 
@@ -247,12 +251,12 @@ def generator_interval_tuning(interval=3 / 2, steps=12, octave=2, harmonic_min=0
 
     Parameters
     ----------
-    interval: float
+    interval : float
         Generator interval
-    steps: int
+    steps : int
         Defaults to 12 (12-TET for interval 3/2)
         Number of steps in the scale
-    octave: int
+    octave : int
         Defaults to 2
         Value of the octave
 
@@ -321,7 +325,7 @@ def dissmeasure(fvec, amp, model="min"):
 
     Returns
     -------
-    D: float
+    D : float
         Dissonance value
     """
     # Sort by frequency
@@ -378,48 +382,48 @@ def diss_curve(
 
     Parameters
     ----------
-    freqs: List (float)
+    freqs : List (float)
         list of frequencies associated with spectral peaks
-    amps: List (float)
+    amps : List (float)
         list of amplitudes associated with freqs (must be same lenght)
-    denom: int
+    denom : int
         Defaults to 1000.
         Highest value for the denominator of each interval
-    max_ratio: int
+    max_ratio : int
         Defaults to 2.
         Value of the maximum ratio
         Set to 2 for a span of 1 octave
         Set to 4 for a span of 2 octaves
         Set to 8 for a span of 3 octaves
         Set to 2**n for a span of n octaves
-    euler: Boolean
+    euler : bool
         Defaults to True
         When set to True, compute the Euler Gradus Suavitatis
         for the derived scale
-    method: str
+    method : str
         {'min', 'product'}
         Defaults to 'min'
         Refer to dissmeasure function for more information.
-    plot: boolean
+    plot : bool
         Defaults to True
         When set to True, a plot of the dissonance curve will be generated
-    n_tet_grid: int
+    n_tet_grid : int
         Defaults to None
         When an integer is given, dotted lines will be add to the plot
         at steps of the given N-TET scale
 
     Returns
     -------
-    intervals: List of tuples
+    intervals : List of tuples
         Each tuple corresponds to the numerator and the denominator
         of each scale step ratio
-    ratios: List (float)
+    ratios : List (float)
         list of ratios that constitute the scale
-    euler_score: int
+    euler_score : int
         value of consonance of the scale
-    diss: float
+    diss : float
         value of averaged dissonance of the total curve
-    dyad_sims: List (float)
+    dyad_sims : List (float)
         list of dyad similarities for each ratio of the scale
 
     """
@@ -574,29 +578,29 @@ def harmonic_entropy(
 
     Parameters
     ----------
-    ratios: List (float)
+    ratios : List (float)
         ratios between each pairs of frequency peaks.
-    res: float
+    res : float
         Defaults to 0.001
         resolution of the ratio steps.
-    spread: float
+    spread : float
         Default to 0.01
-    plot_entropy: boolean
+    plot_entropy : bool
         Defaults to True
         When set to True, plot the harmonic entropy curve.
-    plot_tenney: boolean
+    plot_tenney : bool
         Defaults to False
         When set to True, plot the tenney heights (y-axis)
         across ratios (x-axis).
-    octave: int
+    octave : int
         Defaults to 2
         Value of reference period.
 
     Returns
     ----------
-    HE_minima: List (float)
+    HE_minima : List (float)
         List of ratios corresponding to minima of the harmonic entropy curve
-    HE: float
+    HE : float
         Value of the averaged harmonic entropy
 
     """
@@ -632,7 +636,9 @@ def harmonic_entropy(
     ratios = ratios[indices]
     M = len(tenney_heights)
     x_ratios = np.arange(1, octave, res)
-    _, HE = compute_harmonic_entropy_domain_integral(ratios, x_ratios, spread=spread)
+    _, HE = compute_harmonic_entropy_domain_integral(ratios,
+                                                     x_ratios,
+                                                     spread=spread)
     # HE = compute_harmonic_entropy_simple_weights(numerators,
     #                                                denominators,
     #                                                x_ratios, spread=0.01)
@@ -660,14 +666,14 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
     ----------
     tuning : List (float)
         scale to reduce
-    mode_n_steps: int
+    mode_n_steps : int
         number of steps of the reduced scale
     function : function
         function used to compute the consonance between pairs of ratios
         Choose between: consonance, dyad_similarity, metric_denom
     rounding : int
         maximum number of decimals for each step
-    ratio_type: str
+    ratio_type : str
         Default to 'pos_harm'
         choice:
         -'pos_harm':a/b when a>b
@@ -728,6 +734,24 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
 
 
 def create_mode(tuning, n_steps, function):
+    """Create a mode from a tuning based on the consonance of
+       subsets of tuning steps.
+
+    Parameters
+    ----------
+    tuning : List (float)
+        scale to reduce
+    n_steps : int
+        number of steps of the reduced scale
+    function : str
+        {'dyad_similarity', 'consonance', 'metric_denom'}
+
+    Returns
+    -------
+    mode : List (float)
+        Reduced tuning.
+
+    """
     sets = list(findsubsets(tuning, n_steps))
     metric_values = []
     for s in sets:
@@ -743,7 +767,7 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
 
     Parameters
     ----------
-    pac_freqs : type
+    pac_freqs : List (tuples)
         Description of parameter `pac_freqs`.
     n : type
         Description of parameter `n`.

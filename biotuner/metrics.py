@@ -22,8 +22,8 @@ def compute_consonance(ratio, limit=1000):
 
     Parameters
     ----------
-    ratio: float
-    limit: int
+    ratio : float
+    limit : int
         Defaults to 1000
         Maximum value of the denominator of the fraction representing the ratio
 
@@ -70,9 +70,9 @@ def tenneyHeight(peaks, avg=True):
 
     Parameters
     ----------
-    peaks: List (float)
+    peaks : List (float)
         frequencies
-    avg: Boolean
+    avg : bool
         Default to True
         When set to True, all tenney heights are averaged
 
@@ -103,7 +103,7 @@ def metric_denom(ratio):
 
     Parameters
     ----------
-    ratio: float
+    ratio : float
 
     Returns
     -------
@@ -123,7 +123,7 @@ def dyad_similarity(ratio):
 
     Parameters
     ----------
-    ratio: float
+    ratio : float
         frequency ratio
 
     Returns
@@ -149,12 +149,12 @@ def ratios2harmsim(ratios):
 
     Parameters
     ----------
-    ratios: List (float)
+    ratios : List (float)
         list of frequency ratios (forming a tuning)
 
     Returns
     -------
-    similarity: List (float)
+    similarity : List (float)
         list of percentage of similarity for each ratios
     """
     fracs = []
@@ -174,10 +174,10 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
 
     Parameters
     ----------
-    tuning: List (float)
-    function: function
+    tuning : List (float)
+    function : function
         {'dyad_similarity', 'consonance', 'metric_denom'}
-    ratio_type: str
+    ratio_type : str
         Default to 'pos_harm'
         choice:
         -'pos_harm':a/b when a>b
@@ -186,9 +186,9 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
 
     Returns
     -------
-    metric_values: List
+    metric_values : List
         list of the size of input
-    metric_avg: float
+    metric_avg : float
         metric value averaged across all steps
     """
     metric_values = []
@@ -224,17 +224,17 @@ def tuning_to_metrics(tuning, maxdenom=1000):
 
     Parameters
     ----------
-    tuning: List (float)
+    tuning : List (float)
         List of ratios corresponding to tuning steps
-    maxdenom: int
+    maxdenom : int
         Defaults to 1000.
         Maximum denominator of the fraction representing each tuning step.
 
     Returns
     ----------
-    tuning_metrics: dictionary
+    tuning_metrics : dictionary
         keys correspond to metrics names
-    tuning_metrics_list: List (float)
+    tuning_metrics_list : List (float)
         List of values corresponding to all computed metrics
         (in the same order as dictionary)
     """
@@ -262,15 +262,15 @@ def timepoint_consonance(data,
 
     Parameters
     ----------
-    data: List of lists (float)
+    data : List of lists (float)
         Axis 0 represents moments in time
         Axis 1 represents the sets of frequencies
-    method: str
+    method : str
         Defaults to 'cons'
         'cons': will compute pairwise consonance between
                frequency peaks in the form of (a+b)/(a*b)
         'euler': will compute Euler's gradus suavitatis
-    limit: float
+    limit : float
         limit of consonance under which the set of frequencies are not retained
         When method = 'cons'
              --> See consonance_peaks method's doc to refer to
@@ -281,16 +281,16 @@ def timepoint_consonance(data,
                  Major 7th (8:10:12:15) = 10
                  Minor 7th (10:12:15:18) = 11
                  Diminish (20:24:29) = 38
-    min_notes: int
+    min_notes : int
         minimum number of consonant frequencies in the chords.
         Only relevant when method is set to 'cons'.
 
     Returns
     -------
-    chords: List of lists (float)
+    chords : List of lists (float)
         Axis 0 represents moments in time
         Axis 1 represents the sets of consonant frequencies
-    positions: List (int)
+    positions : List (int)
         positions on Axis 0
     """
     data = np.round(data, 2)
@@ -347,10 +347,9 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
     delta_lim : float
         Maximal distance between subharmonics of different Frequencies
         to consider them as common subharmonics.
-    min_notes : int
+    min_notes : int {2, 3}
         Defaults to 2.
         Minimal number of notes to consider common subharmonics.
-        Choose between 2 or 3.
 
     Returns
     -------
