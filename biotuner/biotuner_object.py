@@ -388,7 +388,10 @@ class compute_biotuner(object):
             min_IMs=min_IMs,
             smooth_fft=smooth_fft
         )
-
+        print('Number of peaks : {}'.format(len(peaks)))
+        if len(peaks) == 0:
+            print('No peak detected')
+            0/0
         self.peaks = peaks
         self.amps = amps
         #print("Number of peaks: ", len(peaks))
