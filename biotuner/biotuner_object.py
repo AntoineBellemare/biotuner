@@ -1515,6 +1515,7 @@ class compute_biotuner(object):
                 self.harm_peaks_fit = harm_peaks_fit
                 self.n_harmonic_recurrence = len(harm_peaks_fit)
                 # Select the n peaks with highest amplitude.
+                '''Need to select peak based on number of harms instead of amps'''
                 peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
                     0:n_peaks
                 ]
@@ -1623,7 +1624,8 @@ class compute_biotuner(object):
         amps = np.array(amps_temp)
         return peaks, amps
 
-    def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth=2):
+    def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,
+                          harmonicity_metric='harmsim', delta_lim=50):
         if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
             print('Peaks extraction function {} is not compatible with resonance metrics'.format(self.peaks_function))
         if len(self.peaks) < 1:
@@ -1631,7 +1633,7 @@ class compute_biotuner(object):
         if self.precision is not None:
             mult = 1 / self.precision
             nfft = int(self.sf * mult)
-            nperseg = int(nfft/smooth)
+            nperseg = int(nfft/smooth_fft)
         max_peak = np.max(self.peaks)
         freq1, freq2, bispec = polycoherence(
                 self.data, self.sf, norm=2, flim1=[1, max_peak+self.precision], flim2=[1, max_peak+self.precision], dim=2,
@@ -1639,29 +1641,39 @@ class compute_biotuner(object):
 
         pairs = list(combinations(self.peaks, 2))
 
-        harm_sim = []
+        harm = []
         bicor = []
         weighted_bicor = []
         resonant_freqs = []
-        harm_sim_all = []
+        harm_all = []
         bicor_all = []
         for pair in pairs:
             if pair[0] > pair[1]:
                 ratio = pair[0]/pair[1]
             if pair[0] < pair[1]:
                 ratio = pair[1]/pair[0]
-            harm_sim_ = dyad_similarity(ratio)
+            if harmonicity_metric == 'harmim':
+                harm_ = dyad_similarity(ratio)
+            if harmonicity_metric == 'subharm_tension':
+                _, _, harm_, _ = compute_subharmonic_tension(pair,
+                                                             self.n_harm,
+                                                             delta_lim=delta_lim,
+                                                             min_notes=2)
+                harm_ = 1 - harm_
             idx1 = list(freq1).index(pair[0])
             idx2 = list(freq1).index(pair[1])
             bicor_ = np.real(bispec[idx1][idx2])
             if bicor_ < 1:
-                harm_sim_all.append(harm_sim_)
+                harm_all.append(harm_)
                 bicor_all.append(bicor_)
-            if harm_sim_ > harm_thresh:
+            if harm_ > harm_thresh:
                 if bicor_ < 1:
                     bicor.append(bicor_)
-                    harm_sim.append(harm_sim_)
-                    weighted_bicor.append((harm_sim_/100)*bicor_)
+                    harm.append(harm_)
+                    if harmonicity_metric == 'harmim':
+                        weighted_bicor.append((harm_/100)*bicor_)
+                    if harmonicity_metric == 'subharm_tension':
+                        weighted_bicor.append((harm_)*bicor_)
                     if bicor_ > PPC_thresh:
                         resonant_freqs.append((pair[0], pair[1]))
         # resonance = np.corrcoef(harm_sim, bicor)[0][1]
