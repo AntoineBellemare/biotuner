@@ -1683,7 +1683,7 @@ class compute_biotuner(object):
         scale = scale_from_pairs(resonant_freqs)
         self.res_tuning = np.sort(list(set(scale)))
 
-        return resonance_, resonant_freqs, harm_sim_all, bicor_all
+        return resonance_, resonant_freqs, harm_all, bicor_all
 
 
     """Listening methods"""
