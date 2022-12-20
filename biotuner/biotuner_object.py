@@ -1649,9 +1649,9 @@ class compute_biotuner(object):
         for pair in pairs:
             if pair[0] > pair[1]:
                 ratio = pair[0]/pair[1]
-            if pair[0] < pair[1]:
+            if pair[0] <= pair[1]:
                 ratio = pair[1]/pair[0]
-            if harmonicity_metric == 'harmim':
+            if harmonicity_metric == 'harmsim':
                 harm_ = dyad_similarity(ratio)
             if harmonicity_metric == 'subharm_tension':
                 _, _, harm_, _ = compute_subharmonic_tension(pair,
@@ -1662,6 +1662,7 @@ class compute_biotuner(object):
             idx1 = list(freq1).index(pair[0])
             idx2 = list(freq1).index(pair[1])
             bicor_ = np.real(bispec[idx1][idx2])
+
             if bicor_ < 1:
                 harm_all.append(harm_)
                 bicor_all.append(bicor_)
@@ -1669,7 +1670,7 @@ class compute_biotuner(object):
                 if bicor_ < 1:
                     bicor.append(bicor_)
                     harm.append(harm_)
-                    if harmonicity_metric == 'harmim':
+                    if harmonicity_metric == 'harmsim':
                         weighted_bicor.append((harm_/100)*bicor_)
                     if harmonicity_metric == 'subharm_tension':
                         weighted_bicor.append((harm_)*bicor_)
@@ -1681,6 +1682,7 @@ class compute_biotuner(object):
         self.resonant_freqs = resonant_freqs
         scale = scale_from_pairs(resonant_freqs)
         self.res_tuning = np.sort(list(set(scale)))
+        self.PPC_bicor = np.mean(bicor_all)
 
         return resonance_, resonant_freqs, harm_all, bicor_all
 
