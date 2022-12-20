@@ -114,7 +114,7 @@ class transitional_harmony(object):
                 plt.xlim(0, len(data)/sf)
                 if save is True:
                     plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
-        return trans_subharm, time_vec_final
+        return trans_subharm, time_vec_final, pairs_melody
 
     def compare_deltas(self, deltas, save=False, savename='_'):
         colors = ['darkorange', 'darkred', 'darkblue', 'darkcyan', 'goldenrod']
