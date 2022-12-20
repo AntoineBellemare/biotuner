@@ -6,7 +6,7 @@ import biotuner.biotuner_utils
 from numpy import log2
 import sympy as sp
 from biotuner.peaks_extension import consonance_peaks
-from biotuner.biotuner_utils import scale2frac
+from biotuner.biotuner_utils import scale2frac, Print3Smallest
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -469,7 +469,9 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
         overall_temp = []
         subharm_tension = []
         c = c
+        subharm_pairs = []
         if len(delta_t) > 0:
+            subharm_pairs.append(pair)
             #  Iterate through common subharmonics to compute
             #  subarmonic tension associated to a single pair of peaks.
             for i in range(len(delta_t)):
@@ -483,5 +485,7 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
             sub_tension_final.append(np.average(subharm_tension))
     #  Compute the overall subharmonic tension by averaging across
     #  pairs of frequencies.
+    mins, low_sub_idx = Print3Smallest(sub_tension_final)
+    pairs_melody = [subharm_pairs[i] for i in low_sub_idx]
     sub_tension_final = np.average(sub_tension_final)
-    return common_subs, delta_t, sub_tension_final, harm_temp
+    return common_subs, delta_t, sub_tension_final, harm_temp, pairs melody

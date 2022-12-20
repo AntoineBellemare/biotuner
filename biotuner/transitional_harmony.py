@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 class transitional_harmony(object):
     """
-    Class used to compute harmonic progressions
+    Class used to compute subharmonic progressions
     in successive windows of time.
     """
 
@@ -83,15 +83,17 @@ class transitional_harmony(object):
             trans_subharm = []
             i=1
             time_vec_final = []
+            subharm_melody = []
             while i < len(peaks):
                 list1 = peaks[i-1]
                 list2 = peaks[i]
-                common_subs, delta_t, sub_tension_final, harm_temp = compute_subharmonics_2lists(list1,
+                common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody = compute_subharmonics_2lists(list1,
                                                                                                  list2,
                                                                                                  self.n_trans_harm,
                                                                                                  delta_lim=delta_lim,
                                                                                                  c=2.1)
                 trans_subharm.append(sub_tension_final)
+                subharm_melody.append()
                 self.trans_subharm = trans_subharm
                 time_vec_final.append((time_vec[i]+time_vec[i-1])/2)
                 i=i+1

@@ -557,6 +557,39 @@ def compareLists(list1, list2, bounds):
     return matching, list(set(positions)), matching_pos, matching_pos_ratios
 
 
+def Print3Smallest(arr):
+    MAX=np.max(arr)
+    firstmin = MAX
+    secmin = MAX
+    thirdmin = MAX
+    for i in range(0, len(arr)):
+
+        # Check if current element
+        # is less than firstmin,
+        # then update first,second
+        # and third
+
+        if arr[i] < firstmin:
+            thirdmin = secmin
+            secmin = firstmin
+            firstmin = arr[i]
+
+        # Check if current element is
+        # less than secmin then update
+        # second and third
+        elif arr[i] < secmin:
+            thirdmin = secmin
+            secmin = arr[i]
+
+        # Check if current element is
+        # less than,then update third
+        elif arr[i] < thirdmin:
+            thirdmin = arr[i]
+    idx = [arr.index(firstmin), arr.index(secmin), arr.index(thirdmin)]
+    mins = [firstmin, secmin, thirdmin]
+    return mins, idx
+
+
 def top_n_indexes(arr, n):
     """Find the index pairs of maximum values in a 2d array.
 
@@ -1318,6 +1351,30 @@ def alpha2bands(a):
 
 
 def chunk_ts(data, sf, overlap=10, precision=1):
+    """Divide a time series into overlapping chunks and provide the indexes.
+
+    Parameters
+    ----------
+    data : ndarray(1d)
+        Time series.
+    sf : int
+        Sampling frequency.
+    overlap : int
+        Defaults to 10.
+        Proportion of overlap in percentage.
+    precision : float
+        Defaults to 1.
+        Precision in Hertz.
+        The precision here determines the length of data
+        required to extract the spectral information at that precise frequency.
+
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     overlap = 100/overlap
     nsec = len(data)/sf
     chunk_size = int((1/precision)*sf)

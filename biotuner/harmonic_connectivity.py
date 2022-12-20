@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 class harmonic_connectivity(object):
     """
-    Class used to compute harmonic metrics
+    Class used to compute harmonicity metrics
     between pairs of sensors.
     """
 
@@ -89,7 +89,7 @@ class harmonic_connectivity(object):
                                  nperseg=None, nfft=None, smooth_fft=1)
             list2 = bt2.peaks
             if metric == 'subharm_tension':
-                common_subs, delta_t, sub_tension_final, harm_temp = compute_subharmonics_2lists(list1,
+                common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody = compute_subharmonics_2lists(list1,
                                                                                                  list2,
                                                                                                  self.n_trans_harm,
                                                                                                  delta_lim=delta_lim,
