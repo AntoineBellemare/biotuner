@@ -31,8 +31,8 @@ class harmonic_connectivity(object):
         ----------
         sf: int
             sampling frequency (in Hz)
-        data : array(numDataPoints,)
-            Time series to analyse.
+        data : 2Darray(elec, numDataPoints)
+            Electrodes x Time series to analyse.
         peaks_function: str
             Defaults to 'EMD'.
             See compute_biotuner class for details.
