@@ -6,6 +6,7 @@ Python toolbox that incorporates tools from biological signal processing and mus
 
 # Installation
 
+Create an environment with Python v3.8
 ```python
 pip install biotuner
 ```
