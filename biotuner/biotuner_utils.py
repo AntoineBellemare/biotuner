@@ -1387,6 +1387,7 @@ def chunk_ts(data, sf, overlap=10, precision=1):
     return pairs
 
 def __get_norm(norm):
+    ''''''
     if norm == 0 or norm is None:
         return None, None
     else:

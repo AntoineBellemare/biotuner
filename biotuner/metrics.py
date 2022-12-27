@@ -488,4 +488,4 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
     mins, low_sub_idx = Print3Smallest(sub_tension_final)
     pairs_melody = [subharm_pairs[i] for i in low_sub_idx]
     sub_tension_final = np.average(sub_tension_final)
-    return common_subs, delta_t, sub_tension_final, harm_temp, pairs melody
+    return common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody
