@@ -749,32 +749,37 @@ class compute_biotuner(object):
         peaks_ratios = compute_peak_ratios(
             peaks, rebound=True, octave=self.octave, sub=self.compute_sub_ratios
         )
+        #print('PEAKS RATIOS COMPUTED')
         metrics = {"cons": 0, "euler": 0, "tenney": 0, "harm_fit": 0, "harmsim": 0}
-        try:
-            harm_fit, harm_pos, common_harm_pos, _ = harmonic_fit(
-                peaks, n_harm=n_harm, bounds=harm_bounds
-            )
-            metrics["harm_pos"] = harm_pos
-            metrics["common_harm_pos"] = common_harm_pos
-            metrics["harm_fit"] = len(harm_fit)
-        except:
-            pass
+        #try:
+        harm_fit, harm_pos, common_harm_pos, _ = harmonic_fit(
+            peaks, n_harm=n_harm, bounds=harm_bounds
+        )
+        #print('HARMONIC FIT COMPUTED')
+        metrics["harm_pos"] = harm_pos
+        metrics["common_harm_pos"] = common_harm_pos
+        metrics["harm_fit"] = len(harm_fit)
+        #except:
+        #    pass
         a, b, c, metrics["cons"] = consonance_peaks(peaks, 0.1)
+        #print('CONSONANCE COMPUTED')
         peaks_euler = [int(round(num, 2) * 1000) for num in peaks]
 
         spf = self.peaks_function
-        if spf == "fixed" or spf == "adapt" or spf == "EMD" or spf == "EEMD":
+        '''if spf == "fixed" or spf == "adapt" or spf == "EMD" or spf == "EEMD":
             try:
                 metrics["euler"] = euler(*peaks_euler)
             except:
-                pass
+                pass'''
         metrics["tenney"] = tenneyHeight(peaks)
         metrics["harmsim"] = np.average(ratios2harmsim(peaks_ratios))
+        #print('HARMSIM COMPUTED')
         _, _, subharm, _ = compute_subharmonic_tension(peaks[0:5],
                                                        n_harm,
                                                        delta_lim,
                                                        min_notes=3)
         metrics["subharm_tension"] = subharm
+        #print('SUBHARM COMPUTED')
         if spf == "harmonic_recurrence":
             metrics["n_harmonic_recurrence"] = self.n_harmonic_recurrence
         self.peaks_metrics = metrics
@@ -1370,7 +1375,7 @@ class compute_biotuner(object):
                         nfft=nfft,
                         smooth=smooth_fft
                     )
-
+                    self.freqs = freqs
                     freqs_all.append(freqs)
                     psd_all.append(psd)
                     peaks_temp.append(p)
@@ -1625,6 +1630,26 @@ class compute_biotuner(object):
 
     def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,
                           harmonicity_metric='harmsim', delta_lim=50):
+        """_summary_
+
+        Parameters
+        ----------
+        harm_thresh : int, optional
+            _description_, by default 30
+        PPC_thresh : float, optional
+            _description_, by default 0.6
+        smooth_fft : int, optional
+            _description_, by default 2
+        harmonicity_metric : str, optional
+            _description_, by default 'harmsim'
+        delta_lim : int, optional
+            _description_, by default 50
+
+        Returns
+        -------
+        _type_
+            _description_
+        """        
         if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
             print('Peaks extraction function {} is not compatible with resonance metrics'.format(self.peaks_function))
         if len(self.peaks) < 1:

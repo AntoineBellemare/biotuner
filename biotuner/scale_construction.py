@@ -783,11 +783,11 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
     """
     if method == "pairwise":
         _, mode, _ = tuning_reduction(
-            scale_from_pairs(pac_freqs), mode_n_steps=n, function=function
+            scale_from_pairs(pac_freqs), n_steps=n, function=function
         )
     if method == "subset":
         mode = create_mode(
-            scale_from_pairs(pac_freqs), mode_n_steps=n, function=function
+            scale_from_pairs(pac_freqs), n_steps=n, function=function
         )
     return sorted(mode)
 
