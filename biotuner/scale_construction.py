@@ -461,7 +461,7 @@ def diss_curve(
         euler_score = "NaN"
 
     if plot is True:
-        plt.figure(figsize=(14, 6))
+        plt.figure(figsize=(14, 6), facecolor='white')
         plt.plot(linspace(r_low, alpharange, len(diss)), diss)
         plt.xscale("linear")
         plt.xlim(r_low, alpharange)
@@ -490,6 +490,9 @@ def diss_curve(
             ["{}/{}".format(n, d) for n, d in intervals],
             fontsize=13,
         )
+        plt.xlabel('Frequency ratio', fontsize=14)
+        plt.ylabel('Dissonance', fontsize=14)
+        
         plt.yticks(fontsize=13)
         plt.tight_layout()
         plt.show()

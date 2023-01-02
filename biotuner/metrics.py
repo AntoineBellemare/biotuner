@@ -316,7 +316,7 @@ def timepoint_consonance(data,
     chords = [e[::-1] for e in chords]
     if graph is True:
         ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
-        ax.set(xlabel="Time Windows", ylabel=method)
+        ax.set(xlabel="Time Windows")
         ax.set_yscale("log")
         plt.legend(
             scatterpoints=1,
