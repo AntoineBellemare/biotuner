@@ -653,6 +653,8 @@ def harmonic_entropy(
         ax.plot(x_ratios, HE)
         ax.scatter(HE_minima[0], HE_minima[1], color="k", s=4)
         ax.set_xlim(1, octave)
+        plt.xlabel('Frequency ratio')
+        plt.ylabel('Harmonic entropy')
         plt.show()
     return HE_minima, np.average(HE)
 
