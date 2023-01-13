@@ -15,3 +15,4 @@ neurokit2==0.2.1
 git+https://github.com/AntoineBellemare/PyTuning.git
 scipy==1.8.0
 numpy==1.21.4
+pingouin

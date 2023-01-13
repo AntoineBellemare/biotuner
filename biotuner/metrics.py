@@ -293,6 +293,17 @@ def timepoint_consonance(data,
     positions : List (int)
         positions on Axis 0
     """
+    # Set number of labels
+    if len(data) == 2:
+        labels=["EMD1", "EMD2"]
+    if len(data) == 3:
+        labels=["EMD1", "EMD2", "EMD3"]
+    if len(data) == 4:
+        labels=["EMD1", "EMD2", "EMD3", "EMD4"]
+    if len(data) == 5:
+        labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"]
+    if len(data) == 6:
+        labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5", "EMD6"]
     data = np.round(data, 2)
     data = np.moveaxis(data, 0, 1)
     out = []
@@ -314,6 +325,7 @@ def timepoint_consonance(data,
     out = list(out for out, _ in itertools.groupby(out))
     chords = [x for x in out if len(x) >= min_notes]
     chords = [e[::-1] for e in chords]
+    
     if graph is True:
         ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
         ax.set(xlabel="Time Windows")
@@ -324,7 +336,7 @@ def timepoint_consonance(data,
             labelspacing=1,
             title="EMDs",
             loc="best",
-            labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5", "EMD6"],
+            labels=labels,
         )
         for xc in positions:
             plt.axvline(x=xc, c="black", linestyle="dotted")
