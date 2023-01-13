@@ -244,7 +244,7 @@ def euler_fokker_scale(intervals, n=1, octave=2):
     return scale
 
 
-def generator_interval_tuning(interval=3 / 2, steps=12, octave=2, harmonic_min=0):
+def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
     """
     Function that takes a generator interval and
     derives a tuning based on its stacking.

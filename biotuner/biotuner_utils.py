@@ -290,7 +290,7 @@ def NTET_ratios(n_steps, max_ratio, octave=2):
     """
     steps = []
     for s in range(n_steps):
-        steps.append(2 ** (s / n_steps))
+        steps.append(octave ** (s / n_steps))
     steps_out = []
     for j in range(max_ratio - 1):
         steps_out.append([i + j for i in steps])
@@ -367,6 +367,25 @@ def ratios_increments(ratios, n_inc=1):
     ratios_harms = [i for sublist in ratios_harms for i in sublist]
     ratios_harms = list(set(ratios_harms))
     return ratios_harms
+
+def ratios2cents (ratios):
+    """_summary_
+
+    Parameters
+    ----------
+    ratios : List (float)
+        List of frequency ratios
+
+    Returns
+    -------
+    cents : List (float)
+        List of corresponding cents
+    """    
+    cents = []
+    for r in ratios:
+        c = 1200 * np.log2 (r)
+        cents.append(c)
+    return cents
 
 
 """---------------------------LIST MANIPULATION--------------------------"""
@@ -1170,12 +1189,16 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     return y
 
 
-def make_chord(hz, ratios):
-    """Make a chord based on a list of frequency ratios."""
-    sampling = 2048
+def make_chord(hz, ratios, waveform=None):
+    """Make a chord based on a list of frequency ratios
+       using a given waveform (defaults to a sine wave).
+    """
+    sampling = 4096
+    if not waveform:
+        waveform = sine_wave
     chord = waveform(hz, sampling)
     for r in ratios[1:]:
-        chord = sum([chord, sine_wave(hz * r / ratios[0], sampling)])
+        chord = sum([chord, waveform(hz * r / ratios[0], sampling)])
     return chord
 
 

@@ -1375,7 +1375,7 @@ class compute_biotuner(object):
                         nfft=nfft,
                         smooth=smooth_fft
                     )
-                    self.freqs = freqs
+                    #self.freqs = freqs
                     freqs_all.append(freqs)
                     psd_all.append(psd)
                     peaks_temp.append(p)
@@ -1383,6 +1383,19 @@ class compute_biotuner(object):
                 peaks_temp = np.flip(peaks_temp)
                 amps_temp = np.flip(amps_temp)
                 peaks_temp = peaks_temp[-n_peaks:]
+                _, _, self.freqs, self.psd = extract_welch_peaks(
+                                                                    data,
+                                                                    sf=sf,
+                                                                    FREQ_BANDS=FREQ_BANDS,
+                                                                    out_type="bands",
+                                                                    precision=precision,
+                                                                    average=average,
+                                                                    extended_returns=True,
+                                                                    nperseg=nperseg,
+                                                                    noverlap=noverlap,
+                                                                    nfft=nfft,
+                                                                    smooth=smooth_fft
+                                                                )
             except:
                 pass
             if graph is True:
