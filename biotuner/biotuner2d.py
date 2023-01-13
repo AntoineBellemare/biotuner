@@ -6,7 +6,7 @@ import seaborn as sbn
 from scipy import stats
 import secrets
 import biotuner
-from biotuner.biotuner_object import compute_peaks_ts
+from biotuner.biotuner_object import *
 from biotuner.metrics import *
 from biotuner.biotuner_utils import (
      AAFT_surrogates, butter_bandpass_filter,
@@ -491,7 +491,11 @@ def graph_dist(
             plt.show()
 
 
-def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_grid=None, labels=None):
+from biotuner.biotuner_utils import NTET_ratios
+from biotuner.scale_construction import dissmeasure
+
+def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_grid=None,
+                      data_type='Electrodes', labels=None):
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
@@ -558,11 +562,11 @@ def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_gri
     plt.yticks(fontsize = 14)
     if n_tet_grid is not None:
         n_tet = NTET_ratios(n_tet_grid, max_ratio=max_ratio)
-    for n in n_tet:
-        plt.axvline(n, color='red', linestyle='--')
+        for n in n_tet:
+            plt.axvline(n, color='red', linestyle='--')
     plt.tight_layout()
     leg = plt.legend(fontsize=12, title='Electrode')
-    leg.set_title('Electrodes',prop={'size':18})
+    leg.set_title(data_type, prop={'size':18})
     #plt.legend()
     plt.savefig('diss_curve_multi_electrodes_1.png', dpi=300)
     #plt.show()
