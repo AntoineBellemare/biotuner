@@ -295,3 +295,48 @@ def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands = None, xmin
     #percentage_fit = np.array(percentage_fit)
 
     return percentage_fit
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def visualize_rhythms(pulses_steps):
+    """
+    Visualize multiple Euclidean rhythms.
+    Args:
+        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6))
+    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    for i, (pulses, steps) in enumerate(pulses_steps):
+        rhythm = euclidean_rhythm(pulses, steps)
+        angles = np.linspace(0, 2*np.pi, steps, endpoint=False)
+        radius = (i+1) * 0.2
+        x = radius * np.cos(angles)
+        y = radius * np.sin(angles)
+        ax.scatter(x, y, s = 200, color = colors[i%len(colors)], alpha = 0.5)
+        for j, value in enumerate(rhythm):
+            if value == 1:
+                ax.scatter(x[j], y[j], s = 500, color = colors[i%len(colors)], alpha = 1)
+                '''if i+1==len(pulses_steps): # when last iteration
+                    for k in range(len(pulses_steps)-2): # check other rhythms
+                        if rhythm[j] == euclidean_rhythm(*pulses_steps[k])[j]:
+                            ax.plot([0, x[j]], [0, y[j]], 'k-', lw=2) # draw black line from center to the point
+'''
+    ax.set_aspect("equal")
+    ax.set_xlim(-1.5, 1.5)
+    ax.set_ylim(-1.5, 1.5)
+    plt.show()
+
+def euclidean_rhythm(pulses, steps):
+    """
+    Generate a Euclidean rhythm.
+    Args:
+        pulses (int): The number of pulses in the rhythm.
+        steps (int): The number of steps in the rhythm.
+    Returns:
+        List[int]: A binary list representing the rhythm, where 1 indicates a pulse and 0 indicates no pulse.
+    """
+    rhythm = [0] * steps
+    for i in range(pulses):
+        rhythm[i * steps // pulses] = 1
+    return rhythm

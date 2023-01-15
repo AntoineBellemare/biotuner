@@ -265,7 +265,7 @@ def extract_welch_peaks(
             idx_max.append(index_max)
             peaks.append(freqs[min_index + index_max])
             amps.append(psd[min_index + index_max])
-        print("Index_max: all zeros indicate 1/f trend", idx_max)
+        #print("Index_max: all zeros indicate 1/f trend", idx_max)
     if out_type != "single":
         peaks = np.around(np.array(peaks), 5)
         peaks = list(peaks)
