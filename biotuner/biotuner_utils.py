@@ -1230,6 +1230,59 @@ def listen_chords(chords, mult=10, length=500):
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
 
+"""------------------------------MIDI-----------------------------------"""
+
+
+import mido
+from mido import Message, MidiFile, MidiTrack
+import math
+
+def create_midi(chords, durations, microtonal=True, filename='example'):
+    # Create a new MIDI file
+    mid = MidiFile()
+
+    # Set the tempo
+    track = MidiTrack()
+    track.append(Message('control_change', control=81, value=120))
+    mid.tracks.append(track)
+
+    def frequency_to_midi(chords):
+        midi_chords = []
+        midi_pitchbends = []
+        for chord in chords:
+            midi_notes = []
+            pitchbends = []
+            for frequency in chord:
+                # Convert frequency to MIDI note
+                midi_note = 69 + 12*math.log2(frequency/440)
+                rounded_midi_note = int(midi_note)
+                rounded_midi_frequency = 440 * 2**((rounded_midi_note - 69)/12)
+                pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
+                midi_notes.append(rounded_midi_note)
+                pitchbends.append(pitch_bend)
+            midi_chords.append(midi_notes)
+            midi_pitchbends.append(pitchbends)
+        return midi_chords, midi_pitchbends
+    
+    midi_chords, pitchbends = frequency_to_midi(chords)
+
+    # Iterate through the chords and durations
+    current_time = 0
+    for chord, duration, pitchbend in zip(midi_chords, durations, pitchbends):
+        for i, (note, pb) in enumerate(zip(chord, pitchbend)):
+            # Create a new track for each note
+            track = MidiTrack()
+            mid.tracks.append(track)
+            # Add a pitch bend message for each note in the chord
+            if microtonal is True:
+                track.append(Message('pitchwheel', pitch=pb))
+            track.append(Message('note_on', note=note, velocity=64, time=current_time,channel=i))
+            track.append(Message('note_off', note=note, velocity=64, time=current_time+(duration*480),channel=i))
+        current_time = current_time+duration*480
+    # Save the MIDI file
+    mid.save(str(filename)+'.mid')
+    return mid
+
 
 """-----------------------------OTHERS----------------------------------"""
 
