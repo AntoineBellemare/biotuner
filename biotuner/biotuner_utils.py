@@ -1220,6 +1220,17 @@ def listen_scale(scale, fund, length):
 
 
 def listen_chords(chords, mult=10, length=500):
+    """_summary_
+
+    Parameters
+    ----------
+    chords : _type_
+        _description_
+    mult : int, optional
+        _description_, by default 10
+    length : int, optional
+        _description_, by default 500
+    """    
     print("Chords:", chords)
 
     for c in chords:
@@ -1238,6 +1249,16 @@ from mido import Message, MidiFile, MidiTrack
 import math
 
 def create_midi(chords, durations, microtonal=True, filename='example'):
+    """
+    Creates a MIDI file from a given set of chords and durations.
+    Args:
+        chords (list): List of chords, where each chord is a list of frequencies.
+        durations (list): List of durations (in beats) for each chord.
+        microtonal (bool): Indicates whether to include microtonal pitch bends (default: True).
+        filename (str): Name of the output MIDI file (default: 'example').
+    Returns:
+        mid (MidiFile): The created MIDI file object.
+    """
     # Create a new MIDI file
     mid = MidiFile()
 

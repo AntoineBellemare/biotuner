@@ -253,7 +253,8 @@ class compute_biotuner(object):
         max_harm_freq=None,
         EIMC_order=3,
         min_IMs=2,
-        smooth_fft=1
+        smooth_fft=1,
+        verbose=True
     ):
         """
         The peaks_extraction method is central to the use of the Biotuner.
@@ -329,6 +330,9 @@ class compute_biotuner(object):
         smooth_fft : int
             Defaults to 1.
             Number used to divide nfft to derive nperseg.
+        verbose : boolean
+            Defaults to True.
+            When set to True, number of detected peaks will be display
 
         Attributes
         ----------
@@ -388,7 +392,8 @@ class compute_biotuner(object):
             min_IMs=min_IMs,
             smooth_fft=smooth_fft
         )
-        print('Number of peaks : {}'.format(len(peaks)))
+        if verbose is True:
+            print('Number of peaks : {}'.format(len(peaks)))
         if len(peaks) == 0:
             print('No peak detected')
         self.peaks = peaks
