@@ -299,44 +299,74 @@ def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands = None, xmin
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize_rhythms(pulses_steps):
+def visualize_rhythms(pulses_steps, offsets=None, plot_size=6, 
+                      tolerance=0.1):
     """
     Visualize multiple Euclidean rhythms.
     Args:
         pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+        offsets (List[int]): A list of offsets for each rhythm in pulses_steps.
     """
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(plot_size, plot_size))
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    pulses_positions = []
     for i, (pulses, steps) in enumerate(pulses_steps):
-        rhythm = euclidean_rhythm(pulses, steps)
+        offset = offsets[i] if offsets else 0
+        rhythm = euclidean_rhythm(pulses, steps, offset)
         angles = np.linspace(0, 2*np.pi, steps, endpoint=False)
-        radius = (i+1) * 0.2
+        radius = (i+1) * 0.15
         x = radius * np.cos(angles)
         y = radius * np.sin(angles)
-        ax.scatter(x, y, s = 200, color = colors[i%len(colors)], alpha = 0.5)
+        ax.scatter(x, y, s = 100, color = colors[i%len(colors)], alpha = 0.5)
+        pulse_pos = []
         for j, value in enumerate(rhythm):
             if value == 1:
-                ax.scatter(x[j], y[j], s = 500, color = colors[i%len(colors)], alpha = 1)
-                '''if i+1==len(pulses_steps): # when last iteration
-                    for k in range(len(pulses_steps)-2): # check other rhythms
-                        if rhythm[j] == euclidean_rhythm(*pulses_steps[k])[j]:
-                            ax.plot([0, x[j]], [0, y[j]], 'k-', lw=2) # draw black line from center to the point
-'''
+                ax.scatter(x[j], y[j], s = 230, color = colors[i%len(colors)], alpha = 1)
+                pulse_pos.append((x[j], y[j], np.arctan2(y[j], x[j])))
+        pulses_positions.append(pulse_pos)
+    for i in range(len(pulses_positions)):
+        for j in range(i+1, len(pulses_positions)):
+            for pulse1 in pulses_positions[i]:
+                for pulse2 in pulses_positions[j]:
+                    if abs(pulse1[2]-pulse2[2])<tolerance:
+                        ax.plot([0, pulse1[0],pulse2[0]], [0, pulse1[1],pulse2[1]], 'k-', lw=2)
     ax.set_aspect("equal")
-    ax.set_xlim(-1.5, 1.5)
-    ax.set_ylim(-1.5, 1.5)
+    ax.set_xlim(-(np.max(x))-0.1, np.max(x)+0.1)
+    ax.set_ylim(-(np.max(y))-0.1, np.max(y)+0.1)
     plt.show()
-
-def euclidean_rhythm(pulses, steps):
+    
+def euclidean_rhythm(pulses, steps, offset=0):
     """
     Generate a Euclidean rhythm.
     Args:
         pulses (int): The number of pulses in the rhythm.
         steps (int): The number of steps in the rhythm.
+        offset (int): An offset for the rhythm in pulses.
     Returns:
         List[int]: A binary list representing the rhythm, where 1 indicates a pulse and 0 indicates no pulse.
     """
     rhythm = [0] * steps
     for i in range(pulses):
-        rhythm[i * steps // pulses] = 1
+        rhythm[(i * steps // pulses + offset) % steps] = 1
     return rhythm
+
+import math
+
+def find_optimal_offsets(pulses_steps):
+    """
+    Finds the optimal offset values for a set of Euclidean rhythms
+    Args:
+        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+    Returns:
+        List[int]: A list of offset values for the rhythms in pulses_steps
+    """
+    offsets = []
+    for i, (pulses, steps) in enumerate(pulses_steps):
+        lcm = pulses * steps // math.gcd(pulses, steps)
+        #offset = (lcm // pulses - 1) * steps % pulses
+        offset = (steps - pulses * (steps // pulses)) % steps
+
+
+
+        offsets.append(offset)
+    return offsets
