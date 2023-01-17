@@ -39,12 +39,8 @@ def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up=0):
     for p in peaks:
         harmonics = []
         p = p * (2**n_oct_up)
-        i = 1
-        harm_temp = p
-        while i < n_harmonics:
-            harm_temp = p * i
-            harmonics.append(harm_temp)
-            i += 1
+        for i in range(1, n_harmonics):
+            harmonics.append(p * i)
         multi_harmonics.append(harmonics)
     multi_harmonics = np.array(multi_harmonics)
 
@@ -70,7 +66,6 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode="div"):
         Defaults to 'div'.
         'div': x, x/2, x/3 ..., x/n
         'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
-        'div_sub': x, (x-x/2), (x-x/3), ... (x-x/n)
 
     Returns
     -------
@@ -86,17 +81,13 @@ def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode="div"):
     for p in peaks:
         harmonics = []
         p = p * (2**n_oct_up)
-        i = 1
         harm_temp = p
-        while i < n_harmonics:
+        for i in range(1, n_harmonics):
             if mode == "div":
                 harm_temp = p / i
             if mode == "div_add":
                 harm_temp = p + (p / i)
-            if mode == "div_sub":
-                harm_temp = p - (p / i)
             harmonics.append(harm_temp)
-            i += 1
         div_harmonics.append(harmonics)
     div_harmonics = np.array(div_harmonics)
     div_harm_bound = div_harmonics.copy()
@@ -307,53 +298,4 @@ def multi_consonance(cons_pairs, n_freqs=5):
     return freqs_related
 
 
-def consonant_ratios(data,
-                     limit,
-                     sub=False,
-                     input_type="peaks",
-                     metric="cons"):
-    """
-    Function that computes integer ratios from peaks with higher consonance
 
-    Parameters
-    ----------
-    data : List (float)
-        Data can whether be frequency values or frequency ratios
-    limit : float
-        minimum consonance value to keep associated pairs of peaks
-    sub : boolean
-        Defaults to False
-        When set to True, include ratios a/b when a < b.
-    input_type : str
-        Defaults to 'peaks'.
-        Choose between 'peaks' and 'ratios'.
-    metric : str
-        Defaults to 'cons'.
-        Choose between 'cons' and 'harmsim'.
-
-    Returns
-    -------
-    cons_ratios : List (float)
-        list of consonant ratios
-    consonance : List (float)
-        list of associated consonance values
-    """
-    consonance_ = []
-    ratios2keep = []
-    if input_type == "peaks":
-        ratios = biotuner.biotuner_utils.compute_peak_ratios(data, sub=sub)
-    if input_type == "ratios":
-        ratios = data
-    for ratio in ratios:
-        if metric == "cons":
-            cons_ = biotuner.metrics.compute_consonance(ratio)
-        if metric == "harmsim":
-            cons_ = biotuner.metrics.dyad_similarity(ratio)
-        if cons_ > limit:
-            consonance_.append(cons_)
-            ratios2keep.append(ratio)
-    ratios2keep = np.array(np.round(ratios2keep, 3))
-    cons_ratios = np.sort(list(set(ratios2keep)))
-    consonance = np.array(consonance_)
-    consonance = [i for i in consonance if i]
-    return cons_ratios, consonance

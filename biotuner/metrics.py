@@ -176,7 +176,7 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
     ----------
     tuning : List (float)
     function : function
-        {'dyad_similarity', 'consonance', 'metric_denom'}
+        {'dyad_similarity', 'compute_consonance', 'metric_denom'}
     ratio_type : str
         Default to 'pos_harm'
         choice:
@@ -202,12 +202,12 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
                         entry = tuning[index1] / tuning[index2]
                         metric_values.append(function(entry))
                         metric_values_temp.append(function(entry))
-                if ratio_type == "sub_harm":
+                elif ratio_type == "sub_harm":
                     if tuning[index1] < tuning[index2]:
                         entry = tuning[index1] / tuning[index2]
                         metric_values.append(function(entry))
                         metric_values_temp.append(function(entry))
-                if ratio_type == "all":
+                elif ratio_type == "all":
                     entry = tuning[index1] / tuning[index2]
                     metric_values.append(function(entry))
                     metric_values_temp.append(function(entry))
@@ -343,17 +343,52 @@ def timepoint_consonance(data,
         plt.show()
     return chords, positions
 
+def compute_subharmonics(chord, n_harmonics, delta_lim):
+    """
+    Compute subharmonics of a chord and find the common subharmonics within a delta limit.
+    
+    Parameters:
+    chord (list): A list of integers representing the chord.
+    n_harmonics (int): The number of harmonics to compute.
+    delta_lim (float): The limit of delta between two subharmonics to be considered common.
+    
+    Returns:
+    Tuple:
+        subharms (list): A list of lists of subharmonics for each element in the chord.
+        common_subs (list): A list of lists of common subharmonics within the delta limit.
+        delta_t (list): A list of delta values for the common subharmonics.
+    """
+    subharms = []
+    subharms_tot = []
+    delta_t = []
+    common_subs = []
+    for i in chord:
+        s_ = []
+        for j in range(1, n_harmonics+1):
+            s_.append(1000/(i/j))
+        subharms.append(s_)
+    for i in range(len(chord)):
+        for j in range(i+1, len(chord)):
+            for s1 in subharms[i]:
+                for s2 in subharms[j]:
+                    if np.abs(s1-s2) < delta_lim:
+                        delta_t.append(np.abs(np.min([s1-s2])))
+                        common_subs.append([s1, s2])
+    return subharms, common_subs, delta_t
 
-def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
-                                min_notes=2):
+
+import numpy as np
+from itertools import combinations
+
+def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     """This function computes the subharmonic tension (Chan et al., 2019)
        for a set of frequencies, based on the common subharmonics of a
        minimum of 2 or 3 frequencies.
 
     Parameters
     ----------
-    chord : List (float)
-        Values of the set of frequencies to compute subharmonic tension on`.
+    chord : numpy array (float)
+        Values of the set of frequencies to compute subharmonic tension on.
     n_harmonics : int
         Number of subharmonics to compute for each frequency.
     delta_lim : float
@@ -365,65 +400,19 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
 
     Returns
     -------
-    type
-        Description of returned object.
+    tuple
+        delta_t, common_subs, harm_temp, subharm_tension
 
     """
-    if min_notes is None:
-        min_notes = len(chord)
-    subharms = []
-    for i in chord:
-        s_ = []
-        for j in range(1, n_harmonics + 1):
-            s_.append(1000 / (i / j))
-        subharms.append(s_)
-
-    if len(chord) == 2:
-        combi = np.array(list(itertools.product(subharms[0], subharms[1])))
-    if len(chord) == 3:
-        combi = np.array(list(itertools.product(subharms[0], subharms[1], subharms[2])))
-    if len(chord) == 4:
-        combi = np.array(list(itertools.product(subharms[0], subharms[1], subharms[2], subharms[3])))
-    if len(chord) == 5:
-        combi = np.array(
-            list(
-                itertools.product(
-                    subharms[0], subharms[1], subharms[2], subharms[3], subharms[4]
-                )
-            )
-        )
+    subharms = [np.array([1000 / (i / j) for j in range(1, n_harmonics + 1)]) for i in chord]
+    combi = np.array(list(itertools.product(*subharms)))
     delta_t = []
     common_subs = []
     for group in range(len(combi)):
-        if min_notes == 2:
-            doublets = list(combinations(combi[group], 2))
-            for t in doublets:
-                s1 = t[0]
-                s2 = t[1]
-                if np.abs(s1 - s2) < delta_lim:
-                    delta_t_ = np.abs(s1-s2)
-                    common_subs_ = np.mean([s1, s2])
-                    if delta_t_ not in delta_t:
-                        delta_t.append(delta_t_)
-                    if common_subs_ not in common_subs:
-                        common_subs.append(common_subs_)
-        if min_notes == 3:
-            triplets = list(combinations(combi[group], 3))
-            for t in triplets:
-                s1 = t[0]
-                s2 = t[1]
-                s3 = t[2]
-                if (
-                    np.abs(s1 - s2) < delta_lim
-                    and np.abs(s1 - s3) < delta_lim
-                    and np.abs(s2 - s3) < delta_lim
-                ):
-                    delta_t_ = np.abs(np.min([s1 - s2, s1 - s3, s2 - s3]))
-                    common_subs_ = np.mean([s1, s2, s3])
-                    if delta_t_ not in delta_t:
-                        delta_t.append(delta_t_)
-                    if common_subs_ not in common_subs:
-                        common_subs.append(common_subs_)
+        for subharmonic_combination in combinations(combi[group], min_notes):
+            if all(np.abs(np.diff(subharmonic_combination)) < delta_lim):
+                delta_t.append(np.min(np.abs(np.diff(subharmonic_combination))))
+                common_subs.append(np.mean(subharmonic_combination))
     delta_temp = []
     harm_temp = []
     overall_temp = []
@@ -443,8 +432,7 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim,
             subharm_tension = "NaN"
     else:
         subharm_tension = "NaN"
-    subharm_tension
-    return common_subs, delta_t, subharm_tension, harm_temp
+    return (common_subs, delta_t, subharm_tension, harm_temp)
 
 
 def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
@@ -501,3 +489,54 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
     pairs_melody = [subharm_pairs[i] for i in low_sub_idx]
     sub_tension_final = np.average(sub_tension_final)
     return common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody
+
+def consonant_ratios(data,
+                     limit,
+                     sub=False,
+                     input_type="peaks",
+                     metric="cons"):
+    """
+    Function that computes integer ratios from peaks with higher consonance
+
+    Parameters
+    ----------
+    data : List (float)
+        Data can whether be frequency values or frequency ratios
+    limit : float
+        minimum consonance value to keep associated pairs of peaks
+    sub : boolean
+        Defaults to False
+        When set to True, include ratios a/b when a < b.
+    input_type : str
+        Defaults to 'peaks'.
+        Choose between 'peaks' and 'ratios'.
+    metric : str
+        Defaults to 'cons'.
+        Choose between 'cons' and 'harmsim'.
+
+    Returns
+    -------
+    cons_ratios : List (float)
+        list of consonant ratios
+    consonance : List (float)
+        list of associated consonance values
+    """
+    consonance_ = []
+    ratios2keep = []
+    if input_type == "peaks":
+        ratios = biotuner.biotuner_utils.compute_peak_ratios(data, sub=sub)
+    if input_type == "ratios":
+        ratios = data
+    for ratio in ratios:
+        if metric == "cons":
+            cons_ = compute_consonance(ratio)
+        if metric == "harmsim":
+            cons_ = dyad_similarity(ratio)
+        if cons_ > limit:
+            consonance_.append(cons_)
+            ratios2keep.append(ratio)
+    ratios2keep = np.array(np.round(ratios2keep, 3))
+    cons_ratios = np.sort(list(set(ratios2keep)))
+    consonance = np.array(consonance_)
+    consonance = [i for i in consonance if i]
+    return cons_ratios, consonance

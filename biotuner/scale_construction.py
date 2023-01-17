@@ -10,13 +10,13 @@ from biotuner.biotuner_utils import (
     findsubsets,
     scale_from_pairs,
 )
-from biotuner.peaks_extension import consonant_ratios
 from biotuner.metrics import (
     ratios2harmsim,
     euler,
     dyad_similarity,
     metric_denom,
     tuning_cons_matrix,
+    consonant_ratios
 )
 from pytuning import create_euler_fokker_scale
 import itertools
@@ -547,6 +547,29 @@ def compute_harmonic_entropy_domain_integral(
 def compute_harmonic_entropy_simple_weights(
     numerators, denominators, ratio_interval, spread=0.01, min_tol=1e-15
 ):
+    """
+    Compute the harmonic entropy of a set of ratios using simple weights.
+
+    Parameters
+    ----------
+    numerators : array-like
+        Numerators of the ratios.
+    denominators : array-like
+        Denominators of the ratios.
+    ratio_interval : array-like
+        Interval to compute the harmonic entropy over.
+    spread : float, optional
+        Spread of the normal distribution used to compute the weights. Default is 0.01.
+    min_tol : float, optional
+        Minimum tolerance for the weights. Default is 1e-15.
+
+    Returns
+    -------
+    weight_ratios : array-like
+        Sorted weight ratios.
+    HE : array-like
+        Harmonic entropy.
+    """
     # The first step is to pre-sort the ratios to speed up computation
     ratios = numerators / denominators
     ind = np.argsort(ratios)
@@ -799,7 +822,7 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
 
 """--------------------------MOMENTS OF SYMMETRY---------------------------"""
 
-
+import sympy as sp
 def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=100):
     """
     Function that takes two ratios a input (boundaries of )
@@ -903,6 +926,23 @@ def horogram_tree_steps(ratio1, ratio2, steps=10, limit=1000):
 
 
 def horogram_tree(ratio1, ratio2, limit):
+    """
+    Compute the next step of the horogram tree.
+    
+    Parameters
+    ----------
+    ratio1 : float
+        First ratio input.
+    ratio2 : float
+        Second ratio input.
+    limit : int
+        Limit for the denominator of the fraction.
+    
+    Returns
+    -------
+    next_step : float
+        Next step of the horogram tree.
+    """
     a = Fraction(ratio1).limit_denominator(limit).numerator
     b = Fraction(ratio1).limit_denominator(limit).denominator
     c = Fraction(ratio2).limit_denominator(limit).numerator
@@ -912,6 +952,21 @@ def horogram_tree(ratio1, ratio2, limit):
 
 
 def phi_convergent_point(ratio1, ratio2):
+    """
+    Compute the phi convergent point of two ratios.
+    
+    Parameters
+    ----------
+    ratio1 : float
+        First ratio input.
+    ratio2 : float
+        Second ratio input.
+    
+    Returns
+    -------
+    convergent_point : float
+        Phi convergent point of the two ratios.
+    """
     Phi = (1 + 5**0.5) / 2
     a = Fraction(ratio1).limit_denominator(1000).numerator
     b = Fraction(ratio1).limit_denominator(1000).denominator
@@ -922,6 +977,21 @@ def phi_convergent_point(ratio1, ratio2):
 
 
 def Stern_Brocot(n, a=0, b=1, c=1, d=1):
+    """
+    Compute the Stern-Brocot tree of a given depth.
+    
+    Parameters
+    ----------
+    n : int
+        Depth of the tree.
+    a, b, c, d : int
+        Initial values for the Stern-Brocot recursion. Default is a=0, b=1, c=1, d=1.
+        
+    Returns
+    -------
+    list
+        List of fractions in the Stern-Brocot tree.
+    """
     if a + b + c + d > n:
         return 0
     x = Stern_Brocot(n, a + c, b + d, c, d)

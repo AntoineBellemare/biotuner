@@ -9,6 +9,16 @@ import scipy.signal
 
 
 def lissajous_curves(tuning):
+    """
+    Plot Lissajous curves for given tuning ratios.
+    Parameters
+    ----------
+    tuning: List[float]
+        List of tuning ratios for which Lissajous curves should be plotted
+    Returns
+    -------
+    None
+    """
     fracs, num, denom = scale2frac(tuning)
     figure(figsize=(64, 40), dpi=80)
     a = num  # plotting the curves for
@@ -138,6 +148,35 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
 
 def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
                      method=None, save=False, figname='test'):
+    """
+    This function plots the power spectral density of a signal,
+    and the position of the peaks that are harmonically related.
+    
+    Parameters
+    ----------
+    freqs : array
+        The frequencies of the signal 
+    psd : array
+        The power spectral density of the signal
+    harm_peaks_fit : array
+        The positions of the peaks that are harmonically related
+    xmin : int or float
+        The minimum frequency to be plotted
+    xmax : int or float
+        The maximum frequency to be plotted
+    color : str
+        The color of the plotted PSD, default is black
+    method : str
+        The method used to find the harmonically related peaks
+    save : bool
+        Whether to save the figure or not
+    figname : str
+        The name of the file if the figure is saved
+        
+    Returns
+    -------
+    None
+    """
     #psd = np.interp(psd, (psd.min(), psd.max()), (0, 0.005))
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(freqs, psd, color=color)
@@ -303,9 +342,21 @@ def visualize_rhythms(pulses_steps, offsets=None, plot_size=6,
                       tolerance=0.1):
     """
     Visualize multiple Euclidean rhythms.
-    Args:
-        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
-        offsets (List[int]): A list of offsets for each rhythm in pulses_steps.
+    
+    Parameters
+    ----------
+    pulses_steps : list of tuple
+        A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+    offsets : list of int, optional
+        A list of offsets for each rhythm in pulses_steps.
+    plot_size : int, optional
+        The size of the plot.
+    tolerance : float, optional
+        The tolerance for considering two pulses to be in the same rhythm.
+    
+    Returns
+    -------
+    None
     """
     fig, ax = plt.subplots(figsize=(plot_size, plot_size))
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
@@ -370,3 +421,164 @@ def find_optimal_offsets(pulses_steps):
 
         offsets.append(offset)
     return offsets
+
+from biotuner.metrics import dyad_similarity
+from biotuner.biotuner_utils import gcd
+
+# This function will allow to simply visualize the harmonic similarity of any pair of frequency.
+def viz_harmsim(x, y, savefig=False, savename='test', n_fund=10):
+    """
+    This function will allow to simply visualize the harmonic similarity of any pair of frequency.
+
+    Parameters
+    ----------
+    x : int
+        Numerator frequency.
+    y : int
+        Denominator frequency.
+    savefig : bool, optional
+        If True, the figure will be saved in the current working directory.
+    savename : str, optional
+        The name of the file to save the figure as.
+    n_fund : int, optional
+        Number of fundamental frequencies to plot.
+
+    Returns
+    -------
+    None
+
+    """
+    # Compute harmonic similarity
+    HS = dyad_similarity(x/y)
+    print('Harmonic similarity : {}'.format(str(np.round(HS, 2))))
+
+    # Find fundamental frequency
+    fund = gcd(x, y)
+    print('Fundamental frequency : {}'.format(str(fund)))
+
+    # Compute the harmonic series of the fundamental and the two frequencies
+    harm_series = [fund*x for x in range(1, 50)]
+    x_series = [x*a for a in range(1, 100)]
+    y_series = [y*a for a in range(1, 100)]
+
+    # Initialize the figure
+    plt.figure(figsize = (7, 4))
+
+    # plot all the harmonics with different colors
+    for h in harm_series:
+        plt.axvline(x = h, color = 'black',linewidth=3, label = 'Fund harmonic series')
+    for xs in x_series:
+        plt.axvline(x = xs, color = 'deeppink', linewidth=3, label = 'Numerator ({}Hz)'.format(x), ymin=0.4, ymax=0.8)
+    for ys in y_series:
+        plt.axvline(x = ys, color = 'darkorange', linewidth=3, label = 'Denominator ({}Hz)'.format(y), ymin=0, ymax=0.4)
+
+    plt.xlim(50, fund*n_fund)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys(), loc='upper right')
+    plt.title('Harmonic similarity for the ratio 3/2 = {}%'.format(np.round(HS, 2)), fontsize=18)
+    plt.xlabel('Frequency (Hz)', fontsize=14)
+    plt.show()
+    if savefig == True:
+        plt.savefig('{}.png'.format(savename), dpi=300)
+        
+
+def viz_interharm_conc(x:int, y:int, n_harms:int, savefig:bool=False):
+    """
+    Derive the harmonic series of each frequency and find common harmonics between the two. 
+    Plot the harmonics and shared inter-harmonics on a graph. 
+    
+    Parameters:
+    x (int): Numerator frequency.
+    y (int): Denominator frequency.
+    n_harms (int): Number of harmonics to consider.
+    savefig (bool): If True, save the graph to a file. Default is False.
+    
+    Returns:
+    None
+    """
+    # derive the harmonic series of each frequency
+    x_series = [x*a for a in range(1, n_harms)]
+    y_series = [y*a for a in range(1, n_harms)]
+
+    # find common harmonics
+    commons = list(set(x_series).intersection(y_series))
+    print(commons)
+
+    # Initialize figure
+    plt.figure(figsize = (7, 4))
+
+    # plot harmonics and the shared inter-harmonics
+    for x_ in x_series:
+        plt.axvline(x = x_, color = 'deeppink', linewidth=2, label = 'Numerator ({})'.format(str(x)), ymin=0, ymax=0.33)
+    for y_ in y_series:
+        plt.axvline(x = y_, color = 'darkorange', linewidth=2, label = 'Denominator ({})'.format(str(y)), ymin=0.33, ymax=0.66)
+    for z in commons:
+        plt.axvline(x = z, color = 'black', linewidth=4, label = 'Shared inter-harmonics', ymin=0.66, ymax=1)
+        
+    # plot parameters and label handling
+    plt.xlim(0, np.max(y_series))
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys(), loc='upper right')
+    plt.title('Inter-harmonic concordance \nfor the ratio {}/{} with {} harmonics'.format(str(x), str(y), str(n_harms)), fontsize=18)
+    plt.xlabel('Frequency (Hz)', fontsize=14)
+    plt.xticks(range(0, np.max(y_series), 5))
+    plt.show()
+    if savefig is True:
+        plt.savefig('interharmonic_concordance_{}-{}.png'.format(str(x), str(y)), dpi=300)
+        
+        
+    
+from biotuner.metrics import euler
+from biotuner.biotuner_utils import lcm, prime_factors
+def viz_euler(chord: list, savefig = False) -> None:
+    """
+    Visualize the least common multiple of a chord using a line plot.
+    
+    Parameters:
+    chord (list): A list of integers representing the chord.
+    savefig (bool, optional): Save the figure as an image file, default to False.
+    
+    Returns:
+    None
+    """
+    x = chord[0]
+    y = chord[1]
+    z = chord[2]
+
+    # create series by multiplying with range of 1 to 100
+    x_series = [x*a for a in range(1, 100)]
+    y_series = [y*a for a in range(1, 100)]
+    z_series = [z*a for a in range(1, 100)]
+
+    # calculate the least common multiple of the integers in the chord list
+    lcm_ = lcm(*chord) 
+    factors_ = prime_factors(lcm_)
+    print('Euler Gradus Suavitatis = {}'.format(euler(*chord)))
+    print('Prime factors are {}'.format(str(factors_)))
+    # create a figure with size of (10,5)
+    plt.figure(figsize = (10, 5)) 
+
+    # plot the three series
+    for x_ in x_series:
+        plt.axvline(x = x_, color = 'deeppink', linewidth=1.5, label = str(chord[0]), ymin=0, ymax=0.33)
+        
+    for y_ in y_series:
+        plt.axvline(x = y_, color = 'darkorange', linewidth=1.5, label = str(chord[1]), ymin=0.33, ymax=0.66)
+        
+    for z_ in z_series:
+        plt.axvline(x = z_, color = 'darkblue', linewidth=1.5, label = str(chord[2]), ymin=0.66, ymax=1)
+
+    # plot a black vertical line for the least common multiple of the integers in the chord list 
+    plt.axvline(x = lcm_, color = 'black', linewidth=5, label = 'Least common \nmultiple : '+str(lcm_), ymax=1)
+
+    plt.xlim(0, lcm_+5) # set x-axis limit
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys(), loc='upper right')
+    plt.title('Least common multiple of chord {}:{}:{}'.format(str(x), str(y), str(z)), fontsize=18)
+    plt.xlabel('Frequency (Hz)', fontsize=14)
+    plt.show()
+    if savefig is True:
+        plt.savefig('euler-{}-{}-{}.png'.format(str(x), str(y), str(z)), dpi=300) # save the figure as an image file
