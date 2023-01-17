@@ -40,9 +40,9 @@ from biotuner.metrics import (
     ratios2harmsim,
     compute_subharmonic_tension,
     dyad_similarity,
+    consonant_ratios
 )
 from biotuner.peaks_extension import (
-    consonant_ratios,
     harmonic_fit,
     consonance_peaks,
     multi_consonance,

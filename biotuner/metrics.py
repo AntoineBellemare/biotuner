@@ -195,25 +195,21 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
     metric_values_per_step = []
     for index1 in range(len(tuning)):
         for index2 in range(len(tuning)):
-            metric_values_temp = []
             if tuning[index1] != tuning[index2]:  # not include the diagonale
                 if ratio_type == "pos_harm":
                     if tuning[index1] > tuning[index2]:
                         entry = tuning[index1] / tuning[index2]
                         metric_values.append(function(entry))
-                        metric_values_temp.append(function(entry))
                 elif ratio_type == "sub_harm":
                     if tuning[index1] < tuning[index2]:
                         entry = tuning[index1] / tuning[index2]
                         metric_values.append(function(entry))
-                        metric_values_temp.append(function(entry))
                 elif ratio_type == "all":
                     entry = tuning[index1] / tuning[index2]
                     metric_values.append(function(entry))
-                    metric_values_temp.append(function(entry))
-        metric_values_per_step.append(np.average(metric_values_temp))
+        metric_values_per_step.append(np.average(metric_values))
     metric_avg = np.average(metric_values)
-    return metric_values, metric_avg
+    return metric_values_per_step, metric_avg
 
 
 def tuning_to_metrics(tuning, maxdenom=1000):
