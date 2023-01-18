@@ -143,3 +143,41 @@ def viz_scale_colors(scale, fund, title=None):
         # Iterating over the grid returns the Axes.
         ax.imshow(im)
     plt.show()
+    
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
+from matplotlib.colors import hsv_to_rgb
+from IPython import display
+
+def animate_colors(colors, duration, frames_per_second, filename='test'):
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Set axis limits
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+
+    # Create a rectangular patch
+    rect = plt.Rectangle((0, 0), 1, 1, color=hsv_to_rgb(colors[0]))
+    ax.add_patch(rect)
+
+    def update(frame):
+        color_index = int(frame // (frames_per_second * duration / len(colors)))
+        next_color_index = (color_index + 1) % len(colors)
+        color_weight = frame % (frames_per_second * duration / len(colors)) / (frames_per_second * duration / len(colors))
+        color = hsv_to_rgb((colors[color_index][0] + (colors[next_color_index][0] - colors[color_index][0]) * color_weight,
+                            colors[color_index][1] + (colors[next_color_index][1] - colors[color_index][1]) * color_weight,
+                            colors[color_index][2] + (colors[next_color_index][2] - colors[color_index][2]) * color_weight))
+        rect.set_color(color)
+
+    # Create animation using the update function
+    ani = FuncAnimation(fig, update, frames=np.linspace(0, frames_per_second * duration - 1, frames_per_second * duration), repeat=True)
+    #plt.show()
+    # embedding for the video
+    html = display.HTML(video)
+    
+    # draw the animation
+    display.display(html)
+    plt.close()
+    ani.save('{}.gif'.format(filename))
