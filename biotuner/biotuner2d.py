@@ -18,6 +18,7 @@ from scipy.stats import boxcox
 from scipy.stats import skew
 from pingouin import ancova
 import colorednoise as cn
+from scipy import signal
 
 # from biotuner_object import *
 
