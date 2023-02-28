@@ -48,6 +48,12 @@ class harmonic_connectivity(object):
             Defaults to 'mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
+        min_freq: float, optional
+            Defaults = 2. Minimum frequency (in Hz) to consider for peak extraction.
+        max_freq: float, optional
+            Defaults = 80. Maximum frequency (in Hz) to consider for peak extraction.
+        n_peaks: int, optional
+            Default = 5. Number of peaks to extract per frequency band.
 
         """
         """Initializing data"""
@@ -65,6 +71,37 @@ class harmonic_connectivity(object):
 
     def compute_harm_connectivity(self, metric='harmsim', delta_lim=20,
                                   save=False, savename='_', graph=True):
+        """
+        Computes the harmonic connectivity matrix between electrodes.
+
+        Parameters
+        ----------
+        metric : str, optional
+            The metric to use for computing harmonic connectivity. Default is 'harmsim'.
+            Possible values are:
+
+            * 'harmsim': computes the harmonic similarity between each pair of peaks from the two electrodes.
+            * 'euler': computes the Euler's totient function on the concatenated peaks of the two electrodes.
+            * 'harm_fit': computes the number of common harmonics between each pair of peaks from the two electrodes.
+            * 'subharm_tension': computes the tension between subharmonics of two electrodes.
+
+        delta_lim : int, optional
+            The delta limit for the subharmonic tension metric. Default is 20.
+
+        save : bool, optional
+            Whether to save the connectivity matrix. Default is False.
+
+        savename : str, optional
+            The name to use when saving the connectivity matrix. Default is '_'.
+
+        graph : bool, optional
+            Whether to display a heatmap of the connectivity matrix. Default is True.
+
+        Returns
+        -------
+        conn_matrix : numpy.ndarray
+            The harmonic connectivity matrix between electrodes.
+        """
         # Initialize biotuner object
         self.metric = metric
         data = self.data
@@ -95,6 +132,7 @@ class harmonic_connectivity(object):
                                                                                                  delta_lim=delta_lim,
                                                                                                  c=2.1)
                 harm_conn_matrix.append(sub_tension_final)
+            # compute the harmonic similarity between each pair of peaks from the two electrodes.
             if metric == 'harmsim':
                 harm_pairs = list(itertools.product(list1, list2))
                 ratios = []

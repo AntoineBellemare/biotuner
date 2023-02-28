@@ -1648,25 +1648,35 @@ class compute_biotuner(object):
 
     def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,
                           harmonicity_metric='harmsim', delta_lim=50):
-        """_summary_
+        """Compute resonances between pairs of frequency peaks in the data.
 
         Parameters
         ----------
         harm_thresh : int, optional
-            _description_, by default 30
+            The minimum harmonic similarity between a peak pair required to be considered a resonance.
+            Must be a positive integer. Default is 30.
         PPC_thresh : float, optional
-            _description_, by default 0.6
+            The minimum bispectral power correlation required for a peak pair to be considered a resonance.
+            Must be a float between 0 and 1. Default is 0.6.
         smooth_fft : int, optional
-            _description_, by default 2
+            The number of times to smooth the data using a Hamming window before computing the FFT.
+            Must be a positive integer. Default is 2.
         harmonicity_metric : str, optional
-            _description_, by default 'harmsim'
+            The metric to use for computing the harmonic similarity between a pair of peaks.
+            Must be one of 'harmsim' or 'subharm_tension'. Default is 'harmsim'.
         delta_lim : int, optional
-            _description_, by default 50
+            The maximum number of subharmonic intervals to consider when using the 'subharm_tension' metric.
+            Must be a positive integer. Default is 50.
 
         Returns
         -------
-        _type_
-            _description_
+        Tuple[float, List[Tuple[float, float]], List[float], List[float]]
+            A tuple containing the following elements:
+            - resonance: a float representing the mean weighted bicorrelation coefficient across all harmonic pairs that meet the specified criteria for harmonicity and PPC
+            - resonant_freqs: a list of tuples, where each tuple contains two floats representing the frequencies of a pair of resonant harmonics that meet the specified criteria for harmonicity and PPC
+            - harm_all: a list of floats representing the harmonic similarity metric between all possible harmonic pairs
+            - bicor_all: a list of floats representing the bicorrelation coefficient between all possible harmonic pairs
+
         """        
         if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
             print('Peaks extraction function {} is not compatible with resonance metrics'.format(self.peaks_function))
@@ -1733,6 +1743,25 @@ class compute_biotuner(object):
     """Listening methods"""
 
     def listen_scale(self, scale, fund=250, length=500):
+        """
+        Play a scale of notes using pygame.
+
+        Parameters
+        ----------
+        scale : str or np.ndarray
+            The scale to play. If `scale` is a string, it can be one of 'peaks', 'diss', or 'HE',
+            which correspond to the biotuner object's `peaks_ratios`, `diss_scale`, and `HE_scale`
+            attributes, respectively. If `scale` is a numpy array, it should be an array of scale
+            ratios.
+        fund : float, optional
+            The fundamental frequency of the scale. By default, `fund` is set to 250 Hz.
+        length : float, optional
+            The length of each note in milliseconds. By default, `length` is set to 500 ms.
+
+        Returns
+        -------
+        None
+        """
         if scale == "peaks":
             scale = self.peaks_ratios
         if scale == "diss":

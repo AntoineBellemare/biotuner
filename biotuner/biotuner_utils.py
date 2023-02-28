@@ -33,9 +33,31 @@ except ModuleNotFoundError:
     pass
 sys.setrecursionlimit(120000)
 
+"""My utility functions.
 
-"""-----------------------PROPORTION FUNCTIONS----------------------------"""
+This module contains a collection of utility functions for working with lists,
+numbers, and strings.
 
+Proportion Functions
+-----------------
+These functions are useful for manipulating proportions:
+
+- `compute_peak_ratios(peaks, rebound=True, octave=2, sub=False)`: Flatten a nested list into a single list.
+- `unique(lists)`: Remove duplicates from a list while preserving order.
+- `split(lists, n)`: Split a list into n roughly equal parts.
+
+Mathematical Functions
+----------------------
+These functions perform various mathematical operations:
+
+- `add(x, y)`: Add two numbers together.
+- `multiply(x, y)`: Multiply two numbers together.
+- `divide(x, y)`: Divide one number by another.
+
+"""
+
+
+'''Proportion functions'''
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
     """This function calculates all the ratios

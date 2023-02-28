@@ -14,30 +14,28 @@ from itertools import combinations
 
 """PEAKS METRICS"""
 
-
 def compute_consonance(ratio, limit=1000):
     """
-    Compute metric of consonance from a single ratio of frequencies
-    in the form (a+b)/(a*b)
+    Compute metric of consonance from a single ratio of frequencies in the form (a+b)/(a*b).
 
     Parameters
     ----------
     ratio : float
-    limit : int
-        Defaults to 1000
-        Maximum value of the denominator of the fraction representing the ratio
+        The ratio of frequencies.
+    limit : int, optional
+        The maximum value of the denominator of the fraction representing the ratio.
+        Defaults to 1000.
 
     Returns
     -------
     cons : float
-        consonance value
+        The consonance value.
     """
     ratio = Fraction(float(ratio)).limit_denominator(limit)
     a = ratio.numerator + ratio.denominator
     b = ratio.numerator * ratio.denominator
     cons = a / b
     return cons
-
 
 def euler(*numbers):
     """Euler's "gradus suavitatis" (degree of sweetness) function
@@ -341,18 +339,26 @@ def timepoint_consonance(data,
 
 def compute_subharmonics(chord, n_harmonics, delta_lim):
     """
-    Compute subharmonics of a chord and find the common subharmonics within a delta limit.
-    
-    Parameters:
-    chord (list): A list of integers representing the chord.
-    n_harmonics (int): The number of harmonics to compute.
-    delta_lim (float): The limit of delta between two subharmonics to be considered common.
-    
-    Returns:
+    Compute subharmonics of a chord and find the common subharmonics within a given delta limit.
+
+    Parameters
+    ----------
+    chord : list of int
+        A list of integers representing the chord.
+    n_harmonics : int
+        The number of harmonics to compute.
+    delta_lim : float
+        The limit of delta between two subharmonics to be considered common.
+
+    Returns
+    ----------
     Tuple:
-        subharms (list): A list of lists of subharmonics for each element in the chord.
-        common_subs (list): A list of lists of common subharmonics within the delta limit.
-        delta_t (list): A list of delta values for the common subharmonics.
+        subharms : list of list of float
+            A list of lists of subharmonics for each element in the chord.
+        common_subs : list of list of float
+            A list of lists of common subharmonics within the delta limit.
+        delta_t : list of float
+            A list of delta values for the common subharmonics.
     """
     subharms = []
     subharms_tot = []
@@ -377,29 +383,48 @@ import numpy as np
 from itertools import combinations
 
 def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
-    """This function computes the subharmonic tension (Chan et al., 2019)
-       for a set of frequencies, based on the common subharmonics of a
-       minimum of 2 or 3 frequencies.
+    """
+    Computes the subharmonic tension (Chan et al., 2019) for a set of frequencies,
+    based on the common subharmonics of a minimum of 2 or 3 frequencies.
 
     Parameters
     ----------
-    chord : numpy array (float)
-        Values of the set of frequencies to compute subharmonic tension on.
+    chord : numpy array, shape (n,)
+        Array containing the frequencies to compute subharmonic tension on.
     n_harmonics : int
         Number of subharmonics to compute for each frequency.
     delta_lim : float
-        Maximal distance between subharmonics of different Frequencies
+        Maximal distance between subharmonics of different frequencies
         to consider them as common subharmonics.
-    min_notes : int {2, 3}
-        Defaults to 2.
+    min_notes : int, {2, 3}, optional (default=2)
         Minimal number of notes to consider common subharmonics.
 
     Returns
     -------
     tuple
-        delta_t, common_subs, harm_temp, subharm_tension
+        A tuple containing the following elements:
 
+        - common_subs : numpy array, shape (m,)
+          Array containing the common subharmonics.
+        - delta_t : numpy array, shape (m,)
+          Array containing the subharmonic distances.
+        - subharm_tension : float or str
+          The subharmonic tension value, calculated as the average of the product
+          of the subharmonic distance and the subharmonic frequency over all
+          subharmonic pairs. Returns "NaN" if no valid subharmonic pairs are found.
+        - harm_temp : numpy array, shape (m,)
+          Array containing the subharmonic harmonic values.
+
+    Notes
+    -----
+    The subharmonic tension is a measure of the perceived stability of a musical chord.
+    The subharmonic tension is calculated as the average of the product of the
+    subharmonic distance and the subharmonic frequency over all subharmonic pairs.
+    A subharmonic is a frequency that is an integer divisor of another frequency.
+    Common subharmonics are defined as subharmonics that are shared by at least
+    `min_notes` notes in the chord.
     """
+
     subharms = [np.array([1000 / (i / j) for j in range(1, n_harmonics + 1)]) for i in chord]
     combi = np.array(list(itertools.product(*subharms)))
     delta_t = []
@@ -432,7 +457,43 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
 
 
 def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
+    """
+    Compute the subharmonic tension (Chan et al., 2019) for pairs of frequencies
+    from two different lists, based on the common subharmonics of each pair.
 
+    Parameters
+    ----------
+    list1 : numpy array (float)
+        Values of the first set of frequencies to compute subharmonic tension on.
+    list2 : numpy array (float)
+        Values of the second set of frequencies to compute subharmonic tension on.
+    n_harmonics : int
+        Number of subharmonics to compute for each frequency.
+    delta_lim : float
+        Maximal distance between subharmonics of different frequencies
+        to consider them as common subharmonics.
+    c : float, optional
+        Default to 2.1.
+        Constant parameter for computing subharmonic tension.
+
+    Returns
+    -------
+    tuple
+        common_subs : list of floats
+            List of common subharmonics found for each pair of frequencies.
+        delta_t : list of floats
+            List of the smallest differences between common subharmonics found
+            for each pair of frequencies.
+        sub_tension_final : float
+            The overall subharmonic tension value computed by averaging across
+            all pairs of frequencies.
+        harm_temp : list of floats
+            List of harmonic tensions for each subharmonic tension computed.
+        pairs_melody : list of tuples
+            List of tuples, each tuple containing two frequencies from different
+            lists that produce one of the three smallest subharmonic tension values.
+
+    """
     list_ = [list1, list2]
     combinations = [p for p in itertools.product(*list_)]
     sub_tension_final = []
@@ -501,7 +562,7 @@ def consonant_ratios(data,
     limit : float
         minimum consonance value to keep associated pairs of peaks
     sub : boolean
-        Defaults to False
+        Defaults to False.
         When set to True, include ratios a/b when a < b.
     input_type : str
         Defaults to 'peaks'.

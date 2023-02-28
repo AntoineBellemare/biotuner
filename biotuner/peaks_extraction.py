@@ -23,7 +23,8 @@ sys.setrecursionlimit(120000)
    on each sub-signal,"""
 
 
-def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5):
+def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5):
+
     """
     The Empirical Mode Decomposition is a data-adaptive multiresolution
     technique to decompose a signal into physically meaningful components,
@@ -38,16 +39,19 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
         Defaults to 'EMD'.
         Type of Empirical Mode Decomposition.
         Choice between:
-                       'EMD'
-                       'EEMD'
-                       'EMD_fast'
-                       'EEMD_fast'
+                    'EMD'
+                    'EEMD'
+                    'EMD_fast'
+                    'EEMD_fast'
     graph : Boolean
         Defaults to False
         Defines if graph is created
     extrema_detection : str
         Defaults to 'simple'
         Choice between: 'simple' and 'parabol'
+    nIMFs : int
+        Defaults to 5.
+        Number of IMFs to extract.
 
     Returns
     -------
@@ -55,7 +59,14 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
         Returns an array of n Intrinsic Mode Functions
         by the initial number of data points.
 
+    References
+    ----------
+    1. Huang, Norden E., et al. "The empirical mode decomposition and the
+    Hilbert spectrum for nonlinear and non-stationary time series analysis."
+    Proceedings of the Royal Society of London. Series A: Mathematical,
+    Physical and Engineering Sciences 454.1971 (1998): 903-995.
     """
+    
     s = np.interp(data, (data.min(), data.max()), (0, +1))
     t = np.linspace(0, 1, len(data))
     if method == "EMD":
@@ -768,36 +779,40 @@ def polyspectrum_frequencies(
     flim2=(2, 50),
     graph=False,
 ):
-    """Short summary.
+    """Calculate the frequencies and amplitudes of the top n polyspectral components 
+    using the bispectrum or bicoherence method.
 
     Parameters
     ----------
-    data : type
-        Description of parameter `data`.
-    sf : type
-        Description of parameter `sf`.
-    precision : type
-        Description of parameter `precision`.
-    n_values : type
-        Description of parameter `n_values`.
-    nperseg : type
-        Description of parameter `nperseg`.
-    noverlap : type
-        Description of parameter `noverlap`.
-    method : type
-        Description of parameter `method`.
-    flim1 : type
-        Description of parameter `flim1`.
-    flim2 : type
-        Description of parameter `flim2`.
-    graph : type
-        Description of parameter `graph`.
+    data : array-like
+        The input signal.
+    sf : float
+        The sampling frequency of the input signal.
+    precision : float
+        The desired frequency precision of the output.
+    n_values : int, optional
+        The number of top polyspectral components to return. Default is 10.
+    nperseg : int, optional
+        The length of each segment used in the FFT calculation. If not specified, 
+        defaults to sf.
+    noverlap : int, optional
+        The number of samples to overlap between adjacent segments. If not specified, 
+        defaults to sf // 10.
+    method : str, optional
+        The method to use for calculating the polyspectrum. Can be either "bispectrum" 
+        or "bicoherence". Default is "bicoherence".
+    flim1 : tuple of float, optional
+        The frequency limits for the first frequency axis. Default is (2, 50).
+    flim2 : tuple of float, optional
+        The frequency limits for the second frequency axis. Default is (2, 50).
+    graph : bool, optional
+        Whether to plot the polyspectrum using matplotlib. Default is False.
 
     Returns
     -------
-    type
-        Description of returned object.
-
+    tuple of list of float
+        A tuple containing the frequencies and amplitudes of the top n polyspectral 
+        components, respectively.
     """
     if method == "bispectrum":
         norm = 0
@@ -835,34 +850,35 @@ def polyspectrum_frequencies(
 def harmonic_recurrence(
     peaks, amps, min_freq=1, max_freq=30, min_harms=2, harm_limit=128
 ):
-    """The harmonic series of each peak is compared to all other peaks
-       to identify those that have the highest recurrence in the spectrum.
-       Hence, selected peaks are the ones that have a maximum number of
-       harmonics that match other peaks in the spectrum.
+    """
+    Identify spectral peaks that have the highest recurrence in the spectrum based on their harmonic series.
 
     Parameters
     ----------
-    peaks : List
-        List of spectral peaks.
-    amps : type
-        Description of parameter `amps`.
-    min_freq : float
-        Default to 1.
-        Minimum peak of frequency to consider.
-    max_freq : float
-        Default to 30.
-        Maximum peak of frequency to consider.
-    min_harms : int
-        Default to 2.
-        Minimum number of harmonic recurrence to keep a peak.
-    harm_limit : int
-        Default to 128.
-        Higher harmonic to consider.
+    peaks : list of floats
+        List of all spectral peaks.
+    amps : list of floats
+        List of amplitudes of the spectral peaks.
+    min_freq : float, optional
+        Minimum frequency to consider, by default 1.
+    max_freq : float, optional
+        Maximum frequency to consider, by default 30.
+    min_harms : int, optional
+        Minimum number of harmonic recurrence to keep a peak, by default 2.
+    harm_limit : int, optional
+        Highest harmonic to consider, by default 128.
 
     Returns
     -------
-    type
-        Description of returned object.
+    tuple of arrays
+        Returns a tuple of arrays containing:
+        - `max_n`: Number of harmonic recurrences for each selected peak.
+        - `max_peaks`: Frequencies of each selected peak.
+        - `max_amps`: Amplitudes of each selected peak.
+        - `harmonics`: List of harmonic ratios of each selected peak.
+        - `harmonic_peaks`: Frequencies of peaks that share harmonic ratios with each selected peak.
+        - `harm_peaks_fit`: List containing detailed information about each selected peak.
+
 
     """
     n_total = []
@@ -953,10 +969,39 @@ def compute_IMs(f1, f2, n):
 
 def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     """
-    This function computes the intermodulation components (IMCs) for each pairs
-    of peaks and compare the IMCs with peaks values. If a pair of peaks has
-    a number of IMCs equals to or higher than parameter min_IMs, these peaks
-    and the associated IMCs are stored in IMs_all dictionary.
+    Computes the intermodulation components (IMCs) for each pair of peaks and compares the IMCs
+    with peak values. If a pair of peaks has a number of IMCs equal to or greater than the
+    `min_IMs` parameter, these peaks and the associated IMCs are stored in the `IMCs_all` dictionary.
+
+    Parameters
+    ----------
+    peaks : array_like
+        An array of peak frequencies.
+    amps : array_like
+        An array of amplitudes corresponding to the peak frequencies.
+    order : int, optional
+        The maximum order of intermodulation to consider (default is 3).
+    min_IMs : int, optional
+        The minimum number of IMCs required for a pair of peaks to be stored in the `IMCs_all` dictionary
+        (default is 2).
+    max_freq : float, optional
+        The maximum frequency to consider when computing IMCs (default is 100).
+
+    Returns
+    -------
+    EIMs : list
+        A list of the endogenous intermodulation components (EIMs) for each peak.
+    IMCs_all : dict
+        A dictionary containing information about all the pairs of peaks and their associated IMCs
+        that satisfy the `min_IMs` threshold. The dictionary has the following keys:
+        - 'IMs': a list of arrays, where each array contains the IMCs associated with a pair of peaks.
+        - 'peaks': a list of arrays, where each array contains the frequencies of the two peaks.
+        - 'n_IMs': a list of integers, where each integer represents the number of IMCs associated with a pair of peaks.
+        - 'orders': a list of lists, where each list contains the orders of the IMCs associated with a pair of peaks.
+        - 'amps': a list of arrays, where each array contains the amplitudes of the two peaks.
+    n_IM_peaks : int
+        The total number of pairs of peaks and their associated IMCs that satisfy the `min_IMs` threshold.
+
     """
     EIMs = []
     IMCs_all = {"IMs": [], "peaks": [], "n_IMs": [], "orders": [], "amps": []}
@@ -985,22 +1030,31 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
 
 
 def compute_sidebands(carrier, modulator, order=2):
-    """Short summary.
+    """
+    Computes the frequency values of the sidebands resulting from the
+    interaction of a carrier signal and a modulating signal.
 
     Parameters
     ----------
-    carrier : type
-        Description of parameter `carrier`.
-    modulator : type
-        Description of parameter `modulator`.
-    order : type
-        Description of parameter `order`.
+    carrier : float
+        The frequency value of the carrier signal.
+    modulator : float
+        The frequency value of the modulating signal.
+    order : int, optional
+        The order of the highest sideband to compute. Default is 2.
 
     Returns
     -------
-    type
-        Description of returned object.
+    numpy.ndarray
+        A sorted 1D array of frequency values for the sidebands.
 
+    Examples
+    --------
+    >>> compute_sidebands(1000, 100, 3)
+    array([700., 800., 900., 1100., 1200., 1300.])
+
+    >>> compute_sidebands(500, 75, 2)
+    array([350., 425., 575., 650.])
     """
     sidebands = []
     i = 1
