@@ -6,6 +6,9 @@ from biotuner.peaks_extension import harmonic_fit
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
+import numpy as np
+from mne.viz import circular_layout
+from mne_connectivity.viz import plot_connectivity_circle
 
 
 class harmonic_connectivity(object):
@@ -161,7 +164,7 @@ class harmonic_connectivity(object):
                                               n_common_harms=2)
                     harm_fit.append(len(a))
                 harm_conn_matrix.append(np.sum(harm_fit))
-        matrix = np.empty(shape=(len(data), len(data)), dtype='object')
+        matrix = np.empty(shape=(len(data), len(data)))
         for e, p in enumerate(pairs):
             matrix[p] = harm_conn_matrix[e]
         conn_matrix = matrix.astype('float')
@@ -169,3 +172,31 @@ class harmonic_connectivity(object):
             sbn.heatmap(matrix)
             plt.show()
         return conn_matrix
+
+    def plot_conn_matrix(conn_matrix, sensor_pos):
+        # Create the circular layout
+        node_names = list(range(conn_matrix.shape[0]))
+        node_angles = circular_layout(node_names, start_pos=90, group_boundaries=[0, len(node_names)//2])
+        
+        # Plot the connectivity matrix
+        plot_connectivity_circle(
+            conn_matrix,
+            node_names,
+            n_lines=None,
+            node_angles=node_angles,
+            node_colors=None,
+            facecolor='white',
+            textcolor='black',
+            linewidth=2.0,
+            colormap='viridis',
+            vmin=np.min(conn_matrix),
+            vmax=np.max(conn_matrix),
+            colorbar=True,
+            title='Connectivity Matrix',
+            padding=0,
+            fontsize_titles=10,
+            fontsize_names=8,
+            fontsize_colorbar=8,
+            show=True,
+            fig=None
+        )
