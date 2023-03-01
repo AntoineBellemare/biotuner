@@ -56,26 +56,126 @@ def wavelength_to_rgb(wavelength, gamma=0.5):
     return (int(R), int(G), int(B))
 
 def scale2freqs (scale, fund, THz = True):
+    """
+    Returns a list of frequency values given a scale and fundamental frequency.
+
+    Parameters
+    ----------
+    scale : list
+        A list of values representing the scale to be used.
+    fund : float
+        The fundamental frequency to be used for scaling the scale.
+    THz : bool, optional
+        Whether the input scale is in THz or Hz. Defaults to True.
+
+    Returns
+    -------
+    list
+        A list of frequency values obtained by scaling the input scale with the fundamental frequency.
+
+    """
     if THz == True:
         scale = [Hz2THz(s) for s in scale]
     scale_freqs = []
     for s in scale:
         scale_freqs.append(s*fund)
     return scale_freqs
+
 def nm2Hz (nm, c):
-    nm = (c/nm)*10**9
+    """
+    Converts a wavelength value from nm to Hz.
+
+    Parameters
+    ----------
+    nm : float
+        The wavelength value in nm to be converted.
+    c : float
+        The speed of light in nm/s.
+
+    Returns
+    -------
+    float
+        The frequency value in Hz.
+
+    """
+    Hz = (c/nm)*10**9
+    return Hz
+
 def Hz2nm (Hz, c):
+    """
+    Converts a frequency value from Hz to nm.
+
+    Parameters
+    ----------
+    Hz : float
+        The frequency value in Hz to be converted.
+    c : float
+        The speed of light in nm/s.
+
+    Returns
+    -------
+    float
+        The wavelength value in nm.
+
+    """
     nm = (c/Hz)*10**9
     return nm
+
 def Hz2THz (freq):
+    """
+    Converts a frequency value from Hz to THz.
+
+    Parameters
+    ----------
+    freq : float
+        The frequency value in Hz to be converted.
+
+    Returns
+    -------
+    float
+        The frequency value in THz.
+
+    """
     freq = freq/10**12
     return freq
 
 def THz2Hz (freq):
+    """
+    Converts a frequency value from THz to Hz.
+
+    Parameters
+    ----------
+    freq : float
+        The frequency value in THz to be converted.
+
+    Returns
+    -------
+    float
+        The frequency value in Hz.
+
+    """
     freq = freq*10**12
     return freq
 
 def audible2visible (freq, visible_range = visible_range_Hz, c = 299792458):
+    """
+    Converts an audible frequency value to its corresponding visible frequency value.
+
+    Parameters
+    ----------
+    freq : float
+        The audible frequency value to be converted.
+    visible_range : tuple, optional
+        A tuple of two values representing the lower and upper bounds of the visible frequency range in Hz. Defaults to visible_range_Hz.
+    c : float, optional
+        The speed of light in nm/s. Defaults to 299792458.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the frequency value in THz, Hz, nm, and the number of octaves shifted to obtain a frequency within the visible range.
+
+    """
     i = 0
     new_freq = 0
     while new_freq < visible_range_Hz[0]:
@@ -92,6 +192,24 @@ def audible2visible (freq, visible_range = visible_range_Hz, c = 299792458):
 
 
 def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
+    """
+    Converts a list of wavelength values to their corresponding frequency values, scaling them to fit within a given frequency range.
+
+    Parameters
+    ----------
+    wavelengths : list
+        A list of wavelength values to be converted.
+    min_frequency : float
+        The lower bound of the desired frequency range.
+    max_frequency : float
+        The upper bound of the desired frequency range.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the frequency values obtained by converting the input wavelengths and the number of times the frequencies were halved to fit within the desired frequency range.
+
+    """
     c = 2.998 * 10**17 # speed of light in nm/s
     frequencies = c / np.array(wavelengths)
     n = 0

@@ -60,23 +60,157 @@ import pygame
 class compute_biotuner(object):
     """
     Class used to derive peaks information, musical tunings, rhythms
-    and related harmonicity metrics from time series
-    (EEG, ECG, EMG, gravitational waves, noise, ...)
+    and related harmonicity metrics from time series (EEG, ECG, EMG,
+    gravitational waves, noise, ...)
 
-    Example of use:
-    biotuning = compute_biotuner(sf = 1000)
-    biotuning.peaks_extraction(data)
-    biotuning.peaks_extension()
-    biotuning.peaks_metrics()
+    Basic usage
+    -----------
+    >>> biotuning = compute_biotuner(sf = 1000)
+    >>> biotuning.peaks_extraction(data)
+    >>> biotuning.peaks_extension()
+    >>> biotuning.peaks_metrics()
+    
+    Parameters
+    ----------
+    sf: int
+        Sampling frequency (in Hz)
+    data : array(numDataPoints,)
+        Time series to analyze.
+    peaks_function: str, optional
+        Defaults to 'EMD'.
+        Defines the method to use for peak extraction.
 
-    Methods
-    -------
-    peaks_extraction(data)
-        Extract spectral peaks from time series
-    peaks_extension(peaks)
-        Extend or restrict a set of spectral peaks
+        'NON-HARMONIC PEAK EXTRACTIONS'
+            'fixed' : 
+                    Power Spectrum Density (PSD) estimated using Welch's method
+                    on fixed frequency bands. Peaks correspond to frequency bins
+                    with the highest power.
+            'adapt' : 
+                    PSD estimated using Welch's method on each frequency band
+                    derived from the alpha peak position. Peaks correspond to
+                    frequency bins with the highest power.
+            'FOOOF' : 
+                    PSD is estimated with Welch's method. 'FOOOF' is applied to
+                    remove the aperiodic component and find physiologically
+                    relevant spectral peaks.
+
+        'SIGNAL DECOMPOSITION BASED PEAK EXTRACTION'
+            'EMD': 
+                Intrinsic Mode Functions (IMFs) are derived with Empirical
+                Mode Decomposition (EMD) PSD is computed on each IMF using
+                Welch. Peaks correspond to frequency bins with the highest power.
+            'EEMD' : 
+                    Intrinsic Mode Functions (IMFs) are derived with Ensemble
+                    Empirical Mode Decomposition (EEMD). PSD is computed on each
+                    IMF using Welch. Peaks correspond to frequency bins with the
+                    highest power.
+            'EMD_FOOOF' : 
+                        Intrinsic Mode Functions (IMFs) are derived with
+                        Ensemble Empirical Mode Decomposition (EEMD). PSD is
+                        computed on each IMF with Welch's method. 'FOOOF' is
+                        applied to remove the aperiodic component and find
+                        physiologically relevant spectral peaks.
+            'HH1D_max' : 
+                        Maximum values of the 1D Hilbert-Huang transform on each
+                        IMF using EMD.
+            'HH1D_FOOOF' : Hilbert-Huang transform on each IMF with Welch's method
+                        'FOOOF' is applied to remove the aperiodic component and
+                        find physiologically relevant spectral peaks.
+            'SSA' : Singular Spectrum Analysis. The name "singular spectrum
+                    analysis" relates to the spectrum of eigenvalues in a singular
+                    value decomposition of a covariance matrix.
+
+        'SECOND-ORDER STATISTICAL PEAK EXTRACTION'
+            'cepstrum': Peak frequencies of the cepstrum (inverse Fourier transform
+                        (IFT) of the logarithm of the estimated signal spectrum).
+            'HPS (to come)' : Harmonic Product Spectrum (HPS) corresponds to the product of
+                    the spectral power at each harmonic. Peaks correspond to the
+                    frequency bins with the highest value of the HPS.
+            'Harmonic_salience (to come)' : A measure of harmonic salience computed by taking
+                                the sum of the squared cosine of the angle between
+                                a harmonic and its neighbors.
+
+        'CROSS-FREQUENCY COUPLING BASED PEAK EXTRACTION'
+            'Bicoherence' : Corresponds to the normalized cross-bispectrum.
+                            It is a third-order moment in the frequency domain.
+                            It is a measure of phase-amplitude coupling.
+            'PAC' : Phase-amplitude coupling. A measure of phase-amplitude
+                    coupling between low-frequency phase and high-frequency
+                    amplitude. 
+                
+        'PEAK SELECTION BASED ON HARMONIC PROPERTIES'
+            'EIMC' : Endogenous InterModulation Components (EIMC)
+                    correspond to spectral peaks that are sums or differences
+                    of other peaks harmonics (f1+f2, f1+2f2, f1-f2, f1-2f2...).
+                    PSD is estimated with Welch's method. All peaks are extracted.
+            'harmonic_recurrence' : PSD is estimated with Welch's method.
+                            All peaks are extracted. Peaks for which
+                            other peaks are their harmonics are kept.
+        
+        'PEAKS EXTRACTION PARAMETERS'
+    
+    precision: float
+        Defaults to 0.1. Precision of the peaks (in Hz).
+        When HH1D_max is used, bins are in log scale.
+    compute_sub_ratios: bool
+        Defaults to False.
+        When set to True, include ratios < 1 in peaks_ratios attribute.
+    ratios_n_harms: int
+        Defaults to 5.
+        The number of harmonics used to compute ratios.
+    ratios_harms: bool
+        Defaults to False.
+        If True, compute ratio values between each harmonic and the 
+        entire set of peaks. If False, compute ratios only for successive peaks.
+    ratios_inc: bool
+        Defaults to True.
+        If True, include the ratio of the sum of every peak to the lowest
+        peak, and the ratio of the sum of every peak to the highest peak.
+    ratios_inc_fit: bool
+        Defaults to False.
+        If True, fit a logarithmic curve to the peak ratios, then add
+        ratio values according to their distance to the logarithmic curve.
+    scale_cons_limit: float
+        Defaults to 0.1.
+        The minimal value of consonance needed for a peaks ratio to be 
+        included in the peaks_ratios_cons attribute.
+
+        'EXTENDED PEAKS PARAMETERS'
+    
+    n_harm: int
+        Defaults to 10.
+        Set the number of harmonics to compute in harmonic_fit function.
+    harm_function: str
+        Defaults to 'mult'.
+        {'mult' or 'div'}: Computes harmonics from iterative multiplication
+        (x, 2x, 3x...) or from iterative division (x, x/2, x/3...).
+    extension_method: str
+        Defaults to 'consonant_harmonic_fit'.
+        {'consonant_harmonic_fit', 'all_harmonic_fit'}:
+        'consonant_harmonic_fit' computes the best-fit of harmonic peaks
+        according to consonance intervals (eg. octaves, fifths).
+        'all_harmonic_fit' computes the best-fit of harmonic peaks without
+        considering consonance intervals.
+        
+        'RATIOS EXTENSION PARAMETERS'
+    
+    ratios_n_harms: int
+        Defaults to 5.
+        Defines to number of harmonics or exponents for extended ratios
+    ratios_harms: bool
+        Defaults to False.
+        When set to True, harmonics (x*1, x*2, x*3...,x*n) of specified
+        ratios will be computed.
+    ratios_inc: bool
+        Defaults to True.
+        When set to True, exponentials (x**1, x**2, x**3,...x**n) of
+        specified ratios will be computed.
+    ratios_inc_fit: bool
+        Defaults to False.
+        When set to True, a fit between exponentials
+        (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
     """
-
+    
     def __init__(
         self,
         sf,
@@ -93,136 +227,23 @@ class compute_biotuner(object):
         ratios_inc_fit=False,
         scale_cons_limit=0.1,
     ):
-        """
-        Parameters
-        ----------
-        sf: int
-            sampling frequency (in Hz)
-        data : array(numDataPoints,)
-            Time series to analyse.
 
-        ///// PEAKS EXTRACTION PARAMETERS /////
-        peaks_function: str
-            Defaults to 'EMD'.
-            Defines the method to use for peak extraction
-            ##### NON-HARMONIC PEAK EXTRACTIONS #####
-            'fixed' : Power Spectrum Density (PSD) estimated using
-                      Welch's method on fixed frequency bands.
-                      Peaks correspond to frequency bins with
-                      the highest power.
-            'adapt' : PSD estimated using Welch's method on each
-                      frequency bands derived from the alpha peak position.
-                      Peaks correspond to frequency bins with
-                      the highest power.
-            'FOOOF' : PSD is estimated with Welch's method.
-                      'FOOOF' is applied to remove the aperiodic
-                      component and find physiologically relevant
-                      spectral peaks.
-            ##### SIGNAL DECOMPOSITION BASED PEAK EXTRACTION #####
-            'EMD': Intrinsic Mode Functions (IMFs) are derived with
-                   Empirical Mode Decomposition (EMD)
-                   PSD is computed on each IMF using Welch. Peaks correspond
-                   to frequency bins with the highest power.
-            'EEMD' : Intrinsic Mode Functions (IMFs) are derived with
-                     Ensemble Empirical Mode Decomposition (EEMD).
-                     PSD is computed on each IMF using Welch. Peaks correspond
-                     to frequency bins with the highest power.
-            'EMD_FOOOF' : Intrinsic Mode Functions (IMFs) are derived with
-                           Ensemble Empirical Mode Decomposition (EEMD).
-                           PSD is computed on each IMF with Welch's method.
-                           'FOOOF' is applied to remove the aperiodic component
-                           and find physiologically relevant spectral peaks.
-            'HH1D_max' : Maximum values of the 1D Hilbert-Huang transform
-                         on each IMF using EMD.
-            'HH1D_avg' : Weighted average values of the 1D Hilbert-Huang
-                         transform on each IMF using EMD.
-            'HH1D_FOOOF' :
-            'SSA' : Singular Spectrum Analysis.
-                    The name "singular spectrum analysis" relates to the
-                    spectrum of eigenvalues in a singular value decomposition
-                    of a covariance matrix.
-            ##### SECOND-ORDER STATISTICAL PEAK EXTRACTION #####
-            'cepstrum': Peak frequencies of the cepstrum
-                        (inverse Fourier transform (IFT) of the logarithm
-                        of the estimated signal spectrum).
-            'HPS' : Harmonic Product Spectrum (HPS) corresponds to
-            'Harmonic_salience' :
-            ##### CROSS-FREQUENCY COUPLING BASED PEAK EXTRACTION #####
-            'Bicoherence' : Corresponds to the normalised cross-bispectrum.
-                            Third-order moment in the frequency domain.
-                            Measure of phase-amplitude coupling.
-            'PAC' : Measure of phase-amplitude coupling between
-                    low-freq phase and high-freq amplitude.
-            ##### PEAK SELECTION BASED ON HARMONIC PROPERTIES #####
-            'EIMC' : PSD is estimated with Welch's method.
-                     All peaks are extracted.
-                     Endogenous InterModulation Components (EIMC)
-                     correspond to spectral peaks that are sums or differences
-                     of other peaks harmonics (f1+f2, f1+2f2, f1-f2, f1-2f2...)
-            'harmonic_recurrence' : PSD is estimated with Welch's method.
-                               All peaks are extracted. Peaks for which
-                               other peaks are their harmonics are kept.
-            'Harmonic_symmetry' :
-
-        precision: float
-            Defaults to 0.1
-            precision of the peaks (in Hz)
-            When HH1D_max is used, bins are in log scale.
-        compute_sub_ratios: str
-            Default to False
-            When set to True, include ratios < 1 in peaks_ratios attribute
-        scale_cons_limit : float
-            Defaults to 0.1
-            minimal value of consonance to be reach for a peaks ratio
-            to be included in the peaks_ratios_cons attribute.
-
-        ///// EXTENDED PEAKS PARAMETERS /////
-        n_harm: int
-            Defaults to 10.
-            Set the number of harmonics to compute in harmonic_fit function
-        harm_function: str
-            {'mult' or 'div'}
-            Defaults to 'mult'
-            Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
-            or division (x, x/2, x/3, ...x/n).
-        extension_method: str
-            {'harmonic_fit', 'consonant', 'multi_consonant',
-            'consonant_harmonic_fit', 'multi_consonant_harmonic_fit'}
-
-        ///// RATIOS EXTENSION PARAMETERS /////
-        ratios_n_harms: int
-            Defaults to 5.
-            Defines to number of harmonics or exponents for extended ratios
-        ratios_harms: boolean
-            Defaults to False.
-            When set to True, harmonics (x*1, x*2, x*3...,x*n) of specified
-            ratios will be computed.
-        ratios_inc: boolean
-            Defaults to True.
-            When set to True, exponentials (x**1, x**2, x**3,...x**n) of
-            specified ratios will be computed.
-        ratios_inc_fit: boolean
-            Defaults to False.
-            When set to True, a fit between exponentials
-            (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
-
-        """
-        """Initializing data"""
+        #Initializing data
         if type(data) is not None:
             self.data = data
         self.sf = sf
-        """Initializing arguments for peak extraction"""
+        #Initializing arguments for peak extraction
         self.peaks_function = peaks_function
         self.precision = precision
         self.compute_sub_ratios = compute_sub_ratios
-        """Initializing arguments for peaks metrics"""
+        #Initializing arguments for peaks metrics
         self.n_harm = n_harm
         self.harm_function = harm_function
         self.extension_method = extension_method
-        """Initializing dictionary for scales metrics"""
+        #Initializing dictionary for scales metrics
         self.scale_metrics = {}
         self.scale_cons_limit = scale_cons_limit
-        """Initializing arguments for ratios extension"""
+        #Initializing arguments for ratios extension
         self.ratios_n_harms = ratios_n_harms
         self.ratios_harms = ratios_harms
         self.ratios_inc = ratios_inc
@@ -344,7 +365,7 @@ class compute_biotuner(object):
             List of ratios between all pairs of peaks
         self.peaks_ratios_cons: List (float)
             List of consonant peaks ratios
-        ----------If ratios_extension = True:----------
+        'If ratios_extension = True'
         self.peaks_ratios_harm: List (float)
             List of peaks ratios and their harmonics
         self.peaks_ratios_inc: List (float)
@@ -482,9 +503,9 @@ class compute_biotuner(object):
             List of pairwise extended peaks ratios when more consonant than
             scale_limit_cons parameter.
 
-        Other Attributes
-        ----------------
-        ----------If ratios_extension is True:----------
+        Attributes
+        ----------
+        'If ratios_extension is True'
         self.peaks_ratios_harm: List (float)
             List of extended peaks ratios and their harmonics
         self.peaks_ratios_inc: List (float)
@@ -741,7 +762,7 @@ class compute_biotuner(object):
             them as equivalent.
 
         Attributes
-        -------
+        ----------
         self.peaks_metrics : dict
             Dictionary with keys corresponding to the different metrics.
             {'cons', 'euler', 'tenney', 'harm_fit', 'harmsim'}
@@ -837,7 +858,7 @@ class compute_biotuner(object):
             to be included in the self.diss_scale_cons attribute.
 
         Attributes
-        -------
+        ----------
         self.diss_scale : List (float)
             List of frequency ratios corresponding to local minima.
         self.diss_scale_cons : List (float)
@@ -927,7 +948,7 @@ class compute_biotuner(object):
             to be included in the self.diss_scale_cons attribute.
 
         Attributes
-        -------
+        ----------
         self.HE_scale : List (float)
             List of frequency ratios corresponding to local minima.
         self.HE_scale_cons : List (float)
@@ -1230,6 +1251,13 @@ class compute_biotuner(object):
         smooth_fft : int
             Number used to divide nfft to derive nperseg.
 
+        Returns
+        -------
+        peaks : List (float)
+            List of peaks frequencies.
+        amps : List (float)
+            List of amplitudes associated with peaks frequencies.
+        
         Attributes
         ----------
         self.freqs : array
@@ -1246,13 +1274,6 @@ class compute_biotuner(object):
         self.all_harmonics : List (int)
             List of all harmonic positions when
             harmonic_recurrence method is used.
-
-        Returns
-        -------
-        peaks : List (float)
-            List of peaks frequencies.
-        amps : List (float)
-            List of amplitudes associated with peaks frequencies.
         """
         alphaband = [[7, 12]]
         if sf is None:
