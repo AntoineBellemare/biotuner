@@ -32,35 +32,34 @@ sys.setrecursionlimit(120000)
 
 def oct_subdiv(ratio, octave_limit=0.01365, octave=2, n=5):
     """
-    N-TET tuning from Generator Interval
-    This function uses a generator interval to suggest
-    numbers of steps to divide the octave.
+    N-TET tuning from Generator Interval.
+
+    This function uses a generator interval to suggest numbers of steps to divide the octave.
 
     Parameters
     ----------
     ratio : float
-        ratio that corresponds to the generator_interval
-        e.g.: by giving the fifth (3/2) as generator interval,
-        this function will suggest to subdivide the octave in 12, 53, ...
-    octave_limit : float
-        Defaults to 0.01365 (Pythagorean comma)
-        approximation of the octave corresponding to the acceptable distance
-        between the ratio of the generator interval after
-        multiple iterations and the octave value.
-    octave : int
-        Defaults to 2
-        value of the octave
-    n : int
-        Defaults to 5
-        number of suggested octave subdivisions
+        Ratio that corresponds to the generator_interval.
+        For example, by giving the fifth (3/2) as generator interval,
+        this function will suggest to subdivide the octave in 12, 53, etc.
+    octave_limit : float, optional
+        Approximation of the octave corresponding to the acceptable distance
+        between the ratio of the generator interval after multiple iterations
+        and the octave value.
+        Defaults to 0.01365 (Pythagorean comma).
+    octave : int, optional
+        Value of the octave.
+        Defaults to 2.
+    n : int, optional
+        Number of suggested octave subdivisions.
+        Defaults to 5.
 
     Returns
     -------
-    Octdiv : List (int)
-        list of N-TET tunings according to
-        the generator interval
-    Octvalue : List (float)
-        list of the approximations of the octave for each N-TET tuning
+    Octdiv : List[int]
+        List of N-TET tunings according to the generator interval.
+    Octvalue : List[float]
+        List of the approximations of the octave for each N-TET tuning.
     """
     Octdiv, Octvalue, i = [], [], 1
     ratios = []
@@ -87,28 +86,23 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
 
     Parameters
     ----------
-    Octdiv : int
-        Defaults to 12.
-        first N-TET tuning number of steps
-    Octdiv2 : int
-        Defaults to 53.
-        second N-TET tuning number of steps
-    bounds : float
-        Defaults to 0.005
-        Maximum distance between one ratio of Octdiv
-        and one ratio of Octdiv2 to consider a match
-    octave : int
-        Defaults to 2
-        value of the octave
+    Octdiv : int, optional
+        First N-TET tuning number of steps (default is 12)
+    Octdiv2 : int, optional
+        Second N-TET tuning number of steps (default is 53)
+    bounds : float, optional
+        Maximum distance between one ratio of Octdiv and one ratio of Octdiv2 
+        to consider a match (default is 0.005)
+    octave : int, optional
+        Value of the octave (default is 2)
 
     Returns
     -------
-    avg_ratios : List (float)
-        list of ratios corresponding to
-        the shared steps in the two N-TET tunings
-    shared_steps : List (tuples)
-        the two elements of each tuple corresponds to the
-        tuning steps sharing the same interval in the two N-TET tunings
+    avg_ratios : numpy.ndarray
+        List of ratios corresponding to the shared steps in the two N-TET tunings
+    shared_steps : List[tuple]
+        The two elements of each tuple corresponds to the tuning steps 
+        sharing the same interval in the two N-TET tunings
     """
     ListOctdiv = []
     ListOctdiv2 = []

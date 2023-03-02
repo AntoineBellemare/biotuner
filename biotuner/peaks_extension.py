@@ -238,19 +238,19 @@ def consonance_peaks (peaks, limit):
     limit : float
         minimum consonance value to keep associated pairs of peaks
 
-        Comparisons with familiar ratios:
-        Unison-frequency ratio 1:1 yields a value of 2
-        Octave-frequency ratio 2:1 yields a value of 1.5
-        Perfect 5th-frequency ratio 3:2 yields a value of 0.833
-        Perfect 4th-frequency ratio 4:3 yields a value of 0.583
-        Major 6th-frequency ratio 5:3 yields a value of 0.533
-        Major 3rd-frequency ratio 5:4 yields a value of 0.45
-        Minor 3rd-frequency ratio 5:6 yields a value of 0.366
-        Minor 6th-frequency ratio 5:8 yields a value of 0.325
-        Major 2nd-frequency ratio 8:9 yields a value of 0.236
-        Major 7th-frequency ratio 8:15 yields a value of 0.192
-        Minor 7th-frequency ratio 9:16 yields a value of 0.174
-        Minor 2nd-frequency ratio 15:16 yields a value of 0.129
+            Comparisons with familiar ratios:  
+            Unison-frequency ratio 1:1 yields a value of 2\n
+            Octave-frequency ratio 2:1 yields a value of 1.5\n
+            Perfect 5th-frequency ratio 3:2 yields a value of 0.833\n
+            Perfect 4th-frequency ratio 4:3 yields a value of 0.583\n  
+            Major 6th-frequency ratio 5:3 yields a value of 0.533\n  
+            Major 3rd-frequency ratio 5:4 yields a value of 0.45\n  
+            Minor 3rd-frequency ratio 5:6 yields a value of 0.366\n  
+            Minor 6th-frequency ratio 5:8 yields a value of 0.325\n  
+            Major 2nd-frequency ratio 8:9 yields a value of 0.236\n  
+            Major 7th-frequency ratio 8:15 yields a value of 0.192\n  
+            Minor 7th-frequency ratio 9:16 yields a value of 0.174\n  
+            Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n  
 
     Returns
     -------
