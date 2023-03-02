@@ -62,6 +62,46 @@ class transitional_harmony(object):
 
     def compute_trans_harmony(self, mode='win_overlap', overlap=10, delta_lim=20,
                              graph=False, save=False, savename='_'):
+        
+        
+        """
+        Computes the transitional subharmonic tension between successive windows of a time series.
+
+        Parameters
+        ----------
+        mode : str, optional
+            The method used to chunk the time series. Default is 'win_overlap'.
+        overlap : int, optional
+            The overlap between successive windows, in number of samples. Default is 10.
+        delta_lim : int, optional
+            The maximum time difference allowed between the closest common subharmonic
+            in two consecutive windows, in milliseconds. Default is 20.
+        graph : bool, optional
+            Whether to plot the transitional subharmonic tension as a function of time. Default is False.
+        save : bool, optional
+            Whether to save the plot as a PNG file. Default is False.
+        savename : str, optional
+            The filename of the saved plot, without the extension. Default is '_'.
+
+        Returns
+        -------
+        trans_subharm : list of float
+            The list of transitional subharmonic tension values for each pair of windows.
+        time_vec_final : list of float
+            The list of time values corresponding to the center of each pair of windows.
+        pairs_melody : list of tuple of int
+            The list of pairs of indices of the closest common subharmonic in each pair of windows.
+
+        Notes
+        -----
+        This method chunks the time series using the specified mode and overlap parameters,
+        and for each pair of consecutive windows, it extracts the subharmonic peaks using
+        the biotuner algorithm. It then computes the closest common subharmonics between
+        the two sets of peaks, and determines the transitional subharmonic tension based
+        on their frequency difference and time difference. The resulting values are stored
+        in the trans_subharm and time_vec_final lists, and optionally plotted and saved.
+
+        """
         # Initialize biotuner object
         self.mode = mode
         self.overlap = overlap
@@ -117,6 +157,31 @@ class transitional_harmony(object):
         return trans_subharm, time_vec_final, pairs_melody
 
     def compare_deltas(self, deltas, save=False, savename='_'):
+        """
+        Compares the transitional subharmonic tension for multiple maximum delta limits.
+
+        Parameters
+        ----------
+        deltas : list of int
+            The list of maximum time differences allowed between the closest
+            common subharmonic in consecutive windows, in milliseconds.
+        save : bool, optional
+            Whether to save the plot as a PNG file. Default is False.
+        savename : str, optional
+            The filename of the saved plot, without the extension. Default is '_'.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        This method computes the transitional subharmonic tension for each maximum
+        delta limit in the deltas list, using the compute_trans_harmony method.
+        It then plots the resulting values as a function of time, using a different
+        color for each delta value, and optionally saves the plot.
+
+        """
         colors = ['darkorange', 'darkred', 'darkblue', 'darkcyan', 'goldenrod']
         plt.clf()
         figure(figsize=(8, 5), dpi=300)
