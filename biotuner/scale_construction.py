@@ -278,13 +278,14 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
 
 
 def convergents(interval):
-    """Return the convergents of the log2 of a ratio.
-       The second value represents the number of steps to divide the octave
-       while the first value represents the number of octaves up before
-       the stacke ratio arrives approximately to the octave value.
-       For example, the interval 1.5 will gives [7, 12], which means that
-       to approximate the fifth (1.5) in a NTET-tuning, you can divide the
-       octave in 12, while stacking 12 fifth will lead to the 7th octave up.
+    """
+    Return the convergents of the log2 of a ratio.
+    The second value represents the number of steps to divide the octave
+    while the first value represents the number of octaves up before
+    the stacke ratio arrives approximately to the octave value.
+    For example, the interval 1.5 will gives [7, 12], which means that
+    to approximate the fifth (1.5) in a NTET-tuning, you can divide the
+    octave in 12, while stacking 12 fifth will lead to the 7th octave up.
 
     Parameters
     ----------
@@ -506,23 +507,39 @@ def compute_harmonic_entropy_domain_integral(
     ratios, ratio_interval, spread=0.01, min_tol=1e-15
 ):
     """
+    Computes the harmonic entropy of a list of frequency ratios for a given set of possible intervals.
+
     Parameters
     ----------
-    ratios : List
-        Frequency ratios
-    ratio_interval : List
-        All possible intervals to consider
-    spread : float
-        Defaults to 0.01
-    min_tol : float
-        Minimal tolerance
-        Defaults to 1e-15
+    ratios : List[float]
+        List of frequency ratios.
+    ratio_interval : List[float]
+        List of possible intervals to consider.
+    spread : float, optional
+        Controls the width of the Gaussian kernel used to smooth the probability density function of the ratios.
+        Default is 0.01.
+    min_tol : float, optional
+        The smallest tolerance value for considering the probability density function.
+        Default is 1e-15.
 
     Returns
     -------
-    weight_ratios : List
-    HE : float
-        Harmonic entropy.
+    weight_ratios : ndarray
+        Sorted ratios.
+    HE : ndarray
+        Harmonic entropy values for each interval in `ratio_interval`.
+
+    Notes
+    -----
+    Harmonic entropy is a measure of the deviation of a set of frequency ratios from the idealized harmonics
+    (integer multiples of a fundamental frequency) and is defined as:
+
+    HE = - sum_i(p_i * log2(p_i))
+
+    where p_i is the probability of a given ratio in a smoothed probability density function.
+
+    The `ratio_interval` defines a range of possible intervals to consider. The algorithm computes the harmonic entropy
+    of each possible interval in `ratio_interval` and returns an array of HE values, one for each interval.
 
     """
     # The first step is to pre-sort the ratios to speed up computation
@@ -565,9 +582,9 @@ def compute_harmonic_entropy_simple_weights(
 
     Returns
     -------
-    weight_ratios : array-like
+    weight_ratios : ndarray
         Sorted weight ratios.
-    HE : array-like
+    HE : ndarray
         Harmonic entropy.
     """
     # The first step is to pre-sort the ratios to speed up computation
@@ -791,23 +808,26 @@ def create_mode(tuning, n_steps, function):
 
 
 def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
-    """Short summary.
+    """
+    Compute the pac mode of a set of frequency pairs.
 
     Parameters
     ----------
-    pac_freqs : List (tuples)
-        Description of parameter `pac_freqs`.
-    n : type
-        Description of parameter `n`.
-    function : type
-        Description of parameter `function`.
-    method : str
-        {'pairwise', 'subset'}
+    pac_freqs : List of tuples
+        List of frequency pairs (f1, f2) representing phase-amplitude coupling.
+    n : int
+        Number of steps in the tuning system.
+    function : callable, optional
+        A function that takes two frequencies as input and returns a similarity score.
+        The default is dyad_similarity.
+    method : str, optional
+        The method used to compute the pac mode. Possible values are 'pairwise' and 'subset'.
+        The default is 'subset'.
+
     Returns
     -------
-    type
-        Description of returned object.
-
+    List
+        The pac mode as a list of frequencies.
     """
     if method == "pairwise":
         _, mode, _ = tuning_reduction(
@@ -823,30 +843,47 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
 """--------------------------MOMENTS OF SYMMETRY---------------------------"""
 
 import sympy as sp
+
 def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=100):
     """
-    Function that takes two ratios a input (boundaries of )
-    The mediant corresponds to the interval where
-    small and large steps are equal.
+    Compute the Moment of Symmetry (MOS) signature for a range of ratios defined by two input fractions,
+    and compute the generative interval for that range.
+
+    The MOS signature of a ratio is a tuple of integers representing the number of equally spaced intervals
+    that can fit into an octave when starting from the ratio, going in one direction, and repeating the
+    interval until the octave is filled. For example, the MOS signature of an octave is (1,0) because there
+    is only one interval that fits into an octave when starting from the ratio of 1:1 and going up.
+    The MOS signature of a perfect fifth is (0,1) because there are no smaller intervals that fit into an
+    octave when starting from the ratio of 3:2 and going up, but there is one larger interval that fits,
+    which is the octave above the perfect fifth.
+
+    The generative interval is the interval that corresponds to the mediant of the two input fractions.
+    The mediant is the fraction that lies between the two input fractions and corresponds to the interval
+    where small and large steps are equal.
 
     Parameters
     ----------
-    frac1 : type
-        Description of parameter `frac1`.
-    frac2 : type
-        Description of parameter `frac2`.
-    octave : type
-        Description of parameter `octave`.
-    max_denom_in : type
-        Description of parameter `max_denom_in`.
-    max_denom_out : type
-        Description of parameter `max_denom_out`.
+    frac1 : str or float
+        First ratio as a string or float.
+    frac2 : str or float
+        Second ratio as a string or float.
+    octave : float, optional
+        The ratio of an octave. Default is 2.
+    max_denom_in : int, optional
+        Maximum denominator to use when converting the input fractions to rational numbers. Default is 100.
+    max_denom_out : int, optional
+        Maximum denominator to use when approximating the generative interval as a rational number. Default is 100.
 
     Returns
     -------
-    tuning_range_to_MOS
-        Description of returned object.
-
+    tuple
+        A tuple containing:
+        - the mediant as a float,
+        - the mediant as a fraction with a denominator not greater than `max_denom_out`,
+        - the generative interval as a float,
+        - the generative interval as a fraction with a denominator not greater than `max_denom_out`,
+        - the MOS signature of the generative interval as a tuple of integers,
+        - the MOS signature of the inverse of the generative interval as a tuple of integers.
     """
     a = Fraction(frac1).limit_denominator(max_denom_in).numerator
     b = Fraction(frac1).limit_denominator(max_denom_in).denominator
