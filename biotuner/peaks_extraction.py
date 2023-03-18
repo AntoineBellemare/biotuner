@@ -28,30 +28,22 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
     """
     The Empirical Mode Decomposition is a data-adaptive multiresolution
     technique to decompose a signal into physically meaningful components,
-    the Intrinsic Mode Functions (IMFs) It works like a dyadic filter bank.
-    Hence, a log2 structure characterize the relation between successive IMFs.
+    the Intrinsic Mode Functions (IMFs). It works like a dyadic filter bank.
+    Hence, a log2 structure characterizes the relation between successive IMFs.
 
     Parameters
     ----------
     data : array (numDataPoints,)
         Single time series.
-    method : str
-        Defaults to 'EMD'.
+    method : str (default='EMD')
+        {'EMD', 'EEMD', 'EMD_fast', 'EEMD_fast'}
         Type of Empirical Mode Decomposition.
-        Choice between:
-                    'EMD'
-                    'EEMD'
-                    'EMD_fast'
-                    'EEMD_fast'
-    graph : Boolean
-        Defaults to False
-        Defines if graph is created
-    extrema_detection : str
-        Defaults to 'simple'
-        Choice between: 'simple' and 'parabol'
-    nIMFs : int
-        Defaults to 5.
-        Number of IMFs to extract.
+    graph : bool (default=False)
+        Defines if graph is created.
+    extrema_detection : str (default='simple')
+        {'simple', 'parabol'}
+    nIMFs : int (default=5)
+        Number of IMFs to plot when 'graph' = True.
 
     Returns
     -------
@@ -59,6 +51,13 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
         Returns an array of n Intrinsic Mode Functions
         by the initial number of data points.
 
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> IMFs = EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5)
+    >>> print('DATA', data.shape, 'IMFs', IMFs.shape)
+    DATA (9501,) IMFs (11, 9501)
+    
     References
     ----------
     1. Huang, Norden E., et al. "The empirical mode decomposition and the
@@ -157,20 +156,16 @@ def extract_welch_peaks(
         Single time series.
     sf : int
         Sampling frequency.
-    precision : float
-        Defaults to 0.5.
+    precision : float (default=0.5)
         Size of a frequency bin in Hertz.
-        Defaults to 0.5Hz
-    min_freq : float
-        Defaults to 1
+    min_freq : float (default=1.0)
         Minimum frequency to consider when out_type='all'.
     max_freq : float
         Maximum frequency to consider when out_type='all'.
     FREQ_BANDS : List of lists
         Each sublist contains the
         minimum and maximum values for each frequency band.
-    average : str
-        Defaults to 'median'.
+    average : str (default='median')
         {'mean', 'median'}
         Method to use when averaging periodograms. Defaults to median’.
     nperseg : int
@@ -178,35 +173,27 @@ def extract_welch_peaks(
     nfft : int
         Length of the FFT used, if a zero padded FFT is desired.
         If None, the FFT length is nperseg.
-        Defaults to None.
     noverlap : int
         Number of points to overlap between segments.
-        If None, noverlap = nperseg // 2. Defaults to None.
-    find_peaks_method : str
-        Defaults to 'maxima'.
+        If None, noverlap = nperseg // 2.
+    find_peaks_method : str (default='maxima')
         {'maxima', 'wavelet'}
-    width : int
-        Defaults to 2
+    width : int (default=2)
         Required width of peaks in samples.
-    rel_height : float
-        Defaults to 0.7
+    rel_height : float (default=0.7)
         Chooses the relative height at which the peak width is measured as a
         percentage of its prominence. 1.0 calculates the width of the peak at
         its lowest contour line while 0.5 evaluates at half the
         prominence height.
-    prominence : type
-        Defaults to 1
+    prominence : float (default=1)
         Required prominence of peaks.
-    out_type : str
-        Defaults to 'all'.
+    out_type : str (default='all')
         {'single', 'bands', 'all'}
         Defines how many peaks are outputed.
-    extended_returns : Boolean
-        Defaults to True.
+    extended_returns : bool (default=True)
         Defines if psd and frequency bins values are outputed along
         the peaks and amplitudes.
-    smooth : int
-        Defaults to 1.
+    smooth : int (default=1)
         Number used to divide nfft to derive nperseg.
 
     Returns
@@ -220,8 +207,21 @@ def extract_welch_peaks(
     psd : Array
         Power spectrum density of each frequency bin
 
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> FREQ_BANDS = [[1, 3], [3, 8], [8, 13], [13, 20], [20, 30], [30, 50]]
+    >>> peaks, amps = extract_welch_peaks(
+    >>>                                   data,
+    >>>                                   1200,
+    >>>                                   FREQ_BANDS=FREQ_BANDS,
+    >>>                                   precision=0.5,
+    >>>                                   out_type="bands",
+    >>>                                   extended_returns=False,
+    >>>                                   )
+    >>> peaks
+    [1.5, 5.5, 9.0, 15.0, 22.5, 32.5]
     """
-
     if max_freq is None:
         max_freq = sf / 2
     if nperseg is None:
@@ -290,7 +290,7 @@ def extract_welch_peaks(
 def compute_FOOOF(
     data,
     sf,
-    precision=0.1,
+    precision=0.5,
     max_freq=80,
     noverlap=None,
     nperseg=None,
@@ -299,11 +299,12 @@ def compute_FOOOF(
     extended_returns=False,
     graph=False,
 ):
-    """FOOOF conceives of a model of the power spectrum as a combination of
-       two distinct functional processes:
-       - An aperiodic component, reflecting 1/f like characteristics
-       - A variable number of periodic components (putative oscillations),
-         as peaks rising above the aperiodic component.
+    """
+    FOOOF conceives of a model of the power spectrum as a combination of
+    two distinct functional processes:
+        - An aperiodic component, reflecting 1/f like characteristics
+        - A variable number of periodic components (putative oscillations),
+          as peaks rising above the aperiodic component.
 
     Parameters
     ----------
@@ -311,32 +312,25 @@ def compute_FOOOF(
         Single time series.
     sf : int
         Sampling frequency.
-    precision : float
-        Defaults to 0.1
-        Size of a frequency bin in Hertz.
-        Defaults to 0.5Hz
-    max_freq : float
-        Defaults to 80
+    precision : float (default=0.5)
+        Size of a frequency bin in Hertz before sending to FOOOF.
+    max_freq : float (default=80)
         Maximum frequency to consider as a peak.
-    noverlap : int
+    noverlap : int (default=None)
         Number of points to overlap between segments.
-        If None, noverlap = nperseg // 2. Defaults to None.
+        If None, noverlap = nperseg // 2.
     nperseg : int
         Length of each segment.
-    nfft : int
+    nfft : int (default=None)
         Length of the FFT used, if a zero padded FFT is desired.
         If None, the FFT length is nperseg.
-        Defaults to None.
-    n_peaks : int
-        Defaults to 5
+    n_peaks : int (default=5)
         Maximum number of peaks. If FOOOF finds higher number of peaks,
         the peaks with highest amplitude will be retained.
-    extended_returns : Boolean
-        Defaults to False.
+    extended_returns : bool (default=False)
         Defines if psd and frequency bins values are outputed along
         the peaks and amplitudes.
-    graph : Boolean
-        Defaults to False.
+    graph : bool (default=False)
         Defines if a graph is generated.
 
     Returns
@@ -349,7 +343,19 @@ def compute_FOOOF(
         Frequency bins
     psd : Array
         Power spectrum density of each frequency bin
-
+        
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> peaks, amps = compute_FOOOF(data, sf=1200, max_freq=50, n_peaks=3)
+    >>> peaks
+    [7.24, 14.71, 5.19]
+    
+    References
+    ----------
+    Donoghue T, Haller M, Peterson EJ, Varma P, Sebastian P, Gao R, Noto T, Lara AH, Wallis JD,
+    Knight RT, Shestyuk A, Voytek B (2020). Parameterizing neural power spectra into periodic
+    and aperiodic components. Nature Neuroscience, 23, 1655-1665. DOI: 10.1038/s41593-020-00744-x
     """
 
     if nperseg is None:
@@ -405,10 +411,11 @@ def HilbertHuang1D(
     precision=0.1,
     bin_spread="log",
 ):
-    """The Hilbert-Huang transform provides a description of how the energy
-       or power within a signal is distributed across frequency.
-       The distributions are based on the instantaneous frequency and
-       amplitude of a signal.
+    """
+    The Hilbert-Huang transform provides a description of how the energy
+    or power within a signal is distributed across frequency.
+    The distributions are based on the instantaneous frequency and
+    amplitude of a signal.
 
     Parameters
     ----------
@@ -416,25 +423,19 @@ def HilbertHuang1D(
         Single time series.
     sf : int
         Sampling frequency.
-    graph : Boolean
-        Defaults to False.
+    graph : bool (default=False)
         Defines if a graph is generated.
-    nIMFs : int
-        Defaults to 5
+    nIMFs : int (default=5)
         Number of intrinsic mode functions (IMFs) to keep when
         Empirical Mode Decomposition (EMD) is computed.
-    min_freq : float
-        Defaults to 1
+    min_freq : float (default=1)
         Minimum frequency to consider.
-    max_freq : float
-        Defaults to 80
+    max_freq : float (default=80)
         Maximum frequency to consider.
-    precision : float
-        Defaults to 0.1
+    precision : float (default=0.1)
         Value in Hertz corresponding to the minimal step between two
         frequency bins.
-    bin_spread : str
-        Defaults to 'log'.
+    bin_spread : str (default='log')
         {'linear','log'}
 
     Returns
@@ -450,6 +451,12 @@ def HilbertHuang1D(
     bins : array (nIMFs, nbins)
         Frequency bins for each IMF
 
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> _, peaks, amps, _, _ = HilbertHuang1D(data, sf=1200, nIMFs=5)
+    >>> peaks
+    [2.24, 8.08, 11.97, 19.61, 64.06]
     """
     IMFs = EMD_eeg(data, method="EMD")
     IMFs = np.moveaxis(IMFs, 0, 1)
@@ -496,10 +503,11 @@ def HilbertHuang1D(
 
 
 def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
-    """The cepstrum is the result of computing the
-       inverse Fourier transform (IFT) of the logarithm of
-       the estimated signal spectrum. The method is a tool for
-       investigating periodic structures in frequency spectra.
+    """
+    The cepstrum is the result of computing the
+    inverse Fourier transform (IFT) of the logarithm of
+    the estimated signal spectrum. The method is a tool for
+    investigating periodic structures in frequency spectra.
 
     Parameters
     ----------
@@ -507,14 +515,11 @@ def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
         Single time series.
     sf : int
         Sampling frequency.
-    plot_cepstrum : Boolean
-        Defaults to False.
+    plot_cepstrum : bool (default=False)
         Determines wether a plot is generated.
-    min_freq : float
-        Defaults to 1.5
+    min_freq : float (default=1.5)
         Minimum frequency to consider.
-    max_freq : float
-        Defaults to 80
+    max_freq : float (default=80)
         Maximum frequency to consider.
 
     Returns
@@ -553,7 +558,7 @@ def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
 
 
 def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
-    """This function extract cepstral peaks based on the cepstrum function.
+    """This function extract cepstral peaks based on the :func:'biotuner.peaks_extraction.cepstrum' function.
 
     Parameters
     ----------
@@ -625,35 +630,25 @@ def pac_frequencies(
     method : str
         {'ozkurt', 'canolty', 'tort', 'penny', 'vanwijk', 'duprelatour',
          'colgin','sigl', 'bispectrum'}
-    n_values : int
-        Defaults to 10
+    n_values : int (default=10)
         Number of pairs of drive and modulated frequencies to keep.
-    drive_precision : float
-        Defaults to 0.05
+    drive_precision : float (default=0.05)
         Value (hertz) of one frequency bin of the phase signal.
-    max_drive_freq : float
-        Defaults to 6
+    max_drive_freq : float (default=6)
         Minimum value (hertz) of the phase signal.
-    min_drive_freq : float
-        Defaults to 3
+    min_drive_freq : float (default=3)
         Maximum value (hertz) of the phase signal.
-    sig_precision : float
-        Defaults to 1
+    sig_precision : float (default=1)
         Value (hertz) of one frequency bin of the amplitude signal.
-    max_sig_freq : float
-        Defaults to 50
+    max_sig_freq : float (default=50)
         Maximum value (hertz) of the amplitude signal.
-    min_sig_freq : float
-        Defaults to 8
+    min_sig_freq : float (default=8)
         Minimum value (hertz) of the amplitude signal.
-    low_fq_width : float
-        Defaults to 0.5
+    low_fq_width : float (default=0.5)
         Bandwidth of the band-pass filter (phase signal).
-    high_fq_width : float
-        Defaults to 1
+    high_fq_width : float (default=1)
         Bandwidth of the band-pass filter (amplitude signal).
-    plot : Boolean
-        Defaults to False.
+    plot : bool (default=False)
         Determines if a plot of the comodulogram is created.
 
     Returns
@@ -664,7 +659,31 @@ def pac_frequencies(
     pac_coupling : List
         Coupling values associated with each pairs of phase and amplitude
         frequencies.
-
+        
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> pac_frequencies(
+    >>>                 data,
+    >>>                 1200,
+    >>>                 method="canolty",
+    >>>                 n_values=5,
+    >>>                 drive_precision=0.1,
+    >>>                 max_drive_freq=6,
+    >>>                 min_drive_freq=3,
+    >>>                 sig_precision=1,
+    >>>                 max_sig_freq=50,
+    >>>                 min_sig_freq=10,
+    >>>                 low_fq_width=0.5,
+    >>>                 high_fq_width=1,
+    >>>                 plot=True,
+    >>>                 )
+    ([[3.0, 10.0], [3.0, 11.0], [3.8, 15.0], [4.0, 11.0], [3.2, 11.0]],
+    [3.544482291850382e-08,
+    3.44758700485373e-08,
+    4.125714430185903e-08,
+    3.780184228154704e-08,
+    3.3232328382531826e-08])
     """
 
     drive_steps = int(((max_drive_freq - min_drive_freq) / drive_precision) + 1)
@@ -729,36 +748,54 @@ def _polycoherence_2d(
 
 def polycoherence(data, *args, dim=2, **kwargs):
     """
-    FROM: https://github.com/trichter/polycoherence
-    Polycoherence between frequencies and their sum frequency
-    Polycoherence as a function of two frequencies.
-    |<prod(spec(fi)) * conj(spec(sum(fi)))>| ** n0 /
-        <|prod(spec(fi))|> ** n1 * <|spec(sum(fi))|> ** n2
-    i ... 1 - N: N=2 bicoherence, N>2 polycoherence
-    < > ... averaging
-    | | ... absolute value
-    data: 1d data
-    fs: sampling rate
-    ofreqs: further positional arguments are fixed frequencies
-    dim:
-        2 - 2D polycoherence as a function of f1 and f2, ofreqs are additional
-            fixed frequencies (default)
-        1 - 1D polycoherence as a function of f1, at least one fixed frequency
-            (ofreq) is expected
-        'sum' - 1D polycoherence with fixed frequency sum. The first argument
-            after fs is the frequency sum. Other fixed frequencies possible.
-        0 - polycoherence for fixed frequencies
-    norm:
-        2 - return polycoherence, n0 = n1 = n2 = 2 (default)
-        0 - return polyspectrum, <prod(spec(fi)) * conj(spec(sum(fi)))>
-        tuple (n1, n2): general case with n0=2
-    synthetic:
-        used for synthetic signal for some frequencies,
-        list of 3-item tuples (freq, amplitude, phase), freq must coincide
-        with the first fixed frequencies (ofreq, except for dim='sum')
-    flim1, flim2: for 2D case, frequency limits can be set
-    **kwargs: are passed to scipy.signal.spectrogram. Important are the
-        parameters nperseg, noverlap, nfft.
+    Calculate the polycoherence between frequencies and their sum frequency.
+
+    The polycoherence is defined as a function of two frequencies: 
+    |<prod(spec(fi)) * conj(spec(sum(fi)))>| ** n0 / <|prod(spec(fi))|> ** n1 * <|spec(sum(fi))|> ** n2 
+    where i is from 1 to N. For N=2, it is the bicoherence, and for N>2, it is the polycoherence.
+
+    Parameters
+    ----------
+    data : array_like
+        1D data array.
+    fs : float
+        Sampling rate.
+    ofreqs : float
+        Fixed frequencies.
+    dim : {'sum', 1, 2, 0}, optional
+        Dimension of the polycoherence calculation:
+        - 'sum': 1D polycoherence with fixed frequency sum. The first argument after fs is the frequency sum. Other fixed frequencies possible.
+        - 1: 1D polycoherence as a function of f1, at least one fixed frequency (ofreq) is expected.
+        - 2: 2D polycoherence as a function of f1 and f2. ofreqs are additional fixed frequencies.
+        - 0: Polycoherence for fixed frequencies.
+    norm : {2, 0, tuple}, optional
+        Normalization scheme:
+        - 2: Return polycoherence, n0 = n1 = n2 = 2 (default).
+        - 0: Return polyspectrum, <prod(spec(fi)) * conj(spec(sum(fi)))>.
+        - tuple(n1, n2): General case with n0=2.
+    synthetic : list, optional
+        Used for synthetic signal for some frequencies. List of 3-item tuples (freq, amplitude, phase). The freq must coincide with the first fixed frequencies (ofreq, except for dim='sum').
+    flim1, flim2 : tuple, optional
+        Frequency limits for 2D case.
+    **kwargs
+        Additional keyword arguments to pass to `scipy.signal.spectrogram`. Important parameters are nperseg, noverlap, and nfft.
+
+    Returns
+    -------
+    polycoherence : ndarray
+        The polycoherence or polyspectrum.
+    freqs : ndarray
+        Frequency array.
+    spectrum : ndarray
+        The power spectrum of the signal.
+
+    Notes
+    -----
+    < > denotes averaging and | | denotes absolute value.
+    
+    References
+    ----------
+    FROM: https://github.com/trichter/polycoherence.
     """
     N = len(data)
     kwargs.setdefault("nperseg", N // 20)
@@ -813,6 +850,19 @@ def polyspectrum_frequencies(
     tuple of list of float
         A tuple containing the frequencies and amplitudes of the top n polyspectral 
         components, respectively.
+        
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> polyspectrum_frequencies(data, sf=1200, precision=0.1, n_values=5, method="bicoherence",
+    >>>                      flim1=(15, 30), flim2=(2, 15), graph=True,
+    >>>                     )
+    ([[23.25, 4.916666666666666],
+    [23.333333333333332, 4.916666666666666],
+    [23.166666666666664, 4.916666666666666],
+    [23.416666666666664, 4.916666666666666],
+    [27.25, 4.75]],
+    [[0.8518411], [0.84810454], [0.8344524], [0.83267957], [0.8235908]])
     """
     if method == "bispectrum":
         norm = 0
@@ -934,8 +984,9 @@ def harmonic_recurrence(
 
 
 def compute_IMs(f1, f2, n):
-    """InterModulation components: sum or subtraction of any non-zero integer
-       multiple of the input frequencies.
+    """
+    InterModulation components: sum or subtraction of any non-zero integer
+    multiple of the input frequencies.
 
     Parameters
     ----------

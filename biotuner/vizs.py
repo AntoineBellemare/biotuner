@@ -407,7 +407,8 @@ def find_optimal_offsets(pulses_steps):
     """
     Finds the optimal offset values for a set of Euclidean rhythms
     Args:
-        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple
+        represent the number of pulses and steps of a rhythm.
     Returns:
         List[int]: A list of offset values for the rhythms in pulses_steps
     """
@@ -416,9 +417,6 @@ def find_optimal_offsets(pulses_steps):
         lcm = pulses * steps // math.gcd(pulses, steps)
         #offset = (lcm // pulses - 1) * steps % pulses
         offset = (steps - pulses * (steps // pulses)) % steps
-
-
-
         offsets.append(offset)
     return offsets
 
