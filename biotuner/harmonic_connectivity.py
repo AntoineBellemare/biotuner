@@ -111,9 +111,12 @@ class harmonic_connectivity(object):
         list_idx = list(range(len(data)))
         pairs = list(itertools.product(list_idx, list_idx))
         harm_conn_matrix = []
-        for pair in pairs:
+        for i, pair in enumerate(pairs):
             data1 = data[pair[0]]
             data2 = data[pair[1]]
+            #if i % (len(pairs) // 10) == 0:
+            percentage_complete = int(i / len(pairs) * 100)
+            print(f"{percentage_complete}% complete")
             bt1 = compute_biotuner(self.sf, peaks_function=self.peaks_function,
                                    precision=self.precision, n_harm=self.n_harm)
             bt1.peaks_extraction(data1, min_freq=self.min_freq,
@@ -145,9 +148,15 @@ class harmonic_connectivity(object):
                     if p[1] > p[0]:
                         ratios.append(p[1]/p[0])
                 ratios = rebound_list(ratios)
-                harm_conn_matrix.append(ratios2harmsim(ratios))
+                harm_conn_matrix.append(np.mean(ratios2harmsim(ratios)))
 
             if metric == 'euler':
+                list_all = list1 + list2
+                list_all = [int(x*10) for x in list_all]
+                harm_conn_matrix.append(euler(*list_all))
+
+            # to do
+            if metric == 'PPC_bicor':
                 list_all = list1 + list2
                 list_all = [int(x*10) for x in list_all]
                 harm_conn_matrix.append(euler(*list_all))
@@ -166,37 +175,19 @@ class harmonic_connectivity(object):
                 harm_conn_matrix.append(np.sum(harm_fit))
         matrix = np.empty(shape=(len(data), len(data)))
         for e, p in enumerate(pairs):
-            matrix[p] = harm_conn_matrix[e]
-        conn_matrix = matrix.astype('float')
+            matrix[p[0]][p[1]] = harm_conn_matrix[e]
+        #conn_matrix = matrix.astype('float')
         if graph is True:
             sbn.heatmap(matrix)
             plt.show()
-        return conn_matrix
+        self.conn_matrix = matrix
+        return matrix
 
-    def plot_conn_matrix(conn_matrix, sensor_pos):
-        # Create the circular layout
-        node_names = list(range(conn_matrix.shape[0]))
-        node_angles = circular_layout(node_names, start_pos=90, group_boundaries=[0, len(node_names)//2])
-        
-        # Plot the connectivity matrix
-        plot_connectivity_circle(
-            conn_matrix,
-            node_names,
-            n_lines=None,
-            node_angles=node_angles,
-            node_colors=None,
-            facecolor='white',
-            textcolor='black',
-            linewidth=2.0,
-            colormap='viridis',
-            vmin=np.min(conn_matrix),
-            vmax=np.max(conn_matrix),
-            colorbar=True,
-            title='Connectivity Matrix',
-            padding=0,
-            fontsize_titles=10,
-            fontsize_names=8,
-            fontsize_colorbar=8,
-            show=True,
-            fig=None
-        )
+    def plot_conn_matrix(self, conn_matrix=None, node_names=None):
+        if conn_matrix is None:
+            conn_matrix = self.conn_matrix
+        if node_names is None:
+            node_names = range(0, len(conn_matrix), 1)
+            node_names = [str(x) for x in node_names]
+        fig = plot_connectivity_circle(conn_matrix, node_names=node_names, n_lines=100,
+                        fontsize_names=24, show=False, vmin=0.)
