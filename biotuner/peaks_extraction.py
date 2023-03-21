@@ -97,10 +97,43 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
     return eIMFs
 
 
-def SSA_EEG(data, n_components=3, graph=False):
-    ssa = SingularSpectrumAnalysis(window_size=20, groups=None)
+def SSA_EEG(data, n_components=3, graph=False, window_size=20):
+    """
+    Applies Singular Spectrum Analysis (SSA) to an EEG signal
+    to extract its main frequency components.
+
+    Parameters
+    ----------
+    data : numpy.ndarray
+        The input EEG signal as a 1D numpy array.
+    n_components : int, optional (default=3)
+        The number of components to extract from the signal.
+    graph : bool, optional (default=False)
+        Whether to plot the original signal and the extracted components.
+    window_size : int, optional (default=20)
+        The size of the sliding window used in SSA.
+
+    Returns
+    -------
+    numpy.ndarray
+        The extracted components as a 2D numpy array,
+        where each row corresponds to a component.
+
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> components = SSA_EEG(data[1000:2000], n_components=5, graph=True, window_size=50)
+    >>> print(components.shape)
+    (5, 1000)
+
+    """
+    # Instantiate SingularSpectrumAnalysis object with specified window size
+    ssa = SingularSpectrumAnalysis(window_size=window_size, groups=None)
+    # Prepare the input data for SSA by transforming it into a 2D numpy array
     X = (data, (range(len(data))))
+    # Apply SSA to the input data to extract the desired number of components
     X_ssa = ssa.fit_transform(X)
+    # If graph is True, plot the original signal and the extracted components
     if graph is True:
         plt.figure(figsize=(16, 6))
         ax1 = plt.subplot(121)
@@ -119,7 +152,7 @@ def SSA_EEG(data, n_components=3, graph=False):
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
         plt.show()
-    return X_ssa
+    return X_ssa[0]
 
 
 """PEAKS EXTRACTION METHODS
@@ -567,9 +600,9 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
     quefrency_vector : array
         Values of all the quefrency bins.
     max_time : float
-        Maximum value of the quefrency to keep in ms.
+        Maximum value of the quefrency to keep in seconds.
     min_time : float
-        Minimum value of the quefrency to keep in ms.
+        Minimum value of the quefrency to keep in seconds.
 
     Returns
     -------
@@ -578,6 +611,15 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
     amps : List(float)
         Amplitude values.
 
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> cepst, quef = cepstrum(data, 1000, plot_cepstrum=False, min_freq=1, max_freq=50)
+    >>> peaks, amps = cepstral_peaks(cepst, quef, 1, 0.01)
+    >>> print('PEAKS', [np.round(x) for x in peaks[0:3]])
+    >>> print('AMPS', [np.round(x) for x in amps[0:3]])
+    PEAKS [24.0, 16.0, 11.0]
+    AMPS [244.0, 151.0, 101.0]
     """
 
     indexes = scipy.signal.find_peaks(
@@ -588,7 +630,7 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
         prominence=None,
         width=3,
         wlen=None,
-        rel_height=0.5,
+        rel_height=1,
         plateau_size=None,
     )
     peaks = []
@@ -929,7 +971,26 @@ def harmonic_recurrence(
         - `harmonic_peaks`: Frequencies of peaks that share harmonic ratios with each selected peak.
         - `harm_peaks_fit`: List containing detailed information about each selected peak.
 
-
+    Examples
+    --------
+    >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
+    >>> peaks, amps, freqs, psd = extract_welch_peaks(
+    >>>                             data,
+    >>>                             1000,
+    >>>                             precision=1,
+    >>>                             max_freq=150,
+    >>>                             extended_returns=True,
+    >>>                             out_type="all",
+    >>>                             min_freq=1)
+    >>> (max_n, peaks_temp,
+    >>>  amps_temp,harms,
+    >>>  harm_peaks,
+    >>>  harm_peaks_fit) = harmonic_recurrence(peaks, amps, min_freq=1,
+    >>>                                        max_freq=50, min_harms=2,
+    >>>                                        harm_limit=128)
+    >>> peaks_temp
+    array([ 2.,  6., 27., 44.])
+    
     """
     n_total = []
     harm_ = []
@@ -1004,15 +1065,30 @@ def compute_IMs(f1, f2, n):
     order : List
         Order associated with IMs.
 
+    Examples
+    --------
+    >>> f1 = 3
+    >>> f2 = 12
+    >>> n = 2
+    >>> IMs, order = compute_IMs(f1, f2, n)
+    >>> IMs, order
+    ([9, 15, 21, 27, 6, 18, 30],
+    [(1, 1), (1, 1), (1, 2), (1, 2), (2, 1), (2, 1), (2, 2)])
     """
     IMs = []
     orders = []
-    for i in range(-n, n + 1):
-        for j in range(-n, n + 1):
-            IMs.append(f1 * j + f2 * i)
-            orders.append(j)
-            IMs.append(np.abs(f1 * j - f2 * i))
-            orders.append(j)
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            #print(j)
+            #print(f1 * j + f2 * i)
+            IM_add = f1 * j + f2 * i
+            if IM_add not in IMs:
+                IMs.append(IM_add)
+                orders.append((j, i))
+            IM_sub = np.abs(f1 * j - f2 * i)
+            if IM_sub not in IMs:
+                IMs.append(IM_sub)
+                orders.append((j, i))
     IMs = [x for _, x in sorted(zip(orders, IMs))]
     orders = sorted(orders)
     return IMs, orders
