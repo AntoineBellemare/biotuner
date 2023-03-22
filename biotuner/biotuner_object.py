@@ -1557,13 +1557,14 @@ class compute_biotuner(object):
                 self.all_harmonics = list_harmonics
                 self.harm_peaks_fit = harm_peaks_fit
                 self.n_harmonic_recurrence = len(harm_peaks_fit)
-                # Select the n peaks with highest amplitude.
-                '''Need to select peak based on number of harms instead of amps'''
-                peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
+                # Select the n peaks with maximum number of harmonic recurrence.
+                peaks_temp = [x for _, x in sorted(zip(max_n, peaks_temp))][::-1][
                     0:n_peaks
                 ]
-
-                amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+                amps_temp = [x for _, x in sorted(zip(max_n, amps_temp))][::-1][
+                    0:n_peaks
+                ]
+                #amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
                 if graph is True:
                     graph_harm_peaks(self.freqs, self.psd,
                                      harm_peaks_fit, min_freq,
