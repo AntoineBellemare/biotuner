@@ -275,7 +275,8 @@ class compute_biotuner(object):
         EIMC_order=3,
         min_IMs=2,
         smooth_fft=1,
-        verbose=True
+        verbose=True,
+        keep_first_IMF=False
     ):
         """
         The peaks_extraction method is central to the use of the Biotuner.
@@ -354,6 +355,8 @@ class compute_biotuner(object):
         verbose : boolean
             Defaults to True.
             When set to True, number of detected peaks will be display
+        keep_first_IMF : boolean (default=False)
+            When set to True, the first IMF is kept.
 
         Attributes
         ----------
@@ -411,7 +414,8 @@ class compute_biotuner(object):
             max_harm_freq=max_harm_freq,
             EIMC_order=EIMC_order,
             min_IMs=min_IMs,
-            smooth_fft=smooth_fft
+            smooth_fft=smooth_fft,
+            keep_first_IMF=keep_first_IMF
         )
         if verbose is True:
             print('Number of peaks : {}'.format(len(peaks)))
