@@ -160,7 +160,7 @@ def harmonic_fit (peaks,
         Mode of the natural sub-harmonic function when function='div'.
         Default is 'div'. See EEG_harmonics_div function.
     n_common_harms : int, optional
-        Minimum number of times the harmonic is found to be sent to
+        Number of harmonic positions to be sent to
         the most_common_harmonics output. Default is 5.
 
     Returns
@@ -174,6 +174,17 @@ def harmonic_fit (peaks,
     matching_positions : list of lists
         Each sublist corresponds to an harmonic fit, the first number
         is the frequency and the two others are harmonic positions.
+    
+    Examples
+    --------
+    >>> from biotuner.peaks_extension import harmonic_fit
+    >>> peaks = [3, 9, 12]
+    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=5, bounds=0.1, function="mult")                                                                             
+    >>> print(harm_fit)
+    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=10, bounds=0.1, function="div")                                                                             
+    >>> print(harm_fit)
+    [9.0, 18.0, 12.0, 36.0]
+    [0.784, 1.5, 1.045, 3.0, 1.0, 1.757, 1.31, 1.243, 1.162, 1.108]
     """
     from itertools import combinations
 
@@ -216,10 +227,13 @@ def harmonic_fit (peaks,
     ]
     harmonics_pos = list(np.sort(list(set(harmonics_pos))))
     if len(peak_bands) > 2:
-        harm_fit = list(itertools.chain.from_iterable(harm_fit))
-        harm_fit = [round(num, 3) for num in harm_fit]
-        harm_fit = list(dict.fromkeys(harm_fit))
-        harm_fit = list(set(harm_fit))
+        try:
+            harm_fit = list(itertools.chain.from_iterable(harm_fit))
+            harm_fit = [round(num, 3) for num in harm_fit]
+            harm_fit = list(dict.fromkeys(harm_fit))
+            harm_fit = list(set(harm_fit))
+        except TypeError:
+            print("No common harmonics found")
     return harm_fit, harmonics_pos, most_common_harmonics, matching_positions
 
 

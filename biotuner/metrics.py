@@ -489,8 +489,22 @@ def timepoint_consonance(data,
     chords = [e[::-1] for e in chords]
     
     if graph is True:
-        ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
+        '''ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
         ax.set(xlabel="Time Windows")
+        ax.set_yscale("log")
+        plt.legend(
+            scatterpoints=1,
+            frameon=True,
+            labelspacing=1,
+            title="EMDs",
+            loc="best",
+            labels=labels,
+        )'''
+        fig, ax = plt.subplots()
+        for i, label in enumerate(labels):
+            ax.plot(data[:, i], label=label)
+
+        ax.set_xlabel("Time Windows")
         ax.set_yscale("log")
         plt.legend(
             scatterpoints=1,

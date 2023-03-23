@@ -1337,19 +1337,28 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
     
     midi_chords, pitchbends = frequency_to_midi(chords)
 
+    # Find the maximum number of notes in any chord
+    max_notes = max(len(chord) for chord in midi_chords)
+
+    # Create a fixed number of tracks equal to the maximum number of notes in any chord
+    tracks = [MidiTrack() for _ in range(max_notes)]
+    for track in tracks:
+        mid.tracks.append(track)
+
     # Iterate through the chords and durations
     current_time = 0
     for chord, duration, pitchbend in zip(midi_chords, durations, pitchbends):
         for i, (note, pb) in enumerate(zip(chord, pitchbend)):
-            # Create a new track for each note
-            track = MidiTrack()
-            mid.tracks.append(track)
+            track = tracks[i]
+
             # Add a pitch bend message for each note in the chord
             if microtonal is True:
-                track.append(Message('pitchwheel', pitch=pb))
-            track.append(Message('note_on', note=note, velocity=64, time=current_time,channel=i))
-            track.append(Message('note_off', note=note, velocity=64, time=current_time+(duration*480),channel=i))
-        current_time = current_time+duration*480
+                track.append(Message('pitchwheel', pitch=pb, channel=i, time=current_time))
+
+            track.append(Message('note_on', note=note, velocity=64, channel=i, time=current_time))
+            track.append(Message('note_off', note=note, velocity=64, channel=i, time=current_time+(duration*480)))
+        current_time = current_time + duration * 480
+
     # Save the MIDI file
     mid.save(str(filename)+'.mid')
     return mid

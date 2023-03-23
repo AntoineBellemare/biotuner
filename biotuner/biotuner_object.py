@@ -1185,7 +1185,8 @@ class compute_biotuner(object):
         max_harm_freq=None,
         EIMC_order=3,
         min_IMs=2,
-        smooth_fft=1
+        smooth_fft=1,
+        keep_first_IMF=False
     ):
         """
         Extract peak frequencies. This method is called by the
@@ -1250,6 +1251,8 @@ class compute_biotuner(object):
             associated pair of peaks.
         smooth_fft : int
             Number used to divide nfft to derive nperseg.
+        keep_first_IMF : boolean (default=False)
+            When set to True, the first IMF is kept.
 
         Returns
         -------
@@ -1381,8 +1384,12 @@ class compute_biotuner(object):
                 extrema_detection="simple",
                 nIMFs=nIMFs,
             )
-            self.IMFs = IMFs[1: nIMFs + 1]
-            IMFs = IMFs[1: nIMFs + 1]
+            if keep_first_IMF is True:
+                self.IMFs = IMFs[0: nIMFs + 1]
+                IMFs = IMFs[0: nIMFs + 1]
+            if keep_first_IMF is False:
+                self.IMFs = IMFs[1: nIMFs + 1]
+                IMFs = IMFs[1: nIMFs + 1]
             try:
                 peaks_temp = []
                 amps_temp = []
