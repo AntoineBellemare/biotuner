@@ -40,7 +40,8 @@ from biotuner.metrics import (
     ratios2harmsim,
     compute_subharmonic_tension,
     dyad_similarity,
-    consonant_ratios
+    consonant_ratios,
+    tuning_to_metrics
 )
 from biotuner.peaks_extension import (
     harmonic_fit,
@@ -1856,3 +1857,59 @@ class compute_biotuner(object):
         else:
             print(vars(self))
         return
+
+
+def fit_biotuner(ts, bt_dict):
+    """
+    Compute biotuner metrics on a single time series using a specified set of parameters.
+
+    Parameters
+    ----------
+    ts : array, shape (n_samples,)
+        A single time series of EEG data.
+    bt_dict : dict
+        A dictionary containing the parameters to compute biotuner metrics. See the compute_biotuner and
+        tuning_to_metrics functions documentation for details on the required keys and values.
+
+    Returns
+    -------
+    bt_dict : dict
+        The modified input dictionary with the computed biotuner metrics added.
+    """
+    # Create the biotuner object
+    biotuning = compute_biotuner(sf=bt_dict['sf'], peaks_function=bt_dict['peaks_function'],
+                                 precision=bt_dict['precision'], n_harm=10,
+                                 ratios_n_harms=5, ratios_inc_fit=False, ratios_inc=False)
+    
+    # Extract the peaks from the time series
+    biotuning.peaks_extraction(ts, FREQ_BANDS=None, ratios_extension=False, max_freq=bt_dict['fmax'],
+                               n_peaks=bt_dict['n_peaks'], min_freq=bt_dict['fmin'],
+                               graph=False, min_harms=2, nIMFs=5)
+    
+    # Compute the peaks metrics and resonance
+    biotuning.compute_peaks_metrics(n_harm=10, delta_lim=bt_dict['delta_lim'])
+    biotuning.compute_resonance(harm_thresh=bt_dict['harm_thresh'], smooth_fft=2,
+                                harmonicity_metric='harmsim', delta_lim=bt_dict['delta_lim'])
+    
+    # Convert the peaks ratios and peaks metrics to a dictionary of biotuner metrics
+    bt_metrics = tuning_to_metrics(biotuning.peaks_ratios)
+    bt_metrics.update(biotuning.peaks_metrics)
+    
+    # Remove unneeded metrics from the dictionary
+    del bt_metrics['harm_pos']
+    del bt_metrics['euler']
+    del bt_metrics['common_harm_pos']
+    
+    # Add additional metadata to the dictionary
+    peaks_euler = [int(round(num, 2) * 1000) for num in biotuning.peaks]
+    bt_dict['peaks_avg'] = np.mean(biotuning.peaks)
+    bt_dict['n_peaks'] = len(biotuning.peaks)
+    bt_dict['euler'] = euler(*peaks_euler)
+    bt_dict['resonance'] = biotuning.resonance
+    bt_dict['PPC_bicor'] = biotuning.PPC_bicor
+    
+    # Update the bt_dict dictionary with the computed biotuner metrics
+    bt_dict.update(bt_metrics)
+    
+    # Return the modified bt_dict dictionary
+    return bt_dict

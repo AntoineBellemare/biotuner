@@ -16,7 +16,8 @@ from biotuner.metrics import (
     dyad_similarity,
     metric_denom,
     tuning_cons_matrix,
-    consonant_ratios
+    consonant_ratios,
+    tuning_to_metrics
 )
 from pytuning import create_euler_fokker_scale
 import itertools
@@ -26,6 +27,7 @@ from scipy.signal import argrelextrema
 from fractions import Fraction
 from scipy.stats import norm
 import contfrac
+from math import log2
 
 sys.setrecursionlimit(120000)
 
@@ -1037,3 +1039,167 @@ def Stern_Brocot(n, a=0, b=1, c=1, d=1):
             return [a + c] + [b + d] + x
         else:
             return [a + c] + [b + d] + x + y
+
+def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2, harmonic_min = 0):
+    '''
+    Function that takes a generator interval and derives a tuning based on its stacking.
+    interval: float
+        Generator interval
+    steps: int
+        Defaults to 12 (12-TET for interval 3/2)
+        Number of steps in the scale
+    octave: int
+        Defaults to 2
+        Value of the octave
+    '''
+    scale = []
+    for s in range(steps):
+        degree = interval**harmonic_min
+        while degree > octave:
+            degree = degree/octave
+        while degree < octave/2:
+            degree = degree*octave
+        scale.append(degree)
+        harmonic_min += 1
+    return sorted(scale), scale
+
+def interval_exponents(interval, n_steps):
+    list_intervals = []
+    for n in range(n_steps):
+        n+=1
+        list_intervals.append(interval**n)
+    return list_intervals[:-1]
+
+def interval_to_radian(interval):  
+    degree = 360*(log2(interval))
+    #print(degree)
+    return math.radians(degree), degree 
+
+def tuning_to_radians(interval, n_steps):
+    _, tuning = generator_interval_tuning (interval=interval, steps=n_steps, octave=2, harmonic_min=1)
+    radians = []
+    degrees = []
+    #print(tuning)
+    for step in tuning:
+        rad, deg = interval_to_radian(step)
+        radians.append(rad)
+        degrees.append(deg)
+        
+    return radians, degrees
+
+def tuning_MOS_info (interval=3/2, steps=12, octave=2):
+    tuning, _ = generator_interval_tuning (interval = interval, steps = steps, octave = octave, harmonic_min=0)
+    tuning = tuning+[2]
+    tuning = np.round(tuning, 10)
+    tuning = np.sort(list(set(tuning)))
+    intervals = []
+    intervals_frac = []
+    for i in range(len(tuning)):
+        try:
+            interval_ = np.round((1200*log2(tuning[i+1])-1200*log2(tuning[i])), 3)
+            intervals.append(interval_)
+            intervals_frac.append(Fraction(tuning[i+1]-tuning[i]).limit_denominator(100))
+
+        except:
+            pass
+    #print(distance) 
+    #print(intervals_frac)
+    distances = list(Counter(intervals).keys()) # equals to list(set(words))    
+    steps = list(Counter(intervals).values())
+    sL = [steps for _,steps in sorted(zip(distances,steps))]
+    
+    if len((set(intervals))) == 1:
+        #print('Large and small steps are equal')
+        Large=sL[0]
+        small=sL[0]
+    else:
+        Large=sL[1]
+        small=sL[0]
+    #print(sL)
+    return len(set(intervals)), Large, small, tuning, sorted(distances)[::-1]
+
+def find_MOS (interval, max_steps=53, octave=2):
+    steps=2
+    MOS = {"steps":[],"sig":[], 'tuning':[], 'distances':[], 'distances_frac':[], 'NTET':[], 'harmsim':[],
+          'matrix_harmsim':[], 'stern_brocot_fracs':[]}
+    while steps<max_steps:
+        steps+=1
+        n_gaps, L, s, tuning, distances = tuning_MOS_info (interval, steps, octave)
+        if n_gaps==2 or n_gaps==1:
+            stern = Fraction(log2(interval)).limit_denominator(steps)
+            stern = [stern.numerator, stern.denominator]
+            MOS['stern_brocot_fracs'].append(stern)
+            MOS['steps'].append(steps)
+            MOS['sig'].append([L, s])
+            MOS['tuning'].append(tuning)
+            MOS['distances'].append(distances)
+            if n_gaps==2:
+                MOS['NTET'].append(False)
+            if n_gaps==1:
+                MOS['NTET'].append(True)
+            #MOS['distances_frac'].append(distances_frac)
+    MOS_metrics = []
+    MOS_harmsim = []
+    for tuning in MOS['tuning']:
+        dict_metrics = tuning_to_metrics(tuning)
+        MOS_metrics.append(dict_metrics)
+        MOS['harmsim'].append(dict_metrics['harm_sim'])
+        MOS['matrix_harmsim'].append(dict_metrics['matrix_harm_sim'])
+    return MOS
+
+def MOS_metric_harmonic_mean(MOS_dict, metric='harmsim'):
+    total_steps = np.sum(MOS_dict['steps'])
+    harm_mean = []
+    for step, harmsim in zip(MOS_dict['steps'], MOS_dict[metric]):
+        harm_mean_ = step*harmsim
+        harm_mean.append(harm_mean_)
+    harm_mean = np.sum(harm_mean)/total_steps
+    return harm_mean
+
+def generator_to_stern_brocot_fractions (gen, limit):
+    stern_fraction = []
+    for i in range(1, limit):
+        stern = Fraction(log2(gen)).limit_denominator(i)
+        stern = [stern.numerator, stern.denominator]
+        stern_fraction.append(stern)
+    stern_fraction = sorted(list(set(tuple(row) for row in stern_fraction)))
+    return stern_fraction
+
+def measure_symmetry(generator_interval, max_steps=20, octave=2):
+    """
+    Measure the maximum deviation in symmetry for a given generator interval.
+
+    This function calculates the MOS scales for the given generator interval and determines
+    the maximum deviation in symmetry for the scales.
+
+    Parameters
+    ----------
+    generator_interval : int or float
+        The generator interval for which MOS scales will be calculated.
+    max_steps : int, optional, default: 20
+        The maximum number of steps to consider for each MOS scale calculation.
+    octave : int, optional, default: 2
+        The octave size for which the MOS scales will be calculated.
+
+    Returns
+    -------
+    float
+        The maximum deviation in symmetry for the given generator interval.
+
+    Examples
+    --------
+    >>> generator_interval = 3/2
+    >>> measure_symmetry(generator_interval)
+    """
+    MOS = find_MOS(generator_interval, max_steps=max_steps, octave=octave)
+    deviations = []
+    for sig in MOS['sig']:
+        deviations.append([abs(s - np.mean(sig)) for s in sig])
+    avg_deviations = []
+    for i in range(max([len(sig) for sig in MOS['sig']])):
+        deviations_i = [d[i] for d in deviations if i < len(d)]
+        if deviations_i:
+            avg_deviations.append(np.mean(deviations_i))
+    norm_deviations = [d / len(MOS['sig']) for d in avg_deviations]
+    max_deviation = max(norm_deviations)
+    return max_deviation

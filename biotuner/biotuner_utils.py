@@ -1213,15 +1213,16 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 
 def make_chord(hz, ratios, waveform=None):
     """Make a chord based on a list of frequency ratios
-       using a given waveform (defaults to a sine wave).
+       using a given waveform (defaults to a square wave).
     """
     sampling = 4096
     if not waveform:
-        waveform = sine_wave
+        waveform = square_wave
     chord = waveform(hz, sampling)
     for r in ratios[1:]:
         chord = sum([chord, waveform(hz * r / ratios[0], sampling)])
     return chord
+
 
 
 def major_triad(hz):
@@ -1234,8 +1235,7 @@ def listen_scale(scale, fund, length):
     for s in scale:
         freq = fund * s
         print(freq)
-        note = make_chord(freq, [1])
-        note = np.ascontiguousarray(np.vstack([note, note]).T)
+        note = make_chord(freq, [1], waveform=square_wave)
         sound = pygame.sndarray.make_sound(note)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
@@ -1257,11 +1257,11 @@ def listen_chords(chords, mult=10, length=500):
 
     for c in chords:
         c = [i * mult for i in c]
-        chord = make_chord(c[0], c[1:])
-        chord = np.ascontiguousarray(np.vstack([chord, chord]).T)
+        chord = make_chord(c[0], c[1:], waveform=square_wave)
         sound = pygame.sndarray.make_sound(chord)
         sound.play(loops=0, maxtime=0, fade_ms=0)
         pygame.time.wait(int(sound.get_length() * length))
+
         
 
 def frequency_to_note(frequency):

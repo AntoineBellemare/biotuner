@@ -25,6 +25,64 @@ from scipy import signal
 
 """BIOTUNER 2D"""
 
+def biotuner_mne(epochs, bt_dict, savefile=False, savename=None):
+    """
+    Add biotuner metrics to an MNE epochs object and optionally save metrics to a CSV file.
+
+    Parameters
+    ----------
+    epochs : mne.Epochs object
+        The epochs to compute biotuner metrics for.
+    bt_dict : dict
+        A dictionary containing the parameters to compute biotuner metrics. See the biotuner_mne function
+        documentation for details on the required keys and values.
+    savefile : bool (default=False)
+        If True, save the biotuner metrics to a CSV file.
+    savename : str (default=None)
+        The filename to save the CSV file. If None, use the original epochs filename with '_biotuner.csv'
+        appended to the end.
+
+    Returns
+    -------
+    df : pd.DataFrame
+        A dictionary containing the biotuner metrics for all trials and electrodes.
+        Original metadata are included if present in the epochs file.
+    """
+
+    # Create an empty list to store the metrics for each epoch
+    n_trials, n_electrodes, n_datapoints = epochs.get_data().shape
+    metrics_list = []
+
+    data = epochs.get_data()  # Get the time series data for the epochs
+    for j in range(n_trials):
+        for k in range(n_electrodes):
+            ts = data[j, k, :]
+            metrics = fit_biotuner(ts, bt_dict)
+            metric_dict = {}
+            for metric_name, metric_value in metrics.items():
+                metric_dict[metric_name] = metric_value
+            metric_dict['trial'] = j
+            metric_dict['electrode'] = k
+            metrics_list.append(metric_dict)
+
+    # Save metrics to CSV
+    if savefile:
+        if savename is None:
+            savename = epochs.filename[:-4] + '_biotuner'
+        df = pd.DataFrame(metrics_list)
+
+        # Add metadata from epochs object to the dataframe
+        if 'metadata' in epochs.info:
+            metadata = epochs.metadata
+            for key in metadata.keys():
+                df[key] = np.tile(metadata[key], n_electrodes)
+
+            df = df[['trial', 'electrode'] + list(bt_dict.keys()) + list(metadata.keys())]
+        else:
+            df = df[['trial', 'electrode'] + list(bt_dict.keys())]
+        df.to_csv(savename+'.csv', index=False)
+
+    return df
 
 def surrogate_signal(
     data, surr_type="pink", low_cut=0.5, high_cut=150, sf=1000, TFT_freq=5
