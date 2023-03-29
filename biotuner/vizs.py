@@ -7,6 +7,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
 from math import log2
+import plotly.graph_objs as go
+import ipywidgets as widgets
+from IPython.display import display
+from IPython.display import display, clear_output
+from collections import defaultdict
+import math
+from biotuner.biotuner_utils import sum_list, compute_peak_ratios
+from biotuner.metrics import ratios2harmsim
 
 
 def lissajous_curves(tuning):
@@ -483,12 +491,12 @@ def viz_harmsim(x, y, savefig=False, savename='test', n_fund=10):
         plt.savefig('{}.png'.format(savename), dpi=300)
 
 # Create interactive sliders for x and y
-interact(viz_harmsim,
+'''interact(viz_harmsim,
          x=IntSlider(min=1, max=100, step=1, value=20),
          y=IntSlider(min=1, max=100, step=1, value=30),
          savefig=False,
          savename='test',
-         n_fund=IntSlider(min=1, max=100, step=1, value=10))
+         n_fund=IntSlider(min=1, max=100, step=1, value=10))'''
 
         
 
@@ -592,6 +600,7 @@ def viz_euler(chord: list, savefig = False) -> None:
     if savefig is True:
         plt.savefig('euler-{}-{}-{}.png'.format(str(x), str(y), str(z)), dpi=300) # save the figure as an image file
 
+
 from biotuner.scale_construction import find_MOS, tuning_to_radians
 def plot_labyrinth(generator_intervals, max_steps=53, octave=2):
     """
@@ -671,50 +680,65 @@ def plot_labyrinth(generator_intervals, max_steps=53, octave=2):
     plt.show()
     
     
-    from IPython.display import display
+from IPython.display import display
 import ipywidgets as widgets
 from scipy.fft import rfft, rfftfreq
 
+from biotuner.peaks_extraction import compute_IMs
+
 def interactive_signal_with_sidebands(sample_rate=44100):
-    def generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phase):
+    def generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phases, im_order):
         time = np.arange(0, time_end, 1 / sf)
         sine_tot = []
         mod_freq = min(freqs)
         carrier_freq = max(freqs)
         mod_amp = amps[freqs.index(mod_freq)]
 
-        for freq in freqs:
+        for idx, freq in enumerate(freqs):
             if freq == mod_freq:
-                sinewave = mod_amp * np.sin(2 * np.pi * freq * time + phase)
+                sinewave = mod_amp * np.sin(2 * np.pi * freq * time + phases[idx])
             elif freq == carrier_freq:
-                sinewave = np.sin(2 * np.pi * freq * time + phase)
+                sinewave = np.sin(2 * np.pi * freq * time + phases[idx])
             else:
-                sinewave = amps[freqs.index(freq)] * np.sin(2 * np.pi * freq * time + phase)
+                sinewave = amps[freqs.index(freq)] * np.sin(2 * np.pi * freq * time + phases[idx])
             sine_tot.append(sinewave)
 
         # Add sidebands
         for sb in range(sidebands):
             sb_freq = carrier_freq + (sb+1) * mod_freq
-            sb_wave = sb_amp * np.sin(2 * np.pi * sb_freq * time + phase)
+            sb_wave = sb_amp * np.sin(2 * np.pi * sb_freq * time + phases[0])  # Modify this line according to the desired phase coupling
             sine_tot.append(sb_wave)
+        # Calculate intermodulation components
+        if im_order > 0:
+            im_pairs = [(freqs[0], freqs[1]), (freqs[0], freqs[2]), (freqs[1], freqs[2])]
+            for pair in im_pairs:
+                im_freqs, im_orders = compute_IMs(pair[0], pair[1], im_order)
+                for idx, im_freq in enumerate(im_freqs):
+                    im_sinewave = sb_amp * np.sin(2 * np.pi * im_freq * time + phases[0])
+                    sine_tot.append(im_sinewave)
 
         sine_tot = sum_list(sine_tot)
+        # Calculate intermodulation components
+
+
         return sine_tot
 
-    def update_plot(freq1, freq2, freq3, amp1, amp2, amp3, sidebands, sb_amp, phase):
+    def update_plot(freq1, freq2, freq3, amp1, amp2, amp3, sidebands, sb_amp, phase1, phase2, phase3, im_order):
+
+        phases = [phase1, phase2, phase3]
         time_end = 1
         sf = sample_rate
 
         freqs = [freq1, freq2, freq3]
         amps = [amp1, amp2, amp3]
 
-        signal = generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phase)
+        signal = generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phases, im_order)
 
         # Compute FFT
         yf = rfft(signal)
         xf = rfftfreq(len(signal), 1/sf)
 
-        # Find top 3 frequencies with highest amplitude
+        # Find top 5 frequencies with highest amplitude
         top_freqs_idx = np.argsort(-np.abs(yf))[:5]
         top_freqs = xf[top_freqs_idx]
         top_amps = np.abs(yf[top_freqs_idx])
@@ -729,31 +753,229 @@ def interactive_signal_with_sidebands(sample_rate=44100):
 
         # Clear the plot and plot the updated signal
         plt.clf()
-        plt.plot(np.arange(len(signal)) / float(sf), signal, color='deeppink')
+        plt.plot(np.arange(len(signal)) / float(sf), signal, color='deeppink', label=f'Gen freqs: {harm_sim_freqs:.2f}\nSignal peaks: {harm_sim_signal:.2f}')
         plt.xlabel('Time (s)')
         plt.ylabel('Amplitude')
-        plt.title('Signal with Sidebands')
+        plt.title('Generated signal')
+        plt.legend(loc='upper right', title='Harmonic similarity', fontsize=10)
         plt.show()
 
         # Print the frequency and amplitude values chosen by the user
-        print(f'Frequency values: {freqs}')
+        #print(f'Frequency values: {freqs}')
         print(f'Retrieved freq values: {top_freqs}')
-        print(f'Amplitude values: {amps}')
-        print(f'Harmonic similarity of frequencies: {harm_sim_freqs}')
-        print(f'Harmonic similarity of signal peaks: {harm_sim_signal}')
+        #print(f'Harmonic similarity of gen freqs: {harm_sim_freqs}')
+        #print(f'Harmonic similarity of signal peaks: {harm_sim_signal}')
 
+    phase1_slider = widgets.FloatSlider(min=0, max=2*np.pi, value=0, step=np.pi/16, description='Phase 1:')
+    phase2_slider = widgets.FloatSlider(min=0, max=2*np.pi, value=0, step=np.pi/16, description='Phase 2:')
+    phase3_slider = widgets.FloatSlider(min=0, max=2*np.pi, value=0, step=np.pi/16, description='Phase 3:')
 
-    freq1_slider = widgets.FloatSlider(min=1, max=20, value=2, step=1, description='Freq 1:')
-    freq2_slider = widgets.FloatSlider(min=1, max=50, value=5, step=1, description='Freq 2:')
-    freq3_slider = widgets.FloatSlider(min=1, max=100, value=10, step=1, description='Freq 3:')
+    freq1_slider = widgets.FloatSlider(min=1, max=20, value=2, step=0.5, description='Freq 1:')
+    freq2_slider = widgets.FloatSlider(min=1, max=50, value=5, step=0.5, description='Freq 2:')
+    freq3_slider = widgets.FloatSlider(min=1, max=100, value=10, step=0.5, description='Freq 3:')
     amp1_slider = widgets.FloatSlider(min=0, max=1, value=0.3, step=0.05, description='Amp 1:')
     amp2_slider = widgets.FloatSlider(min=0, max=1, value=0.5, step=0.05, description='Amp 2:')
     amp3_slider = widgets.FloatSlider(min=0, max=1, value=0.2, step=0.05, description='Amp 3:')
     sidebands_slider = widgets.IntSlider(min=0, max=10, value=0, step=1, description='Sidebands:')
-    sb_amp_slider = widgets.FloatSlider(min=0, max=1, value=0.1, step=0.05, description='Sideband Amp:')
-    phase_slider = widgets.FloatSlider(min=0, max=2*np.pi, value=0, step=np.pi/8, description='Phase:')
+    sb_amp_slider = widgets.FloatSlider(min=0, max=1, value=0.1, step=0.05, description='Side. Amp:')
+    im_order_slider = widgets.IntSlider(min=0, max=6, value=0, step=1, description='IM Order:')
 
-    out = widgets.interactive(update_plot, freq1=freq1_slider, freq2=freq2_slider, freq3=freq3_slider,
-            amp1=amp1_slider, amp2=amp2_slider, amp3=amp3_slider,
-            sidebands=sidebands_slider, sb_amp=sb_amp_slider, phase=phase_slider)
-    return out
+    out = widgets.interactive(update_plot,
+                            freq1=freq1_slider,
+                            freq2=freq2_slider,
+                            freq3=freq3_slider,
+                            amp1=amp1_slider,
+                            amp2=amp2_slider,
+                            amp3=amp3_slider,
+                            sidebands=sidebands_slider,
+                            sb_amp=sb_amp_slider,
+                            phase1=phase1_slider,
+                            phase2=phase2_slider,
+                            phase3=phase3_slider,
+                            im_order=im_order_slider)
+
+
+    display_box = widgets.VBox([out])
+    return display_box
+
+
+import warnings
+from biotuner.biotuner_utils import listen_scale
+import ipywidgets as widgets
+from IPython.display import display
+
+def MOS_interactive():
+    def plot_MOS_labyrinth(generator_intervals, max_steps=20):
+        MOS_by_generator = {}
+        for interval in generator_intervals:
+            MOS_by_generator[interval] = find_MOS(interval, max_steps=max_steps)
+
+        fig, ax = plt.subplots(figsize=(9, 9), subplot_kw={'projection': 'polar'})
+        ax.set_theta_zero_location('N')
+        ax.set_theta_direction(-1)
+
+        color_cycle = plt.cm.Set2(np.linspace(0, 1, len(generator_intervals)))
+
+        angle_dict = defaultdict(set)
+        shared_angles = set()
+
+        for i, interval in enumerate(generator_intervals):
+            MOS = MOS_by_generator[interval]
+            max_scale_steps = max(MOS['steps'])
+            
+            for j in range(len(MOS['tuning'])):
+                tuning = MOS['tuning'][j]
+                steps = MOS['steps'][j]
+
+                radians, _ = tuning_to_radians(interval, steps)
+
+                for angle in radians:
+                    scale_info = (interval, steps)
+                    if angle not in angle_dict:
+                        angle_dict[angle] = set()
+                    angle_dict[angle].add(scale_info)
+
+                ax.plot(radians, np.arange(1, steps + 1), 'o-', markersize=5, linewidth=1.5, color=color_cycle[i],
+                        label=f'{interval:.2f} ({steps} steps)' if steps == max_scale_steps else None)
+
+        for angle, scale_info_set in angle_dict.items():
+            intervals = set([scale_info[0] for scale_info in scale_info_set])
+            if len(intervals) > 1:
+                shared_angles.add(angle)
+
+        for angle in shared_angles:
+            ax.plot([angle, angle], [0, max_steps + 1], 'black', linewidth=1, linestyle='--')
+
+        ax.set_title('Moment of Symmetry scales for different generator intervals', fontsize=16)
+        ax.set_rlabel_position(22.5)
+        ax.set_rticks(np.arange(1, max_steps + 1, 1))
+        ax.set_rlim(0, max_steps + 1)
+        ax.set_ylim(0, max_steps + 1)  # Center the labyrinth
+
+        handles, labels = ax.get_legend_handles_labels()
+        new_labels = []
+        for label in labels:
+            interval, steps = label.split('(')
+            interval = float(interval)
+            new_label = f'{interval:.2f} ({steps.rstrip(")")})'
+            if interval in generator_intervals:
+                new_labels.append(new_label)
+                
+        ax.legend(handles, new_labels, title='Generator Interval (steps)', fontsize=10, loc='best')
+        plt.show()
+
+
+    def play_tuning(button):
+        fund = 100  # Set the fundamental frequency (e.g., A4 = 440Hz)
+        length = 500  # Set the duration for each note in milliseconds
+        active_intervals = [interval.value for interval in interval_widgets]
+        active_intervals[0]
+        print(active_intervals[0])
+        MOS_by_generator[interval] = find_MOS(active_intervals[0], max_steps=max_steps_slider.value)
+        MOS = MOS_by_generator[interval]
+
+        highest_steps_scale = MOS["tuning"][-1]
+        
+        if highest_steps_scale is not None:
+            listen_scale(highest_steps_scale, fund, length)
+        else:
+            print("No MOS found for the given generator intervals.")
+
+    play_button = widgets.Button(description="Play Tuning", button_style="success", layout=widgets.Layout(width="50%"))
+    play_button.on_click(play_tuning)
+
+    warnings.filterwarnings('ignore')  # Suppress warnings
+
+    def interactive_plot(interval_1, interval_2, interval_3, interval_4, interval_5, max_steps):
+        generator_intervals = [interval_1, interval_2, interval_3, interval_4, interval_5]
+        active_intervals = [toggle.value for toggle in toggle_widgets]
+        active_generator_intervals = [interval for i, interval in enumerate(generator_intervals) if active_intervals[i]]
+        plot_MOS_labyrinth(active_generator_intervals, max_steps)
+
+    def create_interval_widget(value):
+        return widgets.FloatSlider(min=1, max=2, step=0.01, value=value, description='', layout=widgets.Layout(width='50%'))
+
+    def create_toggle_widget(description):
+        return widgets.ToggleButton(value=True, description=description, button_style='info', layout=widgets.Layout(width='50%'))
+
+    def update_plot(change):
+        active_intervals = [toggle.value for toggle in toggle_widgets]
+        active_generator_intervals = [interval for i, interval in enumerate(intervals) if active_intervals[i]]
+        plot_MOS_labyrinth(active_generator_intervals, max_steps_slider.value)
+        
+    intervals = [1.25, 1.25, 1.25, 1.25, 1.25]
+    interval_widgets = [create_interval_widget(value) for value in intervals]
+    toggle_widgets = [create_toggle_widget(f"Interval {i+1}") for i in range(len(intervals))]
+    max_steps_slider = widgets.IntSlider(min=5, max=50, step=1, value=20, description='Max Steps:', layout=widgets.Layout(width='50%'))
+
+    interact_kwargs = {"interval_" + str(i + 1): interval_widgets[i] for i in range(len(intervals))}
+    interact_kwargs["max_steps"] = max_steps_slider
+
+    ui = widgets.VBox([widgets.HBox([toggle_widgets[i], interval_widgets[i]]) for i in range(len(intervals))] + [max_steps_slider, play_button])
+    out = widgets.interactive_output(interactive_plot, interact_kwargs)
+    display(ui, out)
+    update_plot(None)
+
+ 
+def visualize_rhythms_interactive():
+    def visualize_rhythms(pulses_steps, plot_size=600, offsets=None, tolerance=0.1):
+        """
+        Visualize multiple Euclidean rhythms.
+        """
+        colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
+        pulses_positions = []
+        fig = go.FigureWidget()
+        for i, (pulses, steps) in enumerate(pulses_steps):
+            plt.clf()
+            offset = offsets[i] if offsets else 0
+            rhythm = euclidean_rhythm(pulses, steps, offset)
+            angles = np.linspace(0, 2*np.pi, steps, endpoint=False)
+            radius = (i+1) * 0.15
+            x = radius * np.cos(angles)
+            y = radius * np.sin(angles)
+            fig.add_trace(go.Scatter(x=x, y=y, mode='markers', marker=dict(size=10, color=colors[i % len(colors)], opacity=0.5)))
+
+            pulse_pos = []
+
+            for j, value in enumerate(rhythm):
+                if value == 1:
+                    fig.add_trace(go.Scatter(x=[x[j]], y=[y[j]], mode='markers', marker=dict(size=15, color=colors[i % len(colors)], opacity=1)))
+                    pulse_pos.append((x[j], y[j], np.arctan2(y[j], x[j])))
+
+            pulses_positions.append(pulse_pos)
+
+        for i in range(len(pulses_positions)):
+            for j in range(i+1, len(pulses_positions)):
+                for pulse1 in pulses_positions[i]:
+                    for pulse2 in pulses_positions[j]:
+                        if abs(pulse1[2] - pulse2[2]) < tolerance:
+                            fig.add_shape(type="line", x0=0, y0=0, x1=pulse1[0], y1=pulse1[1], line=dict(color="black", width=2))
+                            fig.add_shape(type="line", x0=pulse1[0], y0=pulse1[1], x1=pulse2[0], y1=pulse2[1], line=dict(color="black", width=2))
+
+        fig.update_xaxes(showgrid=False, zeroline=False, showticklabels=False)
+        fig.update_yaxes(showgrid=False, zeroline=False, showticklabels=False)
+        fig.update_layout(width=plot_size, height=plot_size)
+        fig.show()
+    # Add an output widget to display the plot
+    plot_output = widgets.Output()
+
+    def on_value_change(change):
+        pulses_steps = [(pulses_sliders[i].value, steps_sliders[i].value) for i in range(len(pulses_sliders))]
+        
+        with plot_output:
+            clear_output(wait=True)
+            visualize_rhythms(pulses_steps)
+
+    num_rhythms = 3
+
+    pulses_sliders = [widgets.IntSlider(min=1, max=20, value=5, description=f'Pulses {i + 1}:') for i in range(num_rhythms)]
+    steps_sliders = [widgets.IntSlider(min=1, max=20, value=8, description=f'Steps {i + 1}:') for i in range(num_rhythms)]
+
+    # Observe changes in the sliders and update the plot accordingly
+    for slider in pulses_sliders + steps_sliders:
+        slider.observe(on_value_change, names='value')
+
+    ui = widgets.VBox([widgets.HBox([pulses_sliders[i], steps_sliders[i]]) for i in range(num_rhythms)])
+    display(ui, plot_output)  # Display the output widget along with the UI
+    on_value_change(None)
+    return
