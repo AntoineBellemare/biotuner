@@ -849,6 +849,54 @@ def contFrac(x, k):
         i = i + 1
     return cf
 
+def compute_IMs(f1, f2, n):
+    """
+    InterModulation components: sum or subtraction of any non-zero integer
+    multiple of the input frequencies.
+
+    Parameters
+    ----------
+    f1 : float
+        Frequency 1.
+    f2 : float
+        Frequency 2.
+    n : int
+        Order of the intermodulation component.
+
+    Returns
+    -------
+    IMs : List
+        List of all intermodulation components.
+    order : List
+        Order associated with IMs.
+
+    Examples
+    --------
+    >>> f1 = 3
+    >>> f2 = 12
+    >>> n = 2
+    >>> IMs, order = compute_IMs(f1, f2, n)
+    >>> IMs, order
+    ([9, 15, 21, 27, 6, 18, 30],
+    [(1, 1), (1, 1), (1, 2), (1, 2), (2, 1), (2, 1), (2, 2)])
+    """
+    IMs = []
+    orders = []
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            #print(j)
+            #print(f1 * j + f2 * i)
+            IM_add = f1 * j + f2 * i
+            if IM_add not in IMs:
+                IMs.append(IM_add)
+                orders.append((j, i))
+            IM_sub = np.abs(f1 * j - f2 * i)
+            if IM_sub not in IMs:
+                IMs.append(IM_sub)
+                orders.append((j, i))
+    IMs = [x for _, x in sorted(zip(orders, IMs))]
+    orders = sorted(orders)
+    return IMs, orders
 
 """------------------------------SURROGATES--------------------------------"""
 

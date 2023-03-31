@@ -239,19 +239,23 @@ def harmonic_fit (peaks,
 
 """EXTENDED PEAKS from restrictions"""
 
+import itertools
+import numpy as np
+from biotuner.metrics import compute_consonance
 
-def consonance_peaks (peaks, limit):
+
+def consonance_peaks(peaks, limit, limit_pairs=True):
     """
     This function computes consonance (for a given ratio a/b, when a < 2b),
-    consonance corresponds to (a+b)/(a*b)) between peaks
+    consonance corresponds to (a+b)/(a*b)) between peaks.
 
     Parameters
     ----------
-    peaks : List (float)
-        Peaks represent local maximum in a spectrum
+    peaks : list of floats
+        Peaks represent local maximum in a spectrum.
     limit : float
-        minimum consonance value to keep associated pairs of peaks
-
+        Minimum consonance value to keep associated pairs of peaks.
+        
             Comparisons with familiar ratios:  
             Unison-frequency ratio 1:1 yields a value of 2\n
             Octave-frequency ratio 2:1 yields a value of 1.5\n
@@ -264,63 +268,68 @@ def consonance_peaks (peaks, limit):
             Major 2nd-frequency ratio 8:9 yields a value of 0.236\n  
             Major 7th-frequency ratio 8:15 yields a value of 0.192\n  
             Minor 7th-frequency ratio 9:16 yields a value of 0.174\n  
-            Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n  
+            Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n
+            
+    limit_pairs : bool, optional
+        Whether to compute consonance only for ratios where a > b (default True).
+        If False, also use ratios where a < b by dividing b iteratively.
 
     Returns
     -------
-    consonance : List (float)
-        consonance scores for each pairs of consonant peaks
-    cons_pairs : List of lists (float)
-        list of lists of each pairs of consonant peaks
-    cons_peaks : List (float)
-        list of consonant peaks (no doublons)
+    consonance : list of floats
+        Consonance scores for each pair of consonant peaks.
+    cons_pairs : list of lists of floats
+        List of lists of each pair of consonant peaks.
+    cons_peaks : list of floats
+        List of consonant peaks (no duplicates).
     cons_tot : float
-        averaged consonance value for each pairs of peaks
+        Averaged consonance value for each pair of peaks.
 
+    Examples
+    --------
+    >>> peaks = [3, 9, 11, 21]
+    >>> consonance, cons_pairs, cons_peaks, cons_tot = consonance_peaks(peaks, limit=0.5, limit_pairs=True)
+    >>> consonance, cons_pairs, cons_peaks, cons_tot
+    ([1.3333333333333333, 1.1428571428571428],
+     [[3, 9], [3, 21]],
+     [9, 3, 21],
+     0.31024531024531027)
     """
     consonance_ = []
     peaks2keep = []
     cons_tot = []
-    for p1 in peaks:
-        for p2 in peaks:
-            peaks2keep_temp = []
-            p2x = p2
-            p1x = p1
-            if p1x > p2x:
-                while p1x > p2x:
-                    p1x = p1x / 2
-            if p1x < p2x:
-                while p2x > p1x:
-                    p2x = p2x / 2
-            if p1x < 0.1:
-                p1x = 0.06
-            if p2x < 0.1:
-                p2x = 0.06  # random  number to avoid division by 0
-            cons_ = biotuner.metrics.compute_consonance(p2x / p1x)
-            if cons_ < 1:
-                cons_tot.append(cons_)
-            if cons_ < limit or cons_ == 2:
-                cons_ = None
-                cons_ = None
-                p2x = None
-                p1x = None
-            if p2x is not None:
-                peaks2keep_temp.extend([p2, p1])
-            consonance_.append(cons_)
-            peaks2keep.append(peaks2keep_temp)
-        cons_pairs = [x for x in peaks2keep if x]
-        consonance = [i for i in consonance_ if i]
-        cons_peaks = list(itertools.chain(*cons_pairs))
-        cons_peaks = [np.round(c, 2) for c in cons_peaks]
-        cons_peaks = list(set(cons_peaks))
+    for p1, p2 in itertools.permutations(peaks, 2):
+        if limit_pairs:
+            if p1 <= p2:
+                continue
+        else:
+            while p2 >= p1:
+                p2 /= 2
+            if p1 < 0.1 or p2 < 0.1:
+                continue
+        cons_ = compute_consonance(p2 / p1)
+        if cons_ < 1:
+            cons_tot.append(cons_)
+        if cons_ < limit or cons_ == 2:
+            cons_ = None
+            p2 = None
+            p1 = None
+        if p2 is not None:
+            peaks2keep.append([p2, p1])
+        consonance_.append(cons_)
+    cons_pairs = [x for x in peaks2keep if x]
+    consonance = [i for i in consonance_ if i]
+    cons_peaks = list(itertools.chain(*cons_pairs))
+    cons_peaks = [np.round(c, 2) for c in cons_peaks]
+    cons_peaks = list(set(cons_peaks))
     return consonance, cons_pairs, cons_peaks, np.average(cons_tot)
 
 
 def multi_consonance (cons_pairs, n_freqs=5):
     """
     Function that keeps the frequencies that are the most consonant with others
-    Takes pairs of frequencies that are consonant
-    (output of the 'compute consonance' function)
+    Takes pairs of frequencies that are consonant as input
+    (output of the 'compute consonance' function).
 
     Parameters
     ----------

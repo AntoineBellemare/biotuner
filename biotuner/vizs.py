@@ -2,7 +2,7 @@ from numpy import sin, pi, linspace
 from pylab import plot, subplot
 from matplotlib.pyplot import figure
 import matplotlib.colors as mcolors
-from biotuner.biotuner_utils import scale2frac, NTET_ratios
+from biotuner.biotuner_utils import scale2frac, NTET_ratios, compute_IMs
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
@@ -15,6 +15,7 @@ from collections import defaultdict
 import math
 from biotuner.biotuner_utils import sum_list, compute_peak_ratios
 from biotuner.metrics import ratios2harmsim
+#from biotuner.peaks_extraction import compute_IMs
 
 
 def lissajous_curves(tuning):
@@ -684,7 +685,7 @@ from IPython.display import display
 import ipywidgets as widgets
 from scipy.fft import rfft, rfftfreq
 
-from biotuner.peaks_extraction import compute_IMs
+
 
 def interactive_signal_with_sidebands(sample_rate=44100):
     def generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phases, im_order):
@@ -979,3 +980,6 @@ def visualize_rhythms_interactive():
     display(ui, plot_output)  # Display the output widget along with the UI
     on_value_change(None)
     return
+
+
+

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.signal
 from fooof import FOOOF
 import sys
-from biotuner.biotuner_utils import smooth, top_n_indexes, __get_norm
+from biotuner.biotuner_utils import smooth, top_n_indexes, __get_norm, compute_IMs
 from biotuner.biotuner_utils import __product_other_freqs, __freq_ind
 from biotuner.vizs import plot_polycoherence
 from pactools import Comodulogram
@@ -1044,56 +1044,6 @@ def harmonic_recurrence(
     return max_n, max_peaks, max_amps, harmonics, harmonic_peaks, harm_peaks_fit
 
 
-def compute_IMs(f1, f2, n):
-    """
-    InterModulation components: sum or subtraction of any non-zero integer
-    multiple of the input frequencies.
-
-    Parameters
-    ----------
-    f1 : float
-        Frequency 1.
-    f2 : float
-        Frequency 2.
-    n : int
-        Order of the intermodulation component.
-
-    Returns
-    -------
-    IMs : List
-        List of all intermodulation components.
-    order : List
-        Order associated with IMs.
-
-    Examples
-    --------
-    >>> f1 = 3
-    >>> f2 = 12
-    >>> n = 2
-    >>> IMs, order = compute_IMs(f1, f2, n)
-    >>> IMs, order
-    ([9, 15, 21, 27, 6, 18, 30],
-    [(1, 1), (1, 1), (1, 2), (1, 2), (2, 1), (2, 1), (2, 2)])
-    """
-    IMs = []
-    orders = []
-    for i in range(1, n + 1):
-        for j in range(1, n + 1):
-            #print(j)
-            #print(f1 * j + f2 * i)
-            IM_add = f1 * j + f2 * i
-            if IM_add not in IMs:
-                IMs.append(IM_add)
-                orders.append((j, i))
-            IM_sub = np.abs(f1 * j - f2 * i)
-            if IM_sub not in IMs:
-                IMs.append(IM_sub)
-                orders.append((j, i))
-    IMs = [x for _, x in sorted(zip(orders, IMs))]
-    orders = sorted(orders)
-    return IMs, orders
-
-
 def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     """
     Computes the intermodulation components (IMCs) for each pair of peaks and compares the IMCs
@@ -1121,17 +1071,23 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     IMCs_all : dict
         A dictionary containing information about all the pairs of peaks and their associated IMCs
         that satisfy the `min_IMs` threshold. The dictionary has the following keys:
-        - 'IMs': a list of arrays, where each array contains the IMCs associated with a pair of peaks.
-        - 'peaks': a list of arrays, where each array contains the frequencies of the two peaks.
+        - 'IMs': a list of lists, where each list contains the IMCs associated with a pair of peaks.
+        - 'peaks': a list of lists, where each list contains the frequencies of the two peaks.
         - 'n_IMs': a list of integers, where each integer represents the number of IMCs associated with a pair of peaks.
-        - 'orders': a list of lists, where each list contains the orders of the IMCs associated with a pair of peaks.
-        - 'amps': a list of arrays, where each array contains the amplitudes of the two peaks.
+        - 'amps': a list of lists, where each list contains the amplitudes of the two peaks.
     n_IM_peaks : int
         The total number of pairs of peaks and their associated IMCs that satisfy the `min_IMs` threshold.
 
+    Examples
+    --------
+    >>> peaks = [5, 9, 13, 21]
+    >>> amps = [0.6, 0.5, 0.4, 0.3]
+    >>> EIMs, IMCs_all, n_IM_peaks = endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=50)
+    >>> IMCs_all
+    {'IMs': [[5, 21]], 'peaks': [[9, 13]], 'n_IMs': [2], 'amps': [[0.5, 0.4]]}
     """
     EIMs = []
-    IMCs_all = {"IMs": [], "peaks": [], "n_IMs": [], "orders": [], "amps": []}
+    IMCs_all = {"IMs": [], "peaks": [], "n_IMs": [], "amps": []}
     for p, a in zip(peaks, amps):
         IMs_temp = []
         orders_temp = []
@@ -1142,12 +1098,12 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
                     IMs_temp.append(IMs)
                     orders_temp.append(orders_)
                     IMs_all_ = list(set(IMs) & set(peaks))
-                    if len(IMs_all_) > min_IMs - 1:
+                    if len(IMs_all_) >= min_IMs:
                         IMCs_all["IMs"].append(IMs_all_)
                         IMCs_all["peaks"].append([p, p2])
                         IMCs_all["amps"].append([a, a2])
                         IMCs_all["n_IMs"].append(len(IMs_all_))
-                        IMCs_all["orders"].append(orders_temp)
+                        #IMCs_all["orders"].append(orders_temp)
         IMs_temp = [item for sublist in IMs_temp for item in sublist]
         orders_temp = [item for sublist in orders_temp for item in sublist]
         EIMs_temp = list(set(IMs_temp) & set(peaks))
