@@ -1,4 +1,13 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
+from matplotlib.colors import hsv_to_rgb
+from IPython import display
+import colorsys
+from mpl_toolkits.axes_grid1 import ImageGrid
+from PIL import Image
+from biotuner.metrics import tuning_cons_matrix, dyad_similarity
 
 c = 299792458
 visible_range_THz = [380, 750]
@@ -8,14 +17,33 @@ visible_range_nm = [750, 380]
 
 def wavelength_to_rgb(wavelength, gamma=0.5):
 
-    '''This converts a given wavelength of light to an 
-    approximate RGB color value. The wavelength must be given
-    in nanometers in the range from 380 nm through 750 nm
-    (789 THz through 400 THz).
-
-    Based on code by Dan Bruton
-    http://www.physics.sfasu.edu/astro/color/spectra.html
-    '''
+    """
+    Convert a given wavelength of light to an approximate RGB color value.
+    
+    The input wavelength must be given in nanometers (nm) in the range from
+    380 nm through 750 nm (789 THz through 400 THz). The function is based on
+    code by Dan Bruton: http://www.physics.sfasu.edu/astro/color/spectra.html
+    
+    Parameters
+    ----------
+    wavelength : float
+        The wavelength of light in nanometers.
+    gamma : float, optional
+        The gamma correction factor (default is 0.5).
+        
+    Returns
+    -------
+    tuple
+        A tuple containing the RGB color values (R, G, B) as integers in the range 0-255.
+    
+    Examples
+    --------
+    >>> wavelength_to_rgb(475)
+    (0, 213, 255)
+    
+    >>> wavelength_to_rgb(650, gamma=1.0)
+    (246, 0, 0)
+    """
 
     wavelength = float(wavelength)
     if wavelength >= 380 and wavelength <= 440:
@@ -55,7 +83,7 @@ def wavelength_to_rgb(wavelength, gamma=0.5):
     B *= 255
     return (int(R), int(G), int(B))
 
-def scale2freqs (scale, fund, THz = True):
+def scale2freqs (scale, fund, THz=True):
     """
     Returns a list of frequency values given a scale and fundamental frequency.
 
@@ -166,7 +194,7 @@ def audible2visible (freq, visible_range = visible_range_Hz, c = 299792458):
     freq : float
         The audible frequency value to be converted.
     visible_range : tuple, optional
-        A tuple of two values representing the lower and upper bounds of the visible frequency range in Hz. Defaults to visible_range_Hz.
+        A tuple of two values representing the lower and upper bounds of the visible frequency range in Hz. Defaults to visible_range_Hz (380-750 THz).
     c : float, optional
         The speed of light in nm/s. Defaults to 299792458.
 
@@ -207,7 +235,8 @@ def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
     Returns
     -------
     tuple
-        A tuple containing the frequency values obtained by converting the input wavelengths and the number of times the frequencies were halved to fit within the desired frequency range.
+        A tuple containing the frequency values obtained by converting the input wavelengths and
+        the number of times the frequencies were halved to fit within the desired frequency range.
 
     """
     c = 2.998 * 10**17 # speed of light in nm/s
@@ -220,6 +249,32 @@ def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
 
 
 def viz_scale_colors(scale, fund, title=None):
+    """
+    Visualize a color palette derived from biological tuning by converting
+    the input musical scale to frequency values and mapping them to RGB colors.
+
+    The hue is based on the frequency values and the saturation based on the
+    average consonance of the scale step with all other steps.
+
+    Parameters
+    ----------
+    scale : list
+        List of scale values representing the musical scale.
+    fund : float
+        The fundamental frequency value.
+    title : str, optional
+        Title for the visualization (default is 'Color palette derived from biological tuning').
+
+    Returns
+    -------
+    None
+        Displays the color palette derived from the input scale as an image grid.
+
+    Examples
+    --------
+    >>> scale = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2]
+    >>> viz_scale_colors(scale, fund=30)
+    """
     # set default title
     if title == None:
         title = 'Color palette derived from biological tuning'
@@ -243,7 +298,7 @@ def viz_scale_colors(scale, fund, title=None):
         # rescale
         hsv = ((hsv - 0) * (1/(1 - 0) * 255)).astype('uint8')
         hsv = list(hsv)
-        # define the saturation
+        # define the saturation based on consonance
         hsv[1] = int(cons)
         # define the luminance
         hsv[2] = 200
@@ -262,13 +317,35 @@ def viz_scale_colors(scale, fund, title=None):
         ax.imshow(im)
     plt.show()
     
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.animation import FuncAnimation
-from matplotlib.colors import hsv_to_rgb
-from IPython import display
-
 def animate_colors(colors, duration, frames_per_second, filename='test'):
+    """
+    Animate a sequence of colors and save the animation as a GIF file.
+    
+    The input colors should be in the HSV color space. The function generates
+    a smooth animation by interpolating between the input colors and updates
+    the rectangular patch color in each frame.
+
+    Parameters
+    ----------
+    colors : list of tuples
+        List of HSV colors represented as tuples (H, S, V).
+    duration : float
+        Duration of the animation in seconds.
+    frames_per_second : int
+        Number of frames per second for the animation.
+    filename : str, optional
+        Filename for the output GIF file (default is 'test').
+
+    Returns
+    -------
+    None
+        Saves the animation as a GIF file with the specified filename.
+
+    Examples
+    --------
+    >>> colors = [(0.1, 1, 1), (0.5, 1, 1), (0.9, 1, 1)]
+    >>> animate_colors(colors, 5, 30, 'color_animation')
+    """
     # Create a figure and axis
     fig, ax = plt.subplots()
 
@@ -293,9 +370,9 @@ def animate_colors(colors, duration, frames_per_second, filename='test'):
     ani = FuncAnimation(fig, update, frames=np.linspace(0, frames_per_second * duration - 1, frames_per_second * duration), repeat=True)
     #plt.show()
     # embedding for the video
-    html = display.HTML(video)
+    #html = display.HTML(video)
     
     # draw the animation
-    display.display(html)
-    plt.close()
+    #display.display(html)
+    #plt.close()
     ani.save('{}.gif'.format(filename))
