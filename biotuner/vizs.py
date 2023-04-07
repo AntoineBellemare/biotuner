@@ -28,6 +28,12 @@ def lissajous_curves(tuning):
     Returns
     -------
     None
+    
+    Examples
+    --------
+    .. plot::
+    >>> tuning = [1, 1.25, 1.33, 1.5, 1.7, 1.875]
+    >>> lissajous_curves(tuning)
     """
     fracs, num, denom = scale2frac(tuning)
     figure(figsize=(64, 40), dpi=80)

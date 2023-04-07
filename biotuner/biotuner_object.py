@@ -3,6 +3,7 @@ import scipy.signal
 from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
 from itertools import combinations
+
 from biotuner.peaks_extraction import (
     HilbertHuang1D,
     harmonic_recurrence,
@@ -19,6 +20,7 @@ from biotuner.peaks_extraction import (
     endogenous_intermodulations,
     polycoherence,
 )
+
 from biotuner.biotuner_utils import (
     flatten,
     pairs_most_frequent,
@@ -33,6 +35,7 @@ from biotuner.biotuner_utils import (
     make_chord,
     scale_from_pairs,
 )
+
 from biotuner.metrics import (
     euler,
     tenneyHeight,
@@ -41,11 +44,12 @@ from biotuner.metrics import (
     compute_subharmonic_tension,
     dyad_similarity,
     consonant_ratios,
-    tuning_to_metrics
+    tuning_to_metrics,
+    consonance_peaks
 )
+
 from biotuner.peaks_extension import (
     harmonic_fit,
-    consonance_peaks,
     multi_consonance,
 )
 from biotuner.scale_construction import (
@@ -114,37 +118,46 @@ class compute_biotuner(object):
             'HH1D_max' : 
                         Maximum values of the 1D Hilbert-Huang transform on each
                         IMF using EMD.
-            'HH1D_FOOOF' : Hilbert-Huang transform on each IMF with Welch's method
+            'HH1D_FOOOF' :
+                        Hilbert-Huang transform on each IMF with Welch's method
                         'FOOOF' is applied to remove the aperiodic component and
                         find physiologically relevant spectral peaks.
-            'SSA' : Singular Spectrum Analysis. The name "singular spectrum
+            'SSA' : 
+                    Singular Spectrum Analysis. The name "singular spectrum
                     analysis" relates to the spectrum of eigenvalues in a singular
                     value decomposition of a covariance matrix.
 
         'SECOND-ORDER STATISTICAL PEAK EXTRACTION'
-            'cepstrum': Peak frequencies of the cepstrum (inverse Fourier transform
+            'cepstrum': 
+                        Peak frequencies of the cepstrum (inverse Fourier transform
                         (IFT) of the logarithm of the estimated signal spectrum).
-            'HPS (to come)' : Harmonic Product Spectrum (HPS) corresponds to the product of
+            'HPS (to come)' : 
+                    Harmonic Product Spectrum (HPS) corresponds to the product of
                     the spectral power at each harmonic. Peaks correspond to the
                     frequency bins with the highest value of the HPS.
-            'Harmonic_salience (to come)' : A measure of harmonic salience computed by taking
+            'Harmonic_salience (to come)' :
+                                A measure of harmonic salience computed by taking
                                 the sum of the squared cosine of the angle between
                                 a harmonic and its neighbors.
 
         'CROSS-FREQUENCY COUPLING BASED PEAK EXTRACTION'
-            'Bicoherence' : Corresponds to the normalized cross-bispectrum.
+            'Bicoherence' : 
+                            Corresponds to the normalized cross-bispectrum.
                             It is a third-order moment in the frequency domain.
                             It is a measure of phase-amplitude coupling.
-            'PAC' : Phase-amplitude coupling. A measure of phase-amplitude
+            'PAC' : 
+                    Phase-amplitude coupling. A measure of phase-amplitude
                     coupling between low-frequency phase and high-frequency
                     amplitude. 
                 
         'PEAK SELECTION BASED ON HARMONIC PROPERTIES'
-            'EIMC' : Endogenous InterModulation Components (EIMC)
+            'EIMC' :
+                    Endogenous InterModulation Components (EIMC)
                     correspond to spectral peaks that are sums or differences
                     of other peaks harmonics (f1+f2, f1+2f2, f1-f2, f1-2f2...).
                     PSD is estimated with Welch's method. All peaks are extracted.
-            'harmonic_recurrence' : PSD is estimated with Welch's method.
+            'harmonic_recurrence' :
+                            PSD is estimated with Welch's method.
                             All peaks are extracted. Peaks for which
                             other peaks are their harmonics are kept.
         
@@ -269,9 +282,9 @@ class compute_biotuner(object):
         n_peaks=5,
         nIMFs=5,
         graph=False,
+        nperseg=None,
         nfft=None,
         noverlap=None,
-        nperseg=None,
         max_harm_freq=None,
         EIMC_order=3,
         min_IMs=2,
@@ -291,72 +304,69 @@ class compute_biotuner(object):
             biosignal to analyse
         peaks_function: str
             refer to __init__
-        compute_sub_ratios: Boolean
-            If set to True, will include peaks ratios (x/y) when x < y
         FREQ_BANDS: List of lists (float)
             Each list within the list of lists sets the lower and
             upper limit of a frequency band
-        precision: float
-            Defaults to None
-            precision of the peaks (in Hz)
+        precision: float, default=0.1 -> __init__
+            Precision of the peaks (in Hz)
             When HH1D_max is used, bins are in log scale.
-        min_freq: float
-            Defaults to 1
+        sf: int
+            Sampling frequency (in Hertz).
+        min_freq: float, default=1
             minimum frequency value to be considered as a peak
             Used with 'harmonic_recurrence' and 'HH1D_max' peaks functions
-        max_freq: float
-            Defaults to 60
+        max_freq: float, default=60
             maximum frequency value to be considered as a peak
             Used with 'harmonic_recurrence' and 'HH1D_max' peaks functions
-        min_harms: int
-            Defaults to 2
+        min_harms: int, default=2
             minimum number of harmonics to consider a peak frequency using
-            the 'harmonic_recurrence' function
-        ratios_extension: Boolean
-            Defaults to False
+            the 'harmonic_recurrence' function.
+        compute_sub_ratios: Boolean, default=False
+            If set to True, will include peaks ratios (x/y) when x < y
+        ratios_extension: Boolean, default=False
             When set to True, peaks_ratios harmonics and
-            increments are computed
-        ratios_n_harms: int
-            Defaults to None
+            increments are computed.
+        ratios_n_harms: int, default=5 -> __init__
             number of harmonics or increments to use in ratios_extension method
-        scale_cons_limit: float
-            Defaults to 0.1 (__init__)
+        scale_cons_limit: float, default=0.1
             minimal value of consonance to be reach for a peaks ratio
             to be included in the peaks_ratios_cons attribute.
-        octave: float
-            Defaults to 2
+        octave: float, default=2
             value of the octave
-        harm_limit: int
-            Defaults to 128
-            maximum harmonic position for 'harmonic_recurrence' method.
-        n_peaks: int
-            Defaults to 5
-            number of peaks when using 'FOOOF' and 'cepstrum',
+        harm_limit: int, default=128
+            Maximum harmonic position for 'harmonic_recurrence' method.
+        n_peaks: int, default=5
+            Number of peaks when using 'FOOOF' and 'cepstrum',
             and 'harmonic_recurrence' functions.
             Peaks are chosen based on their amplitude.
-        nIMFs: int
-            Defaults to 5
-            number of intrinsic mode functions to keep when using
+        nIMFs: int, default=5
+            Number of intrinsic mode functions to keep when using
             'EEMD' or 'EMD' peaks function.
-        graph: boolean
-            Defaults to False
-            when set to True, a graph will accompanies the peak extraction
+        graph: boolean, default=False
+            When set to True, a graph will accompanies the peak extraction
             method (except for 'fixed' and 'adapt').
-        max_harm_freq : int
+        nperseg : int, default=None
+            Length of each segment.
+            If None, nperseg = nfft/smooth
+        nfft : int, default=None
+            Length of the FFT used, if a zero padded FFT is desired.
+            If None, nfft = sf/(1/precision)
+        noverlap : int, default=None
+            Number of points to overlap between segments.
+            If None, noverlap = nperseg // 2.
+        max_harm_freq : int, default=None
             Maximum frequency value of the find peaks function
             when harmonic_recurrence or EIMC peaks extraction method is used.
-        EIMC_order : int
+        EIMC_order : int, default=3
             Maximum order of the Intermodulation Components.
-        min_IMs : int
+        min_IMs : int, default=2
             Minimal number of Intermodulation Components to select the
             associated pair of peaks.
-        smooth_fft : int
-            Defaults to 1.
+        smooth_fft : int, default=1
             Number used to divide nfft to derive nperseg.
-        verbose : boolean
-            Defaults to True.
-            When set to True, number of detected peaks will be display
-        keep_first_IMF : boolean (default=False)
+        verbose : boolean, default=True
+            When set to True, number of detected peaks will be displayed.
+        keep_first_IMF : boolean, default=False
             When set to True, the first IMF is kept.
 
         Attributes

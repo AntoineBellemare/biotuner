@@ -201,11 +201,12 @@ def extract_welch_peaks(
     average : str (default='median')
         {'mean', 'median'}
         Method to use when averaging periodograms. Defaults to median’.
-    nperseg : int
+    nperseg : int, default=None
         Length of each segment.
+        If None, nperseg = nfft/smooth
     nfft : int
         Length of the FFT used, if a zero padded FFT is desired.
-        If None, the FFT length is nperseg.
+        If None, nfft = sf/(1/precision)
     noverlap : int
         Number of points to overlap between segments.
         If None, noverlap = nperseg // 2.

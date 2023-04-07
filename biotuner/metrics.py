@@ -1,12 +1,11 @@
 import numpy as np
 from fractions import Fraction
 import pytuning
+import biotuner
 from pytuning.utilities import normalize_interval
-import biotuner.biotuner_utils
 from numpy import log2
 import sympy as sp
-from biotuner.peaks_extension import consonance_peaks
-from biotuner.biotuner_utils import scale2frac, Print3Smallest
+from biotuner.biotuner_utils import scale2frac, Print3Smallest, compute_peak_ratios
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -823,7 +822,7 @@ def consonant_ratios(data,
     consonance_ = []
     ratios2keep = []
     if input_type == "peaks":
-        ratios = biotuner.biotuner_utils.compute_peak_ratios(data, sub=sub, rebound=set_rebound)
+        ratios = compute_peak_ratios(data, sub=sub, rebound=set_rebound)
         print(ratios)
     if input_type == "ratios":
         ratios = data
@@ -840,3 +839,84 @@ def consonant_ratios(data,
     consonance = np.array(consonance_)
     consonance = [i for i in consonance if i]
     return cons_ratios, consonance
+
+
+def consonance_peaks(peaks, limit, limit_pairs=True):
+    """
+    This function computes consonance (for a given ratio a/b, when a < 2b),
+    consonance corresponds to (a+b)/(a*b)) between peaks.
+
+    Parameters
+    ----------
+    peaks : list of floats
+        Peaks represent local maximum in a spectrum.
+    limit : float
+        Minimum consonance value to keep associated pairs of peaks.
+        
+            Comparisons with familiar ratios:  
+            Unison-frequency ratio 1:1 yields a value of 2\n
+            Octave-frequency ratio 2:1 yields a value of 1.5\n
+            Perfect 5th-frequency ratio 3:2 yields a value of 0.833\n
+            Perfect 4th-frequency ratio 4:3 yields a value of 0.583\n  
+            Major 6th-frequency ratio 5:3 yields a value of 0.533\n  
+            Major 3rd-frequency ratio 5:4 yields a value of 0.45\n  
+            Minor 3rd-frequency ratio 5:6 yields a value of 0.366\n  
+            Minor 6th-frequency ratio 5:8 yields a value of 0.325\n  
+            Major 2nd-frequency ratio 8:9 yields a value of 0.236\n  
+            Major 7th-frequency ratio 8:15 yields a value of 0.192\n  
+            Minor 7th-frequency ratio 9:16 yields a value of 0.174\n  
+            Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n
+            
+    limit_pairs : bool, optional
+        Whether to compute consonance only for ratios where a > b (default True).
+        If False, also use ratios where a < b by dividing b iteratively.
+
+    Returns
+    -------
+    consonance : list of floats
+        Consonance scores for each pair of consonant peaks.
+    cons_pairs : list of lists of floats
+        List of lists of each pair of consonant peaks.
+    cons_peaks : list of floats
+        List of consonant peaks (no duplicates).
+    cons_tot : float
+        Averaged consonance value for each pair of peaks.
+
+    Examples
+    --------
+    >>> peaks = [3, 9, 11, 21]
+    >>> consonance, cons_pairs, cons_peaks, cons_tot = consonance_peaks(peaks, limit=0.5, limit_pairs=True)
+    >>> consonance, cons_pairs, cons_peaks, cons_tot
+    ([1.3333333333333333, 1.1428571428571428],
+     [[3, 9], [3, 21]],
+     [9, 3, 21],
+     0.31024531024531027)
+    """
+    consonance_ = []
+    peaks2keep = []
+    cons_tot = []
+    for p1, p2 in itertools.permutations(peaks, 2):
+        if limit_pairs:
+            if p1 <= p2:
+                continue
+        else:
+            while p2 >= p1:
+                p2 /= 2
+            if p1 < 0.1 or p2 < 0.1:
+                continue
+        cons_ = compute_consonance(p2 / p1)
+        if cons_ < 1:
+            cons_tot.append(cons_)
+        if cons_ < limit or cons_ == 2:
+            cons_ = None
+            p2 = None
+            p1 = None
+        if p2 is not None:
+            peaks2keep.append([p2, p1])
+        consonance_.append(cons_)
+    cons_pairs = [x for x in peaks2keep if x]
+    consonance = [i for i in consonance_ if i]
+    cons_peaks = list(itertools.chain(*cons_pairs))
+    cons_peaks = [np.round(c, 2) for c in cons_peaks]
+    cons_peaks = list(set(cons_peaks))
+    return consonance, cons_pairs, cons_peaks, np.average(cons_tot)

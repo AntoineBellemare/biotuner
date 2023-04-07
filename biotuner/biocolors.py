@@ -218,7 +218,6 @@ def audible2visible (freq, visible_range = visible_range_Hz, c = 299792458):
     
     return THz, Hz, nm, n_octave
 
-
 def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
     """
     Converts a list of wavelength values to their corresponding frequency values, scaling them to fit within a given frequency range.
@@ -246,7 +245,6 @@ def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
         frequencies = frequencies / 2
         n += 1
     return frequencies, n
-
 
 def viz_scale_colors(scale, fund, title=None):
     """
