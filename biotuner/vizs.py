@@ -444,7 +444,7 @@ from ipywidgets import interact, IntSlider
 
 def viz_harmsim(x, y, savefig=False, savename='test', n_fund=10):
     """
-    This function will allow to simply visualize the harmonic similarity of any pair of frequency.
+    This function allow to simply visualize the harmonic similarity of any pair of frequency.
 
     Parameters
     ----------
@@ -878,8 +878,7 @@ def MOS_interactive():
         active_intervals = [interval.value for interval in interval_widgets]
         active_intervals[0]
         print(active_intervals[0])
-        MOS_by_generator[interval] = find_MOS(active_intervals[0], max_steps=max_steps_slider.value)
-        MOS = MOS_by_generator[interval]
+        MOS = find_MOS(active_intervals[0], max_steps=max_steps_slider.value)
 
         highest_steps_scale = MOS["tuning"][-1]
         
