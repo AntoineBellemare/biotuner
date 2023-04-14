@@ -361,13 +361,15 @@ def timepoint_consonance(data,
     data : List of lists (float)
         Axis 0 represents moments in time
         Axis 1 represents the sets of frequencies
-    method : str (default='cons')
+    method : str, default='cons'
             'cons': 
                 will compute pairwise consonance between
                 frequency peaks in the form of (a+b)/(a*b)
             'euler': 
                 will compute Euler's gradus suavitatis
-    limit : float (default=0.2)
+            'harmsim':
+                will compute harmonic similarity using dyad_similarity function.
+    limit : float, default=0.2
         limit of consonance under which the set of frequencies are not retained
             
             When method = 'cons'
@@ -378,7 +380,7 @@ def timepoint_consonance(data,
                 Major 7th (8:10:12:15) = 10\n
                 Minor 7th (10:12:15:18) = 11\n
                 Diminish (20:24:29) = 38\n
-    min_notes : int (default=3)
+    min_notes : int, default=3
         Minimal number of consonant frequencies in the chords.\n
         Only relevant when method is set to 'cons'.
 
@@ -454,51 +456,42 @@ def timepoint_consonance(data,
     [67.59, 2.7, 33.79, 16.8]]
     
     """
-    # Set number of labels
-    if len(data) == 2:
-        labels=["EMD1", "EMD2"]
-    if len(data) == 3:
-        labels=["EMD1", "EMD2", "EMD3"]
-    if len(data) == 4:
-        labels=["EMD1", "EMD2", "EMD3", "EMD4"]
-    if len(data) == 5:
-        labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"]
-    if len(data) == 6:
-        labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5", "EMD6"]
+    def process_peaks(method, peaks, limit, min_notes):
+        if method == "cons":
+            cons, _, peaks_cons, _ = consonance_peaks(peaks, limit)
+            if len(set(peaks_cons)) >= min_notes:
+                return peaks_cons
+        elif method == 'harmsim':
+            ratios = compute_peak_ratios(peaks, rebound=False)
+            if np.mean(ratios2harmsim(ratios)) > limit:
+                return peaks
+        elif method == "euler":
+            peaks_ = [int(round(p, 2) * 100) for p in peaks]
+            eul = euler(*peaks_)
+            if eul < limit:
+                return list(peaks)
+        return []
+
+    # Generate labels using list comprehension
+    labels = [f"EMD{i + 1}" for i in range(len(data))]
+
     data = np.round(data, 2)
     data = np.moveaxis(data, 0, 1)
     out = []
     positions = []
     for count, peaks in enumerate(data):
         peaks = [x for x in peaks if x >= 0]
-        if method == "cons":
-            cons, b, peaks_cons, d = consonance_peaks(peaks, limit)
-            out.append(peaks_cons)
-            if len(list(set(peaks_cons))) >= min_notes:
-                positions.append(count)
-        if method == "euler":
-            peaks_ = [int(np.round(p, 2) * 100) for p in peaks]
-            eul = euler(*peaks_)
-            if eul < limit:
-                out.append(list(peaks))
-                positions.append(count)
-    out = [x for x in out if x != []]
+        result = process_peaks(method, peaks, limit, min_notes)
+        out.append(result)
+        if result:
+            positions.append(count)
+
+    out = [x for x in out if x]
     out = list(out for out, _ in itertools.groupby(out))
     chords = [x for x in out if len(x) >= min_notes]
     chords = [e[::-1] for e in chords]
-    
-    if graph is True:
-        '''ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
-        ax.set(xlabel="Time Windows")
-        ax.set_yscale("log")
-        plt.legend(
-            scatterpoints=1,
-            frameon=True,
-            labelspacing=1,
-            title="EMDs",
-            loc="best",
-            labels=labels,
-        )'''
+
+    if graph:
         fig, ax = plt.subplots()
         for i, label in enumerate(labels):
             ax.plot(data[:, i], label=label)
@@ -516,6 +509,7 @@ def timepoint_consonance(data,
         for xc in positions:
             plt.axvline(x=xc, c="black", linestyle="dotted")
         plt.show()
+
     return chords, positions
 
 
@@ -589,7 +583,7 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     delta_lim : float
         Maximal distance between subharmonics of different frequencies
         to consider them as common subharmonics.
-    min_notes : int, {2, 3}, optional (default=2)
+    min_notes : int, {2, 3}, default=2
         Minimal number of notes to consider common subharmonics.
 
     Returns
@@ -669,16 +663,16 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
 
     Parameters
     ----------
-    list1 : numpy array (float)
+    list1 : list of floats
         Values of the first set of frequencies to compute subharmonic tension on.
-    list2 : numpy array (float)
+    list2 : list of floats
         Values of the second set of frequencies to compute subharmonic tension on.
     n_harmonics : int
         Number of subharmonics to compute for each frequency.
     delta_lim : float
         Maximal distance between subharmonics of different frequencies
         to consider them as common subharmonics.
-    c : float, optional (default=2.1)
+    c : float, default=2.1
         Constant parameter for computing subharmonic tension.
 
     Returns
@@ -780,13 +774,17 @@ def consonant_ratios(data,
         Data can whether be frequency values or frequency ratios
     limit : float
         minimum consonance value to keep associated pairs of peaks
-    sub : boolean (default=False)
+    sub : boolean, default=False
         When set to True, include ratios a/b when a < b.
-    input_type : str (default='peaks')
-        Choose between 'peaks' and 'ratios'.
-    metric : str (default='cons')
-        Choose between 'cons' and 'harmsim'.
-    set_rebound : bool (default=True)
+    input_type : str, default='peaks'
+        Choose between:
+        - 'peaks'
+        - 'ratios'
+    metric : str, default='cons'
+        Choose between:
+        - 'cons'
+        - 'harmsim'
+    set_rebound : bool, default=True
         Defines if the ratios are rebounded between 1 and 2.
         Only valid when input_type = 'peaks'.
 
@@ -867,8 +865,8 @@ def consonance_peaks(peaks, limit, limit_pairs=True):
             Minor 7th-frequency ratio 9:16 yields a value of 0.174\n  
             Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n
             
-    limit_pairs : bool, optional
-        Whether to compute consonance only for ratios where a > b (default True).
+    limit_pairs : bool, default=True
+        Whether to compute consonance only for ratios where a > b.
         If False, also use ratios where a < b by dividing b iteratively.
 
     Returns

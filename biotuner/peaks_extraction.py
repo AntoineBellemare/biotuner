@@ -1,6 +1,6 @@
 import numpy as np
 import emd
-from PyEMD import EMD, EEMD
+from PyEMD import EMD, EEMD, CEEMDAN
 import matplotlib.pyplot as plt
 import scipy.signal
 from fooof import FOOOF
@@ -12,19 +12,21 @@ from pactools import Comodulogram
 from scipy.fftpack import next_fast_len
 from scipy.signal import spectrogram
 from pyts.decomposition import SingularSpectrumAnalysis
+from scipy.ndimage import gaussian_filter1d
 
 sys.setrecursionlimit(120000)
 
 
-"""SIGNAL DECOMPOSITION METHODS
-   Take single time series as input
-   and output multiple time series as output.
-   These functions can be used to compute peaks
-   on each sub-signal,"""
+# SIGNAL DECOMPOSITION METHODS
+# ==========
+#
+# Take single time series as input
+# and output multiple time series as output.
+# These functions can be used to compute peaks
+# on each sub-signal.
 
 
-def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5):
-
+def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5):
     """
     The Empirical Mode Decomposition is a data-adaptive multiresolution
     technique to decompose a signal into physically meaningful components,
@@ -35,14 +37,21 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
     ----------
     data : array (numDataPoints,)
         Single time series.
-    method : str (default='EMD')
-        {'EMD', 'EEMD', 'EMD_fast', 'EEMD_fast'}
-        Type of Empirical Mode Decomposition.
-    graph : bool (default=False)
+    method : str, default='EMD'
+        Type of Empirical Mode Decomposition. The available types are:
+        
+        - 'EMD'
+        - 'EEMD'
+        - 'CEEMDAN'
+        - 'EMD_fast'
+        - 'EEMD_fast'
+    graph : bool, default=False
         Defines if graph is created.
-    extrema_detection : str (default='simple')
-        {'simple', 'parabol'}
-    nIMFs : int (default=5)
+    extrema_detection : str, default='simple'
+        
+        - 'simple'
+        - 'parabol'
+    nIMFs : int, default=5
         Number of IMFs to plot when 'graph' = True.
 
     Returns
@@ -72,6 +81,8 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
         eIMFs = EMD(extrema_detection=extrema_detection).emd(s, t)
     if method == "EEMD":
         eIMFs = EEMD(extrema_detection=extrema_detection).eemd(s, t)
+    if method == "CEEMDAN":
+        eIMFs = CEEMDAN(extrema_detection=extrema_detection).ceemdan(s, t)
     if method == "EMD_fast":
         eIMFs = emd.sift.sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
@@ -99,18 +110,18 @@ def EMD_eeg (data, method="EMD", graph=False, extrema_detection="simple", nIMFs=
 
 def SSA_EEG(data, n_components=3, graph=False, window_size=20):
     """
-    Applies Singular Spectrum Analysis (SSA) to an EEG signal
+    Applies Singular Spectrum Analysis (SSA) to the input signal
     to extract its main frequency components.
 
     Parameters
     ----------
     data : numpy.ndarray
-        The input EEG signal as a 1D numpy array.
-    n_components : int, optional (default=3)
+        The input signal as a 1D numpy array.
+    n_components : int, default=3
         The number of components to extract from the signal.
-    graph : bool, optional (default=False)
+    graph : bool, default=False
         Whether to plot the original signal and the extracted components.
-    window_size : int, optional (default=20)
+    window_size : int, default=20
         The size of the sliding window used in SSA.
 
     Returns
@@ -155,7 +166,10 @@ def SSA_EEG(data, n_components=3, graph=False, window_size=20):
     return X_ssa[0]
 
 
-"""PEAKS EXTRACTION METHODS
+# PEAKS EXTRACTION METHODS
+# ==========
+
+"""
    Take time series as input
    and output list of spectral peaks"""
 
@@ -189,46 +203,55 @@ def extract_welch_peaks(
         Single time series.
     sf : int
         Sampling frequency.
-    precision : float (default=0.5)
+    precision : float, default=0.5
         Size of a frequency bin in Hertz.
-    min_freq : float (default=1.0)
+    min_freq : float, default=1.0
         Minimum frequency to consider when out_type='all'.
     max_freq : float
         Maximum frequency to consider when out_type='all'.
     FREQ_BANDS : List of lists
         Each sublist contains the
         minimum and maximum values for each frequency band.
-    average : str (default='median')
-        {'mean', 'median'}
-        Method to use when averaging periodograms. Defaults to median’.
+    average : str, default='median'
+        Method for averaging periodograms.
+        
+        - 'mean'
+        - 'median'  
     nperseg : int, default=None
         Length of each segment.
         If None, nperseg = nfft/smooth
-    nfft : int
+    nfft : int, default=None
         Length of the FFT used, if a zero padded FFT is desired.
         If None, nfft = sf/(1/precision)
-    noverlap : int
+    noverlap : int, default=None
         Number of points to overlap between segments.
         If None, noverlap = nperseg // 2.
-    find_peaks_method : str (default='maxima')
-        {'maxima', 'wavelet'}
-    width : int (default=2)
+    find_peaks_method : str, default='maxima'
+        
+        - 'maxima'
+        - 'wavelet'
+    width : int, default=2
         Required width of peaks in samples.
-    rel_height : float (default=0.7)
+    rel_height : float, default=0.7
         Chooses the relative height at which the peak width is measured as a
         percentage of its prominence. 1.0 calculates the width of the peak at
         its lowest contour line while 0.5 evaluates at half the
         prominence height.
-    prominence : float (default=1)
+    prominence : float, default=1
         Required prominence of peaks.
-    out_type : str (default='all')
-        {'single', 'bands', 'all'}
-        Defines how many peaks are outputed.
-    extended_returns : bool (default=True)
-        Defines if psd and frequency bins values are outputed along
+    out_type : str, default='all'
+        Defines how many peaks are outputed. The options are:
+        
+        - 'single'
+        - 'bands'
+        - 'all'
+        
+    extended_returns : bool, default=True
+        Defines if psd and frequency bins values are output along
         the peaks and amplitudes.
-    smooth : int (default=1)
+    smooth : int, default=1
         Number used to divide nfft to derive nperseg.
+        Higher values will provide smoother periodograms.
 
     Returns
     -------
@@ -334,11 +357,11 @@ def compute_FOOOF(
     graph=False,
 ):
     """
-    FOOOF conceives of a model of the power spectrum as a combination of
+    FOOOF model the power spectrum as a combination of
     two distinct functional processes:
-        - An aperiodic component, reflecting 1/f like characteristics
-        - A variable number of periodic components (putative oscillations),
-          as peaks rising above the aperiodic component.
+    - An aperiodic component, reflecting 1/f like characteristics
+    - A variable number of periodic components (putative oscillations),
+        as peaks rising above the aperiodic component.
 
     Parameters
     ----------
@@ -346,25 +369,25 @@ def compute_FOOOF(
         Single time series.
     sf : int
         Sampling frequency.
-    precision : float (default=0.5)
+    precision : float, default=0.5
         Size of a frequency bin in Hertz before sending to FOOOF.
-    max_freq : float (default=80)
+    max_freq : float, default=80
         Maximum frequency to consider as a peak.
-    noverlap : int (default=None)
+    noverlap : int, default=None
         Number of points to overlap between segments.
         If None, noverlap = nperseg // 2.
     nperseg : int
         Length of each segment.
-    nfft : int (default=None)
+    nfft : int, default=None
         Length of the FFT used, if a zero padded FFT is desired.
         If None, the FFT length is nperseg.
-    n_peaks : int (default=5)
+    n_peaks : int, default=5
         Maximum number of peaks. If FOOOF finds higher number of peaks,
         the peaks with highest amplitude will be retained.
-    extended_returns : bool (default=False)
-        Defines if psd and frequency bins values are outputed along
+    extended_returns : bool, default=False
+        Defines if psd and frequency bins values are output along
         the peaks and amplitudes.
-    graph : bool (default=False)
+    graph : bool, default=False
         Defines if a graph is generated.
 
     Returns
@@ -444,6 +467,7 @@ def HilbertHuang1D(
     max_freq=80,
     precision=0.1,
     bin_spread="log",
+    smooth_sigma=None,
 ):
     """
     The Hilbert-Huang transform provides a description of how the energy
@@ -457,21 +481,24 @@ def HilbertHuang1D(
         Single time series.
     sf : int
         Sampling frequency.
-    graph : bool (default=False)
+    graph : bool, default=False
         Defines if a graph is generated.
-    nIMFs : int (default=5)
+    nIMFs : int, default=5
         Number of intrinsic mode functions (IMFs) to keep when
         Empirical Mode Decomposition (EMD) is computed.
-    min_freq : float (default=1)
+    min_freq : float, default=1
         Minimum frequency to consider.
-    max_freq : float (default=80)
+    max_freq : float, default=80
         Maximum frequency to consider.
-    precision : float (default=0.1)
+    precision : float, default=0.1
         Value in Hertz corresponding to the minimal step between two
         frequency bins.
-    bin_spread : str (default='log')
-        {'linear','log'}
-
+    bin_spread : str, default='log'
+    
+        - 'linear'
+        - 'log'
+    smooth_sigma : float, default=None
+        Sigma value for gaussian smoothing.
     Returns
     -------
     IF : array (numDataPoints,nIMFs)
@@ -509,6 +536,8 @@ def HilbertHuang1D(
     for IMF in range(len(IF[0])):
 
         freqs_, spec_ = emd.spectra.hilberthuang(IF[:, IMF], IA[:, IMF], edges)
+        if smooth_sigma is not None:
+            spec_ = gaussian_filter1d(spec_, smooth_sigma)
         freqs.append(freqs_)
         spec.append(spec_)
     peaks_temp = []
@@ -549,11 +578,11 @@ def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
         Single time series.
     sf : int
         Sampling frequency.
-    plot_cepstrum : bool (default=False)
+    plot_cepstrum : bool, default=False
         Determines wether a plot is generated.
-    min_freq : float (default=1.5)
+    min_freq : float, default=1.5
         Minimum frequency to consider.
-    max_freq : float (default=80)
+    max_freq : float, default=80
         Maximum frequency to consider.
 
     Returns
@@ -592,7 +621,8 @@ def cepstrum(signal, sf, plot_cepstrum=False, min_freq=1.5, max_freq=80):
 
 
 def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
-    """This function extract cepstral peaks based on the :func:'biotuner.peaks_extraction.cepstrum' function.
+    """This function extract cepstral peaks based on
+    the :func:'biotuner.peaks_extraction.cepstrum' function.
 
     Parameters
     ----------
@@ -671,27 +701,35 @@ def pac_frequencies(
     sf : int
         Sampling frequency.
     method : str
-        {'ozkurt', 'canolty', 'tort', 'penny', 'vanwijk', 'duprelatour',
-         'colgin','sigl', 'bispectrum'}
-    n_values : int (default=10)
+    
+        - 'ozkurt'
+        - 'canolty'
+        - 'tort'
+        - 'penny'
+        - 'vanwijk'
+        - 'duprelatour'
+        - 'colgin'
+        - 'sigl'
+        - 'bispectrum'
+    n_values : int, default=10
         Number of pairs of drive and modulated frequencies to keep.
-    drive_precision : float (default=0.05)
+    drive_precision : float, default=0.05
         Value (hertz) of one frequency bin of the phase signal.
-    max_drive_freq : float (default=6)
+    max_drive_freq : float, default=6
         Minimum value (hertz) of the phase signal.
-    min_drive_freq : float (default=3)
+    min_drive_freq : float, default=3
         Maximum value (hertz) of the phase signal.
-    sig_precision : float (default=1)
+    sig_precision : float, default=1
         Value (hertz) of one frequency bin of the amplitude signal.
-    max_sig_freq : float (default=50)
+    max_sig_freq : float, default=50
         Maximum value (hertz) of the amplitude signal.
-    min_sig_freq : float (default=8)
+    min_sig_freq : float, default=8
         Minimum value (hertz) of the amplitude signal.
-    low_fq_width : float (default=0.5)
+    low_fq_width : float, default=0.5
         Bandwidth of the band-pass filter (phase signal).
-    high_fq_width : float (default=1)
+    high_fq_width : float, default=1
         Bandwidth of the band-pass filter (amplitude signal).
-    plot : bool (default=False)
+    plot : bool, default=False
         Determines if a plot of the comodulogram is created.
 
     Returns
@@ -807,12 +845,14 @@ def polycoherence(data, *args, dim=2, **kwargs):
         Fixed frequencies.
     dim : {'sum', 1, 2, 0}, optional
         Dimension of the polycoherence calculation:
+        
         - 'sum': 1D polycoherence with fixed frequency sum. The first argument after fs is the frequency sum. Other fixed frequencies possible.
         - 1: 1D polycoherence as a function of f1, at least one fixed frequency (ofreq) is expected.
         - 2: 2D polycoherence as a function of f1 and f2. ofreqs are additional fixed frequencies.
         - 0: Polycoherence for fixed frequencies.
     norm : {2, 0, tuple}, optional
         Normalization scheme:
+        
         - 2: Return polycoherence, n0 = n1 = n2 = 2 (default).
         - 0: Return polyspectrum, <prod(spec(fi)) * conj(spec(sum(fi)))>.
         - tuple(n1, n2): General case with n0=2.
@@ -870,23 +910,25 @@ def polyspectrum_frequencies(
         The sampling frequency of the input signal.
     precision : float
         The desired frequency precision of the output.
-    n_values : int, optional
+    n_values : int, default=10
         The number of top polyspectral components to return. Default is 10.
-    nperseg : int, optional
+    nperseg : int, default=None
         The length of each segment used in the FFT calculation. If not specified, 
         defaults to sf.
-    noverlap : int, optional
+    noverlap : int, default=None
         The number of samples to overlap between adjacent segments. If not specified, 
-        defaults to sf // 10.
-    method : str, optional
-        The method to use for calculating the polyspectrum. Can be either "bispectrum" 
-        or "bicoherence". Default is "bicoherence".
-    flim1 : tuple of float, optional
-        The frequency limits for the first frequency axis. Default is (2, 50).
-    flim2 : tuple of float, optional
-        The frequency limits for the second frequency axis. Default is (2, 50).
-    graph : bool, optional
-        Whether to plot the polyspectrum using matplotlib. Default is False.
+        When default is None, noverlap = sf // 10.
+    method : str, default='bicoherence'
+        The method to use for calculating the polyspectrum. Can be either:
+        
+        - "bispectrum" 
+        - "bicoherence"
+    flim1 : tuple of float, default=(2, 50)
+        The frequency limits for the first frequency axis.
+    flim2 : tuple of float, default=(2, 50)
+        The frequency limits for the second frequency axis.
+    graph : bool, default=False
+        Whether to plot the polyspectrum using matplotlib.
 
     Returns
     -------
@@ -952,19 +994,20 @@ def harmonic_recurrence(
         List of all spectral peaks.
     amps : list of floats
         List of amplitudes of the spectral peaks.
-    min_freq : float, optional
-        Minimum frequency to consider, by default 1.
-    max_freq : float, optional
-        Maximum frequency to consider, by default 30.
-    min_harms : int, optional
-        Minimum number of harmonic recurrence to keep a peak, by default 2.
-    harm_limit : int, optional
-        Highest harmonic to consider, by default 128.
+    min_freq : float, default=1
+        Minimum frequency to consider.
+    max_freq : float, default=30
+        Maximum frequency to consider.
+    min_harms : int, default=2
+        Minimum number of harmonic recurrence to keep a peak.
+    harm_limit : int, default=128
+        Highest harmonic to consider.
 
     Returns
     -------
     tuple of arrays
         Returns a tuple of arrays containing:
+        
         - `max_n`: Number of harmonic recurrences for each selected peak.
         - `max_peaks`: Frequencies of each selected peak.
         - `max_amps`: Amplitudes of each selected peak.
@@ -1057,13 +1100,12 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
         An array of peak frequencies.
     amps : array_like
         An array of amplitudes corresponding to the peak frequencies.
-    order : int, optional
-        The maximum order of intermodulation to consider (default is 3).
-    min_IMs : int, optional
-        The minimum number of IMCs required for a pair of peaks to be stored in the `IMCs_all` dictionary
-        (default is 2).
-    max_freq : float, optional
-        The maximum frequency to consider when computing IMCs (default is 100).
+    order : int, default=3
+        The maximum order of intermodulation to consider.
+    min_IMs : int, default=2
+        The minimum number of IMCs required for a pair of peaks to be stored in the `IMCs_all` dictionary.
+    max_freq : float, default=100
+        The maximum frequency to consider when computing IMCs.
 
     Returns
     -------
@@ -1072,10 +1114,11 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     IMCs_all : dict
         A dictionary containing information about all the pairs of peaks and their associated IMCs
         that satisfy the `min_IMs` threshold. The dictionary has the following keys:
-        - 'IMs': a list of lists, where each list contains the IMCs associated with a pair of peaks.
-        - 'peaks': a list of lists, where each list contains the frequencies of the two peaks.
-        - 'n_IMs': a list of integers, where each integer represents the number of IMCs associated with a pair of peaks.
-        - 'amps': a list of lists, where each list contains the amplitudes of the two peaks.
+        
+        - `IMs`: a list of lists, where each list contains the IMCs associated with a pair of peaks.
+        - `peaks`: a list of lists, where each list contains the frequencies of the two peaks.
+        - `n_IMs`: a list of integers, where each integer represents the number of IMCs associated with a pair of peaks.
+        - `amps`: a list of lists, where each list contains the amplitudes of the two peaks.
     n_IM_peaks : int
         The total number of pairs of peaks and their associated IMCs that satisfy the `min_IMs` threshold.
 
@@ -1124,8 +1167,8 @@ def compute_sidebands(carrier, modulator, order=2):
         The frequency value of the carrier signal.
     modulator : float
         The frequency value of the modulating signal.
-    order : int, optional
-        The order of the highest sideband to compute. Default is 2.
+    order : int, default=2
+        The order of the highest sideband to compute.
 
     Returns
     -------

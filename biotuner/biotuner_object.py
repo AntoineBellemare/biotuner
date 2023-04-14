@@ -109,6 +109,9 @@ class compute_biotuner(object):
                     Empirical Mode Decomposition (EEMD). PSD is computed on each
                     IMF using Welch. Peaks correspond to frequency bins with the
                     highest power.
+            'CEEMDAN' : Intrinsic Mode Functions (IMFs) are derived with Complex
+                        Ensemble Empirical Mode Decomposition with Adaptive
+                        Noise (CEEMDAN). PSD is computed on each IMF using Welch.
             'EMD_FOOOF' : 
                         Intrinsic Mode Functions (IMFs) are derived with
                         Ensemble Empirical Mode Decomposition (EEMD). PSD is
@@ -1508,6 +1511,8 @@ class compute_biotuner(object):
             amps_temp = [item for sublist in amps_temp for item in sublist]
 
         if peaks_function == "HH1D_max":
+            if smooth_fft == 1:
+                smooth_sigma = None
             IF, peaks_temp, amps_temp, HH_spec, HH_bins = HilbertHuang1D(
                 data,
                 sf,
@@ -1517,6 +1522,7 @@ class compute_biotuner(object):
                 max_freq=max_freq,
                 precision=precision,
                 bin_spread="log",
+                smooth_sigma=smooth_sigma
             )
             self.IF = IF
         # if peaks_function == 'HH1D_weightAVG':

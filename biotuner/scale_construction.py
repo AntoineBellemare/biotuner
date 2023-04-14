@@ -45,24 +45,27 @@ def oct_subdiv(ratio, octave_limit=0.01365, octave=2, n=5):
         Ratio that corresponds to the generator_interval.
         For example, by giving the fifth (3/2) as generator interval,
         this function will suggest to subdivide the octave in 12, 53, etc.
-    octave_limit : float, optional
+    octave_limit : float, default=0.01365
         Approximation of the octave corresponding to the acceptable distance
         between the ratio of the generator interval after multiple iterations
         and the octave value.
-        Defaults to 0.01365 (Pythagorean comma).
-    octave : int, optional
+        The default value of 0.01365 corresponds to the Pythagorean comma.
+    octave : int, default=2
         Value of the octave.
-        Defaults to 2.
-    n : int, optional
+    n : int, default=5
         Number of suggested octave subdivisions.
-        Defaults to 5.
 
     Returns
     -------
-    Octdiv : List[int]
+    Octdiv : List of int
         List of N-TET tunings according to the generator interval.
-    Octvalue : List[float]
+    Octvalue : List of float
         List of the approximations of the octave for each N-TET tuning.
+        
+    Examples
+    --------
+    >>> oct_subdiv(3/2, n=3)
+    ([12, 53, 106], [1.0136432647705078, 1.0020903140410862, 1.0041849974949628])
     """
     Octdiv, Octvalue, i = [], [], 1
     ratios = []
@@ -89,23 +92,30 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
 
     Parameters
     ----------
-    Octdiv : int, optional
-        First N-TET tuning number of steps (default is 12)
-    Octdiv2 : int, optional
-        Second N-TET tuning number of steps (default is 53)
-    bounds : float, optional
+    Octdiv : int, default=12
+        First N-TET tuning number of steps.
+    Octdiv2 : int, default=53
+        Second N-TET tuning number of steps.
+    bounds : float, default=0.005
         Maximum distance between one ratio of Octdiv and one ratio of Octdiv2 
-        to consider a match (default is 0.005)
-    octave : int, optional
-        Value of the octave (default is 2)
+        to consider a match.
+    octave : int, default=2
+        Value of the octave
 
     Returns
     -------
     avg_ratios : numpy.ndarray
         List of ratios corresponding to the shared steps in the two N-TET tunings
-    shared_steps : List[tuple]
+    shared_steps : List of tuples
         The two elements of each tuple corresponds to the tuning steps 
         sharing the same interval in the two N-TET tunings
+        
+    Examples
+    --------
+    >>> ratios, shared_steps = compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2)
+    >>> ratios, shared_steps
+    ([1.124, 1.187, 1.334, 1.499, 1.78, 2.0],
+    [(2, 9), (3, 13), (5, 22), (7, 31), (10, 44), (12, 53)])
     """
     ListOctdiv = []
     ListOctdiv2 = []
@@ -128,48 +138,57 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
             if harm - bounds < n < harm + bounds:
                 shared_steps.append((i + 1, j + 1))
                 avg_ratios.append((n + harm) / 2)
+    avg_ratios = [np.mean(x, 3) for x in avg_ratios]
     return avg_ratios, shared_steps
 
 
 def multi_oct_subdiv(
-    peaks, max_sub=100,
-    octave_limit=1.01365,
+    peaks,
+    max_sub=100,
+    octave_limit=0.01365,
     octave=2,
     n_scales=10,
     cons_limit=0.1
 ):
     """
-    This function uses the most consonant peaks ratios as input of
-    oct_subdiv function. Each consonant ratio leads to a list of possible
-    octave subdivisions. These lists are compared and optimal octave
-    subdivisions are determined.
+    Determine optimal octave subdivisions based on consonant peaks ratios.
+
+    This function takes the most consonant peaks ratios and uses them as input for
+    the oct_subdiv function. Each consonant ratio generates a list of possible
+    octave subdivisions. The function then compares these lists and identifies
+    optimal octave subdivisions that are common across multiple generator intervals.
 
     Parameters
     ----------
-    peaks : List (float)
-        Peaks represent local maximum in a spectrum
-    max_sub : int
-        Defaults to 100.
+    peaks : List of float
+        Peaks represent local maximum in a spectrum.
+    max_sub : int, default=100
         Maximum number of intervals in N-TET tuning suggestions.
-    octave_limit : float
-        Defaults to 1.01365 (Pythagorean comma).
+    octave_limit : float, default=0.01365
         Approximation of the octave corresponding to the acceptable distance
         between the ratio of the generator interval after
         multiple iterations and the octave value.
-    octave : int
-        Defaults to 2.
+    octave : int, default=2
         value of the octave
-    n_scales : int
-        Defaults to 10.
+    n_scales : int, default=10
         Number of N-TET tunings to compute for each generator interval (ratio).
-
+    cons_limit : float, default=0.1
+        Limit for the consonance of the peaks ratios.
+        
     Returns
     -------
-    multi_oct_div : List (int)
+    multi_oct_div : List of int
         List of octave subdivisions that fit with multiple generator intervals.
-    ratios : List (float)
-        list of the generator intervals for which at least 1 N-TET tuning
+    ratios : List of float
+        List of the generator intervals for which at least 1 N-TET tuning
         matches with another generator interval.
+        
+    Examples
+    --------
+    >>> peaks = [2, 3, 9]
+    >>> oct_divs, x = multi_oct_subdiv(peaks, max_sub=100)
+    >>> oct_divs, x
+    ([53], array([1.125, 1.5  ]))
     """
     ratios, cons = consonant_ratios(peaks, cons_limit)
     list_oct_div = []
@@ -195,21 +214,25 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
 
     Parameters
     ----------
-    list_harmonics : List (int)
+    list_harmonics : List of int
         harmonic positions to use in the scale construction
     octave : int
         value of the period reference
-    min_ratio : float
-        Defaults to 1.
+    min_ratio : float, default=1
         Value of the unison.
-    max_ratio : float
-        Defaults to 2.
+    max_ratio : float, default=2
         Value of the octave.
 
     Returns
     -------
-    ratios : List (float)
+    ratios : List of float
         Generated tuning.
+        
+    Examples
+    --------
+    >>> list_harmonics = [3, 5, 7, 9]
+    >>> harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2)
+    [1.125, 1.25, 1.5, 1.75]
     """
     ratios = []
     for i in list_harmonics:

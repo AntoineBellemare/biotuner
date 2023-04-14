@@ -26,9 +26,9 @@ def EEG_harmonics_mult (peaks, n_harmonics, n_oct_up=0):
         The frequency peaks, represented as local maxima in a spectrum.
     n_harmonics : int
         The number of harmonics to compute for each peak.
-    n_oct_up : int, optional
+    n_oct_up : int, default=0
         The number of octaves by which to shift the peaks before computing
-        the harmonics. Defaults to 0.
+        the harmonics.
 
     Returns
     -------
@@ -77,13 +77,13 @@ def EEG_harmonics_div (peaks, n_harmonics, n_oct_up=0, mode="div"):
         The frequency peaks, represented as local maxima in a spectrum.
     n_harmonics : int
         The number of sub-harmonics to compute for each peak.
-    n_oct_up : int, optional
+    n_oct_up : int, default=0
         The number of octaves by which to shift the peaks before computing
-        the sub-harmonics. Defaults to 0.
-    mode : str, optional
+        the sub-harmonics.
+    mode : str, default='div'
         The mode to use for computing the sub-harmonics. Possible values are
         'div' for x, x/2, x/3 ..., x/n and 'div_add' for x, (x+x/2), (x+x/3),
-        ... (x+x/n). Defaults to 'div'.
+        ... (x+x/n).
 
     Returns
     -------
@@ -147,23 +147,23 @@ def harmonic_fit (peaks,
     ----------
     peaks : list of float
         Spectral peaks representing local maximum in a spectrum
-    n_harm : int, optional
-        Number of harmonics to compute. Default is 10.
-    bounds : int, optional
+    n_harm : int, default=10
+        Number of harmonics to compute.
+    bounds : int, default=1
         Minimum distance (in Hz) between two frequencies to consider a fit.
-        Default is 1.
-    function : str, optional
-        Type of harmonic function to use. Default is 'mult'.
-        Possible values are 'mult', 'div', and 'exp'.
-        'mult' will use natural harmonics.
-        'div' will use natural sub-harmonics.
-        'exp' will use exponentials.
-    div_mode : str, optional
+    function : str, default='mult'
+        Type of harmonic function to use.
+        Possible values are:
+        
+        - 'mult' will use natural harmonics.
+        - 'div' will use natural sub-harmonics.
+        - 'exp' will use exponentials.
+    div_mode : str, default='div'
         Mode of the natural sub-harmonic function when function='div'.
-        Default is 'div'. See EEG_harmonics_div function.
-    n_common_harms : int, optional
+        See EEG_harmonics_div function.
+    n_common_harms : int, default=5
         Number of harmonic positions to be sent to
-        the most_common_harmonics output. Default is 5.
+        the most_common_harmonics output.
 
     Returns
     -------
