@@ -3,10 +3,13 @@ from biotuner.biotuner_object import compute_biotuner
 from biotuner.metrics import ratios2harmsim, compute_subharmonics_2lists, euler
 from biotuner.biotuner_utils import rebound_list
 from biotuner.peaks_extension import harmonic_fit
+from scipy.signal import hilbert
+from scipy.stats import zscore
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
-import numpy as np
+from sklearn.metrics import mutual_info_score
+import pywt
 from mne.viz import circular_layout
 from mne_connectivity.viz import plot_connectivity_circle
 
@@ -173,6 +176,43 @@ class harmonic_connectivity(object):
                                               n_common_harms=2)
                     harm_fit.append(len(a))
                 harm_conn_matrix.append(np.sum(harm_fit))
+            
+            if metric == 'wPLI':
+                wPLI_values = []
+                for peak1 in list1:
+                    for peak2 in list2:
+                        wPLI_value = compute_wPLI(data1, data2, peak1, peak2, self.sf)
+                        wPLI_values.append(wPLI_value)
+                harm_conn_matrix.append(np.mean(wPLI_values))
+
+            if metric == 'MI':
+                MI_values = []
+                for peak1 in list1:
+                    for peak2 in list2:
+                        # Filter the original signals using the frequency bands
+                        filtered_signal1 = biotuner.biotuner_utils._band_pass_filter(data1, self.sf, peak1 - bandwidth / 2, peak1 + bandwidth / 2)
+                        filtered_signal2 = biotuner.biotuner_utils._band_pass_filter(data2, self.sf, peak2 - bandwidth / 2, peak2 + bandwidth / 2)
+                        
+                        # Compute the instantaneous phase of each signal using the Hilbert transform
+                        analytic_signal1 = hilbert(zscore(filtered_signal1))
+                        analytic_signal2 = hilbert(zscore(filtered_signal2))
+                        phase1 = np.angle(analytic_signal1)
+                        phase2 = np.angle(analytic_signal2)
+                        
+                        # Compute Mutual Information
+                        MI_value = compute_mutual_information(phase1, phase2)
+                        MI_values.append(MI_value)
+
+                        harm_conn_matrix.append(np.mean(MI_values))
+            
+            if metric == 'MI_spectral':
+                # Create the pairs of peaks
+                peak_pairs = list(itertools.product(list1, list2))
+
+                # Compute the average MI value for the pairs of peaks
+                avg_mi = self.MI_spectral(data1, data2, self.sf, self.min_freq, self.max_freq, self.precision, peak_pairs)
+                harm_conn_matrix.append(avg_mi)
+            
         matrix = np.empty(shape=(len(data), len(data)))
         for e, p in enumerate(pairs):
             matrix[p[0]][p[1]] = harm_conn_matrix[e]
@@ -191,3 +231,72 @@ class harmonic_connectivity(object):
             node_names = [str(x) for x in node_names]
         fig = plot_connectivity_circle(conn_matrix, node_names=node_names, n_lines=100,
                         fontsize_names=24, show=False, vmin=0.)
+
+
+def compute_wPLI(signal1, signal2, peak1, peak2, sf):
+    # Define a band around each peak
+    bandwidth = 1  # You can adjust the bandwidth as needed
+    low_freq1, high_freq1 = peak1 - bandwidth / 2, peak1 + bandwidth / 2
+    low_freq2, high_freq2 = peak2 - bandwidth / 2, peak2 + bandwidth / 2
+    
+    # Filter the original signals using the frequency bands
+    filtered_signal1 = biotuner.biotuner_utils._band_pass_filter(signal1, sf, low_freq1, high_freq1)
+    filtered_signal2 = biotuner.biotuner_utils._band_pass_filter(signal2, sf, low_freq2, high_freq2)
+    
+    # Compute the wPLI between the filtered signals
+    n_samples = len(filtered_signal1)
+    analytic_signal1 = hilbert(zscore(filtered_signal1))
+    analytic_signal2 = hilbert(zscore(filtered_signal2))
+
+    phase_diff = np.angle(analytic_signal1) - np.angle(analytic_signal2)
+    wPLI = np.abs(np.mean(np.exp(1j * phase_diff)))
+
+    return wPLI
+
+
+def compute_mutual_information(phase1, phase2, num_bins=10):
+    # Discretize phase values into bins
+    discretized_phase1 = np.digitize(phase1, bins=np.linspace(-np.pi, np.pi, num_bins + 1))
+    discretized_phase2 = np.digitize(phase2, bins=np.linspace(-np.pi, np.pi, num_bins + 1))
+
+    # Compute the joint probability distribution of the discretized phase values
+    joint_prob, _, _ = np.histogram2d(discretized_phase1, discretized_phase2, bins=num_bins)
+
+    # Normalize the joint probability distribution
+    joint_prob = joint_prob / np.sum(joint_prob)
+
+    # Compute Mutual Information
+    MI = mutual_info_score(None, None, contingency=joint_prob)
+
+    return MI
+
+def MI_spectral(self, signal1, signal2, sf, min_freq, max_freq, precision, peak_pairs, wavelet='cmor'):
+        # Define the scales for the CWT based on the desired frequency precision
+        scales = np.arange(min_freq, max_freq + precision, precision)
+        scales = (sf / (2 * np.pi * precision)) * np.divide(1, scales)
+
+        # Compute the Continuous Wavelet Transform of the signals
+        cwt_signal1 = pywt.cwt(signal1, scales, wavelet)[0]
+        cwt_signal2 = pywt.cwt(signal2, scales, wavelet)[0]
+
+        # Extract the phase values from the CWT coefficients
+        phase_signal1 = np.angle(cwt_signal1)
+        phase_signal2 = np.angle(cwt_signal2)
+
+        # Compute the Mutual Information between the phase values in the time-frequency domain
+        mi_matrix = np.zeros((len(scales), len(scales)))
+        for i in range(len(scales)):
+            for j in range(len(scales)):
+                mi_matrix[i, j] = mutual_info_score(phase_signal1[i, :], phase_signal2[j, :])
+
+        # Extract the MI values corresponding to the pairs of peaks
+        mi_values = []
+        for pair in peak_pairs:
+            scale1 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[0]))
+            scale2 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[1]))
+            mi_values.append(mi_matrix[scale1, scale2])
+
+        # Calculate the average MI value for the pairs of peaks
+        avg_mi = np.mean(mi_values)
+
+        return avg_mi
