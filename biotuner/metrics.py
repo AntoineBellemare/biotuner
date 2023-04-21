@@ -821,7 +821,7 @@ def consonant_ratios(data,
     ratios2keep = []
     if input_type == "peaks":
         ratios = compute_peak_ratios(data, sub=sub, rebound=set_rebound)
-        print(ratios)
+        #print(ratios)
     if input_type == "ratios":
         ratios = data
     for ratio in ratios:

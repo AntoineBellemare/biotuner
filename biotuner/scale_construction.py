@@ -9,6 +9,7 @@ from biotuner.biotuner_utils import (
     scale2frac,
     findsubsets,
     scale_from_pairs,
+    ratio2frac,
 )
 from biotuner.metrics import (
     ratios2harmsim,
@@ -234,6 +235,7 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
     >>> harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2)
     [1.125, 1.25, 1.5, 1.75]
     """
+    list_harmonics = np.abs(list_harmonics)
     ratios = []
     for i in list_harmonics:
         ratios.append(rebound(1 * i, min_ratio, max_ratio, octave))
@@ -249,15 +251,21 @@ def euler_fokker_scale(intervals, n=1, octave=2):
 
     Parameters
     ----------
-    intervals : List (float)
-    n : int
-        Defaults to 1
+    intervals : List of int
+        List of integers that represent the intervals.
+    n : int, default=1
         number of times the interval is used in the scale generation
 
     Returns
     -------
     ratios : List of float
         Generated tuning.
+        
+    Examples
+    --------
+    >>> intervals = [5, 7, 9]
+    >>> euler_fokker_scale(intervals, n=1, octave=2)
+    [1, 35/32, 9/8, 315/256, 5/4, 45/32, 7/4, 63/32, 2]
     """
     multiplicities = [n for x in intervals]  # Each factor is used once.
     scale = create_euler_fokker_scale(intervals, multiplicities, octave=octave)
@@ -273,9 +281,9 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
     ----------
     interval : float
         Generator interval
-    steps : int
-        Defaults to 12 (12-TET for interval 3/2)
+    steps : int, default=12
         Number of steps in the scale
+        When default, 12-TET for interval 3/2
     octave : int
         Defaults to 2
         Value of the octave
@@ -284,6 +292,23 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
     -------
     tuning : List of float
         Generated tuning.
+        
+    Examples
+    --------
+    >>> tuning = generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0)
+    >>> tuning
+    [1.0,
+    1.06787109375,
+    1.125,
+    1.20135498046875,
+    1.265625,
+    1.3515243530273438,
+    1.423828125,
+    1.5,
+    1.601806640625,
+    1.6875,
+    1.802032470703125,
+    1.8984375]
     """
     tuning = []
     for s in range(steps):
@@ -294,7 +319,8 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
             degree = degree * octave
         tuning.append(degree)
         harmonic_min += 1
-    return sorted(tuning)
+    tuning = sorted(list(set(tuning)))
+    return tuning
 
 
 def convergents(interval):
@@ -302,10 +328,10 @@ def convergents(interval):
     Return the convergents of the log2 of a ratio.
     The second value represents the number of steps to divide the octave
     while the first value represents the number of octaves up before
-    the stacke ratio arrives approximately to the octave value.
-    For example, the interval 1.5 will gives [7, 12], which means that
-    to approximate the fifth (1.5) in a NTET-tuning, you can divide the
-    octave in 12, while stacking 12 fifth will lead to the 7th octave up.
+    the stacked ratio arrives approximately to the octave value.
+    For example, the output of the interval 1.5 will includes [7, 12],
+    which means that to approximate the fifth (1.5) in a NTET-tuning, you can
+    divide the octave in 12, while stacking 12 fifth will lead to the 7th octave up.
 
     Parameters
     ----------
@@ -317,6 +343,20 @@ def convergents(interval):
     convergents : List of lists
         Each sublist corresponds to a pair of convergents.
 
+    Examples
+    --------
+    >>> convergents(3/2)
+    [(0, 1),
+    (1, 1),
+    (1, 2),
+    (3, 5),
+    (7, 12),
+    (24, 41),
+    (31, 53),
+    (179, 306),
+    (389, 665),
+    (9126, 15601),
+    (18641, 31867)]
     """
     value = np.log2(interval)
     convergents = list(contfrac.convergents(value))
@@ -328,9 +368,9 @@ def convergents(interval):
 
 def dissmeasure(fvec, amp, model="min"):
     """
-    Given a list of partials in fvec, with amplitudes in amp, this routine
-    calculates the dissonance by summing the roughness of every sine pair
-    based on a model of Plomp-Levelt's roughness curve.
+    Given a list of partials (peak frequencies) in fvec, with amplitudes in amp,
+    this routine calculates the dissonance by summing the roughness of
+    every sine pair based on a model of Plomp-Levelt's roughness curve.
     The older model (model='product') was based on the product of the two
     amplitudes, but the newer model (model='min') is based on the minimum
     of the two amplitudes, since this matches the beat frequency amplitude.
@@ -341,7 +381,7 @@ def dissmeasure(fvec, amp, model="min"):
         List of frequency values
     amp : List
         List of amplitude values
-    model : str
+    model : str, default='min'
         Description of parameter `model`.
 
     Returns
@@ -407,29 +447,26 @@ def diss_curve(
         list of frequencies associated with spectral peaks
     amps : List (float)
         list of amplitudes associated with freqs (must be same lenght)
-    denom : int
-        Defaults to 1000.
+    denom : int, default=1000
         Highest value for the denominator of each interval
-    max_ratio : int
-        Defaults to 2.
+    max_ratio : int, default=2
         Value of the maximum ratio
         Set to 2 for a span of 1 octave
         Set to 4 for a span of 2 octaves
         Set to 8 for a span of 3 octaves
         Set to 2**n for a span of n octaves
-    euler : bool
-        Defaults to True
+    euler : bool, default=True
         When set to True, compute the Euler Gradus Suavitatis
-        for the derived scale
-    method : str
-        {'min', 'product'}
-        Defaults to 'min'
+        for the derived scale.
+    method : str, default='min'
         Refer to dissmeasure function for more information.
-    plot : bool
-        Defaults to True
-        When set to True, a plot of the dissonance curve will be generated
-    n_tet_grid : int
-        Defaults to None
+        
+        - 'min'
+        - 'product'
+        
+    plot : bool, default=True
+        Plot the dissonance curve.
+    n_tet_grid : int, default=None
         When an integer is given, dotted lines will be add to the plot
         at steps of the given N-TET scale
 
@@ -438,13 +475,13 @@ def diss_curve(
     intervals : List of tuples
         Each tuple corresponds to the numerator and the denominator
         of each scale step ratio
-    ratios : List (float)
+    ratios : List of floats
         list of ratios that constitute the scale
     euler_score : int
         value of consonance of the scale
     diss : float
         value of averaged dissonance of the total curve
-    dyad_sims : List (float)
+    dyad_sims : List of floats
         list of dyad similarities for each ratio of the scale
 
     """
@@ -531,16 +568,14 @@ def compute_harmonic_entropy_domain_integral(
 
     Parameters
     ----------
-    ratios : List[float]
+    ratios : List of floats
         List of frequency ratios.
-    ratio_interval : List[float]
+    ratio_interval : List of floats
         List of possible intervals to consider.
-    spread : float, optional
+    spread : float, default=0.01
         Controls the width of the Gaussian kernel used to smooth the probability density function of the ratios.
-        Default is 0.01.
-    min_tol : float, optional
+    min_tol : float, default=1e-15
         The smallest tolerance value for considering the probability density function.
-        Default is 1e-15.
 
     Returns
     -------
@@ -595,10 +630,10 @@ def compute_harmonic_entropy_simple_weights(
         Denominators of the ratios.
     ratio_interval : array-like
         Interval to compute the harmonic entropy over.
-    spread : float, optional
-        Spread of the normal distribution used to compute the weights. Default is 0.01.
-    min_tol : float, optional
-        Minimum tolerance for the weights. Default is 1e-15.
+    spread : float, default=0.01
+        Spread of the normal distribution used to compute the weights.
+    min_tol : float, default=1e-15
+        Minimum tolerance for the weights.
 
     Returns
     -------
@@ -641,27 +676,23 @@ def harmonic_entropy(
 
     Parameters
     ----------
-    ratios : List (float)
-        ratios between each pairs of frequency peaks.
-    res : float
-        Defaults to 0.001
-        resolution of the ratio steps.
-    spread : float
-        Default to 0.01
-    plot_entropy : bool
-        Defaults to True
+    ratios : List of floats
+        Ratios between each pairs of frequency peaks.
+    res : float, default=0.001
+        Resolution of the ratio steps.
+    spread : float, default=0.01
+        Spread of the normal distribution used to compute the weights.
+    plot_entropy : bool, default=True
         When set to True, plot the harmonic entropy curve.
-    plot_tenney : bool
-        Defaults to False
+    plot_tenney : bool, default=False
         When set to True, plot the tenney heights (y-axis)
         across ratios (x-axis).
-    octave : int
-        Defaults to 2
+    octave : int, default=2
         Value of reference period.
 
     Returns
     ----------
-    HE_minima : List (float)
+    HE_minima : List of floats
         List of ratios corresponding to minima of the harmonic entropy curve
     HE : float
         Value of the averaged harmonic entropy
@@ -733,26 +764,39 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
         scale to reduce
     mode_n_steps : int
         number of steps of the reduced scale
-    function : function
+    function : function, default=compute_consonance
         function used to compute the consonance between pairs of ratios
-        Choose between: consonance, dyad_similarity, metric_denom
+        Choose between:
+        
+        - :func:`compute_consonance <biotuner.metrics.compute_consonance>`
+        - :func:`dyad_similarity <biotuner.metrics.dyad_similarity>`
+        - :func:`metric_denom <biotuner.metrics.metric_denom>`
     rounding : int
         maximum number of decimals for each step
-    ratio_type : str
-        Default to 'pos_harm'
-        choice:
-        -'pos_harm':a/b when a>b
-        -'sub_harm':a/b when a<b
-        -'all': pos_harm + sub_harm
+    ratio_type : str, default='pos_harm'
+        Choose between:
+        
+        - 'pos_harm':a/b when a>b
+        - 'sub_harm':a/b when a<b
+        - 'all': pos_harm + sub_harm
 
     Returns
     -------
     tuning_consonance : float
         Consonance value of the input tuning.
-    mode_out : List
+    mode_out : List of floats
         List of mode intervals.
     mode_consonance : float
         Consonance value of the output mode.
+        
+    Examples
+    --------
+    >>> tuning = [1, 1.21, 1.31, 1.45, 1.5, 1.7, 1.875]
+    >>> harm_tuning, mode, harm_mode = tuning_reduction(tuning, mode_n_steps=5, function=dyad_similarity, rounding=4, ratio_type="pos_harm")
+    >>> print('Tuning harmonicity: ', harm_tuning, '\nMode: ', mode, '\nMode harmonicity: ', harm_mode)
+    Tuning harmonicity:  9.267212965965944 
+    Mode:  [1.5, 1, 1.875, 1.7, 1.45] 
+    Mode harmonicity:  17.9500338066261
     """
     tuning_values = []
     mode_values = []
@@ -804,18 +848,28 @@ def create_mode(tuning, n_steps, function):
 
     Parameters
     ----------
-    tuning : List (float)
+    tuning : List of floats
         scale to reduce
     n_steps : int
         number of steps of the reduced scale
-    function : str
-        {'dyad_similarity', 'consonance', 'metric_denom'}
+    function : function, default=compute_consonance
+        function used to compute the consonance between pairs of ratios
+        Choose between:
+        
+        - :func:`compute_consonance <biotuner.metrics.compute_consonance>`
+        - :func:`dyad_similarity <biotuner.metrics.dyad_similarity>`
+        - :func:`metric_denom <biotuner.metrics.metric_denom>`
 
     Returns
     -------
-    mode : List (float)
+    mode : List of floats
         Reduced tuning.
 
+    Examples
+    --------
+    >>> tuning = [1, 1.21, 1.31, 1.45, 1.5, 1.7, 1.875]
+    >>> create_mode(tuning, n_steps=5, function=dyad_similarity)
+    [1, 1.45, 1.5, 1.7, 1.875]
     """
     sets = list(findsubsets(tuning, n_steps))
     metric_values = []
@@ -823,7 +877,7 @@ def create_mode(tuning, n_steps, function):
         _, met = tuning_cons_matrix(s, function)
         metric_values.append(met)
     idx = np.argmax(metric_values)
-    mode = sets[idx]
+    mode = list(sets[idx])
     return mode
 
 
@@ -837,12 +891,14 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
         List of frequency pairs (f1, f2) representing phase-amplitude coupling.
     n : int
         Number of steps in the tuning system.
-    function : callable, optional
+    function : function, default=dyad_similarity
         A function that takes two frequencies as input and returns a similarity score.
-        The default is dyad_similarity.
-    method : str, optional
-        The method used to compute the pac mode. Possible values are 'pairwise' and 'subset'.
-        The default is 'subset'.
+    method : str, default='subset'
+        The method used to compute the pac mode.
+        Possible values:
+        
+        - 'pairwise'
+        - 'subset'
 
     Returns
     -------
@@ -887,12 +943,12 @@ def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=
         First ratio as a string or float.
     frac2 : str or float
         Second ratio as a string or float.
-    octave : float, optional
-        The ratio of an octave. Default is 2.
-    max_denom_in : int, optional
-        Maximum denominator to use when converting the input fractions to rational numbers. Default is 100.
-    max_denom_out : int, optional
-        Maximum denominator to use when approximating the generative interval as a rational number. Default is 100.
+    octave : float, default=2
+        The ratio of an octave.
+    max_denom_in : int, default=100
+        Maximum denominator to use when converting the input fractions to rational numbers.
+    max_denom_out : int, default=100
+        Maximum denominator to use when approximating the generative interval as a rational number.
 
     Returns
     -------
@@ -909,7 +965,7 @@ def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=
     b = Fraction(frac1).limit_denominator(max_denom_in).denominator
     c = Fraction(frac2).limit_denominator(max_denom_in).numerator
     d = Fraction(frac2).limit_denominator(max_denom_in).denominator
-    print(a, b, c, d)
+    #print(a, b, c, d)
     mediant = (a + c) / (b + d)
     mediant_frac = sp.Rational((a + c) / (b + d)).limit_denominator(max_denom_out)
     gen_interval = octave ** (mediant)
@@ -937,7 +993,7 @@ def stern_brocot_to_generator_interval(ratio, octave=2):
     ----------
     ratio : float
         stern-brocot ratio
-    octave : float
+    octave : float, default=2
         Reference period.
 
     Returns
@@ -1069,11 +1125,10 @@ def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2, harmonic_
     Function that takes a generator interval and derives a tuning based on its stacking.
     interval: float
         Generator interval
-    steps: int
-        Defaults to 12 (12-TET for interval 3/2)
-        Number of steps in the scale
-    octave: int
-        Defaults to 2
+    steps: int, default=12
+        Number of steps in the scale.
+        When set to 12 --> 12-TET for interval 3/2
+    octave: int, default=2
         Value of the octave
     '''
     scale = []
@@ -1200,9 +1255,9 @@ def measure_symmetry(generator_interval, max_steps=20, octave=2):
     ----------
     generator_interval : int or float
         The generator interval for which MOS scales will be calculated.
-    max_steps : int, optional, default: 20
+    max_steps : int, default=20
         The maximum number of steps to consider for each MOS scale calculation.
-    octave : int, optional, default: 2
+    octave : int, default=2
         The octave size for which the MOS scales will be calculated.
 
     Returns

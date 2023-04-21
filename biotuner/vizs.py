@@ -163,7 +163,7 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
 
 
 def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
-                     method=None, save=False, figname='test'):
+                     method=None, save=False, figname='test', n_peaks=5):
     """
     This function plots the power spectral density of a signal,
     and the position of the peaks that are harmonically related.
@@ -188,17 +188,15 @@ def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
         Whether to save the figure or not
     figname : str
         The name of the file if the figure is saved
+    n_peaks : int
+        The number of peaks to be plotted
         
     Returns
     -------
     None
     """
-    #psd = np.interp(psd, (psd.min(), psd.max()), (0, 0.005))
     fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(freqs, psd, color=color)
-    #peak_power = [psd]
-    plt.xlim([xmin, xmax])
-    # plt.xscale('log')
+    ax.plot(freqs[:np.where(freqs >= xmax)[0][0]], psd[:np.where(freqs >= xmax)[0][0]], color=color)
     idx_min = list(freqs).index(xmin)
     idx_max = list(freqs).index(xmax)
     ymin = np.min(psd[idx_min:idx_max])
@@ -211,32 +209,34 @@ def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
                   + ' method', size=18)
     if method is None:
         plt.title('Power Spectrum Density and peaks positions', size=18)
-    color_list = ['blue', 'red', 'orange', 'turquoise', 'purple']
+    color_list = ['blue', 'red', 'orange', 'turquoise', 'purple', 'green'][:n_peaks+1]
     y_steps = (ymax-ymin)/10
-    y_list = [ymax-(y_steps*2), ymax-(y_steps*3), ymax-(y_steps*4), ymax-(y_steps*5)]
-    npeaks = len(harm_peaks_fit)
-    #print('npeaks', npeaks)
-    for peak_info, color_harm, ys in zip(harm_peaks_fit, color_list[0:npeaks], y_list[0:npeaks]):
+    y_list = [ymax-(y_steps*(i+2)) for i in range(n_peaks)]
+    for peak_info, color_harm, ys in zip(harm_peaks_fit, color_list, y_list):
         peak = peak_info[0]
         harm_pos = [int(x) for x in peak_info[1]]
-
         harm_freq = peak_info[2]
-        print(harm_freq, peak)
-        try:
-            harm_freq.remove(peak)
-        except ValueError:
-            pass
+        harm_freq.remove(peak)
 
         plt.axvline(x=peak, c=color_harm, linestyle='-')
 
         for e, harm in enumerate(harm_freq):
-            plt.axvline(x=harm, c=color_harm, linestyle='dotted')
-            #print(harm, harm_pos[e])
-            ax.annotate(str(harm_pos[e]), (harm, ys),
-                            bbox=dict(boxstyle="square", alpha=0.2,color=color_harm),
-                            xytext=(harm+0.5, ys), fontsize=12)
+            if harm < xmax:
+                plt.axvline(x=harm, c=color_harm, linestyle='dotted')
+                ax.annotate(str(harm_pos[e]), (harm, ys),
+                                bbox=dict(boxstyle="square", alpha=0.2,color=color_harm),
+                                xytext=(harm+0.5, ys), fontsize=12)
+    ax.set_xlim([xmin, xmax])
+    ax.set_aspect('auto')
+    plt.tight_layout()
     if save is True:
         plt.savefig(figname, dpi=300)
+    else:
+        plt.show()
+
+import matplotlib.colors as mcolors
+
+
 
 
 ##Multiple PSD##
@@ -348,6 +348,76 @@ def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands = None, xmin
     plt.clf()
     #percentage_fit.append((i/(len(epochs.ch_names)*5))*100)
     #percentage_fit = np.array(percentage_fit)
+
+    return percentage_fit
+
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.signal
+
+def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands=None, xmin=1, xmax=70,
+                  compare=True, name='', sf=1000, nfft=4096, nperseg=1024, noverlap=512,
+                  freqs_all=None, psd_all=None, max_freq=80, precision=0.5):
+
+    if bands is None:
+        bands = [[0, 3], [3, 7], [7, 12], [12, 30], [30, 70]]
+    percentage_fit = []
+    if max_freq is None:
+        max_freq = sf / 2
+    if nperseg is None:
+        mult = 1 / precision
+        nperseg = sf * mult
+        nfft = nperseg
+
+    idx_min = list(freqs_all[0]).index(xmin)
+    idx_max = list(freqs_all[0]).index(xmax)
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    color_line = ['aqua', 'darkturquoise', 'darkcyan', 'darkslategrey', 'black']
+    color_bg = ['darkgoldenrod', 'goldenrod', 'orange', 'gold', 'khaki']
+
+    for i in range(len(IMFs)):
+        ax.plot(freqs_all[i], psd_all[i], color=color_line[i])
+        ax.fill_between(freqs_all[i], psd_all[i], 0, color=color_line[i], alpha=.7)
+
+    for i, color in enumerate(color_line):
+        ax.plot(freqs_all[i], psd_all[i], color=color)
+
+    ymin = np.min(psd_all[0][idx_min:idx_max])
+    ymax = np.max(psd_all[-1][idx_min:idx_max])
+
+    if compare:
+        freqs_full, psd_full = scipy.signal.welch(eeg_data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
+        psd_full = np.interp(psd_full, (psd_full[idx_min:idx_max].min(), psd_full[idx_min:idx_max].max()), (ymin, ymax))
+        ax.plot(freqs_all[0], psd_full, color='deeppink', linestyle='dashed')
+
+    plt.xlim([xmin, xmax])
+    plt.ylim([ymin, ymax + ((ymax - ymin) / 3)])
+
+    plt.title('PSD of Empirical Mode Decomposition 1 to 5', fontsize=14)
+    plt.xlabel('Frequency')
+    plt.ylabel('Power')
+    plt.yscale('symlog')
+    plt.xscale('log')
+
+    xposition = peaks_EMD
+    labels = ['IMF5', 'IMF4', 'IMF3', 'IMF2', 'IMF1']
+    for p, n, band in zip(peaks_EMD, range(len(labels)), bands):
+        if p > band[0] and p <= band[1]:
+            labels[n] = labels[n] + '*'
+
+    for xc, c, l in zip(xposition, color_line, labels):
+        plt.axvline(x=xc, label='{} = {}'.format(l, xc), c=c)
+
+    for i, band_name in enumerate(['delta', 'theta', 'alpha', 'beta', 'gamma']):
+        plt.text(np.mean(bands[i]), ymax + (0.015 * (ymax - ymin)), band_name, horizontalalignment='center', fontsize=12)
+
+    for i, band in enumerate(bands[:-1]):
+        plt.axvspan(band[1], bands[i + 1][0], ymin=0, ymax=1, alpha=0.15, color='black')
+
+    plt.legend(loc='lower left')
+    plt.show()
 
     return percentage_fit
 

@@ -1376,7 +1376,8 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
                 midi_note = 69 + 12*math.log2(frequency/440)
                 rounded_midi_note = int(midi_note)
                 rounded_midi_frequency = 440 * 2**((rounded_midi_note - 69)/12)
-                pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
+                #pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
+                pitch_bend = int((midi_note - rounded_midi_note) * (8192))
                 midi_notes.append(rounded_midi_note)
                 pitchbends.append(pitch_bend)
             midi_chords.append(midi_notes)
@@ -1401,11 +1402,12 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
 
             # Add a pitch bend message for each note in the chord
             if microtonal is True:
+                print('pitchweel', pb)
                 track.append(Message('pitchwheel', pitch=pb, channel=i, time=current_time))
 
             track.append(Message('note_on', note=note, velocity=64, channel=i, time=current_time))
             track.append(Message('note_off', note=note, velocity=64, channel=i, time=current_time+(duration*480)))
-        current_time = current_time + duration * 480
+        current_time = current_time + (duration * 480)
 
     # Save the MIDI file
     mid.save(str(filename)+'.mid')

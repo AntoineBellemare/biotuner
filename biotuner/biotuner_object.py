@@ -59,7 +59,6 @@ from biotuner.scale_construction import (
 )
 from biotuner.vizs import graph_psd_peaks, graphEMD_welch, graph_harm_peaks, EMD_PSD_graph
 import seaborn as sbn
-import pygame
 
 
 class compute_biotuner(object):
@@ -79,10 +78,9 @@ class compute_biotuner(object):
     ----------
     sf: int
         Sampling frequency (in Hz)
-    data : array(numDataPoints,)
+    data : array (numDataPoints,)
         Time series to analyze.
-    peaks_function: str, optional
-        Defaults to 'EMD'.
+    peaks_function: str, default='EMD'
         Defines the method to use for peak extraction.
 
         'NON-HARMONIC PEAK EXTRACTIONS'
@@ -166,68 +164,45 @@ class compute_biotuner(object):
         
         'PEAKS EXTRACTION PARAMETERS'
     
-    precision: float
-        Defaults to 0.1. Precision of the peaks (in Hz).
-        When HH1D_max is used, bins are in log scale.
-    compute_sub_ratios: bool
-        Defaults to False.
+    precision: float, default=0.1
+        Precision of the peaks (in Hz).
+        When HH1D_max is used, bins are in log scale by default.
+    compute_sub_ratios: bool, default=False
         When set to True, include ratios < 1 in peaks_ratios attribute.
-    ratios_n_harms: int
-        Defaults to 5.
-        The number of harmonics used to compute ratios.
-    ratios_harms: bool
-        Defaults to False.
-        If True, compute ratio values between each harmonic and the 
-        entire set of peaks. If False, compute ratios only for successive peaks.
-    ratios_inc: bool
-        Defaults to True.
-        If True, include the ratio of the sum of every peak to the lowest
-        peak, and the ratio of the sum of every peak to the highest peak.
-    ratios_inc_fit: bool
-        Defaults to False.
-        If True, fit a logarithmic curve to the peak ratios, then add
-        ratio values according to their distance to the logarithmic curve.
-    scale_cons_limit: float
-        Defaults to 0.1.
+    scale_cons_limit: float, default=0.1
         The minimal value of consonance needed for a peaks ratio to be 
         included in the peaks_ratios_cons attribute.
 
         'EXTENDED PEAKS PARAMETERS'
     
-    n_harm: int
-        Defaults to 10.
+    n_harm: int, default=10
         Set the number of harmonics to compute in harmonic_fit function.
-    harm_function: str
-        Defaults to 'mult'.
-        {'mult' or 'div'}: Computes harmonics from iterative multiplication
-        (x, 2x, 3x...) or from iterative division (x, x/2, x/3...).
-    extension_method: str
-        Defaults to 'consonant_harmonic_fit'.
-        {'consonant_harmonic_fit', 'all_harmonic_fit'}:
-        'consonant_harmonic_fit' computes the best-fit of harmonic peaks
-        according to consonance intervals (eg. octaves, fifths).
-        'all_harmonic_fit' computes the best-fit of harmonic peaks without
-        considering consonance intervals.
+    harm_function: str, default='mult'
+        - 'mult' : Computes harmonics from iterative multiplication
+                   (x, 2x, 3x...) 
+        - 'div': Computes harmonics from iterative division (x, x/2, x/3...).
+    extension_method: str, default='consonant_harmonic_fit'
+        
+        - 'consonant_harmonic_fit' : computes the best-fit of harmonic peaks
+           according to consonance intervals (eg. octaves, fifths).
+        - 'all_harmonic_fit' : computes the best-fit of harmonic peaks without
+           considering consonance intervals.
         
         'RATIOS EXTENSION PARAMETERS'
     
-    ratios_n_harms: int
-        Defaults to 5.
-        Defines to number of harmonics or exponents for extended ratios
-    ratios_harms: bool
-        Defaults to False.
+    ratios_n_harms: int, default=5
+        The number of harmonics used to compute extended peaks ratios.
+    ratios_harms: bool, default=False
         When set to True, harmonics (x*1, x*2, x*3...,x*n) of specified
         ratios will be computed.
-    ratios_inc: bool
-        Defaults to True.
+    ratios_inc: bool, default=True
         When set to True, exponentials (x**1, x**2, x**3,...x**n) of
         specified ratios will be computed.
-    ratios_inc_fit: bool
-        Defaults to False.
+    ratios_inc_fit: bool, Default=False
         When set to True, a fit between exponentials
         (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
     """
-    
+    pygame_lib = None
     def __init__(
         self,
         sf,
@@ -292,7 +267,7 @@ class compute_biotuner(object):
         EIMC_order=3,
         min_IMs=2,
         smooth_fft=1,
-        verbose=True,
+        verbose=False,
         keep_first_IMF=False
     ):
         """
@@ -307,7 +282,7 @@ class compute_biotuner(object):
             biosignal to analyse
         peaks_function: str
             refer to __init__
-        FREQ_BANDS: List of lists (float)
+        FREQ_BANDS: List of lists of float
             Each list within the list of lists sets the lower and
             upper limit of a frequency band
         precision: float, default=0.1 -> __init__
@@ -460,7 +435,7 @@ class compute_biotuner(object):
         self,
         peaks=None,
         n_harm=None,
-        method=None,
+        method="harmonic_fit",
         harm_function="mult",
         div_mode="add",
         cons_limit=0.1,
@@ -476,38 +451,42 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        peaks : List (float)
+        peaks : List of float
             List of frequency peaks.
-        n_harm: int
-            Defaults to 10.
+        n_harm: int, default=10
             Set the number of harmonics to compute in harmonic_fit function
-        method: str
-            {'harmonic_fit', 'consonant', 'multi_consonant',
-            'consonant_harmonic_fit', 'multi_consonant_harmonic_fit'}
-        harm_function: str
-            {'mult' or 'div'}
-            Defaults to 'mult'
-            Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
-            or division (x, x/2, x/3, ...x/n).
-        div_mode : str
-            {'div', 'div_add', 'div_sub'}
-            'div': x, x/2, x/3 ..., x/n
-            'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
-            'div_sub': x, (x-x/2), (x-x/3), ... (x-x/n)
-        cons_limit : type
-            Description of parameter `cons_limit`.
-        ratios_extension : Boolean
-            Defaults to False.
+        method: str, default='harmonic_fit'
+        
+            - 'harmonic_fit'
+            - 'consonant'
+            - 'multi_consonant',
+            - 'consonant_harmonic_fit'
+            - 'multi_consonant_harmonic_fit'
+            
+        harm_function: str, default='mult'
+            
+            - 'mult' : Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
+            - 'div' : Computes harmonics from iterative division (x, x/2, x/3, ...x/n)
+
+        div_mode : strm default='add'
+            Defines the way the harmonics are computed when harm_function is 'div'
+            
+            - 'div': x, x/2, x/3 ..., x/n
+            - 'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
+            - 'div_sub': x, (x-x/2), (x-x/3), ... (x-x/n)
+            
+        cons_limit : float
+            Defines the minimal consonance level used in the method.
+        ratios_extension : Boolean, default=False
             If is True, ratios_extensions are computed accordingly to what
             was defined in __init__.
-        harm_bounds : float
-            Defaults to 0.1
+        harm_bounds : float, default=0.1
             Maximal distance in Hertz between two frequencies to consider
             them as equivalent.
-        scale_cons_limit : float
-            Defaults to 0.1 (__init__)
+        scale_cons_limit : float, default=None
             Minimal value of consonance to be reach for a peaks ratio
             to be included in the extended_peaks_ratios_cons attribute.
+            When None, scale_cons_limit = 0.1, as defined in __init__
 
         Returns
         -------
@@ -617,13 +596,13 @@ class compute_biotuner(object):
         ----------
         ratios : List (float)
             List of frequency ratios.
-        ratio_fit_bounds : float
-            Defaults to 0.001.
+        ratio_fit_bounds : float, default=0.001
             Minimal distance between two ratios to consider a fit
             for the harmonic_fit function.
-        ratios_n_harms : int
+        ratios_n_harms : int, default=None
             Number of harmonics or increments to compute.
-
+            When None, the number of harmonics or increments
+            is set to the value of the attribute ratios_n_harms.
         Returns
         -------
         ratios_harms_ : List (float)
@@ -675,46 +654,46 @@ class compute_biotuner(object):
             When set to 'None', the IMFs are computed in the method.
         sf : int
             Sampling frequency.
-        method : str
-            {'SpectralCentroid',
-             'SpectralCrestFactor',
-             'SpectralDecrease',
-             'SpectralFlatness',
-             'SpectralFlux',
-             'SpectralKurtosis',
-             'SpectralMfccs',
-             'SpectralPitchChroma',
-             'SpectralRolloff',
-             'SpectralSkewness',
-             'SpectralSlope',
-             'SpectralSpread',
-             'SpectralTonalPowerRatio',
-             'TimeAcfCoeff',
-             'TimeMaxAcf',
-             'TimePeakEnvelope',
-             'TimeRms',
-             'TimeStd',
-             'TimeZeroCrossingRate',}
-            Defaults to 'SpectralCentroid'
+        method : str, default='SpectralCentroid'
             Spectromorphological metric to compute.
+        
+             - 'SpectralCentroid',
+             - 'SpectralCrestFactor',
+             - 'SpectralDecrease',
+             - 'SpectralFlatness',
+             - 'SpectralFlux',
+             - 'SpectralKurtosis',
+             - 'SpectralMfccs',
+             - 'SpectralPitchChroma',
+             - 'SpectralRolloff',
+             - 'SpectralSkewness',
+             - 'SpectralSlope',
+             - 'SpectralSpread',
+             - 'SpectralTonalPowerRatio',
+             - 'TimeAcfCoeff',
+             - 'TimeMaxAcf',
+             - 'TimePeakEnvelope',
+             - 'TimeRms',
+             - 'TimeStd',
+             - 'TimeZeroCrossingRate',}
         window : int
-            Window size.
+            Window size in samples.
         overlap : int
             Value of the overlap between successive windows.
-        comp_chords : Boolean
-            Defaults to False.
+        comp_chords : Boolean, default=False
             When set to True, consonant spectral chords are computed.
-        min_notes : int
-            Defaults to 3.
+        min_notes : int, default=3
             Minimum number of consonant values to store a spectral chord.
-        cons_limit : float
+        cons_limit : float, default=0.2
             Minimal value of consonance.
-        cons_chord_method : str
-            {'consonance', 'euler'}
-            Defaults. to 'consonance'.
+        cons_chord_method : str, default='cons'
             Metrics to use for consonance computation.
-        graph : Boolean
-            Defaults to False.
+            
+            - :func:`cons <biotuner.metrics.compute_consonance>`
+            - :func:`harmsim <biotuner.metrics.dyad_similarity>`
+            - :func:`euler <biotuner.metrics.euler>`
+            
+        graph : Boolean, default=False
             Defines if graph is plotted.
 
         Attributes
@@ -774,8 +753,7 @@ class compute_biotuner(object):
         ----------
         n_harm : int
             Set the number of harmonics to compute in harmonic_fit function
-        harm_bounds : type
-            Defaults to 0.5
+        harm_bounds : float, default=0.5
             Maximal distance in Hertz between two frequencies to consider
             them as equivalent.
 
@@ -783,7 +761,16 @@ class compute_biotuner(object):
         ----------
         self.peaks_metrics : dict
             Dictionary with keys corresponding to the different metrics.
-            {'cons', 'euler', 'tenney', 'harm_fit', 'harmsim'}
+            
+            - 'cons'
+            - 'euler'
+            - 'tenney'
+            - 'harm_fit'
+            - 'harmsim'
+            - 'n_harmonic_recurrence',
+            - 'n_harmonic_recurrence_ratio'
+            - 'harm_pos'
+            - 'common_harm_pos'
 
         """
         if n_harm is None:
@@ -846,34 +833,37 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        input_type : str
-            ['peaks', 'extended_peaks']
+        input_type : str, default='peaks'
             Defines whether peaks or extended_peaks are used.
-        denom : int
+            
+            - 'peaks'
+            - 'extended_peaks'
+            
+        denom : int, default=1000
             Maximal value of the denominator when computing frequency ratios.
-        max_ratio : float
+        max_ratio : float, default=2
             Value of the maximal frequency ratio to use when computing
             the dissonance curve. When set to 2, the curve spans one octave.
             When set to 4, the curve spans two octaves.
-        euler_comp : Boolean
-            Defaults to False.
+        euler_comp : Boolean, default=False
             Defines if euler consonance is computed. Can be computationally
             expensive when the number of local minima is high.
-        method : str
-            {'min', 'product'}
-            Defaults to 'min'.
+        method : str, default='min'
             Refer to dissmeasure function in scale_construction.py
             for more information.
-        plot : Boolean
-            Defaults to False
+            
+            - 'min'
+            - 'product'
+            
+        plot : Boolean, default=False
             When set to True, dissonance curve is plotted.
-        n_tet_grid : int
+        n_tet_grid : int, default=12
             Defines which N-TET tuning is indicated, as a reference,
             in red in the dissonance curve plot.
-        scale_cons_limit : float
-            Defaults to 0.1 (__init__)
+        scale_cons_limit : float, default=None
             Minimal value of consonance to be reach for a peaks ratio
             to be included in the self.diss_scale_cons attribute.
+            When set to None, the value of self.scale_cons_limit is used.
 
         Attributes
         ----------
@@ -882,8 +872,13 @@ class compute_biotuner(object):
         self.diss_scale_cons : List (float)
             List of frequency ratios corresponding to consonant local minima.
         self.scale_metrics : dict
-            {'diss_euler', 'dissonance', 'diss_harm_sim', diss_n_steps}
-            Add 4 metrics related to the dissonance curve tuning
+            Add 4 metrics related to the dissonance curve tuning:
+            
+            - 'diss_euler'
+            - 'dissonance'
+            - 'diss_harm_sim'
+            - 'diss_n_steps'
+            
 
         """
         if input_type == "peaks":
@@ -936,34 +931,31 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        input_type : str
-            ['peaks', 'extended_peaks']
+        input_type : str, default='peaks'
             Defines whether peaks or extended_peaks are used.
-        res : float
-            Defaults to 0.001
-            resolution of the ratio steps.
-        spread : float
-            Description of parameter `spread`.
-        plot_entropy : Boolean
-            Defaults to True.
+            
+            - 'peaks'
+            - 'extended_peaks'
+            
+        res : float, default=0.001
+            Resolution of the ratio steps.
+        spread : float, default=0.01
+            Spread of the normal distribution used to compute the weights.
+        plot_entropy : Boolean, default=True
             When set to True, plot the harmonic entropy curve.
-        plot_tenney : Boolean
-            Defaults to False.
+        plot_tenney : Boolean, default=False
             When set to True, plot the tenney heights (y-axis)
             across ratios (x-axis).
-        octave : int
-            Defaults to 2.
+        octave : int, default=2
             Value of the octave.
-        rebound : Boolean
-            Defaults to True.
+        rebound : Boolean, default=True
             When set to True, peaks ratios are bounded within the octave.
-        sub : Boolean
-            Defaults to False.
+        sub : Boolean, default=False
             When set to True, will include ratios below the unison (1)
-        scale_cons_limit : type
-            Defaults to 0.1 (__init__)
+        scale_cons_limit : type, default=None
             Minimal value of consonance to be reach for a peaks ratio
             to be included in the self.diss_scale_cons attribute.
+            When set to None, the value of self.scale_cons_limit is used.
 
         Attributes
         ----------
@@ -972,8 +964,12 @@ class compute_biotuner(object):
         self.HE_scale_cons : List (float)
             List of frequency ratios corresponding to consonant local minima.
         self.scale_metrics : dict
-            {'HE', 'HE_n_steps', 'HE_harm_sim'}
-            Add 4 metrics related to the dissonance curve tuning
+            Four metrics related to the dissonance curve tuning:
+                
+            - 'HE'
+            - 'HE_n_steps'
+            - 'HE_harm_sim'
+            
 
         """
         if input_type == "peaks":
@@ -1015,11 +1011,13 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        method : str
-            {'peaks', 'extended_peaks'}
-            Defaults to 'peaks'.
+        method : str, default='peaks'
             Defines which set of frequencies are used.
-        octave : float
+            
+            - 'peaks'
+            - 'extended_peaks'
+            
+        octave : float, default=2
             Value of period interval.
 
         Returns
@@ -1044,15 +1042,13 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        list_harmonics: List (int)
+        list_harmonics: List of int
             harmonic positions to use in the scale construction
-        octave: int
+        octave: int, default=2
             value of the period reference
-        min_ratio: float
-            Defaults to 1.
+        min_ratio: float, default=1
             Value of the unison.
-        max_ratio: float
-            Defaults to 2.
+        max_ratio: float, default=2
             Value of the octave.
 
         Returns
@@ -1078,11 +1074,10 @@ class compute_biotuner(object):
         ----------
         n_harm : int
             Number of harmonics to consider in the harmonic fit`.
-        bounds : float
-            Defaults to 0.1
+        bounds : float, default=0.1
             Maximal distance in Hertz between two frequencies to consider
             them as equivalent.
-        n_common_harms : int
+        n_common_harms : int, default=2
             minimum number of times the harmonic is found
             to be sent to most_common_harmonics output.
 
@@ -1122,36 +1117,51 @@ class compute_biotuner(object):
         ----------
         sf : int
             Sampling frequency in hertz.
-        method : str
-            Defaults to 'duprelatour'.
+        method : str, default='duprelatour'
             Choice of method for PAC calculation.
-            STANDARD_PAC_METRICS = ['ozkurt', 'canolty', 'tort', 'penny',
-                                    'vanwijk']
-            DAR_BASED_PAC_METRICS = ['duprelatour']
-            COHERENCE_PAC_METRICS = ['jiang', 'colgin']
-            BICOHERENCE_PAC_METRICS = ['sigl', 'nagashima', 'hagihira',
-                                       'bispectrum']
-        n_values : int
-            Defaults to 10.
+                STANDARD_PAC_METRICS:
+                    
+                    - 'ozkurt'
+                    - 'canolty'
+                    - 'tort'
+                    - 'penny'
+                    - 'vanwijk'
+                    
+                DAR_BASED_PAC_METRICS:
+                    
+                    - 'duprelatour'
+                    
+                COHERENCE_PAC_METRICS:
+                    
+                    - 'jiang'
+                    - 'colgin'
+                    
+                BICOHERENCE_PAC_METRICS:
+                    
+                    - 'sigl'
+                    - 'nagashima'
+                    - 'hagihira'
+                    - 'bispectrum'
+                
+        n_values : int, default=10
             Number of pairs of frequencies to return.
-        drive_precision : float
+        drive_precision : float, default=0.05
             Step-size between each phase signal bins.
-        max_drive_freq : float
+        max_drive_freq : float, default=6
             Maximum value of the phase signal in hertz.
-        min_drive_freq : float
+        min_drive_freq : float, default=3
             Minimum value of the phase signal in hertz.
-        sig_precision : float
+        sig_precision : float, default=1
             Step-size between each amplitude signal bins.
-        max_sig_freq : float
+        max_sig_freq : float, default=50
             Maximum value of the amplitude signal in hertz.
-        min_sig_freq : float
+        min_sig_freq : float, default=8
             Minimum value of the amplitude signal in hertz.
-        low_fq_width : float
+        low_fq_width : float, default=0.5
             Bandwidth of the band-pass filter (phase signal)
-        high_fq_width : float
+        high_fq_width : float, default=1
             Bandwidth of the band-pass filter (amplitude signal)
-        plot : Boolean
-            Defaults to false.
+        plot : Boolean, default=False
             When set to True, a plot of the comodulogram is generated.
 
         Returns
@@ -1187,7 +1197,7 @@ class compute_biotuner(object):
         data,
         peaks_function="EMD",
         FREQ_BANDS=None,
-        precision=0.25,
+        precision=0.5,
         sf=None,
         min_freq=1,
         max_freq=80,
@@ -1213,63 +1223,58 @@ class compute_biotuner(object):
         Parameters
         ----------
         data: array (numDataPoints,)
-            biosignal to analyse
+            Niosignal to analyse
         peaks_function: str
-            refer to __init__
-        FREQ_BANDS: List of lists (float)
+            Refer to __init__
+        FREQ_BANDS: List of lists of floats
             Each list within the list of lists sets the lower and
             upper limit of a frequency band
-        precision: float
-            Defaults to None
-            precision of the peaks (in Hz)
+        precision: float, default=0.5
+            Precision of the peaks (in Hz)
             When HH1D_max is used, bins are in log scale.
-        sf : type
-            Description of parameter `sf`.
-        min_freq: float
-            Defaults to 1
-            minimum frequency value to be considered as a peak
+        sf : int, default=None
+            Sampling frequency in hertz.
+        min_freq: float, default=1
+            Minimum frequency value to be considered as a peak
             Used with 'harmonic_recurrence' and 'HH1D_max' peaks functions
-        max_freq: float
-            Defaults to 60
-            maximum frequency value to be considered as a peak
+        max_freq: float, default=80
+            Maximum frequency value to be considered as a peak
             Used with 'harmonic_recurrence' and 'HH1D_max' peaks functions
-        min_harms : type
-            Description of parameter `min_harms`.
-        harm_limit: int
-            Defaults to 128
-            maximum harmonic position for 'harmonic_recurrence' method.
-        n_peaks: int
-            Defaults to 5
-            number of peaks when using 'FOOOF' and 'cepstrum',
+        min_harms : int, default=2
+            Minimum number of harmonics to be considered for peaks extraction
+        harm_limit: int, default=128
+            Maximum harmonic position for 'harmonic_recurrence' method.
+        n_peaks: int, default=5
+            Number of peaks when using 'FOOOF' and 'cepstrum',
             and 'harmonic_recurrence' functions.
             Peaks are chosen based on their amplitude.
-        nIMFs: int
-            Defaults to 5
+        nIMFs: int, default=None
             number of intrinsic mode functions to keep when using
             'EEMD' or 'EMD' peaks function.
-        graph: boolean
-            Defaults to False
-            when set to True, a graph will accompanies the peak extraction
+        graph: boolean, default=False
+            When set to True, a graph will accompanies the peak extraction
             method (except for 'fixed' and 'adapt').
-        noverlap : int
-            Defaults to None.
+        noverlap : int, default=None
             Number of samples overlap between each fft window.
             When set to None, equals sf//10.
-        average : str
-            Defaults to 'median'.
-            {'mean', 'median'}
+        average : str, default='median'
             Method to use when averaging periodograms.
-        max_harm_freq : int
+            
+            - 'mean': average periodograms
+            - 'median': median periodograms 
+            
+        max_harm_freq : int, default=None
             Maximum frequency value of the find peaks function
             when harmonic_recurrence or EIMC peaks extraction method is used.
-        EIMC_order : int
+        EIMC_order : int, default=3
             Maximum order of the Intermodulation Components.
-        min_IMs : int
+        min_IMs : int, default=2
             Minimal number of Intermodulation Components to select the
             associated pair of peaks.
-        smooth_fft : int
+        smooth_fft : int, default=1
             Number used to divide nfft to derive nperseg.
-        keep_first_IMF : boolean (default=False)
+            When set to 1, nperseg = nfft.
+        keep_first_IMF : boolean, default=False
             When set to True, the first IMF is kept.
 
         Returns
@@ -1702,30 +1707,35 @@ class compute_biotuner(object):
 
         Parameters
         ----------
-        harm_thresh : int, optional
+        harm_thresh : int, default=30
             The minimum harmonic similarity between a peak pair required to be considered a resonance.
-            Must be a positive integer. Default is 30.
-        PPC_thresh : float, optional
+            Must be a positive integer.
+        PPC_thresh : float, default=0.6
             The minimum bispectral power correlation required for a peak pair to be considered a resonance.
-            Must be a float between 0 and 1. Default is 0.6.
-        smooth_fft : int, optional
+            Must be a float between 0 and 1.
+        smooth_fft : int, default=2
             The number of times to smooth the data using a Hamming window before computing the FFT.
-            Must be a positive integer. Default is 2.
-        harmonicity_metric : str, optional
+            Must be a positive integer. When smooth_fft=1, nperseg=nfft.
+        harmonicity_metric : str, default='harmsim'
             The metric to use for computing the harmonic similarity between a pair of peaks.
-            Must be one of 'harmsim' or 'subharm_tension'. Default is 'harmsim'.
-        delta_lim : int, optional
+            Choose between:
+            
+            - 'harmsim'
+            - 'subharm_tension'
+            
+        delta_lim : int, default=50
             The maximum number of subharmonic intervals to consider when using the 'subharm_tension' metric.
-            Must be a positive integer. Default is 50.
+            Must be a positive integer.
 
         Returns
         -------
         Tuple[float, List[Tuple[float, float]], List[float], List[float]]
             A tuple containing the following elements:
-            - resonance: a float representing the mean weighted bicorrelation coefficient across all harmonic pairs that meet the specified criteria for harmonicity and PPC
-            - resonant_freqs: a list of tuples, where each tuple contains two floats representing the frequencies of a pair of resonant harmonics that meet the specified criteria for harmonicity and PPC
-            - harm_all: a list of floats representing the harmonic similarity metric between all possible harmonic pairs
-            - bicor_all: a list of floats representing the bicorrelation coefficient between all possible harmonic pairs
+            
+            - **resonance**: a float representing the mean weighted bicorrelation coefficient across all harmonic pairs that meet the specified criteria for harmonicity and PPC
+            - **resonant_freqs**: a list of tuples, where each tuple contains two floats representing the frequencies of a pair of resonant harmonics that meet the specified criteria for harmonicity and PPC
+            - **harm_all**: a list of floats representing the harmonic similarity metric between all possible harmonic pairs
+            - **bicor_all**: a list of floats representing the bicorrelation coefficient between all possible harmonic pairs
 
         """        
         if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
@@ -1799,19 +1809,27 @@ class compute_biotuner(object):
         Parameters
         ----------
         scale : str or np.ndarray
-            The scale to play. If `scale` is a string, it can be one of 'peaks', 'diss', or 'HE',
-            which correspond to the biotuner object's `peaks_ratios`, `diss_scale`, and `HE_scale`
-            attributes, respectively. If `scale` is a numpy array, it should be an array of scale
+            The scale to play. 
+            If `scale` is a string, it can be one of:
+            
+            - 'peaks': the scale is set to the biotuner object's `peaks_ratios` attribute
+            - 'diss': the scale is set to the biotuner object's `diss_scale` attribute
+            - 'HE': the scale is set to the biotuner object's `HE_scale` attribute
+            
+            If `scale` is a numpy array, it should be an array of scale
             ratios.
-        fund : float, optional
-            The fundamental frequency of the scale. By default, `fund` is set to 250 Hz.
-        length : float, optional
-            The length of each note in milliseconds. By default, `length` is set to 500 ms.
+        fund : float, default=250
+            The fundamental frequency of the scale.
+        length : float, default=500
+            The length of each note in milliseconds.
 
         Returns
         -------
         None
         """
+        if self.pygame_lib is None:
+            import pygame
+            self.pygame_lib = pygame
         if scale == "peaks":
             scale = self.peaks_ratios
         if scale == "diss":
@@ -1843,6 +1861,26 @@ class compute_biotuner(object):
     def fit_all(
         self, data, compute_diss=True, compute_HE=True, compute_peaks_extension=True
     ):
+        """
+        Fit biotuning metrics to input data using various optional computations.
+
+        Parameters
+        ----------
+        data : array, shape (n_samples,)
+            A single time series of EEG data.
+        compute_diss : bool, optional, default=True
+            If True, compute the dissonance curve.
+        compute_HE : bool, optional, default=True
+            If True, compute the harmonic entropy.
+        compute_peaks_extension : bool, optional, default=True
+            If True, compute the peaks extension using the multi-consonant harmonic fit method.
+
+        Returns
+        -------
+        biotuning : Biotuning object
+            The fitted biotuning object containing the computed metrics.
+            
+        """
         biotuning = compute_biotuner(
             self.sf,
             peaks_function=self.peaks_function,
