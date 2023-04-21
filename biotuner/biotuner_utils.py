@@ -32,6 +32,7 @@ try:
 except ModuleNotFoundError:
     pass
 sys.setrecursionlimit(120000)
+sample_rate = 44100
 
 """My utility functions.
 
@@ -1275,13 +1276,13 @@ def major_triad(hz):
 
 pygame_lib = None
 
+
 def listen_scale(scale, fund, length):
     global pygame_lib
     if pygame_lib is None:
         import pygame
         pygame_lib = pygame
     print("Scale:", scale)
-    sample_rate = 44100
     pygame_lib.init()
     pygame_lib.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
     scale = [1] + scale
