@@ -1,8 +1,6 @@
 #!bin/bash
 import numpy as np
 import matplotlib.pyplot as plt
-import pygame
-import pygame.sndarray
 import pytuning
 import pyACA
 from pytuning import *
@@ -22,6 +20,8 @@ import math
 from collections import Counter
 from scipy.fftpack import rfft, irfft
 from pytuning.tuning_tables import create_scala_tuning
+import os
+os.environ['SDL_AUDIODRIVER'] = 'directsound'
 try:
     from pyunicorn.timeseries.surrogates import *
     from pyunicorn.timeseries import RecurrenceNetwork
@@ -1172,9 +1172,6 @@ def EMD_to_spectromorph(
 """-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------"""
 
 
-sample_rate = 44100
-pygame.init()
-pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
 
 def generate_signal(
@@ -1276,17 +1273,25 @@ def make_chord(hz, ratios, waveform=None):
 def major_triad(hz):
     return make_chord(hz, [4, 5, 6])
 
+pygame_lib = None
 
 def listen_scale(scale, fund, length):
+    global pygame_lib
+    if pygame_lib is None:
+        import pygame
+        pygame_lib = pygame
     print("Scale:", scale)
+    sample_rate = 44100
+    pygame_lib.init()
+    pygame_lib.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
     scale = [1] + scale
     for s in scale:
         freq = fund * s
         print(freq)
         note = make_chord(freq, [1], waveform=square_wave)
-        sound = pygame.sndarray.make_sound(note)
+        sound = pygame_lib.sndarray.make_sound(note)
         sound.play(loops=0, maxtime=0, fade_ms=0)
-        pygame.time.wait(int(sound.get_length() * length))
+        pygame_lib.time.wait(int(sound.get_length() * length))
 
 
 def listen_chords(chords, mult=10, length=500):
@@ -1302,13 +1307,17 @@ def listen_chords(chords, mult=10, length=500):
         _description_, by default 500
     """    
     print("Chords:", chords)
-
+    global pygame_lib
+    if pygame_lib is None:
+        import pygame
+        import pygame.sndarray
+        pygame_lib = pygame
     for c in chords:
         c = [i * mult for i in c]
         chord = make_chord(c[0], c[1:], waveform=square_wave)
-        sound = pygame.sndarray.make_sound(chord)
+        sound = pygame_lib.sndarray.make_sound(chord)
         sound.play(loops=0, maxtime=0, fade_ms=0)
-        pygame.time.wait(int(sound.get_length() * length))
+        pygame_lib.time.wait(int(sound.get_length() * length))
 
         
 
