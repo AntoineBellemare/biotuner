@@ -16,3 +16,9 @@ git+https://github.com/AntoineBellemare/PyTuning.git
 scipy==1.8.0
 numpy==1.21.4
 pingouin
+mido==1.2.10
+plotly==5.3.1
+ipywidgets==8.0.4
+
+
+
