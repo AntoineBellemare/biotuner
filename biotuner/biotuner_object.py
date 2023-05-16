@@ -1300,6 +1300,8 @@ class compute_biotuner(object):
         self.all_harmonics : List (int)
             List of all harmonic positions when
             harmonic_recurrence method is used.
+        self.FREQ_BANDS : List of lists (float)
+            List of frequency bands.
         """
         alphaband = [[7, 12]]
         if sf is None:
@@ -1318,7 +1320,7 @@ class compute_biotuner(object):
             FREQ_BANDS = FREQ_BANDS
         if max_harm_freq is None:
             max_harm_freq = sf / 2
-
+        self.FREQ_BANDS = FREQ_BANDS
         if peaks_function == "adapt":
             p, a = extract_welch_peaks(
                 data,
@@ -1334,6 +1336,7 @@ class compute_biotuner(object):
                 smooth=smooth_fft
             )
             FREQ_BANDS = alpha2bands(p[0])
+            self.FREQ_BANDS = FREQ_BANDS
             print('Adaptive frequency bands: ', FREQ_BANDS)
             peaks_temp, amps_temp, self.freqs, self.psd = extract_welch_peaks(
                 data,

@@ -2,7 +2,9 @@ from biotuner.biotuner_object import compute_biotuner
 #from biotuner.biotuner_utils import chunk_ts
 from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
-
+from biotuner.metrics import compute_subharmonics_2lists
+from biotuner.biotuner_utils import chunk_ts
+import numpy as np
 class transitional_harmony(object):
     """
     Class used to compute subharmonic progressions
@@ -106,20 +108,28 @@ class transitional_harmony(object):
         self.mode = mode
         self.overlap = overlap
         if mode == 'win_overlap':
+            print('hello')
             data = self.data
             pairs = chunk_ts(data, sf=self.sf, overlap=overlap, precision=self.precision)
+            print(pairs)
             peaks = []
             time_vec = []
             for pair in pairs:
-                data_ = data[pair[0]:pair[1]]
-                biotuning = compute_biotuner(self.sf, peaks_function=self.peaks_function,
-                                             precision=self.precision, n_harm=self.n_harm)
-                biotuning.peaks_extraction(data_, min_freq=self.min_freq,
-                                           max_freq=self.max_freq, max_harm_freq=150,
-                                           n_peaks=self.n_peaks, noverlap=None,
-                                           nperseg=None, nfft=None, smooth_fft=1)
-                peaks.append(biotuning.peaks)
-                time_vec.append(((pair[0]+pair[1])/2)/self.sf)
+                try:
+                    print(pair)
+                    data_ = data[pair[0]:pair[1]]
+                    biotuning = compute_biotuner(self.sf, peaks_function=self.peaks_function,
+                                                precision=self.precision, n_harm=self.n_harm)
+                    biotuning.peaks_extraction(data_, min_freq=self.min_freq,
+                                            max_freq=self.max_freq, max_harm_freq=150,
+                                            n_peaks=self.n_peaks, noverlap=None,
+                                            nperseg=None, nfft=None, smooth_fft=1)
+                    print(biotuning.peaks)
+                    peaks.append(biotuning.peaks)
+                    time_vec.append(((pair[0]+pair[1])/2)/self.sf)
+                except UnboundLocalError:
+                    time_vec.append(((pair[0]+pair[1])/2)/self.sf)
+                    peaks.append([])
             trans_subharm = []
             i=1
             time_vec_final = []
@@ -127,13 +137,17 @@ class transitional_harmony(object):
             while i < len(peaks):
                 list1 = peaks[i-1]
                 list2 = peaks[i]
-                common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody = compute_subharmonics_2lists(list1,
-                                                                                                 list2,
-                                                                                                 self.n_trans_harm,
-                                                                                                 delta_lim=delta_lim,
-                                                                                                 c=2.1)
+                try:
+                    common_subs, delta_t, sub_tension_final, harm_temp, pairs_melody = compute_subharmonics_2lists(list1,
+                                                                                                    list2,
+                                                                                                    self.n_trans_harm,
+                                                                                                    delta_lim=delta_lim,
+                                                                                                    c=2.1)
+                except:
+                    sub_tension_final = np.nan
+                    pairs_melody = np.nan
                 trans_subharm.append(sub_tension_final)
-                subharm_melody.append()
+                subharm_melody.append(pairs_melody)
                 self.trans_subharm = trans_subharm
                 time_vec_final.append((time_vec[i]+time_vec[i-1])/2)
                 i=i+1
@@ -151,7 +165,7 @@ class transitional_harmony(object):
                 plt.legend(title='Maximum distance between \ncommon subharmonics')
                 plt.xlabel('Time (sec)')
                 plt.ylabel('Transitional subharmonic tension')
-                plt.xlim(0, len(data)/sf)
+                plt.xlim(0, len(data)/self.sf)
                 if save is True:
                     plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
         return trans_subharm, time_vec_final, pairs_melody
@@ -193,7 +207,7 @@ class transitional_harmony(object):
         plt.legend(title='Maximum distance between \ncommon subharmonics')
         plt.xlabel('Time (sec)')
         plt.ylabel('Transitional subharmonic tension')
-        plt.xlim(0, len(data)/sf)
+        plt.xlim(0, len(data)/self.sf)
         if save is True:
             plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(self.mode, str((deltas[0], deltas[-1])), self.overlap, savename), dpi=300)
 

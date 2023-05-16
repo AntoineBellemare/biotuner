@@ -13,7 +13,7 @@ pyts==0.12.0
 contfrac==1.0.0
 neurokit2==0.2.2
 PyTuning @ git+https://github.com/AntoineBellemare/PyTuning.git
-scipy==1.7.3
+scipy>=1.7.3
 numpy==1.21.4
 pingouin
 mido==1.2.10

@@ -1225,7 +1225,7 @@ def slice_data(data, sf, window=1):
                 stop_idx = start_idx + window_len
                 data_sliced_temp.append(data[i][start_idx:stop_idx])
             data_sliced.append(data_sliced_temp)
-        data_sliced = combine_dims(np.array(data_sliced), 0, 2)
+        #data_sliced = combine_dims(np.array(data_sliced), 0, 2)
     return np.array(data_sliced)
 
 
