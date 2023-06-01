@@ -19,6 +19,7 @@ pingouin
 mido==1.2.10
 plotly==5.13.1
 ipywidgets==8.0.4
+PyWavelets==1.4.1
 
 
 
