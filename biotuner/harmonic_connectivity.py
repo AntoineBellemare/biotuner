@@ -15,8 +15,16 @@ from mne.viz import circular_layout
 from mne_connectivity.viz import plot_connectivity_circle
 import itertools
 from PyEMD import EMD
+import pandas as pd
 from scipy.signal import hilbert
 from biotuner.biotuner_utils import chunk_ts
+from biotuner.metrics import dyad_similarity, compute_subharmonic_tension, ratios2harmsim, peaks_to_harmsim
+from biotuner.biotuner_utils import compute_peak_ratios
+from biotuner.harmonic_spectrum import compute_frequency_and_psd, compute_resonance_values, find_spectral_peaks, harmonic_entropy
+from biotuner.biotuner_utils import safe_mean, safe_max, apply_power_law_remove, compute_frequency_and_psd
+from scipy.signal import stft
+import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter
 
 
 class harmonic_connectivity(object):
@@ -401,6 +409,32 @@ class harmonic_connectivity(object):
                         fontsize_names=24, show=False, vmin=0.)
 
     
+    def compute_harmonic_spectrum_connectivity(self, sf=None, data=None, precision=0.5, fmin=None, fmax=None, noverlap=1,
+                                               power_law_remove=False, n_peaks=5, metric='harmsim', n_harms=10,
+                                               delta_lim=0.1, min_notes=2, plot=False, smoothness=1, smoothness_harm=1,
+                                               phase_mode=None, save_fig=False, savename='harmonic_spectrum_connectivity.png'):
+        if sf is None:
+            sf = self.sf
+        if data is None:
+            data = self.data
+        electrodes, datapoints = data.shape
+        output = np.empty((electrodes, electrodes), dtype=object)
+
+        for i in range(electrodes):
+            for j in range(electrodes):
+                if i != j:
+                    signal1 = data[i]
+                    signal2 = data[j]
+                    df = compute_cross_spectrum_harmonicity(signal1, signal2, precision_hz=precision, fmin=fmin, fmax=fmax,
+                                                                 noverlap=noverlap, fs=sf, power_law_remove=power_law_remove,
+                                                                 n_peaks=n_peaks, metric=metric, n_harms=n_harms, delta_lim=delta_lim,
+                                                                 min_notes=min_notes, plot=plot, smoothness=smoothness,
+                                                                 smoothness_harm=smoothness_harm, phase_mode=phase_mode,
+                                                                 save_fig=save_fig, save_name=savename)
+                    output[i, j] = df
+
+        return output
+
 
 def wPLI_crossfreq(signal1, signal2, peak1, peak2, sf):
     # Define a band around each peak
@@ -728,7 +762,215 @@ def temporal_correlation_fdr(data):
     return connectivity_matrix, fdr_corrected_pvals
 
 
-import numpy as np
+def compute_cross_spectrum_harmonicity(signal1, signal2, precision_hz, fmin=None, fmax=None, noverlap=1, fs=44100, power_law_remove=False,
+                               n_peaks=5, metric='harmsim', n_harms=10, delta_lim=0.1, min_notes=2, plot=False, smoothness=1,
+                               smoothness_harm=1, phase_mode=None, save_fig=False, save_name='harmonic_spectrum_connectivity.png'):
+        nperseg = int(fs / precision_hz)
+
+        # Compute the power spectral density for both signals
+        freqs, psd1 = compute_frequency_and_psd(signal1, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
+        freqs, psd2 = compute_frequency_and_psd(signal2, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
+
+
+        psd1_clean = apply_power_law_remove(freqs, psd1, power_law_remove)
+        psd2_clean = apply_power_law_remove(freqs, psd2, power_law_remove)
+
+        psd1_min, psd1_max = np.min(psd1_clean), np.max(psd1_clean)
+        psd1_clean = (psd1_clean - psd1_min) / (psd1_max - psd1_min)
+        
+        psd2_min, psd2_max = np.min(psd2_clean), np.max(psd2_clean)
+        psd2_clean = (psd2_clean - psd2_min) / (psd2_max - psd2_min)
+
+        _, _, Zxx1 = stft(signal1, fs, nperseg=int(nperseg/smoothness), noverlap=noverlap)
+        _, _, Zxx2 = stft(signal2, fs, nperseg=int(nperseg/smoothness), noverlap=noverlap)
+
+        dyad_similarities = np.zeros((len(freqs), len(freqs)))
+        phase_coupling_matrix = np.zeros((len(freqs), len(freqs)))
+
+        for i, f1 in enumerate(freqs):
+            for j, f2 in enumerate(freqs):
+                if f2 != 0:
+                    if metric == 'harmsim':
+                        dyad_similarities[i, j] = dyad_similarity(f1 / f2)
+                    if metric == 'subharm_tension':
+                        _, _, subharm, _ = compute_subharmonic_tension([f1, f2], n_harmonics=n_harms, delta_lim=delta_lim, min_notes=2)
+                        dyad_similarities[i, j] = 1-subharm[0]
+
+                    # Compute the wPLI
+                    cross_spectrum = Zxx1[i] * np.conj(Zxx2[j])
+                    imaginary_cross_spectrum = np.imag(cross_spectrum)
+                    phase_coupling_matrix[i, j] = np.abs(np.mean(imaginary_cross_spectrum)) / np.mean(np.abs(imaginary_cross_spectrum))
+
+        harmonicity_values1 = np.zeros(len(freqs))
+        harmonicity_values2 = np.zeros(len(freqs))
+        harmonicity_values_all = np.zeros(len(freqs))
+        phase_coupling_values1 = np.zeros(len(freqs))
+        phase_coupling_values2 = np.zeros(len(freqs))
+        phase_coupling_values_all = np.zeros(len(freqs))
+
+        total_power = np.sum(psd1_clean) + np.sum(psd2_clean)
+
+        
+        for i in range(len(freqs)):
+            weighted_sum_harmonicity1 = 0
+            weighted_sum_harmonicity2 = 0
+            weighted_sum_harmonicity_all = 0
+            weighted_sum_phase_coupling1 = 0
+            weighted_sum_phase_coupling2 = 0
+            weighted_sum_phase_coupling_all = 0
+            count=0
+            for j in range(len(freqs)):
+                if i != j:
+                    count+=1
+                    weighted_sum_harmonicity1 += (dyad_similarities[i, j] * (psd1_clean[i] * psd2_clean[j]))
+                    weighted_sum_harmonicity2 += (dyad_similarities[i, j] * (psd2_clean[i] * psd1_clean[j]))
+                    weighted_sum_harmonicity_all += (dyad_similarities[i, j] * (psd1_clean[i] * psd2_clean[j]) +
+                                                dyad_similarities[j, i] * (psd1_clean[j] * psd2_clean[i])) / 2
+                    if phase_mode == 'weighted':
+                        weighted_sum_phase_coupling1 += (phase_coupling_matrix[i, j] * (psd1_clean[i] * psd2_clean[j]))
+                        weighted_sum_phase_coupling2 += (phase_coupling_matrix[i, j] * (psd2_clean[i] * psd1_clean[j]))
+                        weighted_sum_phase_coupling_all += (phase_coupling_matrix[i, j] * (psd1_clean[i] * psd2_clean[j]) +
+                                                        phase_coupling_matrix[j, i] * (psd1_clean[j] * psd2_clean[i])) / 2
+                    else:
+                        weighted_sum_phase_coupling1 += phase_coupling_matrix[i, j]
+                        weighted_sum_phase_coupling2 += phase_coupling_matrix[j, i]
+                        weighted_sum_phase_coupling_all += (phase_coupling_matrix[i, j] + phase_coupling_matrix[j, i]) / 2
+            harmonicity_values1[i] = weighted_sum_harmonicity1 / (2 * total_power)
+            harmonicity_values2[i] = weighted_sum_harmonicity2 / (2 * total_power)
+            harmonicity_values_all[i] = weighted_sum_harmonicity_all / (2 * total_power)
+            phase_coupling_values1[i] = weighted_sum_phase_coupling1 / count
+            phase_coupling_values2[i] = weighted_sum_phase_coupling2 / count
+            phase_coupling_values_all[i] = weighted_sum_phase_coupling_all / count
+            
+
+        harmonicity_values1 = gaussian_filter(harmonicity_values1, sigma=smoothness_harm)
+        harmonicity_values2 = gaussian_filter(harmonicity_values2, sigma=smoothness_harm)
+        harmonicity_values_all = gaussian_filter(harmonicity_values_all, sigma=smoothness_harm)
+        phase_coupling_values1 = gaussian_filter(phase_coupling_values1, sigma=smoothness_harm)
+        phase_coupling_values2 = gaussian_filter(phase_coupling_values2, sigma=smoothness_harm)
+        phase_coupling_values_all = gaussian_filter(phase_coupling_values_all, sigma=smoothness_harm)
+
+        # Step 1: Calculate a combined metric for harmonicity and phase-coupling by multiplying normalized values
+        normalized_combined_metric = compute_resonance_values(harmonicity_values_all, phase_coupling_values_all)
+
+        # Find peaks in the spectra
+        harmonicity_peak_frequencies, harm_peak_idx = find_spectral_peaks(harmonicity_values_all, freqs, n_peaks, prominence_threshold=0.1)
+        phase_peak_frequencies, phase_peak_idx = find_spectral_peaks(phase_coupling_values_all, freqs, n_peaks, prominence_threshold=0.0001)
+        resonance_peak_frequencies, res_peak_idx = find_spectral_peaks(normalized_combined_metric, freqs, n_peaks, prominence_threshold=0.01)
+        
+        # Compute spectral flatness and entropy values
+        harmonic_complexity = harmonic_entropy(freqs, harmonicity_values_all, phase_coupling_values_all, normalized_combined_metric)
+        
+        # create dataframe with relevant values
+        df = pd.DataFrame({
+            'harmonicity': [harmonicity_values_all],
+            'phase_coupling': [phase_coupling_values_all],
+            'resonance': [normalized_combined_metric],
+            'harm_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Harmonicity']],
+            'harm_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Harmonicity']],
+            'harm_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Harmonicity']],
+            'harm_spectral_spread': [harmonic_complexity['Spectral Spread']['Harmonicity']],
+            'phase_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Phase Coupling']],
+            'phase_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Phase Coupling']],
+            'phase_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Phase Coupling']],
+            'phase_spectral_spread': [harmonic_complexity['Spectral Spread']['Phase Coupling']],
+            'res_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Resonance']],
+            'res_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Resonance']],
+            'res_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Resonance']],
+            'res_spectral_spread': [harmonic_complexity['Spectral Spread']['Resonance']],
+            'harmonicity_peak_frequencies': [harmonicity_peak_frequencies],
+            'phase_peak_frequencies': [phase_peak_frequencies],
+            'resonance_peak_frequencies': [resonance_peak_frequencies],
+        })
+        
+        df['harmonicity_avg'] = df['harmonicity'].apply(np.mean)
+        df['phase_coupling_avg'] = df['phase_coupling'].apply(np.mean)
+        df['resonance_avg'] = df['resonance'].apply(np.mean)
+        
+        df['harmonicity_peaks_avg'] = df['harmonicity_peak_frequencies'].apply(safe_mean)
+        df['phase_peaks_avg'] = df['phase_peak_frequencies'].apply(safe_mean)
+        df['res_peaks_avg'] = df['resonance_peak_frequencies'].apply(safe_mean)
+
+        df['resonance_max'] = df['resonance'].apply(np.max)
+
+        #save df
+        df['precision'] = precision_hz
+        df['fmin'] = fmin
+        df['fmax'] = fmax
+        df['phase_weighting'] = phase_mode
+        df['smooth_fft'] = smoothness
+        df['smooth_harm'] = smoothness_harm
+        df['fs'] = fs
+        
+        #calculate harmonic similarity between peaks
+        df['phase_harmsim'] = df['phase_peak_frequencies'].apply(peaks_to_harmsim)
+        df['harm_harmsim'] = df['harmonicity_peak_frequencies'].apply(peaks_to_harmsim)
+        df['res_harmsim'] = df['resonance_peak_frequencies'].apply(peaks_to_harmsim)
+        
+        df['harm_harmsim_avg'] = df['harm_harmsim'].apply(safe_mean)
+        df['phase_harmsim_avg'] = df['phase_harmsim'].apply(safe_mean)
+        df['res_harmsim_avg'] = df['res_harmsim'].apply(safe_mean)
+        
+        df['harm_harmsim_max'] = df['harm_harmsim'].apply(safe_max)
+        df['phase_harmsim_max'] = df['phase_harmsim'].apply(safe_max)
+        df['res_harmsim_max'] = df['res_harmsim'].apply(safe_max)
+        
+        
+        if plot is True:
+            fig, (ax1, ax2, ax4) = plt.subplots(nrows=3, figsize=(14, 10))
+
+            ax1.plot(freqs, 10 * np.log10(psd1), color='darkred', label='Spectrum 1')
+            #ax1.scatter(freqs[peaks_psd1], 10 * np.log10(psd1[peaks_psd1]), color='red', marker='o', s=50)  # Add red dots on detected peaks
+            ax1.plot(freqs, 10 * np.log10(psd2), color='darkgoldenrod', label='Spectrum 2')
+            #ax1.scatter(freqs[peaks_psd2], 10 * np.log10(psd2[peaks_psd2]), color='red', marker='o', s=50)  # Add red dots on detected peaks
+            ax1.set_title('Spectra 1 and 2')
+            ax1.set_xlabel('Frequency (Hz)')
+            ax1.set_ylabel('Power (dB)')
+            ax1.legend()
+            ax1.grid()
+
+            ax2.plot(freqs, harmonicity_values1, color='mediumaquamarine', alpha=1, linestyle='dashed')
+            ax2.plot(freqs, harmonicity_values2, color='turquoise', alpha=1, linestyle='dashed')
+            ax2.plot(freqs, harmonicity_values_all, color='darkblue', label='Cross Harmonic Spectrum', linestyle='solid')
+            ax2.plot(freqs[harm_peak_idx], harmonicity_values_all[harm_peak_idx], 'ro', color='darkblue')
+            ax2.set_title('Cross Harmonic and Phase Coupling Spectrum')
+            ax2.set_xlabel('Frequency (Hz)')
+            ax2.set_ylabel('Harmonicity')
+            ax2.legend()
+            ax2.grid()
+            for peak in harmonicity_peak_frequencies:
+                ax2.axvline(peak, color='darkblue', linestyle='--')
+
+            ax3 = ax2.twinx()
+            ax3.plot(freqs, phase_coupling_values1, color='violet', alpha=1, linestyle='dashed')
+            ax3.plot(freqs, phase_coupling_values2, color='mediumorchid', alpha=1, linestyle='dashed')
+            ax3.plot(freqs, phase_coupling_values_all, color='indigo', label='Cross Phase Coupling Spectrum', linestyle='solid')
+            ax3.plot(freqs[phase_peak_idx], phase_coupling_values_all[phase_peak_idx], 'ro', color='indigo')
+            ax3.set_ylabel('Phase Coupling')
+            for peak in phase_peak_frequencies:
+                ax3.axvline(peak, color='darkviolet', linestyle='--')
+
+            ax4.plot(freqs, normalized_combined_metric, color='deeppink', label='Resonance')
+            ax4.set_title('Resonance')
+            ax4.set_xlabel('Frequency (Hz)')
+            ax4.set_ylabel('Combined Metric')
+            ax4.plot(freqs[res_peak_idx], normalized_combined_metric[res_peak_idx], 'ro', color='deeppink')
+            #ax4.legend()
+            ax4.grid()
+            for peak in resonance_peak_frequencies:
+                ax4.axvline(peak, color='black', linestyle='--')
+            
+            # Add the legend for the second y-axis (phase_coupling) plot
+            lines, labels = ax2.get_legend_handles_labels()
+            lines2, labels2 = ax3.get_legend_handles_labels()
+            ax2.legend(lines + lines2, labels + labels2, loc='upper right')
+
+            plt.tight_layout()
+            if save_fig is True:
+                plt.savefig(f'{savename}.png', dpi=300)
+            plt.show()
+        
+        return df
 
 '''    def compute_harmonicity_metric_for_IMFs(data, sf, metric='harmsim', delta_lim=20, nIMFs=5, FREQ_BANDS=None):
         # Apply EMD to each channel

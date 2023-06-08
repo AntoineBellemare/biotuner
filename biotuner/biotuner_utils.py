@@ -19,6 +19,8 @@ from functools import reduce
 import math
 from collections import Counter
 from scipy.fftpack import rfft, irfft
+from scipy.signal import detrend, welch, find_peaks, stft
+from scipy.optimize import curve_fit
 from pytuning.tuning_tables import create_scala_tuning
 import os
 os.environ['SDL_AUDIODRIVER'] = 'directsound'
@@ -1602,6 +1604,120 @@ def chunk_ts(data, sf, overlap=10, precision=1):
         i = i+chunk_size-overlap_samp
     return pairs
 
+
+def string_to_list(string):
+    # Remove the brackets and extra spaces, then split the string into elements
+    str_list = string.strip('[]').split()
+
+    # Convert the elements to floats
+    float_list = [float(i) for i in str_list]
+    return float_list
+
+def safe_max(lst):
+    if isinstance(lst, (list, np.ndarray)):
+        return np.max(lst) if len(lst) > 0 else np.nan
+    elif isinstance(lst, float):
+        return lst  # return the float itself
+    else:
+        return np.nan  # or return any other value you see fit for non-list and non-float entries
+    
+def safe_mean(lst):
+    if isinstance(lst, str):
+        lst = string_to_list(lst)
+    if isinstance(lst, (list, np.ndarray)):
+        return np.mean(lst) if len(lst) > 0 else np.nan
+    elif isinstance(lst, float):
+        return lst  # return the float itself if only one number is present
+    else:
+        return np.nan  # or return any other value you see fit for non-list and non-float entries
+    
+def compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=None, fmax=None):
+    """
+    Compute the frequencies and power spectral density (PSD) of a signal using Welch method.
+
+    Parameters
+    ----------
+    signal : ndarray
+        Input signal.
+    precision_hz : float
+        Precision in Hz for the frequencies.
+    smoothness : float
+        Smoothing factor for the PSD.
+    fs : float
+        Sampling frequency of the signal.
+    noverlap : int
+        Number of points to overlap between segments.
+    fmin : float, optional
+        Minimum frequency to compute.
+    fmax : float, optional
+        Maximum frequency to compute.
+
+    Returns
+    -------
+    freqs : ndarray
+        Frequencies for which the PSD is computed.
+    psd : ndarray
+        Power spectral density of the signal.
+    """
+    nperseg = int(fs / precision_hz)
+    freqs, psd = welch(signal, fs, nperseg=int(nperseg/smoothness), nfft=nperseg, noverlap=noverlap)
+    if fmin is not None or fmax is not None:
+        mask = np.ones(freqs.shape, dtype=bool)
+        if fmin is not None:
+            mask &= (freqs >= fmin)
+        if fmax is not None:
+            mask &= (freqs <= fmax)
+        freqs = freqs[mask]
+        psd = psd[mask]
+    return freqs, psd
+
+
+def power_law(x, a, b):
+    """
+    Define a power law function.
+
+    Parameters
+    ----------
+    x : ndarray
+        Independent variable.
+    a : float
+        Scaling factor.
+    b : float
+        Power.
+
+    Returns
+    -------
+    ndarray
+        Values after applying power law function.
+    """
+    return a * (x ** b)
+
+
+def apply_power_law_remove(freqs, psd, power_law_remove):
+    """
+    Apply or not a power law to remove it from PSD.
+
+    Parameters
+    ----------
+    freqs : ndarray
+        Frequencies for which the PSD is computed.
+    psd : ndarray
+        Power spectral density of the signal.
+    power_law_remove : bool
+        If True, apply the power law. Otherwise, return the input PSD.
+
+    Returns
+    -------
+    ndarray
+        PSD after potential power law removal.
+    """
+    if power_law_remove:
+        popt, _ = curve_fit(power_law, freqs, psd, maxfev=5000)
+        return psd - power_law(freqs, *popt)
+    else:
+        return psd
+    
+    
 def __get_norm(norm):
     ''''''
     if norm == 0 or norm is None:

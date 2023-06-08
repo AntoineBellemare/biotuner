@@ -5,7 +5,7 @@ import biotuner
 from pytuning.utilities import normalize_interval
 from numpy import log2
 import sympy as sp
-from biotuner.biotuner_utils import scale2frac, Print3Smallest, compute_peak_ratios
+from biotuner.biotuner_utils import scale2frac, Print3Smallest, compute_peak_ratios, string_to_list
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -177,7 +177,17 @@ def dyad_similarity(ratio):
     z = ((x + y - 1) / (x * y)) * 100
     return z
 
-
+def peaks_to_harmsim(peaks):
+    # check if peaks is string
+    if isinstance(peaks, str):
+        peaks = string_to_list(peaks)
+    # check if list is empty
+    if len(peaks) == 0:
+        return np.nan
+    else:
+        ratios = compute_peak_ratios(peaks)
+        return ratios2harmsim(ratios)
+    
 """TUNING METRICS"""
 
 
@@ -918,3 +928,86 @@ def consonance_peaks(peaks, limit, limit_pairs=True):
     cons_peaks = [np.round(c, 2) for c in cons_peaks]
     cons_peaks = list(set(cons_peaks))
     return consonance, cons_pairs, cons_peaks, np.average(cons_tot)
+
+
+def spectral_flatness(harmonicity_values):
+    """
+    Calculate the spectral flatness of a signal.
+
+    Parameters
+    ----------
+    harmonicity_values : ndarray
+        Harmonicity values of the signal.
+
+    Returns
+    -------
+    float
+        Spectral flatness of the signal.
+    """
+    geometric_mean = np.exp(np.mean(np.log(harmonicity_values + np.finfo(float).eps)))
+    arithmetic_mean = np.mean(harmonicity_values)
+    return geometric_mean / arithmetic_mean
+
+
+def spectral_entropy(harmonicity_values):
+    """
+    Calculate the spectral entropy of a signal.
+
+    Parameters
+    ----------
+    harmonicity_values : ndarray
+        Harmonicity values of the signal.
+
+    Returns
+    -------
+    float
+        Spectral entropy of the signal.
+    """
+    normalized_harmonicity = harmonicity_values / np.sum(harmonicity_values)
+    entropy = -np.sum(normalized_harmonicity * np.log2(normalized_harmonicity + np.finfo(float).eps))
+    return entropy
+
+def spectral_spread(freqs, psd):
+    """
+    Calculate the spectral spread of a signal.
+
+    Parameters
+    ----------
+    freqs : ndarray
+        Frequencies for which the PSD is computed.
+    psd : ndarray
+        Power spectral density of the signal.
+
+    Returns
+    -------
+    float
+        Spectral spread of the signal.
+    """
+    # Normalize PSD
+    psd_norm = psd / np.sum(psd)
+
+    # Calculate spectral centroid
+    spectral_centroid = np.sum(freqs * psd_norm)
+
+    # Calculate spectral spread
+    spectral_spread = np.sqrt(np.sum(((freqs - spectral_centroid) ** 2) * psd_norm))
+
+    return spectral_spread
+
+def higuchi_fd(data, kmax):
+    """ Compute Higuchi Fractal Dimension of a time series. kmax is max. delay (should be < len(data)/3) """
+    L = []
+    x = []
+    N = len(data)
+    for k in range(1,kmax):
+        Lk = 0
+        for m in range(0,k):
+            Lmk = 0
+            for i in range(1,int((N-m)/k)):
+                Lmk += abs(data[m+i*k] - data[m+i*k-k])
+            Lmk = Lmk*(N - 1)/(((N - m)/ k)* k)
+            Lk += Lmk
+        L.append(np.log(Lk/(m+1)))
+        x.append([np.log(1.0/ k), 1])
+    (p, _, _, _) = np.linalg.lstsq(x, L, rcond=None)  # Use rcond=None to silence future warning
+    return p[0]
