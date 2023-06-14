@@ -821,10 +821,13 @@ def _polycoherence_2d(
     if norm is not None:
         coh = np.abs(coh, out=coh)
         coh **= 2
+        eps = 1e-10  # Small constant to prevent division by zero
+        temp2 = temp2 + eps  # Adding small constant to temp2  
         temp2 *= np.mean(np.abs(spec[:, sumind]) ** norm2, axis=0)
         coh /= temp2
         coh **= 0.5
     return freq[ind1], freq[ind2], coh
+
 
 
 def polycoherence(data, *args, dim=2, **kwargs):

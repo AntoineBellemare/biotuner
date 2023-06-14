@@ -490,9 +490,12 @@ def timepoint_consonance(data,
     out = []
     positions = []
     for count, peaks in enumerate(data):
-        peaks = [x for x in peaks if x >= 0]
-        result = process_peaks(method, peaks, limit, min_notes)
-        out.append(result)
+        peaks = [x for x in peaks if x >= 0.1]
+        if len(peaks) == 0:
+            result = []
+        else:
+            result = process_peaks(method, peaks, limit, min_notes)
+            out.append(result)
         if result:
             positions.append(count)
 

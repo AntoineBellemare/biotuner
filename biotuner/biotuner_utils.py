@@ -259,6 +259,8 @@ def chords_to_ratios(chords, harm_limit=2, spread=True):
                         chord[note] = chord[note] / 2
         chord = sorted([np.round(n, 1) for n in chord])
         chord = [int(n * 10) for n in chord]
+        # remove duplicates
+        chord = list(dict.fromkeys(chord))
         gcd_chord = 2  # arbitrary number that is higher than 1
         while gcd_chord > 1:
             gcd_chord = gcd(*chord)
@@ -1175,8 +1177,6 @@ def EMD_to_spectromorph(
 """-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------"""
 
 
-
-
 def generate_signal(
     sf, time_end, freqs, amps, show=False, theta=0, color="blue"
      ):
@@ -1192,26 +1192,6 @@ def generate_signal(
         plt.plot(time, sine_tot, color=color)
     return sine_tot
 
-
-def sine_wave(hz, peak, n_samples=sample_rate):
-    """Compute N samples of a sine wave with given frequency and peak amplitude.
-    Defaults to one second.
-    """
-    length = sample_rate / float(hz)
-    omega = np.pi * 2 / length
-    xvalues = np.arange(int(length)) * omega
-    onecycle = peak * np.sin(xvalues)
-    return np.resize(onecycle, (n_samples,)).astype(np.int16)
-
-
-def square_wave(hz, peak, duty_cycle=0.5, n_samples=sample_rate):
-    """Compute N samples of a sine wave with given frequency and peak amplitude.
-    Defaults to one second.
-    """
-    t = np.linspace(0, 1, 500 * 440 / hz, endpoint=False)
-    wave = scipy.signal.square(2 * np.pi * 5 * t, duty=duty_cycle)
-    wave = np.resize(wave, (n_samples,))
-    return peak / 2 * wave.astype(np.int16)
 
 
 def smooth(x, window_len=11, window="hanning"):
@@ -1259,68 +1239,83 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     return y
 
 
-def make_chord(hz, ratios, waveform=None):
-    """Make a chord based on a list of frequency ratios
-       using a given waveform (defaults to a square wave).
-    """
-    sampling = 4096
-    if not waveform:
-        waveform = square_wave
-    chord = waveform(hz, sampling)
-    for r in ratios[1:]:
-        chord = sum([chord, waveform(hz * r / ratios[0], sampling)])
-    return chord
-
-
-
 def major_triad(hz):
     return make_chord(hz, [4, 5, 6])
 
 pygame_lib = None
 
+def make_chord(hz, length=1):
+    sampling=44100  # this is your sampling rate
+    t = np.linspace(0, length, int(sampling * length), False)
+    chord = np.sin(hz * t * 2 * np.pi)
+    chord *= 4096  # Adjust volume
+    # Expand chord to 2D array for stereo compatibility
+    chord_stereo = np.vstack((chord, chord)).T
+    # Ensure the array is C-contiguous
+    chord_stereo = np.ascontiguousarray(chord_stereo)
+    return chord_stereo.astype(np.int16)
 
-def listen_scale(scale, fund, length):
+def play_chord(chord):
     global pygame_lib
     if pygame_lib is None:
         import pygame
         pygame_lib = pygame
-    print("Scale:", scale)
+    pygame_lib.mixer.init(frequency=44100, size=-16, channels=2)  # Initialize as stereo
+    sound = pygame_lib.sndarray.make_sound(chord)
+    sound.play()
+    
+    
+def listen_chords(chords, mult=1, duration=1):
+    global pygame_lib
+    if pygame_lib is None:
+        import pygame
+        pygame_lib = pygame   
     pygame_lib.init()
-    pygame_lib.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+    pygame_lib.mixer.init(frequency=44100, size=-16, channels=1, buffer=512)
+    for c in chords:
+        hz = c[0] * mult  # The fundamental frequency
+        # The remaining entries in the list are ratios
+        ratios = [i / c[0] for i in c]
+        
+        # Create a chord based on the ratios and fundamental frequency
+        chord = np.sum([make_chord(hz * r, duration) for r in ratios], axis=0)
+        
+        # Ensure the array is C-contiguous
+        chord = np.ascontiguousarray(chord)
+        
+        # Play the chord
+        play_chord(chord)
+        
+        # Wait for the duration of the chord before playing the next one
+        pygame_lib.time.wait(int(duration * 1000))
+
+
+def listen_scale(scale, fund, duration=1):
+    global pygame_lib
+    if pygame_lib is None:
+        import pygame
+        pygame_lib = pygame   
+    pygame_lib.init()
+    pygame_lib.mixer.init(frequency=44100, size=-16, channels=1)
+    
+    # Add 1 at the beginning of the scale to include the fundamental frequency
     scale = [1] + scale
+    
     for s in scale:
         freq = fund * s
-        print(freq)
-        note = make_chord(freq, [1], waveform=square_wave)
-        sound = pygame_lib.sndarray.make_sound(note)
-        sound.play(loops=0, maxtime=0, fade_ms=0)
-        pygame_lib.time.wait(int(sound.get_length() * length))
+        
+        # Create a note based on the frequency
+        note = make_chord(freq, duration)
+        
+        # Ensure the array is C-contiguous
+        note = np.ascontiguousarray(note)
+        
+        # Play the note
+        play_chord(note)
+        
+        # Wait for the duration of the note before playing the next one
+        pygame_lib.time.wait(int(duration * 1000))
 
-
-def listen_chords(chords, mult=10, length=500):
-    """_summary_
-
-    Parameters
-    ----------
-    chords : _type_
-        _description_
-    mult : int, optional
-        _description_, by default 10
-    length : int, optional
-        _description_, by default 500
-    """    
-    print("Chords:", chords)
-    global pygame_lib
-    if pygame_lib is None:
-        import pygame
-        import pygame.sndarray
-        pygame_lib = pygame
-    for c in chords:
-        c = [i * mult for i in c]
-        chord = make_chord(c[0], c[1:], waveform=square_wave)
-        sound = pygame_lib.sndarray.make_sound(chord)
-        sound.play(loops=0, maxtime=0, fade_ms=0)
-        pygame_lib.time.wait(int(sound.get_length() * length))
 
         
 
@@ -1387,14 +1382,19 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
                 # Convert frequency to MIDI note
                 midi_note = 69 + 12*math.log2(frequency/440)
                 rounded_midi_note = int(midi_note)
-                rounded_midi_frequency = 440 * 2**((rounded_midi_note - 69)/12)
-                #pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
-                pitch_bend = int((midi_note - rounded_midi_note) * (8192))
-                midi_notes.append(rounded_midi_note)
-                pitchbends.append(pitch_bend)
+                # Check the limits of the MIDI note
+                if 0 < rounded_midi_note < 127:
+                    rounded_midi_frequency = 440 * 2**((rounded_midi_note - 69)/12)
+                    #pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
+                    pitch_bend = int((midi_note - rounded_midi_note) * (8192))
+                    midi_notes.append(rounded_midi_note)
+                    pitchbends.append(pitch_bend)
+                else:
+                    continue
             midi_chords.append(midi_notes)
             midi_pitchbends.append(pitchbends)
         return midi_chords, midi_pitchbends
+
     
     midi_chords, pitchbends = frequency_to_midi(chords)
 
@@ -1414,7 +1414,7 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
 
             # Add a pitch bend message for each note in the chord
             if microtonal is True:
-                print('pitchweel', pb)
+                #print('pitchweel', pb)
                 track.append(Message('pitchwheel', pitch=pb, channel=i, time=current_time))
 
             track.append(Message('note_on', note=note, velocity=64, channel=i, time=current_time))

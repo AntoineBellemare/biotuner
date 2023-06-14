@@ -1775,8 +1775,20 @@ class compute_biotuner(object):
                                                              delta_lim=delta_lim,
                                                              min_notes=2)
                 harm_ = 1 - harm_
-            idx1 = list(freq1).index(pair[0])
-            idx2 = list(freq1).index(pair[1])
+            # Determine the number of decimal places you want to consider
+            n_decimals = 1 
+
+            # Convert freq1 to a list of rounded values
+            freq1_rounded = [round(f, n_decimals) for f in freq1]
+
+            # Round the pair values
+            pair_rounded = (round(pair[0], n_decimals), round(pair[1], n_decimals))
+
+            # Now use the rounded values to find the indices
+            idx1 = freq1_rounded.index(pair_rounded[0])
+            idx2 = freq1_rounded.index(pair_rounded[1])
+            #idx1 = (np.abs(np.array(freq1) - pair[0])).argmin()
+            #idx2 = (np.abs(np.array(freq1) - pair[1])).argmin()
             bicor_ = np.real(bispec[idx1][idx2])
 
             if bicor_ < 1:
