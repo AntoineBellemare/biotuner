@@ -97,7 +97,7 @@ def invert_ratio(ratio: float, n_steps_down: int, limit_denom: int = 64):
     Returns
     --------
     Tuple [sp.Rational, float]
-    
+
         - The resulting fraction after dividing 1 by the ratio and then dividing it n_steps_down times.
         - The resulting float after dividing 1 by the ratio and then dividing it n_steps_down times.
     """
@@ -105,7 +105,6 @@ def invert_ratio(ratio: float, n_steps_down: int, limit_denom: int = 64):
     i = 2
     if n_steps_down >= 1:
         while i <= n_steps_down:
-
             inverted_ratio = inverted_ratio / ratio
             i += 1
 
@@ -171,7 +170,9 @@ def binome2euclid(binome, n_steps_down=1, limit_denom=64):
     )
 
 
-def consonant_euclid(scale, n_steps_down=2, limit_denom=64, limit_cons=0.1, limit_denom_final=16):
+def consonant_euclid(
+    scale, n_steps_down=2, limit_denom=64, limit_cons=0.1, limit_denom_final=16
+):
     """
     Computes Euclidean rhythms and consonant steps between them based on a given scale.
 
@@ -226,7 +227,6 @@ def consonant_euclid(scale, n_steps_down=2, limit_denom=64, limit_cons=0.1, limi
     for p in pairs:
         euclid, fracs, new_ratios = binome2euclid(p, n_steps_down, limit_denom)
         if new_ratios[0][1] in cons_steps:
-
             try:
                 euclid_final.append(euclid[0])
                 euclid_final.append(
@@ -305,7 +305,7 @@ def bjorklund(steps, pulses):
     array([1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0])
 
     """
- 
+
     steps = int(steps)
     pulses = int(pulses)
     if pulses > steps:
@@ -345,19 +345,19 @@ def bjorklund(steps, pulses):
 def interval_vec_to_string(interval_vectors):
     """
     Convert a list of interval vectors to a list of string representations.
-    
+
     Parameters
     ----------
     interval_vectors : list of array_like
         A list of interval vectors, where each interval vector is an array_like object representing
         the number of steps between each hit.
-        
+
     Returns
     -------
     strings : list of str
         A list of string representations of the interval vectors, where each string is of the form
         'E(n,k)', where n is the number of hits and k is the number of steps.
-    
+
     Examples
     --------
     >>> interval_vectors = [[2, 2, 2, 2, 1], [3, 3, 1]]
@@ -419,14 +419,14 @@ def euclid_long_to_short(pattern):
     Parameters
     ----------
     pattern : list of int
-        The long Euclidean rhythm pattern, represented as a list of integers 
+        The long Euclidean rhythm pattern, represented as a list of integers
         where 1 represents a hit and 0 represents a rest.
 
     Returns
     -------
     list of int
-        A list with two integers representing the short representation of the 
-        rhythm. The first integer represents the number of hits in the rhythm 
+        A list with two integers representing the short representation of the
+        rhythm. The first integer represents the number of hits in the rhythm
         and the second integer represents the total number of steps.
 
     Examples
