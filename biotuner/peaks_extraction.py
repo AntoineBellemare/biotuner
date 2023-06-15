@@ -279,6 +279,7 @@ def extract_welch_peaks(
     >>> peaks
     [1.5, 5.5, 9.0, 15.0, 22.5, 32.5]
     """
+   
     if max_freq is None:
         max_freq = sf / 2
     if nperseg is None:
@@ -468,6 +469,7 @@ def HilbertHuang1D(
     precision=0.1,
     bin_spread="log",
     smooth_sigma=None,
+    keep_first_IMF=False
 ):
     """
     The Hilbert-Huang transform provides a description of how the energy
@@ -521,7 +523,11 @@ def HilbertHuang1D(
     """
     IMFs = EMD_eeg(data, method="EMD")
     IMFs = np.moveaxis(IMFs, 0, 1)
-    IP, IF, IA = emd.spectra.frequency_transform(IMFs[:, 1:nIMFs + 1], sf, "nht")
+    if keep_first_IMF is True:
+        IMFs = IMFs[:, 0: nIMFs + 1]
+    else:
+        IMFs = IMFs[:, 1: nIMFs + 1]
+    IP, IF, IA = emd.spectra.frequency_transform(IMFs, sf, "nht")
     low = min_freq
     high = max_freq
     range_hh = int(high - low)

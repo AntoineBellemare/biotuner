@@ -258,6 +258,8 @@ class compute_biotuner(object):
         octave=2,
         harm_limit=128,
         n_peaks=5,
+        prominence=1.0,
+        rel_height=0.7,
         nIMFs=5,
         graph=False,
         nperseg=None,
@@ -317,6 +319,10 @@ class compute_biotuner(object):
             Number of peaks when using 'FOOOF' and 'cepstrum',
             and 'harmonic_recurrence' functions.
             Peaks are chosen based on their amplitude.
+        prominence: float, default=1.0
+            Minimum prominence of peaks.
+        rel_height: float, default=0.7
+            Minimum relative height of peaks.
         nIMFs: int, default=5
             Number of intrinsic mode functions to keep when using
             'EEMD' or 'EMD' peaks function.
@@ -396,6 +402,8 @@ class compute_biotuner(object):
             min_harms=min_harms,
             harm_limit=harm_limit,
             n_peaks=n_peaks,
+            prominence=prominence,
+            rel_height=rel_height,
             graph=graph,
             nfft=nfft,
             nperseg=nperseg,
@@ -1204,6 +1212,8 @@ class compute_biotuner(object):
         min_harms=2,
         harm_limit=128,
         n_peaks=5,
+        prominence=1.0,
+        rel_height=0.7,
         nIMFs=None,
         graph=False,
         noverlap=None,
@@ -1248,6 +1258,11 @@ class compute_biotuner(object):
             Number of peaks when using 'FOOOF' and 'cepstrum',
             and 'harmonic_recurrence' functions.
             Peaks are chosen based on their amplitude.
+        prominence: float, default=1.0
+            Minimum prominence value to be considered as a peak
+            Used with 'harmonic_recurrence' and 'HH1D_max' peaks functions
+        rel_height: float, default=0.7
+            Minimum relative height value to be considered as a peak
         nIMFs: int, default=None
             number of intrinsic mode functions to keep when using
             'EEMD' or 'EMD' peaks function.
@@ -1333,7 +1348,9 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
-                smooth=smooth_fft
+                smooth=smooth_fft,
+                prominence=prominence,
+                rel_height=rel_height,
             )
             FREQ_BANDS = alpha2bands(p[0])
             self.FREQ_BANDS = FREQ_BANDS
@@ -1373,7 +1390,9 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
-                smooth=smooth_fft
+                smooth=smooth_fft,
+                prominence=prominence,
+                rel_height=rel_height,
             )
             if graph is True:
                 graph_psd_peaks(
@@ -1416,47 +1435,51 @@ class compute_biotuner(object):
             if keep_first_IMF is False:
                 self.IMFs = IMFs[1: nIMFs + 1]
                 IMFs = IMFs[1: nIMFs + 1]
-            try:
-                peaks_temp = []
-                amps_temp = []
-                freqs_all = []
-                psd_all = []
-                for imf in range(len(IMFs)):
-                    p, a, freqs, psd = extract_welch_peaks(
-                        IMFs[imf],
-                        sf=sf,
-                        precision=precision,
-                        average=average,
-                        extended_returns=True,
-                        out_type="single",
-                        nperseg=nperseg,
-                        noverlap=noverlap,
-                        nfft=nfft,
-                        smooth=smooth_fft
-                    )
-                    #self.freqs = freqs
-                    freqs_all.append(freqs)
-                    psd_all.append(psd)
-                    peaks_temp.append(p)
-                    amps_temp.append(a)
-                peaks_temp = np.flip(peaks_temp)
-                amps_temp = np.flip(amps_temp)
-                peaks_temp = peaks_temp[-n_peaks:]
-                _, _, self.freqs, self.psd = extract_welch_peaks(
-                                                                    data,
-                                                                    sf=sf,
-                                                                    FREQ_BANDS=FREQ_BANDS,
-                                                                    out_type="bands",
-                                                                    precision=precision,
-                                                                    average=average,
-                                                                    extended_returns=True,
-                                                                    nperseg=nperseg,
-                                                                    noverlap=noverlap,
-                                                                    nfft=nfft,
-                                                                    smooth=smooth_fft
-                                                                )
-            except:
-                pass
+            #try:
+            peaks_temp = []
+            amps_temp = []
+            freqs_all = []
+            psd_all = []
+            for imf in range(len(IMFs)):
+                p, a, freqs, psd = extract_welch_peaks(
+                    IMFs[imf],
+                    sf=sf,
+                    precision=precision,
+                    average=average,
+                    extended_returns=True,
+                    out_type="single",
+                    nperseg=nperseg,
+                    noverlap=noverlap,
+                    nfft=nfft,
+                    smooth=smooth_fft,
+                    prominence=prominence,
+                    rel_height=rel_height,
+                )
+                #self.freqs = freqs
+                freqs_all.append(freqs)
+                psd_all.append(psd)
+                peaks_temp.append(p)
+                amps_temp.append(a)
+            peaks_temp = np.flip(peaks_temp)
+            amps_temp = np.flip(amps_temp)
+            peaks_temp = peaks_temp[-n_peaks:]
+            _, _, self.freqs, self.psd = extract_welch_peaks(
+                                                                data,
+                                                                sf=sf,
+                                                                FREQ_BANDS=FREQ_BANDS,
+                                                                out_type="bands",
+                                                                precision=precision,
+                                                                average=average,
+                                                                extended_returns=True,
+                                                                nperseg=nperseg,
+                                                                noverlap=noverlap,
+                                                                nfft=nfft,
+                                                                smooth=smooth_fft,
+                                                                prominence=prominence,
+                                                                rel_height=rel_height
+                                                            )
+            #except:
+            #    pass
             if graph is True:
                 '''graphEMD_welch(
                     freqs_all,
@@ -1471,9 +1494,13 @@ class compute_biotuner(object):
                     min_freq=min_freq,
                     max_freq=max_freq,
                 )'''
-                EMD_PSD_graph(self.data, self.IMFs, peaks_temp, spectro='Euler', bands = None, xmin=min_freq, xmax=max_freq,
-                                  compare = True, name = '', nfft=nfft, nperseg=nperseg, noverlap=noverlap, sf=self.sf,
-                                  freqs_all=freqs_all, psd_all=psd_all, max_freq=max_freq, precision=precision)
+                graphEMD_welch(freqs_all, psd_all, peaks_temp, self.data, FREQ_BANDS,
+                            sf, nfft, nperseg, noverlap, min_freq=1,
+                            max_freq=60, precision=0.5)
+                
+                #(self.data, self.IMFs, peaks_temp, spectro='Euler', bands = None, xmin=min_freq, xmax=max_freq,
+                #                  compare = True, name = '', nfft=nfft, nperseg=nperseg, noverlap=noverlap, sf=self.sf,
+                #                  freqs_all=freqs_all, psd_all=psd_all, max_freq=max_freq, precision=precision)
                 #EMD_PSD_graph(peaks_temp, IMFs, freqs_all, psd_all, spectro='Euler', bands=None, xmin=1, xmax=70, plot_type = 'line',
                 #              compare=True, input_data='EEG', name='',sf=self.sf,
                 #              raw_data=self.data, precision=precision, noverlap=noverlap, save=False)
@@ -1530,7 +1557,8 @@ class compute_biotuner(object):
                 max_freq=max_freq,
                 precision=precision,
                 bin_spread="log",
-                smooth_sigma=smooth_sigma
+                smooth_sigma=smooth_sigma,
+                keep_first_IMF=keep_first_IMF
             )
             self.IF = IF
         # if peaks_function == 'HH1D_weightAVG':
@@ -1572,7 +1600,9 @@ class compute_biotuner(object):
                 noverlap=noverlap,
                 nfft=nfft,
                 min_freq=min_freq,
-                smooth=smooth_fft
+                smooth=smooth_fft,
+                prominence=prominence,
+                rel_height=rel_height
             )
 
             (
@@ -1605,7 +1635,7 @@ class compute_biotuner(object):
                     graph_harm_peaks(self.freqs, self.psd,
                                      harm_peaks_fit, min_freq,
                                      max_freq, color='black',
-                                     method=peaks_function, save=False,
+                                     save=False,
                                      figname='test')
             except ValueError:
                 print('No peaks were detected. Consider increasing precision or number of harmonics')
@@ -1622,7 +1652,9 @@ class compute_biotuner(object):
                 noverlap=noverlap,
                 nfft=nfft,
                 min_freq=min_freq,
-                smooth=smooth_fft
+                smooth=smooth_fft,
+                prominence=prominence,
+                rel_height=rel_height
             )
             IMC, self.EIMC_all, n = endogenous_intermodulations(
                 p, a, order=EIMC_order, min_IMs=min_IMs
