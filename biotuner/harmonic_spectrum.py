@@ -153,6 +153,49 @@ def compute_resonance_values(harmonicity_values, phase_coupling_values):
     return resonance_values
 
 def find_spectral_peaks(values, freqs, n_peaks, prominence_threshold=0.5):
+    """
+    Identify the prominent spectral peaks in a frequency spectrum.
+
+    This function uses the peak prominence to select the most notable peaks,
+    and returns their frequencies and indices. Prominence is a measure of how 
+    much a peak stands out due to its intrinsic height and its location relative
+    to other peaks.
+
+    Parameters
+    ----------
+    values : array_like
+        1-D array of values for the frequency spectrum.
+
+    freqs : array_like
+        1-D array of frequencies corresponding to the values in 'values'.
+
+    n_peaks : int
+        The number of top prominent peaks to return.
+
+    prominence_threshold : float, default=0.5
+        The minimum prominence a peak must have to be considered notable. 
+        Peaks with a prominence less than this value will be ignored.
+
+    Returns
+    -------
+    peak_frequencies : ndarray
+        Frequencies of the 'n_peaks' most prominent peaks.
+
+    prominent_peaks : ndarray
+        Indices in 'values' and 'freqs' of the 'n_peaks' most prominent peaks.
+
+    See Also
+    --------
+    scipy.signal.find_peaks
+    scipy.signal.peak_prominences
+
+    Examples
+    --------
+    >>> values = np.array([0, 1, 0, 2, 0, 3, 0, 2, 0, 1, 0])
+    >>> freqs = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110])
+    >>> find_spectral_peaks(values, freqs, n_peaks=3)
+    (array([60, 40, 80]), array([5, 3, 7]))
+    """
     # Find harmonicity peaks
     peaks, _ = find_peaks(values)
     prominences = peak_prominences(values, peaks)[0]
@@ -169,6 +212,40 @@ def find_spectral_peaks(values, freqs, n_peaks, prominence_threshold=0.5):
 
 
 def harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance_values):
+    """
+    Compute spectral features and Higuchi Fractal Dimension of Harmonicity, Phase Coupling, and Resonance spectra.
+
+    This function calculates several spectral properties: flatness, entropy, spread, and Higuchi Fractal Dimension 
+    for three input spectra: Harmonicity, Phase Coupling, and Resonance. Results are returned as a pandas DataFrame.
+
+    Parameters
+    ----------
+    freqs : array_like
+        1-D array of frequencies common for all the spectra.
+
+    harmonicity_values : array_like
+        1-D array of spectral values for the Harmonicity spectrum.
+
+    phase_coupling_values : array_like
+        1-D array of spectral values for the Phase Coupling spectrum.
+
+    resonance_values : array_like
+        1-D array of spectral values for the Resonance spectrum.
+
+    Returns
+    -------
+    harmonic_complexity : DataFrame
+        A pandas DataFrame with spectral flatness, entropy, spread, and Higuchi Fractal Dimension
+        for each of the Harmonicity, Phase Coupling, and Resonance spectra.
+
+    See Also
+    --------
+    scipy.stats.mstats.gmean : Used to compute spectral flatness.
+    scipy.stats.entropy : Used to compute spectral entropy.
+    scipy.integrate.simps : Used to compute spectral spread.
+    nolds.hfd : Used to compute Higuchi Fractal Dimension
+    """
+
     # Measure entropies of the harmonic, phase coupling, and resonance spectra
     SpecFlat_harmonicity = spectral_flatness(harmonicity_values)
     SpecFlat_phase_coupling = spectral_flatness(phase_coupling_values)
@@ -198,10 +275,67 @@ def harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance
     return harmonic_complexity
 
 
-def compute_global_harmonicity(signal, precision_hz, fmin=None, fmax=None, noverlap=1, fs=44100, power_law_remove=False,
-                               n_peaks=5, metric='harmsim', n_harms=10, delta_lim=0.1, min_notes=2, plot=False, smoothness=1,
+def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
+                               n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
                                smoothness_harm=1, save=False, savename='', phase_mode=None):
+    """
+    Compute global harmonicity, phase coupling, and resonance characteristics of a signal.
 
+    This function computes the Power Spectral Density (PSD) of the signal, applies power law removal if required,
+    calculates the phase matrix, computes dyad similarities and phase couplings, calculates harmonicity,
+    phase coupling and resonance values, identifies spectral peaks, and returns a dataframe summarizing these metrics.
+
+    Parameters
+    ----------
+    signal : array_like
+        1-D input signal.
+    precision_hz : float
+        Frequency precision for computing spectra.
+    fmin : float, default=1
+        Minimum frequency to consider in the spectral analysis.
+    fmax : float, default=30
+        Maximum frequency to consider in the spectral analysis.
+    noverlap : int, default=1
+        Number of points of overlap between segments for PSD computation.
+    fs : int, default=1000
+        Sampling frequency.
+    power_law_remove : bool, default=False
+        If True, applies power law removal to the PSD.
+    n_peaks : int, default=5
+        Number of spectral peaks to identify.
+    metric : str, default='harmsim'
+        Method for computing dyad similarity.
+        Options are:
+            'harmsim' : Harmonic similarity
+            'subharm_tension' : Subharmonic tension
+    n_harms : int, default=10
+        Number of harmonics to consider in dyad similarity computation.
+    delta_lim : float, default=0.1
+        Limit in ms used when metric is 'subharm_tension'.
+    min_notes : int, default=2
+        Minimum number of notes for dyad similarity computation.
+    plot : bool, default=False
+        If True, plots the resulting spectra.
+    smoothness : int, default=1
+        Smoothing factor applied to the PSD before computing spectra.
+    smoothness_harm : int, default=1
+        Smoothing factor applied to harmonicity values.
+    save : bool, default=False
+        If True, saves the plot as a .png file.
+    savename : str, default=''
+        Name for the saved plot file.
+    phase_mode : str, default=None
+        Method for weighting phase coupling computation. Options are 'weighted' and 'None'.
+
+    Returns
+    -------
+    df : DataFrame
+        A DataFrame containing computed harmonicity, phase coupling, and resonance values, spectral flatness,
+        entropy, Higushi Fractal Dimension, and spectral spread for each of the three spectra (harmonicity,
+        phase coupling, resonance). Also includes average values and maximum values for these metrics, peak frequencies
+        for each spectrum, and 'harmsim' values for peak frequencies.
+
+        """
     # Perform initial operations and get cleaned PSD
     freqs, psd = compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
     psd_clean = apply_power_law_remove(freqs, psd, power_law_remove)
