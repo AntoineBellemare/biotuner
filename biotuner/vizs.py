@@ -56,7 +56,7 @@ def lissajous_curves(tuning):
 def graph_psd_peaks(freqs, psd, peaks, xmin, xmax, color='deeppink',
                     method=None):
     #psd = np.interp(psd, (psd.min(), psd.max()), (0, 0.005))
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(5, 3))
     ax.plot(freqs, psd, color=color)
     plt.xlim([xmin, xmax])
     idx1 = list(freqs).index(xmin)
@@ -67,12 +67,14 @@ def graph_psd_peaks(freqs, psd, peaks, xmin, xmax, color='deeppink',
     plt.xlabel('Frequency (Hertz)', size=14)
     plt.ylabel('PSD [V**2/Hz]', size=14)
     if method is not None:
-        plt.title('Power Spectrum Density and peaks positions using ' + method
+        plt.title('Spectral peaks positions using ' + method
                   + ' method', size=18)
     if method is None:
-        plt.title('Power Spectrum Density and peaks positions', size=18)
+        plt.title('Spectral peaks positions', size=18)
     for xc in peaks:
         plt.axvline(x=xc, c='black', linestyle='dotted')
+    plt.tight_layout()
+    plt.show()
 
 
 
@@ -93,13 +95,17 @@ def plot_polycoherence(freq1, freq2, bicoh):
     return plt
 
 
+import matplotlib.pyplot as plt
+import scipy.signal
+
 def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
                    sf, nfft, nperseg, noverlap, min_freq=1,
                    max_freq=60, precision=0.5):
-    plt.rcParams["figure.figsize"] = (13, 8)
+    plt.rcParams["figure.figsize"] = (8, 5)
     color_line = ['aqua', 'darkturquoise', 'darkcyan', 'darkslategrey', 'black']
-    for i in range(len(freqs_all)):
-        plt.plot(freqs_all[i], psd_all[i], color=color_line[i])
+
+    for i, (freqs, psd) in enumerate(zip(freqs_all, psd_all)):
+        plt.fill_between(freqs, psd, color=color_line[i], alpha=0.2)
 
     mult = 1/precision
     nperseg = sf*mult
@@ -108,40 +114,30 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
                                               nfft=nfft,
                                               nperseg=nperseg,
                                               noverlap=noverlap)
-    # psd_full = np.interp(psd_full, (psd_full.min(),
-#                    psd_full.max()), (0, 0.005))
-    plt.text(1.7, -5, 'delta', horizontalalignment='center',
-             size=15)
-    plt.text(4.5, -5, 'theta', horizontalalignment='center',
-             size=15)
-    plt.text(9, -5, 'alpha', horizontalalignment='center',
-             size=15)
-    plt.text(19, -5, 'beta', horizontalalignment='center',
-             size=15)
-    plt.text(47, -5, 'gamma', horizontalalignment='center',
-             size=15)
+
+    band_names = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+    color_bg = ['darkgoldenrod', 'goldenrod', 'orange', 'gold', 'khaki']
+    alpha = [0.6, 0.63, 0.66, 0.69, 0.72]
+
+    # Fill areas for frequency bands and place band names
+    for (band, name, color, a) in zip(FREQ_BANDS, band_names, color_bg, alpha):
+        plt.axvspan(band[0], band[1], ymin=0, alpha=a, color=color, ec='black')
+        plt.text(np.sqrt(band[0]*band[1]), -5, name, horizontalalignment='center', size=15)
+
     plt.xlim([min_freq, max_freq])
-    plt.ylim([-75, 0])
+    # use adaptive ylim based on psd_all (list of psd) and psd_full (raw data)
+      
+    plt.ylim([np.min(psd_all[0]), np.max(psd_full)+((np.max(psd_full)-np.min(psd_full)))/3])
+    
     plt.title('PSD of Empirical Mode Decomposition', size=28)
     plt.xlabel('Frequency', size=15)
     plt.ylabel('Power', size=15)
-    plt.tick_params(axis='both', which='major', labelsize=12,
-                    length=6, width=4)
-    plt.tick_params(axis='both', which='minor', labelsize=10,
-                    length=6, width=4)
-    # plt.yscale('log')
+    plt.tick_params(axis='both', which='major', labelsize=12, length=6, width=4)
+    plt.tick_params(axis='both', which='minor', labelsize=10, length=6, width=4)
     plt.xscale('log')
 
-    psd_full = np.interp(psd_full, (psd_full.min(), psd_full.max()),
-                         (-35, 0))
-    plt.plot(freqs_full, psd_full,
-             color='deeppink', linestyle='dashed',
-             label='raw data')
+    plt.plot(freqs_full, psd_full, color='deeppink', linestyle='dashed', label='raw data')
 
-    alpha = [0.6, 0.63, 0.66, 0.69, 0.72]
-    shadow = 0.9
-    color_bg = ['darkgoldenrod', 'goldenrod', 'orange',
-                'gold', 'khaki']
     xposition = peaks
     labels = ['EMD1', 'EMD2', 'EMD3', 'EMD4', 'EMD5']
     for p, n, band in zip(peaks, range(len(labels)), FREQ_BANDS):
@@ -149,21 +145,15 @@ def graphEMD_welch(freqs_all, psd_all, peaks, raw_data, FREQ_BANDS,
             labels[n] = labels[n]+'*'
     for xc, c, l in zip(xposition, color_line, labels):
         plt.axvline(x=xc, label='{} = {}'.format(l, xc), c=c)
-    plt.axvspan(0, 3, ymin=shadow, alpha=alpha[0],
-                color=color_bg[0], ec='black')
-    plt.axvspan(3, 7, ymin=shadow, alpha=alpha[1],
-                color=color_bg[1], ec='black')
-    plt.axvspan(7, 12, ymin=shadow, alpha=alpha[2],
-                color=color_bg[2], ec='black')
-    plt.axvspan(12, 30, ymin=shadow, alpha=alpha[3],
-                color=color_bg[3], ec='black')
-    plt.axvspan(30, 70, ymin=shadow, alpha=alpha[4],
-                color=color_bg[4], ec='black')
+
     plt.legend(loc='lower left', fontsize=16)
+    plt.tight_layout()  # Make sure everything fits without overlap
+    plt.show()  # Display the plot
+
 
 
 def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
-                     method=None, save=False, figname='test', n_peaks=5):
+                     save=False, figname='test', n_peaks=5):
     """
     This function plots the power spectral density of a signal,
     and the position of the peaks that are harmonically related.
@@ -182,8 +172,6 @@ def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
         The maximum frequency to be plotted
     color : str
         The color of the plotted PSD, default is black
-    method : str
-        The method used to find the harmonically related peaks
     save : bool
         Whether to save the figure or not
     figname : str
@@ -195,7 +183,7 @@ def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
     -------
     None
     """
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(9, 5))
     ax.plot(freqs[:np.where(freqs >= xmax)[0][0]], psd[:np.where(freqs >= xmax)[0][0]], color=color)
     idx_min = list(freqs).index(xmin)
     idx_max = list(freqs).index(xmax)
@@ -204,19 +192,17 @@ def graph_harm_peaks(freqs, psd, harm_peaks_fit, xmin, xmax, color='black',
     plt.ylim([ymin, ymax])
     plt.xlabel('Frequency (Hertz)', size=14)
     plt.ylabel('PSD [V**2/Hz]', size=14)
-    if method is not None:
-        plt.title('Power Spectrum Density and peaks positions using ' + method
-                  + ' method', size=18)
-    if method is None:
-        plt.title('Power Spectrum Density and peaks positions', size=18)
+    plt.title('Spectral peaks positions using Harmonic Recurrence', size=18)
     color_list = ['blue', 'red', 'orange', 'turquoise', 'purple', 'green'][:n_peaks+1]
     y_steps = (ymax-ymin)/10
     y_list = [ymax-(y_steps*(i+2)) for i in range(n_peaks)]
-    for peak_info, color_harm, ys in zip(harm_peaks_fit, color_list, y_list):
+
+    for peak_info, color_harm, ys in zip(harm_peaks_fit[:n_peaks], color_list[:n_peaks], y_list[:n_peaks]):
         peak = peak_info[0]
         harm_pos = [int(x) for x in peak_info[1]]
         harm_freq = peak_info[2]
         harm_freq.remove(peak)
+
 
         plt.axvline(x=peak, c=color_harm, linestyle='-')
 
