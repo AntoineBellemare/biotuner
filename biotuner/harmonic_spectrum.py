@@ -9,6 +9,10 @@ import pandas as pd
 from scipy.signal import peak_prominences
 from biotuner.metrics import spectral_flatness, spectral_entropy, spectral_spread, higuchi_fd, peaks_to_harmsim
 from biotuner.biotuner_utils import safe_mean, safe_max, apply_power_law_remove, compute_frequency_and_psd
+import seaborn as sns
+from scipy.stats import pearsonr
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.lines as mlines
 
 
 
@@ -81,7 +85,8 @@ def compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, met
     return harmonicity, phase_coupling_matrix
 
 
-def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, psd_mode=None):
+def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, psd_mode=None,
+                                                         harm_phase_norm=True):
     '''
     Compute harmonicity values and phase coupling values for each frequency.
 
@@ -97,6 +102,9 @@ def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similaritie
         The cleaned Power Spectral Density (PSD).
     phase_matrix : ndarray
         The phase matrix of the signal.
+    harm_phase_norm : bool, default=True
+        If True, normalize the harmonicity and phase coupling values
+        by dividing by the total power.
 
     Returns
     -------
@@ -118,9 +126,12 @@ def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similaritie
                 else:
                     weighted_sum_phase_coupling += phase_coupling_matrix[i, j]
                 
-                
-        harmonicity_values[i] = weighted_sum_harmonicity / (2 * total_power)
-        phase_coupling_values[i] = weighted_sum_phase_coupling / (2 * total_power)
+        if harm_phase_norm is True:
+            harmonicity_values[i] = weighted_sum_harmonicity / (2 * total_power)
+            phase_coupling_values[i] = weighted_sum_phase_coupling / (2 * total_power)
+        if harm_phase_norm is False:        
+            harmonicity_values[i] = weighted_sum_harmonicity
+            phase_coupling_values[i] = weighted_sum_phase_coupling
     ##print(phase_coupling_values)
     return harmonicity_values, phase_coupling_values
 
@@ -277,7 +288,7 @@ def harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance
 
 def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
                                n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
-                               smoothness_harm=1, save=False, savename='', phase_mode=None):
+                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True):
     """
     Compute global harmonicity, phase coupling, and resonance characteristics of a signal.
 
@@ -326,6 +337,9 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         Name for the saved plot file.
     phase_mode : str, default=None
         Method for weighting phase coupling computation. Options are 'weighted' and 'None'.
+    harm_phase_norm : bool, default=True
+        If True, normalize the harmonicity and phase coupling values
+        by dividing by the total power.
 
     Returns
     -------
@@ -350,7 +364,8 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
     dyad_similarities, phase_coupling_matrix = compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, metric, n_harms, delta_lim, min_notes=min_notes)
     
     # Compute harmonicity and phase coupling values
-    harmonicity_values, phase_coupling_values = compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, phase_mode)
+    harmonicity_values, phase_coupling_values = compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, phase_mode,
+                                                                                                     harm_phase_norm=harm_phase_norm)
     # apply smoothing to harmonicity values
     #print(phase_coupling_values)
     harmonicity_values = gaussian_filter(harmonicity_values, smoothness_harm)
@@ -482,3 +497,194 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
 
     return df
 
+
+def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd):
+    plt.figure(figsize=(8, 4))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+
+    corrs = []
+    ps = []
+    reg_lines = []
+
+    for i in range(len(df_all)):
+
+        harm_values = df_all[df_all['trial'] == i]['harmonicity'][0]
+        phase_coupling_values = df_all[df_all['trial'] == i]['phase_coupling'][0]
+        # Scale the data
+        harm_values = scaler.fit_transform(harm_values.reshape(-1, 1))
+        phase_coupling_values = scaler.fit_transform(phase_coupling_values.reshape(-1, 1))
+
+        # Flatten the arrays
+        harm_values = harm_values.flatten()
+        phase_coupling_values = phase_coupling_values.flatten()
+        
+        corr, p = pearsonr(harm_values, phase_coupling_values)
+        corrs.append(corr)
+        ps.append(p)
+        z = np.polyfit(harm_values, phase_coupling_values, 1)
+        reg_lines.append(z)
+        ax1.plot(np.sort(df_all[df_all['trial'] == i]['harmonicity'][0]), np.poly1d(reg_lines[i])(np.sort(df_all[df_all['trial'] == i]['harmonicity'][0])),
+                color='darkblue', linestyle='--', alpha=0.5)
+        #ax1.plot(np.sort(harm_values.flatten()), np.poly1d(z)(np.sort(harm_values.flatten())), 
+        #     color="darkblue", linestyle='--', alpha=0.5)
+        ax1.set_title('Brain Signals')
+        ax1.set_xlabel('Mean Harmonicity across freqs')
+        ax1.set_ylabel('Mean Phase-Coupling across freqs')
+    ax1.text(0.95, 0.95, f'r [{np.round(np.min(corrs), 2)}, {np.round(np.max(corrs), 2)}]', ha='right', va='top', transform=ax1.transAxes, fontsize=10, fontweight='bold')
+
+    corrs_rnd = []
+    ps_rnd = []
+    reg_lines_rnd = []
+    for i in range(len(df_all_rnd)):
+        harm_values_rnd = df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0]
+        phase_coupling_values_rnd = df_all_rnd[df_all_rnd['trial'] == i]['phase_coupling'][0]
+        # Scale the data
+        harm_values_rnd = scaler.fit_transform(harm_values_rnd.reshape(-1, 1))
+        phase_coupling_values_rnd = scaler.fit_transform(phase_coupling_values_rnd.reshape(-1, 1))
+
+        # Flatten the arrays
+        harm_values_rnd = harm_values_rnd.flatten()
+        phase_coupling_values_rnd = phase_coupling_values_rnd.flatten()
+        corr_rnd, p_rnd = pearsonr(harm_values_rnd, phase_coupling_values_rnd)
+        corrs_rnd.append(corr_rnd)
+        ps_rnd.append(p_rnd)
+        z_rnd = np.polyfit(harm_values_rnd.flatten(), phase_coupling_values_rnd.flatten(), 1)
+        reg_lines_rnd.append(z_rnd)
+        ax2.plot(np.sort(df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0]), np.poly1d(reg_lines_rnd[i])(np.sort(df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0])),
+                color='darkblue', linestyle='--', alpha=0.5)
+        #ax2.plot(np.sort(harm_values_rnd.flatten()), np.poly1d(z_rnd)(np.sort(harm_values_rnd.flatten())), 
+        #     color="darkblue", linestyle='--', alpha=0.5)
+        ax2.set_title('Random Signals')
+        ax2.set_xlabel('Mean Harmonicity across freqs')
+        ax2.set_ylabel('Mean Phase-Coupling across freqs')
+    ax2.text(0.95, 0.95, f'r [{np.round(np.min(corrs_rnd), 2)}, {np.round(np.max(corrs_rnd), 2)}]', ha='right', va='top', transform=ax2.transAxes, fontsize=10, fontweight='bold')
+
+    fig.suptitle('Correlation between Harmonicity and Phase Coupling for each trial', fontsize=16)
+    fig.tight_layout()
+    plt.show()
+
+
+
+def harmonic_spectrum_plot_freq_corr(df1, df2, label1='Brain Signals', label2='Random Signals', fmin=2, fmax=30):
+    # Define frequency range and bins
+    freqs = np.linspace(fmin, fmax, len(df1['harmonicity'][0]))
+
+    # Initialize arrays to hold the correlation values for each frequency bin
+    corrs1 = np.zeros(len(freqs))
+    corrs2 = np.zeros(len(freqs))
+
+    # Initialize arrays to hold the mean harmonicity values for each frequency bin
+    mean_harmonicity1 = np.zeros(len(freqs))
+    mean_harmonicity2 = np.zeros(len(freqs))
+
+    # Compute the correlation for each frequency bin
+    for i in range(len(freqs)):
+        harm_values1 = [row[i] for row in df1['harmonicity']]
+        mean_harmonicity1[i] = np.mean(harm_values1)
+        phase_coupling_values1 = [row[i] for row in df1['phase_coupling']]
+        corrs1[i] = np.corrcoef(harm_values1, phase_coupling_values1)[0,1]
+
+        harm_values2 = [row[i] for row in df2['harmonicity']]
+        mean_harmonicity2[i] = np.mean(harm_values2)
+        phase_coupling_values2 = [row[i] for row in df2['phase_coupling']]
+        corrs2[i] = np.corrcoef(harm_values2, phase_coupling_values2)[0,1]
+
+    scaler = MinMaxScaler()
+
+    mean_harmonicity1_scaled = scaler.fit_transform(np.array(mean_harmonicity1).reshape(-1,1)).flatten()
+    mean_harmonicity2_scaled = scaler.fit_transform(np.array(mean_harmonicity2).reshape(-1,1)).flatten()
+
+    plt.figure(figsize=(9.5,4.5))
+
+    # Calculate the min and max for the correlations
+    corrs_min = min(corrs1.min(), corrs2.min())-0.05
+    corrs_max = max(corrs1.max(), corrs2.max())+0.05
+
+    # Calculate the min and max for the mean harmonicity
+    harm_min = min(mean_harmonicity1_scaled.min(), mean_harmonicity2_scaled.min())-0.05
+    harm_max = max(mean_harmonicity1_scaled.max(), mean_harmonicity2_scaled.max())+0.05
+
+    plt.subplot(1, 2, 1)
+    ax1 = plt.gca()
+    line1, = ax1.plot(freqs, corrs1, color='darkblue', label='Correlation (Harm x Phase)')
+    ax1.set_xlabel('Frequency (Hz)')
+    ax1.set_ylabel('Correlation')
+    ax1.set_ylim(corrs_min, corrs_max)  # set the limits for the correlation plot
+
+    ax2 = ax1.twinx()
+    line2, = ax2.plot(freqs, mean_harmonicity1_scaled, color='red', label='Mean Harmonicity across trials')
+    ax2.set_ylabel('Mean Harmonicity')
+    ax2.set_ylim(harm_min, harm_max)  # set the limits for the harmonicity plot
+
+    # Add both lines to the same legend
+    lines = [line1, line2]
+    ax1.legend(lines, [l.get_label() for l in lines], loc='upper right')
+    ax1.set_title(label1)
+
+    plt.subplot(1, 2, 2)
+    ax1 = plt.gca()
+    line1, = ax1.plot(freqs, corrs2, color='darkblue', label='Correlation (Harm x Phase)')
+    ax1.set_xlabel('Frequency (Hz)')
+    ax1.set_ylabel('Correlation')
+    ax1.set_ylim(corrs_min, corrs_max)  # set the limits for the correlation plot
+
+    ax2 = ax1.twinx()
+    line2, = ax2.plot(freqs, mean_harmonicity2_scaled, color='red', label='Mean Harmonicity across trials')
+    ax2.set_ylabel('Mean Harmonicity')
+    ax2.set_ylim(harm_min, harm_max)  # set the limits for the harmonicity plot
+
+    # Add both lines to the same legend
+    lines = [line1, line2]
+    ax1.legend(lines, [l.get_label() for l in lines], loc='upper right')
+    ax1.set_title(label2)
+    
+    # Add global title
+    plt.suptitle(f'Correlation between Harmonicity and Phase-Coupling \nfor each frequency bin ({len(df1)} trials)', fontsize=15)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def harmonic_spectrum_plot_avg_corr(df1, df2):
+    harm_values = [np.mean(row) for row in df1['harmonicity']]
+    phase_coupling_values = [np.mean(row) for row in df1['phase_coupling']]
+
+    harm_values_rnd = [np.mean(row) for row in df2['harmonicity']]
+    phase_coupling_values_rnd = [np.mean(row) for row in df2['phase_coupling']]
+
+    plt.figure(figsize=(8,4))
+
+    # plot the correlation between harmonicity and phase coupling for Brain signals
+    plt.subplot(1, 2, 1)
+    plt.scatter(harm_values, phase_coupling_values, color='darkblue', alpha=0.5)
+    plt.xlabel('Averaged Harmonicity')
+    plt.ylabel('Averaged Phase Coupling')
+    z = np.polyfit(harm_values, phase_coupling_values, 1)
+    plt.plot(np.sort(harm_values), np.poly1d(z)(np.sort(harm_values)), "r--")
+    corr, p = pearsonr(harm_values, phase_coupling_values)
+    print('Brain signals - correlation: ', corr, 'p-value: ', p)
+    plt.title('Brain Signals')
+    vmin_x = min(harm_values + harm_values_rnd)
+    vmax_x = max(harm_values + harm_values_rnd)
+    vmin_y = min(phase_coupling_values + phase_coupling_values_rnd)
+    vmax_y = max(phase_coupling_values + phase_coupling_values_rnd)
+    
+    plt.xlim(vmin_x-(vmin_x/100), vmax_x+(vmax_x/100))
+    plt.ylim(vmin_y-(vmin_y/100), vmax_y+(vmax_y/100))
+
+    # plot the correlation between harmonicity and phase coupling for Random signals
+    plt.subplot(1, 2, 2)
+    plt.scatter(harm_values_rnd, phase_coupling_values_rnd, color='darkblue', alpha=0.5)
+    plt.xlabel('Averaged Harmonicity')
+    plt.ylabel('Averaged Phase Coupling')
+    z_rnd = np.polyfit(harm_values_rnd, phase_coupling_values_rnd, 1)
+    plt.plot(np.sort(harm_values_rnd), np.poly1d(z_rnd)(np.sort(harm_values_rnd)), "r--")
+    corr_rnd, p_rnd = pearsonr(harm_values_rnd, phase_coupling_values_rnd)
+    print('Random signals - correlation: ', corr_rnd, 'p-value: ', p_rnd)
+    plt.title('Random Signals')
+    
+    plt.xlim(vmin_x-(vmin_x/100), vmax_x+(vmax_x/100))
+    plt.ylim(vmin_y-(vmin_y/100), vmax_y+(vmax_y/100))
+
+    plt.tight_layout()
+    plt.show()

@@ -440,7 +440,6 @@ def timepoint_consonance(data,
     [30.5, 22.4, 12.6, 91.5]]
     
     >>> 'USING THE BIOTUNER OBJECT'
-    >>> from biotuner.biotuner_object import compute_biotuner
     >>> # Load data
     >>> data = np.load('data_examples/EEG_pareidolia/parei_occi_L.npy')
     >>> # Keep a single time series.
