@@ -10,9 +10,10 @@ from scipy.signal import peak_prominences
 from biotuner.metrics import spectral_flatness, spectral_entropy, spectral_spread, higuchi_fd, peaks_to_harmsim
 from biotuner.biotuner_utils import safe_mean, safe_max, apply_power_law_remove, compute_frequency_and_psd
 import seaborn as sns
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, chi2
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.lines as mlines
+from scipy.stats import ttest_ind
 
 
 
@@ -498,14 +499,13 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
     return df
 
 
-def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd):
-    plt.figure(figsize=(8, 4))
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
-
+def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd, label1='Brain Signals', label2='Random Signals'):
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
+    
     corrs = []
     ps = []
     reg_lines = []
-
+    scaler = MinMaxScaler()
     for i in range(len(df_all)):
 
         harm_values = df_all[df_all['trial'] == i]['harmonicity'][0]
@@ -523,11 +523,8 @@ def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd):
         ps.append(p)
         z = np.polyfit(harm_values, phase_coupling_values, 1)
         reg_lines.append(z)
-        ax1.plot(np.sort(df_all[df_all['trial'] == i]['harmonicity'][0]), np.poly1d(reg_lines[i])(np.sort(df_all[df_all['trial'] == i]['harmonicity'][0])),
-                color='darkblue', linestyle='--', alpha=0.5)
-        #ax1.plot(np.sort(harm_values.flatten()), np.poly1d(z)(np.sort(harm_values.flatten())), 
-        #     color="darkblue", linestyle='--', alpha=0.5)
-        ax1.set_title('Brain Signals')
+        ax1.plot(np.sort(harm_values), np.poly1d(z)(np.sort(harm_values)), color='darkblue', linestyle='--', alpha=0.5)
+        ax1.set_title(label1)
         ax1.set_xlabel('Mean Harmonicity across freqs')
         ax1.set_ylabel('Mean Phase-Coupling across freqs')
     ax1.text(0.95, 0.95, f'r [{np.round(np.min(corrs), 2)}, {np.round(np.max(corrs), 2)}]', ha='right', va='top', transform=ax1.transAxes, fontsize=10, fontweight='bold')
@@ -535,6 +532,7 @@ def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd):
     corrs_rnd = []
     ps_rnd = []
     reg_lines_rnd = []
+    
     for i in range(len(df_all_rnd)):
         harm_values_rnd = df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0]
         phase_coupling_values_rnd = df_all_rnd[df_all_rnd['trial'] == i]['phase_coupling'][0]
@@ -548,26 +546,54 @@ def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd):
         corr_rnd, p_rnd = pearsonr(harm_values_rnd, phase_coupling_values_rnd)
         corrs_rnd.append(corr_rnd)
         ps_rnd.append(p_rnd)
-        z_rnd = np.polyfit(harm_values_rnd.flatten(), phase_coupling_values_rnd.flatten(), 1)
+        z_rnd = np.polyfit(harm_values_rnd, phase_coupling_values_rnd, 1)
         reg_lines_rnd.append(z_rnd)
-        ax2.plot(np.sort(df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0]), np.poly1d(reg_lines_rnd[i])(np.sort(df_all_rnd[df_all_rnd['trial'] == i]['harmonicity'][0])),
-                color='darkblue', linestyle='--', alpha=0.5)
-        #ax2.plot(np.sort(harm_values_rnd.flatten()), np.poly1d(z_rnd)(np.sort(harm_values_rnd.flatten())), 
-        #     color="darkblue", linestyle='--', alpha=0.5)
-        ax2.set_title('Random Signals')
+        ax2.plot(np.sort(harm_values_rnd), np.poly1d(z_rnd)(np.sort(harm_values_rnd)), color='darkblue', linestyle='--', alpha=0.5)
+        ax2.set_title(label2)
         ax2.set_xlabel('Mean Harmonicity across freqs')
         ax2.set_ylabel('Mean Phase-Coupling across freqs')
     ax2.text(0.95, 0.95, f'r [{np.round(np.min(corrs_rnd), 2)}, {np.round(np.max(corrs_rnd), 2)}]', ha='right', va='top', transform=ax2.transAxes, fontsize=10, fontweight='bold')
 
-    fig.suptitle('Correlation between Harmonicity and Phase Coupling for each trial', fontsize=16)
+    # Calculate the 5th and 95th percentiles for correlation values
+    corr_5th = np.percentile(corrs, 5)
+    corr_95th = np.percentile(corrs, 95)
+    corr_rnd_5th = np.percentile(corrs_rnd, 5)
+    corr_rnd_95th = np.percentile(corrs_rnd, 95)
+
+    # Calculate the t-statistics and p-value for the two-sample t-test
+    t_stat, p_val = ttest_ind(corrs, corrs_rnd)
+    sns.distplot(corrs, ax=ax3, label=label1, color='blue')
+    ax3.axvline(corr_5th, color='blue', linestyle='--')
+    ax3.axvline(corr_95th, color='blue', linestyle='--')
+    sns.distplot(corrs_rnd, ax=ax3, label=label2, color='red')
+    ax3.axvline(corr_rnd_5th, color='red', linestyle='--')
+    ax3.axvline(corr_rnd_95th, color='red', linestyle='--')
+    ax3.set_title('Distribution of correlation values')
+    ax3.set_xlabel('Correlation (r)')
+    ax3.set_ylabel('Density')
+    ax3.legend()
+
+    # Add text with t-test result to the plot
+    ax3.text(0.95, 0.05, f't={np.round(t_stat, 2)}, p={np.round(p_val, 4)}', ha='right', va='top', transform=ax3.transAxes, fontsize=10, fontweight='bold')
+
     fig.tight_layout()
     plt.show()
 
 
 
-def harmonic_spectrum_plot_freq_corr(df1, df2, label1='Brain Signals', label2='Random Signals', fmin=2, fmax=30):
+
+def harmonic_spectrum_plot_freq_corr(df1, df2, mean_phase_coupling=False, label1='Brain Signals', label2='Random Signals', fmin=2, fmax=30, xlim=None):
+    
+    n = len(df1)  # Assuming df1 and df2 have the same number of rows
+
+    # Calculate the critical r-values
+    alpha = 0.05
+    r_critical = np.sqrt(chi2.ppf(1 - alpha, df=1) / n)
+    r_positive = r_critical
+    r_negative = -r_critical
+
     # Define frequency range and bins
-    freqs = np.linspace(fmin, fmax, len(df1['harmonicity'][0]))
+    freqs = np.linspace(fmin, fmax, len(df1['harmonicity'][0].tolist()[0]))
 
     # Initialize arrays to hold the correlation values for each frequency bin
     corrs1 = np.zeros(len(freqs))
@@ -577,24 +603,37 @@ def harmonic_spectrum_plot_freq_corr(df1, df2, label1='Brain Signals', label2='R
     mean_harmonicity1 = np.zeros(len(freqs))
     mean_harmonicity2 = np.zeros(len(freqs))
 
+    mean_phase_coupling1 = np.zeros(len(freqs))
+    mean_phase_coupling2 = np.zeros(len(freqs))
+
     # Compute the correlation for each frequency bin
     for i in range(len(freqs)):
         harm_values1 = [row[i] for row in df1['harmonicity']]
         mean_harmonicity1[i] = np.mean(harm_values1)
         phase_coupling_values1 = [row[i] for row in df1['phase_coupling']]
         corrs1[i] = np.corrcoef(harm_values1, phase_coupling_values1)[0,1]
+        
+        if mean_phase_coupling:
+            mean_phase_coupling1[i] = np.mean(phase_coupling_values1)
 
         harm_values2 = [row[i] for row in df2['harmonicity']]
         mean_harmonicity2[i] = np.mean(harm_values2)
         phase_coupling_values2 = [row[i] for row in df2['phase_coupling']]
         corrs2[i] = np.corrcoef(harm_values2, phase_coupling_values2)[0,1]
 
+        if mean_phase_coupling:
+            mean_phase_coupling2[i] = np.mean(phase_coupling_values2)
+
     scaler = MinMaxScaler()
 
     mean_harmonicity1_scaled = scaler.fit_transform(np.array(mean_harmonicity1).reshape(-1,1)).flatten()
     mean_harmonicity2_scaled = scaler.fit_transform(np.array(mean_harmonicity2).reshape(-1,1)).flatten()
 
-    plt.figure(figsize=(9.5,4.5))
+    if mean_phase_coupling:
+        mean_phase_coupling1_scaled = scaler.fit_transform(np.array(mean_phase_coupling1).reshape(-1,1)).flatten()
+        mean_phase_coupling2_scaled = scaler.fit_transform(np.array(mean_phase_coupling2).reshape(-1,1)).flatten()
+
+    plt.figure(figsize=(12.5,4.5))
 
     # Calculate the min and max for the correlations
     corrs_min = min(corrs1.min(), corrs2.min())-0.05
@@ -604,48 +643,72 @@ def harmonic_spectrum_plot_freq_corr(df1, df2, label1='Brain Signals', label2='R
     harm_min = min(mean_harmonicity1_scaled.min(), mean_harmonicity2_scaled.min())-0.05
     harm_max = max(mean_harmonicity1_scaled.max(), mean_harmonicity2_scaled.max())+0.05
 
+    # Calculate the min and max for the mean phase-coupling (if flag is true)
+    if mean_phase_coupling:
+        phase_min = min(mean_phase_coupling1_scaled.min(), mean_phase_coupling2_scaled.min())-0.05
+        phase_max = max(mean_phase_coupling1_scaled.max(), mean_phase_coupling2_scaled.max())+0.05
+
     plt.subplot(1, 2, 1)
     ax1 = plt.gca()
-    line1, = ax1.plot(freqs, corrs1, color='darkblue', label='Correlation (Harm x Phase)')
+    line1, = ax1.plot(freqs, corrs1, color='black', label='Correlation (Harm x Phase)')
     ax1.set_xlabel('Frequency (Hz)')
     ax1.set_ylabel('Correlation')
-    ax1.set_ylim(corrs_min, corrs_max)  # set the limits for the correlation plot
+    ax1.set_ylim(corrs_min, corrs_max)
+    ax1.axhline(r_positive, color='k', linestyle='--', label='p=0.05')
+    ax1.axhline(r_negative, color='k', linestyle='--')
 
     ax2 = ax1.twinx()
-    line2, = ax2.plot(freqs, mean_harmonicity1_scaled, color='red', label='Mean Harmonicity across trials')
-    ax2.set_ylabel('Mean Harmonicity')
-    ax2.set_ylim(harm_min, harm_max)  # set the limits for the harmonicity plot
+    line2, = ax2.plot(freqs, mean_harmonicity1_scaled, color='mediumblue', label='Mean Harmonicity')
+    
+    if mean_phase_coupling:
+        line3, = ax2.plot(freqs, mean_phase_coupling1_scaled, color='deeppink', label='Mean Phase-Coupling')
 
-    # Add both lines to the same legend
+    ax2.set_ylabel('Normalized measures')
+    ax2.set_ylim(0, 1)  # Since both measures are normalized
+
+    if xlim is not None:
+        ax1.set_xlim(xlim[0], xlim[1])
+        ax2.set_xlim(xlim[0], xlim[1])
+
     lines = [line1, line2]
+    if mean_phase_coupling:
+        lines.append(line3)
     ax1.legend(lines, [l.get_label() for l in lines], loc='upper right')
     ax1.set_title(label1)
 
     plt.subplot(1, 2, 2)
     ax1 = plt.gca()
-    line1, = ax1.plot(freqs, corrs2, color='darkblue', label='Correlation (Harm x Phase)')
+    line1, = ax1.plot(freqs, corrs2, color='black', label='Correlation (Harm x Phase)')
     ax1.set_xlabel('Frequency (Hz)')
     ax1.set_ylabel('Correlation')
-    ax1.set_ylim(corrs_min, corrs_max)  # set the limits for the correlation plot
+    ax1.set_ylim(corrs_min, corrs_max)
+    ax1.axhline(r_positive, color='k', linestyle='--', label='p=0.05')
+    ax1.axhline(r_negative, color='k', linestyle='--')
 
     ax2 = ax1.twinx()
-    line2, = ax2.plot(freqs, mean_harmonicity2_scaled, color='red', label='Mean Harmonicity across trials')
-    ax2.set_ylabel('Mean Harmonicity')
-    ax2.set_ylim(harm_min, harm_max)  # set the limits for the harmonicity plot
+    line2, = ax2.plot(freqs, mean_harmonicity2_scaled, color='mediumblue', label='Mean Harmonicity')
+    
+    if mean_phase_coupling:
+        line3, = ax2.plot(freqs, mean_phase_coupling2_scaled, color='deeppink', label='Mean Phase-Coupling')
 
-    # Add both lines to the same legend
+    ax2.set_ylabel('Normalized measures')
+    ax2.set_ylim(0, 1)  # Since both measures are normalized
+
+    if xlim is not None:
+        ax1.set_xlim(xlim[0], xlim[1])
+        ax2.set_xlim(xlim[0], xlim[1])
+
     lines = [line1, line2]
+    if mean_phase_coupling:
+        lines.append(line3)
     ax1.legend(lines, [l.get_label() for l in lines], loc='upper right')
     ax1.set_title(label2)
-    
-    # Add global title
-    plt.suptitle(f'Correlation between Harmonicity and Phase-Coupling \nfor each frequency bin ({len(df1)} trials)', fontsize=15)
 
     plt.tight_layout()
     plt.show()
 
 
-def harmonic_spectrum_plot_avg_corr(df1, df2):
+def harmonic_spectrum_plot_avg_corr(df1, df2, label1='Brain Signals', label2='Random Signals'):
     harm_values = [np.mean(row) for row in df1['harmonicity']]
     phase_coupling_values = [np.mean(row) for row in df1['phase_coupling']]
 
@@ -662,8 +725,8 @@ def harmonic_spectrum_plot_avg_corr(df1, df2):
     z = np.polyfit(harm_values, phase_coupling_values, 1)
     plt.plot(np.sort(harm_values), np.poly1d(z)(np.sort(harm_values)), "r--")
     corr, p = pearsonr(harm_values, phase_coupling_values)
-    print('Brain signals - correlation: ', corr, 'p-value: ', p)
-    plt.title('Brain Signals')
+    print(f'{label1} - correlation: ', corr, 'p-value: ', p)
+    plt.title(label1)
     vmin_x = min(harm_values + harm_values_rnd)
     vmax_x = max(harm_values + harm_values_rnd)
     vmin_y = min(phase_coupling_values + phase_coupling_values_rnd)
@@ -680,8 +743,8 @@ def harmonic_spectrum_plot_avg_corr(df1, df2):
     z_rnd = np.polyfit(harm_values_rnd, phase_coupling_values_rnd, 1)
     plt.plot(np.sort(harm_values_rnd), np.poly1d(z_rnd)(np.sort(harm_values_rnd)), "r--")
     corr_rnd, p_rnd = pearsonr(harm_values_rnd, phase_coupling_values_rnd)
-    print('Random signals - correlation: ', corr_rnd, 'p-value: ', p_rnd)
-    plt.title('Random Signals')
+    print(f'{label2} - correlation: ', corr_rnd, 'p-value: ', p_rnd)
+    plt.title(label2)
     
     plt.xlim(vmin_x-(vmin_x/100), vmax_x+(vmax_x/100))
     plt.ylim(vmin_y-(vmin_y/100), vmax_y+(vmax_y/100))
