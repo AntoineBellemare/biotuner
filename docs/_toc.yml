@@ -1,0 +1,18 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+root: index
+entries:
+- file: examples/index
+- file: getting_started/index
+  entries:
+  - file: getting_started/basic_usage
+  - file: getting_started/installation
+- file: source/index
+  entries:
+  - file: source/biotuner_object
+  - file: source/metrics
+  - file: source/peaks_extension
+  - file: source/peaks_extraction
+  - file: source/rhythm_construction
+  - file: source/scale_construction
+  - file: source/utils
