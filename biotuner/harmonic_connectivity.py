@@ -40,7 +40,6 @@ from biotuner.biotuner_utils import (
 from scipy.signal import stft
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter, gaussian_filter1d
-from PyEMD import EMD as EMD_eeg
 import emd
 from biotuner.peaks_extraction import EMD_eeg
 
