@@ -11,7 +11,6 @@ import contfrac
 import itertools
 import operator
 import sys
-import bottleneck as bn
 import pandas as pd
 from scipy.stats import pearsonr
 from fractions import Fraction
@@ -639,6 +638,7 @@ def Print3Smallest(arr):
 def top_n_indexes(arr, n):
     """Find the index pairs of maximum values in a 2d array.
 
+
     Parameters
     ----------
     arr : ndarray(i, j)
@@ -648,14 +648,20 @@ def top_n_indexes(arr, n):
 
     Returns
     -------
-    indexes : List of lists
-        Each sublist contains the 2 indexes associated with higest values
+    indexes : List of tuples
+        Each tuple contains the 2 indexes associated with higest values
         of the input array.
 
     """
-    idx = bn.argpartition(arr, arr.size - n, axis=None)[-n:]
-    width = arr.shape[1]
-    indexes = [divmod(i, width) for i in idx]
+    # flatten the array and get the indices of the top n values
+    idx = np.argpartition(arr.flatten(), -n)[-n:]
+    
+    # convert the 1D indices to 2D indices
+    indexes = np.unravel_index(idx, arr.shape)
+    
+    # zip and convert to list of tuples
+    indexes = list(zip(*indexes))
+    
     return indexes
 
 
