@@ -1,0 +1,2117 @@
+element,wavelength,intensity,persistence,type
+Gold,1224.592,600,1,Transition Metals
+Gold,1229.901,600,0,Transition Metals
+Gold,1328.374,9,0,Transition Metals
+Gold,1355.616,400,0,Transition Metals
+Gold,1362.326,400,1,Transition Metals
+Gold,1408.451,9,0,Transition Metals
+Gold,1481.764,9,0,Transition Metals
+Gold,1486.547,500,0,Transition Metals
+Gold,1587.158,20,0,Transition Metals
+Gold,1624.335,9,0,Transition Metals
+Gold,1646.674,14,1,Transition Metals
+Gold,1665.755,9,0,Transition Metals
+Gold,1699.339,20,1,Transition Metals
+Gold,1740.475,600,0,Transition Metals
+Gold,1783.200,600,0,Transition Metals
+Gold,1879.829,9,0,Transition Metals
+Gold,1224.592,600,1,Transition Metals
+Gold,1229.901,600,0,Transition Metals
+Gold,1328.374,9,0,Transition Metals
+Gold,1355.616,400,0,Transition Metals
+Gold,1362.326,400,1,Transition Metals
+Gold,1408.451,9,0,Transition Metals
+Gold,1481.764,9,0,Transition Metals
+Gold,1486.547,500,0,Transition Metals
+Gold,1587.158,20,0,Transition Metals
+Gold,1624.335,9,0,Transition Metals
+Gold,1646.674,14,1,Transition Metals
+Gold,1665.755,9,0,Transition Metals
+Gold,1699.339,20,1,Transition Metals
+Gold,1740.475,600,0,Transition Metals
+Gold,1783.200,600,0,Transition Metals
+Gold,1879.829,9,0,Transition Metals
+Aluminum,1539.830,800,1,Post-transition Metals
+Aluminum,1670.7886,1000,1,Post-transition Metals
+Aluminum,1719.440,800,1,Post-transition Metals
+Aluminum,1721.244,500,0,Post-transition Metals
+Aluminum,1721.271,900,1,Post-transition Metals
+Aluminum,1724.952,500,0,Post-transition Metals
+Aluminum,1724.984,900,1,Post-transition Metals
+Aluminum,1762.899,30,0,Post-transition Metals
+Aluminum,1763.869,500,0,Post-transition Metals
+Aluminum,1763.952,700,1,Post-transition Metals
+Aluminum,1765.636,50,0,Post-transition Metals
+Aluminum,1765.815,300,0,Post-transition Metals
+Aluminum,1766.385,50,0,Post-transition Metals
+Aluminum,1767.731,400,0,Post-transition Metals
+Aluminum,1769.140,50,0,Post-transition Metals
+Aluminum,1828.588,600,0,Post-transition Metals
+Aluminum,1858.026,700,1,Post-transition Metals
+Aluminum,1862.311,1000,1,Post-transition Metals
+Aluminum,1990.531,700,0,Post-transition Metals
+Aluminum,1539.830,800,1,Post-transition Metals
+Aluminum,1670.7886,1000,1,Post-transition Metals
+Aluminum,1719.440,800,1,Post-transition Metals
+Aluminum,1721.244,500,0,Post-transition Metals
+Aluminum,1721.271,900,1,Post-transition Metals
+Aluminum,1724.952,500,0,Post-transition Metals
+Aluminum,1724.984,900,1,Post-transition Metals
+Aluminum,1762.899,30,0,Post-transition Metals
+Aluminum,1763.869,500,0,Post-transition Metals
+Aluminum,1763.952,700,1,Post-transition Metals
+Aluminum,1765.636,50,0,Post-transition Metals
+Aluminum,1765.815,300,0,Post-transition Metals
+Aluminum,1766.385,50,0,Post-transition Metals
+Aluminum,1767.731,400,0,Post-transition Metals
+Aluminum,1769.140,50,0,Post-transition Metals
+Aluminum,1828.588,600,0,Post-transition Metals
+Aluminum,1858.026,700,1,Post-transition Metals
+Aluminum,1862.311,1000,1,Post-transition Metals
+Aluminum,1990.531,700,0,Post-transition Metals
+Helium,,15,0,Noble Gases
+Helium,,20,0,Noble Gases
+Helium,,30,0,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,100,0,Noble Gases
+Helium,,300,1,Noble Gases
+Helium,,150,1,Noble Gases
+Helium,,1000,1,Noble Gases
+Helium,,500,1,Noble Gases
+Helium,,10,0,Noble Gases
+Helium,,2,0,Noble Gases
+Helium,,3,0,Noble Gases
+Helium,,4,0,Noble Gases
+Helium,,5,0,Noble Gases
+Helium,,7,0,Noble Gases
+Helium,,10,0,Noble Gases
+Helium,,15,0,Noble Gases
+Helium,,20,0,Noble Gases
+Helium,,25,0,Noble Gases
+Helium,,35,0,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,100,1,Noble Gases
+Helium,,400,1,Noble Gases
+Helium,,1000,1,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,5,0,Noble Gases
+Helium,,6,0,Noble Gases
+Helium,,8,0,Noble Gases
+Helium,1025.27,15,0,Noble Gases
+Helium,1084.94,30,0,Noble Gases
+Helium,1215.09,35,0,Noble Gases
+Helium,1215.17,50,0,Noble Gases
+Helium,1640.3321,120,1,Noble Gases
+Helium,1640.3447,50,1,Noble Gases
+Helium,1640.3750,7,1,Noble Gases
+Helium,1640.3914,25,1,Noble Gases
+Helium,1640.4742,180,1,Noble Gases
+Helium,1640.4897,25,1,Noble Gases
+Helium,1640.5326,15,1,Noble Gases
+Helium,,15,0,Noble Gases
+Helium,,20,0,Noble Gases
+Helium,,30,0,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,100,0,Noble Gases
+Helium,,300,1,Noble Gases
+Helium,,150,1,Noble Gases
+Helium,,1000,1,Noble Gases
+Helium,,500,1,Noble Gases
+Helium,,10,0,Noble Gases
+Helium,,2,0,Noble Gases
+Helium,,3,0,Noble Gases
+Helium,,4,0,Noble Gases
+Helium,,5,0,Noble Gases
+Helium,,7,0,Noble Gases
+Helium,,10,0,Noble Gases
+Helium,,15,0,Noble Gases
+Helium,,20,0,Noble Gases
+Helium,,25,0,Noble Gases
+Helium,,35,0,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,100,1,Noble Gases
+Helium,,400,1,Noble Gases
+Helium,,1000,1,Noble Gases
+Helium,,50,0,Noble Gases
+Helium,,5,0,Noble Gases
+Helium,,6,0,Noble Gases
+Helium,,8,0,Noble Gases
+Helium,1025.27,15,0,Noble Gases
+Helium,1084.94,30,0,Noble Gases
+Helium,1215.09,35,0,Noble Gases
+Helium,1215.17,50,0,Noble Gases
+Helium,1640.3321,120,1,Noble Gases
+Helium,1640.3447,50,1,Noble Gases
+Helium,1640.3750,7,1,Noble Gases
+Helium,1640.3914,25,1,Noble Gases
+Helium,1640.4742,180,1,Noble Gases
+Helium,1640.4897,25,1,Noble Gases
+Helium,1640.5326,15,1,Noble Gases
+Antimony,1274.938,800,1,Metalloids
+Antimony,1327.378,800,1,Metalloids
+Antimony,1354.955,800,0,Metalloids
+Antimony,1358.009,600,0,Metalloids
+Antimony,1384.656,800,1,Metalloids
+Antimony,1387.565,1000,1,Metalloids
+Antimony,1407.784,600,0,Metalloids
+Antimony,1436.447,800,1,Metalloids
+Antimony,1498.549,800,0,Metalloids
+Antimony,1513.255,800,0,Metalloids
+Antimony,1524.367,800,0,Metalloids
+Antimony,1565.501,800,0,Metalloids
+Antimony,1576.099,900,1,Metalloids
+Antimony,1581.353,800,0,Metalloids
+Antimony,1606.952,1000,1,Metalloids
+Antimony,1814.964,700,0,Metalloids
+Antimony,1871.154,400,1,Metalloids
+Antimony,1882.568,200,0,Metalloids
+Antimony,1950.393,300,0,Metalloids
+Antimony,1274.938,800,1,Metalloids
+Antimony,1327.378,800,1,Metalloids
+Antimony,1354.955,800,0,Metalloids
+Antimony,1358.009,600,0,Metalloids
+Antimony,1384.656,800,1,Metalloids
+Antimony,1387.565,1000,1,Metalloids
+Antimony,1407.784,600,0,Metalloids
+Antimony,1436.447,800,1,Metalloids
+Antimony,1498.549,800,0,Metalloids
+Antimony,1513.255,800,0,Metalloids
+Antimony,1524.367,800,0,Metalloids
+Antimony,1565.501,800,0,Metalloids
+Antimony,1576.099,900,1,Metalloids
+Antimony,1581.353,800,0,Metalloids
+Antimony,1606.952,1000,1,Metalloids
+Antimony,1814.964,700,0,Metalloids
+Antimony,1871.154,400,1,Metalloids
+Antimony,1882.568,200,0,Metalloids
+Antimony,1950.393,300,0,Metalloids
+Argon,,10,0,Noble Gases
+Argon,,15,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,,1000,1,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,1000,1,Noble Gases
+Argon,,150,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,20,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,60,0,Noble Gases
+Argon,,30,0,Noble Gases
+Argon,,40,0,Noble Gases
+Argon,,50,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,80,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,150,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,1048.21987,1000,1,Noble Gases
+Argon,1066.65980,500,1,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,15,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,,1000,1,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,10,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,1000,1,Noble Gases
+Argon,,150,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,25,0,Noble Gases
+Argon,,20,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,60,0,Noble Gases
+Argon,,30,0,Noble Gases
+Argon,,40,0,Noble Gases
+Argon,,50,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,70,0,Noble Gases
+Argon,,80,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,120,0,Noble Gases
+Argon,,150,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,100,0,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,180,1,Noble Gases
+Argon,,150,1,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,,300,1,Noble Gases
+Argon,1048.21987,1000,1,Noble Gases
+Argon,1066.65980,500,1,Noble Gases
+Hydrogen,,15,0,Nonmetals
+Hydrogen,,20,0,Nonmetals
+Hydrogen,,30,0,Nonmetals
+Hydrogen,,50,1,Nonmetals
+Hydrogen,,100,1,Nonmetals
+Hydrogen,,300,1,Nonmetals
+Hydrogen,,1000,1,Nonmetals
+Hydrogen,,500,1,Nonmetals
+Hydrogen,,15,0,Nonmetals
+Hydrogen,,20,0,Nonmetals
+Hydrogen,,30,0,Nonmetals
+Hydrogen,,50,1,Nonmetals
+Hydrogen,,100,1,Nonmetals
+Hydrogen,,300,1,Nonmetals
+Hydrogen,,1000,1,Nonmetals
+Hydrogen,,500,1,Nonmetals
+Rhenium,1973.1340,800,1,Transition Metals
+Rhenium,1973.1340,800,1,Transition Metals
+Arsenic,1211.17,800,0,Metalloids
+Arsenic,1218.10,800,0,Metalloids
+Arsenic,1241.31,800,0,Metalloids
+Arsenic,1243.08,1000,1,Metalloids
+Arsenic,1245.67,900,0,Metalloids
+Arsenic,1258.58,800,0,Metalloids
+Arsenic,1263.77,1000,1,Metalloids
+Arsenic,1266.34,800,0,Metalloids
+Arsenic,1267.59,800,0,Metalloids
+Arsenic,1280.99,700,0,Metalloids
+Arsenic,1287.54,700,0,Metalloids
+Arsenic,1305.70,700,0,Metalloids
+Arsenic,1333.15,800,0,Metalloids
+Arsenic,1341.55,1000,1,Metalloids
+Arsenic,1355.93,800,0,Metalloids
+Arsenic,1369.77,1000,1,Metalloids
+Arsenic,1373.65,800,0,Metalloids
+Arsenic,1375.07,1000,1,Metalloids
+Arsenic,1375.78,800,0,Metalloids
+Arsenic,1394.64,800,0,Metalloids
+Arsenic,1400.31,800,0,Metalloids
+Arsenic,1890.43,700,1,Metalloids
+Arsenic,1937.59,400,1,Metalloids
+Arsenic,1972.62,200,1,Metalloids
+Arsenic,1211.17,800,0,Metalloids
+Arsenic,1218.10,800,0,Metalloids
+Arsenic,1241.31,800,0,Metalloids
+Arsenic,1243.08,1000,1,Metalloids
+Arsenic,1245.67,900,0,Metalloids
+Arsenic,1258.58,800,0,Metalloids
+Arsenic,1263.77,1000,1,Metalloids
+Arsenic,1266.34,800,0,Metalloids
+Arsenic,1267.59,800,0,Metalloids
+Arsenic,1280.99,700,0,Metalloids
+Arsenic,1287.54,700,0,Metalloids
+Arsenic,1305.70,700,0,Metalloids
+Arsenic,1333.15,800,0,Metalloids
+Arsenic,1341.55,1000,1,Metalloids
+Arsenic,1355.93,800,0,Metalloids
+Arsenic,1369.77,1000,1,Metalloids
+Arsenic,1373.65,800,0,Metalloids
+Arsenic,1375.07,1000,1,Metalloids
+Arsenic,1375.78,800,0,Metalloids
+Arsenic,1394.64,800,0,Metalloids
+Arsenic,1400.31,800,0,Metalloids
+Arsenic,1890.43,700,1,Metalloids
+Arsenic,1937.59,400,1,Metalloids
+Arsenic,1972.62,200,1,Metalloids
+Indium,1586.340,20,1,Post-transition Metals
+Indium,1711.1,14,1,Post-transition Metals
+Indium,1757.3,14,1,Post-transition Metals
+Indium,1936.217,6,1,Post-transition Metals
+Indium,1966.711,6,1,Post-transition Metals
+Indium,1977.359,11,1,Post-transition Metals
+Indium,1586.340,20,1,Post-transition Metals
+Indium,1711.1,14,1,Post-transition Metals
+Indium,1757.3,14,1,Post-transition Metals
+Indium,1936.217,6,1,Post-transition Metals
+Indium,1966.711,6,1,Post-transition Metals
+Indium,1977.359,11,1,Post-transition Metals
+Rhodium,1604.45,1000,1,Transition Metals
+Rhodium,1624.47,400,1,Transition Metals
+Rhodium,1628.94,1000,1,Transition Metals
+Rhodium,1634.72,400,1,Transition Metals
+Rhodium,1637.88,400,1,Transition Metals
+Rhodium,1604.45,1000,1,Transition Metals
+Rhodium,1624.47,400,1,Transition Metals
+Rhodium,1628.94,1000,1,Transition Metals
+Rhodium,1634.72,400,1,Transition Metals
+Rhodium,1637.88,400,1,Transition Metals
+Iodine,,100,0,
+Iodine,1018.5,200,0,
+Iodine,1034.6,500,1,
+Iodine,1066.3,100,0,
+Iodine,1075.2,150,0,
+Iodine,1105.0,250,0,
+Iodine,1111.1,120,0,
+Iodine,1125.2,200,0,
+Iodine,1131.5,100,0,
+Iodine,1139.8,500,1,
+Iodine,1160.5,500,1,
+Iodine,1166.4,1000,1,
+Iodine,1175.8,250,0,
+Iodine,1178.6,500,1,
+Iodine,1187.3,800,1,
+Iodine,1190.8,500,1,
+Iodine,1198.8,250,0,
+Iodine,1200.2,400,0,
+Iodine,1220.8,1000,1,
+Iodine,1234.0,1000,1,
+Iodine,1259.5,40,0,
+Iodine,1289.4,40,0,
+Iodine,1300.3,130,0,
+Iodine,1302.9,40,0,
+Iodine,1313.9,40,0,
+Iodine,1317.5,40,0,
+Iodine,1336.5,1000,1,
+Iodine,1355.1,70,0,
+Iodine,1357.9,40,0,
+Iodine,1360.9,70,0,
+Iodine,1361.1,40,0,
+Iodine,1383.2,50,0,
+Iodine,1390.7,40,0,
+Iodine,1425.4,110,0,
+Iodine,1446.2,70,0,
+Iodine,1453.1,70,0,
+Iodine,1457.3,70,0,
+Iodine,1457.4,70,0,
+Iodine,1457.9,130,1,
+Iodine,1459.1,50,0,
+Iodine,1492.8,70,0,
+Iodine,1507.0,70,0,
+Iodine,1514.6,70,0,
+Iodine,1518.0,200,1,
+Iodine,1593.5,70,0,
+Iodine,1617.6,70,0,
+Iodine,1702.0,200,1,
+Iodine,1782.7,150,1,
+Iodine,1799.0,70,0,
+Iodine,1830.3,1000,1,
+Iodine,1844.4,200,1,
+Iodine,,100,0,
+Iodine,1018.5,200,0,
+Iodine,1034.6,500,1,
+Iodine,1066.3,100,0,
+Iodine,1075.2,150,0,
+Iodine,1105.0,250,0,
+Iodine,1111.1,120,0,
+Iodine,1125.2,200,0,
+Iodine,1131.5,100,0,
+Iodine,1139.8,500,1,
+Iodine,1160.5,500,1,
+Iodine,1166.4,1000,1,
+Iodine,1175.8,250,0,
+Iodine,1178.6,500,1,
+Iodine,1187.3,800,1,
+Iodine,1190.8,500,1,
+Iodine,1198.8,250,0,
+Iodine,1200.2,400,0,
+Iodine,1220.8,1000,1,
+Iodine,1234.0,1000,1,
+Iodine,1259.5,40,0,
+Iodine,1289.4,40,0,
+Iodine,1300.3,130,0,
+Iodine,1302.9,40,0,
+Iodine,1313.9,40,0,
+Iodine,1317.5,40,0,
+Iodine,1336.5,1000,1,
+Iodine,1355.1,70,0,
+Iodine,1357.9,40,0,
+Iodine,1360.9,70,0,
+Iodine,1361.1,40,0,
+Iodine,1383.2,50,0,
+Iodine,1390.7,40,0,
+Iodine,1425.4,110,0,
+Iodine,1446.2,70,0,
+Iodine,1453.1,70,0,
+Iodine,1457.3,70,0,
+Iodine,1457.4,70,0,
+Iodine,1457.9,130,1,
+Iodine,1459.1,50,0,
+Iodine,1492.8,70,0,
+Iodine,1507.0,70,0,
+Iodine,1514.6,70,0,
+Iodine,1518.0,200,1,
+Iodine,1593.5,70,0,
+Iodine,1617.6,70,0,
+Iodine,1702.0,200,1,
+Iodine,1782.7,150,1,
+Iodine,1799.0,70,0,
+Iodine,1830.3,1000,1,
+Iodine,1844.4,200,1,
+Rubidium,,2,0,Alkali Metals
+Rubidium,,3,0,Alkali Metals
+Rubidium,,30,1,Alkali Metals
+Rubidium,,15,0,Alkali Metals
+Rubidium,,30,1,Alkali Metals
+Rubidium,,70,1,Alkali Metals
+Rubidium,,110,1,Alkali Metals
+Rubidium,1604.12,11,0,Alkali Metals
+Rubidium,1760.50,60,0,Alkali Metals
+Rubidium,,2,0,Alkali Metals
+Rubidium,,3,0,Alkali Metals
+Rubidium,,30,1,Alkali Metals
+Rubidium,,15,0,Alkali Metals
+Rubidium,,30,1,Alkali Metals
+Rubidium,,70,1,Alkali Metals
+Rubidium,,110,1,Alkali Metals
+Rubidium,1604.12,11,0,Alkali Metals
+Rubidium,1760.50,60,0,Alkali Metals
+Ruthenium,1875.564,600,1,Transition Metals
+Ruthenium,1888.043,600,1,Transition Metals
+Ruthenium,1903.221,600,1,Transition Metals
+Ruthenium,1916.816,250,1,Transition Metals
+Ruthenium,1939.043,250,1,Transition Metals
+Ruthenium,1939.505,250,1,Transition Metals
+Ruthenium,1875.564,600,1,Transition Metals
+Ruthenium,1888.043,600,1,Transition Metals
+Ruthenium,1903.221,600,1,Transition Metals
+Ruthenium,1916.816,250,1,Transition Metals
+Ruthenium,1939.043,250,1,Transition Metals
+Ruthenium,1939.505,250,1,Transition Metals
+Beryllium,1143.039,200,0,Alkaline Earth Metals
+Beryllium,1197.188,400,0,Alkaline Earth Metals
+Beryllium,1512.269,600,1,Alkaline Earth Metals
+Beryllium,1512.412,800,1,Alkaline Earth Metals
+Beryllium,1661.478,100,1,Alkaline Earth Metals
+Beryllium,1964.59,50,0,Alkaline Earth Metals
+Beryllium,1998.01,60,0,Alkaline Earth Metals
+Beryllium,1143.039,200,0,Alkaline Earth Metals
+Beryllium,1197.188,400,0,Alkaline Earth Metals
+Beryllium,1512.269,600,1,Alkaline Earth Metals
+Beryllium,1512.412,800,1,Alkaline Earth Metals
+Beryllium,1661.478,100,1,Alkaline Earth Metals
+Beryllium,1964.59,50,0,Alkaline Earth Metals
+Beryllium,1998.01,60,0,Alkaline Earth Metals
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,30,1,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,300,1,Noble Gases
+Krypton,,130,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,700,1,Noble Gases
+Krypton,,100,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,700,1,Noble Gases
+Krypton,1001.0606,150,0,Noble Gases
+Krypton,1003.5504,150,0,Noble Gases
+Krypton,1030.0232,150,0,Noble Gases
+Krypton,1164.8671,300,1,Noble Gases
+Krypton,1235.8378,1000,1,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,30,1,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,20,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,300,1,Noble Gases
+Krypton,,130,0,Noble Gases
+Krypton,,70,0,Noble Gases
+Krypton,,700,1,Noble Gases
+Krypton,,100,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,30,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,80,0,Noble Gases
+Krypton,,700,1,Noble Gases
+Krypton,1001.0606,150,0,Noble Gases
+Krypton,1003.5504,150,0,Noble Gases
+Krypton,1030.0232,150,0,Noble Gases
+Krypton,1164.8671,300,1,Noble Gases
+Krypton,1235.8378,1000,1,Noble Gases
+Bismuth,1241.045,400,1,Post-transition Metals
+Bismuth,1283.715,300,1,Post-transition Metals
+Bismuth,1436.810,400,1,Post-transition Metals
+Bismuth,1455.091,500,0,Post-transition Metals
+Bismuth,1486.954,400,0,Post-transition Metals
+Bismuth,1520.549,400,0,Post-transition Metals
+Bismuth,1533.139,400,0,Post-transition Metals
+Bismuth,1536.745,300,0,Post-transition Metals
+Bismuth,1538.037,400,0,Post-transition Metals
+Bismuth,1573.69,400,0,Post-transition Metals
+Bismuth,1591.76,600,1,Post-transition Metals
+Bismuth,1609.69,400,0,Post-transition Metals
+Bismuth,1611.358,400,0,Post-transition Metals
+Bismuth,1777.05,800,1,Post-transition Metals
+Bismuth,1787.406,600,0,Post-transition Metals
+Bismuth,1791.842,700,1,Post-transition Metals
+Bismuth,1823.728,700,1,Post-transition Metals
+Bismuth,1902.341,1000,1,Post-transition Metals
+Bismuth,1954.706,300,1,Post-transition Metals
+Bismuth,1960.049,250,1,Post-transition Metals
+Bismuth,1241.045,400,1,Post-transition Metals
+Bismuth,1283.715,300,1,Post-transition Metals
+Bismuth,1436.810,400,1,Post-transition Metals
+Bismuth,1455.091,500,0,Post-transition Metals
+Bismuth,1486.954,400,0,Post-transition Metals
+Bismuth,1520.549,400,0,Post-transition Metals
+Bismuth,1533.139,400,0,Post-transition Metals
+Bismuth,1536.745,300,0,Post-transition Metals
+Bismuth,1538.037,400,0,Post-transition Metals
+Bismuth,1573.69,400,0,Post-transition Metals
+Bismuth,1591.76,600,1,Post-transition Metals
+Bismuth,1609.69,400,0,Post-transition Metals
+Bismuth,1611.358,400,0,Post-transition Metals
+Bismuth,1777.05,800,1,Post-transition Metals
+Bismuth,1787.406,600,0,Post-transition Metals
+Bismuth,1791.842,700,1,Post-transition Metals
+Bismuth,1823.728,700,1,Post-transition Metals
+Bismuth,1902.341,1000,1,Post-transition Metals
+Bismuth,1954.706,300,1,Post-transition Metals
+Bismuth,1960.049,250,1,Post-transition Metals
+Selenium,,800,0,Nonmetals
+Selenium,,800,0,Nonmetals
+Selenium,1013.40,800,1,Nonmetals
+Selenium,1013.99,800,0,Nonmetals
+Selenium,1033.56,1000,1,Nonmetals
+Selenium,1049.65,1000,1,Nonmetals
+Selenium,1057.41,800,0,Nonmetals
+Selenium,1141.97,800,0,Nonmetals
+Selenium,1192.24,1000,1,Nonmetals
+Selenium,1795.28,300,0,Nonmetals
+Selenium,1855.20,300,0,Nonmetals
+Selenium,1898.55,400,0,Nonmetals
+Selenium,1913.79,400,0,Nonmetals
+Selenium,1919.19,300,0,Nonmetals
+Selenium,1960.894,600,1,Nonmetals
+Selenium,1995.111,150,1,Nonmetals
+Selenium,,800,0,Nonmetals
+Selenium,,800,0,Nonmetals
+Selenium,1013.40,800,1,Nonmetals
+Selenium,1013.99,800,0,Nonmetals
+Selenium,1033.56,1000,1,Nonmetals
+Selenium,1049.65,1000,1,Nonmetals
+Selenium,1057.41,800,0,Nonmetals
+Selenium,1141.97,800,0,Nonmetals
+Selenium,1192.24,1000,1,Nonmetals
+Selenium,1795.28,300,0,Nonmetals
+Selenium,1855.20,300,0,Nonmetals
+Selenium,1898.55,400,0,Nonmetals
+Selenium,1913.79,400,0,Nonmetals
+Selenium,1919.19,300,0,Nonmetals
+Selenium,1960.894,600,1,Nonmetals
+Selenium,1995.111,150,1,Nonmetals
+Boron,,180,0,Metalloids
+Boron,,500,0,Metalloids
+Boron,,500,0,Metalloids
+Boron,1081.87,500,0,Metalloids
+Boron,1082.07,500,0,Metalloids
+Boron,1230.16,500,0,Metalloids
+Boron,1362.46,1000,1,Metalloids
+Boron,1623.59,700,1,Metalloids
+Boron,1623.79,500,1,Metalloids
+Boron,1624.02,1000,1,Metalloids
+Boron,1624.17,300,0,Metalloids
+Boron,1624.37,700,1,Metalloids
+Boron,1666.85,300,0,Metalloids
+Boron,1667.27,500,0,Metalloids
+Boron,1817.84,300,0,Metalloids
+Boron,1818.34,500,0,Metalloids
+Boron,1825.89,800,1,Metalloids
+Boron,1826.40,1000,1,Metalloids
+Boron,1842.82,500,1,Metalloids
+Boron,,180,0,Metalloids
+Boron,,500,0,Metalloids
+Boron,,500,0,Metalloids
+Boron,1081.87,500,0,Metalloids
+Boron,1082.07,500,0,Metalloids
+Boron,1230.16,500,0,Metalloids
+Boron,1362.46,1000,1,Metalloids
+Boron,1623.59,700,1,Metalloids
+Boron,1623.79,500,1,Metalloids
+Boron,1624.02,1000,1,Metalloids
+Boron,1624.17,300,0,Metalloids
+Boron,1624.37,700,1,Metalloids
+Boron,1666.85,300,0,Metalloids
+Boron,1667.27,500,0,Metalloids
+Boron,1817.84,300,0,Metalloids
+Boron,1818.34,500,0,Metalloids
+Boron,1825.89,800,1,Metalloids
+Boron,1826.40,1000,1,Metalloids
+Boron,1842.82,500,1,Metalloids
+Lead,1060.619,200,0,Post-transition Metals
+Lead,1121.325,200,0,Post-transition Metals
+Lead,1433.906,1000,1,Post-transition Metals
+Lead,1512.298,1000,1,Post-transition Metals
+Lead,1671.553,500,0,Post-transition Metals
+Lead,1682.127,500,0,Post-transition Metals
+Lead,1726.802,600,1,Post-transition Metals
+Lead,1796.669,400,0,Post-transition Metals
+Lead,1822.052,1000,1,Post-transition Metals
+Lead,1060.619,200,0,Post-transition Metals
+Lead,1121.325,200,0,Post-transition Metals
+Lead,1433.906,1000,1,Post-transition Metals
+Lead,1512.298,1000,1,Post-transition Metals
+Lead,1671.553,500,0,Post-transition Metals
+Lead,1682.127,500,0,Post-transition Metals
+Lead,1726.802,600,1,Post-transition Metals
+Lead,1796.669,400,0,Post-transition Metals
+Lead,1822.052,1000,1,Post-transition Metals
+Silicon,,70,0,Metalloids
+Silicon,,70,0,Metalloids
+Silicon,1190.4160,300,1,Metalloids
+Silicon,1193.2898,700,1,Metalloids
+Silicon,1194.5004,800,1,Metalloids
+Silicon,1228.746,70,0,Metalloids
+Silicon,1229.388,100,0,Metalloids
+Silicon,1248.426,100,0,Metalloids
+Silicon,1250.433,70,0,Metalloids
+Silicon,1251.164,130,0,Metalloids
+Silicon,1260.4223,500,1,Metalloids
+Silicon,1264.7379,1000,1,Metalloids
+Silicon,1309.2766,100,0,Metalloids
+Silicon,1350.057,70,0,Metalloids
+Silicon,1526.70698,150,0,Metalloids
+Silicon,1533.4318,300,1,Metalloids
+Silicon,1594.5655,70,0,Metalloids
+Silicon,1594.9493,70,0,Metalloids
+Silicon,1622.8806,90,0,Metalloids
+Silicon,1629.441,100,0,Metalloids
+Silicon,1629.9477,100,0,Metalloids
+Silicon,1675.2052,200,0,Metalloids
+Silicon,1696.2065,200,0,Metalloids
+Silicon,1697.9409,250,0,Metalloids
+Silicon,1770.9223,300,0,Metalloids
+Silicon,1808.01288,30,0,Metalloids
+Silicon,1814.0794,250,0,Metalloids
+Silicon,1816.9290,40,0,Metalloids
+Silicon,1836.5102,200,0,Metalloids
+Silicon,1841.4490,400,0,Metalloids
+Silicon,1843.7700,200,0,Metalloids
+Silicon,1845.5203,200,0,Metalloids
+Silicon,1846.1118,200,0,Metalloids
+Silicon,1847.4737,300,0,Metalloids
+Silicon,1848.1504,200,0,Metalloids
+Silicon,1848.7480,250,0,Metalloids
+Silicon,1850.6719,400,1,Metalloids
+Silicon,1852.4717,250,0,Metalloids
+Silicon,1874.8423,200,0,Metalloids
+Silicon,1901.3377,400,1,Metalloids
+Silicon,1977.5978,400,1,Metalloids
+Silicon,1979.2056,400,1,Metalloids
+Silicon,1980.6185,300,1,Metalloids
+Silicon,1983.2330,300,1,Metalloids
+Silicon,1986.3640,500,1,Metalloids
+Silicon,1988.9937,1000,1,Metalloids
+Silicon,,70,0,Metalloids
+Silicon,,70,0,Metalloids
+Silicon,1190.4160,300,1,Metalloids
+Silicon,1193.2898,700,1,Metalloids
+Silicon,1194.5004,800,1,Metalloids
+Silicon,1228.746,70,0,Metalloids
+Silicon,1229.388,100,0,Metalloids
+Silicon,1248.426,100,0,Metalloids
+Silicon,1250.433,70,0,Metalloids
+Silicon,1251.164,130,0,Metalloids
+Silicon,1260.4223,500,1,Metalloids
+Silicon,1264.7379,1000,1,Metalloids
+Silicon,1309.2766,100,0,Metalloids
+Silicon,1350.057,70,0,Metalloids
+Silicon,1526.70698,150,0,Metalloids
+Silicon,1533.4318,300,1,Metalloids
+Silicon,1594.5655,70,0,Metalloids
+Silicon,1594.9493,70,0,Metalloids
+Silicon,1622.8806,90,0,Metalloids
+Silicon,1629.441,100,0,Metalloids
+Silicon,1629.9477,100,0,Metalloids
+Silicon,1675.2052,200,0,Metalloids
+Silicon,1696.2065,200,0,Metalloids
+Silicon,1697.9409,250,0,Metalloids
+Silicon,1770.9223,300,0,Metalloids
+Silicon,1808.01288,30,0,Metalloids
+Silicon,1814.0794,250,0,Metalloids
+Silicon,1816.9290,40,0,Metalloids
+Silicon,1836.5102,200,0,Metalloids
+Silicon,1841.4490,400,0,Metalloids
+Silicon,1843.7700,200,0,Metalloids
+Silicon,1845.5203,200,0,Metalloids
+Silicon,1846.1118,200,0,Metalloids
+Silicon,1847.4737,300,0,Metalloids
+Silicon,1848.1504,200,0,Metalloids
+Silicon,1848.7480,250,0,Metalloids
+Silicon,1850.6719,400,1,Metalloids
+Silicon,1852.4717,250,0,Metalloids
+Silicon,1874.8423,200,0,Metalloids
+Silicon,1901.3377,400,1,Metalloids
+Silicon,1977.5978,400,1,Metalloids
+Silicon,1979.2056,400,1,Metalloids
+Silicon,1980.6185,300,1,Metalloids
+Silicon,1983.2330,300,1,Metalloids
+Silicon,1986.3640,500,1,Metalloids
+Silicon,1988.9937,1000,1,Metalloids
+Bromine,,1000,1,
+Bromine,,500,0,
+Bromine,,500,0,
+Bromine,,500,0,
+Bromine,1012.13,500,0,
+Bromine,1015.53,1000,1,
+Bromine,1036.98,500,0,
+Bromine,1048.94,1000,1,
+Bromine,1064.71,400,0,
+Bromine,1071.84,500,0,
+Bromine,1232.43,100,0,
+Bromine,1384.60,150,0,
+Bromine,1488.45,700,1,
+Bromine,1531.74,400,0,
+Bromine,1540.65,300,1,
+Bromine,1574.84,400,1,
+Bromine,1576.39,250,0,
+Bromine,1582.31,300,0,
+Bromine,1633.40,1000,1,
+Bromine,,1000,1,
+Bromine,,500,0,
+Bromine,,500,0,
+Bromine,,500,0,
+Bromine,1012.13,500,0,
+Bromine,1015.53,1000,1,
+Bromine,1036.98,500,0,
+Bromine,1048.94,1000,1,
+Bromine,1064.71,400,0,
+Bromine,1071.84,500,0,
+Bromine,1232.43,100,0,
+Bromine,1384.60,150,0,
+Bromine,1488.45,700,1,
+Bromine,1531.74,400,0,
+Bromine,1540.65,300,1,
+Bromine,1574.84,400,1,
+Bromine,1576.39,250,0,
+Bromine,1582.31,300,0,
+Bromine,1633.40,1000,1,
+Lithium,,30,0,Alkali Metals
+Lithium,,300,1,Alkali Metals
+Lithium,,1000,1,Alkali Metals
+Lithium,,10,0,Alkali Metals
+Lithium,1017.88,10,0,Alkali Metals
+Lithium,1131.88,30,0,Alkali Metals
+Lithium,1166.63,10,0,Alkali Metals
+Lithium,1198.092,50,0,Alkali Metals
+Lithium,1237.29,20,0,Alkali Metals
+Lithium,1253.32,10,0,Alkali Metals
+Lithium,1420.900,60,0,Alkali Metals
+Lithium,1492.931,15,0,Alkali Metals
+Lithium,1492.973,30,0,Alkali Metals
+Lithium,1493.036,6,0,Alkali Metals
+Lithium,1653.077,15,0,Alkali Metals
+Lithium,1653.132,30,0,Alkali Metals
+Lithium,1653.213,6,0,Alkali Metals
+Lithium,1681.661,40,0,Alkali Metals
+Lithium,1755.332,50,0,Alkali Metals
+Lithium,,30,0,Alkali Metals
+Lithium,,300,1,Alkali Metals
+Lithium,,1000,1,Alkali Metals
+Lithium,,10,0,Alkali Metals
+Lithium,1017.88,10,0,Alkali Metals
+Lithium,1131.88,30,0,Alkali Metals
+Lithium,1166.63,10,0,Alkali Metals
+Lithium,1198.092,50,0,Alkali Metals
+Lithium,1237.29,20,0,Alkali Metals
+Lithium,1253.32,10,0,Alkali Metals
+Lithium,1420.900,60,0,Alkali Metals
+Lithium,1492.931,15,0,Alkali Metals
+Lithium,1492.973,30,0,Alkali Metals
+Lithium,1493.036,6,0,Alkali Metals
+Lithium,1653.077,15,0,Alkali Metals
+Lithium,1653.132,30,0,Alkali Metals
+Lithium,1653.213,6,0,Alkali Metals
+Lithium,1681.661,40,0,Alkali Metals
+Lithium,1755.332,50,0,Alkali Metals
+Silver,1106.9931,1000,1,Transition Metals
+Silver,1112.4006,600,1,Transition Metals
+Silver,1195.8092,700,1,Transition Metals
+Silver,1515.63,9,0,Transition Metals
+Silver,1644.4958,300,0,Transition Metals
+Silver,1665.3513,400,0,Transition Metals
+Silver,1651.52,5,0,Transition Metals
+Silver,1682.8353,300,0,Transition Metals
+Silver,1723.6119,300,0,Transition Metals
+Silver,1994.3173,300,0,Transition Metals
+Silver,1106.9931,1000,1,Transition Metals
+Silver,1112.4006,600,1,Transition Metals
+Silver,1195.8092,700,1,Transition Metals
+Silver,1515.63,9,0,Transition Metals
+Silver,1644.4958,300,0,Transition Metals
+Silver,1665.3513,400,0,Transition Metals
+Silver,1651.52,5,0,Transition Metals
+Silver,1682.8353,300,0,Transition Metals
+Silver,1723.6119,300,0,Transition Metals
+Silver,1994.3173,300,0,Transition Metals
+Cadmium,1514.26,200,0,Transition Metals
+Cadmium,1571.58,200,0,Transition Metals
+Cadmium,1922.23,300,0,Transition Metals
+Cadmium,1995.43,200,0,Transition Metals
+Cadmium,1514.26,200,0,Transition Metals
+Cadmium,1571.58,200,0,Transition Metals
+Cadmium,1922.23,300,0,Transition Metals
+Cadmium,1995.43,200,0,Transition Metals
+Sodium,,90,1,Alkali Metals
+Sodium,,90,0,Alkali Metals
+Sodium,,50,0,Alkali Metals
+Sodium,,60,0,Alkali Metals
+Sodium,,30,0,Alkali Metals
+Sodium,,150,1,Alkali Metals
+Sodium,,200,0,Alkali Metals
+Sodium,1374.69,50,0,Alkali Metals
+Sodium,1404.68,50,0,Alkali Metals
+Sodium,1506.41,40,0,Alkali Metals
+Sodium,1776.57,50,0,Alkali Metals
+Sodium,1787.19,40,0,Alkali Metals
+Sodium,1798.41,40,0,Alkali Metals
+Sodium,1807.09,50,0,Alkali Metals
+Sodium,1835.22,40,0,Alkali Metals
+Sodium,1853.17,40,0,Alkali Metals
+Sodium,1881.91,90,0,Alkali Metals
+Sodium,,90,1,Alkali Metals
+Sodium,,90,0,Alkali Metals
+Sodium,,50,0,Alkali Metals
+Sodium,,60,0,Alkali Metals
+Sodium,,30,0,Alkali Metals
+Sodium,,150,1,Alkali Metals
+Sodium,,200,0,Alkali Metals
+Sodium,1374.69,50,0,Alkali Metals
+Sodium,1404.68,50,0,Alkali Metals
+Sodium,1506.41,40,0,Alkali Metals
+Sodium,1776.57,50,0,Alkali Metals
+Sodium,1787.19,40,0,Alkali Metals
+Sodium,1798.41,40,0,Alkali Metals
+Sodium,1807.09,50,0,Alkali Metals
+Sodium,1835.22,40,0,Alkali Metals
+Sodium,1853.17,40,0,Alkali Metals
+Sodium,1881.91,90,0,Alkali Metals
+Calcium,1649.858,250,0,Alkaline Earth Metals
+Calcium,1651.991,140,0,Alkaline Earth Metals
+Calcium,1840.061,250,0,Alkaline Earth Metals
+Calcium,1649.858,250,0,Alkaline Earth Metals
+Calcium,1651.991,140,0,Alkaline Earth Metals
+Calcium,1840.061,250,0,Alkaline Earth Metals
+Magnesium,1025.9681,14,1,Alkaline Earth Metals
+Magnesium,1026.1134,12,1,Alkaline Earth Metals
+Magnesium,1239.9253,25,1,Alkaline Earth Metals
+Magnesium,1240.3946,20,1,Alkaline Earth Metals
+Magnesium,1367.257,15,0,Alkaline Earth Metals
+Magnesium,1367.708,15,0,Alkaline Earth Metals
+Magnesium,1369.423,20,0,Alkaline Earth Metals
+Magnesium,1476.000,20,0,Alkaline Earth Metals
+Magnesium,1478.004,25,0,Alkaline Earth Metals
+Magnesium,1480.880,20,0,Alkaline Earth Metals
+Magnesium,1482.890,30,0,Alkaline Earth Metals
+Magnesium,1683.412,2,0,Alkaline Earth Metals
+Magnesium,1707.061,2,0,Alkaline Earth Metals
+Magnesium,1734.852,40,0,Alkaline Earth Metals
+Magnesium,1737.628,50,0,Alkaline Earth Metals
+Magnesium,1747.794,3,0,Alkaline Earth Metals
+Magnesium,1750.663,40,0,Alkaline Earth Metals
+Magnesium,1753.474,50,0,Alkaline Earth Metals
+Magnesium,1827.934,5,0,Alkaline Earth Metals
+Magnesium,1025.9681,14,1,Alkaline Earth Metals
+Magnesium,1026.1134,12,1,Alkaline Earth Metals
+Magnesium,1239.9253,25,1,Alkaline Earth Metals
+Magnesium,1240.3946,20,1,Alkaline Earth Metals
+Magnesium,1367.257,15,0,Alkaline Earth Metals
+Magnesium,1367.708,15,0,Alkaline Earth Metals
+Magnesium,1369.423,20,0,Alkaline Earth Metals
+Magnesium,1476.000,20,0,Alkaline Earth Metals
+Magnesium,1478.004,25,0,Alkaline Earth Metals
+Magnesium,1480.880,20,0,Alkaline Earth Metals
+Magnesium,1482.890,30,0,Alkaline Earth Metals
+Magnesium,1683.412,2,0,Alkaline Earth Metals
+Magnesium,1707.061,2,0,Alkaline Earth Metals
+Magnesium,1734.852,40,0,Alkaline Earth Metals
+Magnesium,1737.628,50,0,Alkaline Earth Metals
+Magnesium,1747.794,3,0,Alkaline Earth Metals
+Magnesium,1750.663,40,0,Alkaline Earth Metals
+Magnesium,1753.474,50,0,Alkaline Earth Metals
+Magnesium,1827.934,5,0,Alkaline Earth Metals
+Manganese,1915.10,8,0,Transition Metals
+Manganese,1921.250,7,0,Transition Metals
+Manganese,1996.056,400,1,Transition Metals
+Manganese,1999.511,500,1,Transition Metals
+Manganese,1915.10,8,0,Transition Metals
+Manganese,1921.250,7,0,Transition Metals
+Manganese,1996.056,400,1,Transition Metals
+Manganese,1999.511,500,1,Transition Metals
+Sulfur,,400,0,Nonmetals
+Sulfur,,300,0,Nonmetals
+Sulfur,,250,0,Nonmetals
+Sulfur,,250,0,Nonmetals
+Sulfur,,300,0,Nonmetals
+Sulfur,1014.44,250,0,Nonmetals
+Sulfur,1250.57,400,1,Nonmetals
+Sulfur,1253.80,900,1,Nonmetals
+Sulfur,1259.51,1000,1,Nonmetals
+Sulfur,1388.43,200,0,Nonmetals
+Sulfur,1392.58,120,0,Nonmetals
+Sulfur,1396.11,250,0,Nonmetals
+Sulfur,1401.51,150,0,Nonmetals
+Sulfur,1425.03,1000,1,Nonmetals
+Sulfur,1433.28,600,1,Nonmetals
+Sulfur,1433.31,200,1,Nonmetals
+Sulfur,1436.96,250,0,Nonmetals
+Sulfur,1473.99,1000,1,Nonmetals
+Sulfur,1483.03,700,0,Nonmetals
+Sulfur,1666.68,900,1,Nonmetals
+Sulfur,1687.53,800,1,Nonmetals
+Sulfur,1807.31,1000,1,Nonmetals
+Sulfur,1820.34,900,1,Nonmetals
+Sulfur,1826.24,800,1,Nonmetals
+Sulfur,1900.28,200,0,Nonmetals
+Sulfur,1914.69,100,0,Nonmetals
+Sulfur,,400,0,Nonmetals
+Sulfur,,300,0,Nonmetals
+Sulfur,,250,0,Nonmetals
+Sulfur,,250,0,Nonmetals
+Sulfur,,300,0,Nonmetals
+Sulfur,1014.44,250,0,Nonmetals
+Sulfur,1250.57,400,1,Nonmetals
+Sulfur,1253.80,900,1,Nonmetals
+Sulfur,1259.51,1000,1,Nonmetals
+Sulfur,1388.43,200,0,Nonmetals
+Sulfur,1392.58,120,0,Nonmetals
+Sulfur,1396.11,250,0,Nonmetals
+Sulfur,1401.51,150,0,Nonmetals
+Sulfur,1425.03,1000,1,Nonmetals
+Sulfur,1433.28,600,1,Nonmetals
+Sulfur,1433.31,200,1,Nonmetals
+Sulfur,1436.96,250,0,Nonmetals
+Sulfur,1473.99,1000,1,Nonmetals
+Sulfur,1483.03,700,0,Nonmetals
+Sulfur,1666.68,900,1,Nonmetals
+Sulfur,1687.53,800,1,Nonmetals
+Sulfur,1807.31,1000,1,Nonmetals
+Sulfur,1820.34,900,1,Nonmetals
+Sulfur,1826.24,800,1,Nonmetals
+Sulfur,1900.28,200,0,Nonmetals
+Sulfur,1914.69,100,0,Nonmetals
+Carbon,,600,1,Nonmetals
+Carbon,,1000,1,Nonmetals
+Carbon,,150,0,Nonmetals
+Carbon,,300,0,Nonmetals
+Carbon,,750,1,Nonmetals
+Carbon,,150,0,Nonmetals
+Carbon,1036.336,250,1,Nonmetals
+Carbon,1037.018,500,1,Nonmetals
+Carbon,1193.008,300*,0,Nonmetals
+Carbon,1193.030,300*,0,Nonmetals
+Carbon,1193.240,400,0,Nonmetals
+Carbon,1193.264,100,0,Nonmetals
+Carbon,1261.552,200,0,Nonmetals
+Carbon,1277.245,400,1,Nonmetals
+Carbon,1277.282,800,1,Nonmetals
+Carbon,1277.513,200,1,Nonmetals
+Carbon,1277.549,1000,1,Nonmetals
+Carbon,1280.333,800,1,Nonmetals
+Carbon,1329.577,200,0,Nonmetals
+Carbon,1329.600,100,0,Nonmetals
+Carbon,1334.532,80,1,Nonmetals
+Carbon,1335.707,150,1,Nonmetals
+Carbon,1560.30,200,0,Nonmetals
+Carbon,1560.68,500,1,Nonmetals
+Carbon,1560.70,200,1,Nonmetals
+Carbon,1561.43,600,1,Nonmetals
+Carbon,1656.26,500,1,Nonmetals
+Carbon,1656.92,400,1,Nonmetals
+Carbon,1657.00,1000,1,Nonmetals
+Carbon,1657.37,400,1,Nonmetals
+Carbon,1657.90,400,1,Nonmetals
+Carbon,1658.12,500,1,Nonmetals
+Carbon,1751.82,500,1,Nonmetals
+Carbon,1930.90,1000,1,Nonmetals
+Carbon,,600,1,Nonmetals
+Carbon,,1000,1,Nonmetals
+Carbon,,150,0,Nonmetals
+Carbon,,300,0,Nonmetals
+Carbon,,750,1,Nonmetals
+Carbon,,150,0,Nonmetals
+Carbon,1036.336,250,1,Nonmetals
+Carbon,1037.018,500,1,Nonmetals
+Carbon,1193.008,300*,0,Nonmetals
+Carbon,1193.030,300*,0,Nonmetals
+Carbon,1193.240,400,0,Nonmetals
+Carbon,1193.264,100,0,Nonmetals
+Carbon,1261.552,200,0,Nonmetals
+Carbon,1277.245,400,1,Nonmetals
+Carbon,1277.282,800,1,Nonmetals
+Carbon,1277.513,200,1,Nonmetals
+Carbon,1277.549,1000,1,Nonmetals
+Carbon,1280.333,800,1,Nonmetals
+Carbon,1329.577,200,0,Nonmetals
+Carbon,1329.600,100,0,Nonmetals
+Carbon,1334.532,80,1,Nonmetals
+Carbon,1335.707,150,1,Nonmetals
+Carbon,1560.30,200,0,Nonmetals
+Carbon,1560.68,500,1,Nonmetals
+Carbon,1560.70,200,1,Nonmetals
+Carbon,1561.43,600,1,Nonmetals
+Carbon,1656.26,500,1,Nonmetals
+Carbon,1656.92,400,1,Nonmetals
+Carbon,1657.00,1000,1,Nonmetals
+Carbon,1657.37,400,1,Nonmetals
+Carbon,1657.90,400,1,Nonmetals
+Carbon,1658.12,500,1,Nonmetals
+Carbon,1751.82,500,1,Nonmetals
+Carbon,1930.90,1000,1,Nonmetals
+Mercury,,20,0,Transition Metals
+Mercury,,12,0,Transition Metals
+Mercury,,20,0,Transition Metals
+Mercury,,25,0,Transition Metals
+Mercury,,25,0,Transition Metals
+Mercury,1039.6315,20,0,Transition Metals
+Mercury,1062.7802,20,0,Transition Metals
+Mercury,1649.9373,1000,1,Transition Metals
+Mercury,1849.499,1000,1,Transition Metals
+Mercury,1942.273,1000,1,Transition Metals
+Mercury,1973.794,15,0,Transition Metals
+Mercury,1987.841,10,0,Transition Metals
+Mercury,,20,0,Transition Metals
+Mercury,,12,0,Transition Metals
+Mercury,,20,0,Transition Metals
+Mercury,,25,0,Transition Metals
+Mercury,,25,0,Transition Metals
+Mercury,1039.6315,20,0,Transition Metals
+Mercury,1062.7802,20,0,Transition Metals
+Mercury,1649.9373,1000,1,Transition Metals
+Mercury,1849.499,1000,1,Transition Metals
+Mercury,1942.273,1000,1,Transition Metals
+Mercury,1973.794,15,0,Transition Metals
+Mercury,1987.841,10,0,Transition Metals
+Cesium,,20,0,Alkali Metals
+Cesium,,150,0,Alkali Metals
+Cesium,,150,1,Alkali Metals
+Cesium,,150,1,Alkali Metals
+Cesium,,400,1,Alkali Metals
+Cesium,,400,1,Alkali Metals
+Cesium,1840.50,1,0,Alkali Metals
+Cesium,1859.16,1,0,Alkali Metals
+Cesium,1883.93,1,0,Alkali Metals
+Cesium,1935.19,1,0,Alkali Metals
+Cesium,,20,0,Alkali Metals
+Cesium,,150,0,Alkali Metals
+Cesium,,150,1,Alkali Metals
+Cesium,,150,1,Alkali Metals
+Cesium,,400,1,Alkali Metals
+Cesium,,400,1,Alkali Metals
+Cesium,1840.50,1,0,Alkali Metals
+Cesium,1859.16,1,0,Alkali Metals
+Cesium,1883.93,1,0,Alkali Metals
+Cesium,1935.19,1,0,Alkali Metals
+Tellurium,,40,0,Metalloids
+Tellurium,1059.51,40,0,Metalloids
+Tellurium,1077.66,40,1,Metalloids
+Tellurium,1174.34,50,1,Metalloids
+Tellurium,1175.79,60,1,Metalloids
+Tellurium,1208.54,40,0,Metalloids
+Tellurium,1220.98,40,0,Metalloids
+Tellurium,1253.62,40,0,Metalloids
+Tellurium,1270.52,40,0,Metalloids
+Tellurium,1324.92,50,1,Metalloids
+Tellurium,1363.24,40,0,Metalloids
+Tellurium,1374.80,50,0,Metalloids
+Tellurium,1608.41,50,0,Metalloids
+Tellurium,1613.15,50,0,Metalloids
+Tellurium,1822.155,500,1,Metalloids
+Tellurium,1857.296,500,1,Metalloids
+Tellurium,1994.839,500,1,Metalloids
+Tellurium,,40,0,Metalloids
+Tellurium,1059.51,40,0,Metalloids
+Tellurium,1077.66,40,1,Metalloids
+Tellurium,1174.34,50,1,Metalloids
+Tellurium,1175.79,60,1,Metalloids
+Tellurium,1208.54,40,0,Metalloids
+Tellurium,1220.98,40,0,Metalloids
+Tellurium,1253.62,40,0,Metalloids
+Tellurium,1270.52,40,0,Metalloids
+Tellurium,1324.92,50,1,Metalloids
+Tellurium,1363.24,40,0,Metalloids
+Tellurium,1374.80,50,0,Metalloids
+Tellurium,1608.41,50,0,Metalloids
+Tellurium,1613.15,50,0,Metalloids
+Tellurium,1822.155,500,1,Metalloids
+Tellurium,1857.296,500,1,Metalloids
+Tellurium,1994.839,500,1,Metalloids
+Chlorine,,600,0,
+Chlorine,,600,0,
+Chlorine,,600,0,
+Chlorine,,700,1,
+Chlorine,,900,1,
+Chlorine,,800,1,
+Chlorine,,600,1,
+Chlorine,1063.831,700,1,
+Chlorine,1067.945,300,1,
+Chlorine,1071.036,1000,1,
+Chlorine,1071.767,700,1,
+Chlorine,1075.230,600,1,
+Chlorine,1079.080,600,1,
+Chlorine,1179.293,150,0,
+Chlorine,1335.726,300,1,
+Chlorine,1347.240,1000,1,
+Chlorine,1351.657,500,1,
+Chlorine,1363.447,500,1,
+Chlorine,1373.116,120,0,
+Chlorine,1379.528,500,1,
+Chlorine,1389.693,500,1,
+Chlorine,1389.957,500,1,
+Chlorine,1396.527,500,1,
+Chlorine,,600,0,
+Chlorine,,600,0,
+Chlorine,,600,0,
+Chlorine,,700,1,
+Chlorine,,900,1,
+Chlorine,,800,1,
+Chlorine,,600,1,
+Chlorine,1063.831,700,1,
+Chlorine,1067.945,300,1,
+Chlorine,1071.036,1000,1,
+Chlorine,1071.767,700,1,
+Chlorine,1075.230,600,1,
+Chlorine,1079.080,600,1,
+Chlorine,1179.293,150,0,
+Chlorine,1335.726,300,1,
+Chlorine,1347.240,1000,1,
+Chlorine,1351.657,500,1,
+Chlorine,1363.447,500,1,
+Chlorine,1373.116,120,0,
+Chlorine,1379.528,500,1,
+Chlorine,1389.693,500,1,
+Chlorine,1389.957,500,1,
+Chlorine,1396.527,500,1,
+Neon,,90,1,Noble Gases
+Neon,,60,1,Noble Gases
+Neon,,90,0,Noble Gases
+Neon,,60,0,Noble Gases
+Neon,,150,0,Noble Gases
+Neon,,120,0,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,300,1,Noble Gases
+Neon,,250,1,Noble Gases
+Neon,,200,0,Noble Gases
+Neon,,150,0,Noble Gases
+Neon,,200,0,Noble Gases
+Neon,,10,0,Noble Gases
+Neon,,120,0,Noble Gases
+Neon,,90,0,Noble Gases
+Neon,,1000,1,Noble Gases
+Neon,,500,1,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,100,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,130,0,Noble Gases
+Neon,,170,1,Noble Gases
+Neon,,170,1,Noble Gases
+Neon,,130,1,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,1000,1,Noble Gases
+Neon,,400,1,Noble Gases
+Neon,,60,0,Noble Gases
+Neon,1068.6488,70,0,Noble Gases
+Neon,1131.7224,90,0,Noble Gases
+Neon,1131.8490,100,0,Noble Gases
+Neon,1229.8367,90,0,Noble Gases
+Neon,1418.3779,90,0,Noble Gases
+Neon,1428.5822,90,0,Noble Gases
+Neon,1436.0813,90,0,Noble Gases
+Neon,1681.6840,120,0,Noble Gases
+Neon,1688.3553,200,0,Noble Gases
+Neon,1888.1064,100,0,Noble Gases
+Neon,1889.7120,100,0,Noble Gases
+Neon,1907.4940,200,0,Noble Gases
+Neon,1916.0818,500,1,Noble Gases
+Neon,1930.0345,300,1,Noble Gases
+Neon,1938.8269,200,0,Noble Gases
+Neon,1945.4521,100,0,Noble Gases
+Neon,,90,1,Noble Gases
+Neon,,60,1,Noble Gases
+Neon,,90,0,Noble Gases
+Neon,,60,0,Noble Gases
+Neon,,150,0,Noble Gases
+Neon,,120,0,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,300,1,Noble Gases
+Neon,,250,1,Noble Gases
+Neon,,200,0,Noble Gases
+Neon,,150,0,Noble Gases
+Neon,,200,0,Noble Gases
+Neon,,10,0,Noble Gases
+Neon,,120,0,Noble Gases
+Neon,,90,0,Noble Gases
+Neon,,1000,1,Noble Gases
+Neon,,500,1,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,100,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,30,0,Noble Gases
+Neon,,70,0,Noble Gases
+Neon,,130,0,Noble Gases
+Neon,,170,1,Noble Gases
+Neon,,170,1,Noble Gases
+Neon,,130,1,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,200,1,Noble Gases
+Neon,,1000,1,Noble Gases
+Neon,,400,1,Noble Gases
+Neon,,60,0,Noble Gases
+Neon,1068.6488,70,0,Noble Gases
+Neon,1131.7224,90,0,Noble Gases
+Neon,1131.8490,100,0,Noble Gases
+Neon,1229.8367,90,0,Noble Gases
+Neon,1418.3779,90,0,Noble Gases
+Neon,1428.5822,90,0,Noble Gases
+Neon,1436.0813,90,0,Noble Gases
+Neon,1681.6840,120,0,Noble Gases
+Neon,1688.3553,200,0,Noble Gases
+Neon,1888.1064,100,0,Noble Gases
+Neon,1889.7120,100,0,Noble Gases
+Neon,1907.4940,200,0,Noble Gases
+Neon,1916.0818,500,1,Noble Gases
+Neon,1930.0345,300,1,Noble Gases
+Neon,1938.8269,200,0,Noble Gases
+Neon,1945.4521,100,0,Noble Gases
+Chromium,1220.165,90,0,Transition Metals
+Chromium,1247.554,150,0,Transition Metals
+Chromium,1426.208,1000,1,Transition Metals
+Chromium,1431.323,800,1,Transition Metals
+Chromium,1431.865,600,1,Transition Metals
+Chromium,1432.056,600,1,Transition Metals
+Chromium,1433.004,500,1,Transition Metals
+Chromium,1434.808,600,1,Transition Metals
+Chromium,1435.207,400,1,Transition Metals
+Chromium,1435.582,350,1,Transition Metals
+Chromium,1448.428,300,0,Transition Metals
+Chromium,1669.876,170,0,Transition Metals
+Chromium,1672.738,150,0,Transition Metals
+Chromium,1676.152,200,0,Transition Metals
+Chromium,1752.585,180,0,Transition Metals
+Chromium,1760.747,180,0,Transition Metals
+Chromium,1767.457,150,0,Transition Metals
+Chromium,1220.165,90,0,Transition Metals
+Chromium,1247.554,150,0,Transition Metals
+Chromium,1426.208,1000,1,Transition Metals
+Chromium,1431.323,800,1,Transition Metals
+Chromium,1431.865,600,1,Transition Metals
+Chromium,1432.056,600,1,Transition Metals
+Chromium,1433.004,500,1,Transition Metals
+Chromium,1434.808,600,1,Transition Metals
+Chromium,1435.207,400,1,Transition Metals
+Chromium,1435.582,350,1,Transition Metals
+Chromium,1448.428,300,0,Transition Metals
+Chromium,1669.876,170,0,Transition Metals
+Chromium,1672.738,150,0,Transition Metals
+Chromium,1676.152,200,0,Transition Metals
+Chromium,1752.585,180,0,Transition Metals
+Chromium,1760.747,180,0,Transition Metals
+Chromium,1767.457,150,0,Transition Metals
+Thallium,,500,0,Post-transition Metals
+Thallium,,300,0,Post-transition Metals
+Thallium,1162.55,500,0,Post-transition Metals
+Thallium,1307.50,500,0,Post-transition Metals
+Thallium,1321.644,800,1,Post-transition Metals
+Thallium,1561.58,500,0,Post-transition Metals
+Thallium,1792.827,300,1,Post-transition Metals
+Thallium,1814.776,400,1,Post-transition Metals
+Thallium,1881.121,700,0,Post-transition Metals
+Thallium,1908.617,800,1,Post-transition Metals
+Thallium,,500,0,Post-transition Metals
+Thallium,,300,0,Post-transition Metals
+Thallium,1162.55,500,0,Post-transition Metals
+Thallium,1307.50,500,0,Post-transition Metals
+Thallium,1321.644,800,1,Post-transition Metals
+Thallium,1561.58,500,0,Post-transition Metals
+Thallium,1792.827,300,1,Post-transition Metals
+Thallium,1814.776,400,1,Post-transition Metals
+Thallium,1881.121,700,0,Post-transition Metals
+Thallium,1908.617,800,1,Post-transition Metals
+Cobalt,1970.769,140,0,Transition Metals
+Cobalt,1970.769,140,0,Transition Metals
+Nickel,1741.547,150,1,Transition Metals
+Nickel,1741.547,150,1,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,500,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,500,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,1036.470,400,0,Transition Metals
+Copper,1039.348,400,0,Transition Metals
+Copper,1039.582,400,0,Transition Metals
+Copper,1044.519,500,0,Transition Metals
+Copper,1044.744,500,0,Transition Metals
+Copper,1054.690,400,0,Transition Metals
+Copper,1056.955,400,0,Transition Metals
+Copper,1059.096,400,0,Transition Metals
+Copper,1060.634,400,0,Transition Metals
+Copper,1063.005,400,0,Transition Metals
+Copper,1358.773,200,1,Transition Metals
+Copper,1367.951,150,1,Transition Metals
+Copper,1488.637,500,0,Transition Metals
+Copper,1519.837,400,0,Transition Metals
+Copper,1541.703,500,0,Transition Metals
+Copper,1593.556,400,0,Transition Metals
+Copper,1621.426,400,0,Transition Metals
+Copper,1979.956,300,1,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,500,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,500,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,,400,0,Transition Metals
+Copper,1036.470,400,0,Transition Metals
+Copper,1039.348,400,0,Transition Metals
+Copper,1039.582,400,0,Transition Metals
+Copper,1044.519,500,0,Transition Metals
+Copper,1044.744,500,0,Transition Metals
+Copper,1054.690,400,0,Transition Metals
+Copper,1056.955,400,0,Transition Metals
+Copper,1059.096,400,0,Transition Metals
+Copper,1060.634,400,0,Transition Metals
+Copper,1063.005,400,0,Transition Metals
+Copper,1358.773,200,1,Transition Metals
+Copper,1367.951,150,1,Transition Metals
+Copper,1488.637,500,0,Transition Metals
+Copper,1519.837,400,0,Transition Metals
+Copper,1541.703,500,0,Transition Metals
+Copper,1593.556,400,0,Transition Metals
+Copper,1621.426,400,0,Transition Metals
+Copper,1979.956,300,1,Transition Metals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,,600,1,Nonmetals
+Nitrogen,,1000,1,Nonmetals
+Nitrogen,,80,0,Nonmetals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,,50,1,Nonmetals
+Nitrogen,,50,1,Nonmetals
+Nitrogen,,60,1,Nonmetals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,1083.99,25,1,Nonmetals
+Nitrogen,1084.58,60,1,Nonmetals
+Nitrogen,1085.55,15,1,Nonmetals
+Nitrogen,1085.71,100,1,Nonmetals
+Nitrogen,1134.16,90,0,Nonmetals
+Nitrogen,1134.41,90,0,Nonmetals
+Nitrogen,1199.55,1000,1,Nonmetals
+Nitrogen,1200.22,700,1,Nonmetals
+Nitrogen,1200.71,300,1,Nonmetals
+Nitrogen,1243.17,250,1,Nonmetals
+Nitrogen,1411.9,90,0,Nonmetals
+Nitrogen,1492.62,250,1,Nonmetals
+Nitrogen,1492.82,120,0,Nonmetals
+Nitrogen,1494.67,150,0,Nonmetals
+Nitrogen,1742.72,200,1,Nonmetals
+Nitrogen,1745.25,150,0,Nonmetals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,,600,1,Nonmetals
+Nitrogen,,1000,1,Nonmetals
+Nitrogen,,80,0,Nonmetals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,,50,1,Nonmetals
+Nitrogen,,50,1,Nonmetals
+Nitrogen,,60,1,Nonmetals
+Nitrogen,,200,1,Nonmetals
+Nitrogen,1083.99,25,1,Nonmetals
+Nitrogen,1084.58,60,1,Nonmetals
+Nitrogen,1085.55,15,1,Nonmetals
+Nitrogen,1085.71,100,1,Nonmetals
+Nitrogen,1134.16,90,0,Nonmetals
+Nitrogen,1134.41,90,0,Nonmetals
+Nitrogen,1199.55,1000,1,Nonmetals
+Nitrogen,1200.22,700,1,Nonmetals
+Nitrogen,1200.71,300,1,Nonmetals
+Nitrogen,1243.17,250,1,Nonmetals
+Nitrogen,1411.9,90,0,Nonmetals
+Nitrogen,1492.62,250,1,Nonmetals
+Nitrogen,1492.82,120,0,Nonmetals
+Nitrogen,1494.67,150,0,Nonmetals
+Nitrogen,1742.72,200,1,Nonmetals
+Nitrogen,1745.25,150,0,Nonmetals
+Tin,1223.721,600,0,Post-transition Metals
+Tin,1242.926,500,0,Post-transition Metals
+Tin,1290.880,1000,0,Post-transition Metals
+Tin,1316.576,1000,0,Post-transition Metals
+Tin,1400.440,1000,1,Post-transition Metals
+Tin,1474.997,1000,1,Post-transition Metals
+Tin,1811.201,300,0,Post-transition Metals
+Tin,1860.330,140,0,Post-transition Metals
+Tin,1899.881,300,1,Post-transition Metals
+Tin,1223.721,600,0,Post-transition Metals
+Tin,1242.926,500,0,Post-transition Metals
+Tin,1290.880,1000,0,Post-transition Metals
+Tin,1316.576,1000,0,Post-transition Metals
+Tin,1400.440,1000,1,Post-transition Metals
+Tin,1474.997,1000,1,Post-transition Metals
+Tin,1811.201,300,0,Post-transition Metals
+Tin,1860.330,140,0,Post-transition Metals
+Tin,1899.881,300,1,Post-transition Metals
+Oxygen,,400,1,Nonmetals
+Oxygen,,700,1,Nonmetals
+Oxygen,,1000,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,1000,1,Nonmetals
+Oxygen,,600,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,700,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,250,0,Nonmetals
+Oxygen,,250,0,Nonmetals
+Oxygen,,250,1,Nonmetals
+Oxygen,,400,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,50,0,Nonmetals
+Oxygen,1025.76,80,0,Nonmetals
+Oxygen,1039.23,50,0,Nonmetals
+Oxygen,1302.16,1000,1,Nonmetals
+Oxygen,1304.85,700,1,Nonmetals
+Oxygen,1306.02,300,1,Nonmetals
+Oxygen,,400,1,Nonmetals
+Oxygen,,700,1,Nonmetals
+Oxygen,,1000,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,1000,1,Nonmetals
+Oxygen,,600,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,700,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,800,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,250,0,Nonmetals
+Oxygen,,250,0,Nonmetals
+Oxygen,,250,1,Nonmetals
+Oxygen,,400,1,Nonmetals
+Oxygen,,500,1,Nonmetals
+Oxygen,,50,0,Nonmetals
+Oxygen,1025.76,80,0,Nonmetals
+Oxygen,1039.23,50,0,Nonmetals
+Oxygen,1302.16,1000,1,Nonmetals
+Oxygen,1304.85,700,1,Nonmetals
+Oxygen,1306.02,300,1,Nonmetals
+Tungsten,1951.05,1000,1,Transition Metals
+Tungsten,1962.14,900,1,Transition Metals
+Tungsten,1977.52,600,0,Transition Metals
+Tungsten,1982.90,600,0,Transition Metals
+Tungsten,1989.39,900,1,Transition Metals
+Tungsten,1990.86,500,0,Transition Metals
+Tungsten,1951.05,1000,1,Transition Metals
+Tungsten,1962.14,900,1,Transition Metals
+Tungsten,1977.52,600,0,Transition Metals
+Tungsten,1982.90,600,0,Transition Metals
+Tungsten,1989.39,900,1,Transition Metals
+Tungsten,1990.86,500,0,Transition Metals
+Palladium,1162.1700,600,1,Transition Metals
+Palladium,1183.4003,700,1,Transition Metals
+Palladium,1196.4051,1000,1,Transition Metals
+Palladium,1203.9645,800,1,Transition Metals
+Palladium,1214.5242,600,0,Transition Metals
+Palladium,1218.6219,700,1,Transition Metals
+Palladium,1225.2684,600,0,Transition Metals
+Palladium,1235.1957,600,0,Transition Metals
+Palladium,1237.0677,700,1,Transition Metals
+Palladium,1320.0229,800,1,Transition Metals
+Palladium,1363.6892,700,1,Transition Metals
+Palladium,1365.5430,600,0,Transition Metals
+Palladium,1367.7039,800,1,Transition Metals
+Palladium,1374.8481,900,1,Transition Metals
+Palladium,1162.1700,600,1,Transition Metals
+Palladium,1183.4003,700,1,Transition Metals
+Palladium,1196.4051,1000,1,Transition Metals
+Palladium,1203.9645,800,1,Transition Metals
+Palladium,1214.5242,600,0,Transition Metals
+Palladium,1218.6219,700,1,Transition Metals
+Palladium,1225.2684,600,0,Transition Metals
+Palladium,1235.1957,600,0,Transition Metals
+Palladium,1237.0677,700,1,Transition Metals
+Palladium,1320.0229,800,1,Transition Metals
+Palladium,1363.6892,700,1,Transition Metals
+Palladium,1365.5430,600,0,Transition Metals
+Palladium,1367.7039,800,1,Transition Metals
+Palladium,1374.8481,900,1,Transition Metals
+Phosphorus,1310.70,200,1,Nonmetals
+Phosphorus,1532.53,80,1,Nonmetals
+Phosphorus,1535.91,130,1,Nonmetals
+Phosphorus,1536.41,80,1,Nonmetals
+Phosphorus,1542.29,130,1,Nonmetals
+Phosphorus,1674.59,800,1,Nonmetals
+Phosphorus,1679.69,1000,1,Nonmetals
+Phosphorus,1774.95,1000,1,Nonmetals
+Phosphorus,1782.83,800,1,Nonmetals
+Phosphorus,1787.65,700,1,Nonmetals
+Phosphorus,1858.88,600,0,Nonmetals
+Phosphorus,1859.39,400,0,Nonmetals
+Phosphorus,1310.70,200,1,Nonmetals
+Phosphorus,1532.53,80,1,Nonmetals
+Phosphorus,1535.91,130,1,Nonmetals
+Phosphorus,1536.41,80,1,Nonmetals
+Phosphorus,1542.29,130,1,Nonmetals
+Phosphorus,1674.59,800,1,Nonmetals
+Phosphorus,1679.69,1000,1,Nonmetals
+Phosphorus,1774.95,1000,1,Nonmetals
+Phosphorus,1782.83,800,1,Nonmetals
+Phosphorus,1787.65,700,1,Nonmetals
+Phosphorus,1858.88,600,0,Nonmetals
+Phosphorus,1859.39,400,0,Nonmetals
+Fluorine,,900,1,
+Fluorine,,900,1,
+Fluorine,,800,1,
+Fluorine,,1000,1,
+Fluorine,,700,1,
+Fluorine,,800,1,
+Fluorine,,900,1,
+Fluorine,,500,1,
+Fluorine,,1000,1,
+Fluorine,,800,1,
+Fluorine,,500,1,
+Fluorine,,400,0,
+Fluorine,,100,0,
+Fluorine,,100,0,
+Fluorine,,900,1,
+Fluorine,,900,1,
+Fluorine,,800,1,
+Fluorine,,1000,1,
+Fluorine,,700,1,
+Fluorine,,800,1,
+Fluorine,,900,1,
+Fluorine,,500,1,
+Fluorine,,1000,1,
+Fluorine,,800,1,
+Fluorine,,500,1,
+Fluorine,,400,0,
+Fluorine,,100,0,
+Fluorine,,100,0,
+Platinum,1164.4184,30,0,Transition Metals
+Platinum,1166.8635,30,0,Transition Metals
+Platinum,1169.7477,90,0,Transition Metals
+Platinum,1178.9614,80,0,Transition Metals
+Platinum,1182.3552,30,0,Transition Metals
+Platinum,1186.2203,60,0,Transition Metals
+Platinum,1193.4484,60,0,Transition Metals
+Platinum,1198.7745,70,0,Transition Metals
+Platinum,1219.4931,110,0,Transition Metals
+Platinum,1229.0134,40,0,Transition Metals
+Platinum,1232.8739,40,0,Transition Metals
+Platinum,1238.8499,90,0,Transition Metals
+Platinum,1248.6069,200,0,Transition Metals
+Platinum,1264.5677,40,0,Transition Metals
+Platinum,1271.7939,40,0,Transition Metals
+Platinum,1283.6978,30,0,Transition Metals
+Platinum,1289.9515,70,0,Transition Metals
+Platinum,1290.0131,30,0,Transition Metals
+Platinum,1290.0131,30,0,Transition Metals
+Platinum,1292.7998,30,0,Transition Metals
+Platinum,1302.4578,50,0,Transition Metals
+Platinum,1303.1187,40,0,Transition Metals
+Platinum,1327.4314,40,0,Transition Metals
+Platinum,1348.8300,40,0,Transition Metals
+Platinum,1352.9768,30,0,Transition Metals
+Platinum,1363.3059,30,0,Transition Metals
+Platinum,1364.1171,30,0,Transition Metals
+Platinum,1373.1724,30,0,Transition Metals
+Platinum,1378.9572,120,0,Transition Metals
+Platinum,1382.0460,100,0,Transition Metals
+Platinum,1403.9006,200,0,Transition Metals
+Platinum,1429.5248,80,0,Transition Metals
+Platinum,1447.8030,40,0,Transition Metals
+Platinum,1454.2866,30,0,Transition Metals
+Platinum,1454.2866,30,0,Transition Metals
+Platinum,1461.0786,40,0,Transition Metals
+Platinum,1462.6591,40,0,Transition Metals
+Platinum,1475.6306,60,0,Transition Metals
+Platinum,1482.8256,150,0,Transition Metals
+Platinum,1491.9735,25,0,Transition Metals
+Platinum,1494.7256,200,0,Transition Metals
+Platinum,1498.1132,100,0,Transition Metals
+Platinum,1499.3707,200,0,Transition Metals
+Platinum,1505.2462,140,0,Transition Metals
+Platinum,1506.2923,110,0,Transition Metals
+Platinum,1507.6288,30,0,Transition Metals
+Platinum,1509.2920,600,0,Transition Metals
+Platinum,1520.7414,30,0,Transition Metals
+Platinum,1524.5715,150,0,Transition Metals
+Platinum,1524.7295,900,0,Transition Metals
+Platinum,1524.7295,900,0,Transition Metals
+Platinum,1528.2831,80,0,Transition Metals
+Platinum,1530.1969,60,0,Transition Metals
+Platinum,1534.9063,100,0,Transition Metals
+Platinum,1540.5040,50,0,Transition Metals
+Platinum,1541.8337,60,0,Transition Metals
+Platinum,1542.7098,30,0,Transition Metals
+Platinum,1546.8248,40,0,Transition Metals
+Platinum,1552.3268,110,0,Transition Metals
+Platinum,1554.9285,200,0,Transition Metals
+Platinum,1558.3479,30,0,Transition Metals
+Platinum,1559.3893,40,0,Transition Metals
+Platinum,1561.5450,40,0,Transition Metals
+Platinum,1561.5450,40,0,Transition Metals
+Platinum,1568.9021,30,0,Transition Metals
+Platinum,1573.1802,30,0,Transition Metals
+Platinum,1573.8180,40,0,Transition Metals
+Platinum,1574.3059,200,0,Transition Metals
+Platinum,1579.4357,80,0,Transition Metals
+Platinum,1581.3980,90,0,Transition Metals
+Platinum,1587.7205,40,0,Transition Metals
+Platinum,1589.3735,40,0,Transition Metals
+Platinum,1594.0344,40,0,Transition Metals
+Platinum,1594.2611,40,0,Transition Metals
+Platinum,1604.0102,9,0,Transition Metals
+Platinum,1621.6590,80,0,Transition Metals
+Platinum,1631.0903,80,0,Transition Metals
+Platinum,1634.2337,120,0,Transition Metals
+Platinum,1636.1647,25,0,Transition Metals
+Platinum,1644.4634,8,0,Transition Metals
+Platinum,1659.4860,50,0,Transition Metals
+Platinum,1669.2312,200,0,Transition Metals
+Platinum,1677.8443,20,0,Transition Metals
+Platinum,1684.5867,50,0,Transition Metals
+Platinum,1684.5867,50,0,Transition Metals
+Platinum,1690.7825,7,0,Transition Metals
+Platinum,1698.4958,30,0,Transition Metals
+Platinum,1707.0710,80,0,Transition Metals
+Platinum,1713.8364,40,0,Transition Metals
+Platinum,1714.4801,7,0,Transition Metals
+Platinum,1723.1314,150,0,Transition Metals
+Platinum,1727.6799,50,0,Transition Metals
+Platinum,1735.8642,90,0,Transition Metals
+Platinum,1737.1732,14,0,Transition Metals
+Platinum,1744.4305,10,0,Transition Metals
+Platinum,1753.8286,120,0,Transition Metals
+Platinum,1753.8286,120,0,Transition Metals
+Platinum,1764.5948,14,0,Transition Metals
+Platinum,1766.0328,25,0,Transition Metals
+Platinum,1767.1612,120,0,Transition Metals
+Platinum,1775.0160,200,0,Transition Metals
+Platinum,1776.5571,40,0,Transition Metals
+Platinum,1777.0866,600,1,Transition Metals
+Platinum,1777.2783,20,0,Transition Metals
+Platinum,1781.8617,250,0,Transition Metals
+Platinum,1785.8803,30,0,Transition Metals
+Platinum,1786.6480,25,0,Transition Metals
+Platinum,1802.9398,20,0,Transition Metals
+Platinum,1812.8819,20,0,Transition Metals
+Platinum,1817.8736,15,0,Transition Metals
+Platinum,1825.3262,8,0,Transition Metals
+Platinum,1826.1377,13,0,Transition Metals
+Platinum,1833.3875,25,0,Transition Metals
+Platinum,1835.0745,40,0,Transition Metals
+Platinum,1836.5075,80,0,Transition Metals
+Platinum,1838.8246,30,0,Transition Metals
+Platinum,1839.5258,80,0,Transition Metals
+Platinum,1845.7517,25,0,Transition Metals
+Platinum,1849.6831,13,0,Transition Metals
+Platinum,1853.4523,9,0,Transition Metals
+Platinum,1853.4523,40,0,Transition Metals
+Platinum,1867.1302,80,0,Transition Metals
+Platinum,1870.4100,90,0,Transition Metals
+Platinum,1871.1038,30,0,Transition Metals
+Platinum,1879.1031,70,0,Transition Metals
+Platinum,1883.0587,600,1,Transition Metals
+Platinum,1885.8171,30,0,Transition Metals
+Platinum,1889.5226,140,0,Transition Metals
+Platinum,1895.0088,30,0,Transition Metals
+Platinum,1897.5769,30,0,Transition Metals
+Platinum,1898.1722,40,0,Transition Metals
+Platinum,1899.0445,30,0,Transition Metals
+Platinum,1903.2186,15,0,Transition Metals
+Platinum,1911.7092,400,1,Transition Metals
+Platinum,1928.4320,40,0,Transition Metals
+Platinum,1929.2449,250,1,Transition Metals
+Platinum,1929.6829,40,0,Transition Metals
+Platinum,1934.3690,50,0,Transition Metals
+Platinum,1937.4245,100,0,Transition Metals
+Platinum,1939.8110,130,0,Transition Metals
+Platinum,1940.0319,20,0,Transition Metals
+Platinum,1944.4617,150,0,Transition Metals
+Platinum,1949.9102,40,0,Transition Metals
+Platinum,1954.7436,30,0,Transition Metals
+Platinum,1963.1429,11,0,Transition Metals
+Platinum,1969.6807,13,0,Transition Metals
+Platinum,1971.5374,30,0,Transition Metals
+Platinum,1978.8444,50,0,Transition Metals
+Platinum,1979.7647,25,0,Transition Metals
+Platinum,1983.7486,40,0,Transition Metals
+Platinum,1987.7868,9,0,Transition Metals
+Platinum,1989.1056,15,0,Transition Metals
+Platinum,1990.5751,80,0,Transition Metals
+Platinum,1991.5830,8,0,Transition Metals
+Platinum,1995.8991,11,0,Transition Metals
+Platinum,1164.4184,30,0,Transition Metals
+Platinum,1166.8635,30,0,Transition Metals
+Platinum,1169.7477,90,0,Transition Metals
+Platinum,1178.9614,80,0,Transition Metals
+Platinum,1182.3552,30,0,Transition Metals
+Platinum,1186.2203,60,0,Transition Metals
+Platinum,1193.4484,60,0,Transition Metals
+Platinum,1198.7745,70,0,Transition Metals
+Platinum,1219.4931,110,0,Transition Metals
+Platinum,1229.0134,40,0,Transition Metals
+Platinum,1232.8739,40,0,Transition Metals
+Platinum,1238.8499,90,0,Transition Metals
+Platinum,1248.6069,200,0,Transition Metals
+Platinum,1264.5677,40,0,Transition Metals
+Platinum,1271.7939,40,0,Transition Metals
+Platinum,1283.6978,30,0,Transition Metals
+Platinum,1289.9515,70,0,Transition Metals
+Platinum,1290.0131,30,0,Transition Metals
+Platinum,1290.0131,30,0,Transition Metals
+Platinum,1292.7998,30,0,Transition Metals
+Platinum,1302.4578,50,0,Transition Metals
+Platinum,1303.1187,40,0,Transition Metals
+Platinum,1327.4314,40,0,Transition Metals
+Platinum,1348.8300,40,0,Transition Metals
+Platinum,1352.9768,30,0,Transition Metals
+Platinum,1363.3059,30,0,Transition Metals
+Platinum,1364.1171,30,0,Transition Metals
+Platinum,1373.1724,30,0,Transition Metals
+Platinum,1378.9572,120,0,Transition Metals
+Platinum,1382.0460,100,0,Transition Metals
+Platinum,1403.9006,200,0,Transition Metals
+Platinum,1429.5248,80,0,Transition Metals
+Platinum,1447.8030,40,0,Transition Metals
+Platinum,1454.2866,30,0,Transition Metals
+Platinum,1454.2866,30,0,Transition Metals
+Platinum,1461.0786,40,0,Transition Metals
+Platinum,1462.6591,40,0,Transition Metals
+Platinum,1475.6306,60,0,Transition Metals
+Platinum,1482.8256,150,0,Transition Metals
+Platinum,1491.9735,25,0,Transition Metals
+Platinum,1494.7256,200,0,Transition Metals
+Platinum,1498.1132,100,0,Transition Metals
+Platinum,1499.3707,200,0,Transition Metals
+Platinum,1505.2462,140,0,Transition Metals
+Platinum,1506.2923,110,0,Transition Metals
+Platinum,1507.6288,30,0,Transition Metals
+Platinum,1509.2920,600,0,Transition Metals
+Platinum,1520.7414,30,0,Transition Metals
+Platinum,1524.5715,150,0,Transition Metals
+Platinum,1524.7295,900,0,Transition Metals
+Platinum,1524.7295,900,0,Transition Metals
+Platinum,1528.2831,80,0,Transition Metals
+Platinum,1530.1969,60,0,Transition Metals
+Platinum,1534.9063,100,0,Transition Metals
+Platinum,1540.5040,50,0,Transition Metals
+Platinum,1541.8337,60,0,Transition Metals
+Platinum,1542.7098,30,0,Transition Metals
+Platinum,1546.8248,40,0,Transition Metals
+Platinum,1552.3268,110,0,Transition Metals
+Platinum,1554.9285,200,0,Transition Metals
+Platinum,1558.3479,30,0,Transition Metals
+Platinum,1559.3893,40,0,Transition Metals
+Platinum,1561.5450,40,0,Transition Metals
+Platinum,1561.5450,40,0,Transition Metals
+Platinum,1568.9021,30,0,Transition Metals
+Platinum,1573.1802,30,0,Transition Metals
+Platinum,1573.8180,40,0,Transition Metals
+Platinum,1574.3059,200,0,Transition Metals
+Platinum,1579.4357,80,0,Transition Metals
+Platinum,1581.3980,90,0,Transition Metals
+Platinum,1587.7205,40,0,Transition Metals
+Platinum,1589.3735,40,0,Transition Metals
+Platinum,1594.0344,40,0,Transition Metals
+Platinum,1594.2611,40,0,Transition Metals
+Platinum,1604.0102,9,0,Transition Metals
+Platinum,1621.6590,80,0,Transition Metals
+Platinum,1631.0903,80,0,Transition Metals
+Platinum,1634.2337,120,0,Transition Metals
+Platinum,1636.1647,25,0,Transition Metals
+Platinum,1644.4634,8,0,Transition Metals
+Platinum,1659.4860,50,0,Transition Metals
+Platinum,1669.2312,200,0,Transition Metals
+Platinum,1677.8443,20,0,Transition Metals
+Platinum,1684.5867,50,0,Transition Metals
+Platinum,1684.5867,50,0,Transition Metals
+Platinum,1690.7825,7,0,Transition Metals
+Platinum,1698.4958,30,0,Transition Metals
+Platinum,1707.0710,80,0,Transition Metals
+Platinum,1713.8364,40,0,Transition Metals
+Platinum,1714.4801,7,0,Transition Metals
+Platinum,1723.1314,150,0,Transition Metals
+Platinum,1727.6799,50,0,Transition Metals
+Platinum,1735.8642,90,0,Transition Metals
+Platinum,1737.1732,14,0,Transition Metals
+Platinum,1744.4305,10,0,Transition Metals
+Platinum,1753.8286,120,0,Transition Metals
+Platinum,1753.8286,120,0,Transition Metals
+Platinum,1764.5948,14,0,Transition Metals
+Platinum,1766.0328,25,0,Transition Metals
+Platinum,1767.1612,120,0,Transition Metals
+Platinum,1775.0160,200,0,Transition Metals
+Platinum,1776.5571,40,0,Transition Metals
+Platinum,1777.0866,600,1,Transition Metals
+Platinum,1777.2783,20,0,Transition Metals
+Platinum,1781.8617,250,0,Transition Metals
+Platinum,1785.8803,30,0,Transition Metals
+Platinum,1786.6480,25,0,Transition Metals
+Platinum,1802.9398,20,0,Transition Metals
+Platinum,1812.8819,20,0,Transition Metals
+Platinum,1817.8736,15,0,Transition Metals
+Platinum,1825.3262,8,0,Transition Metals
+Platinum,1826.1377,13,0,Transition Metals
+Platinum,1833.3875,25,0,Transition Metals
+Platinum,1835.0745,40,0,Transition Metals
+Platinum,1836.5075,80,0,Transition Metals
+Platinum,1838.8246,30,0,Transition Metals
+Platinum,1839.5258,80,0,Transition Metals
+Platinum,1845.7517,25,0,Transition Metals
+Platinum,1849.6831,13,0,Transition Metals
+Platinum,1853.4523,9,0,Transition Metals
+Platinum,1853.4523,40,0,Transition Metals
+Platinum,1867.1302,80,0,Transition Metals
+Platinum,1870.4100,90,0,Transition Metals
+Platinum,1871.1038,30,0,Transition Metals
+Platinum,1879.1031,70,0,Transition Metals
+Platinum,1883.0587,600,1,Transition Metals
+Platinum,1885.8171,30,0,Transition Metals
+Platinum,1889.5226,140,0,Transition Metals
+Platinum,1895.0088,30,0,Transition Metals
+Platinum,1897.5769,30,0,Transition Metals
+Platinum,1898.1722,40,0,Transition Metals
+Platinum,1899.0445,30,0,Transition Metals
+Platinum,1903.2186,15,0,Transition Metals
+Platinum,1911.7092,400,1,Transition Metals
+Platinum,1928.4320,40,0,Transition Metals
+Platinum,1929.2449,250,1,Transition Metals
+Platinum,1929.6829,40,0,Transition Metals
+Platinum,1934.3690,50,0,Transition Metals
+Platinum,1937.4245,100,0,Transition Metals
+Platinum,1939.8110,130,0,Transition Metals
+Platinum,1940.0319,20,0,Transition Metals
+Platinum,1944.4617,150,0,Transition Metals
+Platinum,1949.9102,40,0,Transition Metals
+Platinum,1954.7436,30,0,Transition Metals
+Platinum,1963.1429,11,0,Transition Metals
+Platinum,1969.6807,13,0,Transition Metals
+Platinum,1971.5374,30,0,Transition Metals
+Platinum,1978.8444,50,0,Transition Metals
+Platinum,1979.7647,25,0,Transition Metals
+Platinum,1983.7486,40,0,Transition Metals
+Platinum,1987.7868,9,0,Transition Metals
+Platinum,1989.1056,15,0,Transition Metals
+Platinum,1990.5751,80,0,Transition Metals
+Platinum,1991.5830,8,0,Transition Metals
+Platinum,1995.8991,11,0,Transition Metals
+Xenon,,120,0,Noble Gases
+Xenon,,120,0,Noble Gases
+Xenon,,200,0,Noble Gases
+Xenon,,120,0,Noble Gases
+Xenon,,200,0,Noble Gases
+Xenon,,80,0,Noble Gases
+Xenon,,250,1,Noble Gases
+Xenon,,250,0,Noble Gases
+Xenon,1032.44,150,0,Noble Gases
+Xenon,1037.68,250,0,Noble Gases
+Xenon,1041.31,400,1,Noble Gases
+Xenon,1048.27,300,1,Noble Gases
+Xenon,1051.92,400,1,Noble Gases
+Xenon,1074.48,700,1,Noble Gases
+Xenon,1083.86,200,0,Noble Gases
+Xenon,1100.43,400,1,Noble Gases
+Xenon,1158.47,200,0,Noble Gases
+Xenon,1169.63,80,0,Noble Gases
+Xenon,1183.05,250,1,Noble Gases
+Xenon,1192.0376,25,1,Noble Gases
+Xenon,1244.76,200,1,Noble Gases
+Xenon,1250.2091,25,1,Noble Gases
+Xenon,1295.5878,100,1,Noble Gases
+Xenon,1469.6123,60,1,Noble Gases
+Xenon,,120,0,Noble Gases
+Xenon,,120,0,Noble Gases
+Xenon,,200,0,Noble Gases
+Xenon,,120,0,Noble Gases
+Xenon,,200,0,Noble Gases
+Xenon,,80,0,Noble Gases
+Xenon,,250,1,Noble Gases
+Xenon,,250,0,Noble Gases
+Xenon,1032.44,150,0,Noble Gases
+Xenon,1037.68,250,0,Noble Gases
+Xenon,1041.31,400,1,Noble Gases
+Xenon,1048.27,300,1,Noble Gases
+Xenon,1051.92,400,1,Noble Gases
+Xenon,1074.48,700,1,Noble Gases
+Xenon,1083.86,200,0,Noble Gases
+Xenon,1100.43,400,1,Noble Gases
+Xenon,1158.47,200,0,Noble Gases
+Xenon,1169.63,80,0,Noble Gases
+Xenon,1183.05,250,1,Noble Gases
+Xenon,1192.0376,25,1,Noble Gases
+Xenon,1244.76,200,1,Noble Gases
+Xenon,1250.2091,25,1,Noble Gases
+Xenon,1295.5878,100,1,Noble Gases
+Xenon,1469.6123,60,1,Noble Gases
+Gallium,,140,0,Post-transition Metals
+Gallium,1113.708,200,0,Post-transition Metals
+Gallium,1119.133,200,0,Post-transition Metals
+Gallium,1130.760,300,0,Post-transition Metals
+Gallium,1414.401,1000,1,Post-transition Metals
+Gallium,1535.309,800,1,Post-transition Metals
+Gallium,1813.878,800,1,Post-transition Metals
+Gallium,1845.199,900,1,Post-transition Metals
+Gallium,,140,0,Post-transition Metals
+Gallium,1113.708,200,0,Post-transition Metals
+Gallium,1119.133,200,0,Post-transition Metals
+Gallium,1130.760,300,0,Post-transition Metals
+Gallium,1414.401,1000,1,Post-transition Metals
+Gallium,1535.309,800,1,Post-transition Metals
+Gallium,1813.878,800,1,Post-transition Metals
+Gallium,1845.199,900,1,Post-transition Metals
+Potassium,,800,0,Alkali Metals
+Potassium,,150,0,Alkali Metals
+Potassium,31,469.50K,0,Alkali Metals
+Potassium,,300,0,Alkali Metals
+Potassium,,1000,0,Alkali Metals
+Potassium,,1000,1,Alkali Metals
+Potassium,,800,1,Alkali Metals
+Potassium,,1000,1,Alkali Metals
+Potassium,,800,0,Alkali Metals
+Potassium,,150,0,Alkali Metals
+Potassium,31,469.50K,0,Alkali Metals
+Potassium,,300,0,Alkali Metals
+Potassium,,1000,0,Alkali Metals
+Potassium,,1000,1,Alkali Metals
+Potassium,,800,1,Alkali Metals
+Potassium,,1000,1,Alkali Metals
+Germanium,1085.51,300,0,Metalloids
+Germanium,1106.74,500,1,Metalloids
+Germanium,1120.46,500,1,Metalloids
+Germanium,1181.19,500,0,Metalloids
+Germanium,1181.65,500,0,Metalloids
+Germanium,1188.73,200,1,Metalloids
+Germanium,1191.26,300,0,Metalloids
+Germanium,1237.059,500,1,Metalloids
+Germanium,1261.905,500,1,Metalloids
+Germanium,1576.855,500,1,Metalloids
+Germanium,1716.784,80,0,Metalloids
+Germanium,1750.043,80,0,Metalloids
+Germanium,1774.176,80,0,Metalloids
+Germanium,1785.046,80,0,Metalloids
+Germanium,1841.328,80,0,Metalloids
+Germanium,1842.410,80,0,Metalloids
+Germanium,1853.134,80,0,Metalloids
+Germanium,1860.086,200,0,Metalloids
+Germanium,1874.256,120,0,Metalloids
+Germanium,1904.702,200,0,Metalloids
+Germanium,1917.592,120,0,Metalloids
+Germanium,1929.826,200,0,Metalloids
+Germanium,1938.008,500,1,Metalloids
+Germanium,1938.891,500,1,Metalloids
+Germanium,1944.731,80,0,Metalloids
+Germanium,1955.115,80,0,Metalloids
+Germanium,1962.013,200,0,Metalloids
+Germanium,1970.880,80,0,Metalloids
+Germanium,1987.849,120,0,Metalloids
+Germanium,1988.267,120,1,Metalloids
+Germanium,1998.887,200,0,Metalloids
+Germanium,1085.51,300,0,Metalloids
+Germanium,1106.74,500,1,Metalloids
+Germanium,1120.46,500,1,Metalloids
+Germanium,1181.19,500,0,Metalloids
+Germanium,1181.65,500,0,Metalloids
+Germanium,1188.73,200,1,Metalloids
+Germanium,1191.26,300,0,Metalloids
+Germanium,1237.059,500,1,Metalloids
+Germanium,1261.905,500,1,Metalloids
+Germanium,1576.855,500,1,Metalloids
+Germanium,1716.784,80,0,Metalloids
+Germanium,1750.043,80,0,Metalloids
+Germanium,1774.176,80,0,Metalloids
+Germanium,1785.046,80,0,Metalloids
+Germanium,1841.328,80,0,Metalloids
+Germanium,1842.410,80,0,Metalloids
+Germanium,1853.134,80,0,Metalloids
+Germanium,1860.086,200,0,Metalloids
+Germanium,1874.256,120,0,Metalloids
+Germanium,1904.702,200,0,Metalloids
+Germanium,1917.592,120,0,Metalloids
+Germanium,1929.826,200,0,Metalloids
+Germanium,1938.008,500,1,Metalloids
+Germanium,1938.891,500,1,Metalloids
+Germanium,1944.731,80,0,Metalloids
+Germanium,1955.115,80,0,Metalloids
+Germanium,1962.013,200,0,Metalloids
+Germanium,1970.880,80,0,Metalloids
+Germanium,1987.849,120,0,Metalloids
+Germanium,1988.267,120,1,Metalloids
+Germanium,1998.887,200,0,Metalloids
