@@ -19,8 +19,7 @@ def scale2euclid(scale, max_denom=10, mode="normal"):
     mode : str, default='normal'
         A string representing the mode of Euclidean rhythms to generate.
         Mode options:
-            'normal' : generate rhythms with `num` steps distributed over `denom`
-                       beats.
+            'normal' : generate rhythms with `num` steps distributed over "denom" beats.
             'full' : generate rhythms with all possible combinations
                      of `num` and `denom` for a given `scale`.\
 

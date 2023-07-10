@@ -854,7 +854,7 @@ def consonant_ratios(data,
 def consonance_peaks(peaks, limit, limit_pairs=True):
     """
     This function computes consonance (for a given ratio a/b, when a < 2b),
-    consonance corresponds to (a+b)/(a*b)) between peaks.
+    which is computed with the formula (a+b)/(a*b)) for each pair of peaks.
 
     Parameters
     ----------
@@ -934,7 +934,7 @@ def consonance_peaks(peaks, limit, limit_pairs=True):
 
 def spectral_flatness(harmonicity_values):
     """
-    Calculate the spectral flatness of a signal.
+    Calculate the spectral flatness of a power spectrum.
 
     Parameters
     ----------
@@ -953,7 +953,7 @@ def spectral_flatness(harmonicity_values):
 
 def spectral_entropy(harmonicity_values):
     """
-    Calculate the spectral entropy of a signal.
+    Calculate the spectral entropy of a power spectrum.
 
     Parameters
     ----------
@@ -971,7 +971,7 @@ def spectral_entropy(harmonicity_values):
 
 def spectral_spread(freqs, psd):
     """
-    Calculate the spectral spread of a signal.
+    Calculate the spectral spread of a power spectrum.
 
     Parameters
     ----------
@@ -997,7 +997,27 @@ def spectral_spread(freqs, psd):
     return spectral_spread
 
 def higuchi_fd(data, kmax):
-    """ Compute Higuchi Fractal Dimension of a time series. kmax is max. delay (should be < len(data)/3) """
+    """
+    Compute Higuchi Fractal Dimension of a power spectrum.
+
+    HFD is a technique used to determine the self-similarity 
+    of a signal. It has been widely used in analyzing time-series data, especially 
+    for detecting chaotic behavior in time-series data. Here we apply it the characterize
+    the complexity of a power spectrum.
+
+    Parameters
+    ----------
+    data : ndarray
+        The power spectrum data.
+    kmax : int
+        The maximum delay; should be less than len(data)/3.
+
+    Returns
+    -------
+    float
+        The Higuchi Fractal Dimension of the time series data.
+
+    """
     L = []
     x = []
     N = len(data)
@@ -1013,3 +1033,4 @@ def higuchi_fd(data, kmax):
         x.append([np.log(1.0/ k), 1])
     (p, _, _, _) = np.linalg.lstsq(x, L, rcond=None)  # Use rcond=None to silence future warning
     return p[0]
+

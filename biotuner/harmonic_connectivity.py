@@ -5,7 +5,7 @@ from biotuner.biotuner_utils import rebound_list, butter_bandpass_filter
 from biotuner.peaks_extension import harmonic_fit
 from biotuner.transitional_harmony import transitional_harmony
 from scipy.signal import hilbert
-from scipy.stats import zscore
+from scipy.stats import zscore, t
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -13,6 +13,8 @@ from sklearn.metrics import mutual_info_score
 import pywt
 from fractions import Fraction
 import mne
+import numpy.ma as ma
+from statsmodels.stats.multitest import multipletests
 from mne.viz import circular_layout
 from mne_connectivity.viz import plot_connectivity_circle
 import itertools
@@ -92,11 +94,10 @@ class harmonic_connectivity(object):
             Default = 5. Number of peaks to extract per frequency band.
 
         """
-        """Initializing data"""
         if type(data) is not None:
             self.data = data
         self.sf = sf
-        """Initializing arguments for peak extraction"""
+        # Initializing arguments for peak extraction
         self.peaks_function = peaks_function
         self.precision = precision
         self.n_harm = n_harm
@@ -121,38 +122,33 @@ class harmonic_connectivity(object):
         ----------
         metric : str, optional
             The metric to use for computing harmonic connectivity. Default is 'harmsim'.
+            
             Possible values are:
 
-            * 'harmsim': computes the harmonic similarity between each pair of peaks from the two electrodes.
-            It calculates the ratio between each pair of peaks and computes the mean harmonic similarity.
+             - 'harmsim': computes the harmonic similarity between each pair of peaks from the two electrodes.
+                It calculates the ratio between each pair of peaks and computes the mean harmonic similarity.
 
-            * 'euler': computes the Euler's totient function on the concatenated peaks of the two electrodes.
-            It provides a measure of the number of positive integers that are relatively prime to the concatenated peaks.
+             - 'euler': computes the Euler's totient function on the concatenated peaks of the two electrodes.
+                It provides a measure of the number of positive integers that are relatively prime to the concatenated peaks.
 
-            * 'harm_fit': computes the number of common harmonics between each pair of peaks from the two electrodes.
-            It evaluates the harmonic fit between each peak pair and counts the number of common harmonics.
+             - 'harm_fit': computes the number of common harmonics between each pair of peaks from the two electrodes.
+                It evaluates the harmonic fit between each peak pair and counts the number of common harmonics.
 
-            * 'subharm_tension': computes the tension between subharmonics of two electrodes.
-            It evaluates the tension between subharmonics of the two electrodes by comparing the subharmonics and their ratios.
+             - 'subharm_tension': computes the tension between subharmonics of two electrodes.
+                It evaluates the tension between subharmonics of the two electrodes by comparing the subharmonics and their ratios.
 
-            * 'RRCi': computes the Rhythmic Ratio Coupling with Imaginary Component (RRCi) metric between each pair of
-            peaks from the two electrodes, using a bandwidth of 2 Hz and a max_denom of 16. This metric calculates the
-            imaginary part of the complex phase differences between two filtered signals, accounting for volume conduction.
-            A higher absolute value of the imaginary part indicates stronger phase coupling while being less sensitive
-            to volume conduction.
+             - 'RRCi': computes the Rhythmic Ratio Coupling with Imaginary Component (RRCi) metric between each pair of
+                peaks from the two electrodes, using a bandwidth of 2 Hz and a max_denom of 16. This metric calculates the
+                imaginary part of the complex phase differences between two filtered signals, accounting for volume conduction.
+                A higher absolute value of the imaginary part indicates stronger phase coupling while being less sensitive
+                to volume conduction.
 
-            * 'wPLI_crossfreq': computes the weighted Phase Lag Index (wPLI) for cross-frequency coupling between each pair
-            of peaks from the two electrodes. The wPLI measures the phase synchronization between two signals, with a value
-            close to 0 indicating no synchronization and a value close to 1 indicating perfect synchronization.
+             - 'wPLI_crossfreq': computes the weighted Phase Lag Index (wPLI) for cross-frequency coupling between each pair
+                of peaks from the two electrodes. The wPLI measures the phase synchronization between two signals, with a value
+                close to 0 indicating no synchronization and a value close to 1 indicating perfect synchronization.
 
-            * 'wPLI_multiband': computes the weighted Phase Lag Index (wPLI) for multiple frequency bands between the two electrodes.
-            It calculates wPLI for each frequency band and returns an array of wPLI values for the defined frequency bands.
-
-            * 'MI': computes the Mutual Information (MI) between the instantaneous phases of each pair of peaks from the two electrodes.
-            MI is a measure of the dependence between the two signals, with a higher value indicating a stronger relationship.
-
-            * 'MI_spectral': computes the spectral Mutual Information (MI) between the two electrodes for each pair of peaks.
-            It evaluates the MI for the concatenated peaks and returns the average MI value for the pairs of peaks.
+             - 'wPLI_multiband': computes the weighted Phase Lag Index (wPLI) for multiple frequency bands between the two electrodes.
+                It calculates wPLI for each frequency band and returns an array of wPLI values for the defined frequency bands.
 
         delta_lim : int, optional
             The delta limit for the subharmonic tension metric. Default is 20.
@@ -354,6 +350,8 @@ class harmonic_connectivity(object):
         # conn_matrix = matrix.astype('float')
         if graph is True:
             sbn.heatmap(matrix)
+            # Add title and axis names
+            plt.title(f"Harmonic connectivity matrix ({metric})")
             plt.show()
         self.conn_matrix = matrix
         return matrix
@@ -362,7 +360,9 @@ class harmonic_connectivity(object):
         self, sf, nIMFs, metric="harmsim", delta_lim=50
     ):
         """
-        Computes the time-resolved harmonic connectivity matrix between electrodes.
+        Computes the time-resolved harmonic connectivity matrix between electrodes,
+        which is a harmonic connectivity matrix for each intrinsic mode function (IMF),
+        and each time point.
 
         Parameters
         ----------
@@ -381,6 +381,10 @@ class harmonic_connectivity(object):
         -------
         connectivity_matrices : numpy.ndarray
             Time-resolved harmonic connectivity matrices with shape (IMFs, numDataPoints, electrodes, electrodes).
+            
+        Notes
+        -----
+        !!! This method is very computationally expensive and can take a long time to run. !!!
         """
         data = self.data
         num_electrodes, numDataPoints = data.shape
@@ -411,7 +415,6 @@ class harmonic_connectivity(object):
 
         return connectivity_matrices
 
-    # method for computing inter-electrodes correlations between transitional harmony matrices
     def transitional_connectivity(
         self,
         data=None,
@@ -423,8 +426,20 @@ class harmonic_connectivity(object):
         n_trans_harm=3,
     ):
         """
-        Compute the transitional connectivity between electrodes using transitional harmony
-        and temporal correlation with False Discovery Rate (FDR) correction.
+        This function calculates the transitional connectivity among electrodes, utilizing concepts of transitional harmony and temporal correlation.
+        It does so by employing a two-step approach:
+
+        - Transitional Harmony Calculation: For every electrode, the transitional harmony is determined first.
+                                            This measure reflects the patterns or sequences of signal transitions over time
+                                            that each electrode experiences.
+
+        - Temporal Correlation with FDR Correction: After obtaining transitional harmonies, the function evaluates the temporal correlation
+                                                    between these harmonies for each pair of electrodes. Temporal correlation quantifies
+                                                    how similar the timing and pattern of transitional harmonies are between each pair of electrodes.
+
+        The entire process takes into account multiple comparisons, utilizing False Discovery Rate (FDR) correction
+        to reduce the likelihood of false positives. This correction is crucial in maintaining the validity and robustness of the results,
+        especially when dealing with a large number of comparisons, as is the case with numerous electrodes.
 
         Parameters
         ----------
@@ -433,13 +448,14 @@ class harmonic_connectivity(object):
         sf : float
             Sampling frequency of the EEG data in Hz.
         mode : str, optional, default='win_overlap'
-            The mode to compute the transitional harmony. Default is 'win_overlap'.
+            The mode to compute the transitional harmony.
+            'win_overlap' computes the transitional harmony using a sliding window with overlap.
         overlap : int, optional, default=10
             The percentage of overlap between consecutive windows when computing
             the transitional harmony. Default is 10.
         delta_lim : int, optional, default=20
-            The maximum allowed frequency change (delta frequency) between two
-            consecutive peaks in Hz. Default is 20.
+            The minimum delta value for the computation of
+            subharmonic tension, in ms. Default is 20.
         graph : bool, optional, default=False
             If True, it will plot the graph of the transitional harmony. Default is False.
         n_trans_harm : int, optional, default=3
@@ -453,13 +469,6 @@ class harmonic_connectivity(object):
         pval_mat : numpy.ndarray
             P-value matrix of shape (n_electrodes, n_electrodes) with FDR-corrected
             p-values for the computed connectivity values.
-
-        Notes
-        -----
-        This function computes the transitional connectivity between electrodes by
-        first calculating the transitional harmony for each electrode and then
-        computing the temporal correlation between the transitional harmonies with
-        FDR correction for multiple comparisons.
         """
         if sf is None:
             sf = self.sf
@@ -488,16 +497,47 @@ class harmonic_connectivity(object):
         conn_mat, pval_mat = temporal_correlation_fdr(subharm)
         return conn_mat, pval_mat, subharm
 
-    def plot_conn_matrix(self, conn_matrix=None, node_names=None):
+    def plot_conn_matrix(self, conn_matrix=None, node_names=None, n_lines=50):
+        """
+        Plots a connectivity matrix in a circle plot.
+
+        Parameters
+        ----------
+        conn_matrix : ndarray, optional
+            The connectivity matrix to plot. If None, uses the object's own attribute `conn_matrix`. 
+            If `conn_matrix` is still None, a ValueError will be raised.
+        node_names : list, optional
+            The labels for the nodes. If None, a range object will be converted to a list of string values for node names.
+        n_lines : int, default=50
+            The number of lines to draw in the plot. Default is 50.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            A matplotlib figure object.
+
+        Raises
+        ------
+        ValueError
+            Raised when no connectivity matrix is found.
+
+        Notes
+        -----
+        This method uses the function `plot_connectivity_circle` to plot the connectivity matrix.
+        """
+
         if conn_matrix is None:
             conn_matrix = self.conn_matrix
+            # Raise error if conn_matrix is still None
+            if conn_matrix is None:
+                raise ValueError("No connectivity matrix found.")
         if node_names is None:
             node_names = range(0, len(conn_matrix), 1)
             node_names = [str(x) for x in node_names]
         fig = plot_connectivity_circle(
             conn_matrix,
             node_names=node_names,
-            n_lines=100,
+            n_lines=n_lines,
             fontsize_names=24,
             show=False,
             vmin=0.0,
@@ -524,6 +564,69 @@ class harmonic_connectivity(object):
         save_fig=False,
         savename="harmonic_spectrum_connectivity.png",
     ):
+        """
+        Computes the harmonic spectrum connectivity between pairs of electrodes. For more details on the harmonic spectrum, 
+        see the function :func:`compute_cross_spectrum_harmonicity`.
+
+        Parameters
+        ----------
+        sf : float, optional
+            Sampling frequency of the data. If not provided, uses the object's own attribute `sf`.
+        data : ndarray, optional
+            2D data array of shape (n_electrodes, n_datapoints). If not provided, uses the object's own attribute `data`.
+        precision : float, default=0.5
+            Precision of the frequency axis of the cross-spectrum.
+        fmin : float, optional
+            Minimum frequency for computation. If not provided, uses the smallest possible frequency (i.e., zero).
+        fmax : float, optional
+            Maximum frequency for computation. If not provided, uses the Nyquist frequency.
+        noverlap : int, default=1
+            Argument passed to the :func:`scipy.signal.stft` function.
+        power_law_remove : bool, default=False
+            If True, removes the power-law noise from the cross-spectrum.
+        n_peaks : int, default=5
+            Number of peaks to derive from the harmonic spectrum.
+        metric : str, default='harmsim'
+            Name of the metric to be used in the computation of harmonicity.
+            Choose between:
+            
+            - 'harmsim'
+            - 'subharm_tension'
+        n_harms : int, default=10
+            Number of harmonics to consider in the computation.
+        delta_lim : float, default=0.1
+            Threshold for the delta limit used in subharmonic tension computation.
+        min_notes : int, default=2
+            Minimum number of notes required for a harmonic pattern to be considered valid,
+            when subharmonic tension is used as the metric.
+        plot : bool, default=False
+            If True, plots the results.
+        smoothness : int, default=1
+            Smoothness factor of the power spectrum.
+            When smoothness=1, no smoothing is applied.
+        smoothness_harm : int, default=1
+            Smoothness factor of the harmonic spectrum.
+            When smoothness_harm=1, no smoothing is applied.
+        phase_mode : str, optional
+            If set to 'weighted', the phase coupling is weighted by the power of associated frequencies.
+        save_fig : bool, default=False
+            If True, saves the resulting plot as a .png file.
+        savename : str, default='harmonic_spectrum_connectivity.png'
+            Name of the .png file to save if `save_fig` is True.
+
+        Returns
+        -------
+        output : pandas.DataFrame
+            DataFrame containing the results of the harmonic spectrum connectivity computation.
+
+        Notes
+        -----
+        The harmonic spectrum connectivity is computed between each pair of electrodes. This is achieved
+        by computing the cross-spectrum harmonicity for each pair of electrodes, and storing the results
+        in a DataFrame. The DataFrame includes indices of the electrode pairs, alongside the results of
+        the harmonicity computation.
+        """
+
         if sf is None:
             sf = self.sf
         if data is None:
@@ -566,6 +669,28 @@ class harmonic_connectivity(object):
         return output
 
     def get_harm_spectrum_metric_matrix(self, metric):
+        """
+        Method to retrieve a matrix of harmonic spectrum metric values between pairs of electrodes.
+
+        Parameters
+        ----------
+        metric : str
+            The specific metric from the harmonic spectrum connectivity data to create the matrix from.
+
+        Returns
+        -------
+        matrix : pandas.DataFrame or None
+            A pivot table with 'elec1' and 'elec2' as indices and the provided 'metric' as values. 
+            If 'harmonic_spectrum_connectivity' is None or 'metric' is not found in 'harmonic_spectrum_connectivity',
+            this method will print an error message and return None.
+
+        Notes
+        -----
+        This method checks if 'harmonic_spectrum_connectivity' exists in the object.
+        If it does, it further checks if 'metric' exists in the DataFrame's columns. If both checks pass,
+        a pivot table is created using 'elec1' and 'elec2' as indices and 'metric' as values. 
+        """
+
         # Check if self.harmonic_spectrum_connectivity exists
         if self.harmonic_spectrum_connectivity is None:
             print("Error: No harmonic_spectrum_connectivity found.")
@@ -686,66 +811,6 @@ def wPLI_multiband(signal1, signal2, freq_bands, sf):
         wPLI_values.append(wPLI)
 
     return wPLI_values
-
-
-def compute_mutual_information(phase1, phase2, num_bins=10):
-    # Discretize phase values into bins
-    discretized_phase1 = np.digitize(
-        phase1, bins=np.linspace(-np.pi, np.pi, num_bins + 1)
-    )
-    discretized_phase2 = np.digitize(
-        phase2, bins=np.linspace(-np.pi, np.pi, num_bins + 1)
-    )
-
-    # Compute the joint probability distribution of the discretized phase values
-    joint_prob, _, _ = np.histogram2d(
-        discretized_phase1, discretized_phase2, bins=num_bins
-    )
-
-    # Normalize the joint probability distribution
-    joint_prob = joint_prob / np.sum(joint_prob)
-
-    # Compute Mutual Information
-    MI = mutual_info_score(None, None, contingency=joint_prob)
-
-    return MI
-
-
-def MI_spectral(
-    signal1, signal2, sf, min_freq, max_freq, precision, peak_pairs, wavelet="cmor"
-):
-    # Define the scales for the CWT based on the desired frequency precision
-    scales = np.arange(min_freq, max_freq + precision, precision)
-    scales = (sf / (2 * np.pi * precision)) * np.divide(1, scales)
-
-    # Compute the Continuous Wavelet Transform of the signals
-    cwt_signal1 = pywt.cwt(signal1, scales, wavelet)[0]
-    cwt_signal2 = pywt.cwt(signal2, scales, wavelet)[0]
-
-    # Extract the phase values from the CWT coefficients
-    phase_signal1 = np.angle(cwt_signal1)
-    phase_signal2 = np.angle(cwt_signal2)
-
-    # Compute the Mutual Information between the phase values in the time-frequency domain
-    mi_matrix = np.zeros((len(scales), len(scales)))
-    for i in range(len(scales)):
-        for j in range(len(scales)):
-            mi_matrix[i, j] = mutual_info_score(
-                phase_signal1[i, :], phase_signal2[j, :]
-            )
-
-    # Extract the MI values corresponding to the pairs of peaks
-    mi_values = []
-    for pair in peak_pairs:
-        scale1 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[0]))
-        scale2 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[1]))
-        mi_values.append(mi_matrix[scale1, scale2])
-
-    # Calculate the average MI value for the pairs of peaks
-    avg_mi = np.mean(mi_values)
-
-    return avg_mi
-
 
 def cross_frequency_rrci(
     signal1, signal2, sfreq, freq_peak1, freq_peak2, bandwidth=1, max_denom=50
@@ -1009,25 +1074,30 @@ def EMD_time_resolved_harmonicity(
                     pass
     return harmonicity
 
-
-import numpy as np
-import numpy.ma as ma
-from scipy.stats import t
-from statsmodels.stats.multitest import multipletests
-
-
 def temporal_correlation_fdr(data):
     """
     Compute the temporal correlation for each pair of electrodes and output a connectivity matrix
-    and a matrix of FDR-corrected p-values.
+    and a matrix of FDR-corrected p-values. This function is used in the computation of the
+    transitional harmony connectivity.
 
-    Args:
-    data (array): An array of shape (electrodes, samples) containing the electrode recordings.
+    Parameters
+    ----------
+    data : array-like
+        An array of shape (electrodes, samples) containing the electrode recordings.
 
-    Returns:
-    connectivity_matrix (array): A connectivity matrix of shape (electrodes, electrodes) with the temporal correlation for each pair of electrodes.
-    fdr_corrected_pvals (array): A matrix of FDR-corrected p-values of shape (electrodes, electrodes).
+    Returns
+    -------
+    connectivity_matrix : ndarray
+        A connectivity matrix of shape (electrodes, electrodes) with the temporal correlation for each pair of electrodes.
+    fdr_corrected_pvals : ndarray
+        A matrix of FDR-corrected p-values of shape (electrodes, electrodes).
+
+    Notes
+    -----
+    This function calculates the temporal correlation for each pair of electrodes, creating a connectivity matrix.
+    Simultaneously, it calculates a matrix of p-values and corrects for multiple comparisons using the False Discovery Rate (FDR) method.
     """
+
     if not isinstance(data, np.ndarray):
         data = np.array(data)
 
@@ -1079,6 +1149,55 @@ def compute_cross_spectrum_harmonicity(
     save_fig=False,
     save_name="harmonic_spectrum_connectivity.png",
 ):
+    
+    """
+    Compute the cross-spectrum harmonicity between two signals. This function is useful for analyzing
+    the interaction between frequency components of two different signals.
+
+    Parameters
+    ----------
+    signal1, signal2 : array_like
+        Input signals.
+    precision_hz : float
+        The precision in Hz for the short time Fourier transform.
+    fmin, fmax : float or None
+        Minimum and maximum frequency for computing the power spectral density.
+    noverlap : int
+        Number of points to overlap between segments for computing the power spectral density.
+    fs : int
+        The sampling frequency of the signals.
+    power_law_remove : bool
+        If True, power-law noise is removed from the power spectral densities of the signals.
+    n_peaks : int
+        The number of peaks to identify in the spectra.
+    metric : {"harmsim", "subharm_tension"}
+        The metric to use for computing the harmonicity between the signals.
+    n_harms : int
+        Number of harmonics to consider for computing subharmonic tension.
+    delta_lim : float
+        Delta limit for computing subharmonic tension.
+    min_notes : int
+        Minimum number of notes for computing subharmonic tension.
+    plot : bool
+        If True, the function will plot the cross harmonic and phase coupling spectrum.
+    smoothness : int
+        Smoothness of the Fourier transform. Higher values result in a smoother transform.
+    smoothness_harm : int
+        Smoothness of the harmonic spectrum. Higher values result in a smoother spectrum.
+    phase_mode : {None, "weighted"}
+        If "weighted", the phase coupling is computed as a weighted sum. If None, it is computed as a simple average.
+    save_fig : bool
+        If True, the plot is saved as a png file.
+    save_name : str
+        Name of the png file if save_fig is True.
+
+    Returns
+    -------
+    DataFrame
+        A pandas DataFrame with columns representing various computed metrics of the signals, such as spectral flatness, spectral entropy, etc.
+        The DataFrame also contains columns for peak frequencies in the spectra and their harmonic similarities.
+    """
+    
     nperseg = int(fs / precision_hz)
 
     # Compute the power spectral density for both signals
@@ -1396,6 +1515,64 @@ def compute_cross_spectrum_harmonicity(
 
     return df
 
+"""
+def compute_mutual_information(phase1, phase2, num_bins=10):
+    # Discretize phase values into bins
+    discretized_phase1 = np.digitize(
+        phase1, bins=np.linspace(-np.pi, np.pi, num_bins + 1)
+    )
+    discretized_phase2 = np.digitize(
+        phase2, bins=np.linspace(-np.pi, np.pi, num_bins + 1)
+    )
+
+    # Compute the joint probability distribution of the discretized phase values
+    joint_prob, _, _ = np.histogram2d(
+        discretized_phase1, discretized_phase2, bins=num_bins
+    )
+
+    # Normalize the joint probability distribution
+    joint_prob = joint_prob / np.sum(joint_prob)
+
+    # Compute Mutual Information
+    MI = mutual_info_score(None, None, contingency=joint_prob)
+
+    return MI
+
+
+def MI_spectral(
+    signal1, signal2, sf, min_freq, max_freq, precision, peak_pairs, wavelet="cmor"
+):
+    # Define the scales for the CWT based on the desired frequency precision
+    scales = np.arange(min_freq, max_freq + precision, precision)
+    scales = (sf / (2 * np.pi * precision)) * np.divide(1, scales)
+
+    # Compute the Continuous Wavelet Transform of the signals
+    cwt_signal1 = pywt.cwt(signal1, scales, wavelet)[0]
+    cwt_signal2 = pywt.cwt(signal2, scales, wavelet)[0]
+
+    # Extract the phase values from the CWT coefficients
+    phase_signal1 = np.angle(cwt_signal1)
+    phase_signal2 = np.angle(cwt_signal2)
+
+    # Compute the Mutual Information between the phase values in the time-frequency domain
+    mi_matrix = np.zeros((len(scales), len(scales)))
+    for i in range(len(scales)):
+        for j in range(len(scales)):
+            mi_matrix[i, j] = mutual_info_score(
+                phase_signal1[i, :], phase_signal2[j, :]
+            )
+
+    # Extract the MI values corresponding to the pairs of peaks
+    mi_values = []
+    for pair in peak_pairs:
+        scale1 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[0]))
+        scale2 = int((sf / (2 * np.pi * precision)) * np.divide(1, pair[1]))
+        mi_values.append(mi_matrix[scale1, scale2])
+
+    # Calculate the average MI value for the pairs of peaks
+    avg_mi = np.mean(mi_values)
+
+    return avg_mi"""
 
 """    def compute_harmonicity_metric_for_IMFs(data, sf, metric='harmsim', delta_lim=20, nIMFs=5, FREQ_BANDS=None):
         # Apply EMD to each channel

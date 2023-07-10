@@ -202,7 +202,7 @@ class compute_biotuner(object):
         When set to True, a fit between exponentials
         (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
     """
-    pygame_lib = None
+    
     def __init__(
         self,
         sf,
@@ -219,7 +219,7 @@ class compute_biotuner(object):
         ratios_inc_fit=False,
         scale_cons_limit=0.1,
     ):
-
+        pygame_lib = None
         #Initializing data
         if type(data) is not None:
             self.data = data
@@ -363,7 +363,9 @@ class compute_biotuner(object):
             List of ratios between all pairs of peaks
         self.peaks_ratios_cons: List (float)
             List of consonant peaks ratios
-        'If ratios_extension = True'
+        .. note::
+        The following attributes are only present if `ratios_extension = True`:
+
         self.peaks_ratios_harm: List (float)
             List of peaks ratios and their harmonics
         self.peaks_ratios_inc: List (float)
@@ -510,7 +512,8 @@ class compute_biotuner(object):
 
         Attributes
         ----------
-        'If ratios_extension is True'
+        .. note::
+        The following attributes are only present if `ratios_extension = True`:
         self.peaks_ratios_harm: List (float)
             List of extended peaks ratios and their harmonics
         self.peaks_ratios_inc: List (float)
@@ -1032,6 +1035,11 @@ class compute_biotuner(object):
         -------
         self.euler_fokker : List (float)
             Euler-Fokker genera.
+            
+        Attributes
+        ----------
+        self.euler_fokker : List (float)
+            Euler-Fokker genera.
 
         """
         if method == "peaks":
@@ -1063,6 +1071,11 @@ class compute_biotuner(object):
         -------
         ratios : List (float)
             Generated tuning.
+            
+        Attributes
+        ----------
+        self.harmonic_tuning : List (float)
+            Generated tuning.
 
         """
         ratios = []
@@ -1091,6 +1104,11 @@ class compute_biotuner(object):
 
         Returns
         -------
+        self.harmonic_fit_tuning : List (float)
+            Generated tuning
+            
+        Attributes
+        ----------
         self.harmonic_fit_tuning : List (float)
             Generated tuning
 
@@ -1174,10 +1192,10 @@ class compute_biotuner(object):
 
         Returns
         -------
-        self.pac_freqs : List of lists (float)
-            Pairs of frequencies with highest coupling value.
-        self.pac_coupling : List (float)
-            Values of coupling for each pair in self.pac_freqs
+        pac_freqs : List of lists (float)
+            Pairs of frequencies with highest coupling value. Stored in self.pac_freqs.
+        pac_coupling : List (float)
+            Values of coupling for each pair in pac_freqs. Stored in self.pac_coupling.
         """
         if sf is None:
             sf = self.sf

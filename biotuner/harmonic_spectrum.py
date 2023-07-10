@@ -16,6 +16,218 @@ import matplotlib.lines as mlines
 from scipy.stats import ttest_ind
 
 
+def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
+                               n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
+                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True):
+    """
+    Compute global harmonicity, phase coupling, and resonance spectrum from a signal.
+
+    This function computes the Power Spectral Density (PSD) of the signal, applies power law removal if required,
+    calculates the phase matrix, computes dyad similarities and phase couplings for each pairs of frequencies, calculates harmonicity,
+    phase coupling and resonance spectrum, identifies spectral peaks, and returns a dataframe summarizing these metrics.
+
+    Parameters
+    ----------
+    signal : array_like
+        1-D input signal.
+    precision_hz : float
+        Frequency precision for computing spectra.
+    fmin : float, default=1
+        Minimum frequency to consider in the spectral analysis.
+    fmax : float, default=30
+        Maximum frequency to consider in the spectral analysis.
+    noverlap : int, default=1
+        Number of points of overlap between segments for PSD computation.
+    fs : int, default=1000
+        Sampling frequency.
+    power_law_remove : bool, default=False
+        If True, applies power law removal to the PSD.
+    n_peaks : int, default=5
+        Number of spectral peaks to identify.
+    metric : str, default='harmsim'
+        Method for computing dyad similarity.
+        Options are:
+            'harmsim' : Harmonic similarity
+            'subharm_tension' : Subharmonic tension
+    n_harms : int, default=10
+        Number of harmonics to consider in dyad similarity computation.
+    delta_lim : float, default=0.1
+        Limit in ms used when metric is 'subharm_tension'.
+    min_notes : int, default=2
+        Minimum number of notes for dyad similarity computation.
+    plot : bool, default=False
+        If True, plots the resulting spectra.
+    smoothness : int, default=1
+        Smoothing factor applied to the PSD before computing spectra.
+    smoothness_harm : int, default=1
+        Smoothing factor applied to harmonicity values.
+    save : bool, default=False
+        If True, saves the plot as a .png file.
+    savename : str, default=''
+        Name for the saved plot file.
+    phase_mode : str, default=None
+        Method for weighting phase coupling computation. Options are 'weighted' and 'None'.
+    harm_phase_norm : bool, default=True
+        If True, normalize the harmonicity and phase coupling values
+        by dividing by the total power.
+
+    Returns
+    -------
+    df : DataFrame
+        A DataFrame containing computed harmonicity, phase coupling, and resonance values, spectral flatness,
+        entropy, Higushi Fractal Dimension, and spectral spread for each of the three spectra (harmonicity,
+        phase coupling, resonance). Also includes average values and maximum values for these metrics, peak frequencies
+        for each spectrum, and 'harmsim' values for peak frequencies.
+
+        """
+    # Perform initial operations and get cleaned PSD
+    freqs, psd = compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
+    psd_clean = apply_power_law_remove(freqs, psd, power_law_remove)
+    psd_min = np.min(psd_clean)
+    psd_max = np.max(psd_clean)
+    psd_clean = (psd_clean - psd_min) / (psd_max - psd_min)
+    
+    # Get phase matrix
+    phase_matrix = compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness)
+
+    # Compute dyad similarities and phase couplings
+    dyad_similarities, phase_coupling_matrix = compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, metric, n_harms, delta_lim, min_notes=min_notes)
+    
+    # Compute harmonicity and phase coupling values
+    harmonicity_values, phase_coupling_values = compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, phase_mode,
+                                                                                                     harm_phase_norm=harm_phase_norm)
+    # apply smoothing to harmonicity values
+    #print(phase_coupling_values)
+    harmonicity_values = gaussian_filter(harmonicity_values, smoothness_harm)
+    phase_coupling_values = gaussian_filter(phase_coupling_values, smoothness_harm)
+    
+    # Compute resonance values
+    resonance_values = compute_resonance_values(harmonicity_values, phase_coupling_values)
+
+    # Find peaks in the spectra
+    harmonicity_peak_frequencies, harm_peak_idx = find_spectral_peaks(harmonicity_values, freqs, n_peaks, prominence_threshold=0.5)
+    phase_peak_frequencies, phase_peak_idx = find_spectral_peaks(phase_coupling_values, freqs, n_peaks, prominence_threshold=0.0001)
+    resonance_peak_frequencies, res_peak_idx = find_spectral_peaks(resonance_values, freqs, n_peaks, prominence_threshold=0.00001)
+
+    # Compute spectral flatness and entropy values
+    harmonic_complexity = harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance_values)
+
+    df = pd.DataFrame({
+        'harmonicity': [harmonicity_values],
+        'phase_coupling': [phase_coupling_values],
+        'resonance': [resonance_values],
+        'harm_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Harmonicity']],
+        'harm_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Harmonicity']],
+        'harm_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Harmonicity']],
+        'harm_spectral_spread': [harmonic_complexity['Spectral Spread']['Harmonicity']],
+        'phase_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Phase Coupling']],
+        'phase_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Phase Coupling']],
+        'phase_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Phase Coupling']],
+        'phase_spectral_spread': [harmonic_complexity['Spectral Spread']['Phase Coupling']],
+        'res_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Resonance']],
+        'res_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Resonance']],
+        'res_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Resonance']],
+        'res_spectral_spread': [harmonic_complexity['Spectral Spread']['Resonance']],
+        'harmonicity_peak_frequencies': [harmonicity_peak_frequencies],
+        'phase_peak_frequencies': [phase_peak_frequencies],
+        'resonance_peak_frequencies': [resonance_peak_frequencies],
+    })
+    
+    df['harmonicity_avg'] = df['harmonicity'].apply(np.mean)
+    df['phase_coupling_avg'] = df['phase_coupling'].apply(np.mean)
+    df['resonance_avg'] = df['resonance'].apply(np.mean)
+    
+    df['harmonicity_peaks_avg'] = df['harmonicity_peak_frequencies'].apply(safe_mean)
+    df['phase_peaks_avg'] = df['phase_peak_frequencies'].apply(safe_mean)
+    df['res_peaks_avg'] = df['resonance_peak_frequencies'].apply(safe_mean)
+
+    df['resonance_max'] = df['resonance'].apply(np.max)
+    df['harmonicity_max'] = df['harmonicity'].apply(np.max)
+    df['phase_coupling_max'] = df['phase_coupling'].apply(np.max)
+
+    #save df
+    df['precision'] = precision_hz
+    df['fmin'] = fmin
+    df['fmax'] = fmax
+    df['phase_weighting'] = phase_mode
+    df['smooth_fft'] = smoothness
+    df['smooth_harm'] = smoothness_harm
+    df['fs'] = fs
+    
+    #calculate harmonic similarity between peaks
+    df['phase_harmsim'] = df['phase_peak_frequencies'].apply(peaks_to_harmsim)
+    df['harm_harmsim'] = df['harmonicity_peak_frequencies'].apply(peaks_to_harmsim)
+    df['res_harmsim'] = df['resonance_peak_frequencies'].apply(peaks_to_harmsim)
+    
+    df['harm_harmsim_avg'] = df['harm_harmsim'].apply(safe_mean)
+    df['phase_harmsim_avg'] = df['phase_harmsim'].apply(safe_mean)
+    df['res_harmsim_avg'] = df['res_harmsim'].apply(safe_mean)
+    
+    df['harm_harmsim_max'] = df['harm_harmsim'].apply(safe_max)
+    df['phase_harmsim_max'] = df['phase_harmsim'].apply(safe_max)
+    df['res_harmsim_max'] = df['res_harmsim'].apply(safe_max)
+    # Plot results if required
+    if plot:
+        fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 12))
+
+        ax1.plot(freqs, 10 * np.log10(psd), color='black')
+        ax1.set_title('Spectrum')
+        ax1.set_xlabel('Frequency (Hz)')
+        ax1.set_ylabel('Power (dB)')
+        ax1.grid()
+
+        ax2.plot(freqs, harmonicity_values, color='darkblue')
+        ax2.plot(freqs[harm_peak_idx], harmonicity_values[harm_peak_idx], 'ro')
+        ax2.set_title('Harmonic Spectrum')
+        ax2.set_xlabel('Frequency (Hz)')
+        ax2.set_ylabel('Harmonicity')
+        # add vertical lines for the peaks in the spectrum
+        for peak in harmonicity_peak_frequencies:
+            ax2.axvline(peak, color='darkblue', linestyle='--')
+        
+        # add text for the spectral flatness and entropy values on the toop right corner
+        ax2.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Harmonicity'], 2)), transform=ax2.transAxes)
+        ax2.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Harmonicity'], 2)), transform=ax2.transAxes)
+        
+        ax2.grid()
+        
+        ax3.plot(freqs, phase_coupling_values, color='darkviolet')
+        ax3.plot(freqs[phase_peak_idx], phase_coupling_values[phase_peak_idx], 'ro')
+        ax3.set_title('Phase Coupling Spectrum')
+        ax3.set_xlabel('Frequency (Hz)')
+        ax3.set_ylabel('Phase Coupling')
+        # add vertical lines for the peaks in the spectrum
+        for peak in phase_peak_frequencies:
+            ax3.axvline(peak, color='darkviolet', linestyle='--')
+            
+        # add text for the spectral flatness and entropy values on the toop right corner
+        ax3.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Phase Coupling'], 2)), transform=ax3.transAxes)
+        ax3.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Phase Coupling'], 2)), transform=ax3.transAxes)
+            
+        ax3.grid()
+        
+        ax4.plot(freqs, resonance_values, color='darkred')
+        ax4.plot(freqs[res_peak_idx], resonance_values[res_peak_idx], 'ro')
+        ax4.set_title('Resonance Spectrum')
+        ax4.set_xlabel('Frequency (Hz)')
+        ax4.set_ylabel('Resonance')
+        # add vertical lines for the peaks in the spectrum
+        for peak in resonance_peak_frequencies:
+            ax4.axvline(peak, color='darkred', linestyle='--')
+        # add text for the spectral flatness and entropy values on the toop right corner
+        ax4.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Resonance'], 2)), transform=ax4.transAxes)
+        ax4.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Resonance'], 2)), transform=ax4.transAxes)
+            
+        ax4.grid()
+
+        plt.tight_layout()
+        if save is True:
+            plt.savefig('Spectra' + savename + '.png')
+        
+        plt.show()
+
+
+    return df
 
 def compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness):
     '''
@@ -140,6 +352,8 @@ def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similaritie
 def compute_resonance_values(harmonicity_values, phase_coupling_values):
     """
     Compute resonance values from harmonicity and phase coupling values.
+    Resonance values are computed as the product of harmonicity and phase coupling values
+    normalized between 0 and 1.
 
     Parameters
     ----------
@@ -208,7 +422,7 @@ def find_spectral_peaks(values, freqs, n_peaks, prominence_threshold=0.5):
     >>> find_spectral_peaks(values, freqs, n_peaks=3)
     (array([60, 40, 80]), array([5, 3, 7]))
     """
-    # Find harmonicity peaks
+    # Find peaks
     peaks, _ = find_peaks(values)
     prominences = peak_prominences(values, peaks)[0]
     
@@ -285,218 +499,6 @@ def harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance
                             index=['Harmonicity', 'Phase Coupling', 'Resonance'], )
 
     return harmonic_complexity
-
-
-def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
-                               n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
-                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True):
-    """
-    Compute global harmonicity, phase coupling, and resonance characteristics of a signal.
-
-    This function computes the Power Spectral Density (PSD) of the signal, applies power law removal if required,
-    calculates the phase matrix, computes dyad similarities and phase couplings, calculates harmonicity,
-    phase coupling and resonance values, identifies spectral peaks, and returns a dataframe summarizing these metrics.
-
-    Parameters
-    ----------
-    signal : array_like
-        1-D input signal.
-    precision_hz : float
-        Frequency precision for computing spectra.
-    fmin : float, default=1
-        Minimum frequency to consider in the spectral analysis.
-    fmax : float, default=30
-        Maximum frequency to consider in the spectral analysis.
-    noverlap : int, default=1
-        Number of points of overlap between segments for PSD computation.
-    fs : int, default=1000
-        Sampling frequency.
-    power_law_remove : bool, default=False
-        If True, applies power law removal to the PSD.
-    n_peaks : int, default=5
-        Number of spectral peaks to identify.
-    metric : str, default='harmsim'
-        Method for computing dyad similarity.
-        Options are:
-            'harmsim' : Harmonic similarity
-            'subharm_tension' : Subharmonic tension
-    n_harms : int, default=10
-        Number of harmonics to consider in dyad similarity computation.
-    delta_lim : float, default=0.1
-        Limit in ms used when metric is 'subharm_tension'.
-    min_notes : int, default=2
-        Minimum number of notes for dyad similarity computation.
-    plot : bool, default=False
-        If True, plots the resulting spectra.
-    smoothness : int, default=1
-        Smoothing factor applied to the PSD before computing spectra.
-    smoothness_harm : int, default=1
-        Smoothing factor applied to harmonicity values.
-    save : bool, default=False
-        If True, saves the plot as a .png file.
-    savename : str, default=''
-        Name for the saved plot file.
-    phase_mode : str, default=None
-        Method for weighting phase coupling computation. Options are 'weighted' and 'None'.
-    harm_phase_norm : bool, default=True
-        If True, normalize the harmonicity and phase coupling values
-        by dividing by the total power.
-
-    Returns
-    -------
-    df : DataFrame
-        A DataFrame containing computed harmonicity, phase coupling, and resonance values, spectral flatness,
-        entropy, Higushi Fractal Dimension, and spectral spread for each of the three spectra (harmonicity,
-        phase coupling, resonance). Also includes average values and maximum values for these metrics, peak frequencies
-        for each spectrum, and 'harmsim' values for peak frequencies.
-
-        """
-    # Perform initial operations and get cleaned PSD
-    freqs, psd = compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
-    psd_clean = apply_power_law_remove(freqs, psd, power_law_remove)
-    psd_min = np.min(psd_clean)
-    psd_max = np.max(psd_clean)
-    psd_clean = (psd_clean - psd_min) / (psd_max - psd_min)
-    
-    # Get phase matrix
-    phase_matrix = compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness)
-
-    # Compute dyad similarities and phase couplings
-    dyad_similarities, phase_coupling_matrix = compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, metric, n_harms, delta_lim, min_notes=min_notes)
-    
-    # Compute harmonicity and phase coupling values
-    harmonicity_values, phase_coupling_values = compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, phase_mode,
-                                                                                                     harm_phase_norm=harm_phase_norm)
-    # apply smoothing to harmonicity values
-    #print(phase_coupling_values)
-    harmonicity_values = gaussian_filter(harmonicity_values, smoothness_harm)
-    phase_coupling_values = gaussian_filter(phase_coupling_values, smoothness_harm)
-    
-    # Compute resonance values
-    resonance_values = compute_resonance_values(harmonicity_values, phase_coupling_values)
-
-    # Find peaks in the spectra
-    harmonicity_peak_frequencies, harm_peak_idx = find_spectral_peaks(harmonicity_values, freqs, n_peaks, prominence_threshold=0.5)
-    phase_peak_frequencies, phase_peak_idx = find_spectral_peaks(phase_coupling_values, freqs, n_peaks, prominence_threshold=0.0001)
-    resonance_peak_frequencies, res_peak_idx = find_spectral_peaks(resonance_values, freqs, n_peaks, prominence_threshold=0.00001)
-
-    # Compute spectral flatness and entropy values
-    harmonic_complexity = harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance_values)
-
-    df = pd.DataFrame({
-        'harmonicity': [harmonicity_values],
-        'phase_coupling': [phase_coupling_values],
-        'resonance': [resonance_values],
-        'harm_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Harmonicity']],
-        'harm_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Harmonicity']],
-        'harm_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Harmonicity']],
-        'harm_spectral_spread': [harmonic_complexity['Spectral Spread']['Harmonicity']],
-        'phase_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Phase Coupling']],
-        'phase_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Phase Coupling']],
-        'phase_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Phase Coupling']],
-        'phase_spectral_spread': [harmonic_complexity['Spectral Spread']['Phase Coupling']],
-        'res_spectral_flatness': [harmonic_complexity['Spectral Flatness']['Resonance']],
-        'res_spectral_entropy': [harmonic_complexity['Spectral Entropy']['Resonance']],
-        'res_higuchi': [harmonic_complexity['Higuchi Fractal Dimension']['Resonance']],
-        'res_spectral_spread': [harmonic_complexity['Spectral Spread']['Resonance']],
-        'harmonicity_peak_frequencies': [harmonicity_peak_frequencies],
-        'phase_peak_frequencies': [phase_peak_frequencies],
-        'resonance_peak_frequencies': [resonance_peak_frequencies],
-    })
-    
-    df['harmonicity_avg'] = df['harmonicity'].apply(np.mean)
-    df['phase_coupling_avg'] = df['phase_coupling'].apply(np.mean)
-    df['resonance_avg'] = df['resonance'].apply(np.mean)
-    
-    df['harmonicity_peaks_avg'] = df['harmonicity_peak_frequencies'].apply(safe_mean)
-    df['phase_peaks_avg'] = df['phase_peak_frequencies'].apply(safe_mean)
-    df['res_peaks_avg'] = df['resonance_peak_frequencies'].apply(safe_mean)
-
-    df['resonance_max'] = df['resonance'].apply(np.max)
-
-    #save df
-    df['precision'] = precision_hz
-    df['fmin'] = fmin
-    df['fmax'] = fmax
-    df['phase_weighting'] = phase_mode
-    df['smooth_fft'] = smoothness
-    df['smooth_harm'] = smoothness_harm
-    df['fs'] = fs
-    
-    #calculate harmonic similarity between peaks
-    df['phase_harmsim'] = df['phase_peak_frequencies'].apply(peaks_to_harmsim)
-    df['harm_harmsim'] = df['harmonicity_peak_frequencies'].apply(peaks_to_harmsim)
-    df['res_harmsim'] = df['resonance_peak_frequencies'].apply(peaks_to_harmsim)
-    
-    df['harm_harmsim_avg'] = df['harm_harmsim'].apply(safe_mean)
-    df['phase_harmsim_avg'] = df['phase_harmsim'].apply(safe_mean)
-    df['res_harmsim_avg'] = df['res_harmsim'].apply(safe_mean)
-    
-    df['harm_harmsim_max'] = df['harm_harmsim'].apply(safe_max)
-    df['phase_harmsim_max'] = df['phase_harmsim'].apply(safe_max)
-    df['res_harmsim_max'] = df['res_harmsim'].apply(safe_max)
-    # Plot results if required
-    if plot:
-        fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 12))
-
-        ax1.plot(freqs, 10 * np.log10(psd), color='black')
-        ax1.set_title('Spectrum')
-        ax1.set_xlabel('Frequency (Hz)')
-        ax1.set_ylabel('Power (dB)')
-        ax1.grid()
-
-        ax2.plot(freqs, harmonicity_values, color='darkblue')
-        ax2.plot(freqs[harm_peak_idx], harmonicity_values[harm_peak_idx], 'ro')
-        ax2.set_title('Harmonic Spectrum')
-        ax2.set_xlabel('Frequency (Hz)')
-        ax2.set_ylabel('Harmonicity')
-        # add vertical lines for the peaks in the spectrum
-        for peak in harmonicity_peak_frequencies:
-            ax2.axvline(peak, color='darkblue', linestyle='--')
-        
-        # add text for the spectral flatness and entropy values on the toop right corner
-        ax2.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Harmonicity'], 2)), transform=ax2.transAxes)
-        ax2.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Harmonicity'], 2)), transform=ax2.transAxes)
-        
-        ax2.grid()
-        
-        ax3.plot(freqs, phase_coupling_values, color='darkviolet')
-        ax3.plot(freqs[phase_peak_idx], phase_coupling_values[phase_peak_idx], 'ro')
-        ax3.set_title('Phase Coupling Spectrum')
-        ax3.set_xlabel('Frequency (Hz)')
-        ax3.set_ylabel('Phase Coupling')
-        # add vertical lines for the peaks in the spectrum
-        for peak in phase_peak_frequencies:
-            ax3.axvline(peak, color='darkviolet', linestyle='--')
-            
-        # add text for the spectral flatness and entropy values on the toop right corner
-        ax3.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Phase Coupling'], 2)), transform=ax3.transAxes)
-        ax3.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Phase Coupling'], 2)), transform=ax3.transAxes)
-            
-        ax3.grid()
-        
-        ax4.plot(freqs, resonance_values, color='darkred')
-        ax4.plot(freqs[res_peak_idx], resonance_values[res_peak_idx], 'ro')
-        ax4.set_title('Resonance Spectrum')
-        ax4.set_xlabel('Frequency (Hz)')
-        ax4.set_ylabel('Resonance')
-        # add vertical lines for the peaks in the spectrum
-        for peak in resonance_peak_frequencies:
-            ax4.axvline(peak, color='darkred', linestyle='--')
-        # add text for the spectral flatness and entropy values on the toop right corner
-        ax4.text(0.85, 0.9, 'Spectral Flatness: ' + str(round(harmonic_complexity['Spectral Flatness']['Resonance'], 2)), transform=ax4.transAxes)
-        ax4.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Resonance'], 2)), transform=ax4.transAxes)
-            
-        ax4.grid()
-
-        plt.tight_layout()
-        if save is True:
-            plt.savefig('Spectra' + savename + '.png')
-        
-        plt.show()
-
-
-    return df
 
 
 def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd, label1='Brain Signals', label2='Random Signals'):
@@ -578,8 +580,6 @@ def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd, label1='Brain Signals'
 
     fig.tight_layout()
     plt.show()
-
-
 
 
 def harmonic_spectrum_plot_freq_corr(df1, df2, mean_phase_coupling=False, label1='Brain Signals', label2='Random Signals', fmin=2, fmax=30, xlim=None):
