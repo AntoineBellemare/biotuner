@@ -37,7 +37,8 @@ elements_types = {
                   'Curium', 'Berkelium', 'Californium', 'Einsteinium', 'Fermium', 'Mendelevium', 'Nobelium',
                   'Lawrencium', 'Rutherfordium', 'Dubnium', 'Seaborgium', 'Bohrium', 'Hassium',
                   'Meitnerium', 'Darmstadtium', 'Roentgenium', 'Copernicium', 'Nihonium', 'Flerovium',
-                  'Moscovium', 'Livermorium', 'Tennessine', 'Oganesson']
+                  'Moscovium', 'Livermorium', 'Tennessine', 'Oganesson'],
+    'Halogens': ['Fluorine', 'Chlorine', 'Bromine', 'Iodine', 'Astatine', 'Tennessine'],
 }
 def find_type(string, elements_dict):
     for key, element_list in elements_dict.items():
@@ -67,28 +68,35 @@ for medium in ["Air", "Vacuum"]:
                             if row.text.strip()[0].isdigit():
                                 split_text = row.text.strip().split('\xa0')
                                 print(split_text)
-                                # There are two different ways lines are formatted, manage them separately
+
                                 if len(split_text) == 1:
                                     split_text = row.text.strip().split(' ')
-                                    intensity = split_text[0]
+                                    intensity = re.sub(r'[^0-9.]', '', split_text[0])
                                     wavelength = re.sub(r'[^0-9.]', '', split_text[1].split(' ')[0])
                                     persistense = 0 
                                     if "P" in split_text[-2]:
                                         persistence = 1
-                                else: 
-                                    intensity = split_text[0].split(' ')[0]
-                                    wavelength = split_text[1].split(' ')[0][:-2]
+                                else: # Manage special cases
+                                    intensity = re.sub(r'[^0-9.]', '', split_text[0].split(' ')[0])
+                                    wavelength = re.sub(r'[^0-9.]', '', split_text[-1].split(' ')[0][:-2])
                                     if "P" in split_text[0].split(' ')[-1]:
                                         persistence = 1
                                     else:
                                         persistence = 0 
+                                if wavelength == '': # Manage some more special cases
+                                    wavelength = re.sub(r'[^0-9.]', '', split_text[-2][:-2])
+                                    if split_text[-2][0] == "P":
+                                        persistence = 1
+                                    else:
+                                        persistence = 0
 
                                 intensity_list.append(intensity)
                                 persistence_list.append(persistence)
                                 wavelength_list.append(wavelength)
                                 element_list.append(element.text)
                                 type_list.append(find_type(element.text, elements_types))
-
+                                if wavelength == '':
+                                    0/0
     elements_df = pd.DataFrame({
         'element': element_list,
         'wavelength': wavelength_list,
