@@ -1,7 +1,7 @@
 matplotlib>=3.5.3
 seaborn==0.12.1
 pygame>=2.1.2
-mne==1.4.0
+mne>=1.4.0
 pyACA==0.3.1
 pactools==0.3.1
 colorednoise==2.1.0
