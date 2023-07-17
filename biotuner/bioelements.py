@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 def Angstrom_to_hertz(wavelength_in_Angstrom):
     c = 2.998e+8 # speed of light in m/s
