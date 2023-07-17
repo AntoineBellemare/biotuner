@@ -30,17 +30,32 @@ def hertz_to_volt(frequency_in_hertz):
     return voltage
 
 def find_matching_spectral_lines(df, peaks, tolerance=1e-9, max_divisions=10):
-    def match_peak(value):
-        for peak in peaks:
-            for i in range(42, 50):
-                divided_peak = peak / (2**i)
-                if np.abs(value - divided_peak) <= tolerance:
-                    return divided_peak
-        return np.nan
+    min_wl, max_wl = df['wavelength'].min(), df['wavelength'].max()
+    
+    # calculate all divisions once for each peak
+    divided_peaks = []
+    for peak in peaks:
+        end_i = abs(int(math.floor(np.log2(min_wl / peak))))
+        start_i = abs(int(math.ceil(np.log2(max_wl / peak))))
+        divided_peaks.extend([peak / (2**i) for i in range(start_i, end_i + 1)])
 
-    df = df.copy()
-    df['peak_value'] = df['wavelength'].apply(match_peak)
-    return df.dropna(subset=['peak_value'])
+    # create a new numpy array for faster computation
+    wavelengths = df['wavelength'].values
+
+    # create a new dataframe with column 'peak_value' where we find matches
+    matching_df = pd.DataFrame(columns=df.columns.to_list() + ['peak_value'])
+
+    # iterate over the divided peaks
+    for divided_peak in divided_peaks:
+        # find where the absolute difference between wavelength and divided peak is less than tolerance
+        matches = np.abs(wavelengths - divided_peak) <= tolerance
+
+        if np.any(matches):
+            temp_df = df[matches].copy()
+            temp_df['peak_value'] = divided_peak
+            matching_df = pd.concat([matching_df, temp_df])
+
+    return matching_df
 
 def plot_type_proportions(df):
     type_counts = df['type'].value_counts()
