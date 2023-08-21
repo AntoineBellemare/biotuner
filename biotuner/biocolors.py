@@ -246,7 +246,7 @@ def wavelength_to_frequency(wavelengths, min_frequency, max_frequency):
         n += 1
     return frequencies, n
 
-def viz_scale_colors(scale, fund, title=None):
+def viz_scale_colors(scale, fund, title=None, return_fig=False):
     """
     Visualize a color palette derived from biological tuning by converting
     the input musical scale to frequency values and mapping them to RGB colors.
@@ -313,7 +313,10 @@ def viz_scale_colors(scale, fund, title=None):
     for ax, im in zip(grid, img_array):
         # Iterating over the grid returns the Axes.
         ax.imshow(im)
-    plt.show()
+    if return_fig:
+        return fig
+    else:
+        plt.show()
     
 def animate_colors(colors, duration, frames_per_second, filename='test'):
     """

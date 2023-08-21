@@ -1,6 +1,6 @@
 import numpy as np
 from biotuner.biotuner_object import compute_biotuner
-from biotuner.metrics import ratios2harmsim, compute_subharmonics_2lists, euler
+from biotuner.metrics import ratios2harmsim, compute_subharmonics_2lists, euler, dyad_similarity
 from biotuner.biotuner_utils import rebound_list, butter_bandpass_filter
 from biotuner.peaks_extension import harmonic_fit
 from biotuner.transitional_harmony import transitional_harmony
@@ -20,7 +20,9 @@ from mne_connectivity.viz import plot_connectivity_circle
 import itertools
 from PyEMD import EMD
 import pandas as pd
-from scipy.signal import hilbert
+from scipy.signal import hilbert, coherence, welch
+from scipy.stats import pearsonr
+import seaborn as sns
 from biotuner.metrics import (
     dyad_similarity,
     compute_subharmonic_tension,
@@ -354,7 +356,86 @@ class harmonic_connectivity(object):
             plt.title(f"Harmonic connectivity matrix ({metric})")
             plt.show()
         self.conn_matrix = matrix
-        return matrix
+        return matrix 
+
+
+    def compute_IMF_correlation(self, nIMFs=5, freq_range=(1, 60), precision=0.5, delta_lim=50):
+        """
+        Compute the correlation, coherence, and peak frequency between each pair of IMFs for each pair of electrodes.
+        
+        Returns
+        -------
+        df : pd.DataFrame
+            DataFrame with columns: elec1, elec2, imf1, imf2, pearson, coherence, and peak_freq.
+        """
+        
+        num_electrodes, _ = self.data.shape
+        results = []
+
+        # Pre-compute IMFs for each electrode
+        all_IMFs = []
+        peak_frequencies = []  # Store peak frequencies for each IMF
+
+        for elec in range(num_electrodes):
+            IMFs = EMD_eeg(self.data[elec, :], method="EMD")
+            IMFs = IMFs[:nIMFs]
+            all_IMFs.append(IMFs)
+
+            # Compute peak frequencies for each IMF once
+            elec_peak_freqs = []
+            for imf in IMFs:
+                f_welch, Pxx = welch(imf, self.sf, nperseg=int(self.sf/precision))
+                peak_freq = f_welch[np.argmax(Pxx)]
+                elec_peak_freqs.append(peak_freq)
+            peak_frequencies.append(elec_peak_freqs)
+
+        print('shape all IMFS', np.array(all_IMFs).shape)
+        
+        # Iterate over pairs of electrodes
+        for elec1 in range(num_electrodes):
+            for elec2 in range(num_electrodes):
+                num_IMFs_elec1 = len(all_IMFs[elec1])
+                num_IMFs_elec2 = len(all_IMFs[elec2])
+                
+                # Compute correlation and coherence between IMFs of the two electrodes
+                for imf1 in range(num_IMFs_elec1):
+                    for imf2 in range(num_IMFs_elec2):
+                        corr, _ = pearsonr(all_IMFs[elec1][imf1], all_IMFs[elec2][imf2])
+                        f, Cxy = coherence(all_IMFs[elec1][imf1], all_IMFs[elec2][imf2], fs=self.sf)
+                        
+                        # Filter for desired frequency range
+                        filtered_coherence = Cxy[(f >= freq_range[0]) & (f <= freq_range[1])]
+                        mean_coherence = np.mean(filtered_coherence)
+                        
+                        # Retrieve the precomputed peak frequency for the IMF
+                        peak_freq1 = peak_frequencies[elec1][imf1]
+                        peak_freq2 = peak_frequencies[elec2][imf2]
+
+                        peak1 = peak_frequencies[elec1][imf1]
+                        peak2 = peak_frequencies[elec2][imf2]
+                        if peak1 >= peak2:
+                            harmsim = dyad_similarity(peak1/peak2)
+                        if peak2 > peak1:
+                            harmsim = dyad_similarity(peak2/peak1)
+                            
+                        # compute subharmonic tension
+                        _, _, subharm_tension, _ = compute_subharmonic_tension([peak1, peak2], n_harmonics=10,
+                                                                               delta_lim=delta_lim, min_notes=2)
+                        results.append({
+                            "elec1": elec1,
+                            "elec2": elec2,
+                            "imf1": imf1,
+                            "imf2": imf2,
+                            "pearson": corr,
+                            "coherence": mean_coherence,
+                            "peak_freq1": peak_freq1,
+                            "peak_freq2": peak_freq2,
+                            'harmsim': harmsim,
+                            'subharm_tension': subharm_tension
+                        })
+
+        df = pd.DataFrame(results)
+        return df
 
     def compute_time_resolved_harm_connectivity(
         self, sf, nIMFs, metric="harmsim", delta_lim=50
@@ -707,6 +788,51 @@ class harmonic_connectivity(object):
         )
 
         return matrix
+    
+    def plot_IMF_correlation_matrix(self, df, elec1, elec2, variable='pearson', savepath=None):
+        """
+        Plot a heatmap of correlations between IMFs for specified electrodes.
+        
+        Parameters
+        ----------
+        df : pd.DataFrame
+            DataFrame containing the correlation data with columns: elec1, elec2, imf1, imf2, and pearson.
+        elec1 : int
+            The first electrode of interest.
+        elec2 : int
+            The second electrode of interest.
+        
+        Returns
+        -------
+        None
+        """
+        
+        # Filter the dataframe for the specified electrodes
+        subset = df[(df['elec1'] == elec1) & (df['elec2'] == elec2)]
+        
+        # Find the number of unique IMFs
+        num_IMFs = max(len(subset['imf1'].unique()), len(subset['imf2'].unique()))
+        
+        # Create an empty matrix for correlations
+        corr_matrix = np.zeros((num_IMFs, num_IMFs))
+        
+        # Fill the matrix with correlation values
+        for _, row in subset.iterrows():
+            corr_matrix[int(row['imf1']), int(row['imf2'])] = row[variable]
+
+        # Determine the colorbar range
+        max_corr = subset[variable].abs().max()
+        vmin, vmax = -max_corr, max_corr
+        
+        # Plot the heatmap
+        plt.figure(figsize=(5, 4))
+        sns.heatmap(corr_matrix, cmap='coolwarm', annot=True, vmin=vmin, vmax=vmax)
+        plt.title(f'Correlation between IMFs for Electrode {elec1} and Electrode {elec2}')
+        plt.xlabel(f'IMFs of Electrode {elec2}')
+        plt.ylabel(f'IMFs of Electrode {elec1}')
+        if savepath is not None:
+            plt.savefig(savepath)
+        plt.show()
 
 
 def wPLI_crossfreq(signal1, signal2, peak1, peak2, sf):

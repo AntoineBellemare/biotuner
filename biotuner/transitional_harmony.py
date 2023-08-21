@@ -22,7 +22,9 @@ class transitional_harmony(object):
         min_freq=2,
         max_freq=80,
         n_peaks=5,
-        n_trans_harm=10
+        n_trans_harm=10,
+        mode="win_overlap",
+        overlap=10,
     ):
         """
         Parameters
@@ -46,6 +48,10 @@ class transitional_harmony(object):
             Defaults to 'mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
+        mode : str, optional
+            The method used to chunk the time series. Default is 'win_overlap'.
+        overlap : int, optional
+            The overlap between successive windows, in number of samples. Default is 10.
 
         """
         """Initializing data"""
@@ -61,6 +67,8 @@ class transitional_harmony(object):
         self.min_freq = min_freq
         self.max_freq = max_freq
         self.n_peaks = n_peaks
+        self.mode = mode
+        self.overlap = overlap
 
     def compute_trans_harmony(self, mode='win_overlap', overlap=10, delta_lim=20,
                              graph=False, save=False, savename='_'):
@@ -108,15 +116,15 @@ class transitional_harmony(object):
         self.mode = mode
         self.overlap = overlap
         if mode == 'win_overlap':
-            print('hello')
+            #print('hello')
             data = self.data
             pairs = chunk_ts(data, sf=self.sf, overlap=overlap, precision=self.precision)
-            print(pairs)
+            #print(pairs)
             peaks = []
             time_vec = []
             for pair in pairs:
                 try:
-                    print(pair)
+                    #print(pair)
                     data_ = data[pair[0]:pair[1]]
                     biotuning = compute_biotuner(self.sf, peaks_function=self.peaks_function,
                                                 precision=self.precision, n_harm=self.n_harm)
@@ -124,7 +132,7 @@ class transitional_harmony(object):
                                             max_freq=self.max_freq, max_harm_freq=150,
                                             n_peaks=self.n_peaks, noverlap=None,
                                             nperseg=None, nfft=None, smooth_fft=1)
-                    print(biotuning.peaks)
+                    #print(biotuning.peaks)
                     peaks.append(biotuning.peaks)
                     time_vec.append(((pair[0]+pair[1])/2)/self.sf)
                 except UnboundLocalError:
@@ -168,7 +176,7 @@ class transitional_harmony(object):
                 plt.xlim(0, len(data)/self.sf)
                 if save is True:
                     plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
-        return trans_subharm, time_vec_final, pairs_melody
+        return trans_subharm, time_vec_final, subharm_melody
 
     def compare_deltas(self, deltas, save=False, savename='_'):
         """
@@ -186,7 +194,8 @@ class transitional_harmony(object):
 
         Returns
         -------
-        None
+        fig : matplotlib.figure.Figure
+            The figure showing the plotted data.
 
         Notes
         -----
@@ -197,19 +206,22 @@ class transitional_harmony(object):
 
         """
         colors = ['darkorange', 'darkred', 'darkblue', 'darkcyan', 'goldenrod']
+        
         plt.clf()
-        figure(figsize=(8, 5), dpi=300)
+        fig = plt.figure(figsize=(8, 5), dpi=300)
+        
         for d, c in zip(deltas, colors):
-            sub, tvec = self.compute_trans_harmony(mode=self.mode, overlap=self.overlap, delta_lim=d,
-                                                   graph=False, savename='_')
+            sub, tvec, _ = self.compute_trans_harmony(mode=self.mode, overlap=self.overlap, delta_lim=d, graph=False, savename='_')
             plt.plot(tvec, sub, color=c, label=str(d)+'ms')
 
         plt.legend(title='Maximum distance between \ncommon subharmonics')
         plt.xlabel('Time (sec)')
         plt.ylabel('Transitional subharmonic tension')
-        plt.xlim(0, len(data)/self.sf)
+        plt.xlim(0, len(self.data)/self.sf)
+        
         if save is True:
             plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(self.mode, str((deltas[0], deltas[-1])), self.overlap, savename), dpi=300)
-
+        
+        return fig
     def compute_trans_EMD():
         return

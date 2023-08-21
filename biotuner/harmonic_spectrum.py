@@ -18,7 +18,8 @@ from scipy.stats import ttest_ind
 
 def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
                                n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
-                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True):
+                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True,
+                               return_fig=False):
     """
     Compute global harmonicity, phase coupling, and resonance spectrum from a signal.
 
@@ -224,10 +225,13 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         if save is True:
             plt.savefig('Spectra' + savename + '.png')
         
+        
+
+    if return_fig:
+        return df, fig
+    else:
         plt.show()
-
-
-    return df
+        return df
 
 def compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness):
     '''
