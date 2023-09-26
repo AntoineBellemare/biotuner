@@ -32,7 +32,7 @@ def hertz_to_volt(frequency_in_hertz):
 
 def find_matching_spectral_lines(df, peaks, tolerance=1e-9, max_divisions=10):
     min_wl, max_wl = df['wavelength'].min(), df['wavelength'].max()
-    
+     
     # calculate all divisions once for each peak
     divided_peaks = []
     for peak in peaks:
@@ -72,11 +72,69 @@ def spectrum_region(wavelength):
     return "Unknown"
 
 spectrum_nm = {
-    "Gamma rays": [0.01, 10],
-    "X-rays": [0.01, 10],
-    "Ultraviolet": [10, 400],
-    "Visible light": [400, 700],
-    "Infrared": [700, 1e6],
-    "Microwaves": [1e6, 1e9],
-    "Radio waves": [1e9, 1e11]
+    'Gamma rays': [0.01, 0.1],
+    'X-rays': [0.1, 10],
+    'Ultraviolet': [10, 400],
+    'Visible light': [400, 700],
+    'Infrared': [700, 1_000_000],
+    'Microwaves': [1_000_000, 1_000_000_000],
+    'Radio waves': [1_000_000_000, 100_000_000_000]
 }
+
+spectrum_Angstrom = {k: [v[0]*10, v[1]*10] for k, v in spectrum_nm.items()}
+
+spectrum_hertz = {k: [nm_to_hertz(v[0]), nm_to_hertz(v[1])] for k, v in spectrum_nm.items()}
+
+spectrum_volt = {k: [hertz_to_volt(v[0]), hertz_to_volt(v[1])] for k, v in spectrum_hertz.items()}
+
+import pandas as pd
+from fractions import Fraction
+
+def compute_ratios_df(df, ratio_type, label_name):
+    # Create an empty DataFrame to store the results
+    ratios_df = pd.DataFrame(columns=[label_name, 'ratio', 'peak1', 'peak2'])
+    
+    # Group by the label and compute the ratios within each group
+    for label, group_df in df.groupby(label_name):
+        peak_values = group_df['wavelength'].values
+
+        for i in range(len(peak_values)):
+            for j in range(i + 1, len(peak_values)):
+                x = int(peak_values[i])
+                y = int(peak_values[j])
+                
+                if ratio_type == 'harm':
+                    if x > y:
+                        ratio = x / y
+                        ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': x, 'peak2': y}, ignore_index=True)
+                    else:
+                        ratio = y / x
+                        ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': y, 'peak2': x}, ignore_index=True)
+
+                elif ratio_type == 'subharm':
+                    if x < y:
+                        ratio = x / y
+                        ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': x, 'peak2': y}, ignore_index=True)
+                    else:
+                        ratio = y / x
+                        ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': y, 'peak2': x}, ignore_index=True)
+                        
+                elif ratio_type == 'all':
+                    ratio = x / y
+                    ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': x, 'peak2': y}, ignore_index=True)
+                    ratio = y / x  # y/x ratio
+                    ratios_df = ratios_df.append({label_name: label, 'ratio': ratio, 'peak1': y, 'peak2': x}, ignore_index=True)
+    
+    # Merge the ratios DataFrame with the original DataFrame based on the label_name
+    merged_df = pd.merge(df, ratios_df, how='left', on=label_name)
+    ratio_df = merged_df.copy()
+    # Create 'ratio1' and 'ratio2' columns
+    ratio_df['temp_ratio'] = ratio_df.apply(lambda row: Fraction(row['peak1'], row['peak2']).limit_denominator(100), axis=1)
+
+    # Extract numerator and denominator
+    ratio_df['ratio1'] = ratio_df['temp_ratio'].apply(lambda x: x.numerator)
+    ratio_df['ratio2'] = ratio_df['temp_ratio'].apply(lambda x: x.denominator)
+
+    # Drop the temporary column
+    ratio_df.drop('temp_ratio', axis=1, inplace=True)
+    return ratio_df
