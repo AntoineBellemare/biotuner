@@ -1566,6 +1566,8 @@ class compute_biotuner(object):
         if peaks_function == "HH1D_max":
             if smooth_fft == 1:
                 smooth_sigma = None
+            else:
+                smooth_sigma = smooth_fft
             IF, peaks_temp, amps_temp, HH_spec, HH_bins = HilbertHuang1D(
                 data,
                 sf,
