@@ -33,8 +33,7 @@ class transitional_harmony(object):
             sampling frequency (in Hz)
         data : array(numDataPoints,)
             Time series to analyse.
-        peaks_function: str
-            Defaults to 'EMD'.
+        peaks_function: str (default = 'EMD')
             See compute_biotuner class for details.
         precision: float
             Defaults to 0.1
@@ -79,8 +78,11 @@ class transitional_harmony(object):
 
         Parameters
         ----------
-        mode : str, optional
-            The method used to chunk the time series. Default is 'win_overlap'.
+        mode : str (default='win_overlap)
+            The method used to chunk the time series.
+            choice:
+            - 'win_overlap' : divide the time series in successive windows\n
+            - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
         overlap : int, optional
             The overlap between successive windows, in number of samples. Default is 10.
         delta_lim : int, optional
@@ -163,19 +165,38 @@ class transitional_harmony(object):
 
                 self.time_vec = time_vec_final
 
-            if graph is True:
-                plt.clf()
-                figure(figsize=(8, 5), dpi=300)
+        if mode == 'IF':
+            biotuning = compute_biotuner(self.sf, peaks_function='HH1D_max',
+                                                precision=self.precision, n_harm=self.n_harm)
+            biotuning.peaks_extraction(data, min_freq=self.min_freq,
+                                    max_freq=self.max_freq, max_harm_freq=150,
+                                    n_peaks=self.n_peaks, noverlap=None,
+                                    nperseg=None, nfft=None, smooth_fft=1)
+            IFs = np.round(biotuning.IF, 2)
+            trans_subharm = []
+            subharm_melody = []
+            for i in range(len(IFs)-1):
+                list1 = IFs[i]
+                list2 = IFs[i+1]    
+                a, b, c, d, pairs_melody = compute_subharmonics_2lists(list1, list2, n_harmonics=10, delta_lim=delta, c=2.1)
+                trans_subharm.append(c)
+                subharm_melody.append(pairs_melody)
+                
+            time_vec_final = list(range(0, len(trans_subharm), 1))
+            
+        if graph is True:
+            plt.clf()
+            figure(figsize=(8, 5), dpi=300)
 
-                plt.plot(time_vec_final, trans_subharm, color='black', label=str(delta_lim)+'ms')
+            plt.plot(time_vec_final, trans_subharm, color='black', label=str(delta_lim)+'ms')
 
 
-                plt.legend(title='Maximum distance between \ncommon subharmonics')
-                plt.xlabel('Time (sec)')
-                plt.ylabel('Transitional subharmonic tension')
-                plt.xlim(0, len(data)/self.sf)
-                if save is True:
-                    plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
+            plt.legend(title='Maximum distance between \ncommon subharmonics')
+            plt.xlabel('Time (sec)')
+            plt.ylabel('Transitional subharmonic tension')
+            plt.xlim(0, len(data)/self.sf)
+            if save is True:
+                plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
         return trans_subharm, time_vec_final, subharm_melody
 
     def compare_deltas(self, deltas, save=False, savename='_'):
