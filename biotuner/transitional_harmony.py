@@ -168,7 +168,7 @@ class transitional_harmony(object):
         if mode == 'IF':
             biotuning = compute_biotuner(self.sf, peaks_function='HH1D_max',
                                                 precision=self.precision, n_harm=self.n_harm)
-            biotuning.peaks_extraction(data, min_freq=self.min_freq,
+            biotuning.peaks_extraction(self.data, min_freq=self.min_freq,
                                     max_freq=self.max_freq, max_harm_freq=150,
                                     n_peaks=self.n_peaks, noverlap=None,
                                     nperseg=None, nfft=None, smooth_fft=1)
@@ -178,7 +178,12 @@ class transitional_harmony(object):
             for i in range(len(IFs)-1):
                 list1 = IFs[i]
                 list2 = IFs[i+1]    
-                a, b, c, d, pairs_melody = compute_subharmonics_2lists(list1, list2, n_harmonics=10, delta_lim=delta, c=2.1)
+                #print('list1', list1)
+                #print('list2', list2)
+                if all(v == 0 for v in list1) or all(v == 0 for v in list2):
+                    print("One of the lists is only zeros, skipping computation...")
+                    continue  # Skip to the next iteration
+                a, b, c, d, pairs_melody = compute_subharmonics_2lists(list1, list2, n_harmonics=10, delta_lim=delta_lim, c=2.1)
                 trans_subharm.append(c)
                 subharm_melody.append(pairs_melody)
                 
@@ -192,9 +197,13 @@ class transitional_harmony(object):
 
 
             plt.legend(title='Maximum distance between \ncommon subharmonics')
-            plt.xlabel('Time (sec)')
+            
             plt.ylabel('Transitional subharmonic tension')
-            plt.xlim(0, len(data)/self.sf)
+            if mode == 'win_overlap':
+                plt.xlim(0, len(self.data)/self.sf)
+                plt.xlabel('Time (sec)')
+            if mode == 'IF':
+                plt.xlabel('Timepoints')
             if save is True:
                 plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(mode, str(delta_lim), overlap, savename), dpi=300)
         return trans_subharm, time_vec_final, subharm_melody
