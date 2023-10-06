@@ -579,7 +579,7 @@ class compute_biotuner(object):
         self.extended_amps = peaks_to_amps(
             self.extended_peaks, self.freqs, self.psd, self.sf
         )
-        print("Number of extended peaks : ", len(self.extended_peaks))
+        #print("Number of extended peaks : ", len(self.extended_peaks))
         if len(self.extended_peaks) > 0:
             ext_peaks_rat = compute_peak_ratios(self.extended_peaks, rebound=True)
             if ratios_extension is True:
