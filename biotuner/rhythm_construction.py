@@ -113,7 +113,7 @@ def invert_ratio(ratio: float, n_steps_down: int, limit_denom: int = 64):
 
 def binome2euclid(binome, n_steps_down=1, limit_denom=64):
     """
-    Convert a binomial distribution of two ratios to Euclidean rhythms.
+    Convert a set of two ratios to Euclidean rhythms.
 
     Parameters
     ----------

@@ -123,7 +123,7 @@ def tenneyHeight(peaks, avg=True):
 def metric_denom(ratio):
     """
     Function that computes the denominator of the normalized ratio.
-    Higher value represents higher dissoance.
+    Higher value represents higher dissonance.
 
     Parameters
     ----------

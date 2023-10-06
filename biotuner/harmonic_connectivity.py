@@ -191,7 +191,7 @@ class harmonic_connectivity(object):
             data2 = data[pair[1]]
             # if i % (len(pairs) // 10) == 0:
             percentage_complete = int(i / len(pairs) * 100)
-            print(f"{percentage_complete}% complete")
+            #print(f"{percentage_complete}% complete")
             bt1 = compute_biotuner(
                 self.sf,
                 peaks_function=self.peaks_function,
@@ -241,7 +241,7 @@ class harmonic_connectivity(object):
                 ) = compute_subharmonics_2lists(
                     list1, list2, self.n_harm, delta_lim=delta_lim, c=2.1
                 )
-                print(sub_tension_final)
+                #print(sub_tension_final)
                 harm_conn_matrix.append(sub_tension_final)
             # compute the harmonic similarity between each pair of peaks from the two electrodes.
             if metric == "harmsim":
@@ -1172,7 +1172,7 @@ def EMD_time_resolved_harmonicity(
     # Compute the Hilbert-Huang transform for each time series
     IF1, _, _, _, _ = HilbertHuang1D_nopeaks(time_series1, sf, nIMFs=nIMFs)
     IF2, _, _, _, _ = HilbertHuang1D_nopeaks(time_series2, sf, nIMFs=nIMFs)
-    print(IF1.shape)
+    #print(IF1.shape)
     # Compute the harmonicity between the instantaneous frequencies of corresponding IMFs
     harmonicity = np.zeros((IF1.shape[0], nIMFs))
 
@@ -1187,15 +1187,15 @@ def EMD_time_resolved_harmonicity(
                 except ZeroDivisionError:
                     harmonicity[i, imf] = 0
             elif method == "subharm_tension":
-                _, _, subharm_tenion, _ = compute_subharmonic_tension(
+                _, _, subharm_tension, _ = compute_subharmonic_tension(
                     [IF1[i, imf], IF2[i, imf]],
                     n_harmonics=10,
                     delta_lim=100,
                     min_notes=2,
                 )
-                print(subharm_tenion)
+                #print(subharm_tension)
                 if subharm_tenion != "NaN":
-                    harmonicity[i, imf] = subharm_tenion[0]
+                    harmonicity[i, imf] = subharm_tension[0]
                 else:
                     pass
     return harmonicity
