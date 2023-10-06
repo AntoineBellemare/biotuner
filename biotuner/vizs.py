@@ -473,25 +473,6 @@ def euclidean_rhythm(pulses, steps, offset=0):
         rhythm[(i * steps // pulses + offset) % steps] = 1
     return rhythm
 
-import math
-
-def find_optimal_offsets(pulses_steps):
-    """
-    Finds the optimal offset values for a set of Euclidean rhythms
-    Args:
-        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple
-        represent the number of pulses and steps of a rhythm.
-    Returns:
-        List[int]: A list of offset values for the rhythms in pulses_steps
-    """
-    offsets = []
-    for i, (pulses, steps) in enumerate(pulses_steps):
-        lcm = pulses * steps // math.gcd(pulses, steps)
-        #offset = (lcm // pulses - 1) * steps % pulses
-        offset = (steps - pulses * (steps // pulses)) % steps
-        offsets.append(offset)
-    return offsets
-
 from biotuner.metrics import dyad_similarity
 from biotuner.biotuner_utils import gcd
 

@@ -179,7 +179,7 @@ def consonant_euclid(
     ----------
     scale : list of floats
         Musical scale.
-    n_steps_down : int, defaulty=2
+    n_steps_down : int, default=2
         The number of steps the Euclidean rhythms is shifted down.
     limit_denom : int, default=64
         The upper bound of the denominator of the resulting fractions.
@@ -436,3 +436,22 @@ def euclid_long_to_short(pattern):
     steps = len(pattern)
     hits = pattern.count(1)
     return [hits, steps]
+
+import math
+
+def find_optimal_offsets(pulses_steps):
+    """
+    Finds the optimal offset values for a set of Euclidean rhythms
+    Args:
+        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple
+        represent the number of pulses and steps of a rhythm.
+    Returns:
+        List[int]: A list of offset values for the rhythms in pulses_steps
+    """
+    offsets = []
+    for i, (pulses, steps) in enumerate(pulses_steps):
+        lcm = pulses * steps // math.gcd(pulses, steps)
+        #offset = (lcm // pulses - 1) * steps % pulses
+        offset = (steps - pulses * (steps // pulses)) % steps
+        offsets.append(offset)
+    return offsets
