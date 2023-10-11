@@ -94,7 +94,7 @@ def scale2freqs (scale, fund, THz=True):
     fund : float
         The fundamental frequency to be used for scaling the scale.
     THz : bool, optional
-        Whether the input scale is in THz or Hz. Defaults to True.
+        Whether the input scale needs to be transformed from Hz to THz. Defaults to True.
 
     Returns
     -------
@@ -102,12 +102,11 @@ def scale2freqs (scale, fund, THz=True):
         A list of frequency values obtained by scaling the input scale with the fundamental frequency.
 
     """
+
+    freqs = [x*fund for x in scale]
     if THz == True:
-        scale = [Hz2THz(s) for s in scale]
-    scale_freqs = []
-    for s in scale:
-        scale_freqs.append(s*fund)
-    return scale_freqs
+        freqs = [Hz2THz(s) for s in freqs]
+    return freqs
 
 def nm2Hz (nm, c):
     """
@@ -210,7 +209,6 @@ def audible2visible (freq, visible_range = visible_range_Hz, c = 299792458):
         i+=1
         octave = 2**i
         new_freq = freq*octave
-        #print(new_freq)
     n_octave = i
     Hz = new_freq
     THz = Hz2THz(new_freq)

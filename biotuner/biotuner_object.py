@@ -901,10 +901,10 @@ class compute_biotuner(object):
         if scale_cons_limit is None:
             scale_cons_limit = self.scale_cons_limit
 
-        peaks = [p * 128 for p in peaks]
+        peaks = [p * 128 for p in peaks] # scale the peaks up to accomodate beating frequency modelling.
         amps = np.interp(amps, (np.array(amps).min(), np.array(amps).max()), (0.2, 0.8))
 
-        intervals, self.diss_scale, euler_diss, diss, harm_sim_diss = diss_curve(
+        diss, intervals, self.diss_scale, euler_diss, diss, harm_sim_diss = diss_curve(
             peaks,
             amps,
             denom=denom,

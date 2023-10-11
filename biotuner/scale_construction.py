@@ -472,6 +472,8 @@ def diss_curve(
 
     Returns
     -------
+    diss : list of floats
+        list of dissonance values for all the intervals
     intervals : List of tuples
         Each tuple corresponds to the numerator and the denominator
         of each scale step ratio
@@ -554,7 +556,7 @@ def diss_curve(
         plt.yticks(fontsize=13)
         plt.tight_layout()
         plt.show()
-    return intervals, ratios, euler_score, np.average(diss), dyad_sims
+    return diss, intervals, ratios, euler_score, np.average(diss), dyad_sims
 
 
 """Harmonic Entropy"""
@@ -608,10 +610,10 @@ def compute_harmonic_entropy_domain_integral(
     HE = np.zeros(N)
     for i, x in enumerate(ratio_interval):
         P = np.diff(
-            concatenate(([0], norm.cdf(log2(centers), loc=log2(x), scale=spread), [1]))
+            concatenate(([0], norm.cdf(np.log2(centers), loc=np.log2(x), scale=spread), [1]))
         )
         ind = P > min_tol
-        HE[i] = -np.sum(P[ind] * log2(P[ind]))
+        HE[i] = -np.sum(P[ind] * np.log2(P[ind]))
 
     return weight_ratios, HE
 
@@ -653,13 +655,13 @@ def compute_harmonic_entropy_simple_weights(
     N = len(ratio_interval)
     HE = np.zeros(N)
     for i, x in enumerate(ratio_interval):
-        P = norm.pdf(log2(weight_ratios), loc=log2(x), scale=spread) / np.sqrt(
+        P = norm.pdf(np.log2(weight_ratios), loc=np.log2(x), scale=spread) / np.sqrt(
             numerators * denominators
         )
         ind = P > min_tol
         P = P[ind]
         P /= np.sum(P)
-        HE[i] = -np.sum(P * log2(P))
+        HE[i] = -np.sum(P * np.log2(P))
 
     return weight_ratios, HE
 
@@ -701,7 +703,8 @@ def harmonic_entropy(
     fracs, numerators, denominators = scale2frac(ratios)
     ratios = numerators / denominators
     bendetti_heights = numerators * denominators
-    tenney_heights = log2(bendetti_heights)
+    
+    tenney_heights = np.log2(bendetti_heights)
 
     ind = np.argsort(tenney_heights)  # sort by Tenney height
     bendetti_heights = bendetti_heights[ind]
