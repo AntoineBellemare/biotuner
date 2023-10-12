@@ -253,5 +253,5 @@ class transitional_harmony(object):
             plt.savefig('Transitional_subharm_{}_delta_{}_overlap_{}.png'.format(self.mode, str((deltas[0], deltas[-1])), self.overlap, savename), dpi=300)
         
         return fig
-    def compute_trans_EMD():
-        return
+    #def compute_trans_EMD():
+    #    return

@@ -254,6 +254,8 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
         and all other steps.
     metric_avg : float
         metric value averaged across all steps
+    full_matrix : List[List]
+        full matrix [n, n] of metric values for each pair of ratios
         
     Examples
     --------
@@ -283,26 +285,40 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
     0.11630349967694496],
     0.11630349967694496)
     """
-    metric_values = []
+    n = len(tuning)
     metric_values_per_step = []
-    for index1 in range(len(tuning)):
-        for index2 in range(len(tuning)):
-            if tuning[index1] != tuning[index2]:  # not include the diagonale
+    full_matrix = [[None for _ in range(n)] for _ in range(n)]
+    
+    for index1 in range(n):
+        metric_values = []
+        for index2 in range(n):
+            if tuning[index1] == tuning[index2]:
+                metric_values.append(0)
+                full_matrix[index1][index2] = 0
+            if tuning[index1] != tuning[index2]:  # not include the diagonal
                 if ratio_type == "pos_harm":
                     if tuning[index1] > tuning[index2]:
                         entry = tuning[index1] / tuning[index2]
-                        metric_values.append(function(entry))
+                        metric = function(entry)
+                        metric_values.append(metric)
+                        full_matrix[index1][index2] = metric
                 elif ratio_type == "sub_harm":
                     if tuning[index1] < tuning[index2]:
                         entry = tuning[index1] / tuning[index2]
-                        metric_values.append(function(entry))
+                        metric = function(entry)
+                        metric_values.append(metric)
+                        full_matrix[index1][index2] = metric
                 elif ratio_type == "all":
                     entry = tuning[index1] / tuning[index2]
-                    metric_values.append(function(entry))
+                    metric = function(entry)
+                    metric_values.append(metric)
+                    full_matrix[index1][index2] = metric
+        
         metric_values_per_step.append(np.average(metric_values))
-    metric_avg = np.average(metric_values)
-    return metric_values_per_step, metric_avg
-
+    
+    metric_avg = np.average(metric_values_per_step)
+    
+    return metric_values_per_step, metric_avg, full_matrix
 
 def tuning_to_metrics(tuning, maxdenom=1000):
     """

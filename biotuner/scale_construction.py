@@ -877,7 +877,7 @@ def create_mode(tuning, n_steps, function):
     sets = list(findsubsets(tuning, n_steps))
     metric_values = []
     for s in sets:
-        _, met = tuning_cons_matrix(s, function)
+        _, met, _ = tuning_cons_matrix(s, function)
         metric_values.append(met)
     idx = np.argmax(metric_values)
     mode = list(sets[idx])
