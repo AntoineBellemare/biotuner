@@ -1,5 +1,9 @@
+<p align="center">
+  <img src="https://github.com/AntoineBellemare/biotuner/assets/49297774/fc83d888-db2a-4f9f-ba26-65a58c42b72d" alt="biotuner_logo" width="150"/>
+  <br>
+  🎵🧬 <strong>Biotuner</strong> 🧬🎵
+</p>
 
-# Biotuner 🧬🎵
 🌳🧠 Python toolbox that incorporates tools from biological signal processing and musical theory to extract harmonic structures from biosignals. 🧠🌳
 
 🔗 Visit the [documentation page](https://sangfrois.github.io/biotuner/)
