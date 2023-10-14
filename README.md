@@ -10,9 +10,22 @@ Visit the [documentation page](https://sangfrois.github.io/biotuner/)
 
 # Installation
 
-Create an environment with Python v3.8
-```python
-pip install biotuner
+To install Biotuner, follow the steps below:
+
+1. **Create a Python environment with v3.8 using conda**:
+```bash
+conda create --name biotuner_env python=3.8
+conda activate biotuner_env
+```
+
+2. Clone the Biotuner repository:
+```
+git clone https://github.com/YourUsername/biotuner.git
+cd biotuner
+```
+3. Install the package:
+```
+pip install .
 ```
 
 # Simple use case
