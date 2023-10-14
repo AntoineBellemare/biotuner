@@ -3,9 +3,9 @@
 </p>
 
 <h1 align="center">Biotuner</h1>
-<h3 align="center">🎵🧬 Python toolbox that incorporates tools from biological signal processing and musical theory to extract harmonic structures from biosignals. 🧬🎵</h3>
+<h3 align="center"> Python toolbox that incorporates tools from biological signal processing and musical theory to extract harmonic structures from biosignals. </h3>
 
-🔗 Visit the [documentation page](https://sangfrois.github.io/biotuner/)
+🧬🎵 Visit the [documentation page](https://sangfrois.github.io/biotuner/)
 
 # Installation
 
