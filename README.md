@@ -24,7 +24,7 @@ cd biotuner
 ```
 3. Install the package:
 ```
-pip install .
+pip install -e .
 ```
 
 # Simple use case
