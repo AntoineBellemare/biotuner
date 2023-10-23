@@ -98,7 +98,7 @@ exclude_patterns = []
 # ]
 
 # -- Options for myst_nb ---------------------------------------------------
-nb_execution_mode = "force"
+nb_execution_mode = "off"
 nb_execution_raise_on_error = True
 
 # -- Options for HTML output -------------------------------------------------

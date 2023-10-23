@@ -24,7 +24,7 @@ but also use electrophysiological signals as a source of musical or visual compo
 
 .. seealso::
 
-   You can information on how to cite this documentation `here <https://sangfrois.github.io/biotuner/cite_us.html>`_.
+   You can information on how to cite this documentation `here <https://antoinebellemare.github.io/biotuner/cite_us.html>`_.
 
 
 The documentation covers installation instructions, the API, as well as notebooks that show
