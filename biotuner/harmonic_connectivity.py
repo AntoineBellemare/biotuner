@@ -71,28 +71,25 @@ class harmonic_connectivity(object):
         ----------
         sf: int
             sampling frequency (in Hz)
-        data : 2Darray(elec, numDataPoints)
+        data : 2D array (elec, numDataPoints)
             Electrodes x Time series to analyse.
         peaks_function: str, default='EMD'
             See compute_biotuner class for details.
-        precision: float
-            Defaults to 0.1
-            precision of the peaks (in Hz)
+        precision: float, default=0.1
+            Precision of the peaks (in Hz)
             When HH1D_max is used, bins are in log scale.
-        n_harm: int
-            Defaults to 10.
+        n_harm: int, default=10
             Set the number of harmonics to compute in harmonic_fit function
-        harm_function: str
-            {'mult' or 'div'}
-            Defaults to 'mult'
+        harm_function: str, default='mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
-        min_freq: float, optional
-            Defaults = 2. Minimum frequency (in Hz) to consider for peak extraction.
-        max_freq: float, optional
-            Defaults = 80. Maximum frequency (in Hz) to consider for peak extraction.
-        n_peaks: int, optional
-            Default = 5. Number of peaks to extract per frequency band.
+            Choose between 'mult' and 'div'
+        min_freq: float, default=2
+            Minimum frequency (in Hz) to consider for peak extraction.
+        max_freq: float, default=80
+            Maximum frequency (in Hz) to consider for peak extraction.
+        n_peaks: int, default=5
+            Number of peaks to extract per frequency band.
 
         """
         if type(data) is not None:
@@ -126,26 +123,33 @@ class harmonic_connectivity(object):
             
             Possible values are:
 
-             - 'harmsim': computes the harmonic similarity between each pair of peaks from the two electrodes.
+             - 'harmsim': 
+                computes the harmonic similarity between each pair of peaks from the two electrodes.
                 It calculates the ratio between each pair of peaks and computes the mean harmonic similarity.
 
-             - 'euler': computes the Euler's Gradus Suavitatis on the concatenated peaks of the two electrodes.
+             - 'euler':
+                computes the Euler's Gradus Suavitatis on the concatenated peaks of the two electrodes.
 
-             - 'harm_fit': computes the number of common harmonics between each pair of peaks from the two electrodes.
+             - 'harm_fit':
+                computes the number of common harmonics between each pair of peaks from the two electrodes.
                 It evaluates the harmonic fit between each peak pair and counts the number of common harmonics.
 
-             - 'subharm_tension': computes the tension between subharmonics of two electrodes.
+             - 'subharm_tension':
+                computes the tension between subharmonics of two electrodes.
                 It evaluates the tension between subharmonics of the two electrodes by comparing the subharmonics and their ratios.
 
-             - 'RRCi': computes the Rhythmic Ratio Coupling with Imaginary Component (RRCi) metric between each pair of
+             - 'RRCi':
+                computes the Rhythmic Ratio Coupling with Imaginary Component (RRCi) metric between each pair of
                 peaks from the two electrodes, using a bandwidth of 2 Hz and a max_denom of 16. This metric calculates the
                 imaginary part of the complex phase differences between two filtered signals.
 
-             - 'wPLI_crossfreq': computes the weighted Phase Lag Index (wPLI) for cross-frequency coupling between each pair
+             - 'wPLI_crossfreq':
+                computes the weighted Phase Lag Index (wPLI) for cross-frequency coupling between each pair
                 of peaks from the two electrodes. The wPLI measures the phase synchronization between two signals, with a value
                 close to 0 indicating no synchronization and a value close to 1 indicating perfect synchronization.
 
-             - 'wPLI_multiband': computes the weighted Phase Lag Index (wPLI) for multiple frequency bands between the two electrodes.
+             - 'wPLI_multiband':
+                computes the weighted Phase Lag Index (wPLI) for multiple frequency bands between the two electrodes.
                 It calculates wPLI for each frequency band and returns an array of wPLI values for the defined frequency bands.
 
         delta_lim : int, optional

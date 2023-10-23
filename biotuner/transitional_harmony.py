@@ -32,39 +32,39 @@ class transitional_harmony(object):
         ----------
         sf: int
             sampling frequency (in Hz)
-        data : array(numDataPoints,)
+        data : array (numDataPoints,)
             Time series to analyse.
-        peaks_function: str (default = 'EMD')
+        peaks_function: str, default='EMD'
             See compute_biotuner class for details.
-        precision: float
-            Defaults to 0.1
-            precision of the peaks (in Hz)
+        precision: float, default=0.1
+            Precision of the peaks (in Hz)
             When HH1D_max is used, bins are in log scale.
-        n_harm: int
-            Defaults to 10.
+        n_harm: int, default=10
             Set the number of harmonics to compute in harmonic_fit function
-        harm_function: str
-            {'mult' or 'div'}
-            Defaults to 'mult'
+        harm_function: str, default='mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
+            choice:
+                - 'mult' : iterative multiplication\n
+                - 'div' : iterative division\n
         min_freq: int, default=2
             Minimum frequency to consider (in Hz)
         max_freq: int, default=80
             Maximum frequency to consider (in Hz)
         n_peaks: int, default=5
             Number of peaks to extract in the peaks_extraction function.
-        mode : str, optional
-            The method used to chunk the time series. Default is 'win_overlap'.
-        overlap : int, optional
-            The overlap between successive windows, in number of samples. Default is 10.
+        mode : str, default='win_overlap'
+            The method used to chunk the time series.
+            choice:
+                - 'win_overlap' : divide the time series in successive windows\n
+                - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
+        overlap : int, default=10
+            The overlap between successive windows, in number of samples.
 
         """
-        """Initializing data"""
         if type(data) is not None:
             self.data = data
         self.sf = sf
-        """Initializing arguments for peak extraction"""
         self.peaks_function = peaks_function
         self.precision = precision
         self.n_harm = n_harm
@@ -88,8 +88,8 @@ class transitional_harmony(object):
         mode : str, default='win_overlap
             The method used to chunk the time series.
             choice:
-            - 'win_overlap' : divide the time series in successive windows\n
-            - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
+                - 'win_overlap' : divide the time series in successive windows\n
+                - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
         overlap : int, default=10
             The overlap between successive windows, in number of samples.
         delta_lim : int, default=20
