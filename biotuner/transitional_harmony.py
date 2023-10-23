@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from biotuner.metrics import compute_subharmonics_2lists
 from biotuner.biotuner_utils import chunk_ts
 import numpy as np
+
 class transitional_harmony(object):
     """
     Class used to compute subharmonic progressions
@@ -47,6 +48,12 @@ class transitional_harmony(object):
             Defaults to 'mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
+        min_freq: int, default=2
+            Minimum frequency to consider (in Hz)
+        max_freq: int, default=80
+            Maximum frequency to consider (in Hz)
+        n_peaks: int, default=5
+            Number of peaks to extract in the peaks_extraction function.
         mode : str, optional
             The method used to chunk the time series. Default is 'win_overlap'.
         overlap : int, optional
@@ -78,39 +85,39 @@ class transitional_harmony(object):
 
         Parameters
         ----------
-        mode : str (default='win_overlap)
+        mode : str, default='win_overlap
             The method used to chunk the time series.
             choice:
             - 'win_overlap' : divide the time series in successive windows\n
             - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
-        overlap : int, optional
-            The overlap between successive windows, in number of samples. Default is 10.
-        delta_lim : int, optional
+        overlap : int, default=10
+            The overlap between successive windows, in number of samples.
+        delta_lim : int, default=20
             The maximum time difference allowed between the closest common subharmonic
-            in two consecutive windows, in milliseconds. Default is 20.
-        graph : bool, optional
-            Whether to plot the transitional subharmonic tension as a function of time. Default is False.
-        save : bool, optional
-            Whether to save the plot as a PNG file. Default is False.
-        savename : str, optional
-            The filename of the saved plot, without the extension. Default is '_'.
+            in two consecutive windows, in milliseconds.
+        graph : bool, default=False
+            Whether to plot the transitional subharmonic tension as a function of time.
+        save : bool, default=False
+            Whether to save the plot as a PNG file.
+        savename : str, default='_'
+            The filename of the saved plot, without the extension.
 
         Returns
         -------
         trans_subharm : list of float
             The list of transitional subharmonic tension values for each pair of windows.
         time_vec_final : list of float
-            The list of time values corresponding to the center of each pair of windows.
-        pairs_melody : list of tuple of int
+            The corresponding list of time values.
+        subharm_melody : list of tuple of int
             The list of pairs of indices of the closest common subharmonic in each pair of windows.
 
         Notes
         -----
         This method chunks the time series using the specified mode and overlap parameters,
-        and for each pair of consecutive windows, it extracts the subharmonic peaks using
-        the biotuner algorithm. It then computes the closest common subharmonics between
-        the two sets of peaks, and determines the transitional subharmonic tension based
-        on their frequency difference and time difference. The resulting values are stored
+        and for each pair of consecutive windows, it extracts the subharmonic of spectral peaks.
+        It then computes the closest common subharmonics between
+        the two sets of peaks, and determines the transitional subharmonic tension.
+        The resulting values are stored
         in the trans_subharm and time_vec_final lists, and optionally plotted and saved.
 
         """
@@ -217,10 +224,10 @@ class transitional_harmony(object):
         deltas : list of int
             The list of maximum time differences allowed between the closest
             common subharmonic in consecutive windows, in milliseconds.
-        save : bool, optional
-            Whether to save the plot as a PNG file. Default is False.
-        savename : str, optional
-            The filename of the saved plot, without the extension. Default is '_'.
+        save : bool, default=False
+            Whether to save the plot as a PNG file.
+        savename : str, default='_'
+            The filename of the saved plot, without the extension.
 
         Returns
         -------

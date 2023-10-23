@@ -21,7 +21,7 @@ def compute_consonance(ratio, limit=1000):
     ----------
     ratio : float
         The ratio of frequencies.
-    limit : int, optional (default=1000)
+    limit : int, default=1000
         The maximum value of the denominator of the fraction representing the ratio.
 
     Returns
@@ -85,7 +85,7 @@ def tenneyHeight(peaks, avg=True):
     ----------
     peaks : List (float)
         frequencies
-    avg : bool (default=True)
+    avg : bool, default=True
         When set to True, all tenney heights are averaged.
 
     Returns
@@ -241,7 +241,7 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
         List of tuning steps (classically between 1 (unison) and 2 (octave))
     function : function
         {'dyad_similarity', 'compute_consonance', 'metric_denom'}
-    ratio_type : str (default='pos_harm')
+    ratio_type : str, default='pos_harm'
         choice:
             - 'pos_harm' : a/b when a>b\n
             - 'sub_harm' : a/b when a<b\n

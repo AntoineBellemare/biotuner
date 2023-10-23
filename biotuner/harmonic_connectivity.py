@@ -46,7 +46,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter, gaussian_filter1d
 import emd
 from biotuner.peaks_extraction import EMD_eeg
-
+ 
 
 class harmonic_connectivity(object):
     """
@@ -73,8 +73,7 @@ class harmonic_connectivity(object):
             sampling frequency (in Hz)
         data : 2Darray(elec, numDataPoints)
             Electrodes x Time series to analyse.
-        peaks_function: str
-            Defaults to 'EMD'.
+        peaks_function: str, default='EMD'
             See compute_biotuner class for details.
         precision: float
             Defaults to 0.1
@@ -130,8 +129,7 @@ class harmonic_connectivity(object):
              - 'harmsim': computes the harmonic similarity between each pair of peaks from the two electrodes.
                 It calculates the ratio between each pair of peaks and computes the mean harmonic similarity.
 
-             - 'euler': computes the Euler's totient function on the concatenated peaks of the two electrodes.
-                It provides a measure of the number of positive integers that are relatively prime to the concatenated peaks.
+             - 'euler': computes the Euler's Gradus Suavitatis on the concatenated peaks of the two electrodes.
 
              - 'harm_fit': computes the number of common harmonics between each pair of peaks from the two electrodes.
                 It evaluates the harmonic fit between each peak pair and counts the number of common harmonics.
@@ -141,9 +139,7 @@ class harmonic_connectivity(object):
 
              - 'RRCi': computes the Rhythmic Ratio Coupling with Imaginary Component (RRCi) metric between each pair of
                 peaks from the two electrodes, using a bandwidth of 2 Hz and a max_denom of 16. This metric calculates the
-                imaginary part of the complex phase differences between two filtered signals, accounting for volume conduction.
-                A higher absolute value of the imaginary part indicates stronger phase coupling while being less sensitive
-                to volume conduction.
+                imaginary part of the complex phase differences between two filtered signals.
 
              - 'wPLI_crossfreq': computes the weighted Phase Lag Index (wPLI) for cross-frequency coupling between each pair
                 of peaks from the two electrodes. The wPLI measures the phase synchronization between two signals, with a value
