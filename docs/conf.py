@@ -113,6 +113,7 @@ html_theme = 'sphinx_book_theme'
 
 html_favicon = "img/favicon.ico"
 html_logo = "img/logo.png"
+autoclass_content = 'both'
 
 
 # Add autodoc options
