@@ -358,11 +358,11 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     tuning_frac, num, denom = scale2frac(tuning, maxdenom=maxdenom)
     tuning_metrics = pytuning.metrics.all_metrics(tuning_frac)
     tuning_metrics["harm_sim"] = np.round(np.average(ratios2harmsim(tuning)), 2)
-    _, tuning_metrics["matrix_harm_sim"] = tuning_cons_matrix(tuning,
+    _, tuning_metrics["matrix_harm_sim"], _ = tuning_cons_matrix(tuning,
                                                               dyad_similarity)
-    _, tuning_metrics["matrix_cons"] = tuning_cons_matrix(tuning,
+    _, tuning_metrics["matrix_cons"], _ = tuning_cons_matrix(tuning,
                                                           compute_consonance)
-    _, tuning_metrics["matrix_denom"] = tuning_cons_matrix(tuning,
+    _, tuning_metrics["matrix_denom"], _ = tuning_cons_matrix(tuning,
                                                            metric_denom)
     return tuning_metrics
 
