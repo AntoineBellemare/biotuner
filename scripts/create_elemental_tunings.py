@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from biotuner.scale_construction import tuning_reduction, create_mode
+from biotuner.scale_construction import tuning_reduction
 from biotuner.biotuner_utils import compute_peak_ratios, create_SCL
 from biotuner.bioelements import Angstrom_to_hertz
 from biotuner.metrics import dyad_similarity, metric_denom
