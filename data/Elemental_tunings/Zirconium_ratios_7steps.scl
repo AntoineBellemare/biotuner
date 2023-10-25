@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Zirconium_ratios_7steps
+  7
+!
+286.54423
+344.25738
+802.83212
+866.95923
+988.49923
+1046.21238
+1200.00000

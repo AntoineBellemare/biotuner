@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Gadolinium_ratios_7steps
+  7
+!
+84.46719
+133.23757
+196.19848
+519.55129
+532.32798
+582.51219
+1200.00000

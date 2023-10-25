@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Helium_ratios_7steps
+  7
+!
+372.40814
+480.64552
+928.79559
+1017.59629
+1074.36315
+1182.60052
+1200.00000

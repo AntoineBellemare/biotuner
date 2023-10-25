@@ -1,0 +1,12 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Protactinium_ratios_7steps
+  6
+!
+315.64129
+400.10848
+988.49923
+1017.59629
+1102.06348
+1200.00000

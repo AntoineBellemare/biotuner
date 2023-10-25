@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Hafnium_ratios_7steps
+  7
+!
+344.25738
+372.40814
+958.90477
+1017.59629
+1046.21238
+1074.36315
+1200.00000

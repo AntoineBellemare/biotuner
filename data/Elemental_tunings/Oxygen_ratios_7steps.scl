@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Oxygen_ratios_7steps
+  7
+!
+400.10848
+427.37257
+1017.59629
+1074.36315
+1102.06348
+1129.32757
+1200.00000

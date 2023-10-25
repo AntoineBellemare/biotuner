@@ -1,0 +1,12 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Carbon_ratios_7steps
+  6
+!
+344.25738
+454.21395
+1017.59629
+1046.21238
+1156.16895
+1200.00000

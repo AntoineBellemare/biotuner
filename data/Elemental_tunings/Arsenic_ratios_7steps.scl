@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Arsenic_ratios_7steps
+  7
+!
+344.25738
+454.21395
+988.49923
+1017.59629
+1046.21238
+1156.16895
+1200.00000

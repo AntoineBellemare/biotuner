@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Palladium_ratios_7steps
+  7
+!
+100.87712
+133.23757
+736.23798
+769.85523
+802.83212
+835.19258
+1200.00000

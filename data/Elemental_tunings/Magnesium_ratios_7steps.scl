@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Magnesium_ratios_7steps
+  7
+!
+315.64129
+372.40814
+928.79559
+988.49923
+1017.59629
+1074.36315
+1200.00000

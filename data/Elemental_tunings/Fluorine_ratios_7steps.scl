@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Fluorine_ratios_7steps
+  7
+!
+286.54423
+315.64129
+928.79559
+958.90477
+988.49923
+1017.59629
+1200.00000

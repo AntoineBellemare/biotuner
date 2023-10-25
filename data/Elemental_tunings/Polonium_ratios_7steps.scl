@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Polonium_ratios_7steps
+  7
+!
+196.19848
+315.64129
+769.85523
+835.19258
+898.15348
+1017.59629
+1200.00000

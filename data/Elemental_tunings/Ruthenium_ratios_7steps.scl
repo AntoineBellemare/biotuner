@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Ruthenium_ratios_7steps
+  7
+!
+165.00423
+226.84059
+736.23798
+769.85523
+866.95923
+928.79559
+1200.00000

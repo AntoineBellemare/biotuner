@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Nitrogen_ratios_7steps
+  7
+!
+165.00423
+315.64129
+769.85523
+802.83212
+866.95923
+1017.59629
+1200.00000

@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Dysprosium_ratios_7steps
+  7
+!
+34.28298
+84.46719
+271.81024
+301.15389
+315.64129
+386.31371
+1200.00000

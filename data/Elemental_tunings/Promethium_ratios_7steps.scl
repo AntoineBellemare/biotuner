@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Promethium_ratios_7steps
+  7
+!
+84.46719
+133.23757
+532.32798
+582.51219
+631.28257
+701.95500
+1200.00000

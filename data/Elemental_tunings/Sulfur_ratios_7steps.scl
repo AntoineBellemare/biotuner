@@ -1,0 +1,12 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Sulfur_ratios_7steps
+  6
+!
+344.25738
+372.40814
+988.49923
+1046.21238
+1074.36315
+1200.00000

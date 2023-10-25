@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Ytterbium_ratios_7steps
+  7
+!
+427.37257
+454.21395
+1074.36315
+1102.06348
+1129.32757
+1156.16895
+1200.00000

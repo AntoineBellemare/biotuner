@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Iron_ratios_7steps
+  7
+!
+133.23757
+165.00423
+769.85523
+802.83212
+835.19258
+866.95923
+1200.00000

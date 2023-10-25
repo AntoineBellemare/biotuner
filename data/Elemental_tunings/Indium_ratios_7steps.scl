@@ -1,0 +1,13 @@
+! Scale produced by pytuning. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final '!'
+!
+../data/elemental_tunings/Indium_ratios_7steps
+  7
+!
+454.21395
+480.64552
+1074.36315
+1102.06348
+1156.16895
+1182.60052
+1200.00000
