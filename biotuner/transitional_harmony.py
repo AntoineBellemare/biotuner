@@ -1,9 +1,8 @@
 from biotuner.biotuner_object import compute_biotuner
-#from biotuner.biotuner_utils import chunk_ts
+from biotuner.biotuner_utils import chunk_ts
 from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
 from biotuner.metrics import compute_subharmonics_2lists
-from biotuner.biotuner_utils import chunk_ts
 import numpy as np
 
 class transitional_harmony(object):
@@ -19,6 +18,7 @@ class transitional_harmony(object):
         peaks_function="EMD",
         precision=0.1,
         n_harm=10,
+        max_harm_freq=150,
         harm_function="mult",
         min_freq=2,
         max_freq=80,
@@ -26,6 +26,7 @@ class transitional_harmony(object):
         n_trans_harm=10,
         mode="win_overlap",
         overlap=10,
+        FREQ_BANDS=None,
     ):
         """
         Parameters
@@ -39,8 +40,12 @@ class transitional_harmony(object):
         precision: float, default=0.1
             Precision of the peaks (in Hz)
             When HH1D_max is used, bins are in log scale.
+            Also used to divide the time series in successive windows.
+            ChunkSizes = (1/precision)*sf
         n_harm: int, default=10
-            Set the number of harmonics to compute in harmonic_fit function
+            Set the number of harmonics to compute in harmonic_fit function and peaks_extraction function
+        max_harm_freq: int, default=150
+            Set the maximum frequency to consider in harmonic_fit function and peaks_extraction function
         harm_function: str, default='mult'
             Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             or division (x, x/2, x/3, ...x/n).
@@ -60,6 +65,8 @@ class transitional_harmony(object):
                 - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
         overlap : int, default=10
             The overlap between successive windows, in number of samples.
+        FREQ_BANDS : list of list of int
+            The frequency bands used in the 'fixed' peaks_function.
 
         """
         if type(data) is not None:
@@ -75,9 +82,12 @@ class transitional_harmony(object):
         self.n_peaks = n_peaks
         self.mode = mode
         self.overlap = overlap
+        self.max_harm_freq = max_harm_freq
+        self.FREQ_BANDS = FREQ_BANDS
 
     def compute_trans_harmony(self, mode='win_overlap', overlap=10, delta_lim=20,
-                             graph=False, save=False, savename='_'):
+                             graph=False, save=False, savename='_', n_elements=2,
+                             keep_first_IMF=False):
         
         
         """
@@ -91,7 +101,7 @@ class transitional_harmony(object):
                 - 'win_overlap' : divide the time series in successive windows\n
                 - 'IF' : uses the instantaneous frequency using Hilbert-Huang transform\n
         overlap : int, default=10
-            The overlap between successive windows, in number of samples.
+            The overlap between successive windows, in percentage of the window size.
         delta_lim : int, default=20
             The maximum time difference allowed between the closest common subharmonic
             in two consecutive windows, in milliseconds.
@@ -101,7 +111,10 @@ class transitional_harmony(object):
             Whether to save the plot as a PNG file.
         savename : str, default='_'
             The filename of the saved plot, without the extension.
-
+        keep_first_IMF : bool, default=False
+            Whether to keep the first IMF in the EMD decomposition.
+        n_elements : int, default=2
+            TODO
         Returns
         -------
         trans_subharm : list of float
@@ -132,21 +145,23 @@ class transitional_harmony(object):
             peaks = []
             time_vec = []
             for pair in pairs:
-                try:
-                    #print(pair)
-                    data_ = data[pair[0]:pair[1]]
-                    biotuning = compute_biotuner(self.sf, peaks_function=self.peaks_function,
-                                                precision=self.precision, n_harm=self.n_harm)
-                    biotuning.peaks_extraction(data_, min_freq=self.min_freq,
-                                            max_freq=self.max_freq, max_harm_freq=150,
-                                            n_peaks=self.n_peaks, noverlap=None,
-                                            nperseg=None, nfft=None, smooth_fft=1)
-                    #print(biotuning.peaks)
-                    peaks.append(biotuning.peaks)
-                    time_vec.append(((pair[0]+pair[1])/2)/self.sf)
-                except UnboundLocalError:
-                    time_vec.append(((pair[0]+pair[1])/2)/self.sf)
-                    peaks.append([])
+                #try:
+                #print(pair)
+                data_ = data[pair[0]:pair[1]]
+                biotuning = compute_biotuner(self.sf, peaks_function=self.peaks_function,
+                                            precision=self.precision, n_harm=self.n_harm)
+                biotuning.peaks_extraction(data_, min_freq=self.min_freq,
+                                        max_freq=self.max_freq, max_harm_freq=self.max_harm_freq,
+                                        n_peaks=self.n_peaks, noverlap=None,
+                                        nperseg=None, nfft=None, smooth_fft=1, FREQ_BANDS=self.FREQ_BANDS,
+                                        keep_first_IMF=keep_first_IMF)
+                #print(biotuning.peaks)
+                #print(biotuning.peaks)
+                peaks.append(biotuning.peaks)
+                time_vec.append(((pair[0]+pair[1])/2)/self.sf)
+                #except UnboundLocalError:
+                #    time_vec.append(((pair[0]+pair[1])/2)/self.sf)
+                #    peaks.append([])
             trans_subharm = []
             i=1
             time_vec_final = []
@@ -173,13 +188,13 @@ class transitional_harmony(object):
                 self.time_vec = time_vec_final
 
         if mode == 'IF':
-            biotuning = compute_biotuner(self.sf, peaks_function='HH1D_max',
+            bt = compute_biotuner(self.sf, peaks_function='HH1D_max',
                                                 precision=self.precision, n_harm=self.n_harm)
-            biotuning.peaks_extraction(self.data, min_freq=self.min_freq,
+            bt.peaks_extraction(self.data, min_freq=self.min_freq,
                                     max_freq=self.max_freq, max_harm_freq=150,
                                     n_peaks=self.n_peaks, noverlap=None,
                                     nperseg=None, nfft=None, smooth_fft=1)
-            IFs = np.round(biotuning.IF, 2)
+            IFs = np.round(bt.IF, 2)
             trans_subharm = []
             subharm_melody = []
             for i in range(len(IFs)-1):

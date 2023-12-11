@@ -172,16 +172,16 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 12))
 
         ax1.plot(freqs, 10 * np.log10(psd), color='black')
-        ax1.set_title('Spectrum')
-        ax1.set_xlabel('Frequency (Hz)')
-        ax1.set_ylabel('Power (dB)')
+        ax1.set_title('Spectrum', fontsize=20)
+        ax1.set_xlabel('Frequency (Hz)', fontsize=16)
+        ax1.set_ylabel('Power (dB)', fontsize=16)
         ax1.grid()
 
         ax2.plot(freqs, harmonicity_values, color='darkblue')
         ax2.plot(freqs[harm_peak_idx], harmonicity_values[harm_peak_idx], 'ro')
-        ax2.set_title('Harmonic Spectrum')
-        ax2.set_xlabel('Frequency (Hz)')
-        ax2.set_ylabel('Harmonicity')
+        ax2.set_title('Harmonic Spectrum', fontsize=20)
+        ax2.set_xlabel('Frequency (Hz)', fontsize=16)
+        ax2.set_ylabel('Harmonicity', fontsize=16)
         # add vertical lines for the peaks in the spectrum
         for peak in harmonicity_peak_frequencies:
             ax2.axvline(peak, color='darkblue', linestyle='--')
@@ -194,9 +194,9 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         
         ax3.plot(freqs, phase_coupling_values, color='darkviolet')
         ax3.plot(freqs[phase_peak_idx], phase_coupling_values[phase_peak_idx], 'ro')
-        ax3.set_title('Phase Coupling Spectrum')
-        ax3.set_xlabel('Frequency (Hz)')
-        ax3.set_ylabel('Phase Coupling')
+        ax3.set_title('Phase Coupling Spectrum', fontsize=20)
+        ax3.set_xlabel('Frequency (Hz)', fontsize=16)
+        ax3.set_ylabel('Phase Coupling', fontsize=16)
         # add vertical lines for the peaks in the spectrum
         for peak in phase_peak_frequencies:
             ax3.axvline(peak, color='darkviolet', linestyle='--')
@@ -209,9 +209,9 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         
         ax4.plot(freqs, resonance_values, color='darkred')
         ax4.plot(freqs[res_peak_idx], resonance_values[res_peak_idx], 'ro')
-        ax4.set_title('Resonance Spectrum')
-        ax4.set_xlabel('Frequency (Hz)')
-        ax4.set_ylabel('Resonance')
+        ax4.set_title('Resonance Spectrum', fontsize=20)
+        ax4.set_xlabel('Frequency (Hz)', fontsize=16)
+        ax4.set_ylabel('Resonance', fontsize=16)
         # add vertical lines for the peaks in the spectrum
         for peak in resonance_peak_frequencies:
             ax4.axvline(peak, color='darkred', linestyle='--')
@@ -220,6 +220,11 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         ax4.text(0.85, 0.80, 'Spectral Entropy: ' + str(round(harmonic_complexity['Spectral Entropy']['Resonance'], 2)), transform=ax4.transAxes)
             
         ax4.grid()
+        # increase font size for all axes
+        for ax in fig.axes:
+            plt.sca(ax)
+            plt.xticks(fontsize=14)
+            plt.yticks(fontsize=14)
 
         plt.tight_layout()
         if save is True:

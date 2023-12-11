@@ -15,6 +15,7 @@ from collections import defaultdict
 import math
 from biotuner.biotuner_utils import sum_list, compute_peak_ratios
 from biotuner.metrics import ratios2harmsim
+import seaborn as sns
 #from biotuner.peaks_extraction import compute_IMs
 
 
@@ -410,8 +411,23 @@ def EMD_PSD_graph(eeg_data, IMFs, peaks_EMD, spectro='Euler', bands=None, xmin=1
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize_rhythms(pulses_steps, offsets=None, plot_size=6, 
-                      tolerance=0.1):
+def euclidean_rhythm(pulses, steps, offset=0):
+    """
+    Generate a Euclidean rhythm.
+    Args:
+        pulses (int): The number of pulses in the rhythm.
+        steps (int): The number of steps in the rhythm.
+        offset (int): An offset for the rhythm in pulses.
+    Returns:
+        List[int]: A binary list representing the rhythm, where 1 indicates a pulse and 0 indicates no pulse.
+    """
+    rhythm = [0] * steps
+    for i in range(pulses):
+        rhythm[(i * steps // pulses + offset) % steps] = 1
+    return rhythm
+
+
+def visualize_rhythms(pulses_steps, offsets=None, plot_size=6, tolerance=0.1, cmap='Set3'):
     """
     Visualize multiple Euclidean rhythms.
     
@@ -431,7 +447,7 @@ def visualize_rhythms(pulses_steps, offsets=None, plot_size=6,
     None
     """
     fig, ax = plt.subplots(figsize=(plot_size, plot_size))
-    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    colors = sns.color_palette(cmap, n_colors=len(pulses_steps))
     pulses_positions = []
     for i, (pulses, steps) in enumerate(pulses_steps):
         offset = offsets[i] if offsets else 0
@@ -440,12 +456,17 @@ def visualize_rhythms(pulses_steps, offsets=None, plot_size=6,
         radius = (i+1) * 0.15
         x = radius * np.cos(angles)
         y = radius * np.sin(angles)
-        ax.scatter(x, y, s = 100, color = colors[i%len(colors)], alpha = 0.5)
+        ax.scatter(x, y, s=100, color=colors[i%len(colors)], alpha=0.7)  # Circle alpha
         pulse_pos = []
         for j, value in enumerate(rhythm):
             if value == 1:
-                ax.scatter(x[j], y[j], s = 230, color = colors[i%len(colors)], alpha = 1)
+                ax.scatter(x[j], y[j], s=230, color=colors[i%len(colors)], alpha=1)
                 pulse_pos.append((x[j], y[j], np.arctan2(y[j], x[j])))
+        # Draw a filled circle around the pulse with the desired alpha transparency
+        circle = plt.Circle((0, 0), radius=radius, color=colors[i%len(colors)], alpha=0.5, fill=False)
+        ax.add_patch(circle)  # Use add_patch instead of add_artist
+
+                
         pulses_positions.append(pulse_pos)
     for i in range(len(pulses_positions)):
         for j in range(i+1, len(pulses_positions)):
@@ -453,26 +474,14 @@ def visualize_rhythms(pulses_steps, offsets=None, plot_size=6,
                 for pulse2 in pulses_positions[j]:
                     if abs(pulse1[2]-pulse2[2])<tolerance:
                         ax.plot([0, pulse1[0],pulse2[0]], [0, pulse1[1],pulse2[1]], 'k-', lw=2)
-    ax.set_aspect("equal")
+    #ax.set_aspect("equal")
     ax.set_xlim(-(np.max(x))-0.1, np.max(x)+0.1)
     ax.set_ylim(-(np.max(y))-0.1, np.max(y)+0.1)
+    # Remove grid and tick labels
+    plt.grid(False)
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
     plt.show()
-    
-def euclidean_rhythm(pulses, steps, offset=0):
-    """
-    Generate a Euclidean rhythm.
-    Args:
-        pulses (int): The number of pulses in the rhythm.
-        steps (int): The number of steps in the rhythm.
-        offset (int): An offset for the rhythm in pulses.
-    Returns:
-        List[int]: A binary list representing the rhythm, where 1 indicates a pulse and 0 indicates no pulse.
-    """
-    rhythm = [0] * steps
-    for i in range(pulses):
-        rhythm[(i * steps // pulses + offset) % steps] = 1
-    return rhythm
-
 from biotuner.metrics import dyad_similarity
 from biotuner.biotuner_utils import gcd
 

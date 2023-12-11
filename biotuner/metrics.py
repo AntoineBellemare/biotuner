@@ -120,6 +120,52 @@ def tenneyHeight(peaks, avg=True):
     return tenney
 
 
+def integral_tenneyHeight(peaks, avg=True):
+    """
+    Integral Tenney Height is a measure of inharmonicity calculated on
+    a list of frequencies. It considers the prime factorization of the
+    numerator and denominator of each interval, reflecting the complexity
+    of the interval. Higher values represent higher dissonance.
+
+    Parameters
+    ----------
+    peaks : List (float)
+        List of frequencies.
+    avg : bool, default=True
+        When set to True, the average of Tenney Heights is returned.
+
+    Returns
+    -------
+    tenney : float
+        Integral Tenney Height.
+
+    Examples
+    --------
+    >>> peaks = [3, 7, 13, 19]
+    >>> integral_tenneyHeight(peaks)
+    12.28
+    >>> peaks = [3, 9, 11, 27]
+    >>> integral_tenneyHeight(peaks)
+    8.49
+    """
+    pairs = biotuner.biotuner_utils.getPairs(peaks)
+    tenney = []
+    for p in pairs:
+        try:
+            frac = Fraction(p[0] / p[1]).limit_denominator(1000)
+            x, y = frac.numerator, frac.denominator
+            factors_x = factorint(x)
+            factors_y = factorint(y)
+            th_value = sum(factors_x[key] * log2(key) for key in factors_x) + sum(factors_y[key] * log2(key) for key in factors_y)
+            tenney.append(th_value)
+        except ZeroDivisionError:
+            continue
+
+    if avg:
+        return np.average(tenney) if tenney else 0
+    else:
+        return tenney
+    
 def metric_denom(ratio):
     """
     Function that computes the denominator of the normalized ratio.
@@ -151,7 +197,7 @@ def metric_denom(ratio):
 def dyad_similarity(ratio):
     """
     This function computes the similarity between a dyad of frequencies
-    and the natural harmonic series. Higher value represents higher harmonicity.
+    and the natural harmonic series of their greatest common divisor. Higher value represents higher harmonicity.
     Implemented from Gill and Purves (2009)
 
     Parameters
@@ -367,11 +413,14 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     return tuning_metrics
 
 
+
 def timepoint_consonance(data,
                          method="cons",
                          limit=0.2,
                          min_notes=3,
-                         graph=False):
+                         graph=False,
+                         n_harm=5,
+                         delta_lim=20):
 
     """
     Function that keeps moments of consonance
@@ -409,6 +458,13 @@ def timepoint_consonance(data,
     min_notes : int, default=3
         Minimal number of consonant frequencies in the chords.\n
         Only relevant when method is set to 'cons'.
+    n_harms : int, default=5
+        Number of harmonics to compute for each frequency.\n
+        Only relevant when method is set to 'subharm_tension'.
+    delta_lim : float, default=20
+        Maximal distance between subharmonics of different frequencies
+        to consider them as common subharmonics.\n
+        Only relevant when method is set to 'subharm_tension'.
 
     Returns
     -------
@@ -417,6 +473,8 @@ def timepoint_consonance(data,
         Axis 1 represents the sets of consonant frequencies
     positions : List (int)
         positions on Axis 0
+    tr_harm : List (float)
+        List of harmonicity value for each time point.
         
     Examples
     --------
@@ -434,7 +492,7 @@ def timepoint_consonance(data,
     >>> rand_integers = np.random.randint(min_freq * 10 / precision, max_freq * 10 / precision, size=(n_time_series, n_samples))
     >>> time_series = rand_integers / 10
     >>> 
-    >>> tc, _ = timepoint_consonance(time_series,
+    >>> tc, _, _ = timepoint_consonance(time_series,
                                      method="cons",
                                      limit=0.2,
                                      min_notes=3,
@@ -481,21 +539,30 @@ def timepoint_consonance(data,
     [67.59, 2.7, 33.79, 16.8]]
     
     """
-    def process_peaks(method, peaks, limit, min_notes):
+    def process_peaks(method, peaks, limit, min_notes, n_harm, delta_Lim):
         if method == "cons":
-            cons, _, peaks_cons, _ = consonance_peaks(peaks, limit)
+            cons, _, peaks_cons, cons_avg = consonance_peaks(peaks, limit)
             if len(set(peaks_cons)) >= min_notes:
-                return peaks_cons
+                return (peaks_cons, cons_avg)
         elif method == 'harmsim':
             ratios = compute_peak_ratios(peaks, rebound=False)
-            if np.mean(ratios2harmsim(ratios)) > limit:
-                return peaks
+            cons_avg = np.mean(ratios2harmsim(ratios))
+            if cons_avg >= limit:
+                return (peaks, cons_avg)
         elif method == "euler":
             peaks_ = [int(round(p, 2) * 100) for p in peaks]
-            eul = euler(*peaks_)
-            if eul < limit:
-                return list(peaks)
-        return []
+            cons_avg = euler(*peaks_)
+            if cons_avg < limit:
+                return (list(peaks), cons_avg)
+        elif method == "tenney":
+            cons_avg = integral_tenneyHeight(peaks, avg=True)
+            if cons_avg < limit:
+                return (list(peaks), cons_avg)
+        elif method == 'subharm':
+            subharms, _, cons_avg = compute_subharmonic_tension(peaks, n_harm, delta_lim, min_notes=2)
+            if cons_avg >= limit:
+                return (peaks, cons_avg)
+        return ([], cons_avg)
 
     # Generate labels using list comprehension
     labels = [f"EMD{i + 1}" for i in range(len(data))]
@@ -504,13 +571,15 @@ def timepoint_consonance(data,
     data = np.moveaxis(data, 0, 1)
     out = []
     positions = []
+    tr_harm = []
     for count, peaks in enumerate(data):
         peaks = [x for x in peaks if x >= 0.1]
         if len(peaks) == 0:
             result = []
         else:
-            result = process_peaks(method, peaks, limit, min_notes)
+            (result, cons_) = process_peaks(method, peaks, limit, min_notes, n_harm, delta_lim)
             out.append(result)
+            tr_harm.append(cons_)
         if result:
             positions.append(count)
 
@@ -538,7 +607,7 @@ def timepoint_consonance(data,
             plt.axvline(x=xc, c="black", linestyle="dotted")
         plt.show()
 
-    return chords, positions
+    return chords, positions, tr_harm
 
 
 def compute_subharmonics(chord, n_harmonics, delta_lim):

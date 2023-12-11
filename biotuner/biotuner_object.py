@@ -3,6 +3,8 @@ import scipy.signal
 from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
 from itertools import combinations
+import emd
+import itertools
 
 from biotuner.peaks_extraction import (
     HilbertHuang1D,
@@ -34,6 +36,7 @@ from biotuner.biotuner_utils import (
     ratios_increments,
     make_chord,
     scale_from_pairs,
+    ratios2cents,
 )
 
 from biotuner.metrics import (
@@ -45,7 +48,8 @@ from biotuner.metrics import (
     dyad_similarity,
     consonant_ratios,
     tuning_to_metrics,
-    consonance_peaks
+    consonance_peaks,
+    integral_tenneyHeight,
 )
 
 from biotuner.peaks_extension import (
@@ -57,6 +61,20 @@ from biotuner.scale_construction import (
     harmonic_entropy,
     harmonic_tuning
 )
+from biotuner.rhythm_construction import (
+    scale2euclid,
+    consonant_euclid,
+    interval_vector,
+    interval_vec_to_string,
+    euclid_string_to_referent,
+    find_optimal_offsets,
+)
+
+from biotuner.vizs import (
+    visualize_rhythms,
+)
+from biotuner.dictionaries import dict_rhythms, interval_names
+
 from biotuner.vizs import graph_psd_peaks, graphEMD_welch, graph_harm_peaks, EMD_PSD_graph
 import seaborn as sbn
 
@@ -243,7 +261,7 @@ class compute_biotuner(object):
 
     def peaks_extraction(
         self,
-        data,
+        data=None,
         peaks_function=None,
         FREQ_BANDS=None,
         precision=None,
@@ -270,7 +288,8 @@ class compute_biotuner(object):
         min_IMs=2,
         smooth_fft=1,
         verbose=False,
-        keep_first_IMF=False
+        keep_first_IMF=False,
+        identify_labels=False,
     ):
         """
         The peaks_extraction method is central to the use of the Biotuner.
@@ -352,6 +371,9 @@ class compute_biotuner(object):
             When set to True, number of detected peaks will be displayed.
         keep_first_IMF : boolean, default=False
             When set to True, the first IMF is kept.
+        identify_labels : boolean, default=False
+            When set to True, the labels of peaks ratios will be identified
+            from the interval_names dictionary.
 
         Attributes
         ----------
@@ -377,7 +399,8 @@ class compute_biotuner(object):
             List of peaks ratios and their congruent increments (ratios**n)
         """
 
-        self.data = data
+        if data is None:
+            data = self.data
         if sf is None:
             sf = self.sf
         if precision is None:
@@ -428,6 +451,22 @@ class compute_biotuner(object):
         )
         self.peaks_ratios_cons, b = consonant_ratios(self.peaks,
                                                      limit=scale_cons_limit)
+        
+        # find labels of peaks_ratios from the interval_names dictionary
+        def find_interval(cents, interval_names):
+            for interval, values in interval_names.items():
+                if values['Cents'] == cents:
+                    harmonic = values['Harmonic']
+                    return interval, harmonic
+            return (None, None)
+        
+        if identify_labels is True:
+            self.peaks_ratios_labels = []
+            cents = ratios2cents(self.peaks_ratios)
+            for e, cent in enumerate(cents):
+                name, harmonic = find_interval(int(cent), interval_names)
+                self.peaks_ratios_labels.append((self.peaks_ratios[e], name))
+
         if ratios_extension is True:
             a, b, c = self.ratios_extension(
                 self.peaks_ratios, ratios_n_harms=ratios_n_harms
@@ -641,6 +680,108 @@ class compute_biotuner(object):
             ratios_inc_fit_ = None
         return ratios_harms_, ratios_inc_, ratios_inc_fit_
 
+    def time_resolved_harmonicity(self, input='IF', method='harmsim', keep_first_IMF=False, nIMFs=3, IMFs=None, delta_lim=20,
+                                  limit_cons=0.2, min_notes=3, graph=False, window=None):
+        """
+        Compute the time-resolved harmonicity of the input data, which involves computation of instantaneous frequency 
+        (IF) or SpectroMorph analysis on the input data, followed by harmonicity computation on the IFs or SpectroMorph
+        data.
+        Parameters
+        ----------
+        input : str, default='IF'
+            The input type for harmonicity computation, either 'IF' (instantaneous frequency) or 'SpectralCentroid'. 
+        method : str, default='harmsim'
+            The method used for harmonicity computation, such as 'harmsim'.
+        keep_first_IMF : bool, default=False
+            Whether to keep the first intrinsic mode function (IMF) after EMD.
+        nIMFs : int, default=3
+            The number of IMFs to consider in the analysis.
+        IMFs : array_like, default=None
+            Precomputed IMFs. If None, IMFs are computed within the method.
+        delta_lim : int, default=20
+            The limit for delta when method is 'subharm_tension'.
+        limit_cons : float, default=0.2
+            The limit for consonance for spectral chords.
+        min_notes : int, default=3
+            The minimum number of notes required for spectral chords.
+        graph : bool, default=False
+            If True, a graph of the computed harmonicity will be displayed.
+        window : int, default=None
+            The window size for SpectroMorph analysis. If None, it is set to half of the sampling frequency. 
+
+        Returns
+        -------
+        tuple
+            A tuple containing the following:
+            - time_resolved_harmonicity : array_like
+                The time-resolved harmonicity of the input data.
+            - spectro_chords : List of lists (float)
+                Each sublist corresponds to a list of harmonious instantaneous frequencies (IFs).
+            - spectro_chord_pos : List (int)
+                Positions in the time series where each chord from `self.spectro_chords` is located.
+
+        Attributes
+        ----------
+        self.spectro_chords : List of lists (float)
+            Each sublist corresponds to a list of harmonious instantaneous frequencies (IFs).
+        self.time_resolved_harmonicity : array_like
+            The time-resolved harmonicity of the input data.
+        self.spectro_EMD : array_like
+            The spectroMorph analysis of the input data.
+        self.IFs : array_like
+            The instantaneous frequencies of the input data.
+        self.IMFs : array_like
+            The intrinsic mode functions (IMFs) of the input data.
+        """
+        if window is None:
+            window = int(self.sf / 2)
+        if IMFs is None:
+            IMFs = EMD_eeg(self.data, method="EMD")
+            if keep_first_IMF is True:
+                IMFs = IMFs[0: nIMFs + 1, :]
+            else:
+                IMFs = IMFs[1: nIMFs + 1, :]
+            self.IMFs = IMFs
+        if input == 'IF':
+            IMFs = np.moveaxis(IMFs, 0, 1)
+            IP, IFs, IA = emd.spectra.frequency_transform(IMFs, self.sf, "nht") # IFs (time, IMF)
+            self.IFs = IFs
+            IFs = np.moveaxis(IFs, 0, 1)
+            print(IFs.shape)
+        if input == 'SpectralCentroid':
+            IFs = EMD_to_spectromorph(IMFs, self.sf, method='SpectralCentroid', window=window, overlap=1)
+            self.spectro_EMD = IFs
+            print(IFs.shape)
+        self.spectro_chords, spectro_chord_pos, tr_harm = timepoint_consonance(
+            IFs,
+            method=method,
+            limit=limit_cons,
+            min_notes=min_notes,
+            graph=graph,
+            n_harm=self.n_harm,
+            delta_lim=delta_lim,
+            )
+        
+        if graph is True:
+            plt.clf()
+            if len(self.spectro_chords) > 0:
+                data = np.moveaxis(self.spectro_EMD, 0, 1)
+                ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
+                ax.set(xlabel="Time Windows", ylabel=method)
+                if method == "SpectralCentroid":
+                    ax.set_yscale("log")
+                plt.legend(
+                    scatterpoints=1,
+                    frameon=True,
+                    labelspacing=1,
+                    title="EMDs",
+                    loc="best",
+                    labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"],
+                )
+                plt.show()
+        self.time_resolved_harmonicity = tr_harm
+        return self.time_resolved_harmonicity, self.spectro_chords, spectro_chord_pos
+        
     def compute_spectromorph(
         self,
         IMFs=None,
@@ -648,11 +789,7 @@ class compute_biotuner(object):
         method="SpectralCentroid",
         window=None,
         overlap=1,
-        comp_chords=False,
-        min_notes=3,
-        cons_limit=0.2,
-        cons_chord_method="cons",
-        graph=False,
+        nIMFs=5,
     ):
         """
         This method computes spectromorphological metrics on
@@ -691,21 +828,6 @@ class compute_biotuner(object):
             Window size in samples.
         overlap : int
             Value of the overlap between successive windows.
-        comp_chords : Boolean, default=False
-            When set to True, consonant spectral chords are computed.
-        min_notes : int, default=3
-            Minimum number of consonant values to store a spectral chord.
-        cons_limit : float, default=0.2
-            Minimal value of consonance.
-        cons_chord_method : str, default='cons'
-            Metrics to use for consonance computation.
-            
-            - :func:`cons <biotuner.metrics.compute_consonance>`
-            - :func:`harmsim <biotuner.metrics.dyad_similarity>`
-            - :func:`euler <biotuner.metrics.euler>`
-            
-        graph : Boolean, default=False
-            Defines if graph is plotted.
 
         Attributes
         ----------
@@ -716,11 +838,9 @@ class compute_biotuner(object):
             spectromorphological metrics.
         """
         if IMFs is None:
-            if self.peaks_function == "EEMD" or self.peaks_function == "EMD":
-                IMFs = self.IMFs
-            else:
-                IMFs = EMD_eeg(self.data, method="EMD")[1:6]
-                self.IMFs = IMFs
+
+            IMFs = EMD_eeg(self.data, method="EMD")[1:nIMFs + 1]
+            self.IMFs = IMFs
         if sf is None:
             sf = self.sf
         if window is None:
@@ -729,32 +849,8 @@ class compute_biotuner(object):
         spectro_EMD = EMD_to_spectromorph(
             IMFs, sf, method=method, window=window, overlap=overlap
         )
-        if comp_chords is True:
-            self.spectro_chords, spectro_chord_pos = timepoint_consonance(
-                spectro_EMD,
-                method=cons_chord_method,
-                limit=cons_limit,
-                min_notes=min_notes,
-                graph=graph,
-            )
         self.spectro_EMD = spectro_EMD
-        if graph is True:
-            plt.clf()
-            if comp_chords is False:
-                data = np.moveaxis(self.spectro_EMD, 0, 1)
-                ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
-                ax.set(xlabel="Time Windows", ylabel=method)
-                if method == "SpectralCentroid":
-                    ax.set_yscale("log")
-                plt.legend(
-                    scatterpoints=1,
-                    frameon=True,
-                    labelspacing=1,
-                    title="EMDs",
-                    loc="best",
-                    labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"],
-                )
-                plt.show()
+        
 
     def compute_peaks_metrics(self, n_harm=None, harm_bounds=0.5, delta_lim=20):
         """
@@ -904,7 +1000,7 @@ class compute_biotuner(object):
         peaks = [p * 128 for p in peaks] # scale the peaks up to accomodate beating frequency modelling.
         amps = np.interp(amps, (np.array(amps).min(), np.array(amps).max()), (0.2, 0.8))
 
-        diss, intervals, self.diss_scale, euler_diss, diss, harm_sim_diss = diss_curve(
+        diss, intervals, self.diss_scale, euler_diss, diss_avg, harm_sim_diss = diss_curve(
             peaks,
             amps,
             denom=denom,
@@ -918,7 +1014,7 @@ class compute_biotuner(object):
             self.diss_scale, scale_cons_limit, sub=False, input_type="ratios"
         )
         self.scale_metrics["diss_euler"] = euler_diss
-        self.scale_metrics["dissonance"] = diss
+        self.scale_metrics["dissonance"] = diss_avg
         self.scale_metrics["diss_harm_sim"] = np.average(harm_sim_diss)
         self.scale_metrics["diss_n_steps"] = len(self.diss_scale)
 
@@ -996,7 +1092,7 @@ class compute_biotuner(object):
         if scale_cons_limit is None:
             scale_cons_limit = self.scale_cons_limit
 
-        HE_scale, HE = harmonic_entropy(
+        HE_scale, HE, HE_all = harmonic_entropy(
             ratios,
             res=res,
             spread=spread,
@@ -1052,7 +1148,7 @@ class compute_biotuner(object):
         self.euler_fokker = scale
         return scale
 
-    def harmonic_tuning(self, list_harmonics, octave=2, min_ratio=1, max_ratio=2):
+    def harmonic_tuning(self, list_harmonics=None, octave=2, min_ratio=1, max_ratio=2):
         """
         Generates a tuning based on a list of harmonic positions.
 
@@ -1078,6 +1174,11 @@ class compute_biotuner(object):
             Generated tuning.
 
         """
+        if list_harmonics is None:
+            if self.peak_function == "harmonic_recurrence":
+                list_harmonics = self.all_harmonics
+            else:
+                print("No list of harmonics provided")
         ratios = []
         for i in list_harmonics:
             ratios.append(rebound(1 * i, min_ratio, max_ratio, octave))
@@ -1218,6 +1319,123 @@ class compute_biotuner(object):
         self.pac_coupling = pac_coupling
         return self.pac_freqs, self.pac_coupling
 
+
+
+    
+    def rhythm_construction(self, scale='peaks_ratios', mode='default', cons_threshold=0.2, max_denom=8, n_steps_down=3,
+                            graph=False, optimal_offsets=True):
+        """
+        Computes Euclidean rhythms from a scale defined between unison and octave. 
+
+        Parameters
+        ----------
+        scale : str, default='peaks_ratios'
+            The scale from which Euclidean rhythms are generated. Options include 'peaks_ratios', 'extended_peaks_ratios',
+            'diss_scale', 'HE_scale', 'harmonic_fit_tuning', 'harmonic_tuning', and 'euler_fokker', each corresponding to
+            a different scale computation method within the class.
+        mode : str, default='default'
+            The rhythm generation mode. Options are 'default' for basic Euclidean rhythms and 'consonant' for rhythms with
+            maximized consonance, based on the 'cons_threshold' parameter and the use of shared denominator values.
+        cons_threshold : float, default=0.2
+            Consonance threshold used in 'consonant' mode to maximize consonance between rhythm pairs.
+            See the 'compute_consonance' function in the 'scale_construction' module for more information.
+        max_denom : int, default=8
+            The maximum denominator used in the rhythm generation process, controlling the complexity of the rhythm.
+            Only used in 'consonant' mode.
+        n_steps_down : int, default=3
+            The number of steps by which the generated Euclidean rhythm is transposed down.
+            Only used in 'consonant' mode.
+
+        Raises
+        ------
+        RuntimeError
+            If the specified 'scale' is not computed prior to invoking this method.
+
+        Returns
+        -------
+        tuple
+            The first element is a list of generated Euclidean rhythms. The second element is their corresponding referential strings, derived from comparing the generated rhythms to known referent patterns.
+
+        Notes
+        -----
+        This method requires the prior computation of the specified 'scale'. For instance, 'peaks_ratios' requires the 'peaks_extraction' method to be called beforehand. The method's return values are integral to further rhythm analysis and comparison within the Biot
+        """
+    
+        if scale == 'peaks_ratios':
+            try:
+                scale = self.peaks_ratios
+            # raise error if peaks_ratios is not computed
+            except:
+                RuntimeError('peaks_ratios not computed. Call the peaks_extraction method first.')
+                
+        if scale == 'extended_peaks_ratios':
+            try:
+                scale = self.extended_peaks_ratios
+            # raise error if extended_peaks_ratios is not computed
+            except:
+                print('extended_peaks_ratios not computed. Calling the peaks_extension method first.')
+                self.peaks_extension()
+                scale = self.extended_peaks_ratios
+                
+        if scale == 'diss_scale':
+            try:
+                scale = self.diss_scale
+            # raise error if diss_scale is not computed
+            except:
+                RuntimeError('diss_scale not computed. Call the compute_diss_curve method first.')
+        if scale == 'HE_scale':
+            try:
+                scale = self.HE_scale
+            # raise error if HE_scale is not computed
+            except:
+                RuntimeError('HE_scale not computed. Call the compute_harmonic_entropy method first.')
+        if scale == 'harmonic_fit_tuning':
+            try:
+                scale = self.harmonic_fit_tuning
+            # raise error if harmonic_fit_tuning is not computed
+            except:
+                RuntimeError('harmonic_fit_tuning not computed. Call the harmonic_fit_tuning method first.')
+        if scale == 'harmonic_tuning':
+            try:
+                scale = self.harmonic_tuning
+            # raise error if harmonic_tuning is not computed
+            except:
+                RuntimeError('harmonic_tuning not computed. Call the harmonic_tuning method first and ensure that the peaks_extraction method was called with harmonic_recurrence as peaks_function.')
+        if scale == 'euler_fokker':
+            try:
+                scale = self.euler_fokker
+            # raise error if euler_fokker is not computed
+            except:
+                RuntimeError('euler_fokker not computed. Call the euler_fokker_scale method first.')
+        if mode == 'default':
+            euclid_final = scale2euclid(scale, max_denom=max_denom)
+            
+        if mode == 'consonant':
+            euclid_final, cons = consonant_euclid(scale, n_steps_down=n_steps_down, limit_denom=max_denom,
+                                      limit_cons=cons_threshold, limit_denom_final=max_denom)
+
+        
+        # Compare rhythms to referents
+        interval_vectors = [interval_vector(x) for x in euclid_final]
+        strings = interval_vec_to_string(interval_vectors)
+        euclid_referent = euclid_string_to_referent(strings, dict_rhythms)
+        self.euclid_rhythms = euclid_final
+        self.euclid_referent = euclid_referent
+        euclid_rhythms = []
+        for i in range(len(euclid_final[:])):
+            pulse = euclid_final[i].count(1)
+            steps = len(euclid_final[i])
+            euclid_rhythms.append((pulse, steps))
+        if optimal_offsets is True:
+            offsets = find_optimal_offsets(euclid_rhythms)
+        else:
+            offsets = None
+        if graph is True:
+            tolerance = 0.05    
+            visualize_rhythms(euclid_rhythms, offsets=offsets, tolerance=tolerance, cmap='plasma_r')
+        return euclid_final, euclid_rhythms, euclid_referent
+        
+            
     def compute_peaks_ts(
         self,
         data,

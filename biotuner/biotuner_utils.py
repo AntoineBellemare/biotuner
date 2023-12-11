@@ -1581,7 +1581,7 @@ def chunk_ts(data, sf, overlap=10, precision=1):
     overlap_samp = int((chunk_size)/overlap)
     i = 0
     pairs = []
-    while i < len(data):
+    while i <= len(data)-chunk_size:
         pairs.append((i, i+chunk_size))
         i = i+chunk_size-overlap_samp
     return pairs

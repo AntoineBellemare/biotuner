@@ -112,6 +112,7 @@ class harmonic_connectivity(object):
         savename="_",
         graph=True,
         FREQ_BANDS=None,
+        max_denom_rrci=16,
     ):
         """
         Computes the harmonic connectivity matrix between electrodes.
@@ -163,6 +164,13 @@ class harmonic_connectivity(object):
 
         graph : bool, optional
             Whether to display a heatmap of the connectivity matrix. Default is True.
+            
+        FREQ_BANDS : list, optional
+            The frequency bands to use for the computation of the wPLI_multiband metric. Default is None.
+            If None, the following frequency bands will be used: [2, 3.55], [3.55, 7.15], [7.15, 14.3], [14.3, 28.55], [28.55, 49.4].
+            
+        max_denom_rrci : int, optional
+            The maximum denominator to use for the computation of the RRCi metric. Default is 16.
 
         Returns
         -------
@@ -259,7 +267,7 @@ class harmonic_connectivity(object):
                 for peak1 in list1:
                     for peak2 in list2:
                         rrci_value = cross_frequency_rrci(
-                            data1, data2, self.sf, peak1, peak2, 2, 16
+                            data1, data2, self.sf, peak1, peak2, 2, max_denom_rrci
                         )
                         rrci_values.append(rrci_value)
                 harm_conn_matrix.append(np.mean(rrci_values))

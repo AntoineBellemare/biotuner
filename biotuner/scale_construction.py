@@ -696,8 +696,10 @@ def harmonic_entropy(
     ----------
     HE_minima : List of floats
         List of ratios corresponding to minima of the harmonic entropy curve
-    HE : float
+    HE_avg : float
         Value of the averaged harmonic entropy
+    HE : List of floats
+        List of harmonic entropy values for each ratio.
 
     """
     fracs, numerators, denominators = scale2frac(ratios)
@@ -750,7 +752,7 @@ def harmonic_entropy(
         plt.xlabel('Frequency ratio')
         plt.ylabel('Harmonic entropy')
         plt.show()
-    return HE_minima, np.average(HE)
+    return HE_minima, np.average(HE), HE
 
 
 """Scale reduction"""
