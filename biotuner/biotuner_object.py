@@ -757,7 +757,7 @@ class compute_biotuner(object):
             method=method,
             limit=limit_cons,
             min_notes=min_notes,
-            graph=graph,
+            graph=False,
             n_harm=self.n_harm,
             delta_lim=delta_lim,
             )
@@ -768,6 +768,7 @@ class compute_biotuner(object):
                 data = np.moveaxis(self.spectro_EMD, 0, 1)
                 ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
                 ax.set(xlabel="Time Windows", ylabel=method)
+                ax.set_ylabel(method)
                 if method == "SpectralCentroid":
                     ax.set_yscale("log")
                 plt.legend(
