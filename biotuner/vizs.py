@@ -1032,5 +1032,72 @@ def visualize_rhythms_interactive():
     on_value_change(None)
     return
 
+from biotuner.scale_construction import harmonic_entropy, diss_curve
+from biotuner.peaks_extension import harmonic_fit
 
+# Define the plotting function
+def plot_diss_curve(peaks_dict, colors=None, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 5))
+    if colors is None:
+        colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
+    for label, peaks in peaks_dict.items():
+        # Assuming equal amplitude for simplicity
+        amps = [1.0 for _ in peaks]  
 
+        # Scale peaks for beating frequency modelling
+        peaks_scaled = [p * 1000 for p in peaks]
+
+        # Normalize amplitudes
+        amps_norm = np.interp(amps, (np.min(amps), np.max(amps)), (0.2, 0.8))
+
+        # Compute dissonance curve
+        diss, intervals, diss_scale, euler_diss, diss_avg, harm_sim_diss = diss_curve(
+            peaks_scaled, amps_norm, denom=1000, max_ratio=2, euler_comp=False,
+            method="min", plot=False, n_tet_grid=12
+        )
+        if label == '5':
+            for n, d in intervals:
+                ax.axvline(n / d, color="silver", linestyle='--', alpha=0.5)
+        ratio_vec = np.linspace(1, 2, 1000)
+        # normalize dissonance
+        diss = np.interp(diss, (np.min(diss), np.max(diss)), (0, 1))
+        # Plot dissonance curve
+        ax.plot(ratio_vec, diss, label=label, color=colors[list(peaks_dict.keys()).index(label)])
+        ax.set_ylabel('Normalized Dissonance', fontsize=14)
+        ax.legend(loc='upper right', fontsize=12, title='N Harmonics', title_fontsize=13)
+        
+
+def plot_harm_entropy(peaks_dict, ax=None, colors=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 5))
+    if colors is None:
+        colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
+    # remove first entry of the dictionary
+    peaks_dict.pop('5')
+    for label, peaks in peaks_dict.items():
+
+        # Compute harmonic entropy
+        extended_peaks, harmonics, _, _ = harmonic_fit(
+                        peaks,
+                        10,
+                        function='mult',
+                        bounds=1,
+                    )
+        ratios = compute_peak_ratios(extended_peaks, rebound=True)
+        #ratios = ratios_increments(ratios, 20)
+        HE_scale, HE_avg, HE = harmonic_entropy(
+            ratios, res=0.001, spread=0.01, plot_entropy=False, plot_tenney=False,
+            octave=2
+        )
+        ratio_vec = np.linspace(1, 2, 1000)
+        if label == '10':
+            for freq_ratio in HE_scale[0]:
+                ax.axvline(freq_ratio, color="silver", linestyle='--', alpha=0.5)
+        # normalize harmonic entropy
+        #HE = np.interp(HE, (np.min(HE), np.max(HE)), (0, 1))
+        # Plot harmonic entropy curve
+        ax.plot(ratio_vec, HE, label=label, color=colors[list(peaks_dict.keys()).index(label)+1])
+        ax.set_ylabel('Harmonic Entropy', fontsize=14)
+        ax.legend(loc='lower right', fontsize=12, title='N Harmonics', title_fontsize=13)
+    return HE_scale

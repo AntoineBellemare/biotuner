@@ -10,6 +10,7 @@ import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
 from itertools import combinations
+from sympy import factorint
 
 """PEAKS METRICS"""
 

@@ -169,6 +169,9 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
     df['res_harmsim_max'] = df['res_harmsim'].apply(safe_max)
     # Plot results if required
     if plot:
+        # close all previous plots
+        plt.close('all')
+        # Plot the spectra
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 12))
 
         ax1.plot(freqs, 10 * np.log10(psd), color='black')

@@ -455,3 +455,38 @@ def find_optimal_offsets(pulses_steps):
         offset = (steps - pulses * (steps // pulses)) % steps
         offsets.append(offset)
     return offsets
+
+import itertools
+from biotuner.biotuner_utils import lcm
+
+def find_optimal_offsets(pulses_steps):
+    """
+    Finds the optimal offset values for a set of Euclidean rhythms that aligns
+    multiple pulses from different rhythms together.
+    Args:
+        pulses_steps (List[Tuple[int,int]]): A list of tuples, where each tuple
+        represent the number of pulses and steps of a rhythm.
+    Returns:
+        List[int]: A list of optimal offset values for the rhythms in pulses_steps
+    """
+    # Calculate the least common multiple (LCM) of all the rhythms' steps
+    total_steps = [steps for pulses, steps in pulses_steps]
+    lcm_steps = lcm(*total_steps)
+    
+    # Generate all possible rhythms with offsets
+    rhythms_with_offsets = []
+    for pulses, steps in pulses_steps:
+        rhythm_offsets = [(i + offset) % steps for offset in range(steps) for i in range(pulses)]
+        rhythms_with_offsets.append(rhythm_offsets)
+    
+    # Search for the combination of offsets that maximizes pulse alignment
+    max_alignment = 0
+    optimal_offsets = [0] * len(pulses_steps)
+    
+    for offsets in itertools.product(*rhythms_with_offsets):
+        alignment = sum([1 for i in range(lcm_steps) if offsets.count(i) > 1])
+        if alignment > max_alignment:
+            max_alignment = alignment
+            optimal_offsets = offsets
+    
+    return optimal_offsets

@@ -946,6 +946,33 @@ def wPLI_multiband(signal1, signal2, freq_bands, sf):
 
     return wPLI_values
 
+def n_m_phase_locking(signal1, signal2, n, m, sf):
+    """
+    Calculate n:m phase locking between two signals.
+    
+    :param signal1: First time series.
+    :param signal2: Second time series.
+    :param n: Multiplicative factor for the first signal.
+    :param m: Multiplicative factor for the second signal.
+    :param sf: Sampling frequency of the signals.
+    :return: Mean resultant length (Rn:m) indicating the phase locking value.
+    """
+    # Calculate the instantaneous phase for each signal using the Hilbert transform
+    phase1 = np.angle(hilbert(signal1))
+    phase2 = np.angle(hilbert(signal2))
+    
+    # Calculate the n:m phase difference
+    phase_diff_nm = n * phase1 - m * phase2
+    
+    # Calculate the unitary vectors whose angle is the instantaneous phase difference
+    unit_vectors = np.exp(1j * phase_diff_nm)
+    
+    # Compute the length of the mean vector (mean resultant length)
+    Rn_m = np.abs(np.sum(unit_vectors)) / len(unit_vectors)
+    
+    return Rn_m
+
+
 def cross_frequency_rrci(
     signal1, signal2, sfreq, freq_peak1, freq_peak2, bandwidth=1, max_denom=50
 ):
@@ -1009,6 +1036,7 @@ def rhythmic_ratio_coupling_imaginary(
 ):
     """
     Computes the Imaginary part of Rhythmic Ratio Coupling between two signals.
+    From the paper : "On cross-frequency phase-phase coupling between theta and gamma oscillations in the hippocampus"
 
     Parameters
     ----------
