@@ -1743,6 +1743,7 @@ class compute_biotuner(object):
                 peaks_temp.append(p)
                 amps_temp.append(a)
             peaks_temp = np.flip(peaks_temp)
+            #print('PEAKS_TEMP', peaks_temp, 'AMPS_TEMP', amps_temp)
             amps_temp = np.flip(amps_temp)
             peaks_temp = peaks_temp[-n_peaks:]
             _, _, self.freqs, self.psd = extract_welch_peaks(
@@ -2021,6 +2022,7 @@ class compute_biotuner(object):
         # ensure no peaks are above max_freq
         peaks_idx = np.where(np.array(peaks) <= max_freq)[0]
         peaks = np.array(peaks)[peaks_idx]
+        #print('FINAL PEAKS', peaks)
         if peaks_function != 'PAC' and peaks_function != 'bicoherence':
             amps = np.array(amps)[peaks_idx]
         return peaks, amps
