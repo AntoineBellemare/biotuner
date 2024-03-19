@@ -1,0 +1,806 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Constructing euclidian rhythms from biotunings &#8212; Biotuner 0.0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Phase-Amplitude Coupling" href="../phase_amplitude_coupling/phase_amplitude_coupling.html" />
+    <link rel="prev" title="Deriving spectral chords from biosignals" href="../spectral_chords/spectral_chords.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Biotuner 0.0.1 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Menu:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../getting_started.html">
+   Getting started with Biotuner
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../cite_us.html">
+   Cite us
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../index.html">
+   Examples
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">
+     Harmonicity Metrics Computation on MNE Epochs File
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../peaks_extraction/peaks_extraction.html">
+     Peaks extraction methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">
+     Harmonicity metrics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">
+     From Spectral Peaks to Harmonic Spectrum Analysis
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">
+     Biotuner Paper Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../scale_construction/scale_construction.html">
+     Constructing musical tunings with biosignals
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../spectral_chords/spectral_chords.html">
+     Deriving spectral chords from biosignals
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Constructing euclidian rhythms from biotunings
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">
+     Phase-Amplitude Coupling
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../api/index.html">
+   API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/biotuner_object.html">
+     Biotuner object
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/metrics.html">
+     Harmonicity Metrics
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/peaks_extraction.html">
+     Peaks Extraction
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/peaks_extension.html">
+     Peaks Extension
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/harmonic_spectrum.html">
+     Harmonic spectrum
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/harmonic_connectivity.html">
+     Harmonic connectivity
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/transitional_harmony.html">
+     Transitional Harmony
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/scale_construction.html">
+     Scale construction
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/rhythm_construction.html">
+     Rhythm construction
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/utils.html">
+     Biotuner utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="simple">
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/examples/rhythm_construction/rhythm_construction.ipynb.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#deriving-euclidian-rhythms-from-a-series-of-ratios">
+   Deriving euclidian rhythms from a series of ratios
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#finding-consonant-euclidian-rhythms-from-a-set-of-frequency-ratios">
+   Finding consonant euclidian rhythms from a set of frequency ratios
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualizing-euclidean-biorhythms">
+   Visualizing euclidean biorhythms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimizing-rhythms-offset-to-increase-pulse-alignments">
+   Optimizing rhythms offset to increase pulse alignments.
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#simple-use-case">
+     Simple use case
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#biotuning-use-case">
+     Biotuning use case
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Constructing euclidian rhythms from biotunings</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#deriving-euclidian-rhythms-from-a-series-of-ratios">
+   Deriving euclidian rhythms from a series of ratios
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#finding-consonant-euclidian-rhythms-from-a-set-of-frequency-ratios">
+   Finding consonant euclidian rhythms from a set of frequency ratios
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualizing-euclidean-biorhythms">
+   Visualizing euclidean biorhythms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimizing-rhythms-offset-to-increase-pulse-alignments">
+   Optimizing rhythms offset to increase pulse alignments.
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#simple-use-case">
+     Simple use case
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#biotuning-use-case">
+     Biotuning use case
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="constructing-euclidian-rhythms-from-biotunings">
+<h1>Constructing euclidian rhythms from biotunings<a class="headerlink" href="#constructing-euclidian-rhythms-from-biotunings" title="Permalink to this headline">#</a></h1>
+<p>Euclidean rhythms represent an even distribution of pulses within a specified number of steps. It is possible to convert frequency ratios into euclidian rhythms in that a ratio’s numerator can be seen as the number of pulses and a ratio’s denominator as the number of steps within which the pulses should be distributed. In this notebook we will see how to derive Euclidean rhythms from EEG signal by extracting spectal peaks and looking at their frequency ratios. Therefore, more consonant brain frequency ratios will lead to more aligned Euclidean polyrhythms.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">biotuner.biotuner_object</span> <span class="kn">import</span> <span class="n">compute_biotuner</span><span class="p">,</span> <span class="n">harmonic_tuning</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+
+<span class="c1"># Load dataset</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;../data/EEG_example.npy&#39;</span><span class="p">)</span>
+
+<span class="c1"># Select a single time series </span>
+<span class="c1"># 20</span>
+<span class="n">data_</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Initialize biotuner object</span>
+<span class="n">biotuning_harm_peaks</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;harmonic_recurrence&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> 
+
+<span class="c1"># Extract spectral peaks</span>
+<span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">min_freq</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_harms</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">harm_limit</span> <span class="o">=</span> <span class="mi">128</span><span class="p">)</span>
+<span class="c1">#print(biotuning_harm_peaks.all_harmonics)</span>
+
+<span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stop</span><span class="o">-</span><span class="n">start</span><span class="p">)</span>
+
+<span class="c1"># Print the extracted peaks</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spectral peaks :&#39;</span><span class="p">,</span> <span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span>
+
+<span class="c1"># Create harmonic tuning</span>
+<span class="n">harm_tuning</span> <span class="o">=</span> <span class="n">harmonic_tuning</span><span class="p">(</span><span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">all_harmonics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">harm_tuning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of peaks : 4
+0.01108407974243164
+Spectral peaks : [ 8.  10.  15.5 17. ]
+[1.125, 1.1875, 1.25, 1.3125, 1.375, 1.40625, 1.5, 1.5625, 1.75, 1.8125, 1.875, 1.90625]
+</pre></div>
+</div>
+</div>
+</div>
+<section id="deriving-euclidian-rhythms-from-a-series-of-ratios">
+<h2>Deriving euclidian rhythms from a series of ratios<a class="headerlink" href="#deriving-euclidian-rhythms-from-a-series-of-ratios" title="Permalink to this headline">#</a></h2>
+<p>When mode = ‘normal’, the ratios are inverted and the numerator is taken as the number of pulses and the denominator as the number of steps (e.g. 3/2 -&gt; 2pulses/3steps).</p>
+<p>When mode = ‘full’, the ratios are inverted. The number of steps corresponds to num*denom and the numbers of pulses correspond to both the initial numerator and denominator (e.g. 3/2 -&gt; 3pulses/6steps and 2pulses/6steps)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">biotuner.rhythm_construction</span> <span class="kn">import</span> <span class="n">scale2euclid</span><span class="p">,</span> <span class="n">interval_vector</span><span class="p">,</span> <span class="n">euclid_string_to_referent</span><span class="p">,</span> <span class="n">interval_vec_to_string</span>
+<span class="kn">from</span> <span class="nn">biotuner.biotuner_utils</span> <span class="kn">import</span> <span class="n">scale2frac</span>
+<span class="kn">from</span> <span class="nn">biotuner.dictionaries</span> <span class="kn">import</span> <span class="n">dict_rhythms</span>
+
+<span class="c1"># Convert the tuning from ratios to fractions</span>
+<span class="n">harm_tuning_frac</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">harm_tuning</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tuning :&#39;</span><span class="p">,</span> <span class="n">harm_tuning_frac</span><span class="p">)</span>
+
+<span class="c1"># Derive euclidian rhythms from the harmonic tuning</span>
+<span class="n">euclid_patterns</span> <span class="o">=</span> <span class="n">scale2euclid</span><span class="p">(</span><span class="n">harm_tuning</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">10</span><span class="p">],</span> <span class="n">max_denom</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;normal&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Euclid patterns :&#39;</span><span class="p">,</span> <span class="n">euclid_patterns</span><span class="p">)</span>
+
+<span class="c1"># Compute interval vectors</span>
+<span class="n">interval_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval_vector</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">euclid_patterns</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interval vectors :&#39;</span><span class="p">,</span> <span class="n">interval_vectors</span><span class="p">)</span>
+
+<span class="c1"># Compare rhythms to referents</span>
+<span class="n">strings</span> <span class="o">=</span> <span class="n">interval_vec_to_string</span><span class="p">(</span><span class="n">interval_vectors</span><span class="p">)</span>
+<span class="n">euclid_referent</span> <span class="o">=</span> <span class="n">euclid_string_to_referent</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">dict_rhythms</span><span class="p">)</span>
+<span class="n">euclid_referent</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Tuning : [21/16, 11/8, 45/32, 3/2, 25/16, 7/4, 29/16]
+Euclid patterns : [[1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1], [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [1, 1, 0, 1, 1, 0, 1], [1, 1, 0], [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0]]
+Interval vectors : [[1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1], [1, 2, 1, 1, 2, 1, 1, 2], [1, 2, 1, 2, 1], [1, 2], [2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 2, 1], [2, 2, 2, 1], [2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2]]
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;None&#39;,
+ &#39;None&#39;,
+ &#39;It is the Nawakhat pattern, a popular Arabic rhythm. In Nubia it is called the Al Noht rhythm.&#39;,
+ &#39;A common Afro-Cuban drum pattern when started on the second onset as in [101]. For example, it is the conga rhythm of the (6/8)-time Swing Tumbao. It is common in Latin American music, as for example in the Cueca, and the coros de clave. It is common in Arabic music, as for example in the Al Taer rhythm of Nubia. It is also a rhythmic pattern of the Drum Dance of the Slavey Indians of Northern Canada&#39;,
+ &#39;None&#39;,
+ &#39;It is a Ruchenitza Bulgarian folk-dance rhythm.&#39;,
+ &#39;None&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="finding-consonant-euclidian-rhythms-from-a-set-of-frequency-ratios">
+<h2>Finding consonant euclidian rhythms from a set of frequency ratios<a class="headerlink" href="#finding-consonant-euclidian-rhythms-from-a-set-of-frequency-ratios" title="Permalink to this headline">#</a></h2>
+<p>‘consonant_euclid’ function derives euclidian rhythm from a set of consonant intervals.</p>
+<p>First, a set of denominators is defined by finding the common denominator of each pair of ratios (e.g. 3/5 and 4/7 give 5*7=35).</p>
+<p>The consonance is computed on each pairs of denominators to find harmonic subdivisions. Only the euclidian rhythms from consonant denominators (steps) are returned.</p>
+<p>The extracted rhythms are compared to a dictionary containing a large database of known rhythms and their origin and description.</p>
+<p>The</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">biotuner.rhythm_construction</span> <span class="kn">import</span> <span class="n">consonant_euclid</span><span class="p">,</span> <span class="n">interval_vec_to_string</span>
+
+<span class="c1"># Derive consonant euclidian rhythms from the harmonic tuning</span>
+<span class="n">euclid_final</span><span class="p">,</span> <span class="n">cons</span> <span class="o">=</span> <span class="n">consonant_euclid</span><span class="p">(</span><span class="n">harm_tuning</span><span class="p">,</span> <span class="n">n_steps_down</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">limit_denom</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
+                                      <span class="n">limit_cons</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">limit_denom_final</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Euclid patterns :&#39;</span><span class="p">,</span> <span class="n">euclid_final</span><span class="p">)</span>
+
+<span class="c1"># Compare rhythms to referents</span>
+<span class="n">interval_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval_vector</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">euclid_final</span><span class="p">]</span>
+<span class="n">strings</span> <span class="o">=</span> <span class="n">interval_vec_to_string</span><span class="p">(</span><span class="n">interval_vectors</span><span class="p">)</span>
+<span class="n">euclid_referent</span> <span class="o">=</span> <span class="n">euclid_string_to_referent</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">dict_rhythms</span><span class="p">)</span>
+<span class="n">euclid_referent</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\User\anaconda3\envs\biotuner\lib\fractions.py:612: RuntimeWarning: overflow encountered in longlong_scalars
+  self._denominator * other.numerator)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Euclid patterns : [[1, 0], [1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 0], [1, 0, 1, 0, 0], [1, 0, 1, 0, 1, 0], [1, 0, 1, 0, 1, 0, 0], [1, 0, 1, 0, 1, 0, 1], [1, 1, 0, 1, 1, 0, 1], [1, 1, 1, 1, 0]]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\User\anaconda3\envs\biotuner\lib\fractions.py:611: RuntimeWarning: overflow encountered in longlong_scalars
+  return op(self._numerator * other.denominator,
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;None&#39;,
+ &#39;None&#39;,
+ &#39;None&#39;,
+ &quot;A rhythm found in Greece, Namibia, Rwanda and Central Africa. It is also a 13th century Persian rhythm called Khafif-e-ramal, as well as the rhythm of the dance Makedonka from the FYROM. Tchaikovsky used it as the metric pattern in the second movement of his Symphony No. 6. Started on the second onset as in [10010] it is a rhythm found in Central Africa, Bulgaria, Turkey, Turkestan and Norway. It is also the metric pattern of Dave Brubeck&#39;s Take Five, as well as Mars from The Planets by Gustav Holst. Rotated as in [10010100100], it is a Serbian rhythmic pattern. When it is started on the fourth (last) onset it is the Daasa al kbiri rhythmic pattern of Yemen.&quot;,
+ &#39;None&#39;,
+ &quot;It is the Ruchenitza rhythm used in a Bulgarian folk-dance. It is also the metric pattern of Pink Floyd&#39;s Money.&quot;,
+ &#39;It is a Ruchenitza Bulgarian folk-dance rhythm.&#39;,
+ &#39;It is the Nawakhat pattern, a popular Arabic rhythm. In Nubia it is called the Al Noht rhythm.&#39;,
+ &#39;None&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-euclidean-biorhythms">
+<h2>Visualizing euclidean biorhythms<a class="headerlink" href="#visualizing-euclidean-biorhythms" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># variability of scales of integration for optimal brain homeostatic growth</span>
+<span class="kn">from</span> <span class="nn">biotuner.vizs</span> <span class="kn">import</span> <span class="n">visualize_rhythms</span><span class="p">,</span> <span class="n">find_optimal_offsets</span>
+
+<span class="n">euclid_rhythms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">euclid_final</span><span class="p">)):</span>
+    <span class="n">pulse</span> <span class="o">=</span> <span class="n">euclid_final</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">euclid_final</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">euclid_rhythms</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pulse</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
+<span class="n">visualize_rhythms</span><span class="p">(</span><span class="n">euclid_rhythms</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/203251cf8d988460f224070f477261244d66adc856e78da61b78d870306c9be1.png" src="../../_images/203251cf8d988460f224070f477261244d66adc856e78da61b78d870306c9be1.png" />
+</div>
+</div>
+</section>
+<section id="optimizing-rhythms-offset-to-increase-pulse-alignments">
+<h2>Optimizing rhythms offset to increase pulse alignments.<a class="headerlink" href="#optimizing-rhythms-offset-to-increase-pulse-alignments" title="Permalink to this headline">#</a></h2>
+<section id="simple-use-case">
+<h3>Simple use case<a class="headerlink" href="#simple-use-case" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pulses_steps</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">)]</span>
+<span class="n">pulses_steps</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">offsets</span> <span class="o">=</span> <span class="n">find_optimal_offsets</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Optimal offset values&#39;</span><span class="p">,</span> <span class="n">offsets</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOT OPTIMIZED&#39;</span><span class="p">)</span>
+<span class="n">visualize_rhythms</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">,</span> <span class="n">offsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+                  <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OPTIMIZED&#39;</span><span class="p">)</span>
+<span class="n">visualize_rhythms</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">plot_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+                  <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimal offset values [3, 4, 4]
+NOT OPTIMIZED
+</pre></div>
+</div>
+<img alt="../../_images/7dd229cb9f240fd5b0e258ee23fa3dd63f6559e07c02d16f180026075ae30126.png" src="../../_images/7dd229cb9f240fd5b0e258ee23fa3dd63f6559e07c02d16f180026075ae30126.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OPTIMIZED
+</pre></div>
+</div>
+<img alt="../../_images/ce11447f071bee0af4079691dcc6c4bdaf8bd0d0894da65d830ee9f681dbd9b8.png" src="../../_images/ce11447f071bee0af4079691dcc6c4bdaf8bd0d0894da65d830ee9f681dbd9b8.png" />
+</div>
+</div>
+</section>
+<section id="biotuning-use-case">
+<h3>Biotuning use case<a class="headerlink" href="#biotuning-use-case" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">offsets</span> <span class="o">=</span> <span class="n">find_optimal_offsets</span><span class="p">(</span><span class="n">euclid_rhythms</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">euclid_rhythms</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Optimal offset values&#39;</span><span class="p">,</span> <span class="n">offsets</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOT OPTIMIZED&#39;</span><span class="p">)</span>
+<span class="n">visualize_rhythms</span><span class="p">(</span><span class="n">euclid_rhythms</span><span class="p">,</span> <span class="n">offsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OPTIMIZED&#39;</span><span class="p">)</span>
+<span class="n">visualize_rhythms</span><span class="p">(</span><span class="n">euclid_rhythms</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(1, 2), (2, 6), (2, 7), (2, 5), (3, 6), (3, 7), (4, 7), (5, 7), (4, 5)]
+Optimal offset values [0, 0, 1, 1, 0, 1, 3, 2, 1]
+NOT OPTIMIZED
+</pre></div>
+</div>
+<img alt="../../_images/203251cf8d988460f224070f477261244d66adc856e78da61b78d870306c9be1.png" src="../../_images/203251cf8d988460f224070f477261244d66adc856e78da61b78d870306c9be1.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OPTIMIZED
+</pre></div>
+</div>
+<img alt="../../_images/52bcb30da9fae6c149a65e3059bcf82159b0753bc83b9542773eca0c0dc5b5d6.png" src="../../_images/52bcb30da9fae6c149a65e3059bcf82159b0753bc83b9542773eca0c0dc5b5d6.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../spectral_chords/spectral_chords.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Deriving spectral chords from biosignals</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../phase_amplitude_coupling/phase_amplitude_coupling.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Phase-Amplitude Coupling</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Antoine Bellemare & François Lespinasse. This documentation is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license.<br/>
+  
+      &copy; Copyright 2023–2024.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
