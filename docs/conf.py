@@ -138,3 +138,5 @@ latex_elements = {
 html_static_path = ["_static"]
 
 #sphinx-build -b html docs docs/_build/html
+
+#git push origin --delete docs_build

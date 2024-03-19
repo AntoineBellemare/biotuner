@@ -15,6 +15,7 @@ Science
    peaks_extraction/peaks_extraction
    harmonicity_metrics/harmonicity_metrics
    harmonic_spectrum/harmonic_spectrum
+   toolbox_paper_notebook/toolbox_paper_notebook
 
 Music
 ======
