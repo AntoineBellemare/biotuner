@@ -77,16 +77,16 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
     
     s = np.interp(data, (data.min(), data.max()), (0, +1))
     t = np.linspace(0, 1, len(data))
-    if method == "EMD":
-        eIMFs = EMD(extrema_detection=extrema_detection).emd(s, t)
-    if method == "EEMD":
-        eIMFs = EEMD(extrema_detection=extrema_detection).eemd(s, t)
+    #if method == "EMD":
+    #    eIMFs = EMD(extrema_detection=extrema_detection).emd(s, t)
+    #if method == "EEMD":
+    #    eIMFs = EEMD(extrema_detection=extrema_detection).eemd(s, t)
     if method == "CEEMDAN":
         eIMFs = CEEMDAN(extrema_detection=extrema_detection).ceemdan(s, t)
-    if method == "EMD_fast":
+    if method == "EMD":
         eIMFs = emd.sift.sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
-    if method == "EEMD_fast":
+    if method == "EEMD":
         eIMFs = emd.sift.ensemble_sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
     if graph is True:
@@ -279,7 +279,12 @@ def extract_welch_peaks(
     >>> peaks
     [1.5, 5.5, 9.0, 15.0, 22.5, 32.5]
     """
-   
+    # check if precision is larger than a band range
+    if FREQ_BANDS is not None:
+        if out_type == 'bands':
+            for minf, maxf in FREQ_BANDS:
+                if precision > (maxf - minf):
+                    raise ValueError("Precision is larger than a band range")
     if max_freq is None:
         max_freq = sf / 2
     if nperseg is None:

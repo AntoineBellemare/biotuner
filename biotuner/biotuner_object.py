@@ -138,11 +138,11 @@ class compute_biotuner(object):
                         Maximum values of the 1D Hilbert-Huang transform on each
                         IMF using EMD.
             'HH1D_FOOOF' :
-                        Hilbert-Huang transform on each IMF with Welch's method
+                        TODO. Hilbert-Huang transform on each IMF with Welch's method
                         'FOOOF' is applied to remove the aperiodic component and
                         find physiologically relevant spectral peaks.
             'SSA' : 
-                    Singular Spectrum Analysis. The name "singular spectrum
+                    TODO. Singular Spectrum Analysis. The name "singular spectrum
                     analysis" relates to the spectrum of eigenvalues in a singular
                     value decomposition of a covariance matrix.
 
@@ -239,8 +239,16 @@ class compute_biotuner(object):
     ):
         pygame_lib = None
         #Initializing data
-        if type(data) is not None:
+        if data is not None:
+            if type(data) == list:
+                data = np.array(data)
             self.data = data
+            # squeeze data if it is a 2D array
+            if len(self.data.shape) > 1:
+                self.data = np.squeeze(self.data)
+            # check if data is a 1D array
+            if len(self.data.shape) > 1:
+                raise ValueError("Data must be a 1D array")
         self.sf = sf
         #Initializing arguments for peak extraction
         self.peaks_function = peaks_function
@@ -377,14 +385,15 @@ class compute_biotuner(object):
 
         Attributes
         ----------
-        self.peaks: List (float)
-            List of frequency peaks
-        self.amps: List (float)
-            List of peaks amplitude
-        self.peaks_ratios: List (float)
-            List of ratios between all pairs of peaks
-        self.peaks_ratios_cons: List (float)
-            List of consonant peaks ratios
+        self.peaks: array (float)
+            1D array of peaks frequencies
+        self.amps: array (float)
+            1D array of peaks amplitudes
+        self.peaks_ratios: array (float)
+            1D array of peaks ratios
+        self.peaks_ratios_cons: array (float)
+            1D array of peaks ratios when more consonant than
+            scale_cons_limit parameter.
         .. note::
         The following attributes are only present if `ratios_extension = True`:
 
@@ -401,6 +410,8 @@ class compute_biotuner(object):
 
         if data is None:
             data = self.data
+        else:
+            self.data = data
         if sf is None:
             sf = self.sf
         if precision is None:
@@ -413,6 +424,40 @@ class compute_biotuner(object):
             scale_cons_limit = self.scale_cons_limit
         if ratios_n_harms is None:
             ratios_n_harms = self.ratios_n_harms
+
+        # check if data is empty array or list
+        if len(data) == 0:
+            raise ValueError("Data is empty")
+        # squeeze data if it is a 2D array
+        if len(data.shape) > 1:
+            data = np.squeeze(data)
+        # check if data is a 1D array
+        if len(data.shape) > 1:
+            raise ValueError("Data must be a 1D array")
+        if type(data) == list:
+            data = np.array(data)
+            
+        # ensure peaks_function is in the list of available peaks functions
+        peaks_functions = [
+            "fixed",
+            "adapt",
+            "FOOOF",
+            "EMD",
+            "EEMD",
+            "EMD_FOOOF",
+            "CEEMDAN",
+            "HH1D_max",
+            "cepstrum",
+            "harmonic_recurrence",
+            "bicoherence",
+            "PAC",
+            "EIMC",
+        ]
+        if peaks_function not in peaks_functions:
+            raise ValueError(
+                "peaks_function must be one of {}".format(peaks_functions)
+            )
+            
         self.octave = octave
         self.nIMFs = nIMFs
         self.compute_sub_ratios = compute_sub_ratios
@@ -442,7 +487,7 @@ class compute_biotuner(object):
         if verbose is True:
             print('Number of peaks : {}'.format(len(peaks)))
         if len(peaks) == 0:
-            print('No peak detected')
+            raise ValueError('No peak detected')
         self.peaks = peaks
         self.amps = amps
         #print("Number of peaks: ", len(peaks))
@@ -757,7 +802,7 @@ class compute_biotuner(object):
             method=method,
             limit=limit_cons,
             min_notes=min_notes,
-            graph=False,
+            graph=graph,
             n_harm=self.n_harm,
             delta_lim=delta_lim,
             )
@@ -765,20 +810,19 @@ class compute_biotuner(object):
         if graph is True:
             plt.clf()
             if len(self.spectro_chords) > 0:
-                data = np.moveaxis(self.spectro_EMD, 0, 1)
-                ax = sbn.lineplot(data=data[10:-10, :], dashes=False)
+                ax = sbn.lineplot(data=tr_harm, dashes=False)
                 ax.set(xlabel="Time Windows", ylabel=method)
                 ax.set_ylabel(method)
-                if method == "SpectralCentroid":
-                    ax.set_yscale("log")
-                plt.legend(
-                    scatterpoints=1,
-                    frameon=True,
-                    labelspacing=1,
-                    title="EMDs",
-                    loc="best",
-                    labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"],
-                )
+                #if method == "SpectralCentroid":
+                #    ax.set_yscale("log")
+                # plt.legend(
+                #     scatterpoints=1,
+                #     frameon=True,
+                #     labelspacing=1,
+                #     title="EMDs",
+                #     loc="best",
+                #     labels=["EMD1", "EMD2", "EMD3", "EMD4", "EMD5"],
+                # )
                 plt.show()
         self.time_resolved_harmonicity = tr_harm
         return self.time_resolved_harmonicity, self.spectro_chords, spectro_chord_pos
@@ -1562,7 +1606,7 @@ class compute_biotuner(object):
             nIMFs = self.nIMFs
         if FREQ_BANDS is None:
             FREQ_BANDS = [
-                [2, 3.55],
+                [1, 3.55],
                 [3.55, 7.15],
                 [7.15, 14.3],
                 [14.3, 28.55],
@@ -1656,8 +1700,9 @@ class compute_biotuner(object):
         if (
             peaks_function == "EMD"
             or peaks_function == "EEMD"
-            or peaks_function == "EMD_fast"
-            or peaks_function == "EEMD_fast"
+            or peaks_function == "CEEMDAN"
+            #or peaks_function == "EMD_fast"
+            #or peaks_function == "EEMD_fast"
         ):
             IMFs = EMD_eeg(
                 data,
@@ -1704,7 +1749,7 @@ class compute_biotuner(object):
                                                                 data,
                                                                 sf=sf,
                                                                 FREQ_BANDS=FREQ_BANDS,
-                                                                out_type="bands",
+                                                                out_type="single",
                                                                 precision=precision,
                                                                 average=average,
                                                                 extended_returns=True,
@@ -1746,7 +1791,7 @@ class compute_biotuner(object):
             nfft = sf / precision
             nperseg = sf / precision
             IMFs = EMD_eeg(
-                data, method="EMD_fast", graph=graph, extrema_detection="simple"
+                data, method="EMD", graph=graph, extrema_detection="simple"
             )[1: nIMFs + 1]
             self.IMFs = IMFs
             peaks_temp = []
@@ -1973,6 +2018,11 @@ class compute_biotuner(object):
         peaks = np.array(peaks_temp)
         peaks = np.around(peaks, 3)
         amps = np.array(amps_temp)
+        # ensure no peaks are above max_freq
+        peaks_idx = np.where(np.array(peaks) <= max_freq)[0]
+        peaks = np.array(peaks)[peaks_idx]
+        if peaks_function != 'PAC' and peaks_function != 'bicoherence':
+            amps = np.array(amps)[peaks_idx]
         return peaks, amps
 
     def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,

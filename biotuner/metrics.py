@@ -934,7 +934,7 @@ def consonant_ratios(data,
     cons_ratios = np.sort(list(set(ratios2keep)))
     consonance = np.array(consonance_)
     consonance = [i for i in consonance if i]
-    return cons_ratios, consonance
+    return np.array(cons_ratios), consonance
 
 
 def consonance_peaks(peaks, limit, limit_pairs=True):
