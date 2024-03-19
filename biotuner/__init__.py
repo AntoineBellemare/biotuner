@@ -13,7 +13,7 @@ __author__ = "The Biotuner development team"
 __email__ = "antoine.bellemare9@gmail.com"
 
 # Version info
-__version__ = "0.0.1"
+__version__ = "0.0.10"
 
 def version(silent=False):
     """Biotuner's version.
