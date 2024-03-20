@@ -9,7 +9,7 @@
   <a href="https://pypi.org/project/biotuner/">
     <img alt="PyPI" src="https://img.shields.io/pypi/v/biotuner">
   </a>
-
+  
   <a href="https://antoinebellemare.github.io/biotuner/">
     <img alt="Documentation" src="https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fantoinebellemare.github.io%2Fbiotuner%2F">
   </a>
