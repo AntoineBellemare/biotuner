@@ -17,7 +17,7 @@ from scipy.fftpack import rfft, irfft
 from scipy.signal import welch
 from scipy.optimize import curve_fit
 from scipy.signal import butter, lfilter
-from dictionaries import interval_catalog
+from biotuner.dictionaries import interval_catalog
 import os
 os.environ['SDL_AUDIODRIVER'] = 'directsound'
 
