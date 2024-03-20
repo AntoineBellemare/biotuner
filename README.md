@@ -5,6 +5,24 @@
 <h1 align="center">Biotuner</h1>
 <h3 align="center"> Python toolbox that incorporates tools from biological signal processing and musical theory to extract harmonic structures from biosignals. </h3>
 
+<p align="center">
+  <a href="https://pypi.org/project/biotuner/">
+    <img alt="PyPI" src="https://img.shields.io/pypi/v/biotuner">
+  </a>
+  
+  <a href="https://antoinebellemare.github.io/biotuner/">
+    <img alt="Documentation" src="https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fantoinebellemare.github.io%2Fbiotuner%2F">
+  </a>
+  
+  <a href="https://github.com/AntoineBellemare/biotuner/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/AntoineBellemare/biotuner">
+  </a>
+  
+  <a href="https://github.com/AntoineBellemare/biotuner/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/AntoineBellemare/biotuner?style=social">
+  </a>
+</p>
+
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
 
 # Installation
