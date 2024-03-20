@@ -1,13 +1,9 @@
 #!bin/bash
 import numpy as np
 import matplotlib.pyplot as plt
-import pytuning
 import pyACA
-from pytuning import *
-import scipy.signal
 import sympy as sp
 import functools
-import contfrac
 import itertools
 import operator
 import sys
@@ -18,20 +14,15 @@ from functools import reduce
 import math
 from collections import Counter
 from scipy.fftpack import rfft, irfft
-from scipy.signal import detrend, welch, find_peaks, stft
+from scipy.signal import welch
 from scipy.optimize import curve_fit
-from pytuning.tuning_tables import create_scala_tuning
+from scipy.signal import butter, lfilter
+from dictionaries import interval_catalog
 import os
 os.environ['SDL_AUDIODRIVER'] = 'directsound'
-try:
-    from pyunicorn.timeseries.surrogates import *
-    from pyunicorn.timeseries import RecurrenceNetwork
-except ModuleNotFoundError:
-    pass
-try:
-    from scipy.signal import butter, lfilter
-except ModuleNotFoundError:
-    pass
+
+
+
 sys.setrecursionlimit(120000)
 
 
@@ -390,6 +381,19 @@ def ratios2cents (ratios):
     return cents
 
 
+def ratio_to_name(ratio):
+    '''
+    Convert a scale degree to a name
+    
+    :param ratio: The input scale degree (a ``sympy`` value)
+    :returns: The degree name if found, ``None`` otherwise
+    '''
+    entries = [x[0] for x in interval_catalog if x[1] == ratio]
+    if len(entries) == 0:
+        return None
+    else:
+        return entries[0]
+    
 """---------------------------LIST MANIPULATION--------------------------"""
 
 
@@ -1410,21 +1414,37 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
 
 """-----------------------------OTHERS----------------------------------"""
 
+def create_SCL(scale, name):
+    '''
+    Create a Scala scale file
 
-def create_SCL(scale, fname):
-    """Save a scale to .scl file.
+    :param scale: The scale (list of frequency ratios)
+    :param name: The name of the scale
+    :returns: A Scala file as a ``String``
 
-    Parameters
-    ----------
-    scale : list
-        List of scale steps.
-    fname : str
-        Name of the saved file.
+    The Scala file can be used to tune various things, most
+    germane being Yoshimi. However, keep in mind that the Scala
+    file does **not** include a base note or frequency, so for tuning
+    purposes those data will need to be captured or input in
+    some other way.
 
-    """
-    table = create_scala_tuning(scale, fname)
-    outF = open(fname + ".scl", "w")
-    outF.writelines(table)
+    '''
+    output = "! Scale produced by Biotuner. For tuning yoshimi or zynaddsubfx,\n! only include the portion below the final '!'"
+    output = output + "\n!"
+    output = output + "\n%s" % name
+    output = output + "\n%3d" % (len(scale) - 1)
+    output = output + "\n!"
+    for degree in scale[1:]:
+        if isinstance(degree, sp.Rational) and isinstance(sp.fraction(degree)[0], sp.Integer) \
+                and isinstance(sp.fraction(degree)[1], sp.Integer):
+            representation = "%s" % degree
+        elif isinstance(degree, sp.Integer) or type(degree) == 1:
+            representation = "%s/1" % degree
+        else:
+            representation = "%0.5f" % ratios2cents([degree])[0]
+        output = output + "\n%s" % representation
+    outF = open(name + ".scl", "w")
+    outF.writelines(output)
     outF.close()
     return
 
@@ -1456,13 +1476,35 @@ def scale_interval_names(scale, reduce=False):
         pass
     interval_names = []
     for step in scale:
-        name = pytuning.utilities.ratio_to_name(step)
+        name = ratio_to_name(step)
         if reduce is True and name is not None:
             interval_names.append([step, name])
         if reduce is False:
             interval_names.append([step, name])
     return interval_names
 
+def distinct_intervals(scale):
+    '''    
+    Find the distinct intervals in a scale, including inversions
+    
+    :param scale: The scale to analyze
+    :returns: A list of distinct intervals
+    
+    The scale should be specified as a list of ``sympy`` numerical
+    values (``Rational`` or ``Integer``). Note that the convention adopted
+    in this code is that scale[0] is a unison and scale[-1] is
+    the formal octave (often 2).
+            
+    '''
+    base = scale[-1] # the formal octave
+    # Make the scale span two octaves to get inversions
+    temp_scale = scale + [x*sp.Integer(base) for x in scale]
+    pairs = [x for x in itertools.combinations(temp_scale,2)]
+    #intervals = sorted(list(set(map(lambda x: x[1]/x[0], pairs))))
+    intervals = list(set(map(lambda x: x[1]/x[0], pairs)))
+    intervals = filter (lambda x: x < 2, intervals)
+    intervals = filter (lambda x: x != 1, intervals)
+    return [x for x in intervals]
 
 def calculate_pvalues(df, method='pearson'):
     """Calculate the correlation between each column of a DataFrame.

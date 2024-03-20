@@ -1,6 +1,5 @@
 from fooof import FOOOF
 import scipy.signal
-from pytuning import create_euler_fokker_scale
 import matplotlib.pyplot as plt
 from itertools import combinations
 import emd
@@ -59,7 +58,8 @@ from biotuner.peaks_extension import (
 from biotuner.scale_construction import (
     diss_curve,
     harmonic_entropy,
-    harmonic_tuning
+    harmonic_tuning,
+    euler_fokker_scale
 )
 from biotuner.rhythm_construction import (
     scale2euclid,
@@ -1188,8 +1188,7 @@ class compute_biotuner(object):
         if method == "extended_peaks":
             intervals = self.extended_peaks
         intervals = prime_factor([int(x) for x in intervals])
-        multiplicities = [1 for x in intervals]  # Each factor is used once.
-        scale = create_euler_fokker_scale(intervals, multiplicities, octave=octave)
+        scale = euler_fokker_scale(intervals, n=1, octave=octave)
         self.euler_fokker = scale
         return scale
 
