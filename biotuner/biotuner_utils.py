@@ -202,8 +202,10 @@ def chords_to_ratios(chords, harm_limit=2, spread=True):
 
     Returns
     -------
-    type
-        Description of returned object.
+    chords_ratios : List of lists
+        List of chords expressed as integer ratios.
+    chords_ratios_bounded : List of lists
+        List of chords expressed as integer ratios and bounded between 1 and 2.
 
     """
     chords_ratios = []
@@ -362,7 +364,7 @@ def ratios_increments(ratios, n_inc=1):
     return ratios_harms
 
 def ratios2cents (ratios):
-    """_summary_
+    """Converts a list of frequency ratios to cents.
 
     Parameters
     ----------
@@ -383,10 +385,17 @@ def ratios2cents (ratios):
 
 def ratio_to_name(ratio):
     '''
-    Convert a scale degree to a name
+    This function returns the name of a ratio in the form of a fraction
     
-    :param ratio: The input scale degree (a ``sympy`` value)
-    :returns: The degree name if found, ``None`` otherwise
+    Parameters
+    ----------
+    ratio : float
+        Frequency ratio
+    
+    Returns
+    -------
+    name : str
+        Name of the ratio
     '''
     entries = [x[0] for x in interval_catalog if x[1] == ratio]
     if len(entries) == 0:
@@ -972,6 +981,16 @@ def correlated_noise_surrogates(original_data):
     then applying an inverse Fourier transform. Correlated noise surrogates
     share their power spectrum and autocorrelation function with the
     original_data time series.
+    
+    Parameters
+    ----------
+    original_data : 2D array (data, index)
+        The original time series.
+    
+    Returns
+    -------
+    surrogates : 2D array (surrogate, index)
+        Surrogates of the original time series.
 
     .. note::
        The amplitudes are not adjusted here, i.e., the
@@ -1166,6 +1185,34 @@ def EMD_to_spectromorph(
 def generate_signal(
     sf, time_end, freqs, amps, show=False, theta=0, color="blue"
      ):
+    """
+    Generate a composite signal consisting of multiple sine waves.
+
+    Parameters
+    ----------
+    sf : int
+        Sampling frequency.
+    time_end : float
+        Duration of the signal in seconds.
+    freqs : List
+        List of frequencies.
+    amps : List
+        List of amplitudes.
+    show : bool
+        Defaults to False.
+        If True, plot the signal.
+    theta : int
+        Defaults to 0.
+        Phase of the sine wave.
+    color : str
+        Defaults to 'blue'.
+        Color of the plot.
+        
+    Returns
+    -------
+    sine_tot : array (numDataPoints,)
+        Composite signal.
+    """
     time = np.arange(0, time_end, 1 / sf)
     sine_tot = []
     for i in range(len(freqs)):
@@ -1188,18 +1235,25 @@ def smooth(x, window_len=11, window="hanning"):
     (with the window size) in both ends so that transient parts are minimized
     in the begining and end part of the output signal.
 
-    input:
-        x: the input signal
-        window_len: dimension of the smoothing window; should be an odd integer
-        window: type of window
-                {'flat', 'hanning', 'hamming', 'bartlett', 'blackman'}
-                flat window will produce a moving average smoothing.
+    Parameters
+    ----------
+    x : array
+        The input signal.
+    window_len : int
+        The dimension of the smoothing window; should be an odd integer.
+    window : str
+        Type of window.
+        {'flat', 'hanning', 'hamming', 'bartlett', 'blackman'}
+        flat window will produce a moving average smoothing.
 
-    output:
-        the smoothed signal
+    Returns
+    -------
+    y : array
+        The smoothed signal.
 
-    NOTE: length(output) != length(input), to correct this:
-          return y[(window_len/2-1):-(window_len/2)] instead of just y.
+    .. note::
+        length(output) != length(input), to correct this:
+        return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
     s = np.r_[x[window_len - 1:0:-1], x, x[-2:-window_len - 1:-1]]
     if window == "flat":  # moving average
@@ -1339,25 +1393,33 @@ import mido
 from mido import Message, MidiFile, MidiTrack
 import math
 
-def create_midi(chords, durations, microtonal=True, filename='example'):
+def create_midi(chords, durations, subdivision=1, microtonal=True, filename='example'):
     """
     Creates a MIDI file from a given set of chords and durations.
-    Args:
-        chords (list): List of chords, where each chord is a list of frequencies.
-        durations (list): List of durations (in beats) for each chord.
-        microtonal (bool): Indicates whether to include microtonal pitch bends (default: True).
-        filename (str): Name of the output MIDI file (default: 'example').
-    Returns:
-        mid (MidiFile): The created MIDI file object.
+    The microtonal parameter allows for pitch bends to be included
+    and relies on multiple notes being played simultaneously on different channels.
+    
+    Parameters:
+    ----------
+    chords : list
+        List of chords, where each chord is a list of frequencies.
+    durations : list
+        List of durations (in beats) for each chord.
+    subdivision : int
+        Number of subdivisions per beat (default: 1).
+    microtonal : bool
+        Indicates whether to include microtonal pitch bends (default: True).
+    filename : str
+        Name of the output MIDI file (default: 'example').
+        
+    Returns
+    -------
+    mid : MidiFile
+        The MIDI file.
     """
     # Create a new MIDI file
     mid = MidiFile()
-
-    # Set the tempo
-    track = MidiTrack()
-    track.append(Message('control_change', control=81, value=120))
-    mid.tracks.append(track)
-
+    
     def frequency_to_midi(chords):
         midi_chords = []
         midi_pitchbends = []
@@ -1392,8 +1454,10 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
     for track in tracks:
         mid.tracks.append(track)
 
+    ticks_per_beat = mid.ticks_per_beat
+    ticks_per_beat = int(ticks_per_beat/(1/subdivision))
+    
     # Iterate through the chords and durations
-    current_time = 0
     for chord, duration, pitchbend in zip(midi_chords, durations, pitchbends):
         for i, (note, pb) in enumerate(zip(chord, pitchbend)):
             track = tracks[i]
@@ -1401,12 +1465,11 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
             # Add a pitch bend message for each note in the chord
             if microtonal is True:
                 #print('pitchweel', pb)
-                track.append(Message('pitchwheel', pitch=pb, channel=i, time=current_time))
+                track.append(Message('pitchwheel', pitch=pb, channel=i, time=1))
 
-            track.append(Message('note_on', note=note, velocity=64, channel=i, time=current_time))
-            track.append(Message('note_off', note=note, velocity=64, channel=i, time=current_time+(duration*480)))
-        current_time = current_time + (duration * 480)
-
+            track.append(Message('note_on', note=note, velocity=64, channel=i, time=1))
+            track.append(Message('note_off', note=note, velocity=64, channel=i, time=int(duration*ticks_per_beat)))
+    
     # Save the MIDI file
     mid.save(str(filename)+'.mid')
     return mid
@@ -1415,20 +1478,26 @@ def create_midi(chords, durations, microtonal=True, filename='example'):
 """-----------------------------OTHERS----------------------------------"""
 
 def create_SCL(scale, name):
-    '''
-    Create a Scala scale file
-
-    :param scale: The scale (list of frequency ratios)
-    :param name: The name of the scale
-    :returns: A Scala file as a ``String``
-
+    """
+    Create a Scala scale file.
     The Scala file can be used to tune various things, most
     germane being Yoshimi. However, keep in mind that the Scala
-    file does **not** include a base note or frequency, so for tuning
+    file does not include a base note or frequency, so for tuning
     purposes those data will need to be captured or input in
     some other way.
 
-    '''
+    Parameters:
+    ----------
+    scale : list
+        The scale (list of frequency ratios)
+    name : str
+        The name of the scale
+
+    Returns:
+    -------
+    output : str
+        A Scala file as a string
+    """
     output = "! Scale produced by Biotuner. For tuning yoshimi or zynaddsubfx,\n! only include the portion below the final '!'"
     output = output + "\n!"
     output = output + "\n%s" % name
@@ -1484,18 +1553,25 @@ def scale_interval_names(scale, reduce=False):
     return interval_names
 
 def distinct_intervals(scale):
-    '''    
+    """
     Find the distinct intervals in a scale, including inversions
     
-    :param scale: The scale to analyze
-    :returns: A list of distinct intervals
+    Parameters
+    ----------
+    scale : list
+        List of scale steps either in float or fraction form.
+        
+    Returns
+    -------
+    intervals : list
+        List of distinct intervals.
     
-    The scale should be specified as a list of ``sympy`` numerical
-    values (``Rational`` or ``Integer``). Note that the convention adopted
-    in this code is that scale[0] is a unison and scale[-1] is
-    the formal octave (often 2).
-            
-    '''
+    Notes
+    -----
+    The scale should be specified as a list of numerical values.
+    Note that the convention adopted in this code is that scale[0]
+    is a unison and scale[-1] is the formal octave (often 2).
+    """
     base = scale[-1] # the formal octave
     # Make the scale span two octaves to get inversions
     temp_scale = scale + [x*sp.Integer(base) for x in scale]

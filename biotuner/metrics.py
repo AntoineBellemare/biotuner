@@ -233,20 +233,32 @@ def peaks_to_harmsim(peaks):
         ratios = compute_peak_ratios(peaks)
         return ratios2harmsim(ratios)
     
-    
+
+"""TUNING METRICS"""
+
+
+
 def sum_p_q(scale):
     '''    
-    Calculate a metric for a scale
-    
-    :param scale: The scale.
-    :returns: A ``dict`` with the metric value.
-    
+    Calculate a metric for a scale.
     This is an estimate of scale consonance. It is derived 
     from summing the numerators and denominators of the 
     scale degrees. 
     
     Smaller values are more consonant.
     
+    Parameters
+    ----------
+    scale : List
+        The scale.
+        
+    Returns
+    -------
+    dict
+        A dictionary with the metric value.
+    
+    Notes
+    -----
     Note that this metric looks at the degrees of the scale, so it is somewhat
     tonic-focused. The similar metric ``sum_p_q_for_all_intervals()`` is similar, 
     but it sums the numerator and denominator values for all distinct intervals within
@@ -256,58 +268,64 @@ def sum_p_q(scale):
     transcendental numbers, it is really only meaningful for scales with just
     degrees (ratios expressed as rational numbers).
     
-    .. code:: python
-        
-        sum_p_q(create_pythagorean_scale())
-        
-    yields:
-        
-    .. code:: python
-        
-        {'sum_p_q': 3138}
+    Examples
+    --------
+    >>> sum_p_q(create_pythagorean_scale())
+    {'sum_p_q': 3138}
         
     '''
     return {"sum_p_q": int(sum(map (lambda x: sum(list(sp.fraction(x))), scale)))}
 
+
 def sum_distinct_intervals(scale):
     '''    
-    Calculate a metric for a scale
-    
-    :param scale: The scale.
-    :returns: A ``dict`` with the metric value.
-        
+    Calculate a metric for a scale.
     This metric is an estimate of scale consonance. Numerically
     it is the number of distinct intervals within the
     scale (including all ratios and their inversions).
-    
     Smaller values are more consonant.
     
-    .. code:: python
+    Parameters
+    ----------
+    scale : List
+        The scale.
+        
+    Returns
+    -------
+    dict
+        A dictionary with the metric value.
     
-        sum_distinct_intervals(create_pythagorean_scale())
-    
-    yields:
-    
-    .. code:: python
-    
-        {'sum_distinct_intervals': 22}
+    Examples
+    --------
+    >>> sum_distinct_intervals(create_pythagorean_scale())
+    {'sum_distinct_intervals': 22}
     '''
     return {"sum_distinct_intervals": len(distinct_intervals(scale))}
+
 
 def metric_3(scale):
     '''    
     Calculate a metric for a scale
     
-    :param scale: The scale.
-    :returns: A ``dict`` with the metric value.
+    Parameters
+    ----------
+    scale : List
+        The scale.
+        
+    Returns
+    -------
+    dict
+        A dictionary with the metric value.
     
+    Notes
+    -----
     Metric 3 is an estimate of scale consonance. Given a
     ratio p/q, it is a heuristic given by the following:
     
     .. math::
     
         \\begin{align}
-        m_3 &= \\sum{\\frac{1}{\\frac{p-q}{q}}}
+        m_3 &= \\sum{\\frac{1}{\\frac{p-q}{q}}} \\
         &= \\sum{\\frac{q}{p-q}}
         \\end{align}
     
@@ -328,9 +346,18 @@ def sum_p_q_for_all_intervals(scale):
     '''    
     Calculate a metric for a scale
     
-    :param scale: The scale (i.e., a list of ``sympy.Rational`` values)
-    :returns: The metric.
+    Parameters
+    ----------
+    scale : List
+        The scale.
+        
+    Returns
+    -------
+    dict
+        A dictionary with the metric value.
     
+    Notes
+    -----
     This metric is an estimate of scale consonance. It is formed by examining
     all unique intervals in the scale, and creating a numeric value based upon
     the summation of the numerators and denominators for all those intervals.
@@ -352,10 +379,19 @@ def sum_q_for_all_intervals(scale):
     '''    
     Calculate a metric for a scale.
     
-    :param scale: The scale (i.e., a list of ``Rational`` s)
-    :returns: The metric.
+    Parameters
+    ----------
+    scale : List
+        The scale.
     
-    Metric 5 is an estimate of scale consonance. It is summation
+    Returns
+    -------
+    dict
+        A dictionary with the metric value.
+    
+    Notes
+    -----
+    This metric is an estimate of scale consonance. It is summation
     of the denominators of the normalized distinct ratios
     of the scale.
     
@@ -365,9 +401,6 @@ def sum_q_for_all_intervals(scale):
         for x in distinct_intervals(scale)])
     
     return {"sum_q_for_all_intervals": m5}
-
-"""TUNING METRICS"""
-
 
 def ratios2harmsim(ratios):
     """

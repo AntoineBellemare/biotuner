@@ -18,7 +18,7 @@ from scipy.stats import ttest_ind
 
 def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
                                n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
-                               smoothness_harm=1, save=False, savename='', phase_mode=None, harm_phase_norm=True,
+                               smoothness_harm=1, save=False, savename='', phase_mode=None, normalize=True,
                                return_fig=False):
     """
     Compute global harmonicity, phase coupling, and resonance spectrum from a signal.
@@ -68,7 +68,7 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         Name for the saved plot file.
     phase_mode : str, default=None
         Method for weighting phase coupling computation. Options are 'weighted' and 'None'.
-    harm_phase_norm : bool, default=True
+    normalize : bool, default=True
         If True, normalize the harmonicity and phase coupling values
         by dividing by the total power.
 
@@ -89,14 +89,18 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
     psd_clean = (psd_clean - psd_min) / (psd_max - psd_min)
     
     # Get phase matrix
-    phase_matrix = compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness)
+    phase_vector = compute_phase_values(signal, precision_hz, fs, noverlap, smoothness)
 
     # Compute dyad similarities and phase couplings
-    dyad_similarities, phase_coupling_matrix = compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, metric, n_harms, delta_lim, min_notes=min_notes)
+    harmonicity_matrix = harmonicity_matrices(freqs, metric, n_harms, delta_lim, min_notes=min_notes)
+    phase_coupling_matrix = PLV_comod(phase_vector)
     
     # Compute harmonicity and phase coupling values
-    harmonicity_values, phase_coupling_values = compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, phase_mode,
-                                                                                                     harm_phase_norm=harm_phase_norm)
+    phase_coupling_values = compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, psd_weight=phase_mode,
+                                                                                                     normalize=normalize)
+    
+    harmonicity_values, harmonicity_matrix = compute_harmonic_power(freqs, harmonicity_matrix, psd_clean,
+                                                                                                     normalize=normalize)
     # apply smoothing to harmonicity values
     #print(phase_coupling_values)
     harmonicity_values = gaussian_filter(harmonicity_values, smoothness_harm)
@@ -239,9 +243,9 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         return df, fig
     else:
         plt.show()
-        return df
+        return df, harmonicity_matrix
 
-def compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness):
+def compute_phase_values(signal, precision_hz, fs, noverlap, smoothness):
     '''
     Compute the phase matrix of a signal using the Short-Time Fourier Transform (STFT).
     
@@ -268,17 +272,14 @@ def compute_phase_matrix(signal, precision_hz, fs, noverlap, smoothness):
     return np.angle(Zxx)
 
 
-def compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, metric='harmsim', n_harms=5, delta_lim=150, min_notes=2):
+def harmonicity_matrices(freqs, metric='harmsim', n_harms=5, delta_lim=150, min_notes=2):
     '''
-    Compute dyad similarities and the phase coupling matrix of frequencies.
-    The phase coupling metric is the Phase Locking Value.
+    Compute harmonicity matrix of frequencies.
 
     Parameters
     ----------
     freqs : ndarray
         Array of frequencies.
-    phase_matrix : ndarray
-        The phase matrix of the signal.
     metric : str, optional
         The metric to compute dyad similarity. Default is 'harmsim'.
     n_harms : int, optional
@@ -304,14 +305,33 @@ def compute_dyad_similarities_and_phase_coupling_matrix(freqs, phase_matrix, met
                 if metric == 'subharm_tension':
                     _, _, subharm, _ = compute_subharmonic_tension([f1, f2], n_harmonics=n_harms, delta_lim=delta_lim, min_notes=min_notes)
                     harmonicity[i, j] = 1-subharm[0]
+    return harmonicity
 
-                phase_diff = np.abs(phase_matrix[i] - phase_matrix[j])
-                phase_coupling_matrix[i, j] = np.abs(np.mean(np.exp(1j * phase_diff), axis=-1))
-    return harmonicity, phase_coupling_matrix
+def PLV_comod(phase):
+    '''
+    Compute the phase coupling matrix of frequencies.
+    The phase coupling metric is the Phase Locking Value.
+
+    Parameters
+    ----------
+    phase: ndarray
+        The phase vector of fft.
+
+    Returns
+    -------
+    tuple of ndarrays
+        The harmonicity and the phase coupling matrix.
+    '''
+    phase_coupling_matrix = np.zeros((len(phase), len(phase)))
+    for i, f1 in enumerate(phase):
+        for j, f2 in enumerate(phase):
+            phase_diff = np.abs(phase[i] - phase[j])
+            phase_coupling_matrix[i, j] = np.abs(np.mean(np.exp(1j * phase_diff), axis=-1))
+    return phase_coupling_matrix
 
 
-def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similarities, phase_coupling_matrix, psd_clean, psd_mode=None,
-                                                         harm_phase_norm=True):
+
+def compute_harmonic_power(freqs, dyad_similarities, psd_clean, normalize=True):
     '''
     Compute harmonicity values and phase coupling values for each frequency.
 
@@ -321,14 +341,10 @@ def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similaritie
         Array of frequencies.
     dyad_similarities : ndarray
         Dyad similarities matrix.
-    phase_coupling_matrix : ndarray
-        The phase coupling matrix.
     psd_clean : ndarray
         The cleaned Power Spectral Density (PSD).
-    phase_matrix : ndarray
-        The phase matrix of the signal.
-    harm_phase_norm : bool, default=True
-        If True, normalize the harmonicity and phase coupling values
+    normalize : bool, default=True
+        If True, normalize the harmonicity values
         by dividing by the total power.
 
     Returns
@@ -337,28 +353,62 @@ def compute_harmonicity_values_and_phase_coupling_values(freqs, dyad_similaritie
         The harmonicity values and the phase coupling values.
     '''
     harmonicity_values = np.zeros(len(freqs))
-    phase_coupling_values = np.zeros(len(freqs))
     total_power = np.sum(psd_clean)
-
+    harmonicity_matrix = np.zeros((len(freqs), len(freqs)))
     for i in range(len(freqs)):
         weighted_sum_harmonicity = 0
-        weighted_sum_phase_coupling = 0
         for j in range(len(freqs)):
             if i != j:
                 weighted_sum_harmonicity += dyad_similarities[i, j] * (psd_clean[i] * psd_clean[j])
-                if psd_mode == 'weighted':
+                harmonicity_matrix[i, j] = (dyad_similarities[i, j] * (psd_clean[i] * psd_clean[j]))/total_power         
+        if normalize is True:
+            harmonicity_values[i] = weighted_sum_harmonicity / (2 * total_power)
+        if normalize is False:        
+            harmonicity_values[i] = weighted_sum_harmonicity
+    ##print(phase_coupling_values)
+    return harmonicity_values, harmonicity_matrix
+
+def compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, psd_weight=True,
+                                                         normalize=True):
+    '''
+    Compute harmonicity values and phase coupling values for each frequency.
+
+    Parameters
+    ----------
+    freqs : ndarray
+        Array of frequencies.
+    phase_coupling_matrix : ndarray
+        The phase coupling matrix.
+    psd_clean : ndarray
+        The cleaned Power Spectral Density (PSD).
+    phase_matrix : ndarray
+        The phase matrix of the signal.
+    normalize : bool, default=True
+        If True, normalize the phase coupling values
+        by dividing by the total power.
+
+    Returns
+    -------
+    tuple of ndarrays
+        The harmonicity values and the phase coupling values.
+    '''
+    phase_coupling_values = np.zeros(len(freqs))
+    total_power = np.sum(psd_clean)
+    for i in range(len(freqs)):
+        weighted_sum_phase_coupling = 0
+        for j in range(len(freqs)):
+            if i != j:
+                if psd_weight == 'weighted':
                     weighted_sum_phase_coupling += phase_coupling_matrix[i, j] * (psd_clean[i] * psd_clean[j])
                 else:
                     weighted_sum_phase_coupling += phase_coupling_matrix[i, j]
                 
-        if harm_phase_norm is True:
-            harmonicity_values[i] = weighted_sum_harmonicity / (2 * total_power)
+        if normalize is True:
             phase_coupling_values[i] = weighted_sum_phase_coupling / (2 * total_power)
-        if harm_phase_norm is False:        
-            harmonicity_values[i] = weighted_sum_harmonicity
+        if normalize is False:        
             phase_coupling_values[i] = weighted_sum_phase_coupling
     ##print(phase_coupling_values)
-    return harmonicity_values, phase_coupling_values
+    return phase_coupling_values
 
 
 def compute_resonance_values(harmonicity_values, phase_coupling_values):

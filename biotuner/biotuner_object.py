@@ -425,6 +425,9 @@ class compute_biotuner(object):
         if ratios_n_harms is None:
             ratios_n_harms = self.ratios_n_harms
 
+        # if data is list, convert to numpy array
+        if type(data) == list:
+            data = np.array(data)
         # check if data is empty array or list
         if len(data) == 0:
             raise ValueError("Data is empty")
@@ -1036,6 +1039,7 @@ class compute_biotuner(object):
         if input_type == "peaks":
             peaks = self.peaks
             amps = self.amps
+            # TODO : check if self.amps exists
         if input_type == "extended_peaks":
             peaks = self.extended_peaks
             amps = self.extended_amps
@@ -2018,12 +2022,22 @@ class compute_biotuner(object):
         peaks = np.array(peaks_temp)
         peaks = np.around(peaks, 3)
         amps = np.array(amps_temp)
-        # ensure no peaks are above max_freq
+        # ensure no peaks are above max_freq and print warning indicating number of peaks removed
         peaks_idx = np.where(np.array(peaks) <= max_freq)[0]
+        if len(peaks) != len(peaks_idx):
+            print(
+                "Warning: {} peaks were removed because they exceeded the maximum frequency of {} Hz".format(
+                    len(peaks) - len(peaks_idx), max_freq
+                )
+            )
         peaks = np.array(peaks)[peaks_idx]
         #print('FINAL PEAKS', peaks)
         if peaks_function != 'PAC' and peaks_function != 'bicoherence':
             amps = np.array(amps)[peaks_idx]
+        # filter out peaks that are not in min max range
+        peaks_idx = np.where((np.array(peaks) >= min_freq) & (np.array(peaks) <= max_freq))[0]
+        peaks = np.array(peaks)[peaks_idx]
+        amps = np.array(amps)[peaks_idx]
         return peaks, amps
 
     def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,
