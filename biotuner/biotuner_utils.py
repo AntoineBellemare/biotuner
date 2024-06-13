@@ -1403,6 +1403,8 @@ def create_midi(chords, durations, subdivision=1, microtonal=True, filename='exa
     ----------
     chords : list
         List of chords, where each chord is a list of frequencies.
+    velocities : list
+        List of list of velocities for each note in each chord.
     durations : list
         List of durations (in beats) for each chord.
     subdivision : int
@@ -1458,8 +1460,8 @@ def create_midi(chords, durations, subdivision=1, microtonal=True, filename='exa
     ticks_per_beat = int(ticks_per_beat/(1/subdivision))
     
     # Iterate through the chords and durations
-    for chord, duration, pitchbend in zip(midi_chords, durations, pitchbends):
-        for i, (note, pb) in enumerate(zip(chord, pitchbend)):
+    for chord, duration, pitchbend, velocity in zip(midi_chords, durations, pitchbends, velocities):
+        for i, (note, pb, vel) in enumerate(zip(chord, pitchbend, velocity)):
             track = tracks[i]
 
             # Add a pitch bend message for each note in the chord
@@ -1467,8 +1469,8 @@ def create_midi(chords, durations, subdivision=1, microtonal=True, filename='exa
                 #print('pitchweel', pb)
                 track.append(Message('pitchwheel', pitch=pb, channel=i, time=1))
 
-            track.append(Message('note_on', note=note, velocity=64, channel=i, time=1))
-            track.append(Message('note_off', note=note, velocity=64, channel=i, time=int(duration*ticks_per_beat)))
+            track.append(Message('note_on', note=note, velocity=vel, channel=i, time=1))
+            track.append(Message('note_off', note=note, velocity=vel, channel=i, time=int(duration*ticks_per_beat)))
     
     # Save the MIDI file
     mid.save(str(filename)+'.mid')
