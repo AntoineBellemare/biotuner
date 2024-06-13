@@ -1393,7 +1393,7 @@ import mido
 from mido import Message, MidiFile, MidiTrack
 import math
 
-def create_midi(chords, durations, subdivision=1, microtonal=True, filename='example'):
+def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=True, filename='example'):
     """
     Creates a MIDI file from a given set of chords and durations.
     The microtonal parameter allows for pitch bends to be included
@@ -1419,6 +1419,8 @@ def create_midi(chords, durations, subdivision=1, microtonal=True, filename='exa
     mid : MidiFile
         The MIDI file.
     """
+    if velocities is None:
+        velocities = [[64]*len(chord) for chord in chords]
     # Create a new MIDI file
     mid = MidiFile()
     
