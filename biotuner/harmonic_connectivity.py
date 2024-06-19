@@ -16,7 +16,7 @@ import mne
 import numpy.ma as ma
 from statsmodels.stats.multitest import multipletests
 from mne.viz import circular_layout
-from mne_connectivity.viz import plot_connectivity_circle
+#from mne_connectivity.viz import plot_connectivity_circle
 import itertools
 from PyEMD import EMD
 import pandas as pd
