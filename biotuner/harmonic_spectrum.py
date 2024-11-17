@@ -79,6 +79,8 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         entropy, Higushi Fractal Dimension, and spectral spread for each of the three spectra (harmonicity,
         phase coupling, resonance). Also includes average values and maximum values for these metrics, peak frequencies
         for each spectrum, and 'harmsim' values for peak frequencies.
+    harmonicity_matrix : ndarray
+        The harmonicity matrix of the signal, which corresponds to the power x power comodulogram weighted by dyad similarity.
 
         """
     # Perform initial operations and get cleaned PSD
