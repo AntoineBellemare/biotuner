@@ -352,7 +352,7 @@ def compute_harmonic_power(freqs, dyad_similarities, psd_clean, normalize=True):
     Returns
     -------
     tuple of ndarrays
-        The harmonicity values and the phase coupling values.
+        The harmonicity values and the harmonicity matrix.
     '''
     harmonicity_values = np.zeros(len(freqs))
     total_power = np.sum(psd_clean)

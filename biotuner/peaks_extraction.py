@@ -551,16 +551,26 @@ def HilbertHuang1D(
             spec_ = gaussian_filter1d(spec_, smooth_sigma)
         freqs.append(freqs_)
         spec.append(spec_)
+        
+    # Extract peaks within the frequency range
     peaks_temp = []
     amps_temp = []
     for e, i in enumerate(spec):
         max_power = np.argmax(i)
-        peaks_temp.append(bins[max_power])
-        amps_temp.append(spec[e][max_power])
+        peak = bins[max_power]
+        amplitude = spec[e][max_power]
+
+        # Filter peaks outside min_freq and max_freq
+        if min_freq <= peak <= max_freq:
+            peaks_temp.append(peak)
+            amps_temp.append(amplitude)
+    
+    # Convert to arrays and ensure proper ordering
     peaks_temp = np.flip(peaks_temp)
     amps_temp = np.flip(amps_temp)
     peaks = [np.round(p, 2) for p in peaks_temp]
     amps = [np.round(a, 2) for a in amps_temp]
+    
     bins_ = []
     for i in range(len(spec)):
         bins_.append(bins)

@@ -891,7 +891,9 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     Chan, P. Y., Dong, M., & Li, H. (2019). The science of harmony:A psychophysical basis
     for perceptual tensions and resolutions in music. Research, 2019.
     """
-
+    if not chord or len(chord) < min_notes:
+        return [], [], "NaN", []
+    
     subharms = [np.array([1000 / (i / j) for j in range(1, n_harmonics + 1)]) for i in chord]
     combi = np.array(list(itertools.product(*subharms)))
     delta_t = []
