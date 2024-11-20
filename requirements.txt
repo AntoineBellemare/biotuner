@@ -21,4 +21,5 @@ PyWavelets==1.4.1
 #mne-connectivity==0.5.0 # waiting for mne-connectivity fix
 neurodsp>=2.2
 sympy==1.12
+pytest>=7.0.0
 
