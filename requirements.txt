@@ -1,5 +1,5 @@
 matplotlib>=3.5.3
-seaborn==0.12.1
+seaborn>=0.12.1
 pygame>=2.1.2
 mne>=1.4.0
 pyACA==0.3.1
