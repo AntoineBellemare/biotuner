@@ -16,6 +16,7 @@ Science
    harmonicity_metrics/harmonicity_metrics
    harmonic_spectrum/harmonic_spectrum
    toolbox_paper_notebook/toolbox_paper_notebook
+   toolbox_paper_result_notebook/toolbox_paper_result_notebook
 
 Music
 ======
