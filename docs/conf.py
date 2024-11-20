@@ -29,7 +29,7 @@ def find_author():
 
 project = "Biotuner"
 copyright = f"2023–{datetime.datetime.now().year}"
-author = 'Antoine Bellemare & François Lespinasse. This documentation is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license.'
+author = 'Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.'
 
 # The short X.Y version.
 def find_version():
@@ -137,8 +137,11 @@ latex_elements = {
 }
 html_static_path = ["_static"]
 
-#sphinx-build -b html docs docs/_build/html
+
 
 #git push origin --delete docs_build
 #git checkout -b docs_build
+#sphinx-build -b html docs docs/_build/html
+#git add docs/_build/html
+#git commit -m "Update documentation"
 #git push --set-upstream origin docs_build
