@@ -145,7 +145,7 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
             if harm - bounds < n < harm + bounds:
                 shared_steps.append((i + 1, j + 1))
                 avg_ratios.append((n + harm) / 2)
-    avg_ratios = [np.mean(x, 3) for x in avg_ratios]
+    avg_ratios = [round(x, 3) for x in avg_ratios]
     return avg_ratios, shared_steps
 
 
@@ -212,6 +212,8 @@ def multi_oct_subdiv(
     for i in range(len(oct_div_temp)):
         if oct_div_temp[i] < max_sub:
             multi_oct_div.append(oct_div_temp[i])
+    if len(multi_oct_div) == 0:  # Gracefully handle empty results
+        return [], ratios
     return multi_oct_div, ratios
 
 
