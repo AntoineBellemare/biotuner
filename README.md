@@ -21,6 +21,10 @@
   <a href="https://github.com/AntoineBellemare/biotuner/stargazers">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/AntoineBellemare/biotuner?style=social">
   </a>
+
+  <a href="https://pypi.org/project/biotuner/">
+    <img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/biotuner">
+  </a>
 </p>
 
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
