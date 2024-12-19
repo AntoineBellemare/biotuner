@@ -31,26 +31,26 @@
 
 # Installation
 
-1. Install using PyPI
+## 1. Install using PyPI
 
 ```bash
 pip install biotuner
 ```
 
-2. Install using Github Repository:
+## 2. Install using Github Repository:
 
-2.1. **Create a Python environment with v3.8 using conda**:
+### 2.1. **Create a Python environment with v3.8 using conda**:
 ```bash
 conda create --name biotuner_env python=3.8
 conda activate biotuner_env
 ```
 
-2.2. Clone the Biotuner repository:
+### 2.2. Clone the Biotuner repository:
 ```
 git clone https://github.com/AntoineBellemare/biotuner.git
 cd biotuner
 ```
-2.3. Install the package:
+### 2.3. Install the package:
 ```
 pip install -e .
 ```
