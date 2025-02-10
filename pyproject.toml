@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biotuner"
+version = "0.0.13"
+description = "Time series harmonic analysis for adaptive tuning systems and microtonal exploration"
+authors = [
+    { name = "Antoine Bellemare", email = "antoine.bellemare9@gmail.com" }
+]
+license = { text = "MIT" }
+readme = { file = "README.md", content-type = "text/markdown" }
+keywords = ["biosignal", "harmony", "tuning", "eeg", "microtonality", "music", "time series"]
+requires-python = ">=3.6, <3.11"
+dependencies = [
+    "matplotlib>=3.5.3",
+    "seaborn>=0.12.1",
+    "pygame>=2.1.2",
+    "mne>=1.4.0",
+    "pyACA==0.3.1",
+    "pactools==0.3.1",
+    "colorednoise==2.1.0",
+    "fooof==1.0.0",
+    "emd>=0.5.5",
+    "emd-signal>=1.2.1",
+    "pyts==0.12.0",
+    "contfrac==1.0.0",
+    "neurokit2==0.2.2",
+    "scipy>=1.7.3",
+    "numpy>=1.21.4",
+    "pingouin",
+    "mido==1.2.10",
+    "plotly==5.13.1",
+    "ipywidgets==8.0.4",
+    "PyWavelets==1.4.1",
+    "neurodsp>=2.2",
+    "sympy==1.12",
+    "pytest>=7.0.0"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/antoinebellemare/biotuner"
+
+[tool.setuptools]
+packages = ["biotuner"]
+
+[tool.black]
+line-length = 128
