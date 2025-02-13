@@ -3,7 +3,14 @@ from fractions import Fraction
 import biotuner
 from numpy import log2
 import sympy as sp
-from biotuner.biotuner_utils import scale2frac, Print3Smallest, compute_peak_ratios, string_to_list, rebound, distinct_intervals
+from biotuner.biotuner_utils import (
+    scale2frac,
+    Print3Smallest,
+    compute_peak_ratios,
+    string_to_list,
+    rebound,
+    distinct_intervals,
+)
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
@@ -11,6 +18,7 @@ from itertools import combinations
 from sympy import factorint
 
 """PEAKS METRICS"""
+
 
 def compute_consonance(ratio, limit=1000):
     """
@@ -27,7 +35,7 @@ def compute_consonance(ratio, limit=1000):
     -------
     cons : float
         The consonance value.
-        
+
     Examples
     --------
     >>> compute_consonance(3/2, limit=1000)
@@ -40,6 +48,7 @@ def compute_consonance(ratio, limit=1000):
     b = ratio.numerator * ratio.denominator
     cons = a / b
     return cons
+
 
 def euler(*numbers):
     """Euler's "gradus suavitatis" (degree of sweetness) function
@@ -91,7 +100,7 @@ def tenneyHeight(peaks, avg=True):
     -------
     tenney : float
         Tenney Height
-        
+
     Examples
     --------
     >>> peaks = [3, 7, 13, 19]
@@ -100,7 +109,7 @@ def tenneyHeight(peaks, avg=True):
     >>> peaks = [3, 9, 11, 27]
     >>> tenneyHeight(peaks)
     4.371319977187242
-    
+
     """
     pairs = biotuner.biotuner_utils.getPairs(peaks)
     pairs
@@ -155,7 +164,9 @@ def integral_tenneyHeight(peaks, avg=True):
             x, y = frac.numerator, frac.denominator
             factors_x = factorint(x)
             factors_y = factorint(y)
-            th_value = sum(factors_x[key] * log2(key) for key in factors_x) + sum(factors_y[key] * log2(key) for key in factors_y)
+            th_value = sum(factors_x[key] * log2(key) for key in factors_x) + sum(
+                factors_y[key] * log2(key) for key in factors_y
+            )
             tenney.append(th_value)
         except ZeroDivisionError:
             continue
@@ -164,7 +175,8 @@ def integral_tenneyHeight(peaks, avg=True):
         return np.average(tenney) if tenney else 0
     else:
         return tenney
-    
+
+
 def metric_denom(ratio):
     """
     Function that computes the denominator of the normalized ratio.
@@ -179,7 +191,7 @@ def metric_denom(ratio):
     -------
     y : float
         denominator of the normalized ratio
-        
+
     Examples
     --------
     >>> metric_denom(1.50)
@@ -208,7 +220,7 @@ def dyad_similarity(ratio):
     -------
     z : float
         dyad similarity
-        
+
     Examples
     --------
     >>> dyad_similarity(3/2)
@@ -222,6 +234,7 @@ def dyad_similarity(ratio):
     z = ((x + y - 1) / (x * y)) * 100
     return z
 
+
 def peaks_to_harmsim(peaks):
     # check if peaks is string
     if isinstance(peaks, str):
@@ -232,79 +245,78 @@ def peaks_to_harmsim(peaks):
     else:
         ratios = compute_peak_ratios(peaks)
         return ratios2harmsim(ratios)
-    
+
 
 """TUNING METRICS"""
 
 
-
 def sum_p_q(scale):
-    '''    
+    """
     Calculate a metric for a scale.
-    This is an estimate of scale consonance. It is derived 
-    from summing the numerators and denominators of the 
-    scale degrees. 
-    
+    This is an estimate of scale consonance. It is derived
+    from summing the numerators and denominators of the
+    scale degrees.
+
     Smaller values are more consonant.
-    
+
     Parameters
     ----------
     scale : List
         The scale.
-        
+
     Returns
     -------
     dict
         A dictionary with the metric value.
-    
+
     Notes
     -----
     Note that this metric looks at the degrees of the scale, so it is somewhat
-    tonic-focused. The similar metric ``sum_p_q_for_all_intervals()`` is similar, 
+    tonic-focused. The similar metric ``sum_p_q_for_all_intervals()`` is similar,
     but it sums the numerator and denominator values for all distinct intervals within
     the scale.
-    
+
     While the metric is numerically defined for ratios expressed as irrational or
     transcendental numbers, it is really only meaningful for scales with just
     degrees (ratios expressed as rational numbers).
-    
+
     Examples
     --------
     >>> sum_p_q(create_pythagorean_scale())
     {'sum_p_q': 3138}
-        
-    '''
-    return {"sum_p_q": int(sum(map (lambda x: sum(list(sp.fraction(x))), scale)))}
+
+    """
+    return {"sum_p_q": int(sum(map(lambda x: sum(list(sp.fraction(x))), scale)))}
 
 
 def sum_distinct_intervals(scale):
-    '''    
+    """
     Calculate a metric for a scale.
     This metric is an estimate of scale consonance. Numerically
     it is the number of distinct intervals within the
     scale (including all ratios and their inversions).
     Smaller values are more consonant.
-    
+
     Parameters
     ----------
     scale : List
         The scale.
-        
+
     Returns
     -------
     dict
         A dictionary with the metric value.
-    
+
     Examples
     --------
     >>> sum_distinct_intervals(create_pythagorean_scale())
     {'sum_distinct_intervals': 22}
-    '''
+    """
     return {"sum_distinct_intervals": len(distinct_intervals(scale))}
 
 
 def metric_3(scale):
-    '''    
+    """    
     Calculate a metric for a scale
     
     Parameters
@@ -333,74 +345,86 @@ def metric_3(scale):
     
     The summation takes place over all of the intervals in the scale. It does not
     form a set of distinct intervals.
-    '''
-    
-    return {"metric_3": sum([1/y for y in filter(
-                    lambda x: x != 0, [(
-                        sp.fraction(x)[0] - 
-                        sp.fraction(x)[1])/
-                        sp.fraction(x)[1] for x in scale])]).evalf()
-            }
+    """
+    if len(scale) == 0:
+        return {"metric_3": None}
+    return {
+        "metric_3": sum(
+            [
+                1 / y
+                for y in filter(
+                    lambda x: x != 0,
+                    [
+                        (sp.fraction(x)[0] - sp.fraction(x)[1]) / sp.fraction(x)[1]
+                        for x in scale
+                    ],
+                )
+            ]
+        ).evalf()
+    }
+
 
 def sum_p_q_for_all_intervals(scale):
-    '''    
+    """
     Calculate a metric for a scale
-    
+
     Parameters
     ----------
     scale : List
         The scale.
-        
+
     Returns
     -------
     dict
         A dictionary with the metric value.
-    
+
     Notes
     -----
     This metric is an estimate of scale consonance. It is formed by examining
     all unique intervals in the scale, and creating a numeric value based upon
     the summation of the numerators and denominators for all those intervals.
-    
+
     While the metric is numerically defined for ratios expressed as irrational or
     transcendental numbers, it is really only meaningful for scales with just
     degrees (ratios expressed as rational numbers).
-    
+
     Smaller values are more consonant.
-    
-    '''
-    
-    return {"sum_p_q_for_all_intervals": 
-                int(sum(map (lambda x: sum(list(sp.fraction(x))), 
-                distinct_intervals(scale))))
+
+    """
+
+    return {
+        "sum_p_q_for_all_intervals": int(
+            sum(map(lambda x: sum(list(sp.fraction(x))), distinct_intervals(scale)))
+        )
     }
-                        
+
+
 def sum_q_for_all_intervals(scale):
-    '''    
+    """
     Calculate a metric for a scale.
-    
+
     Parameters
     ----------
     scale : List
         The scale.
-    
+
     Returns
     -------
     dict
         A dictionary with the metric value.
-    
+
     Notes
     -----
     This metric is an estimate of scale consonance. It is summation
     of the denominators of the normalized distinct ratios
     of the scale.
-    
+
     Smaller values are more consonant.
-    '''
-    m5 = np.sum([sp.fraction(rebound(x))[1] 
-        for x in distinct_intervals(scale)])
-    
+    """
+    m5 = np.sum([sp.fraction(rebound(x))[1] for x in distinct_intervals(scale)])
+
     return {"sum_q_for_all_intervals": m5}
+
 
 def ratios2harmsim(ratios):
     """
@@ -418,13 +442,13 @@ def ratios2harmsim(ratios):
     -------
     similarity : List (float)
         list of percentage of similarity for each ratios
-        
+
     Examples
     --------
     >>> ratios = [3/2, 4/3, 16/9]
     >>> ratios2harmsim(ratios)
     array([66.66666667, 50.        , 16.66666667])
-    
+
     References
     ----------
     Gill, K. Z., & Purves, D. (2009). A biological rationale for musical
@@ -467,7 +491,7 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
         metric value averaged across all steps
     full_matrix : List[List]
         full matrix [n, n] of metric values for each pair of ratios
-        
+
     Examples
     --------
     >>> tuning = [1, 1.13, 1.25, 1.33, 1.5, 1.67, 1.75, 1.89]
@@ -482,7 +506,7 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
     12.66150677394233,
     10.398481038234042],
     10.398481038234042)
-    
+
     >>> tuning = [1, 1.13, 1.25, 1.33, 1.5, 1.67, 1.75, 1.89]
     >>> function = compute_consonance
     >>> tuning_cons_matrix(tuning, function, ratio_type="pos_harm")
@@ -499,7 +523,7 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
     n = len(tuning)
     metric_values_per_step = []
     full_matrix = [[None for _ in range(n)] for _ in range(n)]
-    
+
     for index1 in range(n):
         metric_values = []
         for index2 in range(n):
@@ -524,12 +548,13 @@ def tuning_cons_matrix(tuning, function, ratio_type="pos_harm"):
                     metric = function(entry)
                     metric_values.append(metric)
                     full_matrix[index1][index2] = metric
-        
+
         metric_values_per_step.append(np.average(metric_values))
-    
+
     metric_avg = np.average(metric_values_per_step)
-    
+
     return metric_values_per_step, metric_avg, full_matrix
+
 
 def tuning_to_metrics(tuning, maxdenom=1000):
     """
@@ -551,7 +576,7 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     tuning_metrics_list : List (float)
         List of values corresponding to all computed metrics
         (in the same order as dictionary)
-        
+
     Examples
     --------
     >>> tuning = [1, 1.13, 1.25, 1.33, 1.5, 1.67, 1.75, 1.89]
@@ -569,29 +594,28 @@ def tuning_to_metrics(tuning, maxdenom=1000):
     tuning_metrics = {}
     tuning_frac, num, denom = scale2frac(tuning, maxdenom=maxdenom)
     tuning_metrics["sum_p_q"] = sum_p_q(tuning_frac)["sum_p_q"]
-    tuning_metrics["sum_distinct_intervals"] = sum_distinct_intervals(tuning_frac)["sum_distinct_intervals"]
+    tuning_metrics["sum_distinct_intervals"] = sum_distinct_intervals(tuning_frac)[
+        "sum_distinct_intervals"
+    ]
     tuning_metrics["metric_3"] = metric_3(tuning_frac)["metric_3"]
-    tuning_metrics["sum_p_q_for_all_intervals"] = sum_p_q_for_all_intervals(tuning_frac)["sum_p_q_for_all_intervals"]
-    tuning_metrics["sum_q_for_all_intervals"] = sum_q_for_all_intervals(tuning_frac)["sum_q_for_all_intervals"]
+    tuning_metrics["sum_p_q_for_all_intervals"] = sum_p_q_for_all_intervals(
+        tuning_frac
+    )["sum_p_q_for_all_intervals"]
+    tuning_metrics["sum_q_for_all_intervals"] = sum_q_for_all_intervals(tuning_frac)[
+        "sum_q_for_all_intervals"
+    ]
     tuning_metrics["harm_sim"] = np.round(np.average(ratios2harmsim(tuning)), 2)
-    _, tuning_metrics["matrix_harm_sim"], _ = tuning_cons_matrix(tuning,
-                                                              dyad_similarity)
-    _, tuning_metrics["matrix_cons"], _ = tuning_cons_matrix(tuning,
-                                                          compute_consonance)
-    _, tuning_metrics["matrix_denom"], _ = tuning_cons_matrix(tuning,
-                                                           metric_denom)
+    _, tuning_metrics["matrix_harm_sim"], _ = tuning_cons_matrix(
+        tuning, dyad_similarity
+    )
+    _, tuning_metrics["matrix_cons"], _ = tuning_cons_matrix(tuning, compute_consonance)
+    _, tuning_metrics["matrix_denom"], _ = tuning_cons_matrix(tuning, metric_denom)
     return tuning_metrics
 
 
-
-def timepoint_consonance(data,
-                         method="cons",
-                         limit=0.2,
-                         min_notes=3,
-                         graph=False,
-                         n_harm=5,
-                         delta_lim=20):
-
+def timepoint_consonance(
+    data, method="cons", limit=0.2, min_notes=3, graph=False, n_harm=5, delta_lim=20
+):
     """
     Function that keeps moments of consonance
     from multiple time series of peak frequencies.
@@ -607,16 +631,16 @@ def timepoint_consonance(data,
         Axis 0 represents moments in time
         Axis 1 represents the sets of frequencies
     method : str, default='cons'
-            'cons': 
+            'cons':
                 will compute pairwise consonance between
                 frequency peaks in the form of (a+b)/(a*b)
-            'euler': 
+            'euler':
                 will compute Euler's gradus suavitatis
             'harmsim':
                 will compute harmonic similarity using dyad_similarity function.
     limit : float, default=0.2
         limit of consonance under which the set of frequencies are not retained
-            
+
             When method = 'cons'
                 --> See :func:`biotuner.metrics.compute_consonance` to refer to consonance values to common intervals
             When method = 'euler'
@@ -645,23 +669,23 @@ def timepoint_consonance(data,
         positions on Axis 0
     tr_harm : List (float)
         List of harmonicity value for each time point.
-        
+
     Examples
     --------
     >>> 'USING RANDOM DATA'
     >>> # Set the number of time series and the number of samples per time series
     >>> n_time_series = 5
     >>> n_samples = 1000
-    >>> 
+    >>>
     >>> # Define the frequency range
     >>> min_freq = 1
     >>> max_freq = 10
     >>> precision = 0.1
-    >>> 
+    >>>
     >>> # Generate the random time series
     >>> rand_integers = np.random.randint(min_freq * 10 / precision, max_freq * 10 / precision, size=(n_time_series, n_samples))
     >>> time_series = rand_integers / 10
-    >>> 
+    >>>
     >>> tc, _, _ = timepoint_consonance(time_series,
                                      method="cons",
                                      limit=0.2,
@@ -682,7 +706,7 @@ def timepoint_consonance(data,
     [55.9, 30.1, 99.0, 40.5],
     [55.8, 21.7, 99.2],
     [30.5, 22.4, 12.6, 91.5]]
-    
+
     >>> 'USING THE BIOTUNER OBJECT'
     >>> # Load data
     >>> data = np.load('data_examples/EEG_pareidolia/parei_occi_L.npy')
@@ -707,14 +731,15 @@ def timepoint_consonance(data,
     [5.72, 12.71, 26.64, 2.59],
     [15.31, 6.38, 2.53, 64.77],
     [67.59, 2.7, 33.79, 16.8]]
-    
+
     """
+
     def process_peaks(method, peaks, limit, min_notes, n_harm, delta_Lim):
         if method == "cons":
             cons, _, peaks_cons, cons_avg = consonance_peaks(peaks, limit)
             if len(set(peaks_cons)) >= min_notes:
                 return (peaks_cons, cons_avg)
-        elif method == 'harmsim':
+        elif method == "harmsim":
             ratios = compute_peak_ratios(peaks, rebound=False)
             cons_avg = np.mean(ratios2harmsim(ratios))
             if cons_avg >= limit:
@@ -728,8 +753,10 @@ def timepoint_consonance(data,
             cons_avg = integral_tenneyHeight(peaks, avg=True)
             if cons_avg < limit:
                 return (list(peaks), cons_avg)
-        elif method == 'subharm':
-            subharms, _, cons_avg = compute_subharmonic_tension(peaks, n_harm, delta_lim, min_notes=2)
+        elif method == "subharm":
+            subharms, _, cons_avg = compute_subharmonic_tension(
+                peaks, n_harm, delta_lim, min_notes=2
+            )
             if cons_avg >= limit:
                 return (peaks, cons_avg)
         return ([], cons_avg)
@@ -747,7 +774,9 @@ def timepoint_consonance(data,
         if len(peaks) == 0:
             result = []
         else:
-            (result, cons_) = process_peaks(method, peaks, limit, min_notes, n_harm, delta_lim)
+            (result, cons_) = process_peaks(
+                method, peaks, limit, min_notes, n_harm, delta_lim
+            )
             out.append(result)
             tr_harm.append(cons_)
         if result:
@@ -802,7 +831,7 @@ def compute_subharmonics(chord, n_harmonics, delta_lim):
         A list of lists of common subharmonics within the delta limit.
     delta_t : list of float
         A list of delta values for the common subharmonics.
-        
+
     Examples
     --------
     >>> chord = [3, 5, 7]
@@ -812,8 +841,8 @@ def compute_subharmonics(chord, n_harmonics, delta_lim):
     >>> print('delta_t', delta_t)
     subharms [[333.3333333333333, 666.6666666666666, 1000.0, 1333.3333333333333, 1666.6666666666667],
     [200.0, 400.0, 600.0, 800.0, 1000.0],
-    [142.85714285714286, 285.7142857142857, 428.57142857142856, 571.4285714285714, 714.2857142857143]] 
-    common_subharms [[1000.0, 1000.0]] 
+    [142.85714285714286, 285.7142857142857, 428.57142857142856, 571.4285714285714, 714.2857142857143]]
+    common_subharms [[1000.0, 1000.0]]
     delta_t [0.0]
     """
     subharms = []
@@ -822,15 +851,15 @@ def compute_subharmonics(chord, n_harmonics, delta_lim):
     common_subs = []
     for i in chord:
         s_ = []
-        for j in range(1, n_harmonics+1):
-            s_.append(1000/(i/j))
+        for j in range(1, n_harmonics + 1):
+            s_.append(1000 / (i / j))
         subharms.append(s_)
     for i in range(len(chord)):
-        for j in range(i+1, len(chord)):
+        for j in range(i + 1, len(chord)):
             for s1 in subharms[i]:
                 for s2 in subharms[j]:
-                    if np.abs(s1-s2) < delta_lim:
-                        delta_t.append(np.abs(np.min([s1-s2])))
+                    if np.abs(s1 - s2) < delta_lim:
+                        delta_t.append(np.abs(np.min([s1 - s2])))
                         common_subs.append([s1, s2])
     return subharms, common_subs, delta_t
 
@@ -876,7 +905,7 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     >>> _, _, subharm_tension, _ = compute_subharmonic_tension(chord, 5, 20, min_notes=2)
     >>> subharm_tension
     [0.23539483720429924]
-    
+
     Notes
     -----
     The subharmonic tension is a measure of the perceived stability of a musical chord.
@@ -885,7 +914,7 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     A subharmonic is a frequency that is an integer divisor of another frequency.
     Common subharmonics are defined as subharmonics that are shared by at least
     `min_notes` notes in the chord.
-    
+
     References
     ----------
     Chan, P. Y., Dong, M., & Li, H. (2019). The science of harmony:A psychophysical basis
@@ -893,8 +922,10 @@ def compute_subharmonic_tension(chord, n_harmonics, delta_lim, min_notes=2):
     """
     if not chord or len(chord) < min_notes:
         return [], [], "NaN", []
-    
-    subharms = [np.array([1000 / (i / j) for j in range(1, n_harmonics + 1)]) for i in chord]
+
+    subharms = [
+        np.array([1000 / (i / j) for j in range(1, n_harmonics + 1)]) for i in chord
+    ]
     combi = np.array(list(itertools.product(*subharms)))
     delta_t = []
     common_subs = []
@@ -960,7 +991,7 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
         pair_melody : list of floats
             List containing the pair of frequency with the lowest subharmonic tension.
             Could be used in transitional harmony to derive subharmonic melodies.
-            
+
     Examples
     --------
     >>> list1 = [5, 9]
@@ -986,8 +1017,8 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
         #  Compute subharmonics for each fundamental frequency
         for i in pair:
             s_ = []
-            for j in range(1, n_harmonics+1):
-                s_.append(1000/(i/j))
+            for j in range(1, n_harmonics + 1):
+                s_.append(1000 / (i / j))
             subharms.append(s_)
         #  Create pairwise combinations of subharmonics from the two lists.
         combi = np.array(list(itertools.product(subharms[0], subharms[1])))
@@ -995,8 +1026,8 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
         for t in combi:
             s1 = t[0]
             s2 = t[1]
-            if np.abs(s1-s2) < delta_lim:
-                delta_t_ = np.abs(s1-s2)
+            if np.abs(s1 - s2) < delta_lim:
+                delta_t_ = np.abs(s1 - s2)
                 common_subs_ = np.mean([s1, s2])
                 if delta_t_ not in delta_t and common_subs_ not in common_subs:
                     delta_t.append(delta_t_)
@@ -1011,29 +1042,27 @@ def compute_subharmonics_2lists(list1, list2, n_harmonics, delta_lim, c=2.1):
             #  Iterate through common subharmonics to compute
             #  subarmonic tension associated to a single pair of peaks.
             for i in range(len(delta_t)):
-                delta_norm = delta_t[i]/common_subs[i]
+                delta_norm = delta_t[i] / common_subs[i]
                 delta_temp.append(delta_norm)
-                harm_temp.append(1/delta_norm)
-                overall_temp.append((1/common_subs[i])*(delta_t[i]))
-            subharm_tension.append(((sum(overall_temp))/len(delta_t)))
-            #print('subharm_tension', np.average(subharm_tension))
+                harm_temp.append(1 / delta_norm)
+                overall_temp.append((1 / common_subs[i]) * (delta_t[i]))
+            subharm_tension.append(((sum(overall_temp)) / len(delta_t)))
+            # print('subharm_tension', np.average(subharm_tension))
             sub_tension_final.append(np.average(subharm_tension))
             common_subs_tot.append(common_subs)
             delta_t_tot.append(delta_t)
     #  Compute the overall subharmonic tension by averaging across
     #  pairs of frequencies.
-    #mins, low_sub_idx = Print3Smallest(sub_tension_final)
+    # mins, low_sub_idx = Print3Smallest(sub_tension_final)
     low_sub_idx = sub_tension_final.index(np.min(sub_tension_final))
     pair_melody = subharm_pairs[low_sub_idx]
     sub_tension_final = np.average(sub_tension_final)
     return common_subs_tot, delta_t_tot, sub_tension_final, harm_temp, pair_melody
 
-def consonant_ratios(data,
-                     limit,
-                     sub=False,
-                     input_type="peaks",
-                     metric="cons",
-                     set_rebound=True):
+
+def consonant_ratios(
+    data, limit, sub=False, input_type="peaks", metric="cons", set_rebound=True
+):
     """
     Function that computes integer ratios from peaks with higher consonance
 
@@ -1064,7 +1093,7 @@ def consonant_ratios(data,
         list of consonant ratios
     consonance : List (float)
         list of associated consonance values
-        
+
     Examples
     --------
     >>> ratios = [1, 1.25, 1.34, 1.5, 1.67, 1.86]
@@ -1075,7 +1104,7 @@ def consonant_ratios(data,
     >>>                                         metric="cons")
     >>> cons_ratios, metrics
     (array([1.  , 1.25, 1.5 ]), [2.0, 0.45, 0.8333333333333334])
-    
+
     >>> freqs = [3, 4.5, 11, 17]
     >>> ratios, metrics = consonant_ratios(freqs,
     >>>                                     0.2,
@@ -1090,7 +1119,7 @@ def consonant_ratios(data,
     ratios2keep = []
     if input_type == "peaks":
         ratios = compute_peak_ratios(data, sub=sub, rebound=set_rebound)
-        #print(ratios)
+        # print(ratios)
     if input_type == "ratios":
         ratios = data
     for ratio in ratios:
@@ -1119,21 +1148,21 @@ def consonance_peaks(peaks, limit, limit_pairs=True):
         Peaks represent local maximum in a spectrum.
     limit : float
         Minimum consonance value to keep associated pairs of peaks.
-        
-            Comparisons with familiar ratios:  
+
+            Comparisons with familiar ratios:
             Unison-frequency ratio 1:1 yields a value of 2\n
             Octave-frequency ratio 2:1 yields a value of 1.5\n
             Perfect 5th-frequency ratio 3:2 yields a value of 0.833\n
-            Perfect 4th-frequency ratio 4:3 yields a value of 0.583\n  
-            Major 6th-frequency ratio 5:3 yields a value of 0.533\n  
-            Major 3rd-frequency ratio 5:4 yields a value of 0.45\n  
-            Minor 3rd-frequency ratio 5:6 yields a value of 0.366\n  
-            Minor 6th-frequency ratio 5:8 yields a value of 0.325\n  
-            Major 2nd-frequency ratio 8:9 yields a value of 0.236\n  
-            Major 7th-frequency ratio 8:15 yields a value of 0.192\n  
-            Minor 7th-frequency ratio 9:16 yields a value of 0.174\n  
+            Perfect 4th-frequency ratio 4:3 yields a value of 0.583\n
+            Major 6th-frequency ratio 5:3 yields a value of 0.533\n
+            Major 3rd-frequency ratio 5:4 yields a value of 0.45\n
+            Minor 3rd-frequency ratio 5:6 yields a value of 0.366\n
+            Minor 6th-frequency ratio 5:8 yields a value of 0.325\n
+            Major 2nd-frequency ratio 8:9 yields a value of 0.236\n
+            Major 7th-frequency ratio 8:15 yields a value of 0.192\n
+            Minor 7th-frequency ratio 9:16 yields a value of 0.174\n
             Minor 2nd-frequency ratio 15:16 yields a value of 0.129\n
-            
+
     limit_pairs : bool, default=True
         Whether to compute consonance only for ratios where a > b.
         If False, also use ratios where a < b by dividing b iteratively.
@@ -1223,8 +1252,11 @@ def spectral_entropy(harmonicity_values):
         Spectral entropy of the signal.
     """
     normalized_harmonicity = harmonicity_values / np.sum(harmonicity_values)
-    entropy = -np.sum(normalized_harmonicity * np.log2(normalized_harmonicity + np.finfo(float).eps))
+    entropy = -np.sum(
+        normalized_harmonicity * np.log2(normalized_harmonicity + np.finfo(float).eps)
+    )
     return entropy
+
 
 def spectral_spread(freqs, psd):
     """
@@ -1253,12 +1285,13 @@ def spectral_spread(freqs, psd):
 
     return spectral_spread
 
+
 def higuchi_fd(data, kmax):
     """
     Compute Higuchi Fractal Dimension of a power spectrum.
 
-    HFD is a technique used to determine the self-similarity 
-    of a signal. It has been widely used in analyzing time-series data, especially 
+    HFD is a technique used to determine the self-similarity
+    of a signal. It has been widely used in analyzing time-series data, especially
     for detecting chaotic behavior in time-series data. Here we apply it the characterize
     the complexity of a power spectrum.
 
@@ -1278,16 +1311,17 @@ def higuchi_fd(data, kmax):
     L = []
     x = []
     N = len(data)
-    for k in range(1,kmax):
+    for k in range(1, kmax):
         Lk = 0
-        for m in range(0,k):
+        for m in range(0, k):
             Lmk = 0
-            for i in range(1,int((N-m)/k)):
-                Lmk += abs(data[m+i*k] - data[m+i*k-k])
-            Lmk = Lmk*(N - 1)/(((N - m)/ k)* k)
+            for i in range(1, int((N - m) / k)):
+                Lmk += abs(data[m + i * k] - data[m + i * k - k])
+            Lmk = Lmk * (N - 1) / (((N - m) / k) * k)
             Lk += Lmk
-        L.append(np.log(Lk/(m+1)))
-        x.append([np.log(1.0/ k), 1])
-    (p, _, _, _) = np.linalg.lstsq(x, L, rcond=None)  # Use rcond=None to silence future warning
+        L.append(np.log(Lk / (m + 1)))
+        x.append([np.log(1.0 / k), 1])
+    (p, _, _, _) = np.linalg.lstsq(
+        x, L, rcond=None
+    )  # Use rcond=None to silence future warning
     return p[0]
-

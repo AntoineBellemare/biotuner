@@ -59,7 +59,7 @@ from biotuner.scale_construction import (
     diss_curve,
     harmonic_entropy,
     harmonic_tuning,
-    euler_fokker_scale
+    euler_fokker_scale,
 )
 from biotuner.rhythm_construction import (
     scale2euclid,
@@ -75,7 +75,12 @@ from biotuner.vizs import (
 )
 from biotuner.dictionaries import dict_rhythms, interval_names
 
-from biotuner.vizs import graph_psd_peaks, graphEMD_welch, graph_harm_peaks, EMD_PSD_graph
+from biotuner.vizs import (
+    graph_psd_peaks,
+    graphEMD_welch,
+    graph_harm_peaks,
+    EMD_PSD_graph,
+)
 import seaborn as sbn
 
 
@@ -91,7 +96,7 @@ class compute_biotuner(object):
     >>> biotuning.peaks_extraction(data)
     >>> biotuning.peaks_extension()
     >>> biotuning.peaks_metrics()
-    
+
     Parameters
     ----------
     sf: int
@@ -102,25 +107,25 @@ class compute_biotuner(object):
         Defines the method to use for peak extraction.
 
         'NON-HARMONIC PEAK EXTRACTIONS'
-            'fixed' : 
+            'fixed' :
                     Power Spectrum Density (PSD) estimated using Welch's method
                     on fixed frequency bands. Peaks correspond to frequency bins
                     with the highest power.
-            'adapt' : 
+            'adapt' :
                     PSD estimated using Welch's method on each frequency band
                     derived from the alpha peak position. Peaks correspond to
                     frequency bins with the highest power.
-            'FOOOF' : 
+            'FOOOF' :
                     PSD is estimated with Welch's method. 'FOOOF' is applied to
                     remove the aperiodic component and find physiologically
                     relevant spectral peaks.
 
         'SIGNAL DECOMPOSITION BASED PEAK EXTRACTION'
-            'EMD': 
+            'EMD':
                 Intrinsic Mode Functions (IMFs) are derived with Empirical
                 Mode Decomposition (EMD) PSD is computed on each IMF using
                 Welch. Peaks correspond to frequency bins with the highest power.
-            'EEMD' : 
+            'EEMD' :
                     Intrinsic Mode Functions (IMFs) are derived with Ensemble
                     Empirical Mode Decomposition (EEMD). PSD is computed on each
                     IMF using Welch. Peaks correspond to frequency bins with the
@@ -128,29 +133,29 @@ class compute_biotuner(object):
             'CEEMDAN' : Intrinsic Mode Functions (IMFs) are derived with Complex
                         Ensemble Empirical Mode Decomposition with Adaptive
                         Noise (CEEMDAN). PSD is computed on each IMF using Welch.
-            'EMD_FOOOF' : 
+            'EMD_FOOOF' :
                         Intrinsic Mode Functions (IMFs) are derived with
                         Ensemble Empirical Mode Decomposition (EEMD). PSD is
                         computed on each IMF with Welch's method. 'FOOOF' is
                         applied to remove the aperiodic component and find
                         physiologically relevant spectral peaks.
-            'HH1D_max' : 
+            'HH1D_max' :
                         Maximum values of the 1D Hilbert-Huang transform on each
                         IMF using EMD.
             'HH1D_FOOOF' :
                         TODO. Hilbert-Huang transform on each IMF with Welch's method
                         'FOOOF' is applied to remove the aperiodic component and
                         find physiologically relevant spectral peaks.
-            'SSA' : 
+            'SSA' :
                     TODO. Singular Spectrum Analysis. The name "singular spectrum
                     analysis" relates to the spectrum of eigenvalues in a singular
                     value decomposition of a covariance matrix.
 
         'SECOND-ORDER STATISTICAL PEAK EXTRACTION'
-            'cepstrum': 
+            'cepstrum':
                         Peak frequencies of the cepstrum (inverse Fourier transform
                         (IFT) of the logarithm of the estimated signal spectrum).
-            'HPS (to come)' : 
+            'HPS (to come)' :
                     Harmonic Product Spectrum (HPS) corresponds to the product of
                     the spectral power at each harmonic. Peaks correspond to the
                     frequency bins with the highest value of the HPS.
@@ -160,15 +165,15 @@ class compute_biotuner(object):
                                 a harmonic and its neighbors.
 
         'CROSS-FREQUENCY COUPLING BASED PEAK EXTRACTION'
-            'Bicoherence' : 
+            'Bicoherence' :
                             Corresponds to the normalized cross-bispectrum.
                             It is a third-order moment in the frequency domain.
                             It is a measure of phase-amplitude coupling.
-            'PAC' : 
+            'PAC' :
                     Phase-amplitude coupling. A measure of phase-amplitude
                     coupling between low-frequency phase and high-frequency
-                    amplitude. 
-                
+                    amplitude.
+
         'PEAK SELECTION BASED ON HARMONIC PROPERTIES'
             'EIMC' :
                     Endogenous InterModulation Components (EIMC)
@@ -179,35 +184,35 @@ class compute_biotuner(object):
                             PSD is estimated with Welch's method.
                             All peaks are extracted. Peaks for which
                             other peaks are their harmonics are kept.
-        
+
         'PEAKS EXTRACTION PARAMETERS'
-    
+
     precision: float, default=0.1
         Precision of the peaks (in Hz).
         When HH1D_max is used, bins are in log scale by default.
     compute_sub_ratios: bool, default=False
         When set to True, include ratios < 1 in peaks_ratios attribute.
     scale_cons_limit: float, default=0.1
-        The minimal value of consonance needed for a peaks ratio to be 
+        The minimal value of consonance needed for a peaks ratio to be
         included in the peaks_ratios_cons attribute.
 
         'EXTENDED PEAKS PARAMETERS'
-    
+
     n_harm: int, default=10
         Set the number of harmonics to compute in harmonic_fit function.
     harm_function: str, default='mult'
         - 'mult' : Computes harmonics from iterative multiplication
-                   (x, 2x, 3x...) 
+                   (x, 2x, 3x...)
         - 'div': Computes harmonics from iterative division (x, x/2, x/3...).
     extension_method: str, default='consonant_harmonic_fit'
-        
+
         - 'consonant_harmonic_fit' : computes the best-fit of harmonic peaks
            according to consonance intervals (eg. octaves, fifths).
         - 'all_harmonic_fit' : computes the best-fit of harmonic peaks without
            considering consonance intervals.
-        
+
         'RATIOS EXTENSION PARAMETERS'
-    
+
     ratios_n_harms: int, default=5
         The number of harmonics used to compute extended peaks ratios.
     ratios_harms: bool, default=False
@@ -220,7 +225,7 @@ class compute_biotuner(object):
         When set to True, a fit between exponentials
         (x**1, x**2, x**3,...x**n) of specified ratios will be computed.
     """
-    
+
     def __init__(
         self,
         sf,
@@ -237,8 +242,8 @@ class compute_biotuner(object):
         ratios_inc_fit=False,
         scale_cons_limit=0.1,
     ):
-        pygame_lib = None
-        #Initializing data
+        self.pygame_lib = None
+        # Initializing data
         if data is not None:
             if type(data) == list:
                 data = np.array(data)
@@ -250,18 +255,18 @@ class compute_biotuner(object):
             if len(self.data.shape) > 1:
                 raise ValueError("Data must be a 1D array")
         self.sf = sf
-        #Initializing arguments for peak extraction
+        # Initializing arguments for peak extraction
         self.peaks_function = peaks_function
         self.precision = precision
         self.compute_sub_ratios = compute_sub_ratios
-        #Initializing arguments for peaks metrics
+        # Initializing arguments for peaks metrics
         self.n_harm = n_harm
         self.harm_function = harm_function
         self.extension_method = extension_method
-        #Initializing dictionary for scales metrics
+        # Initializing dictionary for scales metrics
         self.scale_metrics = {}
         self.scale_cons_limit = scale_cons_limit
-        #Initializing arguments for ratios extension
+        # Initializing arguments for ratios extension
         self.ratios_n_harms = ratios_n_harms
         self.ratios_harms = ratios_harms
         self.ratios_inc = ratios_inc
@@ -439,7 +444,7 @@ class compute_biotuner(object):
             raise ValueError("Data must be a 1D array")
         if type(data) == list:
             data = np.array(data)
-            
+
         # ensure peaks_function is in the list of available peaks functions
         peaks_functions = [
             "fixed",
@@ -457,10 +462,8 @@ class compute_biotuner(object):
             "EIMC",
         ]
         if peaks_function not in peaks_functions:
-            raise ValueError(
-                "peaks_function must be one of {}".format(peaks_functions)
-            )
-            
+            raise ValueError("peaks_function must be one of {}".format(peaks_functions))
+
         self.octave = octave
         self.nIMFs = nIMFs
         self.compute_sub_ratios = compute_sub_ratios
@@ -485,29 +488,28 @@ class compute_biotuner(object):
             EIMC_order=EIMC_order,
             min_IMs=min_IMs,
             smooth_fft=smooth_fft,
-            keep_first_IMF=keep_first_IMF
+            keep_first_IMF=keep_first_IMF,
         )
         if verbose is True:
-            print('Number of peaks : {}'.format(len(peaks)))
+            print("Number of peaks : {}".format(len(peaks)))
         if len(peaks) == 0:
-            raise ValueError('No peak detected')
+            raise ValueError("No peak detected")
         self.peaks = peaks
         self.amps = amps
-        #print("Number of peaks: ", len(peaks))
+        # print("Number of peaks: ", len(peaks))
         self.peaks_ratios = compute_peak_ratios(
             self.peaks, rebound=True, octave=octave, sub=compute_sub_ratios
         )
-        self.peaks_ratios_cons, b = consonant_ratios(self.peaks,
-                                                     limit=scale_cons_limit)
-        
+        self.peaks_ratios_cons, b = consonant_ratios(self.peaks, limit=scale_cons_limit)
+
         # find labels of peaks_ratios from the interval_names dictionary
         def find_interval(cents, interval_names):
             for interval, values in interval_names.items():
-                if values['Cents'] == cents:
-                    harmonic = values['Harmonic']
+                if values["Cents"] == cents:
+                    harmonic = values["Harmonic"]
                     return interval, harmonic
             return (None, None)
-        
+
         if identify_labels is True:
             self.peaks_ratios_labels = []
             cents = ratios2cents(self.peaks_ratios)
@@ -553,25 +555,25 @@ class compute_biotuner(object):
         n_harm: int, default=10
             Set the number of harmonics to compute in harmonic_fit function
         method: str, default='harmonic_fit'
-        
+
             - 'harmonic_fit'
             - 'consonant'
             - 'multi_consonant',
             - 'consonant_harmonic_fit'
             - 'multi_consonant_harmonic_fit'
-            
+
         harm_function: str, default='mult'
-            
+
             - 'mult' : Computes harmonics from iterative multiplication (x, 2x, 3x, ...nx)
             - 'div' : Computes harmonics from iterative division (x, x/2, x/3, ...x/n)
 
         div_mode : strm default='add'
             Defines the way the harmonics are computed when harm_function is 'div'
-            
+
             - 'div': x, x/2, x/3 ..., x/n
             - 'div_add': x, (x+x/2), (x+x/3), ... (x+x/n)
             - 'div_sub': x, (x-x/2), (x-x/3), ... (x-x/n)
-            
+
         cons_limit : float
             Defines the minimal consonance level used in the method.
         ratios_extension : Boolean, default=False
@@ -666,7 +668,7 @@ class compute_biotuner(object):
         self.extended_amps = peaks_to_amps(
             self.extended_peaks, self.freqs, self.psd, self.sf
         )
-        #print("Number of extended peaks : ", len(self.extended_peaks))
+        # print("Number of extended peaks : ", len(self.extended_peaks))
         if len(self.extended_peaks) > 0:
             ext_peaks_rat = compute_peak_ratios(self.extended_peaks, rebound=True)
             if ratios_extension is True:
@@ -728,16 +730,27 @@ class compute_biotuner(object):
             ratios_inc_fit_ = None
         return ratios_harms_, ratios_inc_, ratios_inc_fit_
 
-    def time_resolved_harmonicity(self, input='IF', method='harmsim', keep_first_IMF=False, nIMFs=3, IMFs=None, delta_lim=20,
-                                  limit_cons=0.2, min_notes=3, graph=False, window=None):
+    def time_resolved_harmonicity(
+        self,
+        input="IF",
+        method="harmsim",
+        keep_first_IMF=False,
+        nIMFs=3,
+        IMFs=None,
+        delta_lim=20,
+        limit_cons=0.2,
+        min_notes=3,
+        graph=False,
+        window=None,
+    ):
         """
-        Compute the time-resolved harmonicity of the input data, which involves computation of instantaneous frequency 
+        Compute the time-resolved harmonicity of the input data, which involves computation of instantaneous frequency
         (IF) or SpectroMorph analysis on the input data, followed by harmonicity computation on the IFs or SpectroMorph
         data.
         Parameters
         ----------
         input : str, default='IF'
-            The input type for harmonicity computation, either 'IF' (instantaneous frequency) or 'SpectralCentroid'. 
+            The input type for harmonicity computation, either 'IF' (instantaneous frequency) or 'SpectralCentroid'.
         method : str, default='harmsim'
             The method used for harmonicity computation, such as 'harmsim'.
         keep_first_IMF : bool, default=False
@@ -755,7 +768,7 @@ class compute_biotuner(object):
         graph : bool, default=False
             If True, a graph of the computed harmonicity will be displayed.
         window : int, default=None
-            The window size for SpectroMorph analysis. If None, it is set to half of the sampling frequency. 
+            The window size for SpectroMorph analysis. If None, it is set to half of the sampling frequency.
 
         Returns
         -------
@@ -786,18 +799,22 @@ class compute_biotuner(object):
         if IMFs is None:
             IMFs = EMD_eeg(self.data, method="EMD")
             if keep_first_IMF is True:
-                IMFs = IMFs[0: nIMFs + 1, :]
+                IMFs = IMFs[0 : nIMFs + 1, :]
             else:
-                IMFs = IMFs[1: nIMFs + 1, :]
+                IMFs = IMFs[1 : nIMFs + 1, :]
             self.IMFs = IMFs
-        if input == 'IF':
+        if input == "IF":
             IMFs = np.moveaxis(IMFs, 0, 1)
-            IP, IFs, IA = emd.spectra.frequency_transform(IMFs, self.sf, "nht") # IFs (time, IMF)
+            IP, IFs, IA = emd.spectra.frequency_transform(
+                IMFs, self.sf, "nht"
+            )  # IFs (time, IMF)
             self.IFs = IFs
             IFs = np.moveaxis(IFs, 0, 1)
             print(IFs.shape)
-        if input == 'SpectralCentroid':
-            IFs = EMD_to_spectromorph(IMFs, self.sf, method='SpectralCentroid', window=window, overlap=1)
+        if input == "SpectralCentroid":
+            IFs = EMD_to_spectromorph(
+                IMFs, self.sf, method="SpectralCentroid", window=window, overlap=1
+            )
             self.spectro_EMD = IFs
             print(IFs.shape)
         self.spectro_chords, spectro_chord_pos, tr_harm = timepoint_consonance(
@@ -808,15 +825,15 @@ class compute_biotuner(object):
             graph=graph,
             n_harm=self.n_harm,
             delta_lim=delta_lim,
-            )
-        
+        )
+
         if graph is True:
             plt.clf()
             if len(self.spectro_chords) > 0:
                 ax = sbn.lineplot(data=tr_harm, dashes=False)
                 ax.set(xlabel="Time Windows", ylabel=method)
                 ax.set_ylabel(method)
-                #if method == "SpectralCentroid":
+                # if method == "SpectralCentroid":
                 #    ax.set_yscale("log")
                 # plt.legend(
                 #     scatterpoints=1,
@@ -829,7 +846,7 @@ class compute_biotuner(object):
                 plt.show()
         self.time_resolved_harmonicity = tr_harm
         return self.time_resolved_harmonicity, self.spectro_chords, spectro_chord_pos
-        
+
     def compute_spectromorph(
         self,
         IMFs=None,
@@ -852,7 +869,7 @@ class compute_biotuner(object):
             Sampling frequency.
         method : str, default='SpectralCentroid'
             Spectromorphological metric to compute.
-        
+
              - 'SpectralCentroid',
              - 'SpectralCrestFactor',
              - 'SpectralDecrease',
@@ -887,7 +904,7 @@ class compute_biotuner(object):
         """
         if IMFs is None:
 
-            IMFs = EMD_eeg(self.data, method="EMD")[1:nIMFs + 1]
+            IMFs = EMD_eeg(self.data, method="EMD")[1 : nIMFs + 1]
             self.IMFs = IMFs
         if sf is None:
             sf = self.sf
@@ -898,7 +915,6 @@ class compute_biotuner(object):
             IMFs, sf, method=method, window=window, overlap=overlap
         )
         self.spectro_EMD = spectro_EMD
-        
 
     def compute_peaks_metrics(self, n_harm=None, harm_bounds=0.5, delta_lim=20):
         """
@@ -916,7 +932,7 @@ class compute_biotuner(object):
         ----------
         self.peaks_metrics : dict
             Dictionary with keys corresponding to the different metrics.
-            
+
             - 'cons'
             - 'euler'
             - 'tenney'
@@ -935,37 +951,38 @@ class compute_biotuner(object):
         peaks_ratios = compute_peak_ratios(
             peaks, rebound=True, octave=self.octave, sub=self.compute_sub_ratios
         )
-        #print('PEAKS RATIOS COMPUTED')
+        # print('PEAKS RATIOS COMPUTED')
         metrics = {"cons": 0, "euler": 0, "tenney": 0, "harm_fit": 0, "harmsim": 0}
-        #try:
+        # try:
         harm_fit, harm_pos, common_harm_pos, _ = harmonic_fit(
             peaks, n_harm=n_harm, bounds=harm_bounds
         )
-        #print('HARMONIC FIT COMPUTED')
         metrics["harm_pos"] = harm_pos
         metrics["common_harm_pos"] = common_harm_pos
-        metrics["harm_fit"] = len(harm_fit)
-        #except:
-        #    pass
+        if isinstance(harm_fit, np.ndarray):
+            harm_fit = harm_fit.flatten().tolist()  # Convert to a flat list
+        if not isinstance(harm_fit, list):
+            harm_fit = []  # Default safeguard
+        metrics["harm_fit"] = len(harm_fit) if harm_fit else np.nan
+
         a, b, c, metrics["cons"] = consonance_peaks(peaks, 0.1)
-        #print('CONSONANCE COMPUTED')
+        # print('CONSONANCE COMPUTED')
         peaks_euler = [int(round(num, 2) * 1000) for num in peaks]
 
         spf = self.peaks_function
-        '''if spf == "fixed" or spf == "adapt" or spf == "EMD" or spf == "EEMD":
+        """if spf == "fixed" or spf == "adapt" or spf == "EMD" or spf == "EEMD":
             try:
                 metrics["euler"] = euler(*peaks_euler)
             except:
-                pass'''
+                pass"""
         metrics["tenney"] = tenneyHeight(peaks)
         metrics["harmsim"] = np.average(ratios2harmsim(peaks_ratios))
-        #print('HARMSIM COMPUTED')
-        _, _, subharm, _ = compute_subharmonic_tension(peaks[0:5],
-                                                       n_harm,
-                                                       delta_lim,
-                                                       min_notes=3)
+        # print('HARMSIM COMPUTED')
+        _, _, subharm, _ = compute_subharmonic_tension(
+            peaks[0:5], n_harm, delta_lim, min_notes=3
+        )
         metrics["subharm_tension"] = subharm
-        #print('SUBHARM COMPUTED')
+        # print('SUBHARM COMPUTED')
         if spf == "harmonic_recurrence":
             metrics["n_harmonic_recurrence"] = self.n_harmonic_recurrence
         self.peaks_metrics = metrics
@@ -990,10 +1007,10 @@ class compute_biotuner(object):
         ----------
         input_type : str, default='peaks'
             Defines whether peaks or extended_peaks are used.
-            
+
             - 'peaks'
             - 'extended_peaks'
-            
+
         denom : int, default=1000
             Maximal value of the denominator when computing frequency ratios.
         max_ratio : float, default=2
@@ -1006,10 +1023,10 @@ class compute_biotuner(object):
         method : str, default='min'
             Refer to dissmeasure function in scale_construction.py
             for more information.
-            
+
             - 'min'
             - 'product'
-            
+
         plot : Boolean, default=False
             When set to True, dissonance curve is plotted.
         n_tet_grid : int, default=12
@@ -1028,12 +1045,12 @@ class compute_biotuner(object):
             List of frequency ratios corresponding to consonant local minima.
         self.scale_metrics : dict
             Add 4 metrics related to the dissonance curve tuning:
-            
+
             - 'diss_euler'
             - 'dissonance'
             - 'diss_harm_sim'
             - 'diss_n_steps'
-            
+
 
         """
         if input_type == "peaks":
@@ -1046,18 +1063,22 @@ class compute_biotuner(object):
         if scale_cons_limit is None:
             scale_cons_limit = self.scale_cons_limit
 
-        peaks = [p * 128 for p in peaks] # scale the peaks up to accomodate beating frequency modelling.
+        peaks = [
+            p * 128 for p in peaks
+        ]  # scale the peaks up to accomodate beating frequency modelling.
         amps = np.interp(amps, (np.array(amps).min(), np.array(amps).max()), (0.2, 0.8))
 
-        diss, intervals, self.diss_scale, euler_diss, diss_avg, harm_sim_diss = diss_curve(
-            peaks,
-            amps,
-            denom=denom,
-            max_ratio=max_ratio,
-            euler_comp=euler_comp,
-            method=method,
-            plot=plot,
-            n_tet_grid=n_tet_grid,
+        diss, intervals, self.diss_scale, euler_diss, diss_avg, harm_sim_diss = (
+            diss_curve(
+                peaks,
+                amps,
+                denom=denom,
+                max_ratio=max_ratio,
+                euler_comp=euler_comp,
+                method=method,
+                plot=plot,
+                n_tet_grid=n_tet_grid,
+            )
         )
         self.diss_scale_cons, b = consonant_ratios(
             self.diss_scale, scale_cons_limit, sub=False, input_type="ratios"
@@ -1089,10 +1110,10 @@ class compute_biotuner(object):
         ----------
         input_type : str, default='peaks'
             Defines whether peaks or extended_peaks are used.
-            
+
             - 'peaks'
             - 'extended_peaks'
-            
+
         res : float, default=0.001
             Resolution of the ratio steps.
         spread : float, default=0.01
@@ -1121,11 +1142,11 @@ class compute_biotuner(object):
             List of frequency ratios corresponding to consonant local minima.
         self.scale_metrics : dict
             Four metrics related to the dissonance curve tuning:
-                
+
             - 'HE'
             - 'HE_n_steps'
             - 'HE_harm_sim'
-            
+
 
         """
         if input_type == "peaks":
@@ -1169,10 +1190,10 @@ class compute_biotuner(object):
         ----------
         method : str, default='peaks'
             Defines which set of frequencies are used.
-            
+
             - 'peaks'
             - 'extended_peaks'
-            
+
         octave : float, default=2
             Value of period interval.
 
@@ -1180,7 +1201,7 @@ class compute_biotuner(object):
         -------
         self.euler_fokker : List (float)
             Euler-Fokker genera.
-            
+
         Attributes
         ----------
         self.euler_fokker : List (float)
@@ -1215,7 +1236,7 @@ class compute_biotuner(object):
         -------
         ratios : List (float)
             Generated tuning.
-            
+
         Attributes
         ----------
         self.harmonic_tuning : List (float)
@@ -1255,7 +1276,7 @@ class compute_biotuner(object):
         -------
         self.harmonic_fit_tuning : List (float)
             Generated tuning
-            
+
         Attributes
         ----------
         self.harmonic_fit_tuning : List (float)
@@ -1295,29 +1316,29 @@ class compute_biotuner(object):
         method : str, default='duprelatour'
             Choice of method for PAC calculation.
                 STANDARD_PAC_METRICS:
-                    
+
                     - 'ozkurt'
                     - 'canolty'
                     - 'tort'
                     - 'penny'
                     - 'vanwijk'
-                    
+
                 DAR_BASED_PAC_METRICS:
-                    
+
                     - 'duprelatour'
-                    
+
                 COHERENCE_PAC_METRICS:
-                    
+
                     - 'jiang'
                     - 'colgin'
-                    
+
                 BICOHERENCE_PAC_METRICS:
-                    
+
                     - 'sigl'
                     - 'nagashima'
                     - 'hagihira'
                     - 'bispectrum'
-                
+
         n_values : int, default=10
             Number of pairs of frequencies to return.
         drive_precision : float, default=0.05
@@ -1367,13 +1388,18 @@ class compute_biotuner(object):
         self.pac_coupling = pac_coupling
         return self.pac_freqs, self.pac_coupling
 
-
-
-    
-    def rhythm_construction(self, scale='peaks_ratios', mode='default', cons_threshold=0.2, max_denom=8, n_steps_down=3,
-                            graph=False, optimal_offsets=True):
+    def rhythm_construction(
+        self,
+        scale="peaks_ratios",
+        mode="default",
+        cons_threshold=0.2,
+        max_denom=8,
+        n_steps_down=3,
+        graph=False,
+        optimal_offsets=True,
+    ):
         """
-        Computes Euclidean rhythms from a scale defined between unison and octave. 
+        Computes Euclidean rhythms from a scale defined between unison and octave.
 
         Parameters
         ----------
@@ -1408,61 +1434,79 @@ class compute_biotuner(object):
         -----
         This method requires the prior computation of the specified 'scale'. For instance, 'peaks_ratios' requires the 'peaks_extraction' method to be called beforehand. The method's return values are integral to further rhythm analysis and comparison within the Biot
         """
-    
-        if scale == 'peaks_ratios':
+
+        if scale == "peaks_ratios":
             try:
                 scale = self.peaks_ratios
             # raise error if peaks_ratios is not computed
             except:
-                RuntimeError('peaks_ratios not computed. Call the peaks_extraction method first.')
-                
-        if scale == 'extended_peaks_ratios':
+                RuntimeError(
+                    "peaks_ratios not computed. Call the peaks_extraction method first."
+                )
+
+        if scale == "extended_peaks_ratios":
             try:
                 scale = self.extended_peaks_ratios
             # raise error if extended_peaks_ratios is not computed
             except:
-                print('extended_peaks_ratios not computed. Calling the peaks_extension method first.')
+                print(
+                    "extended_peaks_ratios not computed. Calling the peaks_extension method first."
+                )
                 self.peaks_extension()
                 scale = self.extended_peaks_ratios
-                
-        if scale == 'diss_scale':
+
+        if scale == "diss_scale":
             try:
                 scale = self.diss_scale
             # raise error if diss_scale is not computed
             except:
-                RuntimeError('diss_scale not computed. Call the compute_diss_curve method first.')
-        if scale == 'HE_scale':
+                RuntimeError(
+                    "diss_scale not computed. Call the compute_diss_curve method first."
+                )
+        if scale == "HE_scale":
             try:
                 scale = self.HE_scale
             # raise error if HE_scale is not computed
             except:
-                RuntimeError('HE_scale not computed. Call the compute_harmonic_entropy method first.')
-        if scale == 'harmonic_fit_tuning':
+                RuntimeError(
+                    "HE_scale not computed. Call the compute_harmonic_entropy method first."
+                )
+        if scale == "harmonic_fit_tuning":
             try:
                 scale = self.harmonic_fit_tuning
             # raise error if harmonic_fit_tuning is not computed
             except:
-                RuntimeError('harmonic_fit_tuning not computed. Call the harmonic_fit_tuning method first.')
-        if scale == 'harmonic_tuning':
+                RuntimeError(
+                    "harmonic_fit_tuning not computed. Call the harmonic_fit_tuning method first."
+                )
+        if scale == "harmonic_tuning":
             try:
                 scale = self.harmonic_tuning
             # raise error if harmonic_tuning is not computed
             except:
-                RuntimeError('harmonic_tuning not computed. Call the harmonic_tuning method first and ensure that the peaks_extraction method was called with harmonic_recurrence as peaks_function.')
-        if scale == 'euler_fokker':
+                RuntimeError(
+                    "harmonic_tuning not computed. Call the harmonic_tuning method first and ensure that the peaks_extraction method was called with harmonic_recurrence as peaks_function."
+                )
+        if scale == "euler_fokker":
             try:
                 scale = self.euler_fokker
             # raise error if euler_fokker is not computed
             except:
-                RuntimeError('euler_fokker not computed. Call the euler_fokker_scale method first.')
-        if mode == 'default':
+                RuntimeError(
+                    "euler_fokker not computed. Call the euler_fokker_scale method first."
+                )
+        if mode == "default":
             euclid_final = scale2euclid(scale, max_denom=max_denom)
-            
-        if mode == 'consonant':
-            euclid_final, cons = consonant_euclid(scale, n_steps_down=n_steps_down, limit_denom=max_denom,
-                                      limit_cons=cons_threshold, limit_denom_final=max_denom)
 
-        
+        if mode == "consonant":
+            euclid_final, cons = consonant_euclid(
+                scale,
+                n_steps_down=n_steps_down,
+                limit_denom=max_denom,
+                limit_cons=cons_threshold,
+                limit_denom_final=max_denom,
+            )
+
         # Compare rhythms to referents
         interval_vectors = [interval_vector(x) for x in euclid_final]
         strings = interval_vec_to_string(interval_vectors)
@@ -1479,11 +1523,12 @@ class compute_biotuner(object):
         else:
             offsets = None
         if graph is True:
-            tolerance = 0.05    
-            visualize_rhythms(euclid_rhythms, offsets=offsets, tolerance=tolerance, cmap='plasma_r')
+            tolerance = 0.05
+            visualize_rhythms(
+                euclid_rhythms, offsets=offsets, tolerance=tolerance, cmap="plasma_r"
+            )
         return euclid_final, euclid_rhythms, euclid_referent
-        
-            
+
     def compute_peaks_ts(
         self,
         data,
@@ -1508,7 +1553,7 @@ class compute_biotuner(object):
         EIMC_order=3,
         min_IMs=2,
         smooth_fft=1,
-        keep_first_IMF=False
+        keep_first_IMF=False,
     ):
         """
         Extract peak frequencies. This method is called by the
@@ -1558,10 +1603,10 @@ class compute_biotuner(object):
             When set to None, equals sf//10.
         average : str, default='median'
             Method to use when averaging periodograms.
-            
+
             - 'mean': average periodograms
-            - 'median': median periodograms 
-            
+            - 'median': median periodograms
+
         max_harm_freq : int, default=None
             Maximum frequency value of the find peaks function
             when harmonic_recurrence or EIMC peaks extraction method is used.
@@ -1582,7 +1627,7 @@ class compute_biotuner(object):
             List of peaks frequencies.
         amps : List (float)
             List of amplitudes associated with peaks frequencies.
-        
+
         Attributes
         ----------
         self.freqs : array
@@ -1638,7 +1683,7 @@ class compute_biotuner(object):
             )
             FREQ_BANDS = alpha2bands(p[0])
             self.FREQ_BANDS = FREQ_BANDS
-            print('Adaptive frequency bands: ', FREQ_BANDS)
+            print("Adaptive frequency bands: ", FREQ_BANDS)
             peaks_temp, amps_temp, self.freqs, self.psd = extract_welch_peaks(
                 data,
                 sf=sf,
@@ -1650,7 +1695,7 @@ class compute_biotuner(object):
                 nperseg=nperseg,
                 noverlap=noverlap,
                 nfft=nfft,
-                smooth=smooth_fft
+                smooth=smooth_fft,
             )
             if graph is True:
                 graph_psd_peaks(
@@ -1686,7 +1731,7 @@ class compute_biotuner(object):
                     xmin=min_freq,
                     xmax=max_freq,
                     color="darkred",
-                    method=peaks_function
+                    method=peaks_function,
                 )
         if peaks_function == "FOOOF":
             peaks_temp, amps_temp, self.freqs, self.psd = compute_FOOOF(
@@ -1704,8 +1749,8 @@ class compute_biotuner(object):
             peaks_function == "EMD"
             or peaks_function == "EEMD"
             or peaks_function == "CEEMDAN"
-            #or peaks_function == "EMD_fast"
-            #or peaks_function == "EEMD_fast"
+            # or peaks_function == "EMD_fast"
+            # or peaks_function == "EEMD_fast"
         ):
             IMFs = EMD_eeg(
                 data,
@@ -1715,12 +1760,12 @@ class compute_biotuner(object):
                 nIMFs=nIMFs,
             )
             if keep_first_IMF is True:
-                self.IMFs = IMFs[0: nIMFs + 1]
-                IMFs = IMFs[0: nIMFs + 1]
+                self.IMFs = IMFs[0 : nIMFs + 1]
+                IMFs = IMFs[0 : nIMFs + 1]
             if keep_first_IMF is False:
-                self.IMFs = IMFs[1: nIMFs + 1]
-                IMFs = IMFs[1: nIMFs + 1]
-            #try:
+                self.IMFs = IMFs[1 : nIMFs + 1]
+                IMFs = IMFs[1 : nIMFs + 1]
+            # try:
             peaks_temp = []
             amps_temp = []
             freqs_all = []
@@ -1740,34 +1785,34 @@ class compute_biotuner(object):
                     prominence=prominence,
                     rel_height=rel_height,
                 )
-                #self.freqs = freqs
+                # self.freqs = freqs
                 freqs_all.append(freqs)
                 psd_all.append(psd)
                 peaks_temp.append(p)
                 amps_temp.append(a)
             peaks_temp = np.flip(peaks_temp)
-            #print('PEAKS_TEMP', peaks_temp, 'AMPS_TEMP', amps_temp)
+            # print('PEAKS_TEMP', peaks_temp, 'AMPS_TEMP', amps_temp)
             amps_temp = np.flip(amps_temp)
             peaks_temp = peaks_temp[-n_peaks:]
             _, _, self.freqs, self.psd = extract_welch_peaks(
-                                                                data,
-                                                                sf=sf,
-                                                                FREQ_BANDS=FREQ_BANDS,
-                                                                out_type="single",
-                                                                precision=precision,
-                                                                average=average,
-                                                                extended_returns=True,
-                                                                nperseg=nperseg,
-                                                                noverlap=noverlap,
-                                                                nfft=nfft,
-                                                                smooth=smooth_fft,
-                                                                prominence=prominence,
-                                                                rel_height=rel_height
-                                                            )
-            #except:
+                data,
+                sf=sf,
+                FREQ_BANDS=FREQ_BANDS,
+                out_type="single",
+                precision=precision,
+                average=average,
+                extended_returns=True,
+                nperseg=nperseg,
+                noverlap=noverlap,
+                nfft=nfft,
+                smooth=smooth_fft,
+                prominence=prominence,
+                rel_height=rel_height,
+            )
+            # except:
             #    pass
             if graph is True:
-                '''graphEMD_welch(
+                """graphEMD_welch(
                     freqs_all,
                     psd_all,
                     peaks=peaks_temp,
@@ -1779,24 +1824,35 @@ class compute_biotuner(object):
                     noverlap=noverlap,
                     min_freq=min_freq,
                     max_freq=max_freq,
-                )'''
-                graphEMD_welch(freqs_all, psd_all, peaks_temp, self.data, FREQ_BANDS,
-                            sf, nfft, nperseg, noverlap, min_freq=1,
-                            max_freq=60, precision=0.5)
-                
-                #(self.data, self.IMFs, peaks_temp, spectro='Euler', bands = None, xmin=min_freq, xmax=max_freq,
+                )"""
+                graphEMD_welch(
+                    freqs_all,
+                    psd_all,
+                    peaks_temp,
+                    self.data,
+                    FREQ_BANDS,
+                    sf,
+                    nfft,
+                    nperseg,
+                    noverlap,
+                    min_freq=1,
+                    max_freq=60,
+                    precision=0.5,
+                )
+
+                # (self.data, self.IMFs, peaks_temp, spectro='Euler', bands = None, xmin=min_freq, xmax=max_freq,
                 #                  compare = True, name = '', nfft=nfft, nperseg=nperseg, noverlap=noverlap, sf=self.sf,
                 #                  freqs_all=freqs_all, psd_all=psd_all, max_freq=max_freq, precision=precision)
-                #EMD_PSD_graph(peaks_temp, IMFs, freqs_all, psd_all, spectro='Euler', bands=None, xmin=1, xmax=70, plot_type = 'line',
+                # EMD_PSD_graph(peaks_temp, IMFs, freqs_all, psd_all, spectro='Euler', bands=None, xmin=1, xmax=70, plot_type = 'line',
                 #              compare=True, input_data='EEG', name='',sf=self.sf,
                 #              raw_data=self.data, precision=precision, noverlap=noverlap, save=False)
 
         if peaks_function == "EMD_FOOOF":
             nfft = sf / precision
             nperseg = sf / precision
-            IMFs = EMD_eeg(
-                data, method="EMD", graph=graph, extrema_detection="simple"
-            )[1: nIMFs + 1]
+            IMFs = EMD_eeg(data, method="EMD", graph=graph, extrema_detection="simple")[
+                1 : nIMFs + 1
+            ]
             self.IMFs = IMFs
             peaks_temp = []
             amps_temp = []
@@ -1846,7 +1902,7 @@ class compute_biotuner(object):
                 precision=precision,
                 bin_spread="log",
                 smooth_sigma=smooth_sigma,
-                keep_first_IMF=keep_first_IMF
+                keep_first_IMF=keep_first_IMF,
             )
             self.IF = IF
         # if peaks_function == 'HH1D_weightAVG':
@@ -1867,15 +1923,15 @@ class compute_biotuner(object):
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
             peaks_temp = [p for p in peaks_temp if p < max_freq][0:n_peaks]
-            '''amp_idx = []
+            """amp_idx = []
             for i in peaks_temp:
                 amp_idx.append(flatten(freqs).index(i))
             amps_temp = np.array(flatten(amps))[amp_idx]
             amps_temp = list(amps_temp)
             # Select the n peaks with highest amplitude.
             peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][0:n_peaks]
-            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]'''
-            amps_temp = 'NaN'
+            amps_temp = sorted(amps_temp)[::-1][0:n_peaks]"""
+            amps_temp = "NaN"
         if peaks_function == "harmonic_recurrence":
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
@@ -1890,7 +1946,7 @@ class compute_biotuner(object):
                 min_freq=min_freq,
                 smooth=smooth_fft,
                 prominence=prominence,
-                rel_height=rel_height
+                rel_height=rel_height,
             )
 
             (
@@ -1918,15 +1974,22 @@ class compute_biotuner(object):
                 amps_temp = [x for _, x in sorted(zip(max_n, amps_temp))][::-1][
                     0:n_peaks
                 ]
-                #amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
+                # amps_temp = sorted(amps_temp)[::-1][0:n_peaks]
                 if graph is True:
-                    graph_harm_peaks(self.freqs, self.psd,
-                                     harm_peaks_fit, min_freq,
-                                     max_freq, color='black',
-                                     save=False,
-                                     figname='test')
+                    graph_harm_peaks(
+                        self.freqs,
+                        self.psd,
+                        harm_peaks_fit,
+                        min_freq,
+                        max_freq,
+                        color="black",
+                        save=False,
+                        figname="test",
+                    )
             except ValueError:
-                print('No peaks were detected. Consider increasing precision or number of harmonics')
+                print(
+                    "No peaks were detected. Consider increasing precision or number of harmonics"
+                )
 
         if peaks_function == "EIMC":
             p, a, self.freqs, self.psd = extract_welch_peaks(
@@ -1942,7 +2005,7 @@ class compute_biotuner(object):
                 min_freq=min_freq,
                 smooth=smooth_fft,
                 prominence=prominence,
-                rel_height=rel_height
+                rel_height=rel_height,
             )
             IMC, self.EIMC_all, n = endogenous_intermodulations(
                 p, a, order=EIMC_order, min_IMs=min_IMs
@@ -1989,16 +2052,16 @@ class compute_biotuner(object):
             common_freqs = flatten(pairs_most_frequent(freqs, n_peaks))
             peaks_temp = list(np.sort(list(set(common_freqs))))
             peaks_temp = [p for p in peaks_temp if p < max_freq][0:n_peaks]
-            '''amp_idx = []
+            """amp_idx = []
             for i in peaks_temp:
                 amp_idx.append(flatten(freqs).index(i))
             amps_temp = np.array(amps)[amp_idx]
             amps_temp = list(amps_temp)
             peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp))][::-1][
                 0:n_peaks
-            ]'''
+            ]"""
 
-            amps_temp = 'NaN'
+            amps_temp = "NaN"
         if peaks_function == "cepstrum":
             cepstrum_, quefrency_vector = cepstrum(
                 self.data,
@@ -2031,17 +2094,26 @@ class compute_biotuner(object):
                 )
             )
         peaks = np.array(peaks)[peaks_idx]
-        #print('FINAL PEAKS', peaks)
-        if peaks_function != 'PAC' and peaks_function != 'bicoherence':
+        # print('FINAL PEAKS', peaks)
+        if peaks_function != "PAC" and peaks_function != "bicoherence":
+            amps = np.array(amps)[peaks_idx]
             amps = np.array(amps)[peaks_idx]
         # filter out peaks that are not in min max range
-        peaks_idx = np.where((np.array(peaks) >= min_freq) & (np.array(peaks) <= max_freq))[0]
+        peaks_idx = np.where(
+            (np.array(peaks) >= min_freq) & (np.array(peaks) <= max_freq)
+        )[0]
         peaks = np.array(peaks)[peaks_idx]
-        amps = np.array(amps)[peaks_idx]
+
         return peaks, amps
 
-    def compute_resonance(self, harm_thresh=30, PPC_thresh=0.6, smooth_fft=2,
-                          harmonicity_metric='harmsim', delta_lim=50):
+    def compute_resonance(
+        self,
+        harm_thresh=30,
+        PPC_thresh=0.6,
+        smooth_fft=2,
+        harmonicity_metric="harmsim",
+        delta_lim=50,
+    ):
         """Compute resonances between pairs of frequency peaks in the data.
 
         Parameters
@@ -2058,10 +2130,10 @@ class compute_biotuner(object):
         harmonicity_metric : str, default='harmsim'
             The metric to use for computing the harmonic similarity between a pair of peaks.
             Choose between:
-            
+
             - 'harmsim'
             - 'subharm_tension'
-            
+
         delta_lim : int, default=50
             The maximum number of subharmonic intervals to consider when using the 'subharm_tension' metric.
             Must be a positive integer.
@@ -2070,25 +2142,44 @@ class compute_biotuner(object):
         -------
         Tuple[float, List[Tuple[float, float]], List[float], List[float]]
             A tuple containing the following elements:
-            
+
             - **resonance**: a float representing the mean weighted bicorrelation coefficient across all harmonic pairs that meet the specified criteria for harmonicity and PPC
             - **resonant_freqs**: a list of tuples, where each tuple contains two floats representing the frequencies of a pair of resonant harmonics that meet the specified criteria for harmonicity and PPC
             - **harm_all**: a list of floats representing the harmonic similarity metric between all possible harmonic pairs
             - **bicor_all**: a list of floats representing the bicorrelation coefficient between all possible harmonic pairs
 
-        """        
-        if self.peaks_function != 'EMD' and self.peaks_function != 'EMD_fast' and self.peaks_function != 'harmonic_recurrence' and self.peaks_function != 'FOOOF':
-            print('Peaks extraction function {} is not compatible with resonance metrics'.format(self.peaks_function))
+        """
+        if (
+            self.peaks_function != "EMD"
+            and self.peaks_function != "EMD_fast"
+            and self.peaks_function != "harmonic_recurrence"
+            and self.peaks_function != "FOOOF"
+        ):
+            print(
+                "Peaks extraction function {} is not compatible with resonance metrics".format(
+                    self.peaks_function
+                )
+            )
+            return (None,)
         if len(self.peaks) < 1:
-            print('No peaks in the biotuner object. Please use peaks_extraction method first')
+            print(
+                "No peaks in the biotuner object. Please use peaks_extraction method first"
+            )
         if self.precision is not None:
             mult = 1 / self.precision
             nfft = int(self.sf * mult)
-            nperseg = int(nfft/smooth_fft)
+            nperseg = int(nfft / smooth_fft)
         max_peak = np.max(self.peaks)
         freq1, freq2, bispec = polycoherence(
-                self.data, self.sf, norm=2, flim1=[1, max_peak+self.precision], flim2=[1, max_peak+self.precision], dim=2,
-                nperseg=nperseg, nfft=nfft)
+            self.data,
+            self.sf,
+            norm=2,
+            flim1=[1, max_peak + self.precision],
+            flim2=[1, max_peak + self.precision],
+            dim=2,
+            nperseg=nperseg,
+            nfft=nfft,
+        )
 
         pairs = list(combinations(self.peaks, 2))
 
@@ -2100,19 +2191,18 @@ class compute_biotuner(object):
         bicor_all = []
         for pair in pairs:
             if pair[0] > pair[1]:
-                ratio = pair[0]/pair[1]
+                ratio = pair[0] / pair[1]
             if pair[0] <= pair[1]:
-                ratio = pair[1]/pair[0]
-            if harmonicity_metric == 'harmsim':
+                ratio = pair[1] / pair[0]
+            if harmonicity_metric == "harmsim":
                 harm_ = dyad_similarity(ratio)
-            if harmonicity_metric == 'subharm_tension':
-                _, _, harm_, _ = compute_subharmonic_tension(pair,
-                                                             self.n_harm,
-                                                             delta_lim=delta_lim,
-                                                             min_notes=2)
+            if harmonicity_metric == "subharm_tension":
+                _, _, harm_, _ = compute_subharmonic_tension(
+                    pair, self.n_harm, delta_lim=delta_lim, min_notes=2
+                )
                 harm_ = 1 - harm_
             # Determine the number of decimal places you want to consider
-            n_decimals = 1 
+            n_decimals = 1
 
             # Convert freq1 to a list of rounded values
             freq1_rounded = [round(f, n_decimals) for f in freq1]
@@ -2123,8 +2213,8 @@ class compute_biotuner(object):
             # Now use the rounded values to find the indices
             idx1 = freq1_rounded.index(pair_rounded[0])
             idx2 = freq1_rounded.index(pair_rounded[1])
-            #idx1 = (np.abs(np.array(freq1) - pair[0])).argmin()
-            #idx2 = (np.abs(np.array(freq1) - pair[1])).argmin()
+            # idx1 = (np.abs(np.array(freq1) - pair[0])).argmin()
+            # idx2 = (np.abs(np.array(freq1) - pair[1])).argmin()
             bicor_ = np.real(bispec[idx1][idx2])
 
             if bicor_ < 1:
@@ -2134,10 +2224,10 @@ class compute_biotuner(object):
                 if bicor_ < 1:
                     bicor.append(bicor_)
                     harm.append(harm_)
-                    if harmonicity_metric == 'harmsim':
-                        weighted_bicor.append((harm_/100)*bicor_)
-                    if harmonicity_metric == 'subharm_tension':
-                        weighted_bicor.append((harm_)*bicor_)
+                    if harmonicity_metric == "harmsim":
+                        weighted_bicor.append((harm_ / 100) * bicor_)
+                    if harmonicity_metric == "subharm_tension":
+                        weighted_bicor.append((harm_) * bicor_)
                     if bicor_ > PPC_thresh:
                         resonant_freqs.append((pair[0], pair[1]))
         # resonance = np.corrcoef(harm_sim, bicor)[0][1]
@@ -2150,7 +2240,6 @@ class compute_biotuner(object):
 
         return resonance_, resonant_freqs, harm_all, bicor_all
 
-
     """Listening methods"""
 
     def listen_scale(self, scale, fund=250, length=500):
@@ -2160,13 +2249,13 @@ class compute_biotuner(object):
         Parameters
         ----------
         scale : str or np.ndarray
-            The scale to play. 
+            The scale to play.
             If `scale` is a string, it can be one of:
-            
+
             - 'peaks': the scale is set to the biotuner object's `peaks_ratios` attribute
             - 'diss': the scale is set to the biotuner object's `diss_scale` attribute
             - 'HE': the scale is set to the biotuner object's `HE_scale` attribute
-            
+
             If `scale` is a numpy array, it should be an array of scale
             ratios.
         fund : float, default=250
@@ -2180,6 +2269,7 @@ class compute_biotuner(object):
         """
         if self.pygame_lib is None:
             import pygame
+
             self.pygame_lib = pygame
         if scale == "peaks":
             scale = self.peaks_ratios
@@ -2230,7 +2320,7 @@ class compute_biotuner(object):
         -------
         biotuning : Biotuning object
             The fitted biotuning object containing the computed metrics.
-            
+
         """
         biotuning = compute_biotuner(
             self.sf,
@@ -2282,39 +2372,49 @@ def fit_biotuner(ts, bt_dict):
         The modified input dictionary with the computed biotuner metrics added.
     """
     # Create the biotuner object
-    biotuning = compute_biotuner(sf=bt_dict['sf'], peaks_function=bt_dict['peaks_function'],
-                                 precision=bt_dict['precision'], n_harm=10,
-                                 ratios_n_harms=5, ratios_inc_fit=False, ratios_inc=False)
-    
+    biotuning = compute_biotuner(
+        sf=bt_dict["sf"],
+        peaks_function=bt_dict["peaks_function"],
+        precision=bt_dict["precision"],
+        n_harm=10,
+        ratios_n_harms=5,
+        ratios_inc_fit=False,
+        ratios_inc=False,
+    )
+
     # Extract the peaks from the time series
-    biotuning.peaks_extraction(ts, FREQ_BANDS=None, ratios_extension=False, max_freq=bt_dict['fmax'],
-                               n_peaks=bt_dict['n_peaks'], min_freq=bt_dict['fmin'],
-                               graph=False, min_harms=2, nIMFs=5)
-    
+    biotuning.peaks_extraction(
+        ts,
+        FREQ_BANDS=None,
+        ratios_extension=False,
+        max_freq=bt_dict["fmax"],
+        n_peaks=bt_dict["n_peaks"],
+        min_freq=bt_dict["fmin"],
+        graph=False,
+        min_harms=2,
+        nIMFs=5,
+    )
+
     # Compute the peaks metrics and resonance
-    biotuning.compute_peaks_metrics(n_harm=10, delta_lim=bt_dict['delta_lim'])
-    biotuning.compute_resonance(harm_thresh=bt_dict['harm_thresh'], smooth_fft=2,
-                                harmonicity_metric='harmsim', delta_lim=bt_dict['delta_lim'])
-    
+    biotuning.compute_peaks_metrics(n_harm=10, delta_lim=bt_dict["delta_lim"])
+
     # Convert the peaks ratios and peaks metrics to a dictionary of biotuner metrics
     bt_metrics = tuning_to_metrics(biotuning.peaks_ratios)
     bt_metrics.update(biotuning.peaks_metrics)
-    
+
     # Remove unneeded metrics from the dictionary
-    del bt_metrics['harm_pos']
-    del bt_metrics['euler']
-    del bt_metrics['common_harm_pos']
-    
+    del bt_metrics["harm_pos"]
+    del bt_metrics["euler"]
+    del bt_metrics["common_harm_pos"]
+
     # Add additional metadata to the dictionary
     peaks_euler = [int(round(num, 2) * 1000) for num in biotuning.peaks]
-    bt_dict['peaks_avg'] = np.mean(biotuning.peaks)
-    bt_dict['n_peaks'] = len(biotuning.peaks)
-    bt_dict['euler'] = euler(*peaks_euler)
-    bt_dict['resonance'] = biotuning.resonance
-    bt_dict['PPC_bicor'] = biotuning.PPC_bicor
-    
+    bt_dict["peaks_avg"] = np.mean(biotuning.peaks)
+    bt_dict["n_peaks"] = len(biotuning.peaks)
+    bt_dict["euler"] = euler(*peaks_euler)
+
     # Update the bt_dict dictionary with the computed biotuner metrics
     bt_dict.update(bt_metrics)
-    
+
     # Return the modified bt_dict dictionary
     return bt_dict

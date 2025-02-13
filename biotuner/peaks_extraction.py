@@ -39,16 +39,14 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
         Single time series.
     method : str, default='EMD'
         Type of Empirical Mode Decomposition. The available types are:
-        
+
         - 'EMD'
         - 'EEMD'
         - 'CEEMDAN'
-        - 'EMD_fast'
-        - 'EEMD_fast'
     graph : bool, default=False
         Defines if graph is created.
     extrema_detection : str, default='simple'
-        
+
         - 'simple'
         - 'parabol'
     nIMFs : int, default=5
@@ -66,7 +64,7 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
     >>> IMFs = EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5)
     >>> print('DATA', data.shape, 'IMFs', IMFs.shape)
     DATA (9501,) IMFs (11, 9501)
-    
+
     References
     ----------
     1. Huang, Norden E., et al. "The empirical mode decomposition and the
@@ -74,13 +72,13 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
     Proceedings of the Royal Society of London. Series A: Mathematical,
     Physical and Engineering Sciences 454.1971 (1998): 903-995.
     """
-    
+    # ensure data is not empty or constant values and raise error if so
+    if len(np.unique(data)) == 1:
+        raise ValueError("Data is constant")
+    if len(data) == 0:
+        raise ValueError("Data is empty")
     s = np.interp(data, (data.min(), data.max()), (0, +1))
     t = np.linspace(0, 1, len(data))
-    #if method == "EMD":
-    #    eIMFs = EMD(extrema_detection=extrema_detection).emd(s, t)
-    #if method == "EEMD":
-    #    eIMFs = EEMD(extrema_detection=extrema_detection).eemd(s, t)
     if method == "CEEMDAN":
         eIMFs = CEEMDAN(extrema_detection=extrema_detection).ceemdan(s, t)
     if method == "EMD":
@@ -89,6 +87,8 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
     if method == "EEMD":
         eIMFs = emd.sift.ensemble_sift(data)
         eIMFs = np.moveaxis(eIMFs, 0, 1)
+    if method != "CEEMDAN" and method != "EMD" and method != "EEMD":
+        raise ValueError("method should be 'EMD', 'EEMD', or 'CEEMDAN'")
     if graph is True:
         t = np.linspace(0, len(data), len(data))
         nIMFs = nIMFs
@@ -191,7 +191,7 @@ def extract_welch_peaks(
     prominence=1,
     out_type="all",
     extended_returns=True,
-    smooth=1
+    smooth=1,
 ):
     """
     Extract frequency peaks using Welch's method
@@ -214,9 +214,9 @@ def extract_welch_peaks(
         minimum and maximum values for each frequency band.
     average : str, default='median'
         Method for averaging periodograms.
-        
+
         - 'mean'
-        - 'median'  
+        - 'median'
     nperseg : int, default=None
         Length of each segment.
         If None, nperseg = nfft/smooth
@@ -227,7 +227,7 @@ def extract_welch_peaks(
         Number of points to overlap between segments.
         If None, noverlap = nperseg // 2.
     find_peaks_method : str, default='maxima'
-        
+
         - 'maxima'
         - 'wavelet'
     width : int, default=2
@@ -241,11 +241,11 @@ def extract_welch_peaks(
         Required prominence of peaks.
     out_type : str, default='all'
         Defines how many peaks are outputed. The options are:
-        
+
         - 'single'
         - 'bands'
         - 'all'
-        
+
     extended_returns : bool, default=True
         Defines if psd and frequency bins values are output along
         the peaks and amplitudes.
@@ -279,9 +279,12 @@ def extract_welch_peaks(
     >>> peaks
     [1.5, 5.5, 9.0, 15.0, 22.5, 32.5]
     """
+    # check if signal is empty
+    if len(data) == 0:
+        raise ValueError("Data cannot be empty")
     # check if precision is larger than a band range
     if FREQ_BANDS is not None:
-        if out_type == 'bands':
+        if out_type == "bands":
             for minf, maxf in FREQ_BANDS:
                 if precision > (maxf - minf):
                     raise ValueError("Precision is larger than a band range")
@@ -290,16 +293,15 @@ def extract_welch_peaks(
     if nperseg is None:
         mult = 1 / precision
         nfft = sf * mult
-        nperseg = nfft/smooth
+        nperseg = nfft / smooth
+    # ensure nperseg is not larger than signal length
+    if nperseg > len(data):
+        nperseg = len(data)
     freqs, psd = scipy.signal.welch(
-                 data,
-                 sf,
-                 nfft=nfft,
-                 nperseg=nperseg,
-                 average=average,
-                 noverlap=noverlap
-                 )
-    psd = 10.0 * np.log10(psd)
+        data, sf, nfft=nfft, nperseg=nperseg, average=average, noverlap=noverlap
+    )
+    psd = 10.0 * np.log10(np.maximum(psd, 1e-12))
+    psd = np.real(psd)
     if out_type == "all":
         if find_peaks_method == "maxima":
             indexes, _ = scipy.signal.find_peaks(
@@ -339,7 +341,7 @@ def extract_welch_peaks(
             idx_max.append(index_max)
             peaks.append(freqs[min_index + index_max])
             amps.append(psd[min_index + index_max])
-        #print("Index_max: all zeros indicate 1/f trend", idx_max)
+        # print("Index_max: all zeros indicate 1/f trend", idx_max)
     if out_type != "single":
         peaks = np.around(np.array(peaks), 5)
         peaks = list(peaks)
@@ -406,14 +408,14 @@ def compute_FOOOF(
         Frequency bins
     psd : Array
         Power spectrum density of each frequency bin
-        
+
     Examples
     --------
     >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
     >>> peaks, amps = compute_FOOOF(data, sf=1200, max_freq=50, n_peaks=3)
     >>> peaks
     [7.24, 14.71, 5.19]
-    
+
     References
     ----------
     Donoghue T, Haller M, Peterson EJ, Varma P, Sebastian P, Gao R, Noto T, Lara AH, Wallis JD,
@@ -427,17 +429,11 @@ def compute_FOOOF(
         nperseg = nfft
         noverlap = nperseg // 10
     freqs, psd = scipy.signal.welch(
-                 data,
-                 sf,
-                 nfft=nfft,
-                 nperseg=nperseg,
-                 noverlap=noverlap
-                 )
+        data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap
+    )
     fm = FOOOF(
-         peak_width_limits=[precision * 2, 3],
-         max_n_peaks=50,
-         min_peak_height=0.2
-         )
+        peak_width_limits=[precision * 2, 3], max_n_peaks=50, min_peak_height=0.2
+    )
     freq_range = [(sf / len(data)) * 2, max_freq]
     fm.fit(freqs, psd, freq_range)
     if graph is True:
@@ -445,12 +441,8 @@ def compute_FOOOF(
     peaks_temp_ = []
     amps_temp = []
     for p in range(len(fm.peak_params_)):
-        try:
-            peaks_temp_.append(fm.peak_params_[p][0])
-            amps_temp.append(fm.peak_params_[p][1])
-        except:
-            print("no peaks were found")
-            pass
+        peaks_temp_.append(fm.peak_params_[p][0])
+        amps_temp.append(fm.peak_params_[p][1])
     peaks_temp = [x for _, x in sorted(zip(amps_temp, peaks_temp_))][::-1][0:n_peaks]
     amps = sorted(amps_temp)[::-1][0:n_peaks]
     peaks = [np.round(p, 2) for p in peaks_temp]
@@ -474,7 +466,7 @@ def HilbertHuang1D(
     precision=0.1,
     bin_spread="log",
     smooth_sigma=None,
-    keep_first_IMF=False
+    keep_first_IMF=False,
 ):
     """
     The Hilbert-Huang transform provides a description of how the energy
@@ -501,7 +493,7 @@ def HilbertHuang1D(
         Value in Hertz corresponding to the minimal step between two
         frequency bins.
     bin_spread : str, default='log'
-    
+
         - 'linear'
         - 'log'
     smooth_sigma : float, default=None
@@ -529,9 +521,9 @@ def HilbertHuang1D(
     IMFs = EMD_eeg(data, method="EMD")
     IMFs = np.moveaxis(IMFs, 0, 1)
     if keep_first_IMF is True:
-        IMFs = IMFs[:, 0: nIMFs + 1]
+        IMFs = IMFs[:, 0 : nIMFs + 1]
     else:
-        IMFs = IMFs[:, 1: nIMFs + 1]
+        IMFs = IMFs[:, 1 : nIMFs + 1]
     IP, IF, IA = emd.spectra.frequency_transform(IMFs, sf, "nht")
     low = min_freq
     high = max_freq
@@ -551,7 +543,7 @@ def HilbertHuang1D(
             spec_ = gaussian_filter1d(spec_, smooth_sigma)
         freqs.append(freqs_)
         spec.append(spec_)
-        
+
     # Extract peaks within the frequency range
     peaks_temp = []
     amps_temp = []
@@ -564,13 +556,13 @@ def HilbertHuang1D(
         if min_freq <= peak <= max_freq:
             peaks_temp.append(peak)
             amps_temp.append(amplitude)
-    
+
     # Convert to arrays and ensure proper ordering
     peaks_temp = np.flip(peaks_temp)
     amps_temp = np.flip(amps_temp)
     peaks = [np.round(p, 2) for p in peaks_temp]
     amps = [np.round(a, 2) for a in amps_temp]
-    
+
     bins_ = []
     for i in range(len(spec)):
         bins_.append(bins)
@@ -722,7 +714,7 @@ def pac_frequencies(
     sf : int
         Sampling frequency.
     method : str
-    
+
         - 'ozkurt'
         - 'canolty'
         - 'tort'
@@ -761,7 +753,7 @@ def pac_frequencies(
     pac_coupling : List
         Coupling values associated with each pairs of phase and amplitude
         frequencies.
-        
+
     Examples
     --------
     >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
@@ -817,9 +809,6 @@ def pac_frequencies(
 def _polycoherence_2d(
     data, fs, *ofreqs, norm=2, flim1=None, flim2=None, synthetic=(), **kwargs
 ):
-    """
-    Polycoherence between freqs and their sum as a function of f1 and f2
-    """
     norm1, norm2 = __get_norm(norm)
     freq, t, spec = spectrogram(data, fs=fs, mode="complex", **kwargs)
     spec = np.require(spec, "complex64")
@@ -833,30 +822,34 @@ def _polycoherence_2d(
     ind3 = __freq_ind(freq, ofreqs)
     otemp = __product_other_freqs(spec, ind3, synthetic, t)[:, None, None]
     sumind = ind1[:, None] + ind2[None, :] + sum(ind3)
+
+    # Apply masking to ensure valid indices
+    valid_mask = (sumind >= 0) & (sumind < spec.shape[1])
     temp = spec[:, ind1, None] * spec[:, None, ind2] * otemp
+    temp[~valid_mask] = 0  # Ignore invalid contributions
+    temp *= np.conjugate(spec[:, sumind])
+
     if norm is not None:
         temp2 = np.mean(np.abs(temp) ** norm1, axis=0)
-    temp *= np.conjugate(spec[:, sumind])
     coh = np.mean(temp, axis=0)
     del temp
     if norm is not None:
         coh = np.abs(coh, out=coh)
         coh **= 2
         eps = 1e-10  # Small constant to prevent division by zero
-        temp2 = temp2 + eps  # Adding small constant to temp2  
+        temp2 = temp2 + eps  # Adding small constant to temp2
         temp2 *= np.mean(np.abs(spec[:, sumind]) ** norm2, axis=0)
         coh /= temp2
         coh **= 0.5
     return freq[ind1], freq[ind2], coh
 
 
-
 def polycoherence(data, *args, dim=2, **kwargs):
     """
     Calculate the polycoherence between frequencies and their sum frequency.
 
-    The polycoherence is defined as a function of two frequencies: 
-    |<prod(spec(fi)) * conj(spec(sum(fi)))>| ** n0 / <|prod(spec(fi))|> ** n1 * <|spec(sum(fi))|> ** n2 
+    The polycoherence is defined as a function of two frequencies:
+    |<prod(spec(fi)) * conj(spec(sum(fi)))>| ** n0 / <|prod(spec(fi))|> ** n1 * <|spec(sum(fi))|> ** n2
     where i is from 1 to N. For N=2, it is the bicoherence, and for N>2, it is the polycoherence.
 
     Parameters
@@ -869,14 +862,14 @@ def polycoherence(data, *args, dim=2, **kwargs):
         Fixed frequencies.
     dim : {'sum', 1, 2, 0}, optional
         Dimension of the polycoherence calculation:
-        
+
         - 'sum': 1D polycoherence with fixed frequency sum. The first argument after fs is the frequency sum. Other fixed frequencies possible.
         - 1: 1D polycoherence as a function of f1, at least one fixed frequency (ofreq) is expected.
         - 2: 2D polycoherence as a function of f1 and f2. ofreqs are additional fixed frequencies.
         - 0: Polycoherence for fixed frequencies.
     norm : {2, 0, tuple}, optional
         Normalization scheme:
-        
+
         - 2: Return polycoherence, n0 = n1 = n2 = 2 (default).
         - 0: Return polyspectrum, <prod(spec(fi)) * conj(spec(sum(fi)))>.
         - tuple(n1, n2): General case with n0=2.
@@ -899,7 +892,7 @@ def polycoherence(data, *args, dim=2, **kwargs):
     Notes
     -----
     < > denotes averaging and | | denotes absolute value.
-    
+
     References
     ----------
     FROM: https://github.com/trichter/polycoherence.
@@ -923,7 +916,7 @@ def polyspectrum_frequencies(
     flim2=(2, 50),
     graph=False,
 ):
-    """Calculate the frequencies and amplitudes of the top n polyspectral components 
+    """Calculate the frequencies and amplitudes of the top n polyspectral components
     using the bispectrum or bicoherence method.
 
     Parameters
@@ -937,15 +930,15 @@ def polyspectrum_frequencies(
     n_values : int, default=10
         The number of top polyspectral components to return. Default is 10.
     nperseg : int, default=None
-        The length of each segment used in the FFT calculation. If not specified, 
+        The length of each segment used in the FFT calculation. If not specified,
         defaults to sf.
     noverlap : int, default=None
-        The number of samples to overlap between adjacent segments. If not specified, 
+        The number of samples to overlap between adjacent segments. If not specified,
         When default is None, noverlap = sf // 10.
     method : str, default='bicoherence'
         The method to use for calculating the polyspectrum. Can be either:
-        
-        - "bispectrum" 
+
+        - "bispectrum"
         - "bicoherence"
     flim1 : tuple of float, default=(2, 50)
         The frequency limits for the first frequency axis.
@@ -957,9 +950,9 @@ def polyspectrum_frequencies(
     Returns
     -------
     tuple of list of float
-        A tuple containing the frequencies and amplitudes of the top n polyspectral 
+        A tuple containing the frequencies and amplitudes of the top n polyspectral
         components, respectively.
-        
+
     Examples
     --------
     >>> data = np.load('data_examples/EEG_pareidolia/parei_data_1000ts.npy')[0]
@@ -1031,7 +1024,7 @@ def harmonic_recurrence(
     -------
     tuple of arrays
         Returns a tuple of arrays containing:
-        
+
         - `max_n`: Number of harmonic recurrences for each selected peak.
         - `max_peaks`: Frequencies of each selected peak.
         - `max_amps`: Amplitudes of each selected peak.
@@ -1058,7 +1051,7 @@ def harmonic_recurrence(
     >>>                                        harm_limit=128)
     >>> peaks_temp
     array([ 2.,  6., 27., 44.])
-    
+
     """
     n_total = []
     harm_ = []
@@ -1138,7 +1131,7 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
     IMCs_all : dict
         A dictionary containing information about all the pairs of peaks and their associated IMCs
         that satisfy the `min_IMs` threshold. The dictionary has the following keys:
-        
+
         - `IMs`: a list of lists, where each list contains the IMCs associated with a pair of peaks.
         - `peaks`: a list of lists, where each list contains the frequencies of the two peaks.
         - `n_IMs`: a list of integers, where each integer represents the number of IMCs associated with a pair of peaks.
@@ -1171,7 +1164,7 @@ def endogenous_intermodulations(peaks, amps, order=3, min_IMs=2, max_freq=100):
                         IMCs_all["peaks"].append([p, p2])
                         IMCs_all["amps"].append([a, a2])
                         IMCs_all["n_IMs"].append(len(IMs_all_))
-                        #IMCs_all["orders"].append(orders_temp)
+                        # IMCs_all["orders"].append(orders_temp)
         IMs_temp = [item for sublist in IMs_temp for item in sublist]
         orders_temp = [item for sublist in orders_temp for item in sublist]
         EIMs_temp = list(set(IMs_temp) & set(peaks))

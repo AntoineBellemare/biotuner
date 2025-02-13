@@ -18,7 +18,7 @@ from biotuner.metrics import (
     metric_denom,
     tuning_cons_matrix,
     consonant_ratios,
-    tuning_to_metrics
+    tuning_to_metrics,
 )
 
 import itertools
@@ -34,7 +34,6 @@ import sympy as sp
 import itertools
 import operator
 from functools import reduce
-
 
 
 sys.setrecursionlimit(120000)
@@ -68,7 +67,7 @@ def oct_subdiv(ratio, octave_limit=0.01365, octave=2, n=5):
         List of N-TET tunings according to the generator interval.
     Octvalue : List of float
         List of the approximations of the octave for each N-TET tuning.
-        
+
     Examples
     --------
     >>> oct_subdiv(3/2, n=3)
@@ -104,7 +103,7 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
     Octdiv2 : int, default=53
         Second N-TET tuning number of steps.
     bounds : float, default=0.005
-        Maximum distance between one ratio of Octdiv and one ratio of Octdiv2 
+        Maximum distance between one ratio of Octdiv and one ratio of Octdiv2
         to consider a match.
     octave : int, default=2
         Value of the octave
@@ -114,9 +113,9 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
     avg_ratios : numpy.ndarray
         List of ratios corresponding to the shared steps in the two N-TET tunings
     shared_steps : List of tuples
-        The two elements of each tuple corresponds to the tuning steps 
+        The two elements of each tuple corresponds to the tuning steps
         sharing the same interval in the two N-TET tunings
-        
+
     Examples
     --------
     >>> ratios, shared_steps = compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2)
@@ -150,12 +149,7 @@ def compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2):
 
 
 def multi_oct_subdiv(
-    peaks,
-    max_sub=100,
-    octave_limit=0.01365,
-    octave=2,
-    n_scales=10,
-    cons_limit=0.1
+    peaks, max_sub=100, octave_limit=0.01365, octave=2, n_scales=10, cons_limit=0.1
 ):
     """
     Determine optimal octave subdivisions based on consonant peaks ratios.
@@ -181,7 +175,7 @@ def multi_oct_subdiv(
         Number of N-TET tunings to compute for each generator interval (ratio).
     cons_limit : float, default=0.1
         Limit for the consonance of the peaks ratios.
-        
+
     Returns
     -------
     multi_oct_div : List of int
@@ -189,7 +183,7 @@ def multi_oct_subdiv(
     ratios : List of float
         List of the generator intervals for which at least 1 N-TET tuning
         matches with another generator interval.
-        
+
     Examples
     --------
     >>> peaks = [2, 3, 9]
@@ -236,7 +230,7 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
     -------
     ratios : List of float
         Generated tuning.
-        
+
     Examples
     --------
     >>> list_harmonics = [3, 5, 7, 9]
@@ -253,57 +247,45 @@ def harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2):
 
 
 def euler_fokker_scale(intervals, n=1, octave=2, normalize=True):
-    '''    
-    Create a scale in the Euler-Fokker Genera
-    
-    :param intervals: The factors to use for the construction (usually prime
-        numbers)
-    :param multiplicities: The multiplicities of the factors (see below)
-    :param octave: The formal octave
-    :param normalize: If ``True``, normalize the intervals to the octave.
-    
-    ``intervals`` and ``multiplicities`` should both be lists of equal length.
-    The entries in ``multiplicities`` give the number of each factor to use.
-    Therefore the following:
-    
-    .. code::
-    
-        intervals     = [3,5,7]
-        multiplicities = [1,1,1]
-        scale         = create_euler_fokker_scale(intervals, multiplicities)
-        
-    Will create a scale with one 3, one 5, and one 7 as generators.
-    
-    The above will produce the following scale:
-    
-    .. math::
-    
-        \\left [ 1, \\frac{35}{32}, \\frac{5}{4}, \\frac{21}{16}, \\frac{3}{2}, \\frac{105}{64}, 
-        \\frac{7}{4}, \\frac{15}{8}, 2\\right ]
-        
-    Also note that the two statements will generate the same output:
-    
-    .. code::
-    
-        intervals     = [3,5,7]
-        multiplicities = [2,2,1]
-        scale1        = create_euler_fokker_scale(intervals, multiplicities)
+    """
+    Generates a tuning based on a set of prime factors in the Euler-Fokker Genera.
 
-        intervals     = [3,3,5,5,7]
-        multiplicities = [1,1,1,1,1]
-        scale2        = create_euler_fokker_scale(intervals, multiplicities)
-        
-        scale1 == scale2
-        True
-    '''
+    Parameters
+    ----------
+    intervals : List of int
+        Prime factors to use in the scale construction.
+    n : int, default=1
+        The multiplicity of each factor, controlling how many times each is used.
+    octave : int, default=2
+        Value of the period reference.
+    normalize : bool, default=True
+        If True, normalizes the scale to fit within the octave.
+
+    Returns
+    -------
+    scale : List of sympy.Integer or sympy.Rational
+        Generated tuning.
+
+    Examples
+    --------
+    >>> intervals = [3, 5, 7]
+    >>> euler_fokker_scale(intervals, n=1, octave=2, normalize=True)
+    [1, 35/32, 5/4, 21/16, 3/2, 105/64, 7/4, 15/8, 2]
+    """
     multiplicities = [n for x in intervals]  # Each factor is used once.
     output = []
     for index in range(len(intervals)):
         output = output + [intervals[index]] * multiplicities[index]
         output = [sp.Integer(x) for x in output]
-        
-    potential = list(itertools.chain(*[[x for x in itertools.combinations(output,r)] 
-                                       for r in range(1,len(output)+1)]))
+
+    potential = list(
+        itertools.chain(
+            *[
+                [x for x in itertools.combinations(output, r)]
+                for r in range(1, len(output) + 1)
+            ]
+        )
+    )
     output = []
     for item in potential:
         if len(item) == 0:
@@ -311,9 +293,12 @@ def euler_fokker_scale(intervals, n=1, octave=2, normalize=True):
         else:
             output = output + [reduce(operator.__mul__, item)]
 
-
     if normalize:
-        output = [sp.Integer(1)] + [rebound(x, octave=octave) for x in output] + [sp.Integer(octave)]
+        output = (
+            [sp.Integer(1)]
+            + [rebound(x, octave=octave) for x in output]
+            + [sp.Integer(octave)]
+        )
     else:
         output = [sp.Integer(1)] + [x for x in output] + [sp.Integer(octave)]
 
@@ -321,7 +306,7 @@ def euler_fokker_scale(intervals, n=1, octave=2, normalize=True):
     return output
 
 
-def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
+def generator_interval_tuning(interval=3 / 2, steps=12, octave=2, harmonic_min=0):
     """
     Function that takes a generator interval and
     derives a tuning based on its stacking.
@@ -341,7 +326,7 @@ def generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0):
     -------
     tuning : List of float
         Generated tuning.
-        
+
     Examples
     --------
     >>> tuning = generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0)
@@ -509,10 +494,10 @@ def diss_curve(
         for the derived scale.
     method : str, default='min'
         Refer to dissmeasure function for more information.
-        
+
         - 'min'
         - 'product'
-        
+
     plot : bool, default=True
         Plot the dissonance curve.
     n_tet_grid : int, default=None
@@ -570,7 +555,7 @@ def diss_curve(
         euler_score = "NaN"
 
     if plot is True:
-        plt.figure(figsize=(14, 6), facecolor='white')
+        plt.figure(figsize=(14, 6), facecolor="white")
         plt.plot(linspace(r_low, alpharange, len(diss)), diss)
         plt.xscale("linear")
         plt.xlim(r_low, alpharange)
@@ -599,9 +584,9 @@ def diss_curve(
             ["{}/{}".format(n, d) for n, d in intervals],
             fontsize=13,
         )
-        plt.xlabel('Frequency ratio', fontsize=14)
-        plt.ylabel('Dissonance', fontsize=14)
-        
+        plt.xlabel("Frequency ratio", fontsize=14)
+        plt.ylabel("Dissonance", fontsize=14)
+
         plt.yticks(fontsize=13)
         plt.tight_layout()
         plt.show()
@@ -659,7 +644,9 @@ def compute_harmonic_entropy_domain_integral(
     HE = np.zeros(N)
     for i, x in enumerate(ratio_interval):
         P = np.diff(
-            concatenate(([0], norm.cdf(np.log2(centers), loc=np.log2(x), scale=spread), [1]))
+            concatenate(
+                ([0], norm.cdf(np.log2(centers), loc=np.log2(x), scale=spread), [1])
+            )
         )
         ind = P > min_tol
         HE[i] = -np.sum(P[ind] * np.log2(P[ind]))
@@ -716,8 +703,7 @@ def compute_harmonic_entropy_simple_weights(
 
 
 def harmonic_entropy(
-    ratios, res=0.001, spread=0.01,
-    plot_entropy=True, plot_tenney=False, octave=2
+    ratios, res=0.001, spread=0.01, plot_entropy=True, plot_tenney=False, octave=2
 ):
     """
     Harmonic entropy is a measure of the uncertainty in pitch perception,
@@ -754,7 +740,7 @@ def harmonic_entropy(
     fracs, numerators, denominators = scale2frac(ratios)
     ratios = numerators / denominators
     bendetti_heights = numerators * denominators
-    
+
     tenney_heights = np.log2(bendetti_heights)
 
     ind = np.argsort(tenney_heights)  # sort by Tenney height
@@ -775,8 +761,8 @@ def harmonic_entropy(
     delta = 0.00001
     indices = np.ones(M, dtype=bool)
     for i in range(M - 2):
-        ind = abs(ratios[i + 1:] - ratios[i]) > delta
-        indices[i + 1:] = indices[i + 1:] * ind
+        ind = abs(ratios[i + 1 :] - ratios[i]) > delta
+        indices[i + 1 :] = indices[i + 1 :] * ind
     bendetti_heights = bendetti_heights[indices]
     tenney_heights = tenney_heights[indices]
     numerators = numerators[indices]
@@ -784,9 +770,7 @@ def harmonic_entropy(
     ratios = ratios[indices]
     M = len(tenney_heights)
     x_ratios = np.arange(1, octave, res)
-    _, HE = compute_harmonic_entropy_domain_integral(ratios,
-                                                     x_ratios,
-                                                     spread=spread)
+    _, HE = compute_harmonic_entropy_domain_integral(ratios, x_ratios, spread=spread)
     # HE = compute_harmonic_entropy_simple_weights(numerators,
     #                                                denominators,
     #                                                x_ratios, spread=0.01)
@@ -798,8 +782,8 @@ def harmonic_entropy(
         ax.plot(x_ratios, HE)
         ax.scatter(HE_minima[0], HE_minima[1], color="k", s=4)
         ax.set_xlim(1, octave)
-        plt.xlabel('Frequency ratio')
-        plt.ylabel('Harmonic entropy')
+        plt.xlabel("Frequency ratio")
+        plt.ylabel("Harmonic entropy")
         plt.show()
     return HE_minima, np.average(HE), HE
 
@@ -821,7 +805,7 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
     function : function, default=compute_consonance
         function used to compute the consonance between pairs of ratios
         Choose between:
-        
+
         - :func:`compute_consonance <biotuner.metrics.compute_consonance>`
         - :func:`dyad_similarity <biotuner.metrics.dyad_similarity>`
         - :func:`metric_denom <biotuner.metrics.metric_denom>`
@@ -829,7 +813,7 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
         maximum number of decimals for each step
     ratio_type : str, default='pos_harm'
         Choose between:
-        
+
         - 'pos_harm':a/b when a>b
         - 'sub_harm':a/b when a<b
         - 'all': pos_harm + sub_harm
@@ -842,14 +826,14 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
         List of mode intervals.
     mode_consonance : float
         Consonance value of the output mode.
-        
+
     Examples
     --------
     >>> tuning = [1, 1.21, 1.31, 1.45, 1.5, 1.7, 1.875]
     >>> harm_tuning, mode, harm_mode = tuning_reduction(tuning, mode_n_steps=5, function=dyad_similarity, rounding=4, ratio_type="pos_harm")
     >>> print('Tuning harmonicity: ', harm_tuning, '\nMode: ', mode, '\nMode harmonicity: ', harm_mode)
-    Tuning harmonicity:  9.267212965965944 
-    Mode:  [1.5, 1, 1.875, 1.7, 1.45] 
+    Tuning harmonicity:  9.267212965965944
+    Mode:  [1.5, 1, 1.875, 1.7, 1.45]
     Mode harmonicity:  17.9500338066261
     """
     tuning_values = []
@@ -909,7 +893,7 @@ def create_mode(tuning, n_steps, function):
     function : function, default=compute_consonance
         function used to compute the consonance between pairs of ratios
         Choose between:
-        
+
         - :func:`compute_consonance <biotuner.metrics.compute_consonance>`
         - :func:`dyad_similarity <biotuner.metrics.dyad_similarity>`
         - :func:`metric_denom <biotuner.metrics.metric_denom>`
@@ -950,7 +934,7 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
     method : str, default='subset'
         The method used to compute the pac mode.
         Possible values:
-        
+
         - 'pairwise'
         - 'subset'
 
@@ -961,18 +945,17 @@ def pac_mode(pac_freqs, n, function=dyad_similarity, method="subset"):
     """
     if method == "pairwise":
         _, mode, _ = tuning_reduction(
-            scale_from_pairs(pac_freqs), n_steps=n, function=function
+            scale_from_pairs(pac_freqs), mode_n_steps=n, function=function
         )
     if method == "subset":
-        mode = create_mode(
-            scale_from_pairs(pac_freqs), n_steps=n, function=function
-        )
+        mode = create_mode(scale_from_pairs(pac_freqs), n_steps=n, function=function)
     return sorted(mode)
 
 
 """--------------------------MOMENTS OF SYMMETRY---------------------------"""
 
 import sympy as sp
+
 
 def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=100):
     """
@@ -1019,7 +1002,7 @@ def tuning_range_to_MOS(frac1, frac2, octave=2, max_denom_in=100, max_denom_out=
     b = Fraction(frac1).limit_denominator(max_denom_in).denominator
     c = Fraction(frac2).limit_denominator(max_denom_in).numerator
     d = Fraction(frac2).limit_denominator(max_denom_in).denominator
-    #print(a, b, c, d)
+    # print(a, b, c, d)
     mediant = (a + c) / (b + d)
     mediant_frac = sp.Rational((a + c) / (b + d)).limit_denominator(max_denom_out)
     gen_interval = octave ** (mediant)
@@ -1095,7 +1078,7 @@ def horogram_tree_steps(ratio1, ratio2, steps=10, limit=1000):
 def horogram_tree(ratio1, ratio2, limit):
     """
     Compute the next step of the horogram tree.
-    
+
     Parameters
     ----------
     ratio1 : float
@@ -1104,7 +1087,7 @@ def horogram_tree(ratio1, ratio2, limit):
         Second ratio input.
     limit : int
         Limit for the denominator of the fraction.
-    
+
     Returns
     -------
     next_step : float
@@ -1121,14 +1104,14 @@ def horogram_tree(ratio1, ratio2, limit):
 def phi_convergent_point(ratio1, ratio2):
     """
     Compute the phi convergent point of two ratios.
-    
+
     Parameters
     ----------
     ratio1 : float
         First ratio input.
     ratio2 : float
         Second ratio input.
-    
+
     Returns
     -------
     convergent_point : float
@@ -1146,14 +1129,14 @@ def phi_convergent_point(ratio1, ratio2):
 def Stern_Brocot(n, a=0, b=1, c=1, d=1):
     """
     Compute the Stern-Brocot tree of a given depth.
-    
+
     Parameters
     ----------
     n : int
         Depth of the tree.
     a, b, c, d : int
         Initial values for the Stern-Brocot recursion. Default is a=0, b=1, c=1, d=1.
-        
+
     Returns
     -------
     list
@@ -1174,8 +1157,9 @@ def Stern_Brocot(n, a=0, b=1, c=1, d=1):
         else:
             return [a + c] + [b + d] + x + y
 
-def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2, harmonic_min = 0):
-    '''
+
+def generator_interval_tuning(interval=3 / 2, steps=12, octave=2, harmonic_min=0):
+    """
     Function that takes a generator interval and derives a tuning based on its stacking.
     interval: float
         Generator interval
@@ -1184,112 +1168,136 @@ def generator_interval_tuning (interval = 3/2, steps = 12, octave = 2, harmonic_
         When set to 12 --> 12-TET for interval 3/2
     octave: int, default=2
         Value of the octave
-    '''
+    """
     scale = []
     for s in range(steps):
         degree = interval**harmonic_min
         while degree > octave:
-            degree = degree/octave
-        while degree < octave/2:
-            degree = degree*octave
+            degree = degree / octave
+        while degree < octave / 2:
+            degree = degree * octave
         scale.append(degree)
         harmonic_min += 1
     return sorted(scale), scale
 
+
 def interval_exponents(interval, n_steps):
     list_intervals = []
     for n in range(n_steps):
-        n+=1
+        n += 1
         list_intervals.append(interval**n)
     return list_intervals[:-1]
 
-def interval_to_radian(interval):  
-    degree = 360*(log2(interval))
-    #print(degree)
-    return math.radians(degree), degree 
+
+def interval_to_radian(interval):
+    degree = 360 * (log2(interval))
+    # print(degree)
+    return math.radians(degree), degree
+
 
 def tuning_to_radians(interval, n_steps):
-    _, tuning = generator_interval_tuning (interval=interval, steps=n_steps, octave=2, harmonic_min=1)
+    _, tuning = generator_interval_tuning(
+        interval=interval, steps=n_steps, octave=2, harmonic_min=1
+    )
     radians = []
     degrees = []
-    #print(tuning)
+    # print(tuning)
     for step in tuning:
         rad, deg = interval_to_radian(step)
         radians.append(rad)
         degrees.append(deg)
-        
+
     return radians, degrees
 
-def tuning_MOS_info (interval=3/2, steps=12, octave=2):
-    tuning, _ = generator_interval_tuning (interval = interval, steps = steps, octave = octave, harmonic_min=0)
-    tuning = tuning+[2]
+
+def tuning_MOS_info(interval=3 / 2, steps=12, octave=2):
+    tuning, _ = generator_interval_tuning(
+        interval=interval, steps=steps, octave=octave, harmonic_min=0
+    )
+    tuning = tuning + [2]
     tuning = np.round(tuning, 10)
     tuning = np.sort(list(set(tuning)))
     intervals = []
     intervals_frac = []
     for i in range(len(tuning)):
         try:
-            interval_ = np.round((1200*log2(tuning[i+1])-1200*log2(tuning[i])), 3)
+            interval_ = np.round(
+                (1200 * log2(tuning[i + 1]) - 1200 * log2(tuning[i])), 3
+            )
             intervals.append(interval_)
-            intervals_frac.append(Fraction(tuning[i+1]-tuning[i]).limit_denominator(100))
+            intervals_frac.append(
+                Fraction(tuning[i + 1] - tuning[i]).limit_denominator(100)
+            )
 
         except:
             pass
-    #print(distance) 
-    #print(intervals_frac)
-    distances = list(Counter(intervals).keys()) # equals to list(set(words))    
+    # print(distance)
+    # print(intervals_frac)
+    distances = list(Counter(intervals).keys())  # equals to list(set(words))
     steps = list(Counter(intervals).values())
-    sL = [steps for _,steps in sorted(zip(distances,steps))]
-    
+    sL = [steps for _, steps in sorted(zip(distances, steps))]
+
     if len((set(intervals))) == 1:
-        #print('Large and small steps are equal')
-        Large=sL[0]
-        small=sL[0]
+        # print('Large and small steps are equal')
+        Large = sL[0]
+        small = sL[0]
     else:
-        Large=sL[1]
-        small=sL[0]
-    #print(sL)
+        Large = sL[1]
+        small = sL[0]
+    # print(sL)
     return len(set(intervals)), Large, small, tuning, sorted(distances)[::-1]
 
-def find_MOS (interval, max_steps=53, octave=2):
-    steps=2
-    MOS = {"steps":[],"sig":[], 'tuning':[], 'distances':[], 'distances_frac':[], 'NTET':[], 'harmsim':[],
-          'matrix_harmsim':[], 'stern_brocot_fracs':[]}
-    while steps<max_steps:
-        steps+=1
-        n_gaps, L, s, tuning, distances = tuning_MOS_info (interval, steps, octave)
-        if n_gaps==2 or n_gaps==1:
+
+def find_MOS(interval, max_steps=53, octave=2):
+    steps = 2
+    MOS = {
+        "steps": [],
+        "sig": [],
+        "tuning": [],
+        "distances": [],
+        "distances_frac": [],
+        "NTET": [],
+        "harmsim": [],
+        "matrix_harmsim": [],
+        "stern_brocot_fracs": [],
+    }
+    while steps < max_steps:
+        steps += 1
+        n_gaps, L, s, tuning, distances = tuning_MOS_info(interval, steps, octave)
+        if n_gaps == 2 or n_gaps == 1:
             stern = Fraction(log2(interval)).limit_denominator(steps)
             stern = [stern.numerator, stern.denominator]
-            MOS['stern_brocot_fracs'].append(stern)
-            MOS['steps'].append(steps)
-            MOS['sig'].append([L, s])
-            MOS['tuning'].append(tuning)
-            MOS['distances'].append(distances)
-            if n_gaps==2:
-                MOS['NTET'].append(False)
-            if n_gaps==1:
-                MOS['NTET'].append(True)
-            #MOS['distances_frac'].append(distances_frac)
+            MOS["stern_brocot_fracs"].append(stern)
+            MOS["steps"].append(steps)
+            MOS["sig"].append([L, s])
+            MOS["tuning"].append(tuning)
+            MOS["distances"].append(distances)
+            if n_gaps == 2:
+                MOS["NTET"].append(False)
+            if n_gaps == 1:
+                MOS["NTET"].append(True)
+            # MOS['distances_frac'].append(distances_frac)
     MOS_metrics = []
     MOS_harmsim = []
-    for tuning in MOS['tuning']:
+    for tuning in MOS["tuning"]:
         dict_metrics = tuning_to_metrics(tuning)
         MOS_metrics.append(dict_metrics)
-        MOS['harmsim'].append(dict_metrics['harm_sim'])
-        MOS['matrix_harmsim'].append(dict_metrics['matrix_harm_sim'])
+        MOS["harmsim"].append(dict_metrics["harm_sim"])
+        MOS["matrix_harmsim"].append(dict_metrics["matrix_harm_sim"])
     return MOS
 
-def MOS_metric_harmonic_mean(MOS_dict, metric='harmsim'):
-    total_steps = np.sum(MOS_dict['steps'])
+
+def MOS_metric_harmonic_mean(MOS_dict, metric="harmsim"):
+    total_steps = np.sum(MOS_dict["steps"])
     harm_mean = []
-    for step, harmsim in zip(MOS_dict['steps'], MOS_dict[metric]):
-        harm_mean_ = step*harmsim
+    for step, harmsim in zip(MOS_dict["steps"], MOS_dict[metric]):
+        harm_mean_ = step * harmsim
         harm_mean.append(harm_mean_)
-    harm_mean = np.sum(harm_mean)/total_steps
+    harm_mean = np.sum(harm_mean) / total_steps
     return harm_mean
 
-def generator_to_stern_brocot_fractions (gen, limit):
+
+def generator_to_stern_brocot_fractions(gen, limit):
     stern_fraction = []
     for i in range(1, limit):
         stern = Fraction(log2(gen)).limit_denominator(i)
@@ -1297,6 +1305,7 @@ def generator_to_stern_brocot_fractions (gen, limit):
         stern_fraction.append(stern)
     stern_fraction = sorted(list(set(tuple(row) for row in stern_fraction)))
     return stern_fraction
+
 
 def measure_symmetry(generator_interval, max_steps=20, octave=2):
     """
@@ -1326,14 +1335,13 @@ def measure_symmetry(generator_interval, max_steps=20, octave=2):
     """
     MOS = find_MOS(generator_interval, max_steps=max_steps, octave=octave)
     deviations = []
-    for sig in MOS['sig']:
+    for sig in MOS["sig"]:
         deviations.append([abs(s - np.mean(sig)) for s in sig])
     avg_deviations = []
-    for i in range(max([len(sig) for sig in MOS['sig']])):
+    for i in range(max([len(sig) for sig in MOS["sig"]])):
         deviations_i = [d[i] for d in deviations if i < len(d)]
         if deviations_i:
             avg_deviations.append(np.mean(deviations_i))
-    norm_deviations = [d / len(MOS['sig']) for d in avg_deviations]
+    norm_deviations = [d / len(MOS["sig"]) for d in avg_deviations]
     max_deviation = max(norm_deviations)
     return max_deviation
-

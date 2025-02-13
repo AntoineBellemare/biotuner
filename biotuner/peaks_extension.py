@@ -12,7 +12,7 @@ import numpy as np
 """
 
 
-def EEG_harmonics_mult (peaks, n_harmonics, n_oct_up=0):
+def EEG_harmonics_mult(peaks, n_harmonics, n_oct_up=0):
     """
     Computes the harmonics of a list of frequency peaks.
     Given a list of frequency peaks, this function computes the desired
@@ -61,7 +61,7 @@ def EEG_harmonics_mult (peaks, n_harmonics, n_oct_up=0):
     return multi_harmonics
 
 
-def EEG_harmonics_div (peaks, n_harmonics, n_oct_up=0, mode="div"):
+def EEG_harmonics_div(peaks, n_harmonics, n_oct_up=0, mode="div"):
     """
     Computes the sub-harmonics of a list of frequency peaks using division.
     Given a list of frequency peaks, this function computes the desired
@@ -133,12 +133,9 @@ def EEG_harmonics_div (peaks, n_harmonics, n_oct_up=0, mode="div"):
     return div_harmonics, div_harm_bound
 
 
-def harmonic_fit (peaks,
-                 n_harm=10,
-                 bounds=1,
-                 function="mult",
-                 div_mode="div",
-                 n_common_harms=5):
+def harmonic_fit(
+    peaks, n_harm=10, bounds=1, function="mult", div_mode="div", n_common_harms=5
+):
     """
     Compute harmonics of a list of peaks and compare the lists of
     harmonics pairwise to find fitting between the harmonic series.
@@ -154,7 +151,7 @@ def harmonic_fit (peaks,
     function : str, default='mult'
         Type of harmonic function to use.
         Possible values are:
-        
+
         - 'mult' will use natural harmonics.
         - 'div' will use natural sub-harmonics.
         - 'exp' will use exponentials.
@@ -176,14 +173,14 @@ def harmonic_fit (peaks,
     matching_positions : list of lists
         Each sublist corresponds to an harmonic fit, the first number
         is the frequency and the two others are harmonic positions.
-    
+
     Examples
     --------
     >>> from biotuner.peaks_extension import harmonic_fit
     >>> peaks = [3, 9, 12]
-    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=5, bounds=0.1, function="mult")                                                                             
+    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=5, bounds=0.1, function="mult")
     >>> print(harm_fit)
-    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=10, bounds=0.1, function="div")                                                                             
+    >>> harm_fit, harmonics_pos, _, _ = harmonic_fit(peaks, n_harm=10, bounds=0.1, function="div")
     >>> print(harm_fit)
     [9.0, 18.0, 12.0, 36.0]
     [0.784, 1.5, 1.045, 3.0, 1.0, 1.757, 1.31, 1.243, 1.162, 1.108]
@@ -196,52 +193,62 @@ def harmonic_fit (peaks,
     if function == "mult":
         multi_harmonics = EEG_harmonics_mult(peaks, n_harm)
     elif function == "div":
-        multi_harmonics, x = EEG_harmonics_div(peaks, n_harm, mode=div_mode)
+        multi_harmonics, _ = EEG_harmonics_div(peaks, n_harm, mode=div_mode)
     elif function == "exp":
-        multi_harmonics = []
-        for h in range(n_harm + 1):
-            h += 1
-            multi_harmonics.append([i**h for i in peaks])
-        multi_harmonics = np.array(multi_harmonics)
+        multi_harmonics = np.array(
+            [[i**h for i in peaks] for h in range(1, n_harm + 1)]
+        )
         multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+
+    # Compare harmonics pairwise
     list_peaks = list(combinations(peak_bands, 2))
     harm_temp = []
     matching_positions = []
     harmonics_pos = []
+
     for i in range(len(list_peaks)):
         harms, harm_pos, matching_pos, _ = compareLists(
-                                            multi_harmonics[list_peaks[i][0]],
-                                            multi_harmonics[list_peaks[i][1]],
-                                            bounds
-                                        )
+            multi_harmonics[list_peaks[i][0]], multi_harmonics[list_peaks[i][1]], bounds
+        )
         harm_temp.append(harms)
         harmonics_pos.append(harm_pos)
-        if len(matching_pos) > 0:
-            for j in matching_pos:
-                matching_positions.append(j)
-    matching_positions = [list(i) for i in matching_positions]
-    harm_fit = np.array(harm_temp, dtype=object).squeeze()
-    harmonics_pos = reduce(lambda x, y: x + y, harmonics_pos)
+        matching_positions.extend(matching_pos)
+
+    # Flatten harmonics positions
+    if harmonics_pos:
+        harmonics_pos = reduce(lambda x, y: x + y, harmonics_pos)
+    else:
+        harmonics_pos = []
+
+    # Compute most common harmonics
     most_common_harmonics = [
         h
         for h, h_count in Counter(harmonics_pos).most_common(n_common_harms)
         if h_count > 1
     ]
-    harmonics_pos = list(np.sort(list(set(harmonics_pos))))
+    harmonics_pos = sorted(set(harmonics_pos))
+
+    # Prepare harm_fit
+    harm_fit = np.array(harm_temp, dtype=object).squeeze()
+
     if len(peak_bands) > 2:
         try:
-            harm_fit = list(itertools.chain.from_iterable(harm_fit))
+            if isinstance(harm_fit, (list, np.ndarray)):
+                harm_fit = list(itertools.chain.from_iterable(harm_fit))
             harm_fit = [round(num, 3) for num in harm_fit]
-            harm_fit = list(dict.fromkeys(harm_fit))
-            harm_fit = list(set(harm_fit))
+            harm_fit = list(dict.fromkeys(harm_fit))  # Remove duplicates
+            harm_fit = list(set(harm_fit))  # Final deduplication
         except TypeError:
-            print("No common harmonics found")
+            print("No common harmonics found, setting harm_fit to empty")
+            harm_fit = []
+
     return harm_fit, harmonics_pos, most_common_harmonics, matching_positions
 
 
 """EXTENDED PEAKS from restrictions"""
 
-def multi_consonance (cons_pairs, n_freqs=5):
+
+def multi_consonance(cons_pairs, n_freqs=5):
     """
     Function that keeps the frequencies that are the most consonant with others
     Takes pairs of frequencies that are consonant as input
@@ -267,9 +274,5 @@ def multi_consonance (cons_pairs, n_freqs=5):
     f_count = []
     for f in freqs_nodup:
         f_count.append(freqs_dup.count(f))
-    freqs_related = [x for _, x in sorted(zip(f_count,
-                                              freqs_nodup))][-(n_freqs):][::-1]
+    freqs_related = [x for _, x in sorted(zip(f_count, freqs_nodup))][-(n_freqs):][::-1]
     return freqs_related
-
-
-

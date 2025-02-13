@@ -19,14 +19,15 @@ from scipy.optimize import curve_fit
 from scipy.signal import butter, lfilter
 from biotuner.dictionaries import interval_catalog
 import os
-os.environ['SDL_AUDIODRIVER'] = 'directsound'
 
+os.environ["SDL_AUDIODRIVER"] = "directsound"
 
 
 sys.setrecursionlimit(120000)
 
 
-'''Proportion functions'''
+"""Proportion functions"""
+
 
 def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
     """This function calculates all the ratios
@@ -363,7 +364,8 @@ def ratios_increments(ratios, n_inc=1):
     ratios_harms = list(set(ratios_harms))
     return ratios_harms
 
-def ratios2cents (ratios):
+
+def ratios2cents(ratios):
     """Converts a list of frequency ratios to cents.
 
     Parameters
@@ -375,34 +377,35 @@ def ratios2cents (ratios):
     -------
     cents : List (float)
         List of corresponding cents
-    """    
+    """
     cents = []
     for r in ratios:
-        c = 1200 * np.log2 (r)
+        c = 1200 * np.log2(r)
         cents.append(c)
     return cents
 
 
 def ratio_to_name(ratio):
-    '''
+    """
     This function returns the name of a ratio in the form of a fraction
-    
+
     Parameters
     ----------
     ratio : float
         Frequency ratio
-    
+
     Returns
     -------
     name : str
         Name of the ratio
-    '''
+    """
     entries = [x[0] for x in interval_catalog if x[1] == ratio]
     if len(entries) == 0:
         return None
     else:
         return entries[0]
-    
+
+
 """---------------------------LIST MANIPULATION--------------------------"""
 
 
@@ -461,13 +464,11 @@ def pairs_most_frequent(pairs, n):
     drive_freqs = [x[0] for x in pairs]
     signal_freqs = [x[1] for x in pairs]
     drive_dict = {
-        k: v for k, v in sorted(Counter(drive_freqs).items(),
-                                key=lambda item: item[1])
+        k: v for k, v in sorted(Counter(drive_freqs).items(), key=lambda item: item[1])
     }
     max_drive = list(drive_dict)[::-1][0:n]
     signal_dict = {
-        k: v for k, v in sorted(Counter(signal_freqs).items(),
-                                key=lambda item: item[1])
+        k: v for k, v in sorted(Counter(signal_freqs).items(), key=lambda item: item[1])
     }
     max_signal = list(signal_dict)[::-1][0:n]
     return [max_signal, max_drive]
@@ -592,7 +593,7 @@ def compareLists(list1, list2, bounds):
 
 
 def Print3Smallest(arr):
-    MAX=np.max(arr)
+    MAX = np.max(arr)
     firstmin = MAX
     secmin = MAX
     thirdmin = MAX
@@ -644,13 +645,13 @@ def top_n_indexes(arr, n):
     """
     # flatten the array and get the indices of the top n values
     idx = np.argpartition(arr.flatten(), -n)[-n:]
-    
+
     # convert the 1D indices to 2D indices
     indexes = np.unravel_index(idx, arr.shape)
-    
+
     # zip and convert to list of tuples
     indexes = list(zip(*indexes))
-    
+
     return indexes
 
 
@@ -759,10 +760,12 @@ def lcm(*numbers):
         Least common multiple of the input numbers.
 
     """
+
     def lcm(a, b):
         if a == b == 0:
             return 0
         return (a * b) // gcd(a, b)
+
     lcm_ = reduce(lcm, numbers)
     return lcm_
 
@@ -849,6 +852,7 @@ def contFrac(x, k):
         i = i + 1
     return cf
 
+
 def compute_IMs(f1, f2, n):
     """
     InterModulation components: sum or subtraction of any non-zero integer
@@ -884,8 +888,8 @@ def compute_IMs(f1, f2, n):
     orders = []
     for i in range(1, n + 1):
         for j in range(1, n + 1):
-            #print(j)
-            #print(f1 * j + f2 * i)
+            # print(j)
+            # print(f1 * j + f2 * i)
             IM_add = f1 * j + f2 * i
             if IM_add not in IMs:
                 IMs.append(IM_add)
@@ -897,6 +901,7 @@ def compute_IMs(f1, f2, n):
     IMs = [x for _, x in sorted(zip(orders, IMs))]
     orders = sorted(orders)
     return IMs, orders
+
 
 """------------------------------SURROGATES--------------------------------"""
 
@@ -926,8 +931,7 @@ def phaseScrambleTS(ts):
     # the real and imaginary components.
     # The first and last elements in the fourier array don't have any
     # phase information, and thus don't change
-    fsrp = np.sqrt(pow_fs[:, np.newaxis]) * np.c_[np.cos(phase_fsr),
-                                                  np.sin(phase_fsr)]
+    fsrp = np.sqrt(pow_fs[:, np.newaxis]) * np.c_[np.cos(phase_fsr), np.sin(phase_fsr)]
     fsrp = np.r_[fs[0], fsrp.ravel(), fs[-1]]
     tsr = irfft(fsrp)
     return tsr
@@ -981,12 +985,12 @@ def correlated_noise_surrogates(original_data):
     then applying an inverse Fourier transform. Correlated noise surrogates
     share their power spectrum and autocorrelation function with the
     original_data time series.
-    
+
     Parameters
     ----------
     original_data : 2D array (data, index)
         The original time series.
-    
+
     Returns
     -------
     surrogates : 2D array (surrogate, index)
@@ -1013,9 +1017,7 @@ def correlated_noise_surrogates(original_data):
 
     #  Calculate IFFT and take the real part, the remaining imaginary part
     #  is due to numerical errors.
-    return np.ascontiguousarray(np.real(np.fft.irfft(surrogates,
-                                                     n=n_time,
-                                                     axis=1)))
+    return np.ascontiguousarray(np.real(np.fft.irfft(surrogates, n=n_time, axis=1)))
 
 
 """"""
@@ -1060,7 +1062,7 @@ def UnivariateSurrogatesTFT(data_f, MaxIter=1, fc=5):
         # print(phi_surr.shape)
         # print(phi.shape)
         phi_surr[1:Fc] = phi[1:Fc]
-        phi_surr[Len - Fc + 1: Len] = phi[Len - Fc + 1: Len]
+        phi_surr[Len - Fc + 1 : Len] = phi[Len - Fc + 1 : Len]
         phi_surr[0] = 0.0
         new_len = int(Len / 2)
 
@@ -1076,13 +1078,7 @@ def UnivariateSurrogatesTFT(data_f, MaxIter=1, fc=5):
 """----------------------SPECTROMORPHOLOGY FUNCIONS------------------------"""
 
 
-def computeFeatureCl_new(
-    afAudioData,
-    cFeatureName,
-    f_s,
-    window=4000,
-    overlap=1
-     ):
+def computeFeatureCl_new(afAudioData, cFeatureName, f_s, window=4000, overlap=1):
     """Calculate spectromorphological metrics on time series.
 
     Parameters
@@ -1110,13 +1106,7 @@ def computeFeatureCl_new(
     t : array
         Timestamps.
     """
-    [v, t] = pyACA.computeFeature(
-                   cFeatureName,
-                   afAudioData,
-                   f_s,
-                   None,
-                   window,
-                   overlap)
+    [v, t] = pyACA.computeFeature(cFeatureName, afAudioData, f_s, None, window, overlap)
     return (v, t)
 
 
@@ -1182,9 +1172,7 @@ def EMD_to_spectromorph(
 """-------------------GENERATE AUDIO / SIGNAL PROCESSING--------------------"""
 
 
-def generate_signal(
-    sf, time_end, freqs, amps, show=False, theta=0, color="blue"
-     ):
+def generate_signal(sf, time_end, freqs, amps, show=False, theta=0, color="blue"):
     """
     Generate a composite signal consisting of multiple sine waves.
 
@@ -1207,7 +1195,7 @@ def generate_signal(
     color : str
         Defaults to 'blue'.
         Color of the plot.
-        
+
     Returns
     -------
     sine_tot : array (numDataPoints,)
@@ -1224,7 +1212,6 @@ def generate_signal(
         ax.set_facecolor("xkcd:black")
         plt.plot(time, sine_tot, color=color)
     return sine_tot
-
 
 
 def smooth(x, window_len=11, window="hanning"):
@@ -1255,7 +1242,7 @@ def smooth(x, window_len=11, window="hanning"):
         length(output) != length(input), to correct this:
         return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
-    s = np.r_[x[window_len - 1:0:-1], x, x[-2:-window_len - 1:-1]]
+    s = np.r_[x[window_len - 1 : 0 : -1], x, x[-2 : -window_len - 1 : -1]]
     if window == "flat":  # moving average
         w = np.ones(window_len, "d")
     else:
@@ -1282,10 +1269,12 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 def major_triad(hz):
     return make_chord(hz, [4, 5, 6])
 
+
 pygame_lib = None
 
+
 def make_chord(hz, length=1):
-    sampling=44100  # this is your sampling rate
+    sampling = 44100  # this is your sampling rate
     t = np.linspace(0, length, int(sampling * length), False)
     chord = np.sin(hz * t * 2 * np.pi)
     chord *= 4096  # Adjust volume
@@ -1295,37 +1284,59 @@ def make_chord(hz, length=1):
     chord_stereo = np.ascontiguousarray(chord_stereo)
     return chord_stereo.astype(np.int16)
 
+
 def play_chord(chord):
+    """
+    Play a chord using pygame, ensuring proper format for the chord array.
+
+    Parameters
+    ----------
+    chord : ndarray
+        Array representing the chord. Expected to have dtype int16 or float32.
+    """
     global pygame_lib
     if pygame_lib is None:
         import pygame
         pygame_lib = pygame
-    pygame_lib.mixer.init(frequency=44100, size=-16, channels=2)  # Initialize as stereo
+
+    # Ensure the chord array is in the correct format
+    if chord.dtype != np.int16 and chord.dtype != np.float32:
+        if np.issubdtype(chord.dtype, np.integer):
+            chord = chord.astype(np.int16)
+        else:
+            chord = (chord * 32767).astype(np.int16)  # Scale float to int16
+
+    # Initialize pygame mixer
+    pygame_lib.mixer.init(frequency=44100, size=-16, channels=2)
+
+    # Play the sound
     sound = pygame_lib.sndarray.make_sound(chord)
     sound.play()
-    
-    
+
+
+
 def listen_chords(chords, mult=1, duration=1):
     global pygame_lib
     if pygame_lib is None:
         import pygame
-        pygame_lib = pygame   
+
+        pygame_lib = pygame
     pygame_lib.init()
     pygame_lib.mixer.init(frequency=44100, size=-16, channels=1, buffer=512)
     for c in chords:
         hz = c[0] * mult  # The fundamental frequency
         # The remaining entries in the list are ratios
         ratios = [i / c[0] for i in c]
-        
+
         # Create a chord based on the ratios and fundamental frequency
         chord = np.sum([make_chord(hz * r, duration) for r in ratios], axis=0)
-        
+
         # Ensure the array is C-contiguous
         chord = np.ascontiguousarray(chord)
-        
+
         # Play the chord
         play_chord(chord)
-        
+
         # Wait for the duration of the chord before playing the next one
         pygame_lib.time.wait(int(duration * 1000))
 
@@ -1334,44 +1345,62 @@ def listen_scale(scale, fund, duration=1):
     global pygame_lib
     if pygame_lib is None:
         import pygame
-        pygame_lib = pygame   
+
+        pygame_lib = pygame
     pygame_lib.init()
     pygame_lib.mixer.init(frequency=44100, size=-16, channels=1)
-    
+
     # Add 1 at the beginning of the scale to include the fundamental frequency
     scale = [1] + scale
-    
+
     for s in scale:
         freq = fund * s
-        
+
         # Create a note based on the frequency
         note = make_chord(freq, duration)
-        
+
         # Ensure the array is C-contiguous
         note = np.ascontiguousarray(note)
-        
+
         # Play the note
         play_chord(note)
-        
+
         # Wait for the duration of the note before playing the next one
         pygame_lib.time.wait(int(duration * 1000))
 
 
-        
-
 def frequency_to_note(frequency):
     # define constants that control the algorithm
-    NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] # these are the 12 notes in each octave
-    OCTAVE_MULTIPLIER = 2 # going up an octave multiplies by 2
-    KNOWN_NOTE_NAME, KNOWN_NOTE_OCTAVE, KNOWN_NOTE_FREQUENCY = ('A', 4, 440) # A4 = 440 Hz
+    NOTES = [
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+    ]  # these are the 12 notes in each octave
+    OCTAVE_MULTIPLIER = 2  # going up an octave multiplies by 2
+    KNOWN_NOTE_NAME, KNOWN_NOTE_OCTAVE, KNOWN_NOTE_FREQUENCY = (
+        "A",
+        4,
+        440,
+    )  # A4 = 440 Hz
 
     # calculate the distance to the known note
     # since notes are spread evenly, going up a note will multiply by a constant
     # so we can use log to know how many times a frequency was multiplied to get from the known note to our note
     # this will give a positive integer value for notes higher than the known note, and a negative value for notes lower than it (and zero for the same note)
-    note_multiplier = OCTAVE_MULTIPLIER**(1/len(NOTES))
+    note_multiplier = OCTAVE_MULTIPLIER ** (1 / len(NOTES))
     frequency_relative_to_known_note = frequency / KNOWN_NOTE_FREQUENCY
-    distance_from_known_note = math.log(frequency_relative_to_known_note, note_multiplier)
+    distance_from_known_note = math.log(
+        frequency_relative_to_known_note, note_multiplier
+    )
 
     # round to make up for floating point inaccuracies
     distance_from_known_note = round(distance_from_known_note)
@@ -1380,11 +1409,16 @@ def frequency_to_note(frequency):
     # we can calculate the octave and name of our note
     # NOTE: the "absolute index" doesn't have any actual meaning, since it doesn't care what its zero point is. it is just useful for calculation
     known_note_index_in_octave = NOTES.index(KNOWN_NOTE_NAME)
-    known_note_absolute_index = KNOWN_NOTE_OCTAVE * len(NOTES) + known_note_index_in_octave
+    known_note_absolute_index = (
+        KNOWN_NOTE_OCTAVE * len(NOTES) + known_note_index_in_octave
+    )
     note_absolute_index = known_note_absolute_index + distance_from_known_note
-    note_octave, note_index_in_octave = note_absolute_index // len(NOTES), note_absolute_index % len(NOTES)
+    note_octave, note_index_in_octave = note_absolute_index // len(
+        NOTES
+    ), note_absolute_index % len(NOTES)
     note_name = NOTES[note_index_in_octave]
     return (note_name, note_octave)
+
 
 """------------------------------MIDI-----------------------------------"""
 
@@ -1393,12 +1427,20 @@ import mido
 from mido import Message, MidiFile, MidiTrack
 import math
 
-def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=True, filename='example'):
+
+def create_midi(
+    chords,
+    durations,
+    velocities=None,
+    subdivision=1,
+    microtonal=True,
+    filename="example",
+):
     """
     Creates a MIDI file from a given set of chords and durations.
     The microtonal parameter allows for pitch bends to be included
     and relies on multiple notes being played simultaneously on different channels.
-    
+
     Parameters:
     ----------
     chords : list
@@ -1413,17 +1455,17 @@ def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=Tr
         Indicates whether to include microtonal pitch bends (default: True).
     filename : str
         Name of the output MIDI file (default: 'example').
-        
+
     Returns
     -------
     mid : MidiFile
         The MIDI file.
     """
     if velocities is None:
-        velocities = [[64]*len(chord) for chord in chords]
+        velocities = [[64] * len(chord) for chord in chords]
     # Create a new MIDI file
     mid = MidiFile()
-    
+
     def frequency_to_midi(chords):
         midi_chords = []
         midi_pitchbends = []
@@ -1432,12 +1474,12 @@ def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=Tr
             pitchbends = []
             for frequency in chord:
                 # Convert frequency to MIDI note
-                midi_note = 69 + 12*math.log2(frequency/440)
+                midi_note = 69 + 12 * math.log2(frequency / 440)
                 rounded_midi_note = int(midi_note)
                 # Check the limits of the MIDI note
                 if 0 < rounded_midi_note < 127:
-                    rounded_midi_frequency = 440 * 2**((rounded_midi_note - 69)/12)
-                    #pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
+                    rounded_midi_frequency = 440 * 2 ** ((rounded_midi_note - 69) / 12)
+                    # pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
                     pitch_bend = int((midi_note - rounded_midi_note) * (8192))
                     midi_notes.append(rounded_midi_note)
                     pitchbends.append(pitch_bend)
@@ -1447,7 +1489,6 @@ def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=Tr
             midi_pitchbends.append(pitchbends)
         return midi_chords, midi_pitchbends
 
-    
     midi_chords, pitchbends = frequency_to_midi(chords)
 
     # Find the maximum number of notes in any chord
@@ -1459,27 +1500,38 @@ def create_midi(chords, durations, velocities=None, subdivision=1, microtonal=Tr
         mid.tracks.append(track)
 
     ticks_per_beat = mid.ticks_per_beat
-    ticks_per_beat = int(ticks_per_beat/(1/subdivision))
-    
+    ticks_per_beat = int(ticks_per_beat / (1 / subdivision))
+
     # Iterate through the chords and durations
-    for chord, duration, pitchbend, velocity in zip(midi_chords, durations, pitchbends, velocities):
+    for chord, duration, pitchbend, velocity in zip(
+        midi_chords, durations, pitchbends, velocities
+    ):
         for i, (note, pb, vel) in enumerate(zip(chord, pitchbend, velocity)):
             track = tracks[i]
 
             # Add a pitch bend message for each note in the chord
             if microtonal is True:
-                #print('pitchweel', pb)
-                track.append(Message('pitchwheel', pitch=pb, channel=i, time=1))
+                # print('pitchweel', pb)
+                track.append(Message("pitchwheel", pitch=pb, channel=i, time=1))
 
-            track.append(Message('note_on', note=note, velocity=vel, channel=i, time=1))
-            track.append(Message('note_off', note=note, velocity=vel, channel=i, time=int(duration*ticks_per_beat)))
-    
+            track.append(Message("note_on", note=note, velocity=vel, channel=i, time=1))
+            track.append(
+                Message(
+                    "note_off",
+                    note=note,
+                    velocity=vel,
+                    channel=i,
+                    time=int(duration * ticks_per_beat),
+                )
+            )
+
     # Save the MIDI file
-    mid.save(str(filename)+'.mid')
+    mid.save(str(filename) + ".mid")
     return mid
 
 
 """-----------------------------OTHERS----------------------------------"""
+
 
 def create_SCL(scale, name):
     """
@@ -1508,8 +1560,11 @@ def create_SCL(scale, name):
     output = output + "\n%3d" % (len(scale) - 1)
     output = output + "\n!"
     for degree in scale[1:]:
-        if isinstance(degree, sp.Rational) and isinstance(sp.fraction(degree)[0], sp.Integer) \
-                and isinstance(sp.fraction(degree)[1], sp.Integer):
+        if (
+            isinstance(degree, sp.Rational)
+            and isinstance(sp.fraction(degree)[0], sp.Integer)
+            and isinstance(sp.fraction(degree)[1], sp.Integer)
+        ):
             representation = "%s" % degree
         elif isinstance(degree, sp.Integer) or type(degree) == 1:
             representation = "%s/1" % degree
@@ -1556,37 +1611,41 @@ def scale_interval_names(scale, reduce=False):
             interval_names.append([step, name])
     return interval_names
 
+
 def distinct_intervals(scale):
     """
     Find the distinct intervals in a scale, including inversions
-    
+
     Parameters
     ----------
     scale : list
         List of scale steps either in float or fraction form.
-        
+
     Returns
     -------
     intervals : list
         List of distinct intervals.
-    
+
     Notes
     -----
     The scale should be specified as a list of numerical values.
     Note that the convention adopted in this code is that scale[0]
     is a unison and scale[-1] is the formal octave (often 2).
     """
-    base = scale[-1] # the formal octave
-    # Make the scale span two octaves to get inversions
-    temp_scale = scale + [x*sp.Integer(base) for x in scale]
-    pairs = [x for x in itertools.combinations(temp_scale,2)]
-    #intervals = sorted(list(set(map(lambda x: x[1]/x[0], pairs))))
-    intervals = list(set(map(lambda x: x[1]/x[0], pairs)))
-    intervals = filter (lambda x: x < 2, intervals)
-    intervals = filter (lambda x: x != 1, intervals)
+
+    if not scale:
+        print("Scale is empty. Returning empty list.")
+        return []
+    base = scale[-1]  # the formal octave
+    temp_scale = scale + [x * base for x in scale]  # span two octaves
+    pairs = [x for x in itertools.combinations(temp_scale, 2)]
+    intervals = list(set(map(lambda x: x[1] / x[0], pairs)))
+    intervals = filter(lambda x: x < 2, intervals)
+    intervals = filter(lambda x: x != 1, intervals)
     return [x for x in intervals]
 
-def calculate_pvalues(df, method='pearson'):
+
+def calculate_pvalues(df, method="pearson"):
     """Calculate the correlation between each column of a DataFrame.
 
     Parameters
@@ -1608,9 +1667,9 @@ def calculate_pvalues(df, method='pearson'):
     pvalues = dfcols.transpose().join(dfcols, how="outer")
     for r in df.columns:
         for c in df.columns:
-            if method == 'pearson':
+            if method == "pearson":
                 pvalues[r][c] = round(pearsonr(df[r], df[c])[1], 4)
-            if method == 'spearman':
+            if method == "spearman":
                 pvalues[r][c] = round(spearmanr(df[r], df[c])[1], 4)
     return pvalues
 
@@ -1625,7 +1684,7 @@ def peaks_to_amps(peaks, freqs, amps, sf):
     freqs : list
         All centers of frequency bins.
     amps : list
-        All amplitudes associated with frequency bins.
+        All amplitudes associated with frequency bins.   
     sf : int
         Sampling frequency.
 
@@ -1661,7 +1720,7 @@ def alpha2bands(a):
         Each sublist contains the boundaries of each frequency band.
 
     """
-    np.float(a)
+    float(a)
     center_freqs = [a / 4, a / 2, a, a * 2, a * 4]
     FREQ_BANDS = []
     for f in center_freqs:
@@ -1697,25 +1756,26 @@ def chunk_ts(data, sf, overlap=10, precision=1):
         Description of returned object.
 
     """
-    overlap = 100/overlap
-    nsec = len(data)/sf
-    chunk_size = int((1/precision)*sf)
-    overlap_samp = int((chunk_size)/overlap)
+    overlap = 100 / overlap
+    nsec = len(data) / sf
+    chunk_size = int((1 / precision) * sf)
+    overlap_samp = int((chunk_size) / overlap)
     i = 0
     pairs = []
-    while i <= len(data)-chunk_size:
-        pairs.append((i, i+chunk_size))
-        i = i+chunk_size-overlap_samp
+    while i <= len(data) - chunk_size:
+        pairs.append((i, i + chunk_size))
+        i = i + chunk_size - overlap_samp
     return pairs
 
 
 def string_to_list(string):
     # Remove the brackets and extra spaces, then split the string into elements
-    str_list = string.strip('[]').split()
+    str_list = string.strip("[]").split()
 
     # Convert the elements to floats
     float_list = [float(i) for i in str_list]
     return float_list
+
 
 def safe_max(lst):
     if isinstance(lst, (list, np.ndarray)):
@@ -1723,8 +1783,11 @@ def safe_max(lst):
     elif isinstance(lst, float):
         return lst  # return the float itself
     else:
-        return np.nan  # or return any other value you see fit for non-list and non-float entries
-    
+        return (
+            np.nan
+        )  # or return any other value you see fit for non-list and non-float entries
+
+
 def safe_mean(lst):
     if isinstance(lst, str):
         lst = string_to_list(lst)
@@ -1733,9 +1796,14 @@ def safe_mean(lst):
     elif isinstance(lst, float):
         return lst  # return the float itself if only one number is present
     else:
-        return np.nan  # or return any other value you see fit for non-list and non-float entries
-    
-def compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=None, fmax=None):
+        return (
+            np.nan
+        )  # or return any other value you see fit for non-list and non-float entries
+
+
+def compute_frequency_and_psd(
+    signal, precision_hz, smoothness, fs, noverlap, fmin=None, fmax=None
+):
     """
     Compute the frequencies and power spectral density (PSD) of a signal using Welch method.
 
@@ -1764,13 +1832,15 @@ def compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fm
         Power spectral density of the signal.
     """
     nperseg = int(fs / precision_hz)
-    freqs, psd = welch(signal, fs, nperseg=int(nperseg/smoothness), nfft=nperseg, noverlap=noverlap)
+    freqs, psd = welch(
+        signal, fs, nperseg=int(nperseg / smoothness), nfft=nperseg, noverlap=noverlap
+    )
     if fmin is not None or fmax is not None:
         mask = np.ones(freqs.shape, dtype=bool)
         if fmin is not None:
-            mask &= (freqs >= fmin)
+            mask &= freqs >= fmin
         if fmax is not None:
-            mask &= (freqs <= fmax)
+            mask &= freqs <= fmax
         freqs = freqs[mask]
         psd = psd[mask]
     return freqs, psd
@@ -1794,7 +1864,7 @@ def power_law(x, a, b):
     ndarray
         Values after applying power law function.
     """
-    return a * (x ** b)
+    return a * (x**b)
 
 
 def apply_power_law_remove(freqs, psd, power_law_remove):
@@ -1820,10 +1890,10 @@ def apply_power_law_remove(freqs, psd, power_law_remove):
         return psd - power_law(freqs, *popt)
     else:
         return psd
-    
-    
+
+
 def __get_norm(norm):
-    ''''''
+    """"""
     if norm == 0 or norm is None:
         return None, None
     else:
@@ -1849,7 +1919,7 @@ def __product_other_freqs(spec, indices, synthetic=(), t=None):
         ],
         axis=0,
     )
-    p2 = np.prod(spec[:, indices[len(synthetic):]], axis=1)
+    p2 = np.prod(spec[:, indices[len(synthetic) :]], axis=1)
     return p1 * p2
 
 
