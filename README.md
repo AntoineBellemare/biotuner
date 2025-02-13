@@ -6,6 +6,10 @@
 <h3 align="center"> Python toolbox that incorporates tools from biological signal processing and musical theory to extract harmonic structures from biosignals. </h3>
 
 <p align="center">
+  <a href="https://github.com/AntoineBellemare/biotuner/actions/workflows/ci.yml">
+    <img alt="Biotuner Tests" src="https://github.com/AntoineBellemare/biotuner/actions/workflows/python-test.yml/badge.svg">
+  </a>
+
   <a href="https://pypi.org/project/biotuner/">
     <img alt="PyPI" src="https://img.shields.io/pypi/v/biotuner">
   </a>
