@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
 from math import log2
-from IPython.display import display
-from IPython.display import display, clear_output
 from collections import defaultdict
 from biotuner.biotuner_utils import sum_list, compute_peak_ratios
 from biotuner.metrics import ratios2harmsim
@@ -897,6 +895,12 @@ def MOS_interactive():
             "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
             "    pip install ipywidgets==8.0.4\n"
         )
+    try:
+        from IPython.display import display, clear_output
+    except ImportError:
+        raise ImportError(
+            "The 'IPython' package is required for this functionality. Install it with:\n\n" "    pip install IPython\n"
+        )
 
     def plot_MOS_labyrinth(generator_intervals, max_steps=20):
         MOS_by_generator = {}
@@ -1023,6 +1027,20 @@ def MOS_interactive():
 
 
 def visualize_rhythms_interactive():
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        raise ImportError(
+            "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
+            "    pip install ipywidgets==8.0.4\n"
+        )
+    try:
+        from IPython.display import display, clear_output
+    except ImportError:
+        raise ImportError(
+            "The 'IPython' package is required for this functionality. Install it with:\n\n" "    pip install IPython\n"
+        )
+
     def visualize_rhythms(pulses_steps, plot_size=600, offsets=None, tolerance=0.1):
         """
         Visualize multiple Euclidean rhythms.
@@ -1034,13 +1052,6 @@ def visualize_rhythms_interactive():
                 "The 'plotly' package is required for this visualization. Install it with:\n\n" "    pip install plotly\n"
             )
 
-        try:
-            import ipywidgets as widgets
-        except ImportError:
-            raise ImportError(
-                "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
-                "    pip install ipywidgets==8.0.4\n"
-            )
         colors = ["blue", "green", "red", "cyan", "magenta", "yellow", "black"]
         pulses_positions = []
         fig = go.FigureWidget()
