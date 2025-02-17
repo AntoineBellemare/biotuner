@@ -1,7 +1,6 @@
 #!bin/bash
 import numpy as np
 import matplotlib.pyplot as plt
-import pyACA
 import sympy as sp
 import functools
 import itertools
@@ -1106,6 +1105,13 @@ def computeFeatureCl_new(afAudioData, cFeatureName, f_s, window=4000, overlap=1)
     t : array
         Timestamps.
     """
+    try:
+        import pyACA
+    except ImportError:
+        raise ImportError(
+            "The 'pyACA' package is required for this functionality. Install it with:\n\n"
+            "    pip install pyACA\n"
+        )
     [v, t] = pyACA.computeFeature(cFeatureName, afAudioData, f_s, None, window, overlap)
     return (v, t)
 

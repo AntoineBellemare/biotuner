@@ -1,6 +1,4 @@
 import numpy as np
-from PyEMD import EMD, EEMD
-from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 import seaborn as sbn
 from scipy import stats
@@ -8,22 +6,16 @@ import secrets
 import biotuner
 from biotuner.biotuner_object import *
 from biotuner.metrics import *
-from biotuner.biotuner_utils import (
-     AAFT_surrogates, butter_bandpass_filter,
-     UnivariateSurrogatesTFT, phaseScrambleTS
-)
+from biotuner.biotuner_utils import AAFT_surrogates, butter_bandpass_filter, UnivariateSurrogatesTFT, phaseScrambleTS
 from biotuner.biotuner_object import compute_biotuner
 import pandas as pd
-from scipy.stats import boxcox
-from scipy.stats import skew
-from pingouin import ancova
-import colorednoise as cn
 from scipy import signal
 
 # from biotuner_object import *
 
 
 """BIOTUNER 2D"""
+
 
 def biotuner_mne(epochs, bt_dict, savefile=False, savename=None):
     """
@@ -61,32 +53,31 @@ def biotuner_mne(epochs, bt_dict, savefile=False, savename=None):
             metric_dict = {}
             for metric_name, metric_value in metrics.items():
                 metric_dict[metric_name] = metric_value
-            metric_dict['trial'] = j
-            metric_dict['electrode'] = k
+            metric_dict["trial"] = j
+            metric_dict["electrode"] = k
             metrics_list.append(metric_dict)
 
     # Save metrics to CSV
     if savefile:
         if savename is None:
-            savename = epochs.filename[:-4] + '_biotuner'
+            savename = epochs.filename[:-4] + "_biotuner"
         df = pd.DataFrame(metrics_list)
 
         # Add metadata from epochs object to the dataframe
-        if 'metadata' in epochs.info:
+        if "metadata" in epochs.info:
             metadata = epochs.metadata
             for key in metadata.keys():
                 df[key] = np.tile(metadata[key], n_electrodes)
 
-            df = df[['trial', 'electrode'] + list(bt_dict.keys()) + list(metadata.keys())]
+            df = df[["trial", "electrode"] + list(bt_dict.keys()) + list(metadata.keys())]
         else:
-            df = df[['trial', 'electrode'] + list(bt_dict.keys())]
-        df.to_csv(savename+'.csv', index=False)
+            df = df[["trial", "electrode"] + list(bt_dict.keys())]
+        df.to_csv(savename + ".csv", index=False)
 
     return df
 
-def surrogate_signal(
-    data, surr_type="pink", low_cut=0.5, high_cut=150, sf=1000, TFT_freq=5
-):
+
+def surrogate_signal(data, surr_type="pink", low_cut=0.5, high_cut=150, sf=1000, TFT_freq=5):
     """Generate surrogate signal.
 
     Parameters
@@ -127,10 +118,7 @@ def surrogate_signal(
     if surr_type == "phase":
         len_data = len(data)
         data_ = phaseScrambleTS(data)
-        data_ = butter_bandpass_filter(data_[0:len_data],
-                                       low_cut,
-                                       high_cut,
-                                       sf, 4)
+        data_ = butter_bandpass_filter(data_[0:len_data], low_cut, high_cut, sf, 4)
     if surr_type == "shuffle":
         data_ = data.copy()
         np.random.shuffle(data_)
@@ -143,20 +131,20 @@ def surrogate_signal(
         beta = 2
     if surr_type == "blue":
         beta = -1
-    if (
-        surr_type == "white"
-        or surr_type == "pink"
-        or surr_type == "brown"
-        or surr_type == "blue"
-    ):
+    if surr_type == "white" or surr_type == "pink" or surr_type == "brown" or surr_type == "blue":
+        try:
+            import colorednoise as cn
+        except ImportError:
+            raise ImportError(
+                "The 'colorednoise' package is required for this function. Install it with:\n\n"
+                "    pip install colorednoise\n"
+            )
         data_ = cn.powerlaw_psd_gaussian(beta, len(data))
         data_ = butter_bandpass_filter(data_, low_cut, high_cut, sf, 4)
     return data_
 
 
-def surrogate_signal_matrices(
-    data, surr_type="pink", low_cut=0.5, high_cut=150, sf=1000
-):
+def surrogate_signal_matrices(data, surr_type="pink", low_cut=0.5, high_cut=150, sf=1000):
     """Short summary.
 
     Parameters
@@ -187,13 +175,7 @@ def surrogate_signal_matrices(
     data_ = data.copy()
     if np.ndim(data) == 2:
         for i in range(len(data)):
-            data_[i] = surrogate_signal(
-                       data[i],
-                       surr_type=surr_type,
-                       low_cut=low_cut,
-                       high_cut=high_cut,
-                       sf=sf
-                       )
+            data_[i] = surrogate_signal(data[i], surr_type=surr_type, low_cut=low_cut, high_cut=high_cut, sf=sf)
     if np.ndim(data) == 3:
         for i in range(len(data)):
             for j in range(len(data[i])):
@@ -269,7 +251,7 @@ def compute_peaks_matrices(
                 precision=precision,
                 sf=sf,
                 max_freq=max_freq,
-                n_peaks=n_peaks
+                n_peaks=n_peaks,
             )
             peaks_tot.append(peaks)
             amps_tot.append(amps)
@@ -321,13 +303,9 @@ def compute_peaks_surrogates(
     for e, c in enumerate(conditions):
         print("Condition (", e + 1, "of", len(conditions), "):", c)
         if c == "og_data":
-            peaks, amps = compute_peaks_matrices(
-                data, peaks_function, precision, sf, max_freq
-            )
+            peaks, amps = compute_peaks_matrices(data, peaks_function, precision, sf, max_freq)
         if c != "og_data":
-            data = surrogate_signal_matrices(
-                data, surr_type=c, low_cut=low_cut, high_cut=high_cut, sf=sf
-            )
+            data = surrogate_signal_matrices(data, surr_type=c, low_cut=low_cut, high_cut=high_cut, sf=sf)
             peaks, amps = compute_peaks_matrices(
                 data,
                 peaks_function,
@@ -528,20 +506,14 @@ def graph_dist(
         # if 'pink' in labs or 'brown' in labs or 'white' in labs or 'blue' in labs:
         if title == None:
             plt.suptitle(
-                "Comparing "
-                + m
-                + " \nfor EEG, surrogate data, and noise signals across "
-                + dimension,
+                "Comparing " + m + " \nfor EEG, surrogate data, and noise signals across " + dimension,
                 fontsize="20",
             )
         else:
             plt.suptitle(title, fontsize="20")
         if save == True:
             fig.savefig(
-                savefolder
-                + "{}_distribution_s{}-bloc{}_{}_{}.png".format(
-                    metric, subject, tag, dimension, peaks_function
-                ),
+                savefolder + "{}_distribution_s{}-bloc{}_{}_{}.png".format(metric, subject, tag, dimension, peaks_function),
                 dpi=300,
             )
             plt.clf()
@@ -553,82 +525,80 @@ def graph_dist(
 from biotuner.biotuner_utils import NTET_ratios
 from biotuner.scale_construction import dissmeasure
 
-def diss_curve_multi (freqs, amps, denom=10, max_ratio=2, bound = 0.1, n_tet_grid=None,
-                      data_type='Electrodes', labels=None):
+
+def diss_curve_multi(freqs, amps, denom=10, max_ratio=2, bound=0.1, n_tet_grid=None, data_type="Electrodes", labels=None):
     from numpy import array, linspace, empty, concatenate
     from scipy.signal import argrelextrema
     from fractions import Fraction
+
     plt.figure(figsize=(18, 8))
     diss_minima_tot = []
     for fr, am, lab in zip(freqs, amps, labels):
-        freqs = np.array([x*128 for x in fr])
+        freqs = np.array([x * 128 for x in fr])
         am = np.interp(am, (np.array(am).min(), np.array(am).max()), (0.3, 0.7))
         r_low = 1
         alpharange = max_ratio
-        method = 'min'
+        method = "min"
 
         n = 1000
         diss = empty(n)
         a = concatenate((am, am))
         for i, alpha in enumerate(linspace(r_low, alpharange, n)):
-            f = concatenate((freqs, alpha*freqs))
+            f = concatenate((freqs, alpha * freqs))
             d = dissmeasure(f, a, method)
             diss[i] = d
 
-
         plt.plot(linspace(r_low, alpharange, len(diss)), diss, label=lab)
-        plt.xscale('log')
+        plt.xscale("log")
         plt.xlim(r_low, alpharange)
 
-        plt.xlabel('frequency ratio')
-        plt.ylabel('sensory dissonance')
-
+        plt.xlabel("frequency ratio")
+        plt.ylabel("sensory dissonance")
 
         diss_minima = argrelextrema(diss, np.less)
         diss_minima_tot.append(list(diss_minima[0]))
-        #print(diss_minima)
+        # print(diss_minima)
 
     diss_tot = [item for sublist in diss_minima_tot for item in sublist]
     diss_tot.sort()
     new_minima = []
 
-    for i in range(len(diss_tot)-1):
-        if (diss_tot[i+1] - diss_tot[i]) < bound:
-            new_minima.append((diss_tot[i]+diss_tot[i+1])/2)
-    #print(new_minima)
+    for i in range(len(diss_tot) - 1):
+        if (diss_tot[i + 1] - diss_tot[i]) < bound:
+            new_minima.append((diss_tot[i] + diss_tot[i + 1]) / 2)
+    # print(new_minima)
     intervals = []
     for d in range(len(new_minima)):
-        #print(new_minima[d])
-        frac = Fraction(new_minima[d]/(n/(max_ratio-1))+1).limit_denominator(denom)
+        # print(new_minima[d])
+        frac = Fraction(new_minima[d] / (n / (max_ratio - 1)) + 1).limit_denominator(denom)
         print(frac)
         frac = (frac.numerator, frac.denominator)
         intervals.append(frac)
 
-    #intervals = [(123, 100), (147, 100), (159, 100), (9, 5), (2, 1)]
+    # intervals = [(123, 100), (147, 100), (159, 100), (9, 5), (2, 1)]
     intervals.append((2, 1))
-    #print(intervals)
+    # print(intervals)
     for n, d in intervals:
-        plt.axvline(n/d, color='silver')
-    plt.axvline(1.001, linewidth=1, color='black')
+        plt.axvline(n / d, color="silver")
+    plt.axvline(1.001, linewidth=1, color="black")
     ax = plt.gca()
-    ax.set_facecolor('white')
-    ax.axhline(linewidth=1, color='black')
+    ax.set_facecolor("white")
+    ax.axhline(linewidth=1, color="black")
 
-    plt.xscale('linear')
+    plt.xscale("linear")
     plt.minorticks_off()
-    plt.xticks([n/d for n, d in intervals],
-               ['{}/{}'.format(n, d) for n, d in intervals], fontsize = 14)
-    plt.yticks(fontsize = 14)
+    plt.xticks([n / d for n, d in intervals], ["{}/{}".format(n, d) for n, d in intervals], fontsize=14)
+    plt.yticks(fontsize=14)
     if n_tet_grid is not None:
         n_tet = NTET_ratios(n_tet_grid, max_ratio=max_ratio)
         for n in n_tet:
-            plt.axvline(n, color='red', linestyle='--')
+            plt.axvline(n, color="red", linestyle="--")
     plt.tight_layout()
-    leg = plt.legend(fontsize=12, title='Electrode')
-    leg.set_title(data_type, prop={'size':18})
-    #plt.legend()
-    plt.savefig('diss_curve_multi_electrodes_1.png', dpi=300)
-    #plt.show()
+    leg = plt.legend(fontsize=12, title="Electrode")
+    leg.set_title(data_type, prop={"size": 18})
+    # plt.legend()
+    plt.savefig("diss_curve_multi_electrodes_1.png", dpi=300)
+    # plt.show()
     return diss_minima_tot
 
 
@@ -688,9 +658,7 @@ def graph_conditions(
                     FREQ_BANDS=FREQ_BANDS,
                 )
                 if peaks_function == "harmonic_peaks":
-                    biotuning.peaks = [
-                        x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))
-                    ][::-1][0:n_harmonic_peaks]
+                    biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
                     biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
                 # print(biotuning.peaks)
                 biotuning.compute_peaks_metrics()
@@ -739,9 +707,7 @@ def graph_conditions(
                         metric.append(len(biotuning.spectro_chords))
                     if metric_to_graph == "n_IF_chords":
                         IF = np.round(biotuning.IF, 2)
-                        chords, positions = timepoint_consonance(
-                            IF, method="cons", limit=cons_limit, min_notes=min_notes
-                        )
+                        chords, positions = timepoint_consonance(IF, method="cons", limit=cons_limit, min_notes=min_notes)
                         metric.append(len(chords))
             except:
                 pass
@@ -804,11 +770,7 @@ def compare_metrics(
     cons = []
     tenney = []
     harm_fit = []
-    if (
-        peaks_function == "EEMD"
-        or peaks_function == "EMD"
-        or peaks_function == "HH1D_max"
-    ):
+    if peaks_function == "EEMD" or peaks_function == "EMD" or peaks_function == "HH1D_max":
         if chords_metrics == True:
             n_spec_chords = []
             if chords_multiple_metrics == True:
@@ -836,17 +798,13 @@ def compare_metrics(
                 FREQ_BANDS=FREQ_BANDS,
             )
             if peaks_function == "harmonic_peaks":
-                biotuning.peaks = [
-                    x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))
-                ][::-1][0:n_harmonic_peaks]
+                biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
                 biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
             # print('b', biotuning.peaks, biotuning.amps)
             biotuning.compute_peaks_metrics()
             # peaks_avg.append(np.average(biotuning.peaks))
             scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
-            biotuning.compute_diss_curve(
-                plot=False, input_type="peaks", denom=100, max_ratio=2, n_tet_grid=12
-            )
+            biotuning.compute_diss_curve(plot=False, input_type="peaks", denom=100, max_ratio=2, n_tet_grid=12)
             if peaks_function == "EEMD" or peaks_function == "EMD":
                 if chords_metrics == True:
                     biotuning.compute_spectromorph(
@@ -914,14 +872,10 @@ def compare_metrics(
             # print(biotuning.scale_metrics)
             peaks.append(np.average(biotuning.peaks))
             sum_p_q.append(float(scale_metrics["sum_p_q"]))
-            sum_distinct_intervals.append(
-                float(scale_metrics["sum_distinct_intervals"])
-            )
+            sum_distinct_intervals.append(float(scale_metrics["sum_distinct_intervals"]))
             matrix_harm_sim.append(float(scale_metrics["matrix_harm_sim"]))
             matrix_cons.append(float(scale_metrics["matrix_cons"]))
-            sum_q_for_all_intervals.append(
-                float(scale_metrics["sum_q_for_all_intervals"])
-            )
+            sum_q_for_all_intervals.append(float(scale_metrics["sum_q_for_all_intervals"]))
             dissonance.append(biotuning.scale_metrics["dissonance"])
             diss_n_steps.append(biotuning.scale_metrics["diss_n_steps"])
             cons.append(biotuning.peaks_metrics["cons"])
@@ -943,11 +897,7 @@ def compare_metrics(
     df["sum_q_for_all_intervals"] = sum_q_for_all_intervals
     df["sum_distinct_intervals"] = sum_distinct_intervals
     df["sum_p_q"] = sum_p_q
-    if (
-        peaks_function == "EEMD"
-        or peaks_function == "EMD"
-        or peaks_function == "HH1D_max"
-    ):
+    if peaks_function == "EEMD" or peaks_function == "EMD" or peaks_function == "HH1D_max":
         if chords_metrics == True:
             df["spectro_chords"] = n_spec_chords
             if chords_multiple_metrics == True:
@@ -1000,12 +950,8 @@ def compare_corr_metrics_peaks(
             df_peaks_corr = df_peaks_corr_
             df_peaks_p = df_peaks_p_
         else:
-            df_peaks_corr = pd.concat(
-                [df_peaks_corr, df_peaks_corr_], axis=1, ignore_index=False
-            )
-            df_peaks_p = pd.concat(
-                [df_peaks_p, df_peaks_p_], axis=1, ignore_index=False
-            )
+            df_peaks_corr = pd.concat([df_peaks_corr, df_peaks_corr_], axis=1, ignore_index=False)
+            df_peaks_p = pd.concat([df_peaks_p, df_peaks_p_], axis=1, ignore_index=False)
         df_metrics_total.append(df_metrics)
     df_metrics_total = pd.concat(df_metrics_total, keys=peaks_functions)
     df_metrics_total = df_metrics_total.reset_index(level=1, drop=True)
@@ -1021,9 +967,7 @@ def compare_corr_metrics_peaks(
     return df_peaks_corr, df_peaks_p, df_metrics_total
 
 
-def stats_all_metrics_all_functions(
-    data1, data2, peaks_functions, data_types, stat_method="ANCOVA", plot=False
-):
+def stats_all_metrics_all_functions(data1, data2, peaks_functions, data_types, stat_method="ANCOVA", plot=False):
 
     metrics = list(data1.columns)
     ttest_all = pd.DataFrame()
@@ -1053,9 +997,7 @@ def stats_all_metrics_all_functions(
                 else:
                     # print('data1', data1)
                     # print('data2', data2)
-                    anc = ancova_biotuner2d(
-                        data1, data2, function, metric, data_types, plot=False
-                    )
+                    anc = ancova_biotuner2d(data1, data2, function, metric, data_types, plot=False)
                     metrics_val.append(anc["p-unc"][0])
                     stat_val.append(anc["F"][0])
             avg_1 = np.nanmean(data1.loc[function, metric])
@@ -1064,9 +1006,7 @@ def stats_all_metrics_all_functions(
                 avg.append(1)
             if avg_2 > avg_1:
                 avg.append(2)
-            if len(avg) < len(
-                metrics_val
-            ):  # deal when there are 'NaN' values for methods that doesn't compute spectral chords
+            if len(avg) < len(metrics_val):  # deal when there are 'NaN' values for methods that doesn't compute spectral chords
                 avg += [0] * (len(metrics_val) - len(avg))
         ttest_all[function] = metrics_val
         stat_values_all[function] = stat_val
@@ -1093,12 +1033,7 @@ def plot_ttest_all_metrics(
     fig, ax = plt.subplots(figsize=(15, 10))
     plt.setp(ax.get_xticklabels(), rotation=25, horizontalalignment="right")
     plt.title(
-        "Results of ANCOVA comparing "
-        + labels[0]
-        + " and "
-        + labels[1]
-        + " signals using "
-        + peaks_function,
+        "Results of ANCOVA comparing " + labels[0] + " and " + labels[1] + " signals using " + peaks_function,
         fontsize=22,
     )
     plt.xlabel("Harmonicity metrics", fontsize=16)
@@ -1163,15 +1098,7 @@ def plot_ttest_all_metrics(
     if save == True:
         if savename == None:
             plt.savefig(
-                "ANCOVA_"
-                + labels[0]
-                + "_"
-                + labels[1]
-                + "_"
-                + peaks_function
-                + "_"
-                + fname
-                + ".jpg",
+                "ANCOVA_" + labels[0] + "_" + labels[1] + "_" + peaks_function + "_" + fname + ".jpg",
                 dpi=300,
                 facecolor="w",
             )
@@ -1225,7 +1152,7 @@ def slice_data(data, sf, window=1):
                 stop_idx = start_idx + window_len
                 data_sliced_temp.append(data[i][start_idx:stop_idx])
             data_sliced.append(data_sliced_temp)
-        #data_sliced = combine_dims(np.array(data_sliced), 0, 2)
+        # data_sliced = combine_dims(np.array(data_sliced), 0, 2)
     return np.array(data_sliced)
 
 
@@ -1284,15 +1211,19 @@ def slice_data(data, sf, window=1):
 
 
 def ancova_biotuner2d(df1, df2, method, metric, data_types, plot=False):
-    df_tot = pd.concat(
-        [df1.loc[method], df2.loc[method]], keys=data_types
-    ).reset_index()
+    df_tot = pd.concat([df1.loc[method], df2.loc[method]], keys=data_types).reset_index()
     df_tot.rename(columns={"level_0": "data_type"}, inplace=True)
     df_tot = df_tot.fillna(0)
     if plot == True:
         sbn.distplot(df1.loc[method, metric])
         sbn.distplot(df2.loc[method, metric])
     # print('df_tot', df_tot, 'metric', metric)
+    try:
+        from pingouin import ancova
+    except ImportError:
+        raise ImportError(
+            "The 'pingouin' package is required for this function. Install it with:\n\n" "    pip install pingouin\n"
+        )
     return ancova(data=df_tot, dv=metric, covar="peaks", between="data_type")
 
 
@@ -1422,9 +1353,7 @@ def graph_surrogates(
     metric_tot = []
     for c in conditions:
         if c != "eeg":
-            data_ = surrogate_signal_matrices(
-                data, surr_type=c, low_cut=low_cut, high_cut=high_cut, sf=sf
-            )
+            data_ = surrogate_signal_matrices(data, surr_type=c, low_cut=low_cut, high_cut=high_cut, sf=sf)
         else:
             data_ = butter_bandpass_filter(data, low_cut, high_cut, sf, 4)
         peaks_avg = []
@@ -1448,9 +1377,7 @@ def graph_surrogates(
                 n_peaks_FOOOF=5,
             )
             if peaks_function == "harmonic_peaks":
-                biotuning.peaks = [
-                    x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))
-                ][::-1][0:n_harmonic_peaks]
+                biotuning.peaks = [x for _, x in sorted(zip(biotuning.amps, biotuning.peaks))][::-1][0:n_harmonic_peaks]
                 biotuning.amps = sorted(biotuning.amps)[::-1][0:n_harmonic_peaks]
             # print(biotuning.peaks)
             biotuning.compute_peaks_metrics()
@@ -1469,11 +1396,7 @@ def graph_surrogates(
                     scale_metrics, _ = scale_to_metrics(biotuning.peaks_ratios)
                     # print(scale_metrics[metric_to_graph])
                     metric.append(float(scale_metrics[metric_to_graph]))
-                if (
-                    metric_to_graph == "dissonance"
-                    or metric_to_graph == "diss_n_steps"
-                    or metric_to_graph == "diss_harm_sim"
-                ):
+                if metric_to_graph == "dissonance" or metric_to_graph == "diss_n_steps" or metric_to_graph == "diss_harm_sim":
                     biotuning.compute_diss_curve(
                         plot=False,
                         input_type="peaks",

@@ -1,6 +1,5 @@
 import numpy as np
 import emd
-from PyEMD import EMD, EEMD, CEEMDAN
 import matplotlib.pyplot as plt
 import scipy.signal
 from fooof import FOOOF
@@ -8,10 +7,8 @@ import sys
 from biotuner.biotuner_utils import smooth, top_n_indexes, __get_norm, compute_IMs
 from biotuner.biotuner_utils import __product_other_freqs, __freq_ind
 from biotuner.vizs import plot_polycoherence
-from pactools import Comodulogram
 from scipy.fftpack import next_fast_len
 from scipy.signal import spectrogram
-from pyts.decomposition import SingularSpectrumAnalysis
 from scipy.ndimage import gaussian_filter1d
 
 sys.setrecursionlimit(120000)
@@ -80,6 +77,12 @@ def EMD_eeg(data, method="EMD", graph=False, extrema_detection="simple", nIMFs=5
     s = np.interp(data, (data.min(), data.max()), (0, +1))
     t = np.linspace(0, 1, len(data))
     if method == "CEEMDAN":
+        try:
+            from PyEMD import CEEMDAN
+        except ImportError:
+            raise ImportError(
+                "The 'PyEMD' package is required for CEEMDAN. Install it with:\n\n" "    pip install emd-signal\n"
+            )
         eIMFs = CEEMDAN(extrema_detection=extrema_detection).ceemdan(s, t)
     if method == "EMD":
         eIMFs = emd.sift.sift(data)
@@ -138,6 +141,7 @@ def SSA_EEG(data, n_components=3, graph=False, window_size=20):
     (5, 1000)
 
     """
+    print("Running SSA")
     # Instantiate SingularSpectrumAnalysis object with specified window size
     ssa = SingularSpectrumAnalysis(window_size=window_size, groups=None)
     # Prepare the input data for SSA by transforming it into a 2D numpy array
@@ -297,9 +301,7 @@ def extract_welch_peaks(
     # ensure nperseg is not larger than signal length
     if nperseg > len(data):
         nperseg = len(data)
-    freqs, psd = scipy.signal.welch(
-        data, sf, nfft=nfft, nperseg=nperseg, average=average, noverlap=noverlap
-    )
+    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, average=average, noverlap=noverlap)
     psd = 10.0 * np.log10(np.maximum(psd, 1e-12))
     psd = np.real(psd)
     if out_type == "all":
@@ -316,9 +318,7 @@ def extract_welch_peaks(
                 plateau_size=None,
             )
         if find_peaks_method == "wavelet":
-            indexes = scipy.signal.find_peaks_cwt(
-                psd, widths=[1, max_freq], min_length=0.5
-            )
+            indexes = scipy.signal.find_peaks_cwt(psd, widths=[1, max_freq], min_length=0.5)
         peaks = []
         amps = []
         for i in indexes:
@@ -428,12 +428,8 @@ def compute_FOOOF(
         nfft = sf * mult
         nperseg = nfft
         noverlap = nperseg // 10
-    freqs, psd = scipy.signal.welch(
-        data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap
-    )
-    fm = FOOOF(
-        peak_width_limits=[precision * 2, 3], max_n_peaks=50, min_peak_height=0.2
-    )
+    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
+    fm = FOOOF(peak_width_limits=[precision * 2, 3], max_n_peaks=50, min_peak_height=0.2)
     freq_range = [(sf / len(data)) * 2, max_freq]
     fm.fit(freqs, psd, freq_range)
     if graph is True:
@@ -530,9 +526,7 @@ def HilbertHuang1D(
     range_hh = int(high - low)
     steps = int(range_hh / precision)
     bin_size = range_hh / steps
-    edges, bins = emd.spectra.define_hist_bins(
-        low - (bin_size / 2), high - (bin_size / 2), steps, bin_spread
-    )
+    edges, bins = emd.spectra.define_hist_bins(low - (bin_size / 2), high - (bin_size / 2), steps, bin_spread)
     # Compute the 1d Hilbert-Huang transform (power over carrier frequency)
     freqs = []
     spec = []
@@ -779,7 +773,13 @@ def pac_frequencies(
     3.780184228154704e-08,
     3.3232328382531826e-08])
     """
-
+    try:
+        from pactools import Comodulogram
+    except ImportError:
+        raise ImportError(
+            "The 'pactools' package is required for this functionality. Install it with:\n\n"
+            "    pip install pactools==0.3.1\n"
+        )
     drive_steps = int(((max_drive_freq - min_drive_freq) / drive_precision) + 1)
     low_fq_range = np.linspace(min_drive_freq, max_drive_freq, drive_steps)
     sig_steps = int(((max_sig_freq - min_sig_freq) / sig_precision) + 1)
@@ -806,9 +806,7 @@ def pac_frequencies(
     return pac_freqs, pac_coupling
 
 
-def _polycoherence_2d(
-    data, fs, *ofreqs, norm=2, flim1=None, flim2=None, synthetic=(), **kwargs
-):
+def _polycoherence_2d(data, fs, *ofreqs, norm=2, flim1=None, flim2=None, synthetic=(), **kwargs):
     norm1, norm2 = __get_norm(norm)
     freq, t, spec = spectrogram(data, fs=fs, mode="complex", **kwargs)
     spec = np.require(spec, "complex64")
@@ -976,9 +974,7 @@ def polyspectrum_frequencies(
         noverlap = sf // 10
     nfft = int(sf * (1 / precision))
     kw = dict(nperseg=nperseg, noverlap=noverlap, nfft=nfft)
-    freq1, freq2, bispec = polycoherence(
-        data, 1000, norm=norm, **kw, flim1=flim1, flim2=flim2, dim=2
-    )
+    freq1, freq2, bispec = polycoherence(data, 1000, norm=norm, **kw, flim1=flim1, flim2=flim2, dim=2)
     for i in range(len(bispec)):
         for j in range(len(bispec[i])):
             if str(np.real(bispec[i][j])) == "inf":
@@ -999,9 +995,7 @@ def polyspectrum_frequencies(
    and output selected harmonic peaks"""
 
 
-def harmonic_recurrence(
-    peaks, amps, min_freq=1, max_freq=30, min_harms=2, harm_limit=128
-):
+def harmonic_recurrence(peaks, amps, min_freq=1, max_freq=30, min_harms=2, harm_limit=128):
     """
     Identify spectral peaks that have the highest recurrence in the spectrum based on their harmonic series.
 
@@ -1305,3 +1299,341 @@ def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
 
     return arrT, arrFoFinal, arrPeriod, arrFo
 """
+
+# This code is based on the following repository: https://github.com/johannfaouzi/pyts/tree/main
+
+from sklearn.base import BaseEstimator
+from math import ceil
+from joblib import Parallel, delayed
+from sklearn.utils.validation import check_array
+from numpy.lib.stride_tricks import as_strided
+from numba import prange
+
+
+def _outer_dot(v, X, n_samples, window_size, n_windows):
+    X_new = np.empty((n_samples, window_size, window_size, n_windows))
+    for i in prange(n_samples):
+        for j in prange(window_size):
+            X_new[i, j] = np.dot(np.outer(v[i, :, j], v[i, :, j]), X[i])
+    return X_new
+
+
+def _diagonal_averaging(X, n_samples, n_timestamps, window_size, n_windows, grouping_size, gap):
+    X_new = np.empty((n_samples, grouping_size, n_timestamps))
+    first_row = [(0, col) for col in range(n_windows)]
+    last_col = [(row, n_windows - 1) for row in range(1, window_size)]
+    indices = first_row + last_col
+    for i in prange(n_samples):
+        for group in prange(grouping_size):
+            for j, k in indices:
+                X_new[i, group, j + k] = np.diag(X[i, group, :, ::-1], gap - j - k - 1).mean()
+    return X_new
+
+
+def _windowed_view(X, n_samples, n_timestamps, window_size, window_step):
+    overlap = window_size - window_step
+    shape_new = (n_samples, (n_timestamps - overlap) // window_step, window_size // 1)
+    s0, s1 = X.strides
+    strides_new = (s0, window_step * s1, s1)
+    return as_strided(X, shape=shape_new, strides=strides_new)
+
+
+class UnivariateTransformerMixin:
+    """Mixin class for all univariate transformers in pyts."""
+
+    def fit_transform(self, X, y=None, **fit_params):
+        """Fit to data, then transform it.
+
+        Fits transformer to `X` and `y` with optional parameters `fit_params`
+        and returns a transformed version of `X`.
+
+        Parameters
+        ----------
+        X : array-like, shape = (n_samples, n_timestamps)
+            Univariate time series.
+
+        y : None or array-like, shape = (n_samples,) (default = None)
+            Target values (None for unsupervised transformations).
+
+        **fit_params : dict
+            Additional fit parameters.
+
+        Returns
+        -------
+        X_new : array
+            Transformed array.
+
+        """  # noqa: E501
+        if y is None:
+            # fit method of arity 1 (unsupervised transformation)
+            return self.fit(X, **fit_params).transform(X)
+        else:
+            # fit method of arity 2 (supervised transformation)
+            return self.fit(X, y, **fit_params).transform(X)
+
+
+class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
+    """Singular Spectrum Analysis.
+
+    Parameters
+    ----------
+    window_size : int or float (default = 4)
+        Size of the sliding window (i.e. the size of each word). If float, it
+        represents the percentage of the size of each time series and must be
+        between 0 and 1. The window size will be computed as
+        ``max(2, ceil(window_size * n_timestamps))``.
+
+    groups : None, int, 'auto', or array-like (default = None)
+        The way the elementary matrices are grouped. If None, no grouping is
+        performed. If an integer, it represents the number of groups and the
+        bounds of the groups are computed as
+        ``np.linspace(0, window_size, groups + 1).astype('int64')``.
+        If 'auto', then three groups are determined, containing trend,
+        seasonal, and residual. If array-like, each element must be array-like
+        and contain the indices for each group.
+
+    lower_frequency_bound : float (default = 0.075)
+        The boundary of the periodogram to characterize trend, seasonal and
+        residual components. It must be between 0 and 0.5.
+        Ignored if ``groups`` is not set to 'auto'.
+
+    lower_frequency_contribution : float (default = 0.85)
+        The relative threshold to characterize trend, seasonal and
+        residual components by considering the periodogram.
+        It must be between 0 and 1. Ignored if ``groups`` is not set to 'auto'.
+
+    chunksize : int or None (default = None)
+        If int, the transformation of the whole dataset is performed using
+        chunks (batches) and ``chunksize`` corresponds to the maximum size of
+        each chunk (batch). If None, the transformation is performed on the
+        whole dataset at once. Performing the transformation with chunks is
+        likely to be a bit slower but requires less memory.
+
+    n_jobs : None or int (default = None)
+        The number of jobs to use for the computation. Only used if
+        ``chunksize`` is set to an integer.
+
+    References
+    ----------
+    .. [1] N. Golyandina, and A. Zhigljavsky, "Singular Spectrum Analysis for
+           Time Series". Springer-Verlag Berlin Heidelberg (2013).
+
+    .. [2] T. Alexandrov, "A Method of Trend Extraction Using Singular
+           Spectrum Analysis", REVSTAT (2008).
+
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.decomposition import SingularSpectrumAnalysis
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = SingularSpectrumAnalysis(window_size=5)
+    >>> X_new = transformer.transform(X)
+    >>> X_new.shape
+    (50, 5, 150)
+
+    """
+
+    def __init__(
+        self,
+        window_size=4,
+        groups=None,
+        lower_frequency_bound=0.075,
+        lower_frequency_contribution=0.85,
+        chunksize=None,
+        n_jobs=1,
+    ):
+        self.window_size = window_size
+        self.groups = groups
+        self.lower_frequency_bound = lower_frequency_bound
+        self.lower_frequency_contribution = lower_frequency_contribution
+        self.chunksize = chunksize
+        self.n_jobs = n_jobs
+
+    def fit(self, X=None, y=None):
+        return self
+
+    def transform(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = (n_samples, n_timestamps)
+
+        Returns
+        -------
+        X_new : array-like, shape = (n_samples, n_splits, n_timestamps)
+            Transformed data. ``n_splits`` value depends on the value of
+            ``groups``. If ``groups=None``, ``n_splits`` is equal to
+            ``window_size``. If ``groups`` is an integer, ``n_splits`` is
+            equal to ``groups``. If ``groups='auto'``, ``n_splits`` is equal
+            to three. If ``groups`` is array-like, ``n_splits`` is equal to
+            the length of ``groups``. If ``n_splits=1``, ``X_new`` is squeezed
+            and its shape is (n_samples, n_timestamps).
+
+        """
+        X = check_array(X, dtype="float64")
+        n_samples, n_timestamps = X.shape
+        window_size, grouping_size = self._check_params(n_timestamps)
+        n_windows = n_timestamps - window_size + 1
+
+        try:
+            # Get a rough estimation of the required memory
+            max_array = np.zeros((n_samples + 1, window_size + grouping_size, window_size, n_windows))
+            del max_array
+        except MemoryError:
+            msg = "The required memory is greater than the available memory. "
+            if self.chunksize is None:
+                msg += (
+                    "Set the `chunksize` parameter to an integer to perform "
+                    "the transformation using chunks (batches) to decrease "
+                    "the required memory."
+                )
+            else:
+                msg += "Decrease the value of the `chunksize` parameter to " "to decrease the required memory."
+            raise MemoryError(msg)
+
+        if self.chunksize is not None:
+            return self._transform(X)
+        else:
+            idx = np.r_[np.arange(0, n_samples, self.chunksize), n_samples]
+            return np.asarray(Parallel(n_jobs=self.n_jobs)(delayed(self._transform)(X[i:j]) for i, j in zip(idx[:-1], idx[1:])))
+
+    def _transform(self, X):
+
+        n_samples, n_timestamps = X.shape
+        window_size, grouping_size = self._check_params(n_timestamps)
+        n_windows = n_timestamps - window_size + 1
+
+        X_window = np.transpose(_windowed_view(X, n_samples, n_timestamps, window_size, window_step=1), axes=(0, 2, 1)).copy()
+        X_tranpose = np.matmul(X_window, np.transpose(X_window, axes=(0, 2, 1)))
+        w, v = np.linalg.eigh(X_tranpose)
+        w, v = w[:, ::-1], v[:, :, ::-1]
+
+        del X_tranpose
+
+        X_elem = _outer_dot(v, X_window, n_samples, window_size, n_windows)
+        X_groups, grouping_size = self._grouping(
+            X_elem,
+            v,
+            n_samples,
+            window_size,
+            n_windows,
+            grouping_size,
+        )
+        if window_size >= n_windows:
+            X_groups = np.transpose(X_groups, axes=(0, 1, 3, 2))
+            gap = window_size
+        else:
+            gap = n_windows
+
+        del X_elem
+
+        X_ssa = _diagonal_averaging(X_groups, n_samples, n_timestamps, window_size, n_windows, grouping_size, gap)
+        return np.squeeze(X_ssa)
+
+    def _grouping(self, X, v, n_samples, window_size, n_windows, grouping_size):
+        if self.groups is None:
+            X_new = X
+        elif self.groups == "auto":
+            f = np.arange(0, 1 + window_size // 2) / window_size
+            Pxx = np.abs(np.fft.rfft(v, axis=1, norm="ortho")) ** 2
+            if Pxx.shape[-1] % 2 == 0:
+                Pxx[:, 1:-1, :] *= 2
+            else:
+                Pxx[:, 1:, :] *= 2
+
+            Pxx_cumsum = np.cumsum(Pxx, axis=1)
+            idx_trend = np.where(f < self.lower_frequency_bound)[0][-1]
+            idx_resid = Pxx_cumsum.shape[1] // 2
+
+            c = self.lower_frequency_contribution
+            trend = Pxx_cumsum[:, idx_trend, :] / Pxx_cumsum[:, -1, :] > c
+            resid = Pxx_cumsum[:, idx_resid, :] / Pxx_cumsum[:, -1, :] < c
+            season = np.logical_and(~trend, ~resid)
+
+            X_new = np.zeros((n_samples, grouping_size, window_size, n_windows))
+            for i in range(n_samples):
+                for j, arr in enumerate((trend, season, resid)):
+                    X_new[i, j] = X[i, arr[i]].sum(axis=0)
+        elif isinstance(self.groups, (int, np.integer)):
+            grouping = np.linspace(0, window_size, self.groups + 1).astype("int64")
+            X_new = np.zeros((n_samples, grouping_size, window_size, n_windows))
+            for i, (j, k) in enumerate(zip(grouping[:-1], grouping[1:])):
+                X_new[:, i] = X[:, j:k].sum(axis=1)
+        else:
+            X_new = np.zeros((n_samples, grouping_size, window_size, n_windows))
+            for i, group in enumerate(self.groups):
+                X_new[:, i] = X[:, group].sum(axis=1)
+        return X_new, grouping_size
+
+    def _check_params(self, n_timestamps):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
+            raise TypeError("'window_size' must be an integer or a float.")
+        if isinstance(self.window_size, (int, np.integer)):
+            if not 2 <= self.window_size <= n_timestamps:
+                raise ValueError(
+                    "If 'window_size' is an integer, it must be greater "
+                    "than or equal to 2 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.window_size)
+                )
+            window_size = self.window_size
+        else:
+            if not 0 < self.window_size <= 1:
+                raise ValueError(
+                    "If 'window_size' is a float, it must be greater "
+                    "than 0 and lower than or equal to 1 "
+                    "(got {0}).".format(self.window_size)
+                )
+            window_size = max(2, ceil(self.window_size * n_timestamps))
+
+        if not (
+            self.groups is None
+            or (isinstance(self.groups, str) and self.groups == "auto")
+            or isinstance(self.groups, (int, list, tuple, np.ndarray))
+        ):
+            raise TypeError("'groups' must be either None, an integer, " "'auto' or array-like.")
+        if self.groups is None:
+            grouping_size = window_size
+        elif isinstance(self.groups, str) and self.groups == "auto":
+            grouping_size = 3
+        elif isinstance(self.groups, (int, np.integer)):
+            if not 1 <= self.groups <= self.window_size:
+                raise ValueError(
+                    "If 'groups' is an integer, it must be greater than or "
+                    "equal to 1 and lower than or equal to 'window_size'."
+                )
+            grouping = np.linspace(0, window_size, self.groups + 1).astype("int64")
+            grouping_size = len(grouping) - 1
+        if isinstance(self.groups, (list, tuple, np.ndarray)):
+            idx = np.concatenate(self.groups)
+            diff = np.setdiff1d(idx, np.arange(self.window_size))
+            flat_list = [item for group in self.groups for item in group]
+            if (diff.size > 0) or not (all(isinstance(x, (int, np.integer)) for x in flat_list)):
+                raise ValueError(
+                    "If 'groups' is array-like, all the values in 'groups' "
+                    "must be integers between 0 and ('window_size' - 1)."
+                )
+            grouping_size = len(self.groups)
+
+        if not isinstance(self.lower_frequency_bound, (float, np.floating)):
+            raise TypeError("'lower_frequency_bound' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_bound < 0.5:
+                raise ValueError("'lower_frequency_bound' must be greater than 0 and " "lower than 0.5.")
+
+        if not isinstance(self.lower_frequency_contribution, (float, np.floating)):
+            raise TypeError("'lower_frequency_contribution' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_contribution < 1:
+                raise ValueError("'lower_frequency_contribution' must be greater than 0 " "and lower than 1.")
+
+        chunksize_int = isinstance(self.chunksize, (int, np.integer))
+        if not (self.chunksize is None or chunksize_int):
+            raise TypeError("'chunksize' must be None or an integer.")
+        if chunksize_int and self.chunksize < 1:
+            raise ValueError("If 'chunksize' is an integer, it must be " "positive (got {})".format(self.chunksize))
+
+        n_jobs_int = isinstance(self.n_jobs, (int, np.integer)) and self.n_jobs != 0
+        if not (self.n_jobs is None or n_jobs_int):
+            raise ValueError("'n_jobs' must be None or an integer not equal " "to zero (got {}).".format(self.n_jobs))
+        return window_size, grouping_size

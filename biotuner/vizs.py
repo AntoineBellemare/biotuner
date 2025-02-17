@@ -2,22 +2,20 @@ from numpy import sin, pi, linspace
 from pylab import plot, subplot
 from matplotlib.pyplot import figure
 import matplotlib.colors as mcolors
-from biotuner.biotuner_utils import scale2frac, NTET_ratios, compute_IMs
+from biotuner.biotuner_utils import scale2frac, NTET_ratios, compute_IMs, listen_scale
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
 from math import log2
-import plotly.graph_objs as go
 import ipywidgets as widgets
 from IPython.display import display
 from IPython.display import display, clear_output
 from collections import defaultdict
-import math
 from biotuner.biotuner_utils import sum_list, compute_peak_ratios
 from biotuner.metrics import ratios2harmsim
 import seaborn as sns
-#from biotuner.peaks_extraction import compute_IMs
-
+from scipy.fft import rfft, rfftfreq
+import warnings
 
 def lissajous_curves(tuning):
     """
@@ -227,9 +225,7 @@ import matplotlib.colors as mcolors
 
 
 ##Multiple PSD##
-from PyEMD import EMD, EEMD
 import numpy as np
-import operator
 import scipy
 from random import seed
 
@@ -485,9 +481,6 @@ def visualize_rhythms(pulses_steps, offsets=None, plot_size=6, tolerance=0.1, cm
 from biotuner.metrics import dyad_similarity
 from biotuner.biotuner_utils import gcd
 
-# This function will allow to simply visualize the harmonic similarity of any pair of frequency.
-from ipywidgets import interact, IntSlider
-
 def viz_harmsim(x, y, savefig=False, savename='test', n_fund=10):
     """
     This function allow to simply visualize the harmonic similarity of any pair of frequency.
@@ -733,13 +726,18 @@ def plot_labyrinth(generator_intervals, max_steps=53, octave=2):
     plt.show()
     
     
-from IPython.display import display
-import ipywidgets as widgets
-from scipy.fft import rfft, rfftfreq
+
 
 
 
 def interactive_signal_with_sidebands(sample_rate=44100):
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        raise ImportError(
+            "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
+            "    pip install ipywidgets==8.0.4\n"
+        )
     def generate_signal_with_sidebands(sf, time_end, freqs, amps, sidebands, sb_amp, phases, im_order):
         time = np.arange(0, time_end, 1 / sf)
         sine_tot = []
@@ -851,13 +849,14 @@ def interactive_signal_with_sidebands(sample_rate=44100):
     display_box = widgets.VBox([out])
     return display_box
 
-
-import warnings
-from biotuner.biotuner_utils import listen_scale
-import ipywidgets as widgets
-from IPython.display import display
-
 def MOS_interactive():
+    try:
+        import ipywidgets as widgets
+    except ImportError:
+        raise ImportError(
+            "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
+            "    pip install ipywidgets==8.0.4\n"
+        )
     def plot_MOS_labyrinth(generator_intervals, max_steps=20):
         MOS_by_generator = {}
         for interval in generator_intervals:
@@ -974,6 +973,21 @@ def visualize_rhythms_interactive():
         """
         Visualize multiple Euclidean rhythms.
         """
+        try:
+            import plotly.graph_objects as go
+        except ImportError:
+            raise ImportError(
+                "The 'plotly' package is required for this visualization. Install it with:\n\n"
+                "    pip install plotly\n"
+            )
+
+        try:
+            import ipywidgets as widgets
+        except ImportError:
+            raise ImportError(
+                "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
+                "    pip install ipywidgets==8.0.4\n"
+            )
         colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
         pulses_positions = []
         fig = go.FigureWidget()

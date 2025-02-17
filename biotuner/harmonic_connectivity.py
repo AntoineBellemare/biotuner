@@ -10,7 +10,6 @@ import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
 from sklearn.metrics import mutual_info_score
-#import pywt
 from fractions import Fraction
 import mne
 import numpy.ma as ma
@@ -18,7 +17,6 @@ from statsmodels.stats.multitest import multipletests
 from mne.viz import circular_layout
 #from mne_connectivity.viz import plot_connectivity_circle
 import itertools
-from PyEMD import EMD
 import pandas as pd
 from scipy.signal import hilbert, coherence, welch
 from scipy.stats import pearsonr

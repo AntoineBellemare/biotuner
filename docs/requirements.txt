@@ -8,7 +8,6 @@ colorednoise>=2.1.0
 fooof==1.0.0
 emd>=0.5.5
 emd-signal>=1.2.1
-pyts>=0.12.0
 contfrac>=1.0.0
 neurokit2>=0.2.2
 scipy>=1.7.3

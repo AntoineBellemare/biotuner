@@ -1,9 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import hsv_to_rgb
-from IPython import display
 import colorsys
 from mpl_toolkits.axes_grid1 import ImageGrid
 from PIL import Image
