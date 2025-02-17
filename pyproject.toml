@@ -47,7 +47,8 @@ interactive = [
     "pingouin",
     "plotly>=5.13.1",
     "PyWavelets>=1.4.1",
-    "neurodsp>=2.2"
+    "neurodsp>=2.2",
+    "IPython>=7.0.0"
 ]
 
 [project.urls]
