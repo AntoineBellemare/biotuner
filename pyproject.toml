@@ -34,7 +34,6 @@ dependencies = [
     "mido==1.2.10",
     "sympy==1.12",
     "pytest>=7.0.0",
-    "scikit-learn"
 ]
 
 [project.optional-dependencies]
@@ -49,7 +48,8 @@ interactive = [
     "plotly>=5.13.1",
     "PyWavelets>=1.4.1",
     "neurodsp>=2.2",
-    "IPython>=7.0.0"
+    "IPython>=7.0.0",
+    "scikit-learn"
 ]
 
 [project.urls]

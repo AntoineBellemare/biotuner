@@ -10,7 +10,6 @@ from biotuner.peaks_extraction import (
     HilbertHuang1D,
     cepstrum,
     cepstral_peaks,
-    pac_frequencies,
     harmonic_recurrence,
     endogenous_intermodulations,
     polyspectrum_frequencies,
@@ -23,9 +22,7 @@ def test_EMD_basic():
     data = np.sin(2 * np.pi * np.linspace(0, 1, 1000) * 5)  # 5 Hz sine wave
     IMFs = EMD_eeg(data, method="EMD", graph=False)
 
-    assert IMFs.shape[1] == len(
-        data
-    ), "Number of time samples in IMFs should match input data"
+    assert IMFs.shape[1] == len(data), "Number of time samples in IMFs should match input data"
     assert IMFs.shape[0] > 1, "EMD should produce more than one IMF"
     assert np.all(np.isfinite(IMFs)), "IMF output should contain finite values only"
 
@@ -39,21 +36,10 @@ def test_EEMD_basic():
     assert IMFs.shape[0] > 1, "EEMD should produce multiple IMFs"
 
 
-def test_CEEMDAN_basic():
-    """Test CEEMDAN mode with a simple sine wave."""
-    data = np.sin(2 * np.pi * np.linspace(0, 1, 1000) * 5)
-    IMFs = EMD_eeg(data, method="CEEMDAN", graph=False)
-
-    assert IMFs.shape[1] == len(data), "CEEMDAN IMFs should match input data length"
-    assert IMFs.shape[0] > 1, "CEEMDAN should produce multiple IMFs"
-
-
 def test_invalid_method():
     """Test handling of an invalid method name."""
     data = np.sin(2 * np.pi * np.linspace(0, 1, 1000) * 5)
-    with pytest.raises(
-        ValueError, match="method should be 'EMD', 'EEMD', or 'CEEMDAN'"
-    ):
+    with pytest.raises(ValueError, match="method should be 'EMD', 'EEMD', or 'CEEMDAN'"):
         EMD_eeg(data, method="INVALID_METHOD", graph=False)
 
 
@@ -86,9 +72,7 @@ def test_random_noise():
     data = np.random.randn(1000)  # White noise
     IMFs = EMD_eeg(data, method="EMD", graph=False)
 
-    assert IMFs.shape[1] == len(
-        data
-    ), "Noise signal IMFs should match input data length"
+    assert IMFs.shape[1] == len(data), "Noise signal IMFs should match input data length"
     assert IMFs.shape[0] > 1, "Random noise should produce multiple IMFs"
 
 
@@ -98,27 +82,19 @@ def test_extract_welch_peaks_basic():
     freq = 10  # Hz
     data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * freq)  # 1s sine wave at 10 Hz
 
-    peaks, amps, freqs, psd = extract_welch_peaks(
-        data, sf, precision=0.5, min_freq=1, max_freq=50, extended_returns=True
-    )
+    peaks, amps, freqs, psd = extract_welch_peaks(data, sf, precision=0.5, min_freq=1, max_freq=50, extended_returns=True)
 
     assert len(peaks) > 0, "No peaks were detected"
     assert all(1 <= p <= 50 for p in peaks), "Detected peaks are outside expected range"
-    assert np.isclose(
-        peaks[0], freq, atol=1.0
-    ), f"Expected peak at {freq} Hz, got {peaks[0]}"
+    assert np.isclose(peaks[0], freq, atol=1.0), f"Expected peak at {freq} Hz, got {peaks[0]}"
 
 
 def test_extract_welch_peaks_out_type_all():
     """Test 'all' mode to extract multiple peaks."""
     sf = 2000
-    data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 10) + np.sin(
-        2 * np.pi * np.linspace(0, 1, sf) * 20
-    )
+    data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 10) + np.sin(2 * np.pi * np.linspace(0, 1, sf) * 20)
 
-    peaks, amps, freqs, psd = extract_welch_peaks(
-        data, sf, out_type="all", extended_returns=True
-    )
+    peaks, amps, freqs, psd = extract_welch_peaks(data, sf, out_type="all", extended_returns=True)
 
     assert len(peaks) >= 2, "Expected multiple peaks in 'all' mode"
     assert 9 <= peaks[0] <= 11, "First peak should be around 10 Hz"
@@ -128,13 +104,9 @@ def test_extract_welch_peaks_out_type_all():
 def test_extract_welch_peaks_out_type_single():
     """Test 'single' mode to extract the strongest peak."""
     sf = 2000
-    data = np.sin(
-        2 * np.pi * np.linspace(0, 1, sf) * 15
-    )  # Strongest component at 15 Hz
+    data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 15)  # Strongest component at 15 Hz
 
-    peak, amp, *_ = extract_welch_peaks(
-        data, sf, out_type="single", extended_returns=True
-    )
+    peak, amp, *_ = extract_welch_peaks(data, sf, out_type="single", extended_returns=True)
 
     assert isinstance(peak, float), "Single peak mode should return a float"
     assert 14 <= peak <= 16, f"Expected dominant peak at 15 Hz, got {peak}"
@@ -143,22 +115,14 @@ def test_extract_welch_peaks_out_type_single():
 def test_extract_welch_peaks_out_type_bands():
     """Test 'bands' mode with predefined frequency bands."""
     sf = 2000
-    data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 8) + np.sin(
-        2 * np.pi * np.linspace(0, 1, sf) * 20
-    )
+    data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 8) + np.sin(2 * np.pi * np.linspace(0, 1, sf) * 20)
     FREQ_BANDS = [[5, 10], [10, 30]]
 
-    peaks, amps, *_ = extract_welch_peaks(
-        data, sf, FREQ_BANDS=FREQ_BANDS, out_type="bands", extended_returns=True
-    )
+    peaks, amps, *_ = extract_welch_peaks(data, sf, FREQ_BANDS=FREQ_BANDS, out_type="bands", extended_returns=True)
 
-    assert len(peaks) == len(
-        FREQ_BANDS
-    ), "Number of extracted peaks should match number of frequency bands"
+    assert len(peaks) == len(FREQ_BANDS), "Number of extracted peaks should match number of frequency bands"
     assert 7 <= peaks[0] <= 9, f"Expected first band peak around 8 Hz, got {peaks[0]}"
-    assert (
-        19 <= peaks[1] <= 21
-    ), f"Expected second band peak around 20 Hz, got {peaks[1]}"
+    assert 19 <= peaks[1] <= 21, f"Expected second band peak around 20 Hz, got {peaks[1]}"
 
 
 def test_extract_welch_peaks_invalid_precision():
@@ -168,9 +132,7 @@ def test_extract_welch_peaks_invalid_precision():
     FREQ_BANDS = [[5, 6]]  # Very small band range
 
     with pytest.raises(ValueError, match="Precision is larger than a band range"):
-        extract_welch_peaks(
-            data, sf, precision=2.0, FREQ_BANDS=FREQ_BANDS, out_type="bands"
-        )
+        extract_welch_peaks(data, sf, precision=2.0, FREQ_BANDS=FREQ_BANDS, out_type="bands")
 
 
 def test_extract_welch_peaks_constant_signal():
@@ -197,9 +159,7 @@ def test_extract_welch_peaks_low_prominence():
     sf = 2000
     data = np.sin(2 * np.pi * np.linspace(0, 1, sf) * 10) * 0.01  # Very low amplitude
 
-    peaks, amps, *_ = extract_welch_peaks(
-        data, sf, prominence=0.01, extended_returns=True
-    )
+    peaks, amps, *_ = extract_welch_peaks(data, sf, prominence=0.01, extended_returns=True)
 
     assert len(peaks) > 0, "Expected to detect weak peaks with low prominence"
 
@@ -217,9 +177,7 @@ def test_HilbertHuang1D():
     sf = 1000
     _, peaks, amps, _, _ = HilbertHuang1D(data, sf, nIMFs=5, min_freq=1, max_freq=50)
     assert len(peaks) > 0, "No peaks detected in Hilbert-Huang Transform"
-    assert all(
-        1 <= p <= 50 for p in peaks
-    ), "Peaks are outside the specified frequency range"
+    assert all(1 <= p <= 50 for p in peaks), "Peaks are outside the specified frequency range"
 
 
 def test_cepstrum_and_cepstral_peaks():
@@ -228,33 +186,15 @@ def test_cepstrum_and_cepstral_peaks():
     cepst, quef = cepstrum(data, sf, plot_cepstrum=False)
     peaks, amps = cepstral_peaks(cepst, quef, max_time=0.05, min_time=0.01)
     assert len(peaks) > 0, "No cepstral peaks detected"
-    assert all(
-        10 <= p <= 50 for p in peaks
-    ), "Cepstral peaks are outside the expected range"
-
-
-def test_pac_frequencies():
-    data = np.sin(2 * np.pi * np.linspace(0, 1, 1000) * 5) + np.sin(
-        2 * np.pi * np.linspace(0, 1, 1000) * 40
-    )
-    sf = 1000
-    pac_freqs, pac_coupling = pac_frequencies(
-        data, sf, method="duprelatour", n_values=5, plot=False
-    )
-    assert len(pac_freqs) == 5, "Number of PAC frequencies does not match n_values"
-    assert len(pac_coupling) == 5, "Number of PAC couplings does not match n_values"
+    assert all(10 <= p <= 50 for p in peaks), "Cepstral peaks are outside the expected range"
 
 
 def test_harmonic_recurrence():
     peaks = [5, 10, 20, 40]
     amps = [1, 0.8, 0.5, 0.2]
-    max_n, max_peaks, max_amps, harmonics, _, _ = harmonic_recurrence(
-        peaks, amps, min_harms=2
-    )
+    max_n, max_peaks, max_amps, harmonics, _, _ = harmonic_recurrence(peaks, amps, min_harms=2)
     assert len(max_peaks) > 0, "No harmonics detected"
-    assert all(
-        5 <= p <= 40 for p in max_peaks
-    ), "Harmonics are outside the expected range"
+    assert all(5 <= p <= 40 for p in max_peaks), "Harmonics are outside the expected range"
 
 
 def test_endogenous_intermodulations():

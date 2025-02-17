@@ -1302,10 +1302,8 @@ def detectSubharmonics(signal, fs, timeStep, fMin, fMax, voicingThreshold = 0.3,
 
 # This code is based on the following repository: https://github.com/johannfaouzi/pyts/tree/main
 
-from sklearn.base import BaseEstimator
 from math import ceil
 from joblib import Parallel, delayed
-from sklearn.utils.validation import check_array
 from numpy.lib.stride_tricks import as_strided
 from numba import prange
 
@@ -1372,7 +1370,7 @@ class UnivariateTransformerMixin:
             return self.fit(X, y, **fit_params).transform(X)
 
 
-class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
+class SingularSpectrumAnalysis(UnivariateTransformerMixin):
     """Singular Spectrum Analysis.
 
     Parameters
@@ -1433,6 +1431,8 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
     """
 
+    # lazy import of BaseEstimator to avoid circular imports
+
     def __init__(
         self,
         window_size=4,
@@ -1442,6 +1442,14 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         chunksize=None,
         n_jobs=1,
     ):
+        try:
+            from sklearn.base import BaseEstimator
+            from sklearn.utils.validation import check_array
+        except ImportError:
+            raise ImportError(
+                "The 'scikit-learn' package is required for this functionality. Install it with:\n\n"
+                "    pip install scikit-learn\n"
+            )
         self.window_size = window_size
         self.groups = groups
         self.lower_frequency_bound = lower_frequency_bound
@@ -1471,6 +1479,13 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             and its shape is (n_samples, n_timestamps).
 
         """
+        try:
+            from sklearn.utils.validation import check_array
+        except ImportError:
+            raise ImportError(
+                "The 'scikit-learn' package is required for this functionality. Install it with:\n\n"
+                "    pip install scikit-learn\n"
+            )
         X = check_array(X, dtype="float64")
         n_samples, n_timestamps = X.shape
         window_size, grouping_size = self._check_params(n_timestamps)

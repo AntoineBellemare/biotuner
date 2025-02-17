@@ -11,7 +11,6 @@ from biotuner.metrics import spectral_flatness, spectral_entropy, spectral_sprea
 from biotuner.biotuner_utils import safe_mean, safe_max, apply_power_law_remove, compute_frequency_and_psd
 import seaborn as sns
 from scipy.stats import pearsonr, chi2
-from sklearn.preprocessing import MinMaxScaler
 import matplotlib.lines as mlines
 from scipy.stats import ttest_ind
 
@@ -566,6 +565,13 @@ def harmonic_entropy(freqs, harmonicity_values, phase_coupling_values, resonance
 
 
 def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd, label1='Brain Signals', label2='Random Signals'):
+    try:
+        from sklearn.preprocessing import MinMaxScaler
+    except ImportError:
+        raise ImportError(
+            "The 'scikit-learn' package is required for this functionality. Install it with:\n\n"
+            "    pip install scikit-learn\n"
+        )
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
     
     corrs = []
@@ -647,7 +653,13 @@ def harmonic_spectrum_plot_trial_corr(df_all, df_all_rnd, label1='Brain Signals'
 
 
 def harmonic_spectrum_plot_freq_corr(df1, df2, mean_phase_coupling=False, label1='Brain Signals', label2='Random Signals', fmin=2, fmax=30, xlim=None):
-    
+    try:
+        from sklearn.preprocessing import MinMaxScaler
+    except ImportError:
+        raise ImportError(
+            "The 'scikit-learn' package is required for this functionality. Install it with:\n\n"
+            "    pip install scikit-learn\n"
+        )
     n = len(df1)  # Assuming df1 and df2 have the same number of rows
 
     # Calculate the critical r-values
