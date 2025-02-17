@@ -9,7 +9,6 @@ from scipy.stats import zscore, t
 import itertools
 import seaborn as sbn
 import matplotlib.pyplot as plt
-from sklearn.metrics import mutual_info_score
 from fractions import Fraction
 import mne
 import numpy.ma as ma
