@@ -34,7 +34,7 @@ dependencies = [
     "mido==1.2.10",
     "sympy==1.12",
     "pytest>=7.0.0",
-    "sklearn"
+    "scikit-learn"
 ]
 
 [project.optional-dependencies]

@@ -9,4 +9,4 @@ numpy>=1.21.4
 mido==1.2.10
 sympy==1.12
 pytest>=7.0.0
-sklearn
+scikit-learn
