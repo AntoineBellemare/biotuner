@@ -3,7 +3,7 @@ name: Build and Deploy Docs
 on:
   push:
     branches:
-      - main
+      - docs_build
     paths:
       - 'docs/**'
 
@@ -21,9 +21,7 @@ jobs:
         run: |
           git fetch origin main
           git checkout main
-          git branch -D docs_build || true  # Delete old docs_build if exists
-          git checkout -b docs_build
-          git push origin docs_build --force
+          git checkout -B docs_build
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -35,28 +33,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r docs/requirements.txt
 
-      - name: Build Sphinx documentation
+      - name: Build Sphinx documentation in /docs
         run: |
-          sphinx-build -b html docs docs/_build/html
+          sphinx-build -b html docs docs
 
       - name: Debug Sphinx Build Output
         run: |
           echo "Listing built docs:"
-          ls -R docs/_build
+          ls -R docs
 
-      - name: Move built docs to /docs
-        run: |
-          if [ -d "docs/_build/html" ]; then
-            rsync -a docs/_build/html/ docs/
-          else
-            echo "Build directory not found!"
-            exit 1
-          fi
-
-      - name: Commit and push to main
+      - name: Commit and push built docs
         run: |
           git config --global user.email "your-email@example.com"
           git config --global user.name "your-github-username"
           git add docs
           git commit -m "Deploy updated documentation"
-          git push origin main
+          git push origin docs_build --force
