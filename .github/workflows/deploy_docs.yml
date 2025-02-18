@@ -33,9 +33,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r docs/requirements.txt
 
-      - name: Build Sphinx documentation in /docs
+      - name: Build Sphinx documentation
         run: |
-          sphinx-build -b html docs docs
+          sphinx-build -b html docs docs/_build/html
+
+      - name: Deploy docs
+        run: |
+          rsync -a --delete docs/_build/html/ docs/  # Copy built docs to /docs
 
       - name: Debug Sphinx Build Output
         run: |
@@ -43,9 +47,11 @@ jobs:
           ls -R docs
 
       - name: Commit and push built docs
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          git config --global user.email "your-email@example.com"
-          git config --global user.name "your-github-username"
           git add docs
           git commit -m "Deploy updated documentation"
-          git push origin docs_build --force
+          git push https://x-access-token:${PAT_TOKEN}@github.com/your-username/your-repo.git docs_build --force
+
+
