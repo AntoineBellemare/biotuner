@@ -3,7 +3,7 @@ name: Build and Deploy Docs
 on:
   push:
     branches:
-      - docs_build
+      - main
     paths:
       - 'docs/**'
 
