@@ -12,7 +12,7 @@ __author__ = "The Biotuner development team"
 __email__ = "antoine.bellemare9@gmail.com"
 
 # Version info
-__version__ = "0.0.14"
+__version__ = "0.0.16"
 
 
 def version(silent=False):
@@ -29,11 +29,9 @@ def version(silent=False):
             "- OS: " + platform.system(),
             "(" + platform.architecture()[1] + " " + platform.architecture()[0] + ")",
             "\n- Python: " + platform.python_version(),
-            "\n- NeuroKit2: " + __version__,
             "\n\n- NumPy: " + np.__version__,
             "\n- Pandas: " + pd.__version__,
             "\n- SciPy: " + scipy.__version__,
-            "\n- sklearn: " + sklearn.__version__,
             "\n- matplotlib: " + matplotlib.__version__,
         )
     else:
