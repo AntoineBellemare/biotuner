@@ -37,6 +37,16 @@ for extended signal support (e.g. cardiac signals and plant signals).
 
 You can navigate to the different sections using the left panel.
 
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   :caption: Menu:
+
+   getting_started
+   cite_us
+   examples/index
+   api/index
+
 .. include:: ../README.md
    :parser: myst_parser.sphinx_
 
