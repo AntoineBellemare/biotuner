@@ -4,7 +4,7 @@ Harmonic analysis of biosignals
 
 .. important::
 
-    Like the software? Don't forget to support it by `starring <https://github.com/AntoineBellmare/biotuner>`_ |:star:|, sponsoring |:revolving_hearts:|, or spreading the word |:love_letter:|
+    Like the software? Don't forget to support it by `starring <https://github.com/antoinebellmare/biotuner>`_ |:star:|, sponsoring |:revolving_hearts:|, or spreading the word |:love_letter:|
 
     We count on you to help us making it better by **contributing even the tiniest improvements**
     (a typo, a rephrasing to make things clearer, a comment to the code, a new option, etc.).
@@ -24,7 +24,7 @@ but also use electrophysiological signals as a source of musical or visual compo
 
 .. seealso::
 
-   You can information on how to cite this documentation `here <https://antoinebellemare.github.io/biotuner/cite_us.html>`_.
+   You can find information on how to cite this documentation `here <https://antoinebellemare.github.io/biotuner/cite_us.html>`_.
 
 
 The documentation covers installation instructions, the API, as well as notebooks that show
@@ -36,16 +36,6 @@ for extended signal support (e.g. cardiac signals and plant signals).
 
 
 You can navigate to the different sections using the left panel.
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Menu:
-   :titlesonly:
-
-   getting_started
-   cite_us
-   examples/index
-   api/index
 
 .. include:: ../README.md
    :parser: myst_parser.sphinx_
