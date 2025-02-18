@@ -15,23 +15,15 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensure full history for branch operations
+          fetch-depth: 0  # Ensure full history
 
-      - name: Copy main branch to docs_build
+      - name: Delete and recreate docs_build branch
         run: |
           git fetch origin main
           git checkout main
-          git branch -D docs_build || true
+          git push origin --delete docs_build || true  # Delete existing docs_build branch
           git checkout -b docs_build
-
-      - name: Set Git identity
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-
-      - name: Push main content to docs_build
-        run: |
-          git push origin docs_build --force  # Push the actual main content to docs_build
+          git push origin docs_build  # Recreate docs_build from main
 
       - name: Set up Python
         uses: actions/setup-python@v3
