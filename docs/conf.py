@@ -6,6 +6,8 @@ import datetime
 import os
 import re
 import sys
+import json
+import urllib.request
 
 # -- Path setup --------------------------------------------------------------
 
@@ -31,20 +33,19 @@ project = "Biotuner"
 copyright = f"2023–{datetime.datetime.now().year}"
 author = 'Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.'
 
+def get_latest_version_from_pypi(package_name):
+    try:
+        url = f"https://pypi.org/pypi/{package_name}/json"
+        with urllib.request.urlopen(url) as response:
+            data = json.load(response)
+            return data["info"]["version"]
+    except Exception as e:
+        print(f"Error fetching version from PyPI: {e}")
+        return "unknown"
 
-# The short X.Y version.
-def find_version():
-    result = re.search(
-        r'{}\s*=\s*[\'"]([^\'"]*)[\'"]'.format("__version__"),
-        open("../biotuner/__init__.py").read(),
-    )
-    return result.group(1)
-
-
-version = find_version()
-# The full version, including alpha/beta/rc tags.
+# Replace 'biotuner' with your package's name as registered on PyPI
+version = get_latest_version_from_pypi("biotuner")
 release = version
-
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
