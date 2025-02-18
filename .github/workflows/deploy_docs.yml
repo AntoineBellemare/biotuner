@@ -14,6 +14,15 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure full history for branch operations
+
+      - name: Copy main branch to docs_build
+        run: |
+          git fetch origin main
+          git checkout main
+          git branch -D docs_build || true
+          git checkout -b docs_build
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -27,8 +36,7 @@ jobs:
 
       - name: Build Sphinx documentation
         run: |
-          cd docs
-          sphinx-build -b html . _build/html
+          sphinx-build -b html docs docs/_build/html
 
       - name: Disable Jekyll
         run: touch docs/_build/html/.nojekyll
