@@ -41,6 +41,12 @@ jobs:
       - name: Disable Jekyll
         run: touch docs/_build/html/.nojekyll
 
+      - name: Commit and push updated content
+        run: |
+          git add .
+          git commit -m "Add source code for API documentation"
+          git push origin docs_build
+
       - name: Deploy to docs_build branch
         uses: peaceiris/actions-gh-pages@v3
         with:
