@@ -144,7 +144,7 @@ latex_elements = {
     \renewcommand{\cftaftertoctitle}{\hfill}
     """,
 }
-html_static_path = ["_static"]
+html_static_path = []
 
 
 # git push origin --delete docs_build

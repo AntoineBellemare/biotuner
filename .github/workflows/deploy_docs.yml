@@ -37,6 +37,10 @@ jobs:
         run: |
           sphinx-build -b html docs docs/_build/html
 
+      - name: Sync files before deploy
+        run: |
+          sync  # Ensure files are stable before copying
+
       - name: Deploy docs
         run: |
           rsync -a --delete docs/_build/html/ docs/  # Copy built docs to /docs
@@ -50,8 +54,8 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "your-username"
           git add docs
           git commit -m "Deploy updated documentation"
           git push https://x-access-token:${PAT_TOKEN}@github.com/your-username/your-repo.git docs_build --force
-
-
