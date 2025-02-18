@@ -33,6 +33,7 @@ project = "Biotuner"
 copyright = f"2023–{datetime.datetime.now().year}"
 author = 'Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.'
 
+
 def get_latest_version_from_pypi(package_name):
     try:
         url = f"https://pypi.org/pypi/{package_name}/json"
@@ -42,6 +43,7 @@ def get_latest_version_from_pypi(package_name):
     except Exception as e:
         print(f"Error fetching version from PyPI: {e}")
         return "unknown"
+
 
 # Replace 'biotuner' with your package's name as registered on PyPI
 version = get_latest_version_from_pypi("biotuner")
