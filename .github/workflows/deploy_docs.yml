@@ -21,7 +21,9 @@ jobs:
         run: |
           git fetch origin main
           git checkout main
-          git push origin main:docs_build --force
+          git branch -D docs_build || true  # Delete old docs_build if exists
+          git checkout -b docs_build
+          git push origin docs_build --force  # Push the entire repo to docs_build
 
       - name: Check out docs_build branch
         uses: actions/checkout@v3
@@ -41,20 +43,18 @@ jobs:
 
       - name: Build Sphinx documentation
         run: |
-          mkdir -p docs/_build/html
           sphinx-build -b html docs docs/_build/html
 
-      - name: Debug build output
+      - name: Copy built docs into /docs folder in docs_build
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Build output contents:"
-          ls -la docs/_build/html
+          rm -rf docs  # Remove old docs folder
+          mkdir docs
+          cp -r docs/_build/html/* docs/  # Move built docs to /docs folder
 
-      - name: Deploy to docs_build branch
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          personal_token: ${{ secrets.PAT_TOKEN }}
-          publish_branch: docs_build
-          publish_dir: docs/_build/html
-          keep_files: false  # Clean up previous builds
+      - name: Commit and push to docs_build
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "your-github-username"
+          git add docs
+          git commit -m "Deploy updated documentation"
+          git push origin docs_build --force
