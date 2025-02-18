@@ -37,22 +37,18 @@ jobs:
         run: |
           sphinx-build -b html docs docs/_build/html
 
-      - name: Delay to prevent file vanishing issue
-        run: sleep 10  # Small delay to let the system settle
-
-      - name: Deploy docs
-        run: |
-          rsync -a --ignore-missing-args --delete docs/_build/html/ docs/  # Copy built docs to /docs
-
-      - name: Debug Sphinx Build Output
-        run: |
-          echo "Listing built docs:"
-          ls -R docs
-
       - name: Commit and push built docs
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          git add docs
+          git add docs/_build/html
           git commit -m "Deploy updated documentation"
           git push https://x-access-token:${PAT_TOKEN}@github.com/your-username/your-repo.git docs_build --force
+
+      - name: Deploy to GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: docs/_build/html
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v1
