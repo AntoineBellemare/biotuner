@@ -17,7 +17,8 @@ import urllib.request
 #
 sys.path.insert(0, os.path.abspath("../"))  # To include your biotuner folder
 
-# sys.path.insert(0, os.path.abspath("../"))  # To include your biotuner folder 
+# sys.path.insert(0, os.path.abspath("../"))  # To include your biotuner folder
+
 
 # -- Project information -----------------------------------------------------
 def find_author():
