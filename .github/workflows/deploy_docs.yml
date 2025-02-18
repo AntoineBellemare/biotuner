@@ -23,13 +23,7 @@ jobs:
           git checkout main
           git branch -D docs_build || true  # Delete old docs_build if exists
           git checkout -b docs_build
-          git push origin docs_build --force  # Push the entire repo to docs_build
-
-      - name: Check out docs_build branch
-        uses: actions/checkout@v3
-        with:
-          ref: docs_build
-          fetch-depth: 0
+          git push origin docs_build --force
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -50,33 +44,16 @@ jobs:
           echo "Listing built docs:"
           ls -R docs/_build
 
-      - name: Check built docs
+      - name: Move built docs to /docs
         run: |
-          echo "Checking docs/_build/html:"
-          ls -la docs/_build/html || echo "No docs found!"
+          rm -rf docs  # Remove old docs folder
+          mkdir docs
+          cp -r docs/_build/html/* docs/
 
-      - name: Debug current directory
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Contents:"
-          ls -la
-
-      - name: Copy built docs into /docs folder in docs_build
-        run: |
-          if [ -d "docs/_build/html" ]; then
-            rm -rf docs/html  # Remove old docs if they exist
-            mkdir -p docs/html
-            cp -r docs/_build/html/* docs/html/
-          else
-            echo "Build directory not found!"
-            exit 1
-          fi
-
-      - name: Commit and push to docs_build
+      - name: Commit and push to main
         run: |
           git config --global user.email "your-email@example.com"
           git config --global user.name "your-github-username"
-          git add docs/html
+          git add docs
           git commit -m "Deploy updated documentation"
-          git push origin docs_build --force
+          git push origin main
