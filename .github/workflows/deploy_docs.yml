@@ -29,6 +29,9 @@ jobs:
         run: |
           cd docs
           sphinx-build -b html . _build/html
+      
+      - name: Disable Jekyll
+        run: touch docs/_build/html/.nojekyll
 
       - name: Deploy to docs_build branch
         env:
