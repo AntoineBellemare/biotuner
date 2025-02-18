@@ -46,9 +46,12 @@ jobs:
 
       - name: Move built docs to /docs
         run: |
-          rm -rf docs  # Remove old docs folder
-          mkdir docs
-          cp -r docs/_build/html/* docs/
+          if [ -d "docs/_build/html" ]; then
+            rsync -a docs/_build/html/ docs/
+          else
+            echo "Build directory not found!"
+            exit 1
+          fi
 
       - name: Commit and push to main
         run: |
