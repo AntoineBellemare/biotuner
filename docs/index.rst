@@ -1,6 +1,6 @@
-=========================================================
-**Harmonic analysis of biosignals**
-=========================================================
+
+Harmonic analysis of biosignals
+===============================
 
 .. important::
 
@@ -11,7 +11,7 @@
     **Biotuner belongs to you.** Make yourself part of the team!
 
 Home
-=====
+===============================
 
 Welcome to **Biotuner**'s documentation where you can learn about computational tools derived from 
 music theory and neurophysiology to develop novel ways to analyze, 
@@ -42,13 +42,13 @@ You can navigate to the different sections using the left panel.
    :caption: Menu:
    :titlesonly:
 
-   introduction
    getting_started
    cite_us
    examples/index
    api/index
 
-.. include::  ../README.rst
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
 
 Indices and tables
 ==================

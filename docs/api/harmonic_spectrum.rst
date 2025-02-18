@@ -1,5 +1,5 @@
 Harmonic spectrum
-================
+=================
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

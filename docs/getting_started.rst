@@ -6,7 +6,7 @@ Install using conda and pip
 
 .. code-block:: bash
     
-    conda create -n biotuner python=3.8
+    conda create -n biotuner python=3.11
     conda activate biotuner
     pip install biotuner
 

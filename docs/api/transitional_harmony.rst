@@ -1,5 +1,5 @@
 Transitional Harmony
-===================
+====================
 .. toctree::
    :maxdepth: 2
 
