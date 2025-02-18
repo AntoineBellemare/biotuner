@@ -15,13 +15,13 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch full history to allow branch manipulation
+          fetch-depth: 0
 
       - name: Mirror main to docs_build
         run: |
           git fetch origin main
           git checkout main
-          git push origin main:docs_build --force  # Copy entire main branch to docs_build
+          git push origin main:docs_build --force
 
       - name: Check out docs_build branch
         uses: actions/checkout@v3
@@ -40,17 +40,21 @@ jobs:
           pip install -r docs/requirements.txt
 
       - name: Build Sphinx documentation
-        working-directory: docs
         run: |
-          sphinx-build -b html . _build/html
+          mkdir -p docs/_build/html
+          sphinx-build -b html docs docs/_build/html
 
-      - name: Check build output
-        run: ls -la docs/_build/html  # Verify the built docs
+      - name: Debug build output
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Build output contents:"
+          ls -la docs/_build/html
 
       - name: Deploy to docs_build branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PAT_TOKEN }}
           publish_branch: docs_build
-          publish_dir: docs/_build/html  # Only deploy built docs
-          keep_files: true               # Keep the rest of the repo intact
+          publish_dir: docs/_build/html
+          keep_files: false  # Clean up previous builds

@@ -15,7 +15,8 @@ import urllib.request
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath("../"))  # To include your biotuner folder
+
 # sys.path.insert(0, os.path.abspath("../"))
 
 
@@ -46,7 +47,7 @@ def get_latest_version_from_pypi(package_name):
 
 
 # Replace 'biotuner' with your package's name as registered on PyPI
-version = get_latest_version_from_pypi("biotuner")
+version = "0.0.16"
 release = version
 
 # -- General configuration ---------------------------------------------------
