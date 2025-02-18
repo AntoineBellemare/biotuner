@@ -4,7 +4,7 @@ Harmonic analysis of biosignals
 
 .. important::
 
-    Like the software? Don't forget to support it by `starring <https://github.com/antoinebellmare/biotuner>`_ |:star:|, sponsoring |:revolving_hearts:|, or spreading the word |:love_letter:|
+    Like the software? Don't forget to support it by `starring <https://github.com/antoinebellemare/biotuner>`_ |:star:|, sponsoring |:revolving_hearts:|, or spreading the word |:love_letter:|
 
     We count on you to help us making it better by **contributing even the tiniest improvements**
     (a typo, a rephrasing to make things clearer, a comment to the code, a new option, etc.).
