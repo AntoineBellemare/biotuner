@@ -1,0 +1,1852 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Biotuner object &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/biotuner_object';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Harmonicity Metrics" href="metrics.html" />
+    <link rel="prev" title="API" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Biotuner object</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/biotuner_object.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Biotuner object</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner"><code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.peaks_extraction"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.peaks_extraction()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.amps"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.amps</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_harm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_bound</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_fit</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.peaks_extension"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.peaks_extension()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_harm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_fit</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.ratios_extension"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.ratios_extension()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.time_resolved_harmonicity()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_chords"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_chords</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.time_resolved_harmonicity</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_EMD"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_EMD</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IFs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IFs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IMFs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IMFs</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_spectromorph"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_spectromorph()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_EMD</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_chords</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_peaks_metrics()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_diss_curve"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_diss_curve()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.diss_scale</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.diss_scale_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.scale_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.scale_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_harmonic_entropy()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.HE_scale</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.HE_scale_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.scale_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.euler_fokker_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.euler_fokker_scale()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.euler_fokker"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.euler_fokker</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.harmonic_tuning()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.harmonic_tuning</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.harmonic_fit_tuning()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.harmonic_fit_tuning</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.pac"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.pac()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.rhythm_construction"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.rhythm_construction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_ts"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_peaks_ts()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.freqs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.freqs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.psd"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.psd</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IMFs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IF"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IF</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.all_harmonics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.all_harmonics</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.FREQ_BANDS</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_resonance"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_resonance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.listen_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.listen_scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.fit_all"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.fit_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.info"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.info()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.fit_biotuner"><code class="docutils literal notranslate"><span class="pre">fit_biotuner()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biotuner-object">
+<h1>Biotuner object<a class="headerlink" href="#biotuner-object" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-biotuner.biotuner_object">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_biotuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EMD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_sub_ratios</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mult'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'consonant_harmonic_fit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_inc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_inc_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class used to derive peaks information, musical tunings, rhythms
+and related harmonicity metrics from time series (EEG, ECG, EMG,
+gravitational waves, noise, …)</p>
+<section id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">biotuning</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_metrics</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency (in Hz)</p></li>
+<li><p><strong>data</strong> (<em>array (numDataPoints,)</em>) – Time series to analyze.</p></li>
+<li><p><strong>peaks_function</strong> (<em>str, default=’EMD’</em>) – Defines the method to use for peak extraction.</p>
+<dl class="simple">
+<dt>‘NON-HARMONIC PEAK EXTRACTIONS’</dt><dd><dl class="simple">
+<dt>‘fixed’ :</dt><dd><p>Power Spectrum Density (PSD) estimated using Welch’s method
+on fixed frequency bands. Peaks correspond to frequency bins
+with the highest power.</p>
+</dd>
+<dt>‘adapt’ :</dt><dd><p>PSD estimated using Welch’s method on each frequency band
+derived from the alpha peak position. Peaks correspond to
+frequency bins with the highest power.</p>
+</dd>
+<dt>‘FOOOF’ :</dt><dd><p>PSD is estimated with Welch’s method. ‘FOOOF’ is applied to
+remove the aperiodic component and find physiologically
+relevant spectral peaks.</p>
+</dd>
+</dl>
+</dd>
+<dt>‘SIGNAL DECOMPOSITION BASED PEAK EXTRACTION’</dt><dd><dl class="simple">
+<dt>‘EMD’:</dt><dd><p>Intrinsic Mode Functions (IMFs) are derived with Empirical
+Mode Decomposition (EMD) PSD is computed on each IMF using
+Welch. Peaks correspond to frequency bins with the highest power.</p>
+</dd>
+<dt>‘EEMD’ :</dt><dd><p>Intrinsic Mode Functions (IMFs) are derived with Ensemble
+Empirical Mode Decomposition (EEMD). PSD is computed on each
+IMF using Welch. Peaks correspond to frequency bins with the
+highest power.</p>
+</dd>
+<dt>‘CEEMDAN’<span class="classifier">Intrinsic Mode Functions (IMFs) are derived with Complex</span></dt><dd><p>Ensemble Empirical Mode Decomposition with Adaptive
+Noise (CEEMDAN). PSD is computed on each IMF using Welch.</p>
+</dd>
+<dt>‘EMD_FOOOF’ :</dt><dd><p>Intrinsic Mode Functions (IMFs) are derived with
+Ensemble Empirical Mode Decomposition (EEMD). PSD is
+computed on each IMF with Welch’s method. ‘FOOOF’ is
+applied to remove the aperiodic component and find
+physiologically relevant spectral peaks.</p>
+</dd>
+<dt>‘HH1D_max’ :</dt><dd><p>Maximum values of the 1D Hilbert-Huang transform on each
+IMF using EMD.</p>
+</dd>
+<dt>‘HH1D_FOOOF’ :</dt><dd><p>TODO. Hilbert-Huang transform on each IMF with Welch’s method
+‘FOOOF’ is applied to remove the aperiodic component and
+find physiologically relevant spectral peaks.</p>
+</dd>
+<dt>‘SSA’ :</dt><dd><p>TODO. Singular Spectrum Analysis. The name “singular spectrum
+analysis” relates to the spectrum of eigenvalues in a singular
+value decomposition of a covariance matrix.</p>
+</dd>
+</dl>
+</dd>
+<dt>‘SECOND-ORDER STATISTICAL PEAK EXTRACTION’</dt><dd><dl class="simple">
+<dt>‘cepstrum’:</dt><dd><p>Peak frequencies of the cepstrum (inverse Fourier transform
+(IFT) of the logarithm of the estimated signal spectrum).</p>
+</dd>
+<dt>‘HPS (to come)’ :</dt><dd><p>Harmonic Product Spectrum (HPS) corresponds to the product of
+the spectral power at each harmonic. Peaks correspond to the
+frequency bins with the highest value of the HPS.</p>
+</dd>
+<dt>‘Harmonic_salience (to come)’ :</dt><dd><p>A measure of harmonic salience computed by taking
+the sum of the squared cosine of the angle between
+a harmonic and its neighbors.</p>
+</dd>
+</dl>
+</dd>
+<dt>‘CROSS-FREQUENCY COUPLING BASED PEAK EXTRACTION’</dt><dd><dl class="simple">
+<dt>‘Bicoherence’ :</dt><dd><p>Corresponds to the normalized cross-bispectrum.
+It is a third-order moment in the frequency domain.
+It is a measure of phase-amplitude coupling.</p>
+</dd>
+<dt>‘PAC’ :</dt><dd><p>Phase-amplitude coupling. A measure of phase-amplitude
+coupling between low-frequency phase and high-frequency
+amplitude.</p>
+</dd>
+</dl>
+</dd>
+<dt>‘PEAK SELECTION BASED ON HARMONIC PROPERTIES’</dt><dd><dl class="simple">
+<dt>‘EIMC’ :</dt><dd><p>Endogenous InterModulation Components (EIMC)
+correspond to spectral peaks that are sums or differences
+of other peaks harmonics (f1+f2, f1+2f2, f1-f2, f1-2f2…).
+PSD is estimated with Welch’s method. All peaks are extracted.</p>
+</dd>
+<dt>‘harmonic_recurrence’ :</dt><dd><p>PSD is estimated with Welch’s method.
+All peaks are extracted. Peaks for which
+other peaks are their harmonics are kept.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>‘PEAKS EXTRACTION PARAMETERS’</p>
+</li>
+<li><p><strong>precision</strong> (<em>float, default=0.1</em>) – Precision of the peaks (in Hz).
+When HH1D_max is used, bins are in log scale by default.</p></li>
+<li><p><strong>compute_sub_ratios</strong> (<em>bool, default=False</em>) – When set to True, include ratios &lt; 1 in peaks_ratios attribute.</p></li>
+<li><p><strong>scale_cons_limit</strong> (<em>float, default=0.1</em>) – The minimal value of consonance needed for a peaks ratio to be
+included in the peaks_ratios_cons attribute.</p>
+<p>‘EXTENDED PEAKS PARAMETERS’</p>
+</li>
+<li><p><strong>n_harm</strong> (<em>int, default=10</em>) – Set the number of harmonics to compute in harmonic_fit function.</p></li>
+<li><p><strong>harm_function</strong> (<em>str, default=’mult’</em>) –</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>‘mult’<span class="classifier">Computes harmonics from iterative multiplication</span></dt><dd><p>(x, 2x, 3x…)</p>
+</dd>
+</dl>
+</li>
+<li><p>‘div’: Computes harmonics from iterative division (x, x/2, x/3…).</p></li>
+</ul>
+</li>
+<li><p><strong>extension_method</strong> (<em>str, default=’consonant_harmonic_fit’</em>) –</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>‘consonant_harmonic_fit’<span class="classifier">computes the best-fit of harmonic peaks</span></dt><dd><p>according to consonance intervals (eg. octaves, fifths).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>‘all_harmonic_fit’<span class="classifier">computes the best-fit of harmonic peaks without</span></dt><dd><p>considering consonance intervals.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>‘RATIOS EXTENSION PARAMETERS’</p>
+</li>
+<li><p><strong>ratios_n_harms</strong> (<em>int, default=5</em>) – The number of harmonics used to compute extended peaks ratios.</p></li>
+<li><p><strong>ratios_harms</strong> (<em>bool, default=False</em>) – When set to True, harmonics (x*1, x*2, x*3…,x*n) of specified
+ratios will be computed.</p></li>
+<li><p><strong>ratios_inc</strong> (<em>bool, default=True</em>) – When set to True, exponentials (x**1, x**2, x**3,…x**n) of
+specified ratios will be computed.</p></li>
+<li><p><strong>ratios_inc_fit</strong> (<em>bool, Default=False</em>) – When set to True, a fit between exponentials
+(x**1, x**2, x**3,…x**n) of specified ratios will be computed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.peaks_extraction">
+<span class="sig-name descname"><span class="pre">peaks_extraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FREQ_BANDS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_sub_ratios</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prominence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nIMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nperseg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_harm_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EIMC_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_IMs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_first_IMF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identify_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.peaks_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.peaks_extraction" title="Link to this definition">#</a></dt>
+<dd><p>The peaks_extraction method is central to the use of the Biotuner.
+It uses a time series as input and extract spectral peaks based on
+a variety of methods. See peaks_function parameter description
+in __init__ function for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array (numDataPoints,)</em>) – biosignal to analyse</p></li>
+<li><p><strong>peaks_function</strong> (<em>str</em>) – refer to __init__</p></li>
+<li><p><strong>FREQ_BANDS</strong> (<em>List of lists of float</em>) – Each list within the list of lists sets the lower and
+upper limit of a frequency band</p></li>
+<li><p><strong>precision</strong> (<em>float, default=0.1 -&gt; __init__</em>) – Precision of the peaks (in Hz)
+When HH1D_max is used, bins are in log scale.</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency (in Hertz).</p></li>
+<li><p><strong>min_freq</strong> (<em>float, default=1</em>) – minimum frequency value to be considered as a peak
+Used with ‘harmonic_recurrence’ and ‘HH1D_max’ peaks functions</p></li>
+<li><p><strong>max_freq</strong> (<em>float, default=60</em>) – maximum frequency value to be considered as a peak
+Used with ‘harmonic_recurrence’ and ‘HH1D_max’ peaks functions</p></li>
+<li><p><strong>min_harms</strong> (<em>int, default=2</em>) – minimum number of harmonics to consider a peak frequency using
+the ‘harmonic_recurrence’ function.</p></li>
+<li><p><strong>compute_sub_ratios</strong> (<em>Boolean, default=False</em>) – If set to True, will include peaks ratios (x/y) when x &lt; y</p></li>
+<li><p><strong>ratios_extension</strong> (<em>Boolean, default=False</em>) – When set to True, peaks_ratios harmonics and
+increments are computed.</p></li>
+<li><p><strong>ratios_n_harms</strong> (<em>int, default=5 -&gt; __init__</em>) – number of harmonics or increments to use in ratios_extension method</p></li>
+<li><p><strong>scale_cons_limit</strong> (<em>float, default=0.1</em>) – minimal value of consonance to be reach for a peaks ratio
+to be included in the peaks_ratios_cons attribute.</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – value of the octave</p></li>
+<li><p><strong>harm_limit</strong> (<em>int, default=128</em>) – Maximum harmonic position for ‘harmonic_recurrence’ method.</p></li>
+<li><p><strong>n_peaks</strong> (<em>int, default=5</em>) – Number of peaks when using ‘FOOOF’ and ‘cepstrum’,
+and ‘harmonic_recurrence’ functions.
+Peaks are chosen based on their amplitude.</p></li>
+<li><p><strong>prominence</strong> (<em>float, default=1.0</em>) – Minimum prominence of peaks.</p></li>
+<li><p><strong>rel_height</strong> (<em>float, default=0.7</em>) – Minimum relative height of peaks.</p></li>
+<li><p><strong>nIMFs</strong> (<em>int, default=5</em>) – Number of intrinsic mode functions to keep when using
+‘EEMD’ or ‘EMD’ peaks function.</p></li>
+<li><p><strong>graph</strong> (<em>boolean, default=False</em>) – When set to True, a graph will accompanies the peak extraction
+method (except for ‘fixed’ and ‘adapt’).</p></li>
+<li><p><strong>nperseg</strong> (<em>int, default=None</em>) – Length of each segment.
+If None, nperseg = nfft/smooth</p></li>
+<li><p><strong>nfft</strong> (<em>int, default=None</em>) – Length of the FFT used, if a zero padded FFT is desired.
+If None, nfft = sf/(1/precision)</p></li>
+<li><p><strong>noverlap</strong> (<em>int, default=None</em>) – Number of points to overlap between segments.
+If None, noverlap = nperseg // 2.</p></li>
+<li><p><strong>max_harm_freq</strong> (<em>int, default=None</em>) – Maximum frequency value of the find peaks function
+when harmonic_recurrence or EIMC peaks extraction method is used.</p></li>
+<li><p><strong>EIMC_order</strong> (<em>int, default=3</em>) – Maximum order of the Intermodulation Components.</p></li>
+<li><p><strong>min_IMs</strong> (<em>int, default=2</em>) – Minimal number of Intermodulation Components to select the
+associated pair of peaks.</p></li>
+<li><p><strong>smooth_fft</strong> (<em>int, default=1</em>) – Number used to divide nfft to derive nperseg.</p></li>
+<li><p><strong>verbose</strong> (<em>boolean, default=True</em>) – When set to True, number of detected peaks will be displayed.</p></li>
+<li><p><strong>keep_first_IMF</strong> (<em>boolean, default=False</em>) – When set to True, the first IMF is kept.</p></li>
+<li><p><strong>identify_labels</strong> (<em>boolean, default=False</em>) – When set to True, the labels of peaks ratios will be identified
+from the interval_names dictionary.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks" title="Link to this definition">#</a></dt>
+<dd><p>1D array of peaks frequencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.amps">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">amps</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.amps" title="Link to this definition">#</a></dt>
+<dd><p>1D array of peaks amplitudes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios" title="Link to this definition">#</a></dt>
+<dd><p>1D array of peaks ratios</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_cons</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons" title="Link to this definition">#</a></dt>
+<dd><p>1D array of peaks ratios when more consonant than
+scale_cons_limit parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">..</span> <span class="pre">note::</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">The</span> <span class="pre">following</span> <span class="pre">attributes</span> <span class="pre">are</span> <span class="pre">only</span> <span class="pre">present</span> <span class="pre">if</span> <span class="pre">`ratios_extension</span> <span class="pre">=</span> <span class="pre">True`</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_harm</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm" title="Link to this definition">#</a></dt>
+<dd><p>List of peaks ratios and their harmonics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_inc</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc" title="Link to this definition">#</a></dt>
+<dd><p>List of peaks ratios and their increments (ratios**n)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_inc_bound</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound" title="Link to this definition">#</a></dt>
+<dd><p>List of peaks ratios and their increments (ratios**n)
+bound within one octave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_inc_fit</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit" title="Link to this definition">#</a></dt>
+<dd><p>List of peaks ratios and their congruent increments (ratios**n)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.peaks_extension">
+<span class="sig-name descname"><span class="pre">peaks_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmonic_fit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mult'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'add'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.peaks_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.peaks_extension" title="Link to this definition">#</a></dt>
+<dd><p>This method is used to extend a set of frequencies based on the
+harmonic congruence of specific elements (extend). It can also
+restrict a set of frequencies based on the consonance level of
+specific peak frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List of float</em>) – List of frequency peaks.</p></li>
+<li><p><strong>n_harm</strong> (<em>int, default=10</em>) – Set the number of harmonics to compute in harmonic_fit function</p></li>
+<li><p><strong>method</strong> (<em>str, default=’harmonic_fit’</em>) –</p>
+<ul>
+<li><p>‘harmonic_fit’</p></li>
+<li><p>‘consonant’</p></li>
+<li><p>‘multi_consonant’,</p></li>
+<li><p>‘consonant_harmonic_fit’</p></li>
+<li><p>‘multi_consonant_harmonic_fit’</p></li>
+</ul>
+</li>
+<li><p><strong>harm_function</strong> (<em>str, default=’mult’</em>) –</p>
+<ul>
+<li><p>‘mult’ : Computes harmonics from iterative multiplication (x, 2x, 3x, …nx)</p></li>
+<li><p>‘div’ : Computes harmonics from iterative division (x, x/2, x/3, …x/n)</p></li>
+</ul>
+</li>
+<li><p><strong>div_mode</strong> (<em>strm default=’add’</em>) – Defines the way the harmonics are computed when harm_function is ‘div’</p>
+<ul>
+<li><p>‘div’: x, x/2, x/3 …, x/n</p></li>
+<li><p>‘div_add’: x, (x+x/2), (x+x/3), … (x+x/n)</p></li>
+<li><p>‘div_sub’: x, (x-x/2), (x-x/3), … (x-x/n)</p></li>
+</ul>
+</li>
+<li><p><strong>cons_limit</strong> (<em>float</em>) – Defines the minimal consonance level used in the method.</p></li>
+<li><p><strong>ratios_extension</strong> (<em>Boolean, default=False</em>) – If is True, ratios_extensions are computed accordingly to what
+was defined in __init__.</p></li>
+<li><p><strong>harm_bounds</strong> (<em>float, default=0.1</em>) – Maximal distance in Hertz between two frequencies to consider
+them as equivalent.</p></li>
+<li><p><strong>scale_cons_limit</strong> (<em>float, default=None</em>) – Minimal value of consonance to be reach for a peaks ratio
+to be included in the extended_peaks_ratios_cons attribute.
+When None, scale_cons_limit = 0.1, as defined in __init__</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>self.extended_peaks</strong> (<em>List (float)</em>) – List of extended peaks frequencies.</p></li>
+<li><p><strong>self.extended_amps</strong> (<em>List (float)</em>) – List of extended peaks amplitudes.</p></li>
+<li><p><strong>self.extended_peaks_ratios</strong> (<em>List (float)</em>) – List of pairwise extended peaks ratios.</p></li>
+<li><p><strong>self.extended_peaks_ratios_cons</strong> (<em>List (float)</em>) – List of pairwise extended peaks ratios when more consonant than
+scale_limit_cons parameter.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">..</span> <span class="pre">note::</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">The</span> <span class="pre">following</span> <span class="pre">attributes</span> <span class="pre">are</span> <span class="pre">only</span> <span class="pre">present</span> <span class="pre">if</span> <span class="pre">`ratios_extension</span> <span class="pre">=</span> <span class="pre">True`</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_harm</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>List of extended peaks ratios and their harmonics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_inc</span></span><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd><p>List of extended peaks ratios and their increments (ratios**n)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_ratios_inc_fit</span></span><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd><p>List of extended peaks ratios and
+their congruent increments (ratios**n).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.ratios_extension">
+<span class="sig-name descname"><span class="pre">ratios_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_fit_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.ratios_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.ratios_extension" title="Link to this definition">#</a></dt>
+<dd><p>This method takes a series of ratios as input and returns the
+harmonics (ratio*2, ratio*3, …, ratio*n) or the increments
+(ratio**2, ratio**3, …, ratio**n).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>List (float)</em>) – List of frequency ratios.</p></li>
+<li><p><strong>ratio_fit_bounds</strong> (<em>float, default=0.001</em>) – Minimal distance between two ratios to consider a fit
+for the harmonic_fit function.</p></li>
+<li><p><strong>ratios_n_harms</strong> (<em>int, default=None</em>) – Number of harmonics or increments to compute.
+When None, the number of harmonics or increments
+is set to the value of the attribute ratios_n_harms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ratios_harms_</strong> (<em>List (float)</em>) – List of ratios harmonics.</p></li>
+<li><p><strong>ratios_inc_</strong> (<em>List (float)</em>) – List of ratios increments.</p></li>
+<li><p><strong>ratios_inc_fit_</strong> (<em>List (float)</em>) – List of ratios increments that fit.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity">
+<span class="sig-name descname"><span class="pre">time_resolved_harmonicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmsim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_first_IMF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nIMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_cons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.time_resolved_harmonicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity" title="Link to this definition">#</a></dt>
+<dd><p>Compute the time-resolved harmonicity of the input data, which involves computation of instantaneous frequency
+(IF) or SpectroMorph analysis on the input data, followed by harmonicity computation on the IFs or SpectroMorph
+data.
+:Parameters: * <strong>input</strong> (<em>str, default=’IF’</em>) – The input type for harmonicity computation, either ‘IF’ (instantaneous frequency) or ‘SpectralCentroid’.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>method</strong> (<em>str, default=’harmsim’</em>) – The method used for harmonicity computation, such as ‘harmsim’.</p></li>
+<li><p><strong>keep_first_IMF</strong> (<em>bool, default=False</em>) – Whether to keep the first intrinsic mode function (IMF) after EMD.</p></li>
+<li><p><strong>nIMFs</strong> (<em>int, default=3</em>) – The number of IMFs to consider in the analysis.</p></li>
+<li><p><strong>IMFs</strong> (<em>array_like, default=None</em>) – Precomputed IMFs. If None, IMFs are computed within the method.</p></li>
+<li><p><strong>delta_lim</strong> (<em>int, default=20</em>) – The limit for delta when method is ‘subharm_tension’.</p></li>
+<li><p><strong>limit_cons</strong> (<em>float, default=0.2</em>) – The limit for consonance for spectral chords.</p></li>
+<li><p><strong>min_notes</strong> (<em>int, default=3</em>) – The minimum number of notes required for spectral chords.</p></li>
+<li><p><strong>graph</strong> (<em>bool, default=False</em>) – If True, a graph of the computed harmonicity will be displayed.</p></li>
+<li><p><strong>window</strong> (<em>int, default=None</em>) – The window size for SpectroMorph analysis. If None, it is set to half of the sampling frequency.</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>tuple</em> – A tuple containing the following:
+- time_resolved_harmonicity : array_like</p>
+<blockquote>
+<div><p>The time-resolved harmonicity of the input data.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>spectro_chords<span class="classifier">List of lists (float)</span></dt><dd><p>Each sublist corresponds to a list of harmonious instantaneous frequencies (IFs).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>spectro_chord_pos<span class="classifier">List (int)</span></dt><dd><p>Positions in the time series where each chord from <cite>self.spectro_chords</cite> is located.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.spectro_chords">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">spectro_chords</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_chords" title="Link to this definition">#</a></dt>
+<dd><p>Each sublist corresponds to a list of harmonious instantaneous frequencies (IFs).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of lists (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">time_resolved_harmonicity</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity" title="Link to this definition">#</a></dt>
+<dd><p>The time-resolved harmonicity of the input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.spectro_EMD">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">spectro_EMD</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_EMD" title="Link to this definition">#</a></dt>
+<dd><p>The spectroMorph analysis of the input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.IFs">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">IFs</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.IFs" title="Link to this definition">#</a></dt>
+<dd><p>The instantaneous frequencies of the input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.IMFs">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">IMFs</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.IMFs" title="Link to this definition">#</a></dt>
+<dd><p>The intrinsic mode functions (IMFs) of the input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_spectromorph">
+<span class="sig-name descname"><span class="pre">compute_spectromorph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SpectralCentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nIMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_spectromorph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_spectromorph" title="Link to this definition">#</a></dt>
+<dd><p>This method computes spectromorphological metrics on
+each Intrinsic Mode Function (IMF).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>IMFs</strong> (<em>array (nIMFs, numDataPoints)</em>) – Intrinsic Mode Functions.
+When set to ‘None’, the IMFs are computed in the method.</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency.</p></li>
+<li><p><strong>method</strong> (<em>str, default=’SpectralCentroid’</em>) –</p>
+<p>Spectromorphological metric to compute.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘SpectralCentroid’,</p></li>
+<li><p>‘SpectralCrestFactor’,</p></li>
+<li><p>‘SpectralDecrease’,</p></li>
+<li><p>‘SpectralFlatness’,</p></li>
+<li><p>‘SpectralFlux’,</p></li>
+<li><p>‘SpectralKurtosis’,</p></li>
+<li><p>‘SpectralMfccs’,</p></li>
+<li><p>‘SpectralPitchChroma’,</p></li>
+<li><p>‘SpectralRolloff’,</p></li>
+<li><p>‘SpectralSkewness’,</p></li>
+<li><p>‘SpectralSlope’,</p></li>
+<li><p>‘SpectralSpread’,</p></li>
+<li><p>‘SpectralTonalPowerRatio’,</p></li>
+<li><p>‘TimeAcfCoeff’,</p></li>
+<li><p>‘TimeMaxAcf’,</p></li>
+<li><p>‘TimePeakEnvelope’,</p></li>
+<li><p>‘TimeRms’,</p></li>
+<li><p>‘TimeStd’,</p></li>
+<li><p>‘TimeZeroCrossingRate’,}</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>window</strong> (<em>int</em>) – Window size in samples.</p></li>
+<li><p><strong>overlap</strong> (<em>int</em>) – Value of the overlap between successive windows.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">spectro_EMD</span></span><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd><p>Spectromorphological metric vector for each IMF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (numDataPoints, nIMFs)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">spectro_chords</span></span><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd><p>Each sublist corresponds to a list of consonant
+spectromorphological metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of lists (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics">
+<span class="sig-name descname"><span class="pre">compute_peaks_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_peaks_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics" title="Link to this definition">#</a></dt>
+<dd><p>This function computes consonance metrics on peaks attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_harm</strong> (<em>int</em>) – Set the number of harmonics to compute in harmonic_fit function</p></li>
+<li><p><strong>harm_bounds</strong> (<em>float, default=0.5</em>) – Maximal distance in Hertz between two frequencies to consider
+them as equivalent.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.peaks_metrics">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">peaks_metrics</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_metrics" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary with keys corresponding to the different metrics.</p>
+<ul class="simple">
+<li><p>‘cons’</p></li>
+<li><p>‘euler’</p></li>
+<li><p>‘tenney’</p></li>
+<li><p>‘harm_fit’</p></li>
+<li><p>‘harmsim’</p></li>
+<li><p>‘n_harmonic_recurrence’,</p></li>
+<li><p>‘n_harmonic_recurrence_ratio’</p></li>
+<li><p>‘harm_pos’</p></li>
+<li><p>‘common_harm_pos’</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_diss_curve">
+<span class="sig-name descname"><span class="pre">compute_diss_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">euler_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_tet_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_diss_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_diss_curve" title="Link to this definition">#</a></dt>
+<dd><p>Compute dissonance curve based on peak frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>str, default=’peaks’</em>) – Defines whether peaks or extended_peaks are used.</p>
+<ul>
+<li><p>‘peaks’</p></li>
+<li><p>‘extended_peaks’</p></li>
+</ul>
+</li>
+<li><p><strong>denom</strong> (<em>int, default=1000</em>) – Maximal value of the denominator when computing frequency ratios.</p></li>
+<li><p><strong>max_ratio</strong> (<em>float, default=2</em>) – Value of the maximal frequency ratio to use when computing
+the dissonance curve. When set to 2, the curve spans one octave.
+When set to 4, the curve spans two octaves.</p></li>
+<li><p><strong>euler_comp</strong> (<em>Boolean, default=False</em>) – Defines if euler consonance is computed. Can be computationally
+expensive when the number of local minima is high.</p></li>
+<li><p><strong>method</strong> (<em>str, default=’min’</em>) – Refer to dissmeasure function in scale_construction.py
+for more information.</p>
+<ul>
+<li><p>‘min’</p></li>
+<li><p>‘product’</p></li>
+</ul>
+</li>
+<li><p><strong>plot</strong> (<em>Boolean, default=False</em>) – When set to True, dissonance curve is plotted.</p></li>
+<li><p><strong>n_tet_grid</strong> (<em>int, default=12</em>) – Defines which N-TET tuning is indicated, as a reference,
+in red in the dissonance curve plot.</p></li>
+<li><p><strong>scale_cons_limit</strong> (<em>float, default=None</em>) – Minimal value of consonance to be reach for a peaks ratio
+to be included in the self.diss_scale_cons attribute.
+When set to None, the value of self.scale_cons_limit is used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.diss_scale">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">diss_scale</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale" title="Link to this definition">#</a></dt>
+<dd><p>List of frequency ratios corresponding to local minima.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">diss_scale_cons</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons" title="Link to this definition">#</a></dt>
+<dd><p>List of frequency ratios corresponding to consonant local minima.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.scale_metrics">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">scale_metrics</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.scale_metrics" title="Link to this definition">#</a></dt>
+<dd><p>Add 4 metrics related to the dissonance curve tuning:</p>
+<ul class="simple">
+<li><p>‘diss_euler’</p></li>
+<li><p>‘dissonance’</p></li>
+<li><p>‘diss_harm_sim’</p></li>
+<li><p>‘diss_n_steps’</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy">
+<span class="sig-name descname"><span class="pre">compute_harmonic_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_entropy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_tenney</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rebound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_harmonic_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Computes the harmonic entropy from a series of spectral peaks.
+Harmonic entropy has been introduced by Paul Elrich
+[<a class="reference external" href="http://www.tonalsoft.com/enc/e/erlich/harmonic-entropy_with">http://www.tonalsoft.com/enc/e/erlich/harmonic-entropy_with</a>-
+commentary.aspx]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>str, default=’peaks’</em>) – Defines whether peaks or extended_peaks are used.</p>
+<ul>
+<li><p>‘peaks’</p></li>
+<li><p>‘extended_peaks’</p></li>
+</ul>
+</li>
+<li><p><strong>res</strong> (<em>float, default=0.001</em>) – Resolution of the ratio steps.</p></li>
+<li><p><strong>spread</strong> (<em>float, default=0.01</em>) – Spread of the normal distribution used to compute the weights.</p></li>
+<li><p><strong>plot_entropy</strong> (<em>Boolean, default=True</em>) – When set to True, plot the harmonic entropy curve.</p></li>
+<li><p><strong>plot_tenney</strong> (<em>Boolean, default=False</em>) – When set to True, plot the tenney heights (y-axis)
+across ratios (x-axis).</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – Value of the octave.</p></li>
+<li><p><strong>rebound</strong> (<em>Boolean, default=True</em>) – When set to True, peaks ratios are bounded within the octave.</p></li>
+<li><p><strong>sub</strong> (<em>Boolean, default=False</em>) – When set to True, will include ratios below the unison (1)</p></li>
+<li><p><strong>scale_cons_limit</strong> (<em>type, default=None</em>) – Minimal value of consonance to be reach for a peaks ratio
+to be included in the self.diss_scale_cons attribute.
+When set to None, the value of self.scale_cons_limit is used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.HE_scale">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">HE_scale</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale" title="Link to this definition">#</a></dt>
+<dd><p>List of frequency ratios corresponding to local minima.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">HE_scale_cons</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons" title="Link to this definition">#</a></dt>
+<dd><p>List of frequency ratios corresponding to consonant local minima.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">scale_metrics</span></span><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
+<dd><p>Four metrics related to the dissonance curve tuning:</p>
+<ul class="simple">
+<li><p>‘HE’</p></li>
+<li><p>‘HE_n_steps’</p></li>
+<li><p>‘HE_harm_sim’</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.euler_fokker_scale">
+<span class="sig-name descname"><span class="pre">euler_fokker_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.euler_fokker_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.euler_fokker_scale" title="Link to this definition">#</a></dt>
+<dd><p>Create a scale in the Euler-Fokker Genera. which is a
+musical scale in just intonation whose pitches can be
+expressed as products of some of the members of some multiset
+of generating primer numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str, default=’peaks’</em>) – Defines which set of frequencies are used.</p>
+<ul>
+<li><p>‘peaks’</p></li>
+<li><p>‘extended_peaks’</p></li>
+</ul>
+</li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – Value of period interval.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self.euler_fokker</strong> (<em>List (float)</em>) – Euler-Fokker genera.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.euler_fokker">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">euler_fokker</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.euler_fokker" title="Link to this definition">#</a></dt>
+<dd><p>Euler-Fokker genera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.harmonic_tuning">
+<span class="sig-name descname"><span class="pre">harmonic_tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_harmonics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.harmonic_tuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.harmonic_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Generates a tuning based on a list of harmonic positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list_harmonics</strong> (<em>List of int</em>) – harmonic positions to use in the scale construction</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – value of the period reference</p></li>
+<li><p><strong>min_ratio</strong> (<em>float, default=1</em>) – Value of the unison.</p></li>
+<li><p><strong>max_ratio</strong> (<em>float, default=2</em>) – Value of the octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ratios</strong> (<em>List (float)</em>) – Generated tuning.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">harmonic_tuning</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Generated tuning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning">
+<span class="sig-name descname"><span class="pre">harmonic_fit_tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_common_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.harmonic_fit_tuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Extracts the common harmonics of spectral peaks and compute
+the associated harmonic tuning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_harm</strong> (<em>int</em>) – Number of harmonics to consider in the harmonic fit`.</p></li>
+<li><p><strong>bounds</strong> (<em>float, default=0.1</em>) – Maximal distance in Hertz between two frequencies to consider
+them as equivalent.</p></li>
+<li><p><strong>n_common_harms</strong> (<em>int, default=2</em>) – minimum number of times the harmonic is found
+to be sent to most_common_harmonics output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self.harmonic_fit_tuning</strong> (<em>List (float)</em>) – Generated tuning</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">harmonic_fit_tuning</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Generated tuning</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.pac">
+<span class="sig-name descname"><span class="pre">pac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'duprelatour'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drive_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_drive_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_drive_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_sig_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_sig_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_fq_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_fq_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.pac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.pac" title="Link to this definition">#</a></dt>
+<dd><p>Computes the phase-amplitude coupling and returns to pairs of
+frequencies that have highest coupling value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency in hertz.</p></li>
+<li><p><strong>method</strong> (<em>str, default=’duprelatour’</em>) –</p>
+<dl>
+<dt>Choice of method for PAC calculation.</dt><dd><p>STANDARD_PAC_METRICS:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘ozkurt’</p></li>
+<li><p>‘canolty’</p></li>
+<li><p>‘tort’</p></li>
+<li><p>‘penny’</p></li>
+<li><p>‘vanwijk’</p></li>
+</ul>
+</div></blockquote>
+<p>DAR_BASED_PAC_METRICS:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘duprelatour’</p></li>
+</ul>
+</div></blockquote>
+<p>COHERENCE_PAC_METRICS:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘jiang’</p></li>
+<li><p>‘colgin’</p></li>
+</ul>
+</div></blockquote>
+<p>BICOHERENCE_PAC_METRICS:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘sigl’</p></li>
+<li><p>‘nagashima’</p></li>
+<li><p>‘hagihira’</p></li>
+<li><p>‘bispectrum’</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><p><strong>n_values</strong> (<em>int, default=10</em>) – Number of pairs of frequencies to return.</p></li>
+<li><p><strong>drive_precision</strong> (<em>float, default=0.05</em>) – Step-size between each phase signal bins.</p></li>
+<li><p><strong>max_drive_freq</strong> (<em>float, default=6</em>) – Maximum value of the phase signal in hertz.</p></li>
+<li><p><strong>min_drive_freq</strong> (<em>float, default=3</em>) – Minimum value of the phase signal in hertz.</p></li>
+<li><p><strong>sig_precision</strong> (<em>float, default=1</em>) – Step-size between each amplitude signal bins.</p></li>
+<li><p><strong>max_sig_freq</strong> (<em>float, default=50</em>) – Maximum value of the amplitude signal in hertz.</p></li>
+<li><p><strong>min_sig_freq</strong> (<em>float, default=8</em>) – Minimum value of the amplitude signal in hertz.</p></li>
+<li><p><strong>low_fq_width</strong> (<em>float, default=0.5</em>) – Bandwidth of the band-pass filter (phase signal)</p></li>
+<li><p><strong>high_fq_width</strong> (<em>float, default=1</em>) – Bandwidth of the band-pass filter (amplitude signal)</p></li>
+<li><p><strong>plot</strong> (<em>Boolean, default=False</em>) – When set to True, a plot of the comodulogram is generated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>pac_freqs</strong> (<em>List of lists (float)</em>) – Pairs of frequencies with highest coupling value. Stored in self.pac_freqs.</p></li>
+<li><p><strong>pac_coupling</strong> (<em>List (float)</em>) – Values of coupling for each pair in pac_freqs. Stored in self.pac_coupling.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.rhythm_construction">
+<span class="sig-name descname"><span class="pre">rhythm_construction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'peaks_ratios'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimal_offsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.rhythm_construction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.rhythm_construction" title="Link to this definition">#</a></dt>
+<dd><p>Computes Euclidean rhythms from a scale defined between unison and octave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>str, default=’peaks_ratios’</em>) – The scale from which Euclidean rhythms are generated. Options include ‘peaks_ratios’, ‘extended_peaks_ratios’,
+‘diss_scale’, ‘HE_scale’, ‘harmonic_fit_tuning’, ‘harmonic_tuning’, and ‘euler_fokker’, each corresponding to
+a different scale computation method within the class.</p></li>
+<li><p><strong>mode</strong> (<em>str, default=’default’</em>) – The rhythm generation mode. Options are ‘default’ for basic Euclidean rhythms and ‘consonant’ for rhythms with
+maximized consonance, based on the ‘cons_threshold’ parameter and the use of shared denominator values.</p></li>
+<li><p><strong>cons_threshold</strong> (<em>float, default=0.2</em>) – Consonance threshold used in ‘consonant’ mode to maximize consonance between rhythm pairs.
+See the ‘compute_consonance’ function in the ‘scale_construction’ module for more information.</p></li>
+<li><p><strong>max_denom</strong> (<em>int, default=8</em>) – The maximum denominator used in the rhythm generation process, controlling the complexity of the rhythm.
+Only used in ‘consonant’ mode.</p></li>
+<li><p><strong>n_steps_down</strong> (<em>int, default=3</em>) – The number of steps by which the generated Euclidean rhythm is transposed down.
+Only used in ‘consonant’ mode.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the specified ‘scale’ is not computed prior to invoking this method.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>tuple</em> – The first element is a list of generated Euclidean rhythms. The second element is their corresponding referential strings, derived from comparing the generated rhythms to known referent patterns.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method requires the prior computation of the specified ‘scale’. For instance, ‘peaks_ratios’ requires the ‘peaks_extraction’ method to be called beforehand. The method’s return values are integral to further rhythm analysis and comparison within the Biot</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_peaks_ts">
+<span class="sig-name descname"><span class="pre">compute_peaks_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EMD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FREQ_BANDS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prominence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nIMFs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nperseg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_harm_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EIMC_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_IMs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_first_IMF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_peaks_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_ts" title="Link to this definition">#</a></dt>
+<dd><p>Extract peak frequencies. This method is called by the
+peaks_extraction method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array (numDataPoints,)</em>) – Niosignal to analyse</p></li>
+<li><p><strong>peaks_function</strong> (<em>str</em>) – Refer to __init__</p></li>
+<li><p><strong>FREQ_BANDS</strong> (<em>List of lists of floats</em>) – Each list within the list of lists sets the lower and
+upper limit of a frequency band</p></li>
+<li><p><strong>precision</strong> (<em>float, default=0.5</em>) – Precision of the peaks (in Hz)
+When HH1D_max is used, bins are in log scale.</p></li>
+<li><p><strong>sf</strong> (<em>int, default=None</em>) – Sampling frequency in hertz.</p></li>
+<li><p><strong>min_freq</strong> (<em>float, default=1</em>) – Minimum frequency value to be considered as a peak
+Used with ‘harmonic_recurrence’ and ‘HH1D_max’ peaks functions</p></li>
+<li><p><strong>max_freq</strong> (<em>float, default=80</em>) – Maximum frequency value to be considered as a peak
+Used with ‘harmonic_recurrence’ and ‘HH1D_max’ peaks functions</p></li>
+<li><p><strong>min_harms</strong> (<em>int, default=2</em>) – Minimum number of harmonics to be considered for peaks extraction</p></li>
+<li><p><strong>harm_limit</strong> (<em>int, default=128</em>) – Maximum harmonic position for ‘harmonic_recurrence’ method.</p></li>
+<li><p><strong>n_peaks</strong> (<em>int, default=5</em>) – Number of peaks when using ‘FOOOF’ and ‘cepstrum’,
+and ‘harmonic_recurrence’ functions.
+Peaks are chosen based on their amplitude.</p></li>
+<li><p><strong>prominence</strong> (<em>float, default=1.0</em>) – Minimum prominence value to be considered as a peak
+Used with ‘harmonic_recurrence’ and ‘HH1D_max’ peaks functions</p></li>
+<li><p><strong>rel_height</strong> (<em>float, default=0.7</em>) – Minimum relative height value to be considered as a peak</p></li>
+<li><p><strong>nIMFs</strong> (<em>int, default=None</em>) – number of intrinsic mode functions to keep when using
+‘EEMD’ or ‘EMD’ peaks function.</p></li>
+<li><p><strong>graph</strong> (<em>boolean, default=False</em>) – When set to True, a graph will accompanies the peak extraction
+method (except for ‘fixed’ and ‘adapt’).</p></li>
+<li><p><strong>noverlap</strong> (<em>int, default=None</em>) – Number of samples overlap between each fft window.
+When set to None, equals sf//10.</p></li>
+<li><p><strong>average</strong> (<em>str, default=’median’</em>) – Method to use when averaging periodograms.</p>
+<ul>
+<li><p>‘mean’: average periodograms</p></li>
+<li><p>‘median’: median periodograms</p></li>
+</ul>
+</li>
+<li><p><strong>max_harm_freq</strong> (<em>int, default=None</em>) – Maximum frequency value of the find peaks function
+when harmonic_recurrence or EIMC peaks extraction method is used.</p></li>
+<li><p><strong>EIMC_order</strong> (<em>int, default=3</em>) – Maximum order of the Intermodulation Components.</p></li>
+<li><p><strong>min_IMs</strong> (<em>int, default=2</em>) – Minimal number of Intermodulation Components to select the
+associated pair of peaks.</p></li>
+<li><p><strong>smooth_fft</strong> (<em>int, default=1</em>) – Number used to divide nfft to derive nperseg.
+When set to 1, nperseg = nfft.</p></li>
+<li><p><strong>keep_first_IMF</strong> (<em>boolean, default=False</em>) – When set to True, the first IMF is kept.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List (float)</em>) – List of peaks frequencies.</p></li>
+<li><p><strong>amps</strong> (<em>List (float)</em>) – List of amplitudes associated with peaks frequencies.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.freqs">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">freqs</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.freqs" title="Link to this definition">#</a></dt>
+<dd><p>Vector representing the frequency bins of
+the Power Spectrum Density (PSD)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.psd">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">psd</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.psd" title="Link to this definition">#</a></dt>
+<dd><p>Vector representing the PSD values for each frequency bin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">IMFs</span></span><a class="headerlink" href="#id6" title="Link to this definition">#</a></dt>
+<dd><p>Intrinsic mode functions resulting from decomposing the signal
+with Empirical Mode Decomposition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (nIMFs, numDataPoints)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.IF">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">IF</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.IF" title="Link to this definition">#</a></dt>
+<dd><p>instantaneous frequencies for each IMF.
+Only when ‘HH1D_max’ is used as peaks extraction method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array (nIMFs, numDataPoints)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.all_harmonics">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">all_harmonics</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.all_harmonics" title="Link to this definition">#</a></dt>
+<dd><p>List of all harmonic positions when
+harmonic_recurrence method is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">FREQ_BANDS</span></span><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS" title="Link to this definition">#</a></dt>
+<dd><p>List of frequency bands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of lists (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.compute_resonance">
+<span class="sig-name descname"><span class="pre">compute_resonance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harm_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PPC_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonicity_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmsim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.compute_resonance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.compute_resonance" title="Link to this definition">#</a></dt>
+<dd><p>Compute resonances between pairs of frequency peaks in the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>harm_thresh</strong> (<em>int, default=30</em>) – The minimum harmonic similarity between a peak pair required to be considered a resonance.
+Must be a positive integer.</p></li>
+<li><p><strong>PPC_thresh</strong> (<em>float, default=0.6</em>) – The minimum bispectral power correlation required for a peak pair to be considered a resonance.
+Must be a float between 0 and 1.</p></li>
+<li><p><strong>smooth_fft</strong> (<em>int, default=2</em>) – The number of times to smooth the data using a Hamming window before computing the FFT.
+Must be a positive integer. When smooth_fft=1, nperseg=nfft.</p></li>
+<li><p><strong>harmonicity_metric</strong> (<em>str, default=’harmsim’</em>) – The metric to use for computing the harmonic similarity between a pair of peaks.
+Choose between:</p>
+<ul>
+<li><p>‘harmsim’</p></li>
+<li><p>‘subharm_tension’</p></li>
+</ul>
+</li>
+<li><p><strong>delta_lim</strong> (<em>int, default=50</em>) – The maximum number of subharmonic intervals to consider when using the ‘subharm_tension’ metric.
+Must be a positive integer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[float, List[Tuple[float, float]], List[float], List[float]]</em> – A tuple containing the following elements:</p>
+<ul class="simple">
+<li><p><strong>resonance</strong>: a float representing the mean weighted bicorrelation coefficient across all harmonic pairs that meet the specified criteria for harmonicity and PPC</p></li>
+<li><p><strong>resonant_freqs</strong>: a list of tuples, where each tuple contains two floats representing the frequencies of a pair of resonant harmonics that meet the specified criteria for harmonicity and PPC</p></li>
+<li><p><strong>harm_all</strong>: a list of floats representing the harmonic similarity metric between all possible harmonic pairs</p></li>
+<li><p><strong>bicor_all</strong>: a list of floats representing the bicorrelation coefficient between all possible harmonic pairs</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.listen_scale">
+<span class="sig-name descname"><span class="pre">listen_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fund</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.listen_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.listen_scale" title="Link to this definition">#</a></dt>
+<dd><p>Play a scale of notes using pygame.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>scale</strong> (<em>str or np.ndarray</em>) – The scale to play.
+If <cite>scale</cite> is a string, it can be one of:</p>
+<ul class="simple">
+<li><p>‘peaks’: the scale is set to the biotuner object’s <cite>peaks_ratios</cite> attribute</p></li>
+<li><p>‘diss’: the scale is set to the biotuner object’s <cite>diss_scale</cite> attribute</p></li>
+<li><p>‘HE’: the scale is set to the biotuner object’s <cite>HE_scale</cite> attribute</p></li>
+</ul>
+<p>If <cite>scale</cite> is a numpy array, it should be an array of scale
+ratios.</p>
+</li>
+<li><p><strong>fund</strong> (<em>float, default=250</em>) – The fundamental frequency of the scale.</p></li>
+<li><p><strong>length</strong> (<em>float, default=500</em>) – The length of each note in milliseconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.fit_all">
+<span class="sig-name descname"><span class="pre">fit_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_diss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_HE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_peaks_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.fit_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.fit_all" title="Link to this definition">#</a></dt>
+<dd><p>Fit biotuning metrics to input data using various optional computations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array, shape (n_samples,)</em>) – A single time series of EEG data.</p></li>
+<li><p><strong>compute_diss</strong> (<em>bool, optional, default=True</em>) – If True, compute the dissonance curve.</p></li>
+<li><p><strong>compute_HE</strong> (<em>bool, optional, default=True</em>) – If True, compute the harmonic entropy.</p></li>
+<li><p><strong>compute_peaks_extension</strong> (<em>bool, optional, default=True</em>) – If True, compute the peaks extension using the multi-consonant harmonic fit method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>biotuning</strong> (<em>Biotuning object</em>) – The fitted biotuning object containing the computed metrics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.compute_biotuner.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">whatever</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#compute_biotuner.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.compute_biotuner.info" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.biotuner_object.fit_biotuner">
+<span class="sig-name descname"><span class="pre">fit_biotuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bt_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_object.html#fit_biotuner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_object.fit_biotuner" title="Link to this definition">#</a></dt>
+<dd><p>Compute biotuner metrics on a single time series using a specified set of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ts</strong> (<em>array, shape (n_samples,)</em>) – A single time series of EEG data.</p></li>
+<li><p><strong>bt_dict</strong> (<em>dict</em>) – A dictionary containing the parameters to compute biotuner metrics. See the compute_biotuner and
+tuning_to_metrics functions documentation for details on the required keys and values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>bt_dict</strong> (<em>dict</em>) – The modified input dictionary with the computed biotuner metrics added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">API</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="metrics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Harmonicity Metrics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner"><code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.peaks_extraction"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.peaks_extraction()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.amps"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.amps</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_harm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_bound</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_fit</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.peaks_extension"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.peaks_extension()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_harm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_ratios_inc_fit</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.ratios_extension"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.ratios_extension()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.time_resolved_harmonicity()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_chords"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_chords</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.time_resolved_harmonicity</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.spectro_EMD"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_EMD</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IFs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IFs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IMFs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IMFs</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_spectromorph"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_spectromorph()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_EMD</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.spectro_chords</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_peaks_metrics()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.peaks_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.peaks_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_diss_curve"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_diss_curve()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.diss_scale</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.diss_scale_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.scale_metrics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.scale_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_harmonic_entropy()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.HE_scale</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.HE_scale_cons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.scale_metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.euler_fokker_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.euler_fokker_scale()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.euler_fokker"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.euler_fokker</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.harmonic_tuning()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.harmonic_tuning</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.harmonic_fit_tuning()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.harmonic_fit_tuning</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.pac"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.pac()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.rhythm_construction"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.rhythm_construction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_peaks_ts"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_peaks_ts()</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.freqs"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.freqs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.psd"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.psd</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IMFs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.IF"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.IF</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.all_harmonics"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.all_harmonics</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.self.FREQ_BANDS</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.compute_resonance"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.compute_resonance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.listen_scale"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.listen_scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.fit_all"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.fit_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.compute_biotuner.info"><code class="docutils literal notranslate"><span class="pre">compute_biotuner.info()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_object.fit_biotuner"><code class="docutils literal notranslate"><span class="pre">fit_biotuner()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

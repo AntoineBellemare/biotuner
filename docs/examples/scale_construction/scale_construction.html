@@ -1,0 +1,1407 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Constructing musical tunings with biosignals &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/scale_construction/scale_construction';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Deriving spectral chords from biosignals" href="../spectral_chords/spectral_chords.html" />
+    <link rel="prev" title="Biotuner Toolbox Paper Results Figures" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/scale_construction/scale_construction.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Constructing musical tunings with biosignals</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-content">Table of content</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-peaks-extraction">1. Spectral peaks extraction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-dataset">Load dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-spectral-peaks">Extract spectral peaks</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-tuning-from-peaks-ratios">2. Deriving tuning from peaks ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissonance-curve">3. Dissonance curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-entropy">4. Harmonic entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classical-tuning-creation">5. Classical tuning creation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#euler-fokker-genera">5.1. Euler-Fokker Genera</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-scale">5.2. Harmonic scale</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-harmonic-recurrence">5.2.1. Using harmonic recurrence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-inter-harmonic-concordance">5.2.2. Using inter-harmonic concordance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-from-generator-interval">5.3. Scale from generator interval</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-reduction">6. Scale reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-from-multiple-time-series">7. Scale from multiple time series</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-dissonance-curves">Multiple dissonance curves</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-scale-in-scala-format">8. Exporting scale in scala format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-consonance-matrix-for-a-specific-scale">9. Plotting consonance matrix for a specific scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-scale-metrics">10. Computing scale metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-peaks-ratios">From peaks ratios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-harmonic-entropy-tuning">From harmonic entropy tuning</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-ratios-with-lissajous-curves">11. Visualizing ratios with Lissajous curves</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#listening-to-scales">12. Listening to scales</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="constructing-musical-tunings-with-biosignals">
+<h1>Constructing musical tunings with biosignals<a class="headerlink" href="#constructing-musical-tunings-with-biosignals" title="Link to this heading">#</a></h1>
+<p>This notebook is intended to demonstrate the use of the biotuner for tuning construction. To do so, we will explore how different tuning construction methods developed in the field of music theory can be integrated with electrophysiological signal processing techniques.</p>
+<p>The terms ‘’<em>tuning</em>’’ and ‘’<em>scale</em>’’ will be used interchangeably, referring to a series of ratios that subdivides an octave.</p>
+<section id="table-of-content">
+<h2>Table of content<a class="headerlink" href="#table-of-content" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p>Spectral peaks extraction</p></li>
+<li><p>Deriving tuning from peaks ratios</p></li>
+<li><p>Dissonance curve</p></li>
+<li><p>Harmonic entropy</p></li>
+<li><p>Classical tuning creation</p>
+<p>5.1. Euler-Fokker Genera</p>
+<p>5.2. Harmonic scale</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> 5.2.1. Using harmonic recurrence
+ 5.2.2. Using inter-harmonic concordance
+</pre></div>
+</div>
+</li>
+<li><p>Scale reduction</p></li>
+<li><p>Scale from multiple time series</p></li>
+<li><p>Exporting scale in scala format</p></li>
+<li><p>Plotting consonance matrix for a specific scale</p></li>
+<li><p>Computing scale metrics</p></li>
+<li><p>Visualizing ratios with Lissajous curves</p></li>
+<li><p>Listening to scales</p></li>
+</ol>
+</section>
+<section id="spectral-peaks-extraction">
+<h2>1. Spectral peaks extraction<a class="headerlink" href="#spectral-peaks-extraction" title="Link to this heading">#</a></h2>
+<section id="load-dataset">
+<h3>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytuning.visualizations.scales</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;../data/EEG_example.npy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="extract-spectral-peaks">
+<h3>Extract spectral peaks<a class="headerlink" href="#extract-spectral-peaks" title="Link to this heading">#</a></h3>
+<p>The first step is to initialize the biotuner object by calling <em>compute_biotuner</em> and then applying the method <em>peaks_extraction</em>.</p>
+<p>The <em>peaks_function</em> argument determines how spectral peaks are extracted. Here the ‘fixed’ method is used, where predetermined frequency bands are used to find one spectral peak associated with each band.</p>
+<p>There is no minimum size for time series. However, keep in mind that the minimum frequency that can be observed using spectral decomposition is dependant on the length of your time series. For example, if the sampling frequency equals 1000Hz, time series shorter than 1 second will not allow for peak extraction below 2Hz. Also, note that the <em>precision</em> argument influences the size of the fft and higher precision requires longer time series (e.g. 0.1Hz of precision at 1000Hz of sampling frequency requires 10 seconds of signal).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_biotuner</span>
+<span class="c1"># Define frequency bands for peaks_function = &#39;fixed&#39;</span>
+<span class="n">FREQ_BANDS</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">],</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">]]</span> 
+
+<span class="c1"># Select a single time series</span>
+<span class="n">data_</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Initialize biotuner object</span>
+<span class="n">biotuning</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Extract spectral peaks</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">FREQ_BANDS</span> <span class="o">=</span> <span class="n">FREQ_BANDS</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                          <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">min_harms</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stop</span><span class="o">-</span><span class="n">start</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print the extracted peaks</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 1.5,  5. ,  8. , 13. , 19. , 30.5])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now that we have shown how spectral peaks can be extracted, we will use these peaks as the basis for the organisation of musical structures. We will show how to derive tunings based on the harmonicity of spectral peaks, expressed as the simplicity of their frequency ratios.</p>
+</section>
+</section>
+<section id="deriving-tuning-from-peaks-ratios">
+<h2>2. Deriving tuning from peaks ratios<a class="headerlink" href="#deriving-tuning-from-peaks-ratios" title="Link to this heading">#</a></h2>
+<p>The simpliest way to derive a tuning from spectral peaks is to use their ratios as steps for dividing the octave. An attribute of the biotuner object provides this information.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.0833333333333333,
+ 1.1730769230769231,
+ 1.1875,
+ 1.2708333333333333,
+ 1.3,
+ 1.3333333333333333,
+ 1.4615384615384615,
+ 1.525,
+ 1.5833333333333333,
+ 1.6,
+ 1.605263157894737,
+ 1.625,
+ 1.6666666666666667,
+ 1.9,
+ 1.90625]
+</pre></div>
+</div>
+</div>
+</div>
+<p>You can also derive a tuning from extended peaks ratios as well as from extended peaks ratios with higher consonance levels. Extended peaks correspond to a set of frequencies based on the harmonic congruence of spectral peaks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span>  <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> 
+                          <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.129</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.129</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">extended_peaks_ratios</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.01 1.02 1.03 1.05 1.07 1.08 1.09 1.15 1.17 1.19 1.2  1.23 1.25 1.26
+ 1.27 1.29 1.3  1.31 1.33 1.35 1.37 1.46 1.48 1.5  1.52 1.54 1.56 1.58
+ 1.6  1.61 1.62 1.67 1.7  1.71 1.73 1.83 1.85 1.88 1.9  1.91 1.93 1.98
+ 2.  ]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since the tuning from extended peaks might have a large number of steps, we could keep only the most consonant ratios. To do so, we adjust the ‘scale_cons_limit’ value:</p>
+<p>Comparisons with familiar ratios:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    #Unison-frequency ratio 1:1 yields a value of 2
+    Octave-frequency ratio 2:1 yields a value of 1.5
+    Perfect 5th-frequency ratio 3:2 yields a value of 0.833
+    Perfect 4th-frequency ratio 4:3 yields a value of 0.583
+    Major 6th-frequency ratio 5:3 yields a value of 0.533
+    Major 3rd-frequency ratio 5:4 yields a value of 0.45
+    Minor 3rd-frequency ratio 5:6 yields a value of 0.366
+    Minor 6th-frequency ratio 5:8 yields a value of 0.325
+    Major 2nd-frequency ratio 8:9 yields a value of 0.236
+    Major 7th-frequency ratio 8:15 yields a value of 0.192
+    Minor 7th-frequency ratio 9:16 yields a value of 0.174
+    Minor 2nd-frequency ratio 15:16 yields a value of 0.129
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span>  <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> 
+                          <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.129</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">extended_peaks_ratios_cons</span><span class="p">)</span>
+
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span>  <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> 
+                          <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.236</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">extended_peaks_ratios_cons</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.083 1.125 1.154 1.2   1.231 1.25  1.3   1.333 1.444 1.462 1.5   1.583
+ 1.6   1.625 1.667 1.778 1.875 1.9   2.   ]
+[1.125 1.2   1.25  1.333 1.5   1.6   1.667 2.   ]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dissonance-curve">
+<h2>3. Dissonance curve<a class="headerlink" href="#dissonance-curve" title="Link to this heading">#</a></h2>
+<p>The dissonance curve has been introduced by William Sethares showing how the harmonic structure that constitutes a timbre can be reflected in scale construction, allowing to find tunings that will match the timbral structure. I strongly recommend reading his book <a class="reference external" href="https://sethares.engr.wisc.edu/ttss.html">Tuning, Timbre, Spectrum and Scale</a>.</p>
+<p>The dissonance curve takess as input list of peaks and their associated amplitudes. Since providing less than 6 spectral peaks would lead to less interesting dissonance curve, the method ‘’peaks_extension’’ provides a way to extend the number of peaks based on the harmonic_fit function (see biotuner.py)</p>
+<p>peaks_extension methods:
+[‘harmonic_fit’, ‘consonant’, ‘multi_consonant’, ‘consonant_harmonic_fit’, ‘multi_consonant_harmonic_fit’]</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extend spectral peaks based on their inter-harmonic concordance</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span>  <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> 
+                          <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="c1"># Compute the dissonance curve</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">(</span><span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">input_type</span> <span class="o">=</span> <span class="s1">&#39;extended_peaks&#39;</span><span class="p">,</span> <span class="n">euler_comp</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">max_ratio</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_tet_grid</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/ebcabe4b2b079682230e50eb569b9ba4bb16c138cc8177fb47bc864194fc772d.png" src="../../_images/ebcabe4b2b079682230e50eb569b9ba4bb16c138cc8177fb47bc864194fc772d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dissonance curve metrics:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">scale_metrics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dissonance curve tuning:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">diss_scale</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dissonance curve consonant tuning:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">diss_scale_cons</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dissonance curve metrics: {&#39;diss_euler&#39;: &#39;NaN&#39;, &#39;dissonance&#39;: 5.9114886117207055, &#39;diss_harm_sim&#39;: 14.059883388112603, &#39;diss_n_steps&#39;: 18}
+Dissonance curve tuning: [1.0952380952380953, 1.1538461538461537, 1.1868131868131868, 1.2307692307692308, 1.25, 1.2659574468085106, 1.3, 1.3111111111111111, 1.3333333333333333, 1.3970588235294117, 1.4606741573033708, 1.6, 1.6236559139784945, 1.6666666666666667, 1.8450704225352113, 1.8736842105263158, 1.898989898989899, 2.0]
+Dissonance curve consonant tuning: [1.154 1.231 1.25  1.3   1.333 1.6   1.667 2.   ]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">scale2frac</span>
+
+<span class="c1">### If you want the tuning in fraction</span>
+<span class="n">scale_frac</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">diss_scale</span><span class="p">,</span> <span class="n">maxdenom</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">scale_frac</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[23/21,
+ 15/13,
+ 108/91,
+ 16/13,
+ 5/4,
+ 119/94,
+ 13/10,
+ 59/45,
+ 4/3,
+ 95/68,
+ 130/89,
+ 8/5,
+ 151/93,
+ 5/3,
+ 131/71,
+ 178/95,
+ 188/99,
+ 2]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="harmonic-entropy">
+<h2>4. Harmonic entropy<a class="headerlink" href="#harmonic-entropy" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://en.xen.wiki/w/Harmonic_entropy">Harmonic entropy</a> is a simple model to quantify the extent to which musical chords exhibit various psychoacoustic effects, lumped together in a single construct called psychoacoustic concordance.</p>
+<p>The <em>compute_harmonic_entropy</em> method takes as input a list of ratios.</p>
+<p>If <em>input_type</em> is set to ‘<em>peaks</em>’ or <em>‘extended_peaks’</em>, their ratios will be used.
+Other input types use extended ratios : see biotuner ref.</p>
+<p>‘extended_ratios_inc’  (increments of the ratios in the form of <em>r^1, r^2, r^3, … r^n</em>)</p>
+<p>‘extended_ratios_inc_fit’ (harmonic fit between the ratios increments)</p>
+<p>‘extended_ratios_harm’ (harmonics of the ratios in the form <em>rx1, rx2, rx3, … rxn</em>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize biotuner object, specifying that you want ratios increments and harmonics to be computed</span>
+<span class="n">biotuning</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;harmonic_recurrence&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+                             <span class="n">ratios_inc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ratios_harms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ratios_inc_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Extract spectral peaks</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">FREQ_BANDS</span> <span class="o">=</span> <span class="n">FREQ_BANDS</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                          <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">min_harms</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># compute the extended peaks by finding inter-harmonic concordance.</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span>  <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> 
+                          <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># compute the harmonic entropy curve as a function of extended ratios increments.</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">compute_harmonic_entropy</span><span class="p">(</span><span class="n">input_type</span> <span class="o">=</span> <span class="s1">&#39;extended_ratios_inc&#39;</span><span class="p">,</span> <span class="n">plot_entropy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">octave</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rebound</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                   <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># compute the harmonic entropy curve as a function of extended ratios harmonics.</span>
+<span class="n">biotuning</span><span class="o">.</span><span class="n">compute_harmonic_entropy</span><span class="p">(</span><span class="n">input_type</span> <span class="o">=</span> <span class="s1">&#39;extended_ratios_harms&#39;</span><span class="p">,</span> <span class="n">plot_entropy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">octave</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rebound</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                   <span class="n">scale_cons_limit</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/563ccad74489b3af5fabbe5f78918dbcb0ceb9c111473114a3a2936159ebf476.png" src="../../_images/563ccad74489b3af5fabbe5f78918dbcb0ceb9c111473114a3a2936159ebf476.png" />
+<img alt="../../_images/5f94b935cf9b29c288854c4df7efc116cf765a381425f1d17959d23c94e1c7fd.png" src="../../_images/5f94b935cf9b29c288854c4df7efc116cf765a381425f1d17959d23c94e1c7fd.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Harmonic entropy metrics:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">scale_metrics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Harmonic entropy tuning:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Harmonic entropy consonant tuning:&#39;</span><span class="p">,</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale_cons</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Harmonic entropy metrics: {&#39;HE&#39;: 1.2359532170384886, &#39;HE_n_steps&#39;: 17, &#39;HE_harm_sim&#39;: 3.6470329061635005}
+Harmonic entropy tuning: [1.079 1.099 1.125 1.17  1.202 1.243 1.305 1.33  1.407 1.439 1.506 1.629
+ 1.661 1.779 1.819 1.875 1.9  ]
+Harmonic entropy consonant tuning: [1.125 1.17  1.33  1.875 1.9  ]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you want the tuning in fraction</span>
+<span class="n">scale_frac</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">scale2frac</span> <span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale</span><span class="p">,</span> <span class="n">maxdenom</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_frac</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[41/38, 100/91, 9/8, 117/100, 119/99, 87/70, 77/59, 133/100, 121/86, 59/41, 125/83, 101/62, 98/59, 169/95, 171/94, 15/8, 19/10]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="classical-tuning-creation">
+<h2>5. Classical tuning creation<a class="headerlink" href="#classical-tuning-creation" title="Link to this heading">#</a></h2>
+<p>We will see in this section how to use spectral peaks and their ratios to derive tunings based on Euler-Fokker Genera, Harmonic positions and Generator Intervals</p>
+<section id="euler-fokker-genera">
+<h3>5.1. Euler-Fokker Genera<a class="headerlink" href="#euler-fokker-genera" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Euler%E2%80%93Fokker_genus">Euler-Fokker genera</a> are musical scale in just intonation whose pitches can be expressed as products of some of the members of some multiset of generating prime factors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize biotuner object</span>
+<span class="n">BT_EFG</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;harmonic_recurrence&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                                          <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="n">ratios_n_harms</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ratios_inc_fit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                          <span class="n">ratios_inc</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Extract spectral peaks</span>
+<span class="n">BT_EFG</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Use peaks as generators (using method)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generators :&#39;</span><span class="p">,</span> <span class="n">BT_EFG</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span>
+<span class="n">BT_EFG</span><span class="o">.</span><span class="n">euler_fokker_scale</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Generators : [ 5.   1.5  8.  19.  13. ]
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 65/64, 19/16, 1235/1024, 5/4, 95/64, 13/8, 247/128, 2]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">euler_fokker_scale</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">scale_interval_names</span>
+
+<span class="c1"># compute extended peaks</span>
+<span class="n">BT_EFG</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">harm_function</span> <span class="o">=</span> <span class="s1">&#39;mult&#39;</span><span class="p">,</span> 
+                                       <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">cons_limit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Use extended peaks as generators (using function)</span>
+<span class="n">EFG_scale</span> <span class="o">=</span> <span class="n">euler_fokker_scale</span><span class="p">(</span><span class="n">BT_EFG</span><span class="o">.</span><span class="n">extended_peaks</span><span class="p">)</span>
+
+<span class="c1"># print the scale steps with associated names</span>
+<span class="n">scale_interval_names</span><span class="p">(</span><span class="n">EFG_scale</span><span class="p">,</span> <span class="n">reduce</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[1, &#39;Unison&#39;],
+ [65/64, &#39;Sixty-fifth Harmonic&#39;],
+ [285/256, None],
+ [18525/16384, None],
+ [75/64, &#39;Just Augmented Second&#39;],
+ [19/16, &#39;19th Harmonic&#39;],
+ [4875/4096, None],
+ [1235/1024, None],
+ [5/4, &#39;Just Major Third&#39;],
+ [325/256, None],
+ [1425/1024, None],
+ [92625/65536, None],
+ [375/256, None],
+ [95/64, &#39;Ninety-fifth Harmonic&#39;],
+ [6175/4096, None],
+ [195/128, None],
+ [25/16, &#39;Just Augmented Fifth&#39;],
+ [13/8, &#39;Tridecimal Neutral Sixth&#39;],
+ [7125/4096, None],
+ [3705/2048, None],
+ [475/256, None],
+ [15/8, &#39;Just Major Seventh&#39;],
+ [975/512, None],
+ [247/128, &#39;Two-hundred-forty-seventh Harmonic&#39;],
+ [2, &#39;Octave&#39;]]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="harmonic-scale">
+<h3>5.2. Harmonic scale<a class="headerlink" href="#harmonic-scale" title="Link to this heading">#</a></h3>
+<p>Harmonic scales are constructed by transforming a set of harmonic positions into ratios falling between the unison (1) and the octave (2). For example, using the harmonics 3, 5 and 7 would yields a scale of 1, 1.5, 1.25 and 1.75, since 3/2=1.5, 5/2^2 = 1.25 and 7/2^2 = 1.75</p>
+<section id="using-harmonic-recurrence">
+<h4>5.2.1. Using harmonic recurrence<a class="headerlink" href="#using-harmonic-recurrence" title="Link to this heading">#</a></h4>
+<p>The harmonic recurrence method computes all peaks of the spectrum, and keeps peaks for which a maximum of other peaks are harmonics. This method gives as an ouput the peaks and the positions of congruent harmonics. The <em>max_freq</em> argument determines the maximum frequency that can be choose as a peak. The <em>min_harms</em> argument indicates the minimum number of congruent harmonics to keep the peak.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize biotuner object</span>
+<span class="n">biotuning_harm_peaks</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;harmonic_recurrence&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> 
+
+<span class="c1"># Extract spectral peaks with minimum of 2 recurrent harmonics</span>
+<span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">min_freq</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_harms</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">harm_limit</span> <span class="o">=</span> <span class="mi">128</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">all_harmonics</span><span class="p">)</span>
+
+<span class="c1"># Extract spectral peaks with minimum of 4 recurrent harmonics</span>
+<span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">min_freq</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_harms</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">harm_limit</span> <span class="o">=</span> <span class="mi">128</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">all_harmonics</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[ 5.  7.  8. 15. 16. 20. 22. 23. 25. 26. 27. 28. 34. 35. 38. 42. 45. 50.
+ 59.]
+[ 5.  7.  8. 15. 16. 20. 22. 23. 25. 26. 27. 28. 34. 35. 38. 42. 45. 50.
+ 59.]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">harmonic_tuning</span>
+<span class="c1"># deriving harmonic tuning from recurrent harmonics</span>
+<span class="n">harm_tuning</span> <span class="o">=</span> <span class="n">harmonic_tuning</span><span class="p">(</span><span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">all_harmonics</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">harm_tuning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.0625, 1.09375, 1.1875, 1.25, 1.3125, 1.375, 1.40625, 1.4375, 1.5625, 1.625, 1.6875, 1.75, 1.84375, 1.875, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Instead of using all the harmonics, we can use the harmonic positions of a single peak to generate a tuning</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># find harmonic positions of first peak</span>
+<span class="n">harmonics</span> <span class="o">=</span> <span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">harm_peaks_fit</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># compute harmonic tuning</span>
+<span class="n">harm_peak_tuning</span> <span class="o">=</span> <span class="n">harmonic_tuning</span><span class="p">(</span><span class="n">harmonics</span><span class="p">)</span>
+
+<span class="c1"># print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Harmonics&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">harmonics</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tuning&#39;</span><span class="p">,</span> <span class="n">harm_peak_tuning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Harmonics [7, 8, 28, 34, 38, 42, 45, 50, 59]
+Tuning [1.0625, 1.1875, 1.3125, 1.40625, 1.5625, 1.75, 1.84375, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will now compute the harmonicity metrics associated with the tuning</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">tuning_to_metrics</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">harm_peak_tuning</span><span class="p">)</span>
+<span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\User\anaconda3\envs\biotuner\lib\site-packages\numpy\lib\function_base.py:380: RuntimeWarning: Mean of empty slice.
+  avg = a.mean(axis)
+c:\Users\User\anaconda3\envs\biotuner\lib\site-packages\numpy\core\_methods.py:189: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;sum_p_q&#39;: 328,
+ &#39;sum_distinct_intervals&#39;: 56,
+ &#39;metric_3&#39;: 32.2911680911681,
+ &#39;sum_p_q_for_all_intervals&#39;: 3822,
+ &#39;sum_q_for_all_intervals&#39;: 1576,
+ &#39;harm_sim&#39;: 23.68,
+ &#39;matrix_harm_sim&#39;: 9.586435231987531,
+ &#39;matrix_cons&#39;: 0.1011526968429358,
+ &#39;matrix_denom&#39;: 27.571428571428573}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="using-inter-harmonic-concordance">
+<h4>5.2.2. Using inter-harmonic concordance<a class="headerlink" href="#using-inter-harmonic-concordance" title="Link to this heading">#</a></h4>
+<p>This method constructs the harmonic tuning based on the positions of common harmonics of spectral peaks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize biotuner object</span>
+<span class="n">bt_harm_fit_peaks</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;harmonic_recurrence&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> 
+
+<span class="c1"># Extract spectral peaks with minimum of 2 recurrent harmonics</span>
+<span class="n">bt_harm_fit_peaks</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">min_freq</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_harms</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">harm_limit</span> <span class="o">=</span> <span class="mi">128</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">biotuning_harm_peaks</span><span class="o">.</span><span class="n">all_harmonics</span><span class="p">)</span>
+
+<span class="c1"># Compute the harmonic tuning</span>
+<span class="n">harm_tuning2</span> <span class="o">=</span> <span class="n">bt_harm_fit_peaks</span><span class="o">.</span><span class="n">harmonic_fit_tuning</span><span class="p">(</span><span class="n">n_harm</span> <span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">n_common_harms</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">harm_tuning2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[ 5.  7.  8. 15. 16. 20. 22. 23. 25. 26. 27. 28. 34. 35. 38. 42. 45. 50.
+ 59.]
+[1.015625, 1.1875, 1.21875, 1.25, 1.484375, 1.5, 1.625, 1.78125, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute harmonicity metrics associated with the tuning</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">harm_tuning2</span><span class="p">)</span>
+<span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;sum_p_q&#39;: 521,
+ &#39;sum_distinct_intervals&#39;: 48,
+ &#39;metric_3&#39;: 85.8492780337942,
+ &#39;sum_p_q_for_all_intervals&#39;: 4371,
+ &#39;sum_q_for_all_intervals&#39;: 1809,
+ &#39;harm_sim&#39;: 28.13,
+ &#39;matrix_harm_sim&#39;: 15.746398916629179,
+ &#39;matrix_cons&#39;: 0.1738206861973309,
+ &#39;matrix_denom&#39;: 31.11111111111111}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="scale-from-generator-interval">
+<h2>5.3. Scale from generator interval<a class="headerlink" href="#scale-from-generator-interval" title="Link to this heading">#</a></h2>
+<p>To derive a scale from a generator interval, the first step is to find which interval will be used based on the harmonic structure of the time series. In this example, we will find the most consonant peaks ratio and use it as a generator interval for tuning construction.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">consonant_ratios</span>
+<span class="c1"># Define data (single time series)</span>
+<span class="n">data_gen</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span> 
+
+<span class="c1"># Initialize biotuner object</span>
+<span class="n">bt_gen_int</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;EMD&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">n_harm</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                    <span class="n">ratios_n_harms</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ratios_inc_fit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ratios_inc</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Initialize biotuner object</span>
+
+<span class="c1"># Extract spectral peaks</span>
+<span class="n">bt_gen_int</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_gen</span><span class="p">,</span> <span class="n">FREQ_BANDS</span> <span class="o">=</span> <span class="n">FREQ_BANDS</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Find most consonant peaks ratio</span>
+<span class="n">ratios</span><span class="p">,</span> <span class="n">cons</span> <span class="o">=</span> <span class="n">consonant_ratios</span><span class="p">(</span><span class="n">bt_gen_int</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">input_type</span> <span class="o">=</span> <span class="s1">&#39;peaks&#39;</span><span class="p">,</span> <span class="n">metric</span> <span class="o">=</span> <span class="s1">&#39;harmsim&#39;</span><span class="p">)</span> <span class="c1">#finding the intervals</span>
+<span class="n">ratio_arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span>
+<span class="n">cons_ratio</span> <span class="o">=</span> <span class="n">ratios</span><span class="p">[</span><span class="n">ratio_arg</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\User\anaconda3\envs\biotuner\lib\site-packages\scipy\signal\_spectral_py.py:2014: UserWarning: nperseg = 10000 is greater than input length  = 4000, using nperseg = 4000
+  warnings.warn(&#39;nperseg = {0:d} is greater than input length &#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>The most simple way to derive a scale from a generator interval is to generate an equal temperament tuning, meaning that each step equally spaced on a logarithmic scale. To do so, we take our consonant ratio, and find in how many steps we need to divide the octave to retrieve this ratio within the steps. Then, we generate the NTET with this number of steps.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">NTET_ratios</span><span class="p">,</span> <span class="n">ratio2frac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">oct_subdiv</span>
+
+<span class="c1"># Find potential number of steps to divide the octave</span>
+<span class="n">octdiv</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">oct_subdiv</span><span class="p">(</span><span class="n">cons_ratio</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Consonant ratio :&#39;</span><span class="p">,</span> <span class="n">ratio2frac</span><span class="p">(</span><span class="n">cons_ratio</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Possible octave subdivisions :&#39;</span><span class="p">,</span> <span class="n">octdiv</span><span class="p">)</span>
+
+<span class="c1"># Construct the NTET</span>
+<span class="n">NTET</span> <span class="o">=</span> <span class="n">NTET_ratios</span><span class="p">(</span><span class="n">octdiv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Consonant ratio : [3, 2] 
+Possible octave subdivisions : [12, 53, 106, 159, 200]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The biotuner also provides a function that looks at multiple consonant peaks ratios and find the number of subdivisions that optimize having multiple consonant ratios within the same NTET scale.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">multi_oct_subdiv</span>
+
+<span class="c1"># Find optimal NTET from a series of spectral peaks</span>
+<span class="n">oct_divs</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">multi_oct_subdiv</span><span class="p">(</span>
+                <span class="n">bt_gen_int</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">max_sub</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">octave_limit</span><span class="o">=</span><span class="mf">0.01365</span><span class="p">,</span>
+                <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">n_scales</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">cons_limit</span><span class="o">=</span><span class="mf">0.01</span>
+            <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Optimal NTET divides the octave in </span><span class="si">{}</span><span class="s1"> steps&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oct_divs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimal NTET divides the octave in 37 steps
+</pre></div>
+</div>
+</div>
+</div>
+<p>Another way to create a tuning from a generator interval is by using the “create_equal_interval_scale” from PyTuning toolbox. In the creation of such scale, the generator interval can either be used directly (making each successive tone a generator interval above the previous tone), or in an inverted sense (making each interval a generator down from the previous). This function starts from the unison and walks down the number specified, walking up for the rest of the intervals.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate the tuning</span>
+<span class="n">gen_interval_tuning</span> <span class="o">=</span> <span class="n">pytuning</span><span class="o">.</span><span class="n">scales</span><span class="o">.</span><span class="n">create_equal_interval_scale</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale_size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">number_down_intervals</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">octave</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">gen_interval_tuning</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_interval_tuning</span><span class="p">]</span>
+
+<span class="c1"># Transform the ratios into fractions with controlled maximum denominator.</span>
+<span class="n">frac</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">gen_interval_tuning</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<span class="c1"># Using smaller denominator limit will maximize the chance to find intervalic names in the dictionary</span>
+<span class="n">frac2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">gen_interval_tuning</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_interval_names</span><span class="p">(</span><span class="n">frac</span><span class="p">,</span> <span class="n">reduce</span> <span class="o">=</span> <span class="kc">False</span><span class="p">),</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale_interval_names</span><span class="p">(</span><span class="n">frac2</span><span class="p">,</span> <span class="n">reduce</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[1, &#39;Unison&#39;], [23/22, &#39;Greater 23-limit Semitone&#39;], [59/54, None], [73/64, &#39;Seventy-third Harmonic&#39;], [31/26, None], [43/28, None], [69/43, None], [52/31, None], [107/61, None], [108/59, None], [111/58, None], [2, &#39;Octave&#39;]] 
+
+ [[1, &#39;Unison&#39;], [17/16, &#39;Minor Diatonic Semitone&#39;], [12/11, &#39;3/4-tone&#39;], [8/7, &#39;Septimal Major Second&#39;], [19/16, &#39;19th Harmonic&#39;], [23/15, None], [8/5, &#39;Just Minor Sixth&#39;], [27/16, &#39;Pythagorean Major Sixth&#39;], [7/4, &#39;Septimal Minor Seventh&#39;], [11/6, &#39;Undecimal Neutral Seventh&#39;], [23/12, None], [2, &#39;Octave&#39;]]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="scale-reduction">
+<h2>6. Scale reduction<a class="headerlink" href="#scale-reduction" title="Link to this heading">#</a></h2>
+<p>When a scale has high number of steps, it might be useful to reduce it to a specific number of steps.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">tuning_reduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">dyad_similarity</span>
+
+<span class="c1"># scale reduction based on harmonicity between ratios</span>
+<span class="n">tuning_metric</span><span class="p">,</span> <span class="n">reducted_tuning</span><span class="p">,</span> <span class="n">mode_metric</span> <span class="o">=</span> <span class="n">tuning_reduction</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="n">mode_n_steps</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> 
+                                                            <span class="n">function</span> <span class="o">=</span> <span class="n">dyad_similarity</span><span class="p">,</span> <span class="n">ratio_type</span><span class="o">=</span><span class="s1">&#39;pos_harm&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tuning :&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Tuning harmonicity :&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">tuning_metric</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Mode :&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reducted_tuning</span><span class="p">),</span>
+      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Mode harmonicity :&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">mode_metric</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Tuning : [1.08 1.19 1.3  1.33 1.46 1.58 1.6  1.62 1.67 1.9 ] 
+Tuning harmonicity : 12.46 
+Mode : [1.0833 1.1875 1.5833 1.625 ] 
+Mode harmonicity : 23.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="scale-from-multiple-time-series">
+<h2>7. Scale from multiple time series<a class="headerlink" href="#scale-from-multiple-time-series" title="Link to this heading">#</a></h2>
+<section id="multiple-dissonance-curves">
+<h3>Multiple dissonance curves<a class="headerlink" href="#multiple-dissonance-curves" title="Link to this heading">#</a></h3>
+<p>Multiple time series can be used to compute multiple dissonance curves. The function <em>diss_curve_multi</em> takes a list of list of frequency peaks and amplitudes and gives as output the dissonant minima that are shared by minimally 2 dissonance curves. Here we iterate across <em>n</em> trials to generate multiple dissonance curves. The same process can be done across electrodes to find tunings that are consistent with the harmonic architecture of multiple electrodes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">diss_curve_multi</span>
+<span class="n">n_harm</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">peaks_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">amps_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">+=</span><span class="mi">0</span>
+    <span class="n">data_</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+    <span class="n">diss_tun</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span> <span class="o">=</span> <span class="s1">&#39;EMD&#39;</span><span class="p">,</span> <span class="n">precision</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                        <span class="n">ratios_n_harms</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">ratios_inc_fit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ratios_inc</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># Initialize biotuner object</span>
+    <span class="n">diss_tun</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data_</span><span class="p">,</span> <span class="n">ratios_extension</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">diss_tun</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;harmonic_fit&#39;</span><span class="p">,</span> <span class="n">n_harm</span> <span class="o">=</span> <span class="n">n_harm</span><span class="p">)</span>
+    <span class="n">peaks_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diss_tun</span><span class="o">.</span><span class="n">extended_peaks</span><span class="p">)</span>
+    <span class="n">amps_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diss_tun</span><span class="o">.</span><span class="n">extended_amps</span><span class="p">)</span>
+
+<span class="n">diss_tot</span> <span class="o">=</span> <span class="n">diss_curve_multi</span><span class="p">(</span><span class="n">peaks_tot</span><span class="p">,</span> <span class="n">amps_tot</span><span class="p">,</span> <span class="n">denom</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                            <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">],</span> <span class="n">n_tet_grid</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;Trials&#39;</span><span class="p">)</span>
+<span class="c1">#biotuning.psd.shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7/6
+5/4
+5/4
+4/3
+4/3
+4/3
+7/5
+125/87
+3/2
+3/2
+8/5
+5/3
+5/3
+73/42
+</pre></div>
+</div>
+<img alt="../../_images/7489fff971078cd636df218050325d4449d87c7d3395fc025bf0471130719e6b.png" src="../../_images/7489fff971078cd636df218050325d4449d87c7d3395fc025bf0471130719e6b.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="exporting-scale-in-scala-format">
+<h2>8. Exporting scale in scala format<a class="headerlink" href="#exporting-scale-in-scala-format" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_SCL</span>
+<span class="n">create_SCL</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale</span><span class="p">,</span> <span class="s1">&#39;Harmonic_entropy_scale&#39;</span><span class="p">)</span>
+<span class="n">create_SCL</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="s1">&#39;Peaks_ratios_scale&#39;</span><span class="p">)</span>
+<span class="n">create_SCL</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">extended_peaks_ratios_cons</span><span class="p">,</span> <span class="s1">&#39;consonant_extended_peaks_ratios_scale&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plotting-consonance-matrix-for-a-specific-scale">
+<h2>9. Plotting consonance matrix for a specific scale<a class="headerlink" href="#plotting-consonance-matrix-for-a-specific-scale" title="Link to this heading">#</a></h2>
+<p>The metric_function can be set to:</p>
+<ul class="simple">
+<li><p>None : the denominator of the normalized ratio</p></li>
+<li><p>dyad_similarity : similarity with the harmonic series</p></li>
+<li><p>consonance : (a+b)/(a*b)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pytuning.visualizations.scales</span><span class="w"> </span><span class="kn">import</span> <span class="n">consonance_matrix</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">euler_fokker_scale</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;extended_peaks&#39;</span><span class="p">,</span> <span class="n">octave</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">cons_matrix</span> <span class="o">=</span> <span class="n">consonance_matrix</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">vmin</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;magma_r&#39;</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">cons_matrix_harmsim</span> <span class="o">=</span> <span class="n">consonance_matrix</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">metric_function</span> <span class="o">=</span> <span class="n">dyad_similarity</span><span class="p">,</span>
+                                        <span class="n">vmin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;magma&#39;</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/6717ff2284fece95aa0ea11b22f24df669cc4c6e2fce6a821d2209a1a4422367.png" src="../../_images/6717ff2284fece95aa0ea11b22f24df669cc4c6e2fce6a821d2209a1a4422367.png" />
+<img alt="../../_images/e4438c5ce6b6b538f37997348005c6297760892576a9d947f60fdff1b627ad48.png" src="../../_images/e4438c5ce6b6b538f37997348005c6297760892576a9d947f60fdff1b627ad48.png" />
+</div>
+</div>
+</section>
+<section id="computing-scale-metrics">
+<h2>10. Computing scale metrics<a class="headerlink" href="#computing-scale-metrics" title="Link to this heading">#</a></h2>
+<p>The harmonicity of a scale can be assessed by different metrics.</p>
+<section id="from-peaks-ratios">
+<h3>From peaks ratios<a class="headerlink" href="#from-peaks-ratios" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">tuning_to_metrics</span>
+<span class="n">metrics_peaks</span> <span class="o">=</span> <span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">)</span>
+<span class="n">metrics_peaks</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\User\anaconda3\envs\biotuner\lib\site-packages\numpy\lib\function_base.py:380: RuntimeWarning: Mean of empty slice.
+  avg = a.mean(axis)
+c:\Users\User\anaconda3\envs\biotuner\lib\site-packages\numpy\core\_methods.py:189: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;sum_p_q&#39;: 224,
+ &#39;sum_distinct_intervals&#39;: 70,
+ &#39;metric_3&#39;: 33.4253968253968,
+ &#39;sum_p_q_for_all_intervals&#39;: 7674,
+ &#39;sum_q_for_all_intervals&#39;: 3154,
+ &#39;harm_sim&#39;: 22.98,
+ &#39;matrix_harm_sim&#39;: 12.456712602512198,
+ &#39;matrix_cons&#39;: 0.13646117584806855,
+ &#39;matrix_denom&#39;: 44.13333333333333}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="from-harmonic-entropy-tuning">
+<h3>From harmonic entropy tuning<a class="headerlink" href="#from-harmonic-entropy-tuning" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics_peaks</span> <span class="o">=</span> <span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale</span><span class="p">)</span>
+<span class="n">metrics_peaks</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;sum_p_q&#39;: 25489,
+ &#39;sum_distinct_intervals&#39;: 272,
+ &#39;metric_3&#39;: 66.5888461479233,
+ &#39;sum_p_q_for_all_intervals&#39;: 574184,
+ &#39;sum_q_for_all_intervals&#39;: 269324,
+ &#39;harm_sim&#39;: 3.65,
+ &#39;matrix_harm_sim&#39;: 1.0899513734155513,
+ &#39;matrix_cons&#39;: 0.011536624031893384,
+ &#39;matrix_denom&#39;: 933.9705882352941}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="visualizing-ratios-with-lissajous-curves">
+<h2>11. Visualizing ratios with Lissajous curves<a class="headerlink" href="#visualizing-ratios-with-lissajous-curves" title="Link to this heading">#</a></h2>
+<p>A Lissajous curve is the graph of a system of parametric equations which describe the superposition of two perpendicular oscillations in x and y directions of different angular frequency (a and b). Hence, it allows to visualize ratio (a/b).</p>
+<p>Thanks to https://glowingpython.blogspot.com/2011/12/lissajous-curves.html</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.vizs</span><span class="w"> </span><span class="kn">import</span> <span class="n">lissajous_curves</span>
+<span class="n">tuning</span> <span class="o">=</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">harmonic_fit_tuning</span>
+<span class="n">tuning</span> <span class="o">=</span> <span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span>
+<span class="n">lissajous_curves</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[13/12, 19/16, 13/10, 4/3, 19/13, 19/12, 8/5, 13/8, 5/3, 19/10]
+</pre></div>
+</div>
+<img alt="../../_images/98010d0532a3a3cf354f0af913f3c4c4c308f73408cbf8f80f95f2ac2ede2b71.png" src="../../_images/98010d0532a3a3cf354f0af913f3c4c4c308f73408cbf8f80f95f2ac2ede2b71.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lissajous_curves</span><span class="p">(</span><span class="n">gen_interval_tuning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 209/200, 178/163, 1059/928, 1084/909, 708/461, 1048/653, 909/542, 1183/675, 163/89, 400/209, 2]
+</pre></div>
+</div>
+<img alt="../../_images/ea26a69205b63747b3ca6eb4e5072fd43b30d47988efebe20af71c4f9c485758.png" src="../../_images/ea26a69205b63747b3ca6eb4e5072fd43b30d47988efebe20af71c4f9c485758.png" />
+</div>
+</div>
+</section>
+<section id="listening-to-scales">
+<h2>12. Listening to scales<a class="headerlink" href="#listening-to-scales" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">listen_scale</span>
+<span class="n">listen_scale</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pygame 2.1.2 (SDL 2.0.18, Python 3.8.15)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">listen_scale</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">biotuning</span><span class="o">.</span><span class="n">HE_scale</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">100</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Biotuner Toolbox Paper Results Figures</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../spectral_chords/spectral_chords.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Deriving spectral chords from biosignals</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-content">Table of content</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-peaks-extraction">1. Spectral peaks extraction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-dataset">Load dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-spectral-peaks">Extract spectral peaks</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-tuning-from-peaks-ratios">2. Deriving tuning from peaks ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissonance-curve">3. Dissonance curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-entropy">4. Harmonic entropy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classical-tuning-creation">5. Classical tuning creation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#euler-fokker-genera">5.1. Euler-Fokker Genera</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-scale">5.2. Harmonic scale</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-harmonic-recurrence">5.2.1. Using harmonic recurrence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-inter-harmonic-concordance">5.2.2. Using inter-harmonic concordance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-from-generator-interval">5.3. Scale from generator interval</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-reduction">6. Scale reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scale-from-multiple-time-series">7. Scale from multiple time series</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-dissonance-curves">Multiple dissonance curves</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-scale-in-scala-format">8. Exporting scale in scala format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-consonance-matrix-for-a-specific-scale">9. Plotting consonance matrix for a specific scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-scale-metrics">10. Computing scale metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-peaks-ratios">From peaks ratios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-harmonic-entropy-tuning">From harmonic entropy tuning</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-ratios-with-lissajous-curves">11. Visualizing ratios with Lissajous curves</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#listening-to-scales">12. Listening to scales</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

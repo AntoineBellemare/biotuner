@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Rhythm construction &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/rhythm_construction';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Biotuner utilities" href="utils.html" />
+    <link rel="prev" title="Scale construction" href="scale_construction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Rhythm construction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/rhythm_construction.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Rhythm construction</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.scale2euclid"><code class="docutils literal notranslate"><span class="pre">scale2euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.invert_ratio"><code class="docutils literal notranslate"><span class="pre">invert_ratio()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.binome2euclid"><code class="docutils literal notranslate"><span class="pre">binome2euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.consonant_euclid"><code class="docutils literal notranslate"><span class="pre">consonant_euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.interval_vector"><code class="docutils literal notranslate"><span class="pre">interval_vector()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.bjorklund"><code class="docutils literal notranslate"><span class="pre">bjorklund()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.interval_vec_to_string"><code class="docutils literal notranslate"><span class="pre">interval_vec_to_string()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.euclid_string_to_referent"><code class="docutils literal notranslate"><span class="pre">euclid_string_to_referent()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.euclid_long_to_short"><code class="docutils literal notranslate"><span class="pre">euclid_long_to_short()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.find_optimal_offsets"><code class="docutils literal notranslate"><span class="pre">find_optimal_offsets()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="rhythm-construction">
+<h1>Rhythm construction<a class="headerlink" href="#rhythm-construction" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-biotuner.rhythm_construction">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.scale2euclid">
+<span class="sig-name descname"><span class="pre">scale2euclid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'normal'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#scale2euclid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.scale2euclid" title="Link to this definition">#</a></dt>
+<dd><p>Generate Euclidean rhythms based on a list of scale factors.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>scale</strong> (<em>List of float</em>) – A list of positive floats representing the scale steps.</p></li>
+<li><p><strong>max_denom</strong> (<em>int, default=10</em>) – An integer representing the maximum denominator allowed for the
+fractions generated by scale2frac().</p></li>
+<li><p><strong>mode</strong> (<em>str, default=’normal’</em>) – A string representing the mode of Euclidean rhythms to generate.
+Mode options:</p>
+<blockquote>
+<div><p>‘normal’ : generate rhythms with <cite>num</cite> steps distributed over “denom” beats.
+‘full’ : generate rhythms with all possible combinations</p>
+<blockquote>
+<div><p>of <cite>num</cite> and <cite>denom</cite> for a given <cite>scale</cite>.</p>
+</div></blockquote>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>euclid_patterns</strong> (<em>List of lists</em>) – A list of lists containing the Euclidean rhythms generated
+by the function.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <cite>scale</cite> is not a list of positive floats, or <cite>max_denom</cite> is not
+    an integer.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>max_denom</cite> is not a positive integer.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <cite>scale</cite> parameter is first converted into fractions using the scale2frac()
+function. Euclidean rhythms are then generated based on the <cite>num</cite> and <cite>denom</cite>
+values of the fractions, using the bjorklund() function. If <cite>mode</cite> is set
+to “normal”, the function generates one rhythm for each fraction where
+<cite>denom</cite> is less than or equal to <cite>max_denom</cite>. If <cite>mode</cite> is set to “full”,
+the function generates all possible combinations of <cite>num</cite> and <cite>denom</cite> for
+each fraction where <cite>denom</cite> is less than or equal to <cite>max_denom</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scale2euclid</span><span class="p">([</span><span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">],</span> <span class="n">max_denom</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span>
+<span class="go">[[1, 1, 1, 0], [1, 1, 0], [1, 0, 1, 0, 1, 0, 1]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scale2euclid</span><span class="p">([</span><span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">],</span> <span class="n">max_denom</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+<span class="go">[[1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],</span>
+<span class="go">[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="go">[1, 0, 1, 0, 1, 0], [1, 0, 0, 1, 0, 0],</span>
+<span class="go">[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="go">[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.invert_ratio">
+<span class="sig-name descname"><span class="pre">invert_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_down</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#invert_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.invert_ratio" title="Link to this definition">#</a></dt>
+<dd><p>Inverts a given ratio by dividing 1 by it, then dividing the result by the ratio n_steps_down times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>float</em>) – The ratio to be inverted.</p></li>
+<li><p><strong>n_steps_down</strong> (<em>int</em>) – The number of times to divide the ratio.</p></li>
+<li><p><strong>limit_denom</strong> (<em>int, default=64</em>) – The maximum denominator of the fraction returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple [sp.Rational, float]</em> –</p>
+<ul class="simple">
+<li><p>The resulting fraction after dividing 1 by the ratio and then dividing it n_steps_down times.</p></li>
+<li><p>The resulting float after dividing 1 by the ratio and then dividing it n_steps_down times.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.binome2euclid">
+<span class="sig-name descname"><span class="pre">binome2euclid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binome</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#binome2euclid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.binome2euclid" title="Link to this definition">#</a></dt>
+<dd><p>Convert a set of two ratios to Euclidean rhythms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binome</strong> (<em>list of two floats</em>) – The two ratios to be converted.</p></li>
+<li><p><strong>n_steps_down</strong> (<em>int, default=1</em>) – The number of times to apply the inversion operator.</p></li>
+<li><p><strong>limit_denom</strong> (<em>int, default=64</em>) – The maximum denominator to be used when approximating fractions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<ul class="simple">
+<li><p>the generated Euclidean rhythms</p></li>
+<li><p>the inverted ratios</p></li>
+<li><p>the approximated fractions.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Euclidean rhythms are generated using the bjorklund algorithm, as implemented in the bjorklund function. The
+input ratios are inverted according to the number of steps specified by the n_steps_down parameter. The resulting
+ratios are then used to generate a pair of approximated fractions, which are combined to produce the final
+Euclidean rhythms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.consonant_euclid">
+<span class="sig-name descname"><span class="pre">consonant_euclid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_cons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_denom_final</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#consonant_euclid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.consonant_euclid" title="Link to this definition">#</a></dt>
+<dd><p>Computes Euclidean rhythms and consonant steps between them based on a given scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>list of floats</em>) – Musical scale.</p></li>
+<li><p><strong>n_steps_down</strong> (<em>int, default=2</em>) – The number of steps the Euclidean rhythms is shifted down.</p></li>
+<li><p><strong>limit_denom</strong> (<em>int, default=64</em>) – The upper bound of the denominator of the resulting fractions.</p></li>
+<li><p><strong>limit_cons</strong> (<em>float, default=0.1</em>) – The lower bound of the consonance measure.</p></li>
+<li><p><strong>limit_denom_final</strong> (<em>int, default=16</em>) – The upper bound of the denominator of the final consonant steps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>euclid_final, cons_step</strong> (<em>(list[list], list[int])</em>) – A tuple containing the following elements:
+- List of lists representing the Euclidean rhythms that satisfy the given consonance measure and denominator bounds.
+- List of integers representing the consonant steps between the Euclidean rhythms.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.interval_vector">
+<span class="sig-name descname"><span class="pre">interval_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">euclid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#interval_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.interval_vector" title="Link to this definition">#</a></dt>
+<dd><p>Computes the interval vector for a given Euclidean rhythm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>euclid</strong> (<em>array_like</em>) – A binary array representing a Euclidean rhythm. Must have at least one pulse.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Interval_vector</strong> (<em>numpy.ndarray</em>) – An interval vector as a numpy array.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">euclid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interval_vector</span><span class="p">(</span><span class="n">euclid</span><span class="p">)</span>
+<span class="go">array([1, 2, 1, 2, 1])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">euclid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interval_vector</span><span class="p">(</span><span class="n">euclid</span><span class="p">)</span>
+<span class="go">array([3, 3, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.bjorklund">
+<span class="sig-name descname"><span class="pre">bjorklund</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#bjorklund"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.bjorklund" title="Link to this definition">#</a></dt>
+<dd><p>Generate a Euclidean rhythm pattern using Bjorklund’s algorithm.
+From <a class="github reference external" href="https://github.com/brianhouse/bjorklund">brianhouse/bjorklund</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps</strong> (<em>int</em>) – The number of steps in the pattern.</p></li>
+<li><p><strong>pulses</strong> (<em>int</em>) – The number of pulses in the pattern.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pattern</strong> (<em>numpy.ndarray</em>) – A binary Euclidean rhythm pattern with the specified number of steps and pulses.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <cite>pulses</cite> is greater than <cite>steps</cite>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Generate a Euclidean rhythm pattern with 16 steps and 5 pulses:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bjorklund</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">array([1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.interval_vec_to_string">
+<span class="sig-name descname"><span class="pre">interval_vec_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval_vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#interval_vec_to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.interval_vec_to_string" title="Link to this definition">#</a></dt>
+<dd><p>Convert a list of interval vectors to a list of string representations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>interval_vectors</strong> (<em>list of array_like</em>) – A list of interval vectors, where each interval vector is an array_like object representing
+the number of steps between each hit.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>strings</strong> (<em>list of str</em>) – A list of string representations of the interval vectors, where each string is of the form
+‘E(n,k)’, where n is the number of hits and k is the number of steps.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interval_vectors</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interval_vec_to_string</span><span class="p">(</span><span class="n">interval_vectors</span><span class="p">)</span>
+<span class="go">[&#39;E(5,9)&#39;, &#39;E(3,7)&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.euclid_string_to_referent">
+<span class="sig-name descname"><span class="pre">euclid_string_to_referent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_rhythms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#euclid_string_to_referent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.euclid_string_to_referent" title="Link to this definition">#</a></dt>
+<dd><p>This function takes a list of strings of Euclidean rhythms represented in the E(n,k) format
+and returns a list of their referents in the given dictionary of rhythms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strings</strong> (<em>list of str</em>) – A list of Euclidean rhythms represented as E(n,k) strings.</p></li>
+<li><p><strong>dict_rhythms</strong> (<em>dict</em>) – A dictionary of rhythms where keys are the E(n,k) representation and values are the referents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>referent</strong> (<em>list of str</em>) – A list of the referents of the input rhythms. “None” is used for rhythms not found in the dictionary.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.dictionaries</span><span class="w"> </span><span class="kn">import</span> <span class="n">dict_rhythms</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;E(5,9)&quot;</span><span class="p">,</span> <span class="s2">&quot;E(9,16)&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euclid_string_to_referent</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">dict_rhythms</span><span class="p">)</span>
+<span class="go">[&#39;It is a popular Arabic rhythm called Agsag-Samai. Started on the second onset,</span>
+<span class="go">it is a drum pattern used by the Venda in South Africa, as well as a Rumanian folk-dance rhythm.</span>
+<span class="go">It is also the rhythmic pattern of the Sigaktistos rhythm of Greece,</span>
+<span class="go">and the Samai aktsak rhythm of Turkey. Started on the third onset,</span>
+<span class="go">it is the rhythmic pattern of the Nawahiid rhythm of Turkey.&#39;,</span>
+<span class="go">&#39;It is a rhythm necklace used in the Central African Republic.</span>
+<span class="go">When it is started on the second onset it is a bell pattern of</span>
+<span class="go">the Luba people of Congo. When it is started on the fourth onset</span>
+<span class="go">it is a rhythm played in West and Central Africa, as well as a cow-bell</span>
+<span class="go">pattern in the Brazilian samba. When it is started on the penultimate onset</span>
+<span class="go">it is the bell pattern of the Ngbaka-Maibo rhythms of the Central African Republic.&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.euclid_long_to_short">
+<span class="sig-name descname"><span class="pre">euclid_long_to_short</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#euclid_long_to_short"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.euclid_long_to_short" title="Link to this definition">#</a></dt>
+<dd><p>Converts a long Euclidean rhythm pattern to a short representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pattern</strong> (<em>list of int</em>) – The long Euclidean rhythm pattern, represented as a list of integers
+where 1 represents a hit and 0 represents a rest.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of int</em> – A list with two integers representing the short representation of the
+rhythm. The first integer represents the number of hits in the rhythm
+and the second integer represents the total number of steps.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">euclid_long_to_short</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">[3, 7]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.rhythm_construction.find_optimal_offsets">
+<span class="sig-name descname"><span class="pre">find_optimal_offsets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pulses_steps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/rhythm_construction.html#find_optimal_offsets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.rhythm_construction.find_optimal_offsets" title="Link to this definition">#</a></dt>
+<dd><p>Finds the optimal offset values for a set of Euclidean rhythms that aligns
+multiple pulses from different rhythms together.
+Args:</p>
+<blockquote>
+<div><p>pulses_steps (List[Tuple[int,int]]): A list of tuples, where each tuple
+represent the number of pulses and steps of a rhythm.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List[int]: A list of optimal offset values for the rhythms in pulses_steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="scale_construction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Scale construction</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="utils.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Biotuner utilities</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.scale2euclid"><code class="docutils literal notranslate"><span class="pre">scale2euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.invert_ratio"><code class="docutils literal notranslate"><span class="pre">invert_ratio()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.binome2euclid"><code class="docutils literal notranslate"><span class="pre">binome2euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.consonant_euclid"><code class="docutils literal notranslate"><span class="pre">consonant_euclid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.interval_vector"><code class="docutils literal notranslate"><span class="pre">interval_vector()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.bjorklund"><code class="docutils literal notranslate"><span class="pre">bjorklund()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.interval_vec_to_string"><code class="docutils literal notranslate"><span class="pre">interval_vec_to_string()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.euclid_string_to_referent"><code class="docutils literal notranslate"><span class="pre">euclid_string_to_referent()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.euclid_long_to_short"><code class="docutils literal notranslate"><span class="pre">euclid_long_to_short()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.rhythm_construction.find_optimal_offsets"><code class="docutils literal notranslate"><span class="pre">find_optimal_offsets()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

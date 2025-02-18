@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Harmonic spectrum &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/harmonic_spectrum';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Harmonic connectivity" href="harmonic_connectivity.html" />
+    <link rel="prev" title="Peaks Extension" href="peaks_extension.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Harmonic spectrum</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/harmonic_spectrum.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Harmonic spectrum</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_global_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_global_harmonicity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_phase_values"><code class="docutils literal notranslate"><span class="pre">compute_phase_values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonicity_matrices"><code class="docutils literal notranslate"><span class="pre">harmonicity_matrices()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.PLV_comod"><code class="docutils literal notranslate"><span class="pre">PLV_comod()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_harmonic_power"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_power()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_phase_spectrum"><code class="docutils literal notranslate"><span class="pre">compute_phase_spectrum()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_resonance_values"><code class="docutils literal notranslate"><span class="pre">compute_resonance_values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.find_spectral_peaks"><code class="docutils literal notranslate"><span class="pre">find_spectral_peaks()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_trial_corr()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_freq_corr()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_avg_corr()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="harmonic-spectrum">
+<h1>Harmonic spectrum<a class="headerlink" href="#harmonic-spectrum" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-biotuner.harmonic_spectrum">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.compute_global_harmonicity">
+<span class="sig-name descname"><span class="pre">compute_global_harmonicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_law_remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peaks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmsim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothness_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#compute_global_harmonicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.compute_global_harmonicity" title="Link to this definition">#</a></dt>
+<dd><p>Compute global harmonicity, phase coupling, and resonance spectrum from a signal.</p>
+<p>This function computes the Power Spectral Density (PSD) of the signal, applies power law removal if required,
+calculates the phase matrix, computes dyad similarities and phase couplings for each pairs of frequencies, calculates harmonicity,
+phase coupling and resonance spectrum, identifies spectral peaks, and returns a dataframe summarizing these metrics.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>signal</strong> (<em>array_like</em>) – 1-D input signal.</p></li>
+<li><p><strong>precision_hz</strong> (<em>float</em>) – Frequency precision for computing spectra.</p></li>
+<li><p><strong>fmin</strong> (<em>float, default=1</em>) – Minimum frequency to consider in the spectral analysis.</p></li>
+<li><p><strong>fmax</strong> (<em>float, default=30</em>) – Maximum frequency to consider in the spectral analysis.</p></li>
+<li><p><strong>noverlap</strong> (<em>int, default=1</em>) – Number of points of overlap between segments for PSD computation.</p></li>
+<li><p><strong>fs</strong> (<em>int, default=1000</em>) – Sampling frequency.</p></li>
+<li><p><strong>power_law_remove</strong> (<em>bool, default=False</em>) – If True, applies power law removal to the PSD.</p></li>
+<li><p><strong>n_peaks</strong> (<em>int, default=5</em>) – Number of spectral peaks to identify.</p></li>
+<li><p><strong>metric</strong> (<em>str, default=’harmsim’</em>) – Method for computing dyad similarity.
+Options are:</p>
+<blockquote>
+<div><p>‘harmsim’ : Harmonic similarity
+‘subharm_tension’ : Subharmonic tension</p>
+</div></blockquote>
+</li>
+<li><p><strong>n_harms</strong> (<em>int, default=10</em>) – Number of harmonics to consider in dyad similarity computation.</p></li>
+<li><p><strong>delta_lim</strong> (<em>float, default=0.1</em>) – Limit in ms used when metric is ‘subharm_tension’.</p></li>
+<li><p><strong>min_notes</strong> (<em>int, default=2</em>) – Minimum number of notes for dyad similarity computation.</p></li>
+<li><p><strong>plot</strong> (<em>bool, default=False</em>) – If True, plots the resulting spectra.</p></li>
+<li><p><strong>smoothness</strong> (<em>int, default=1</em>) – Smoothing factor applied to the PSD before computing spectra.</p></li>
+<li><p><strong>smoothness_harm</strong> (<em>int, default=1</em>) – Smoothing factor applied to harmonicity values.</p></li>
+<li><p><strong>save</strong> (<em>bool, default=False</em>) – If True, saves the plot as a .png file.</p></li>
+<li><p><strong>savename</strong> (<em>str, default=’’</em>) – Name for the saved plot file.</p></li>
+<li><p><strong>phase_mode</strong> (<em>str, default=None</em>) – Method for weighting phase coupling computation. Options are ‘weighted’ and ‘None’.</p></li>
+<li><p><strong>normalize</strong> (<em>bool, default=True</em>) – If True, normalize the harmonicity and phase coupling values
+by dividing by the total power.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – A DataFrame containing computed harmonicity, phase coupling, and resonance values, spectral flatness,
+entropy, Higushi Fractal Dimension, and spectral spread for each of the three spectra (harmonicity,
+phase coupling, resonance). Also includes average values and maximum values for these metrics, peak frequencies
+for each spectrum, and ‘harmsim’ values for peak frequencies.</p></li>
+<li><p><strong>harmonicity_matrix</strong> (<em>ndarray</em>) – The harmonicity matrix of the signal, which corresponds to the power x power comodulogram weighted by dyad similarity.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.compute_phase_values">
+<span class="sig-name descname"><span class="pre">compute_phase_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#compute_phase_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.compute_phase_values" title="Link to this definition">#</a></dt>
+<dd><p>Compute the phase matrix of a signal using the Short-Time Fourier Transform (STFT).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal</strong> (<em>ndarray</em>) – Input signal.</p></li>
+<li><p><strong>precision_hz</strong> (<em>float</em>) – Frequency precision.</p></li>
+<li><p><strong>fs</strong> (<em>int</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>noverlap</strong> (<em>int</em>) – The number of points of overlap between blocks.</p></li>
+<li><p><strong>smoothness</strong> (<em>float</em>) – A parameter for smoothing the signal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ndarray</em> – The phase matrix of the signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.harmonicity_matrices">
+<span class="sig-name descname"><span class="pre">harmonicity_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmsim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#harmonicity_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.harmonicity_matrices" title="Link to this definition">#</a></dt>
+<dd><p>Compute harmonicity matrix of frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Array of frequencies.</p></li>
+<li><p><strong>metric</strong> (<em>str, optional</em>) – The metric to compute dyad similarity. Default is ‘harmsim’.</p></li>
+<li><p><strong>n_harms</strong> (<em>int, optional</em>) – The number of harmonics. Default is 5.</p></li>
+<li><p><strong>delta_lim</strong> (<em>int, optional</em>) – The delta limit. Default is 150.</p></li>
+<li><p><strong>min_notes</strong> (<em>int, optional</em>) – The minimum number of notes. Default is 2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of ndarrays</em> – The harmonicity and the phase coupling matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.PLV_comod">
+<span class="sig-name descname"><span class="pre">PLV_comod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#PLV_comod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.PLV_comod" title="Link to this definition">#</a></dt>
+<dd><p>Compute the phase coupling matrix of frequencies.
+The phase coupling metric is the Phase Locking Value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>phase</strong> (<em>ndarray</em>) – The phase vector of fft.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of ndarrays</em> – The harmonicity and the phase coupling matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.compute_harmonic_power">
+<span class="sig-name descname"><span class="pre">compute_harmonic_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dyad_similarities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd_clean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#compute_harmonic_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.compute_harmonic_power" title="Link to this definition">#</a></dt>
+<dd><p>Compute harmonicity values and phase coupling values for each frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Array of frequencies.</p></li>
+<li><p><strong>dyad_similarities</strong> (<em>ndarray</em>) – Dyad similarities matrix.</p></li>
+<li><p><strong>psd_clean</strong> (<em>ndarray</em>) – The cleaned Power Spectral Density (PSD).</p></li>
+<li><p><strong>normalize</strong> (<em>bool, default=True</em>) – If True, normalize the harmonicity values
+by dividing by the total power.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of ndarrays</em> – The harmonicity values and the harmonicity matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.compute_phase_spectrum">
+<span class="sig-name descname"><span class="pre">compute_phase_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_coupling_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd_clean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#compute_phase_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.compute_phase_spectrum" title="Link to this definition">#</a></dt>
+<dd><p>Compute harmonicity values and phase coupling values for each frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Array of frequencies.</p></li>
+<li><p><strong>phase_coupling_matrix</strong> (<em>ndarray</em>) – The phase coupling matrix.</p></li>
+<li><p><strong>psd_clean</strong> (<em>ndarray</em>) – The cleaned Power Spectral Density (PSD).</p></li>
+<li><p><strong>phase_matrix</strong> (<em>ndarray</em>) – The phase matrix of the signal.</p></li>
+<li><p><strong>normalize</strong> (<em>bool, default=True</em>) – If True, normalize the phase coupling values
+by dividing by the total power.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of ndarrays</em> – The harmonicity values and the phase coupling values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.compute_resonance_values">
+<span class="sig-name descname"><span class="pre">compute_resonance_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harmonicity_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_coupling_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#compute_resonance_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.compute_resonance_values" title="Link to this definition">#</a></dt>
+<dd><p>Compute resonance values from harmonicity and phase coupling values.
+Resonance values are computed as the product of harmonicity and phase coupling values
+normalized between 0 and 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>harmonicity_values</strong> (<em>ndarray</em>) – Harmonicity values for each frequency.</p></li>
+<li><p><strong>phase_coupling_values</strong> (<em>ndarray</em>) – Phase coupling values for each frequency.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ndarray</em> – Resonance values for each frequency.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.find_spectral_peaks">
+<span class="sig-name descname"><span class="pre">find_spectral_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prominence_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#find_spectral_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.find_spectral_peaks" title="Link to this definition">#</a></dt>
+<dd><p>Identify the prominent spectral peaks in a frequency spectrum.</p>
+<p>This function uses the peak prominence to select the most notable peaks,
+and returns their frequencies and indices. Prominence is a measure of how
+much a peak stands out due to its intrinsic height and its location relative
+to other peaks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>array_like</em>) – 1-D array of values for the frequency spectrum.</p></li>
+<li><p><strong>freqs</strong> (<em>array_like</em>) – 1-D array of frequencies corresponding to the values in ‘values’.</p></li>
+<li><p><strong>n_peaks</strong> (<em>int</em>) – The number of top prominent peaks to return.</p></li>
+<li><p><strong>prominence_threshold</strong> (<em>float, default=0.5</em>) – The minimum prominence a peak must have to be considered notable.
+Peaks with a prominence less than this value will be ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>peak_frequencies</strong> (<em>ndarray</em>) – Frequencies of the ‘n_peaks’ most prominent peaks.</p></li>
+<li><p><strong>prominent_peaks</strong> (<em>ndarray</em>) – Indices in ‘values’ and ‘freqs’ of the ‘n_peaks’ most prominent peaks.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.find_peaks</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.peak_prominences</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">110</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_spectral_peaks</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">(array([60, 40, 80]), array([5, 3, 7]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.harmonic_entropy">
+<span class="sig-name descname"><span class="pre">harmonic_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonicity_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_coupling_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resonance_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#harmonic_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.harmonic_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Compute spectral features and Higuchi Fractal Dimension of Harmonicity, Phase Coupling, and Resonance spectra.</p>
+<p>This function calculates several spectral properties: flatness, entropy, spread, and Higuchi Fractal Dimension
+for three input spectra: Harmonicity, Phase Coupling, and Resonance. Results are returned as a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>array_like</em>) – 1-D array of frequencies common for all the spectra.</p></li>
+<li><p><strong>harmonicity_values</strong> (<em>array_like</em>) – 1-D array of spectral values for the Harmonicity spectrum.</p></li>
+<li><p><strong>phase_coupling_values</strong> (<em>array_like</em>) – 1-D array of spectral values for the Phase Coupling spectrum.</p></li>
+<li><p><strong>resonance_values</strong> (<em>array_like</em>) – 1-D array of spectral values for the Resonance spectrum.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>harmonic_complexity</strong> (<em>DataFrame</em>) – A pandas DataFrame with spectral flatness, entropy, spread, and Higuchi Fractal Dimension
+for each of the Harmonicity, Phase Coupling, and Resonance spectra.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.stats.mstats.gmean</span></code></dt><dd><p>Used to compute spectral flatness.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.stats.entropy</span></code></dt><dd><p>Used to compute spectral entropy.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.simps</span></code></dt><dd><p>Used to compute spectral spread.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">nolds.hfd</span></code></dt><dd><p>Used to compute Higuchi Fractal Dimension</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr">
+<span class="sig-name descname"><span class="pre">harmonic_spectrum_plot_trial_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_all_rnd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brain</span> <span class="pre">Signals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Random</span> <span class="pre">Signals'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#harmonic_spectrum_plot_trial_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr">
+<span class="sig-name descname"><span class="pre">harmonic_spectrum_plot_freq_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_phase_coupling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brain</span> <span class="pre">Signals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Random</span> <span class="pre">Signals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#harmonic_spectrum_plot_freq_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr">
+<span class="sig-name descname"><span class="pre">harmonic_spectrum_plot_avg_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Brain</span> <span class="pre">Signals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Random</span> <span class="pre">Signals'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/harmonic_spectrum.html#harmonic_spectrum_plot_avg_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="peaks_extension.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Peaks Extension</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="harmonic_connectivity.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Harmonic connectivity</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_global_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_global_harmonicity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_phase_values"><code class="docutils literal notranslate"><span class="pre">compute_phase_values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonicity_matrices"><code class="docutils literal notranslate"><span class="pre">harmonicity_matrices()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.PLV_comod"><code class="docutils literal notranslate"><span class="pre">PLV_comod()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_harmonic_power"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_power()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_phase_spectrum"><code class="docutils literal notranslate"><span class="pre">compute_phase_spectrum()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.compute_resonance_values"><code class="docutils literal notranslate"><span class="pre">compute_resonance_values()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.find_spectral_peaks"><code class="docutils literal notranslate"><span class="pre">find_spectral_peaks()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_trial_corr()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_freq_corr()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_avg_corr()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

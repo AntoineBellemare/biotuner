@@ -1,0 +1,1179 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Biotuner Paper Design and Implementation Examples &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/toolbox_paper_notebook/toolbox_paper_notebook';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Biotuner Toolbox Paper Results Figures" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html" />
+    <link rel="prev" title="From Spectral Peaks to Harmonic Spectrum Analysis" href="../harmonic_spectrum/harmonic_spectrum.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/toolbox_paper_notebook/toolbox_paper_notebook.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Biotuner Paper Design and Implementation Examples</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-comparative-analysis-of-different-metrics-evaluated-across-frequency-pairs-from-unison-to-octave">Figure 2. Comparative analysis of different metrics evaluated across frequency pairs from unison to octave.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-3-pairs-correlation-matrix-for-sets-of-2-peaks">Figure 3 (pairs). Correlation Matrix for sets of 2 peaks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-3-triplets-correlation-matrix-for-sets-of-3-peaks">Figure 3 (triplets). Correlation Matrix for sets of 3 peaks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-4-time-resolved-harmonicity-using-instantaneous-frequencies-for-three-different-types-of-signals">Figure 4. Time-Resolved Harmonicity using instantaneous frequencies for three different types of signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-5-identification-of-spectral-chords-using-time-resolved-harmonicity">Figure 5. Identification of spectral chords using time-resolved harmonicity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-6-comparison-of-normalized-dissonance-and-harmonic-entropy-across-different-sets-of-harmonics">Figure 6. Comparison of Normalized Dissonance and Harmonic Entropy Across Different Sets of Harmonics.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-8-visualization-of-euclidean-rhythms-with-varying-maximal-denominators">Figure 8. Visualization of Euclidean rhythms with varying maximal denominators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-8-harmonic-spectrum">Figure 8. Harmonic Spectrum</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biotuner-paper-design-and-implementation-examples">
+<h1>Biotuner Paper Design and Implementation Examples<a class="headerlink" href="#biotuner-paper-design-and-implementation-examples" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>neurodsp
+<span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_combined</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_interp_spline</span><span class="p">,</span> <span class="n">BSpline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_signal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_biotuner</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Looking in indexes: https://pypi.org/simple, https://pypi.ngc.nvidia.com
+Requirement already satisfied: neurodsp in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (2.2.1)
+Requirement already satisfied: numpy in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from neurodsp) (2.0.2)
+Requirement already satisfied: scipy in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from neurodsp) (1.14.1)
+Requirement already satisfied: matplotlib in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from neurodsp) (3.10.0)
+Requirement already satisfied: contourpy&gt;=1.0.1 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (1.3.1)
+Requirement already satisfied: cycler&gt;=0.10 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (4.55.3)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (1.4.7)
+Requirement already satisfied: packaging&gt;=20.0 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (24.2)
+Requirement already satisfied: pillow&gt;=8 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (11.0.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (3.2.0)
+Requirement already satisfied: python-dateutil&gt;=2.7 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from matplotlib-&gt;neurodsp) (2.9.0.post0)
+Requirement already satisfied: six&gt;=1.5 in c:\users\antoine\anaconda3\envs\biotuner\lib\site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib-&gt;neurodsp) (1.17.0)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\Antoine\anaconda3\envs\biotuner\Lib\site-packages\IPython\utils\_process_win32.py:124: ResourceWarning: unclosed file &lt;_io.BufferedWriter name=3&gt;
+  return process_handler(cmd, _system_body)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+c:\Users\Antoine\anaconda3\envs\biotuner\Lib\site-packages\IPython\utils\_process_win32.py:124: ResourceWarning: unclosed file &lt;_io.BufferedReader name=4&gt;
+  return process_handler(cmd, _system_body)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+c:\Users\Antoine\anaconda3\envs\biotuner\Lib\site-packages\IPython\utils\_process_win32.py:124: ResourceWarning: unclosed file &lt;_io.BufferedReader name=5&gt;
+  return process_handler(cmd, _system_body)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+</pre></div>
+</div>
+</div>
+</div>
+<section id="figure-2-comparative-analysis-of-different-metrics-evaluated-across-frequency-pairs-from-unison-to-octave">
+<h2>Figure 2. Comparative analysis of different metrics evaluated across frequency pairs from unison to octave.<a class="headerlink" href="#figure-2-comparative-analysis-of-different-metrics-evaluated-across-frequency-pairs-from-unison-to-octave" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate all pairs of values with 0.1 precision between 1 and 10</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">10.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span><span class="p">]</span>
+<span class="n">cons_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">tenney_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">harmsim_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">subharm_tension_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">subharm_tension2_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">euler_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">int_tenney_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">peaks</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">peaks_ratios</span> <span class="o">=</span> <span class="n">compute_peak_ratios</span><span class="p">(</span>
+            <span class="n">peaks</span><span class="p">,</span> <span class="n">rebound</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">cons</span> <span class="o">=</span> <span class="n">consonance_peaks</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">tenney</span> <span class="o">=</span> <span class="n">tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">int_tenney</span> <span class="o">=</span> <span class="n">integral_tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">harmsim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">ratios2harmsim</span><span class="p">(</span><span class="n">peaks_ratios</span><span class="p">))</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span>
+                                                       <span class="mi">5</span><span class="p">,</span>
+                                                       <span class="mi">50</span><span class="p">,</span>
+                                                       <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span>
+                                                        <span class="mi">20</span><span class="p">,</span>
+                                                        <span class="mi">50</span><span class="p">,</span>
+                                                        <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">subharm_tension</span> <span class="o">=</span> <span class="n">subharm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">peaks_euler</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+    <span class="n">euler_</span> <span class="o">=</span> <span class="n">euler</span><span class="p">(</span><span class="o">*</span><span class="n">peaks_euler</span><span class="p">)</span>
+    <span class="n">cons_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span>
+    <span class="n">tenney_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tenney</span><span class="p">)</span>
+    <span class="n">harmsim_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">harmsim</span><span class="p">)</span>
+    <span class="n">subharm_tension_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subharm_tension</span><span class="p">)</span>
+    <span class="n">subharm_tension2_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subharm2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">int_tenney_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">int_tenney</span><span class="p">)</span>
+    <span class="c1">#print(&#39;SUBHARM TENSION: &#39;, subharm2[0])</span>
+    <span class="n">euler_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">euler_</span><span class="p">)</span>
+    
+<span class="c1"># create a dataframe with all the values</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;cons&#39;</span><span class="p">:</span> <span class="n">cons_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;tenney&#39;</span><span class="p">:</span> <span class="n">tenney_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;int_tenney&#39;</span><span class="p">:</span> <span class="n">int_tenney_tot</span><span class="p">,</span> <span class="c1"># &#39;int_tenney&#39;: int_tenney_tot,</span>
+                   <span class="s1">&#39;harmsim&#39;</span><span class="p">:</span> <span class="n">harmsim_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;subharm_tension&#39;</span><span class="p">:</span> <span class="n">subharm_tension_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;subharm_tension2&#39;</span><span class="p">:</span> <span class="n">subharm_tension2_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;euler&#39;</span><span class="p">:</span> <span class="n">euler_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;freq_pairs&#39;</span><span class="p">:</span> <span class="n">pairs</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\users\antoine\github\biotuner\biotuner\metrics.py:946: RuntimeWarning: divide by zero encountered in scalar divide
+  harm_temp.append(1 / delta_norm)
+c:\Users\Antoine\anaconda3\envs\goofi-pipe\lib\site-packages\numpy\lib\function_base.py:520: RuntimeWarning: Mean of empty slice.
+  avg = a.mean(axis, **keepdims_kw)
+c:\Users\Antoine\anaconda3\envs\goofi-pipe\lib\site-packages\numpy\core\_methods.py:129: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># remove warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="c1"># Assuming &#39;data&#39; is a DataFrame with the required columns</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># Ensure &#39;freq_pairs&#39; is a single-level index and of type string</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;freq_pairs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;freq_pairs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+<span class="c1"># Drop NaN values in &#39;freq_pairs&#39; or other columns</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;freq_pairs&#39;</span><span class="p">])</span>
+
+<span class="c1"># Take the first 50 pairs for simplicity</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">50</span><span class="p">]</span>
+
+<span class="c1"># Set up the plots</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>  <span class="c1"># Adjust size as needed</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Comparison of Musical Metrics Across Frequency Pairs&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a colormap for consistent gradient</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Normalize data for color scaling</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_colors</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+
+<span class="c1"># Plotting each metric with gradient colors</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tenney&#39;</span><span class="p">,</span> <span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="s1">&#39;cons&#39;</span><span class="p">,</span> <span class="s1">&#39;euler&#39;</span><span class="p">,</span> <span class="s1">&#39;subharm_tension&#39;</span><span class="p">,</span> <span class="s1">&#39;subharm_tension2&#39;</span><span class="p">]</span>
+<span class="n">titles</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Tenney Height&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Harmonic Similarity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Consonance&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Euler&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Subharmonic Tension (harms=5)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Subharmonic Tension (harms=20)&#39;</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">titles</span><span class="p">):</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">get_colors</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span>  <span class="c1"># Generate colors based on metric values</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;freq_pairs&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;unison&#39;</span><span class="p">,</span> <span class="s1">&#39;octave&#39;</span><span class="p">])</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.8</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="c1"># Save figure</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;metrics_comparison_fixed_gradient.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/8d246b737a3092190c29a8d818d2a3692451b73a1b0a07026c0523ebdf82bf58.png" src="../../_images/8d246b737a3092190c29a8d818d2a3692451b73a1b0a07026c0523ebdf82bf58.png" />
+</div>
+</div>
+</section>
+<section id="figure-3-pairs-correlation-matrix-for-sets-of-2-peaks">
+<h2>Figure 3 (pairs). Correlation Matrix for sets of 2 peaks<a class="headerlink" href="#figure-3-pairs-correlation-matrix-for-sets-of-2-peaks" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="c1"># remove frequency pairs</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;freq_pairs&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Compute the correlation matrix</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+<span class="c1"># Round the values for readability</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Drop specific rows and columns</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;int_tenney&#39;</span><span class="p">,</span> <span class="s1">&#39;subharm_tension2&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;int_tenney&#39;</span><span class="p">,</span> <span class="s1">&#39;subharm_tension2&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="c1"># Ensure no duplicates and correct data type</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">corr</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(),</span> <span class="o">~</span><span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># Plot heatmap</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span>
+    <span class="n">corr</span><span class="p">,</span>
+    <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">,</span>
+    <span class="n">xticklabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">yticklabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Correlation Coefficient&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;correlation_matrix_pairs.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b97a591b3935db4c3bf93a2f476d69d4e690ab6ccd57367739677c9daea03ad5.png" src="../../_images/b97a591b3935db4c3bf93a2f476d69d4e690ab6ccd57367739677c9daea03ad5.png" />
+</div>
+</div>
+</section>
+<section id="figure-3-triplets-correlation-matrix-for-sets-of-3-peaks">
+<h2>Figure 3 (triplets). Correlation Matrix for sets of 3 peaks<a class="headerlink" href="#figure-3-triplets-correlation-matrix-for-sets-of-3-peaks" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="c1"># Generate all triplets of values with 0.1 precision between 1 and 10</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">triplets</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">!=</span> <span class="n">z</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">z</span><span class="p">]</span>
+<span class="c1"># select 8190 triplets randomly</span>
+<span class="n">triplets</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">triplets</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">cons_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">tenney_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">harmsim_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">subharm_tension_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">euler_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">peaks</span> <span class="ow">in</span> <span class="n">triplets</span><span class="p">:</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">peaks_ratios</span> <span class="o">=</span> <span class="n">compute_peak_ratios</span><span class="p">(</span>
+            <span class="n">peaks</span><span class="p">,</span> <span class="n">rebound</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">cons</span> <span class="o">=</span> <span class="n">consonance_peaks</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">tenney</span> <span class="o">=</span> <span class="n">tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">harmsim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">ratios2harmsim</span><span class="p">(</span><span class="n">peaks_ratios</span><span class="p">))</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span>
+                                                       <span class="mi">10</span><span class="p">,</span>
+                                                       <span class="mi">200</span><span class="p">,</span>
+                                                       <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">subharm_tension</span> <span class="o">=</span> <span class="n">subharm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">peaks_euler</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+    <span class="n">euler_</span> <span class="o">=</span> <span class="n">euler</span><span class="p">(</span><span class="o">*</span><span class="n">peaks_euler</span><span class="p">)</span>
+    <span class="n">cons_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span>
+    <span class="n">tenney_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tenney</span><span class="p">)</span>
+    <span class="n">harmsim_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">harmsim</span><span class="p">)</span>
+    <span class="n">subharm_tension_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subharm_tension</span><span class="p">)</span>
+    <span class="n">euler_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">euler_</span><span class="p">)</span>
+    
+<span class="c1"># create a dataframe with all the values</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;cons&#39;</span><span class="p">:</span> <span class="n">cons_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;tenney&#39;</span><span class="p">:</span> <span class="n">tenney_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;harmsim&#39;</span><span class="p">:</span> <span class="n">harmsim_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;subharm_tension&#39;</span><span class="p">:</span> <span class="n">subharm_tension_tot</span><span class="p">,</span>
+                   <span class="s1">&#39;euler&#39;</span><span class="p">:</span> <span class="n">euler_tot</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># print correlation matrix using seaborn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="c1"># list symetric cmap</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="s1">&#39;coolwarm&#39;</span><span class="p">,</span> <span class="s1">&#39;bwr&#39;</span><span class="p">,</span> <span class="s1">&#39;seismic&#39;</span><span class="p">]</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> 
+            <span class="n">xticklabels</span><span class="o">=</span><span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">yticklabels</span><span class="o">=</span><span class="n">corr</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">)</span>
+<span class="c1"># make text bigger</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.3</span><span class="p">)</span>
+
+<span class="c1"># make the plot style nicer</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;correlation_matrix_triplets.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/370ac526ddc25d89b5138ed8aa75c928b9ce5145b58b271022e8ea7f257cc88c.png" src="../../_images/370ac526ddc25d89b5138ed8aa75c928b9ce5145b58b271022e8ea7f257cc88c.png" />
+</div>
+</div>
+</section>
+<section id="figure-4-time-resolved-harmonicity-using-instantaneous-frequencies-for-three-different-types-of-signals">
+<h2>Figure 4. Time-Resolved Harmonicity using instantaneous frequencies for three different types of signals<a class="headerlink" href="#figure-4-time-resolved-harmonicity-using-instantaneous-frequencies-for-three-different-types-of-signals" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">hilbert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyEMD</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMD</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">dyad_similarity</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_harmonic_signal</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="n">amplitudes</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">):</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sampling_rate</span> <span class="o">*</span> <span class="n">duration</span><span class="p">))</span>
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">amp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="k">for</span> <span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="n">amplitudes</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">signal</span>
+
+<span class="c1"># Simulate a signal</span>
+<span class="n">sampling_rate</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># in Hz</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># in seconds</span>
+<span class="n">frequencies</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>  <span class="c1"># in Hz</span>
+<span class="n">amplitudes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+
+<span class="n">time</span><span class="p">,</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">simulate_harmonic_signal</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="n">amplitudes</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
+
+<span class="n">time</span><span class="p">,</span> <span class="n">signal2</span> <span class="o">=</span> <span class="n">simulate_harmonic_signal</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mf">15.7</span><span class="p">,</span> <span class="mf">21.9</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
+
+
+<span class="c1"># create random signal</span>
+<span class="n">signal3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+
+<span class="n">signals</span> <span class="o">=</span> <span class="p">[</span><span class="n">signal</span><span class="p">,</span> <span class="n">signal2</span><span class="p">,</span> <span class="n">signal3</span><span class="p">]</span>
+
+<span class="n">dyad_sim_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">dyad_sim_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">IFs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">chords_all</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">chords_pos_all</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
+    <span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;EMD_fast&#39;</span><span class="p">)</span>
+    <span class="n">tr_harm</span><span class="p">,</span> <span class="n">chords</span><span class="p">,</span> <span class="n">chords_pos</span> <span class="o">=</span> <span class="n">bt</span><span class="o">.</span><span class="n">time_resolved_harmonicity</span><span class="p">(</span><span class="n">nIMFs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="s1">&#39;SpectralCentroid&#39;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">keep_first_IMF</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">limit_cons</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">min_notes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">IFs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">spectro_EMD</span><span class="p">)</span>
+    <span class="n">chords_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chords</span><span class="p">)</span>
+    <span class="n">chords_pos_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chords_pos</span><span class="p">)</span>
+    <span class="n">dyad_sim_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr_harm</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dyad similarity: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dyad_sim_tot</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">]</span>
+<span class="c1"># create a figure with 3 subplots</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>  <span class="c1"># Adjust size as needed</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Dyad Similarity Across Time&#39;</span><span class="p">)</span>
+<span class="c1"># set white background</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="c1"># use dyad_sim_tot to derive time</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dyad_sim_tot</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="c1"># Plotting each metric in a separate subplot</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dyad_sim_tot</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Harmonic Signal&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dyad_sim_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Non-Harmonic Signal&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dyad_sim_tot</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Random Signal&#39;</span><span class="p">)</span>
+<span class="c1">#axs[0].set_yscale(&#39;log&#39;)</span>
+<span class="c1">#axs[1].set_yscale(&#39;log&#39;)</span>
+<span class="c1">#axs[2].set_yscale(&#39;log&#39;)</span>
+<span class="c1"># Formatting</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axs</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+    <span class="c1"># remove xlabel</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Dyad Similarity&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>  <span class="c1"># Rotate x-axis labels for readability</span>
+    <span class="c1"># set ylim to 0-35</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+    <span class="c1"># make the plot style nicer</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+    <span class="c1"># log y-axis</span>
+<span class="c1"># set x-axis title only for the last subplot</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+    
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1">#plt.savefig(&#39;time_resolved_example_centroid.png&#39;, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 1800)
+(4, 1800)
+(4, 1800)
+Dyad similarity:  (3, 1800)
+</pre></div>
+</div>
+<img alt="../../_images/3b836e86652ef855f6827d235bd06b52838db612c890748aa9c04f0c6f956a3a.png" src="../../_images/3b836e86652ef855f6827d235bd06b52838db612c890748aa9c04f0c6f956a3a.png" />
+</div>
+</div>
+</section>
+<section id="figure-5-identification-of-spectral-chords-using-time-resolved-harmonicity">
+<h2>Figure 5. Identification of spectral chords using time-resolved harmonicity<a class="headerlink" href="#figure-5-identification-of-spectral-chords-using-time-resolved-harmonicity" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Assuming IFs, chords_pos_all, and chords_all are defined elsewhere in your code</span>
+
+<span class="n">final_IFs</span> <span class="o">=</span> <span class="n">IFs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">final_chord_pos</span> <span class="o">=</span> <span class="n">chords_pos_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">final_chords</span> <span class="o">=</span> <span class="n">chords_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># plot final IFs with seaborn lineplot</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># Swap axes</span>
+<span class="n">final_IFs</span> <span class="o">=</span> <span class="n">final_IFs</span><span class="o">.</span><span class="n">T</span>
+
+<span class="c1"># Define colors</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;deeppink&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;darkturquoise&#39;</span><span class="p">]</span>
+
+<span class="c1"># Create line plot with different colors for each line but same linestyle</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">final_IFs</span><span class="p">,</span> <span class="n">dashes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># Set axis labels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (ms)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add vertical lines for chord positions (which are indexes of the IFs)</span>
+<span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">final_chord_pos</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get the lines from the axes to create custom handles for the legend</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
+
+<span class="c1"># Create custom handles for the legend</span>
+<span class="n">custom_handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+
+<span class="c1"># Create custom labels for the legend</span>
+<span class="n">custom_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IMF1&#39;</span><span class="p">,</span> <span class="s1">&#39;IMF2&#39;</span><span class="p">,</span> <span class="s1">&#39;IMF3&#39;</span><span class="p">,</span> <span class="s1">&#39;IMF4&#39;</span><span class="p">]</span>
+
+<span class="c1"># Set the legend with custom handles and labels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">custom_handles</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">custom_labels</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;IMFs&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="c1">#plt.savefig(&#39;spectro_EMD_example.png&#39;, dpi=300)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div>
+</div>
+<img alt="../../_images/0446d33a6f2b3cc08c0ddd681a89600de70dd7a6eb12f1b5678236dd6abca871.png" src="../../_images/0446d33a6f2b3cc08c0ddd681a89600de70dd7a6eb12f1b5678236dd6abca871.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Frequency to note mapping</span>
+<span class="n">A4</span> <span class="o">=</span> <span class="mi">440</span>
+<span class="n">C0</span> <span class="o">=</span> <span class="n">A4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.75</span><span class="p">)</span>
+<span class="n">note_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;C#&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;D#&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A#&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">freq_to_note</span><span class="p">(</span><span class="n">frequency</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert a frequency to a musical note name. &quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">frequency</span> <span class="o">/</span> <span class="n">C0</span><span class="p">))</span>
+    <span class="n">octave</span> <span class="o">=</span> <span class="n">h</span> <span class="o">//</span> <span class="mi">12</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">12</span>
+    <span class="k">return</span> <span class="n">note_names</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">octave</span><span class="p">)</span>
+
+<span class="c1"># Your sets of frequencies</span>
+<span class="n">freq_sets</span> <span class="o">=</span> <span class="n">final_chords</span>
+<span class="c1"># shift all freqs by factor 4</span>
+<span class="n">freq_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="o">*</span><span class="mi">8</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">freq</span><span class="p">]</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freq_sets</span><span class="p">]</span>
+
+<span class="c1"># Convert each set of frequencies to notes</span>
+<span class="n">chords</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">freq_set</span> <span class="ow">in</span> <span class="n">freq_sets</span><span class="p">:</span>
+    <span class="n">chord</span> <span class="o">=</span> <span class="p">[</span><span class="n">freq_to_note</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">freq_set</span><span class="p">]</span>
+    <span class="n">chords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chord</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chords (in note names):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chords</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chord </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chord</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># convert note from Hz to MIDI</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">freq_to_midi</span><span class="p">(</span><span class="n">frequency</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert a frequency to a MIDI note number. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">69</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">frequency</span> <span class="o">/</span> <span class="n">A4</span><span class="p">)</span>
+
+<span class="c1"># Your sets of frequencies</span>
+<span class="n">MIDI_set</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">freq_set</span> <span class="ow">in</span> <span class="n">freq_sets</span><span class="p">:</span>
+    <span class="n">MIDI_set</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">freq_to_midi</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">freq_set</span><span class="p">])</span>
+    
+<span class="c1"># generate a simple MIDI file with the chords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mido</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">MidiFile</span><span class="p">,</span> <span class="n">MidiTrack</span>
+
+<span class="n">mid</span> <span class="o">=</span> <span class="n">MidiFile</span><span class="p">()</span>
+<span class="n">track</span> <span class="o">=</span> <span class="n">MidiTrack</span><span class="p">()</span>
+<span class="n">mid</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+
+<span class="c1"># Add a track name and tempo. The first argument to Message is the MIDI event type, and the remaining arguments are data.</span>
+<span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;program_change&#39;</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># Add notes. The first argument is the MIDI note number, and the second argument is the note duration in beats.</span>
+<span class="k">for</span> <span class="n">chord</span> <span class="ow">in</span> <span class="n">MIDI_set</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">chord</span><span class="p">:</span>
+        <span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_on&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">note</span><span class="p">),</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">chord</span><span class="p">:</span>
+        <span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_off&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">note</span><span class="p">),</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+        
+<span class="c1"># Save the MIDI file</span>
+<span class="n">mid</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;example.mid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Chords (in note names):
+Chord 1: G#3, C5, C6, C7
+Chord 2: E4, A4, D#6, F#7
+Chord 3: D4, F4, C6, C7
+Chord 4: D#4, E4, C#6, C#7
+Chord 5: G#3, A4, A5, C7
+Chord 6: G3, G4, A5, C7
+Chord 7: D#4, D#5, D#6, D#7
+Chord 8: E3, C5, D6, D7
+Chord 9: A3, C#5, C#6, F7
+Chord 10: F3, F4, C6, B6
+Chord 11: F3, F#4, A#5, C7
+Chord 12: D#3, D4, A5, B6
+Chord 13: A3, G4, D#6, C#7
+Chord 14: F3, F4, C6, B6
+Chord 15: G3, G4, C#6, C#7
+Chord 16: D#4, D5, C6, C#7
+Chord 17: G#3, G#3, G5, C#7
+Chord 18: A#3, D#5, D#6, C#7
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="figure-6-comparison-of-normalized-dissonance-and-harmonic-entropy-across-different-sets-of-harmonics">
+<h2>Figure 6. Comparison of Normalized Dissonance and Harmonic Entropy Across Different Sets of Harmonics.<a class="headerlink" href="#figure-6-comparison-of-normalized-dissonance-and-harmonic-entropy-across-different-sets-of-harmonics" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming the functions diss_curve and harmonic_entropy are pre-defined and accessible</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.scale_construction</span><span class="w"> </span><span class="kn">import</span> <span class="n">diss_curve</span><span class="p">,</span> <span class="n">harmonic_entropy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_peak_ratios</span><span class="p">,</span> <span class="n">ratios_increments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.peaks_extension</span><span class="w"> </span><span class="kn">import</span> <span class="n">harmonic_fit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.vizs</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_diss_curve</span><span class="p">,</span> <span class="n">plot_harm_entropy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">argrelextrema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="c1"># Set the style of seaborn</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+
+<span class="n">peaks_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;10&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="s1">&#39;15&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span>
+    <span class="s1">&#39;20&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+<span class="p">}</span>
+<span class="c1"># Create subplots with shared x-axis</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Set2&quot;</span><span class="p">,</span> <span class="n">n_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="c1"># Plotting the dissonance curves for each dictionary</span>
+<span class="n">plot_diss_curve</span><span class="p">(</span><span class="n">peaks_dict</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">HE_scale</span> <span class="o">=</span> <span class="n">plot_harm_entropy</span><span class="p">(</span><span class="n">peaks_dict</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># add letter a and b to the subplots</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mf">0.09</span><span class="p">,</span> <span class="mf">1.07</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mf">0.09</span><span class="p">,</span> <span class="mf">1.07</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency Ratio&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="c1"># replace xticks with ratios names</span>
+<span class="n">ticks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.66</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span>
+<span class="c1"># add black vertical lines for the ratios</span>
+<span class="k">for</span> <span class="n">ratio</span> <span class="ow">in</span> <span class="n">ticks</span><span class="p">:</span>
+    <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;Unison (1/1)&#39;</span><span class="p">,</span> <span class="s1">&#39;5/4&#39;</span><span class="p">,</span><span class="s1">&#39;4/3&#39;</span><span class="p">,</span> <span class="s1">&#39;Fifth (3/2)&#39;</span><span class="p">,</span> <span class="s1">&#39;5/3&#39;</span><span class="p">,</span> <span class="s1">&#39;7/4&#39;</span><span class="p">,</span> <span class="s1">&#39;Octave&#39;</span><span class="p">])</span>
+<span class="c1"># remove horizontal grid lines only</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="c1"># remove vertical grid lines</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="c1">#plt.savefig(&#39;dissonance_curves_harmonic_entropyX.png&#39;, dpi=300)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/f0d6546a4f147efc6222471bed5b68fdd133336e5227ea461378b796849532e0.png" src="../../_images/f0d6546a4f147efc6222471bed5b68fdd133336e5227ea461378b796849532e0.png" />
+</div>
+</div>
+</section>
+<section id="figure-8-visualization-of-euclidean-rhythms-with-varying-maximal-denominators">
+<h2>Figure 8. Visualization of Euclidean rhythms with varying maximal denominators<a class="headerlink" href="#figure-8-visualization-of-euclidean-rhythms-with-varying-maximal-denominators" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="n">max_denoms</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+<span class="c1"># create signal with harmonics 10, 20 and 30 Hz</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mf">13.33</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">26.66</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># add noise</span>
+<span class="n">signal</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">max_denom</span> <span class="ow">in</span> <span class="n">max_denoms</span><span class="p">:</span>
+    <span class="c1"># Create a BioTuner object</span>
+    <span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;EMD&#39;</span><span class="p">)</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">signal</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">41</span><span class="p">,</span> <span class="n">prominence</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">identify_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="c1"># print the peaks</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">bt</span><span class="o">.</span><span class="n">rhythm_construction</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;peaks_ratios&#39;</span><span class="p">,</span> <span class="n">optimal_offsets</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_denom</span><span class="o">=</span><span class="n">max_denom</span><span class="p">)</span>
+    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 1 peaks were removed because they exceeded the maximum frequency of 41 Hz
+[ 9.5 17.  19.1]
+</pre></div>
+</div>
+<img alt="../../_images/b4e2cc6a1d3fea073213bc85711b13df6627cdc85cadf732e687be43970b0562.png" src="../../_images/b4e2cc6a1d3fea073213bc85711b13df6627cdc85cadf732e687be43970b0562.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 1 peaks were removed because they exceeded the maximum frequency of 41 Hz
+[ 9.5 17.  19.1]
+</pre></div>
+</div>
+<img alt="../../_images/91814457e383e1b5663a9bb895199dfccba009a52293012a9d1e54a81131eb85.png" src="../../_images/91814457e383e1b5663a9bb895199dfccba009a52293012a9d1e54a81131eb85.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 1 peaks were removed because they exceeded the maximum frequency of 41 Hz
+[ 9.5 17.  19.1]
+</pre></div>
+</div>
+<img alt="../../_images/5483f839737491acb753f38e01b3204185be9b6a29c31478497f5d0aece32e6d.png" src="../../_images/5483f839737491acb753f38e01b3204185be9b6a29c31478497f5d0aece32e6d.png" />
+</div>
+</div>
+</section>
+<section id="figure-8-harmonic-spectrum">
+<h2>Figure 8. Harmonic Spectrum<a class="headerlink" href="#figure-8-harmonic-spectrum" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_global_harmonicity</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># generate a signal with peaks at 10, 20 and 30 Hz</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># add 10% of noise</span>
+<span class="n">signal</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+
+<span class="c1"># generate a white noise signal</span>
+<span class="n">pink_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+
+<span class="n">harm_spectrum_df</span> <span class="o">=</span> <span class="n">compute_global_harmonicity</span><span class="p">(</span><span class="n">pink_noise</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                             <span class="n">noverlap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power_law_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                             <span class="n">smoothness</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="n">delta_lim</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">smoothness_harm</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                                             <span class="n">n_harms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">phase_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b56c60486d0f2a3f525f555449eeedbf04898d9df3d61c11d34b7c52501f53d6.png" src="../../_images/b56c60486d0f2a3f525f555449eeedbf04898d9df3d61c11d34b7c52501f53d6.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../harmonic_spectrum/harmonic_spectrum.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">From Spectral Peaks to Harmonic Spectrum Analysis</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Biotuner Toolbox Paper Results Figures</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-comparative-analysis-of-different-metrics-evaluated-across-frequency-pairs-from-unison-to-octave">Figure 2. Comparative analysis of different metrics evaluated across frequency pairs from unison to octave.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-3-pairs-correlation-matrix-for-sets-of-2-peaks">Figure 3 (pairs). Correlation Matrix for sets of 2 peaks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-3-triplets-correlation-matrix-for-sets-of-3-peaks">Figure 3 (triplets). Correlation Matrix for sets of 3 peaks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-4-time-resolved-harmonicity-using-instantaneous-frequencies-for-three-different-types-of-signals">Figure 4. Time-Resolved Harmonicity using instantaneous frequencies for three different types of signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-5-identification-of-spectral-chords-using-time-resolved-harmonicity">Figure 5. Identification of spectral chords using time-resolved harmonicity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-6-comparison-of-normalized-dissonance-and-harmonic-entropy-across-different-sets-of-harmonics">Figure 6. Comparison of Normalized Dissonance and Harmonic Entropy Across Different Sets of Harmonics.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-8-visualization-of-euclidean-rhythms-with-varying-maximal-denominators">Figure 8. Visualization of Euclidean rhythms with varying maximal denominators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-8-harmonic-spectrum">Figure 8. Harmonic Spectrum</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

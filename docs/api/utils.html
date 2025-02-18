@@ -1,0 +1,1491 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Biotuner utilities &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=baac2cea"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/utils';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Rhythm construction" href="rhythm_construction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Biotuner utilities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/utils.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Biotuner utilities</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biotuner-utilities">
+<h1>Biotuner utilities<a class="headerlink" href="#biotuner-utilities" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">compute_peak_ratios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rebound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#compute_peak_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>This function calculates all the ratios</dt><dd><p>(with the possibility to bound them between 1 and 2)
+derived from input peaks.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List (float)</em>) – Peaks represent local maximum in a spectrum</p></li>
+<li><p><strong>rebound</strong> (<em>boolean</em>) – Defaults to True. False will output unbounded ratios</p></li>
+<li><p><strong>octave</strong> (<em>int</em>) – Arbitrary wanted number of octaves. Defaults to 2.</p></li>
+<li><p><strong>sub</strong> (<em>boolean</em>) – Defaults to False. True will include ratios below the unison (1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ratios_final</strong> (<em>List</em>) – List of frequency ratios.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">scale2frac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdenom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#scale2frac"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Transforms a scale provided as a list of floats into a list of fractions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>List</em>) – List of floats, typically between 1 and 2, representing scale steps.</p></li>
+<li><p><strong>maxdenom</strong> (<em>int</em>) – Maximum denominator of the output fractions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>scale_frac</strong> (<em>List</em>) – List of fractions representing scale steps.</p></li>
+<li><p><strong>num</strong> (<em>array</em>) – Numerators of all fractions.</p></li>
+<li><p><strong>den</strong> (<em>array</em>) – Denominators of all fractions.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ratio2frac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdenom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#ratio2frac"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Trasform a ratio expressed as a float in to a fraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>float</em>) – Frequency ratio, typically between 1 and 2.</p></li>
+<li><p><strong>maxdenom</strong> (<em>type</em>) – Maximum denominator of the output fractions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>frac</strong> (<em>List</em>) – List of 2 int (numerator and denominator).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">frac2scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#frac2scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Transforms a scale expressed in fractions</dt><dd><p>into a set of float ratios.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – List of fractions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scale_ratio</strong> (<em>List</em>) – Original scale expressed in float ratios.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">chords_to_ratios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harm_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#chords_to_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Transforms series of frequencies expressed in float</dt><dd><p>into series of integer ratios.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chords</strong> (<em>List of lists</em>) – Each sublist corresponds to a series of frequencies
+expressed in float.</p></li>
+<li><p><strong>harm_limit</strong> (<em>int</em>) – Defaults to 2
+Maximum harmonic of the lower note below which the higher note
+should fall.</p></li>
+<li><p><strong>spread</strong> (<em>Boolean</em>) – Defaults to True.
+When set to True, the harm_limit is applied to the previous note.
+When set to False, the harm_limit is applied to the first note.
+When harm_limit == 2, setting the spread to False will contain the
+chords within the span of one octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>chords_ratios</strong> (<em>List of lists</em>) – List of chords expressed as integer ratios.</p></li>
+<li><p><strong>chords_ratios_bounded</strong> (<em>List of lists</em>) – List of chords expressed as integer ratios and bounded between 1 and 2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">NTET_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">octave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NTET</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#NTET_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>This function computes the ratio associated with a specific step</dt><dd><p>of a N-TET scale.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>octave</strong> (<em>int</em>) – value of the octave</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – value of the step</p></li>
+<li><p><strong>NTET</strong> (<em>int</em>) – number of steps in the N-TET scale</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>answer</strong> (<em>float</em>) – Step value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">NTET_ratios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#NTET_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generate a series of ratios dividing the octave in N equal steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_steps</strong> (<em>int</em>) – Number of steps dividing the octave.</p></li>
+<li><p><strong>max_ratio</strong> (<em>type</em>) – Description of parameter <cite>max_ratio</cite>.</p></li>
+<li><p><strong>octave</strong> (<em>float</em>) – Defaults to 2.
+Value of the octave (period).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>steps_out</strong> (<em>List</em>) – List of steps in decimal numbers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">scale_from_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#scale_from_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Transforms each pairs of frequencies to ratios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pairs</strong> (<em>List of lists</em>) – Each sublist is a pair of frequencies.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scale</strong> (<em>List</em>) – Scale steps.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ratios_harmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#ratios_harmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Computes the harmonics of ratios in the form of r*n when</dt><dd><p>r is the ratio expressed as a float and n is the integer
+representing the harmonic position.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>List</em>) – List of ratios expressed as float.</p></li>
+<li><p><strong>n_harms</strong> (<em>int</em>) – Number of harmonics to compute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ratios_harms</strong> (<em>List</em>) – List of original ratios and their harmonics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ratios_increments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_inc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#ratios_increments"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Computes the harmonics of ratios in the form of r**n when</dt><dd><p>r is the ratio expressed as a float and n is the integer
+representing the increment (e.g. stacking ratios).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>type</em>) – Description of parameter <cite>ratios</cite>.</p></li>
+<li><p><strong>n_inc</strong> (<em>type</em>) – Description of parameter <cite>n_inc</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ratios_harms</strong> (<em>List</em>) – List of original ratios and their harmonics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ratios2cents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#ratios2cents"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Converts a list of frequency ratios to cents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ratios</strong> (<em>List (float)</em>) – List of frequency ratios</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cents</strong> (<em>List (float)</em>) – List of corresponding cents</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ratio_to_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#ratio_to_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>This function returns the name of a ratio in the form of a fraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ratio</strong> (<em>float</em>) – Frequency ratio</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>name</strong> (<em>str</em>) – Name of the ratio</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Flattens a list of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>List of lists</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List</em> – Flattened list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">findsubsets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#findsubsets"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Find all subsets of m elements in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>S</strong> (<em>List</em>) – List to find subsets in.</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Number of elements in each subset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List of lists</em> – Each sublist represents a subset of the original list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">pairs_most_frequent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#pairs_most_frequent"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Finds the most frequent values in a list of lists of pairs of numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pairs</strong> (<em>List of lists</em>) – Each sublist should be a pair of values.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of most frequent pairs to keep.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List of lists</em> – First sublist corresponds to most frequent first values.
+Second sublist corresponds to most frequent second values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rebound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#rebound"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Rescale a value within given range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – Value to rebound.</p></li>
+<li><p><strong>low</strong> (<em>int</em>) – Lower bound. Defaults to 1.</p></li>
+<li><p><strong>high</strong> (<em>int</em>) – Higher bound. Defaults to 2.</p></li>
+<li><p><strong>octave</strong> (<em>int</em>) – Value of an octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>float</em>) – Input value rescaled between low and high values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rebound_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#rebound_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Rescale a list within given range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em>) – List to rebound.</p></li>
+<li><p><strong>low</strong> (<em>int</em>) – Lower bound. Defaults to 1.</p></li>
+<li><p><strong>high</strong> (<em>int</em>) – Higher bound. Defaults to 2.</p></li>
+<li><p><strong>octave</strong> (<em>int</em>) – Value of an octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>list</em>) – Rescaled list between low and high values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">sum_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#sum_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Compute the sum of a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list</strong> (<em>list</em>) – List of values to sum.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sum</strong> (<em>float</em>) – Sum of the list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">compareLists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#compareLists"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Find elements that are closest than bounds value from</dt><dd><p>two lists.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list1</strong> (<em>list</em>) – First list.</p></li>
+<li><p><strong>list2</strong> (<em>list</em>) – Second list.</p></li>
+<li><p><strong>bounds</strong> (<em>float</em>) – Maximum value between two elements to assume equivalence.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>matching</strong> (<em>array</em>) – Elements that match between the two list (average value of the two
+close elements).</p></li>
+<li><p><strong>positions</strong> (<em>list</em>) – All indexes of the selected elements combined in one list.</p></li>
+<li><p><strong>matching_pos</strong> (<em>array (n_matching, 3)</em>) – For each matching, a list of the value and the positions
+in list1 and list2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Print3Smallest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#Print3Smallest"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">top_n_indexes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#top_n_indexes"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Find the index pairs of maximum values in a 2d array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray(i, j)</em>) – 2d array.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of index pairs to return.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>indexes</strong> (<em>List of tuples</em>) – Each tuple contains the 2 indexes associated with higest values
+of the input array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">getPairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#getPairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Extract all possible pairs of elements from a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>peaks</strong> (<em>List</em>) – List of values.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> (<em>List of lists</em>) – Each sublist corresponds to a pair of value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">nth_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#nth_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>This function computes the nth root of a number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num</strong> (<em>int</em>) – value of the octave</p></li>
+<li><p><strong>root</strong> (<em>int</em>) – number of steps in the N-TET scale</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>answer</strong> (<em>float</em>) – nth root.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">gcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numbers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#gcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the greatest common divisor of the given integers
+The result will have the same sign as the last number given (so that
+when the last number is divided by the result, the result comes out
+positive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*numbers</strong> (<em>List</em>) – List of numbers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>a</strong> (<em>float</em>) – Greated common divisor of the input numbers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">reduced_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numbers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#reduced_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Return a tuple of numbers which is the reduced form of the input,</dt><dd><p>which is a list of integers. Ex: [4, 8, 12, 80] -&gt; [1, 2, 3, 20]</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*numbers</strong> (<em>list (float)</em>) – List of numbers to reduce.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>reduce</strong> (<em>list (int)</em>) – Reduced form of the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">lcm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numbers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#lcm"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the least common multiple of the given integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*numbers</strong> (<em>list (float)</em>) – List of numbers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lcm_</strong> (<em>int</em>) – Least common multiple of the input numbers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">prime_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#prime_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Return a list of the prime factors of the integer n.</dt><dd><p>Don’t use this for big numbers; it’s a dumb brute-force method.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Integer to factorize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>factors</strong> (<em>list</em>) – List of prime factors of n.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">prime_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#prime_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Find the prime number in a list of n numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>type</em>) – Description of parameter <cite>n</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>type</em> – Description of returned object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">contFrac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#contFrac"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Compute the continuous fraction of a value x for k steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – Value to decompose.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Number of steps to go through.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cf</strong> (<em>list</em>) – List of denominators (1/cf[0] + 1/cf[1] … +1/cf[k]).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">compute_IMs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#compute_IMs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>InterModulation components: sum or subtraction of any non-zero integer
+multiple of the input frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f1</strong> (<em>float</em>) – Frequency 1.</p></li>
+<li><p><strong>f2</strong> (<em>float</em>) – Frequency 2.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Order of the intermodulation component.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>IMs</strong> (<em>List</em>) – List of all intermodulation components.</p></li>
+<li><p><strong>order</strong> (<em>List</em>) – Order associated with IMs.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">IMs</span><span class="p">,</span> <span class="n">order</span> <span class="o">=</span> <span class="n">compute_IMs</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">IMs</span><span class="p">,</span> <span class="n">order</span>
+<span class="go">([9, 15, 21, 27, 6, 18, 30],</span>
+<span class="go">[(1, 1), (1, 1), (1, 2), (1, 2), (2, 1), (2, 1), (2, 2)])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">phaseScrambleTS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#phaseScrambleTS"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Returns a TS: original TS power is preserved; TS phase is shuffled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ts</strong> (<em>1d array (numDataPoints, )</em>) – Oriinal time series.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tsr</strong> (<em>array (numDataPoints)</em>) – Phase scrabled time series.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">AAFT_surrogates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#AAFT_surrogates"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Return surrogates using the amplitude adjusted Fourier transform</dt><dd><p>method.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>original_data</strong> (<em>2D array (data, index)</em>) – The original time series.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>rescaled_data</strong> (<em>2D array (surrogate, index)</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">correlated_noise_surrogates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#correlated_noise_surrogates"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return Fourier surrogates.</p>
+<p>Generate surrogates by Fourier transforming the <code class="xref py py-attr docutils literal notranslate"><span class="pre">original_data</span></code>
+time series (assumed to be real valued), randomizing the phases and
+then applying an inverse Fourier transform. Correlated noise surrogates
+share their power spectrum and autocorrelation function with the
+original_data time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>original_data</strong> (<em>2D array (data, index)</em>) – The original time series.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>surrogates</strong> (<em>2D array (surrogate, index)</em>) – Surrogates of the original time series.</p></li>
+<li><p><em>.. note::</em> – The amplitudes are not adjusted here, i.e., the
+individual amplitude distributions are not conserved!</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">UnivariateSurrogatesTFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MaxIter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#UnivariateSurrogatesTFT"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Compute Truncated Fourier Transform of the input data.</dt><dd><p>from: <a class="github reference external" href="https://github.com/narayanps/NolinearTimeSeriesAnalysis/blob/">narayanps/NolinearTimeSeriesAnalysis</a>
+master/SurrogateModule.py</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_f</strong> (<em>array</em>) – Original signal.</p></li>
+<li><p><strong>MaxIter</strong> (<em>int</em>) – Defaults to 1.
+Maximum number of iterations.</p></li>
+<li><p><strong>fc</strong> (<em>int</em>) – Defaults to 5.
+Description of parameter <cite>fc</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xsur</strong> (<em>array</em>) – Surrogate of the original signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">computeFeatureCl_new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">afAudioData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cFeatureName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#computeFeatureCl_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate spectromorphological metrics on time series.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>afAudioData</strong> (<em>array (numDataPoints, )</em>) – Input signal.</p></li>
+<li><p><strong>cFeatureName</strong> (<em>str</em>) –</p>
+<dl class="simple">
+<dt>{‘SpectralCentroid’, ‘SpectralCrestFactor’, ‘SpectralDecrease’,</dt><dd><p>‘SpectralFlatness’, ‘SpectralFlux’, ‘SpectralKurtosis’,
+‘SpectralMfccs’, ‘SpectralPitchChroma’, ‘SpectralRolloff’,
+‘SpectralSkewness’, ‘SpectralSlope’, ‘SpectralSpread’,
+‘SpectralTonalPowerRatio’, ‘TimeAcfCoeff’, ‘TimeMaxAcf’,
+‘TimePeakEnvelope’, ‘TimeRms’, ‘TimeStd’, ‘TimeZeroCrossingRate’}</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>f_s</strong> (<em>int</em>) – Sampling frequency.</p></li>
+<li><p><strong>window</strong> (<em>int</em>) – Length of the moving window in samples.</p></li>
+<li><p><strong>overlap</strong> (<em>int</em>) – Overlap between each moving window in samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>v</strong> (<em>array</em>) – Vector of the spectromorphological metric.</p></li>
+<li><p><strong>t</strong> (<em>array</em>) – Timestamps.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">EMD_to_spectromorph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IMFs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SpectralCentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#EMD_to_spectromorph"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Calculate spectromorphological metrics on intrinsic mode functions</dt><dd><p>derived using Empirical Mode Decomposition.</p>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>IMFs</strong> (<em>array (nIMFs, numDataPoints)</em>) – Input data.</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency of the original signal.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Defaults to ‘SpectralCentroid’.
+{‘SpectralCentroid’, ‘SpectralCrestFactor’, ‘SpectralDecrease’,</p>
+<blockquote>
+<div><p>‘SpectralFlatness’, ‘SpectralFlux’, ‘SpectralKurtosis’,
+‘SpectralMfccs’, ‘SpectralPitchChroma’, ‘SpectralRolloff’,
+‘SpectralSkewness’, ‘SpectralSlope’, ‘SpectralSpread’,
+‘SpectralTonalPowerRatio’, ‘TimeAcfCoeff’, ‘TimeMaxAcf’,
+‘TimePeakEnvelope’, ‘TimeRms’, ‘TimeStd’, ‘TimeZeroCrossingRate’}</p>
+</div></blockquote>
+</li>
+<li><p><strong>window</strong> (<em>int</em>) – Length of the moving window in samples.</p></li>
+<li><p><strong>overlap</strong> (<em>int</em>) – Overlap between each moving window in samples.</p></li>
+<li><p><strong>in_cut</strong> (<em>int</em>) – Number of samples to remove at the beginning.</p></li>
+<li><p><strong>out_cut</strong> (<em>type</em>) – Number of samples to remove at the end.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>spectro_IMF</strong> (<em>(nIMFs, numSpectroPoints)</em>) – Spectromorphological metric for each IMF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">generate_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'blue'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#generate_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generate a composite signal consisting of multiple sine waves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency.</p></li>
+<li><p><strong>time_end</strong> (<em>float</em>) – Duration of the signal in seconds.</p></li>
+<li><p><strong>freqs</strong> (<em>List</em>) – List of frequencies.</p></li>
+<li><p><strong>amps</strong> (<em>List</em>) – List of amplitudes.</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Defaults to False.
+If True, plot the signal.</p></li>
+<li><p><strong>theta</strong> (<em>int</em>) – Defaults to 0.
+Phase of the sine wave.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – Defaults to ‘blue’.
+Color of the plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sine_tot</strong> (<em>array (numDataPoints,)</em>) – Composite signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>smooth the data using a window with requested size.</p>
+<p>This method is based on the convolution of a scaled window with the signal.
+The signal is prepared by introducing reflected copies of the signal
+(with the window size) in both ends so that transient parts are minimized
+in the begining and end part of the output signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – The input signal.</p></li>
+<li><p><strong>window_len</strong> (<em>int</em>) – The dimension of the smoothing window; should be an odd integer.</p></li>
+<li><p><strong>window</strong> (<em>str</em>) – Type of window.
+{‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’}
+flat window will produce a moving average smoothing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>y</strong> (<em>array</em>) – The smoothed signal.</p></li>
+<li><p><em>.. note::</em> – length(output) != length(input), to correct this:
+return y[(window_len/2-1):-(window_len/2)] instead of just y.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">butter_bandpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#butter_bandpass"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">butter_bandpass_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#butter_bandpass_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">major_triad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#major_triad"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">make_chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#make_chord"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">play_chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#play_chord"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Play a chord using pygame, ensuring proper format for the chord array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chord</strong> (<em>ndarray</em>) – Array representing the chord. Expected to have dtype int16 or float32.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">listen_chords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#listen_chords"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">listen_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fund</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#listen_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">frequency_to_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#frequency_to_note"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">create_midi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">microtonal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'example'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#create_midi"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Creates a MIDI file from a given set of chords and durations.
+The microtonal parameter allows for pitch bends to be included
+and relies on multiple notes being played simultaneously on different channels.</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>chords<span class="classifier">list</span></dt><dd><p>List of chords, where each chord is a list of frequencies.</p>
+</dd>
+<dt>velocities<span class="classifier">list</span></dt><dd><p>List of list of velocities for each note in each chord.</p>
+</dd>
+<dt>durations<span class="classifier">list</span></dt><dd><p>List of durations (in beats) for each chord.</p>
+</dd>
+<dt>subdivision<span class="classifier">int</span></dt><dd><p>Number of subdivisions per beat (default: 1).</p>
+</dd>
+<dt>microtonal<span class="classifier">bool</span></dt><dd><p>Indicates whether to include microtonal pitch bends (default: True).</p>
+</dd>
+<dt>filename<span class="classifier">str</span></dt><dd><p>Name of the output MIDI file (default: ‘example’).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mid</strong> (<em>MidiFile</em>) – The MIDI file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">create_SCL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#create_SCL"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Create a Scala scale file.
+The Scala file can be used to tune various things, most
+germane being Yoshimi. However, keep in mind that the Scala
+file does not include a base note or frequency, so for tuning
+purposes those data will need to be captured or input in
+some other way.</p>
+<section id="id1">
+<h2>Parameters:<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>scale<span class="classifier">list</span></dt><dd><p>The scale (list of frequency ratios)</p>
+</dd>
+<dt>name<span class="classifier">str</span></dt><dd><p>The name of the scale</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>output<span class="classifier">str</span></dt><dd><p>A Scala file as a string</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">scale_interval_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#scale_interval_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Gives the name of intervals in a scale based on PyTuning dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale</strong> (<em>list</em>) – List of scale steps either in float or fraction form.</p></li>
+<li><p><strong>reduce</strong> (<em>boolean</em>) – Defaults to False.
+When set to True, output only the steps that match a key
+in the dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>interval_names</strong> (<em>list of lists</em>) – Each sublist contains the scale step and the corresponding
+interval names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">distinct_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#distinct_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Find the distinct intervals in a scale, including inversions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>list</em>) – List of scale steps either in float or fraction form.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>intervals</strong> (<em>list</em>) – List of distinct intervals.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The scale should be specified as a list of numerical values.
+Note that the convention adopted in this code is that scale[0]
+is a unison and scale[-1] is the formal octave (often 2).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">calculate_pvalues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pearson'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#calculate_pvalues"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Calculate the correlation between each column of a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – DataFrame of values to compute correlation on.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Defaults to pearson.
+{‘pearson’, ‘spearman’}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>type</em> – Description of returned object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">peaks_to_amps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#peaks_to_amps"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Find the amplitudes of spectral peaks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>list</em>) – Spectral peaks in Hertz.</p></li>
+<li><p><strong>freqs</strong> (<em>list</em>) – All centers of frequency bins.</p></li>
+<li><p><strong>amps</strong> (<em>list</em>) – All amplitudes associated with frequency bins.</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>amps_out</strong> (<em>list</em>) – Amplitudes of spectral peaks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">alpha2bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#alpha2bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><dl class="simple">
+<dt>Derive frequency bands for M/EEG analysis based on the alpha peak.</dt><dd><p>Boundaries of adjacent frequency bands are derived based on the
+golden ratio, which optimizes the uncoupling of phases between
+frequencies. (see: Klimesch, 2018)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> (<em>float</em>) – Alpha peak in Hertz.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FREQ_BANDS</strong> (<em>List of lists</em>) – Each sublist contains the boundaries of each frequency band.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">chunk_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#chunk_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Divide a time series into overlapping chunks and provide the indexes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray(1d)</em>) – Time series.</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency.</p></li>
+<li><p><strong>overlap</strong> (<em>int</em>) – Defaults to 10.
+Proportion of overlap in percentage.</p></li>
+<li><p><strong>precision</strong> (<em>float</em>) – Defaults to 1.
+Precision in Hertz.
+The precision here determines the length of data
+required to extract the spectral information at that precise frequency.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>type</em> – Description of returned object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">string_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#string_to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">safe_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#safe_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">safe_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#safe_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">compute_frequency_and_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision_hz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noverlap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#compute_frequency_and_psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Compute the frequencies and power spectral density (PSD) of a signal using Welch method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal</strong> (<em>ndarray</em>) – Input signal.</p></li>
+<li><p><strong>precision_hz</strong> (<em>float</em>) – Precision in Hz for the frequencies.</p></li>
+<li><p><strong>smoothness</strong> (<em>float</em>) – Smoothing factor for the PSD.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency of the signal.</p></li>
+<li><p><strong>noverlap</strong> (<em>int</em>) – Number of points to overlap between segments.</p></li>
+<li><p><strong>fmin</strong> (<em>float, optional</em>) – Minimum frequency to compute.</p></li>
+<li><p><strong>fmax</strong> (<em>float, optional</em>) – Maximum frequency to compute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Frequencies for which the PSD is computed.</p></li>
+<li><p><strong>psd</strong> (<em>ndarray</em>) – Power spectral density of the signal.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">power_law</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#power_law"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define a power law function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – Independent variable.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Scaling factor.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Power.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ndarray</em> – Values after applying power law function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">apply_power_law_remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_law_remove</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#apply_power_law_remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Apply or not a power law to remove it from PSD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Frequencies for which the PSD is computed.</p></li>
+<li><p><strong>psd</strong> (<em>ndarray</em>) – Power spectral density of the signal.</p></li>
+<li><p><strong>power_law_remove</strong> (<em>bool</em>) – If True, apply the power law. Otherwise, return the input PSD.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ndarray</em> – PSD after potential power law removal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">functools_reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_utils.html#functools_reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">biotuner_utils</span></span></dt>
+<dd><p>alias of &lt;module ‘biotuner.biotuner_utils’ from ‘C:\Users\Antoine\github\biotuner\biotuner\biotuner_utils.py’&gt;</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="rhythm_construction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Rhythm construction</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

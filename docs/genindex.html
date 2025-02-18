@@ -1,0 +1,908 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; Biotuner 0.0.16 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=baac2cea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.16" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.0.16 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Biotuner 0.0.16 documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.all_harmonics">all_harmonics (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.amps">amps (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.binome2euclid">binome2euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li>
+    biotuner.biotuner_object
+
+      <ul>
+        <li><a href="api/biotuner_object.html#module-biotuner.biotuner_object">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_spectrum
+
+      <ul>
+        <li><a href="api/harmonic_spectrum.html#module-biotuner.harmonic_spectrum">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.metrics
+
+      <ul>
+        <li><a href="api/metrics.html#module-biotuner.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.peaks_extension
+
+      <ul>
+        <li><a href="api/peaks_extension.html#module-biotuner.peaks_extension">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    biotuner.peaks_extraction
+
+      <ul>
+        <li><a href="api/peaks_extraction.html#module-biotuner.peaks_extraction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.rhythm_construction
+
+      <ul>
+        <li><a href="api/rhythm_construction.html#module-biotuner.rhythm_construction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.scale_construction
+
+      <ul>
+        <li><a href="api/scale_construction.html#module-biotuner.scale_construction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.transitional_harmony
+
+      <ul>
+        <li><a href="api/transitional_harmony.html#module-biotuner.transitional_harmony">module</a>
+</li>
+      </ul></li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.bjorklund">bjorklund() (in module biotuner.rhythm_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.cepstral_peaks">cepstral_peaks() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.cepstrum">cepstrum() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony.compare_deltas">compare_deltas() (transitional_harmony method)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compare_oct_div">compare_oct_div() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner">compute_biotuner (class in biotuner.biotuner_object)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_consonance">compute_consonance() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_diss_curve">compute_diss_curve() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.compute_FOOOF">compute_FOOOF() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_global_harmonicity">compute_global_harmonicity() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy">compute_harmonic_entropy() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_domain_integral">compute_harmonic_entropy_domain_integral() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_simple_weights">compute_harmonic_entropy_simple_weights() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_power">compute_harmonic_power() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics">compute_peaks_metrics() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_peaks_ts">compute_peaks_ts() (compute_biotuner method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_phase_spectrum">compute_phase_spectrum() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_phase_values">compute_phase_values() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_resonance">compute_resonance() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_resonance_values">compute_resonance_values() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.compute_sidebands">compute_sidebands() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_spectromorph">compute_spectromorph() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonic_tension">compute_subharmonic_tension() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonics">compute_subharmonics() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonics_2lists">compute_subharmonics_2lists() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony.compute_trans_harmony">compute_trans_harmony() (transitional_harmony method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.consonance_peaks">consonance_peaks() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.consonant_euclid">consonant_euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.consonant_ratios">consonant_ratios() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.convergents">convergents() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.create_mode">create_mode() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.diss_curve">diss_curve() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.diss_scale">diss_scale (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons">diss_scale_cons (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.dissmeasure">dissmeasure() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.dyad_similarity">dyad_similarity() (in module biotuner.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_div">EEG_harmonics_div() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_mult">EEG_harmonics_mult() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.EMD_eeg">EMD_eeg() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.endogenous_intermodulations">endogenous_intermodulations() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclid_long_to_short">euclid_long_to_short() (in module biotuner.rhythm_construction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclid_string_to_referent">euclid_string_to_referent() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.euler">euler() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.euler_fokker">euler_fokker (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.euler_fokker_scale">euler_fokker_scale() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.euler_fokker_scale">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.extract_welch_peaks">extract_welch_peaks() (in module biotuner.peaks_extraction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.find_MOS">find_MOS() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.find_optimal_offsets">find_optimal_offsets() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.find_spectral_peaks">find_spectral_peaks() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis.fit">fit() (SingularSpectrumAnalysis method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.fit_all">fit_all() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.fit_biotuner">fit_biotuner() (in module biotuner.biotuner_object)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.UnivariateTransformerMixin.fit_transform">fit_transform() (UnivariateTransformerMixin method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS">FREQ_BANDS (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.freqs">freqs (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.gen_interval_to_stern_brocot">gen_interval_to_stern_brocot() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.generator_interval_tuning">generator_interval_tuning() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.generator_to_stern_brocot_fractions">generator_to_stern_brocot_fractions() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_entropy">harmonic_entropy() (in module biotuner.harmonic_spectrum)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.harmonic_entropy">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.harmonic_fit">harmonic_fit() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning">harmonic_fit_tuning (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning">harmonic_fit_tuning() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.harmonic_recurrence">harmonic_recurrence() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr">harmonic_spectrum_plot_avg_corr() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr">harmonic_spectrum_plot_freq_corr() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr">harmonic_spectrum_plot_trial_corr() (in module biotuner.harmonic_spectrum)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning">harmonic_tuning (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.harmonic_tuning">harmonic_tuning() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.harmonic_tuning">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonicity_matrices">harmonicity_matrices() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.HE_scale">HE_scale (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons">HE_scale_cons (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.higuchi_fd">higuchi_fd() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.HilbertHuang1D">HilbertHuang1D() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.horogram_tree">horogram_tree() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.horogram_tree_steps">horogram_tree_steps() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IF">IF (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IFs">IFs (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IMFs">IMFs (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id6">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.info">info() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.integral_tenneyHeight">integral_tenneyHeight() (in module biotuner.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.interval_exponents">interval_exponents() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.interval_to_radian">interval_to_radian() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.interval_vec_to_string">interval_vec_to_string() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.interval_vector">interval_vector() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.invert_ratio">invert_ratio() (in module biotuner.rhythm_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.listen_scale">listen_scale() (compute_biotuner method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.measure_symmetry">measure_symmetry() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.metric_3">metric_3() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.metric_denom">metric_denom() (in module biotuner.metrics)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/biotuner_object.html#module-biotuner.biotuner_object">biotuner.biotuner_object</a>
+</li>
+        <li><a href="api/harmonic_spectrum.html#module-biotuner.harmonic_spectrum">biotuner.harmonic_spectrum</a>
+</li>
+        <li><a href="api/metrics.html#module-biotuner.metrics">biotuner.metrics</a>
+</li>
+        <li><a href="api/peaks_extension.html#module-biotuner.peaks_extension">biotuner.peaks_extension</a>
+</li>
+        <li><a href="api/peaks_extraction.html#module-biotuner.peaks_extraction">biotuner.peaks_extraction</a>
+</li>
+        <li><a href="api/rhythm_construction.html#module-biotuner.rhythm_construction">biotuner.rhythm_construction</a>
+</li>
+        <li><a href="api/scale_construction.html#module-biotuner.scale_construction">biotuner.scale_construction</a>
+</li>
+        <li><a href="api/transitional_harmony.html#module-biotuner.transitional_harmony">biotuner.transitional_harmony</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.MOS_metric_harmonic_mean">MOS_metric_harmonic_mean() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.multi_consonance">multi_consonance() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.multi_oct_subdiv">multi_oct_subdiv() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.oct_subdiv">oct_subdiv() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.pac">pac() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.pac_frequencies">pac_frequencies() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.pac_mode">pac_mode() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks">peaks (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.peaks_extension">peaks_extension() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.peaks_extraction">peaks_extraction() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_metrics">peaks_metrics (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios">peaks_ratios (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons">peaks_ratios_cons (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm">peaks_ratios_harm (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id0">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc">peaks_ratios_inc (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id1">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound">peaks_ratios_inc_bound (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit">peaks_ratios_inc_fit (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id2">[1]</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.peaks_to_harmsim">peaks_to_harmsim() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.phi_convergent_point">phi_convergent_point() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.PLV_comod">PLV_comod() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.polycoherence">polycoherence() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.polyspectrum_frequencies">polyspectrum_frequencies() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.psd">psd (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/metrics.html#biotuner.metrics.ratios2harmsim">ratios2harmsim() (in module biotuner.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.ratios_extension">ratios_extension() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.rhythm_construction">rhythm_construction() (compute_biotuner method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2euclid">scale2euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.scale_metrics">scale_metrics (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id5">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis">SingularSpectrumAnalysis (class in biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_entropy">spectral_entropy() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_flatness">spectral_flatness() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_spread">spectral_spread() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.spectro_chords">spectro_chords (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id4">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.spectro_EMD">spectro_EMD (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id3">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SSA_EEG">SSA_EEG() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.Stern_Brocot">Stern_Brocot() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.stern_brocot_to_generator_interval">stern_brocot_to_generator_interval() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_distinct_intervals">sum_distinct_intervals() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_p_q">sum_p_q() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_p_q_for_all_intervals">sum_p_q_for_all_intervals() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_q_for_all_intervals">sum_q_for_all_intervals() (in module biotuner.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/metrics.html#biotuner.metrics.tenneyHeight">tenneyHeight() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity">time_resolved_harmonicity (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity">time_resolved_harmonicity() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.timepoint_consonance">timepoint_consonance() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis.transform">transform() (SingularSpectrumAnalysis method)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony">transitional_harmony (class in biotuner.transitional_harmony)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/metrics.html#biotuner.metrics.tuning_cons_matrix">tuning_cons_matrix() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_MOS_info">tuning_MOS_info() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_range_to_MOS">tuning_range_to_MOS() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_reduction">tuning_reduction() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.tuning_to_metrics">tuning_to_metrics() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_to_radians">tuning_to_radians() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.UnivariateTransformerMixin">UnivariateTransformerMixin (class in biotuner.peaks_extraction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
