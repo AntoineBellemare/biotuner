@@ -144,7 +144,6 @@ latex_elements = {
 }
 html_static_path = ["_static"]
 
-
 # git push origin --delete docs_build
 # git checkout -b docs_build
 # sphinx-build -b html docs docs/_build/html

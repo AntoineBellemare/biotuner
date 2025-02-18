@@ -34,13 +34,8 @@ jobs:
         run: touch docs/_build/html/.nojekyll
 
       - name: Deploy to docs_build branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          cd docs/_build/html
-          git init
-          git config user.name "GitHub Actions"
-          git config user.email "[email protected]"
-          git add .
-          git commit -m "Deploy updated documentation"
-          git push --force "https://${PAT_TOKEN}@github.com/${{ github.repository }}.git" master:docs_build
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PAT_TOKEN }}
+          publish_branch: docs_build
+          publish_dir: docs/_build/html
