@@ -17,13 +17,13 @@ jobs:
         with:
           fetch-depth: 0  # Ensure full history
 
-      - name: Delete and recreate docs_build branch
+      - name: Mirror main to docs_build
         run: |
           git fetch origin main
           git checkout main
-          git push origin --delete docs_build || true  # Delete existing docs_build branch
+          git branch -D docs_build || true
           git checkout -b docs_build
-          git push origin docs_build  # Recreate docs_build from main
+          git push origin docs_build --force  # Push all main content to docs_build
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -48,3 +48,4 @@ jobs:
           personal_token: ${{ secrets.PAT_TOKEN }}
           publish_branch: docs_build
           publish_dir: docs/_build/html
+          keep_files: false  # Overwrite docs_build with built docs only
