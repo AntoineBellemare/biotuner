@@ -33,6 +33,11 @@
 
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
 
+# Multimodal Harmonic Analysis
+
+![biotuner_multimodal_02](https://github.com/user-attachments/assets/7e99e0ec-a1da-44f2-8ad9-bdfce8f4a36f)
+
+The figure below illustrates Biotuner's ability to extract harmonic structures across different biological and physical systems. It showcases harmonic ratios detected in biosignals from the brain, heart, and plants, as well as their correspondence with audio signals. 
 # Installation
 
 ## 1. Install using PyPI
@@ -72,3 +77,4 @@ biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
 ## Peaks extraction methods
 
 ![biotuner_peaks_extraction](https://user-images.githubusercontent.com/49297774/156813349-ddcd40d0-57c9-41f2-b62a-7cbb4213e515.jpg)
+
