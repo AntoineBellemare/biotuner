@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/AntoineBellemare/biotuner/assets/49297774/fc83d888-db2a-4f9f-ba26-65a58c42b72d" alt="biotuner_logo" width="250"/>
+  <img src="https://github.com/AntoineBellemare/biotuner/assets/49297774/fc83d888-db2a-4f9f-ba26-65a58c42b72d" alt="biotuner_logo" width="200"/>
 </p>
 
 <h1 align="center">Biotuner</h1>
@@ -33,11 +33,7 @@
 
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
 
-# Multimodal Harmonic Analysis
 
-![biotuner_multimodal_02](https://github.com/user-attachments/assets/7e99e0ec-a1da-44f2-8ad9-bdfce8f4a36f)
-
-The figure below illustrates Biotuner's ability to extract harmonic structures across different biological and physical systems. It showcases harmonic ratios detected in biosignals from the brain, heart, and plants, as well as their correspondence with audio signals. 
 # Installation
 
 ## 1. Install using PyPI
@@ -48,9 +44,9 @@ pip install biotuner
 
 ## 2. Install using Github Repository:
 
-### 2.1. **Create a Python environment with v3.8 using conda**:
+### 2.1. **Create a Python environment with v3.11 using conda**:
 ```bash
-conda create --name biotuner_env python=3.8
+conda create --name biotuner_env python=3.11
 conda activate biotuner_env
 ```
 
@@ -72,6 +68,19 @@ biotuning.peaks_extraction(data, peaks_function='FOOOF') #extract spectral peaks
 biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
 
 ```
+
+<div align="center" style="width: 50%; margin: auto; text-align: center;">
+
+<h1 align="center">Multimodal Harmonic Analysis</h1>
+
+  <p>
+    <img src="https://github.com/user-attachments/assets/7e99e0ec-a1da-44f2-8ad9-bdfce8f4a36f" alt="biotuner_multimodal_02" width="50%">
+  </p>
+
+The figure below illustrates Biotuner's ability to extract harmonic structures across different biological and physical systems. It showcases harmonic ratios detected in biosignals from the **brain**, **heart**, and **plants**, as well as their correspondence with audio signals. By analyzing the fundamental frequency relationships in these diverse modalities, Biotuner enables a cross-domain exploration of resonance and tuning in biological and artificial systems.
+
+</div>
+
 ![Biotuner_pipeline (6)-page-001](https://user-images.githubusercontent.com/49297774/153693263-90c1e49e-a8c0-4a93-8219-491d1ede32e1.jpg)
 
 ## Peaks extraction methods
