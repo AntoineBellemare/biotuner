@@ -95,45 +95,6 @@ def setup(ctx, env_name="biotuner_env"):
     print("🎉 Setup complete! To activate your environment, run:")
     print(f"🔹 conda activate {env_name}")
 
-
-@task
-def link_env(ctx):
-    """
-    Register the Biotuner virtual environment with Conda and create a shortcut for easy activation.
-    """
-    repo_root = Path(__file__).resolve().parent
-    env_path = repo_root / ".venv"
-
-    if not env_path.exists():
-        print("❌ Virtual environment not found. Run `invoke setup` first.")
-        return
-
-    # Conda environment name
-    conda_env_name = "biotuner_env"
-
-    # Tell Conda to recognize this environment
-    print(f"🔗 Registering `.venv` with Conda as `{conda_env_name}`...")
-
-    try:
-        # Add .venv to Conda's known environments
-        subprocess.run(["conda", "env", "update", "--name", conda_env_name, "--file", "environment.yml"], check=True)
-        print(f"✅ Registered `{env_path}` as a Conda environment.")
-    except subprocess.CalledProcessError:
-        print("⚠️ Failed to register with Conda. Ensure `environment.yml` exists or create a minimal one.")
-
-    # Create an easy activation script
-    alias_path = repo_root / "activate"
-    with open(alias_path, "w") as f:
-        if os.name == "nt":
-            f.write(f"{env_path}\\Scripts\\activate")
-        else:
-            f.write(f"source {env_path}/bin/activate")
-
-    print(f"✅ Shortcut created! Now you can activate your environment with:")
-    print(f"\n👉 `source activate` (for bash)")
-    print(f"👉 `conda activate {conda_env_name}` (for Conda users)")
-
-
 @task
 def test(ctx):
     """
