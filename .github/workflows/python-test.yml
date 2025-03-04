@@ -52,4 +52,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: AntoineBellemare/biotuner
-          file: coverage.xml
+          files: coverage.xml
