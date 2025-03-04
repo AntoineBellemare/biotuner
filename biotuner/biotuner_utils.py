@@ -101,7 +101,8 @@ def compute_peak_ratios(peaks, rebound=True, octave=2, sub=False):
         peak_ratios_final = np.array(peak_ratios_final)
         peak_ratios_final = [i for i in peak_ratios_final if i]
         ratios_final = sorted(list(set(peak_ratios_final)))
-    return ratios_final
+    return [float(x) for x in ratios_final] 
+
 
 
 def scale2frac(scale, maxdenom=1000):

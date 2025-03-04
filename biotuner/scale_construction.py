@@ -836,6 +836,10 @@ def tuning_reduction(tuning, mode_n_steps, function, rounding=4, ratio_type="pos
     Mode:  [1.5, 1, 1.875, 1.7, 1.45]
     Mode harmonicity:  17.9500338066261
     """
+    # scale must be at least 4 notes
+    tuning = sorted(tuning)
+    if len(tuning) < 4:
+        raise ValueError("The scale must have at least 4 notes")
     tuning_values = []
     mode_values = []
     for index1 in range(len(tuning)):
