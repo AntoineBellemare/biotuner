@@ -29,7 +29,12 @@
   <a href="https://pypi.org/project/biotuner/">
     <img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/biotuner">
   </a>
+
+  <a href="https://codecov.io/github/AntoineBellemare/biotuner">
+    <img alt="Codecov" src="https://codecov.io/github/AntoineBellemare/biotuner/branch/main/graph/badge.svg?token=DW8JS03EV9">
+  </a>
 </p>
+
 
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
 
