@@ -10,11 +10,11 @@ IPython
 matplotlib>=3.5.3
 seaborn>=0.12.1
 mne>=1.4.0
-fooof==1.0.0
+fooof>=1.0.0
 emd>=0.5.5
-contfrac==1.0.0
+contfrac>=1.0.0
 scipy>=1.7.3
-numpy>=1.21.4
-mido==1.2.10
-sympy==1.12
+numpy>=1.21.4,<2.0
+mido>=1.2.10
+sympy>=1.12
 pytest>=7.0.0
