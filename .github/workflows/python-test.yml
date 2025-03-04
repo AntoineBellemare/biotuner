@@ -46,8 +46,13 @@ jobs:
           name: test-results-${{ matrix.python-version }}
           path: test-reports/test-results-${{ matrix.python-version }}.xml
 
+      - name: Verify Coverage Report
+        run: |
+          ls -l coverage.xml  # Check if the file exists
+          cat coverage.xml | grep "<coverage" || echo "Coverage data is missing!"
+
       - name: Upload coverage to Codecov
-        if: success()  # Upload only if tests pass
+        if: success()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
