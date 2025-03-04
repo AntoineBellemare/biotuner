@@ -7,7 +7,11 @@
 
 <p align="center">
   <a href="https://github.com/AntoineBellemare/biotuner/actions/workflows/ci.yml">
-    <img alt="Biotuner Tests" src="https://github.com/AntoineBellemare/biotuner/actions/workflows/python-test.yml/badge.svg">
+    <img alt="Tests" src="https://github.com/AntoineBellemare/biotuner/actions/workflows/python-test.yml/badge.svg">
+  </a>
+
+  <a href="https://codecov.io/github/AntoineBellemare/biotuner">
+    <img alt="Codecov" src="https://codecov.io/github/AntoineBellemare/biotuner/branch/main/graph/badge.svg?token=DW8JS03EV9">
   </a>
 
   <a href="https://pypi.org/project/biotuner/">
@@ -30,9 +34,7 @@
     <img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/biotuner">
   </a>
 
-  <a href="https://codecov.io/github/AntoineBellemare/biotuner">
-    <img alt="Codecov" src="https://codecov.io/github/AntoineBellemare/biotuner/branch/main/graph/badge.svg?token=DW8JS03EV9">
-  </a>
+  
 </p>
 
 
