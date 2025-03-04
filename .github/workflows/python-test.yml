@@ -2,11 +2,9 @@ name: Biotuner Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -20,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for accurate coverage reports
+          fetch-depth: 0  # Required for accurate coverage tracking
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -31,13 +29,18 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov  # Ensure pytest-cov is installed
+          pip install pytest pytest-cov coverage
           pip install -r requirements.txt
-          pip install .
+          # IMPORTANT: Use editable install so coverage tracks files correctly
+          pip install -e .
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=biotuner --cov-branch --cov-report=xml --junitxml=test-reports/test-results-${{ matrix.python-version }}.xml
+          pytest --cov=biotuner \
+                 --cov-branch \
+                 --cov-report=xml:coverage.xml \
+                 --cov-report=term-missing \
+                 --junitxml=test-reports/test-results-${{ matrix.python-version }}.xml
 
       - name: Upload test results
         if: always()
@@ -46,15 +49,19 @@ jobs:
           name: test-results-${{ matrix.python-version }}
           path: test-reports/test-results-${{ matrix.python-version }}.xml
 
-      - name: Verify Coverage Report
+      - name: Debug Coverage File
         run: |
-          ls -l coverage.xml  # Check if the file exists
-          cat coverage.xml | grep "<coverage" || echo "Coverage data is missing!"
+          echo ">>> Checking coverage.xml (first 50 lines) ..."
+          head -n 50 coverage.xml
+          echo ">>> Checking absolute paths in coverage.xml ..."
+          grep "<source>" coverage.xml || echo "No source path found!"
 
       - name: Upload coverage to Codecov
-        if: success()
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}  # Set this in GitHub Secrets
           slug: AntoineBellemare/biotuner
           files: coverage.xml
+          fail_ci_if_error: true  # Fail if upload fails
+          verbose: true  # Debugging
+          root_dir: biotuner  # Ensure correct root directory

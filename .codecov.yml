@@ -8,17 +8,17 @@ coverage:
         threshold: 1%
     patch:
       default:
-        target: 80%  # Ensures new PRs do not drop coverage too much
-        threshold: 2%  # Allows small deviations
+        target: 80%  # Ensure PRs maintain good coverage
+        threshold: 2%
 
   ignore:
-    - "tests/*"       # Ignore test files from coverage reporting
-    - "examples/*"    # Ignore example scripts if they exist
+    - "tests/*"       # Ignore test files in coverage calculation
+    - "examples/*"    # Ignore example scripts
     - "setup.py"      # Ignore setup scripts
-    - "docs/*"        # Ignore documentation files
+    - "docs/*"        # Ignore documentation
 
 fixes:
-  # Adjust file paths so Codecov correctly maps coverage reports
+  # Replace absolute paths with relative paths in Codecov
   - "s|/home/runner/work/biotuner/biotuner|.|g"
 
 comment:
@@ -34,5 +34,4 @@ flags:
   unit:
     paths:
       - "biotuner/"
-    carryforward: true  # Keep previous coverage data for unchanged files
-
+    carryforward: true  # Preserve previous coverage data for unchanged files
