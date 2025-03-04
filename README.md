@@ -34,31 +34,80 @@
 🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
 
 
-# Installation
+# **Installation**
 
-## 1. Install using PyPI
-
+## **1. Install using PyPI (Recommended)**
+To install the latest stable version of **Biotuner** from PyPI, run:
 ```bash
 pip install biotuner
 ```
 
-## 2. Install using Github Repository:
+---
 
-### 2.1. **Create a Python environment with v3.11 using conda**:
+## **2. Install from the GitHub Repository (Development Version)**
+If you want the latest development version or contribute to the code, follow these steps:
+
+### **2.1. Automatically Setup the Environment (Recommended)**
+The easiest way to set up a development environment is by using `invoke`, which will:
+
+✅ Create a **Conda environment**  
+✅ Install **dependencies**  
+✅ Install **Biotuner in editable mode**  
+
 ```bash
-conda create --name biotuner_env python=3.11
+# Clone the repository
+git clone https://github.com/AntoineBellemare/biotuner.git
+cd biotuner
+
+# Install Invoke (if not already installed)
+pip install invoke
+
+# Automatically create a Conda environment and install Biotuner
+invoke setup
+```
+👉 This will create a Conda environment named `biotuner_env` and install all dependencies.
+
+To activate the Conda environment manually:
+```bash
 conda activate biotuner_env
 ```
 
-### 2.2. Clone the Biotuner repository:
+---
+
+### **2.2. Manual Setup (Alternative)**
+If you prefer to set up the environment manually, follow these steps:
+
+#### **1️⃣ Create a Conda environment**
+```bash
+conda create --name biotuner_env python=3.11 -y
+conda activate biotuner_env
 ```
-git clone https://github.com/AntoineBellemare/biotuner.git
-cd biotuner
-```
-### 2.3. Install the package:
-```
+
+#### **2️⃣ Install dependencies**
+```bash
+pip install -r requirements.txt
 pip install -e .
 ```
+
+---
+
+## **3. Verify Installation by Running Tests**
+To confirm that Biotuner is installed correctly, run the test suite:
+```bash
+invoke test
+```
+or manually using:
+```bash
+pytest tests/
+```
+If all tests pass ✅, your installation is complete!
+
+---
+
+### **🎯 Summary**
+- **For general users**: Install via `pip install biotuner`
+- **For development**: Clone the repo and run `invoke setup`
+- **To verify installation**: Run `invoke test`
 
 # Simple use case
 
