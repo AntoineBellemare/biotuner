@@ -16,6 +16,18 @@ from biotuner.scale_construction import (
     pac_mode,
     diss_curve,
     dissmeasure,
+    horogram_tree_steps,
+    horogram_tree,
+    phi_convergent_point,
+    Stern_Brocot,
+    interval_exponents,
+    interval_to_radian,
+    tuning_to_radians,
+    compare_oct_div,
+    multi_oct_subdiv,
+    convergents,
+    MOS_metric_harmonic_mean,
+    generator_to_stern_brocot_fractions,
 )
 from biotuner.metrics import dyad_similarity, metric_denom
 
@@ -388,3 +400,110 @@ def test_measure_symmetry(generator_interval, max_steps, expected_max_deviation_
         <= max_deviation
         <= expected_max_deviation_range[1]
     )
+
+def test_horogram_tree_steps():
+    ratio1 = 1/2
+    ratio2 = 2/3
+    steps = 7
+    fractions, ratios = horogram_tree_steps(ratio1, ratio2, steps=steps)
+
+    assert len(fractions) == steps + 2  # Includes initial two ratios
+    assert len(ratios) == steps + 2
+    assert all([0 < r < 1 for r in ratios])
+
+def test_horogram_tree():
+    ratio1 = 1/2
+    ratio2 = 2/3
+    limit = 1000
+    result = horogram_tree(ratio1, ratio2, limit)
+    
+    assert isinstance(result, float)
+    assert 0 < result < 1  # Should remain within reasonable bounds
+
+def test_phi_convergent_point():
+    ratio1 = 1/2
+    ratio2 = 2/3
+    result = phi_convergent_point(ratio1, ratio2)
+    
+    assert isinstance(result, float)
+    assert 0 < result < 1  # Should remain within a logical range
+
+def test_Stern_Brocot():
+    depths = [5, 10, 15]
+    for depth in depths:
+        result = Stern_Brocot(depth, a=0, b=1, c=1, d=1)
+        
+        assert isinstance(result, list)
+        assert all(isinstance(x, int) for x in result)
+        assert len(result) > 0  # Should return some values
+    
+    # Test case where depth is lower than a + b + c + d
+    assert Stern_Brocot(2, a=0, b=1, c=1, d=1) == 0
+
+def test_interval_exponents():
+    interval = 3/2
+    n_steps = 5
+    result = interval_exponents(interval, n_steps)
+    
+    assert len(result) == n_steps
+    assert all(isinstance(r, float) for r in result)
+
+def test_interval_to_radian():
+    interval = 3/2
+    rad, deg = interval_to_radian(interval)
+    
+    assert isinstance(rad, float)
+    assert isinstance(deg, float)
+    assert 0 <= deg <= 360  # Should be within a valid degree range
+
+def test_tuning_to_radians():
+    interval = 3/2
+    n_steps = 12
+    radians, degrees = tuning_to_radians(interval, n_steps)
+    
+    assert len(radians) == len(degrees) == n_steps
+    assert all(isinstance(r, float) for r in radians)
+    assert all(isinstance(d, float) for d in degrees)
+
+def test_compare_oct_div():
+    avg_ratios, shared_steps = compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2)
+
+    assert isinstance(avg_ratios, list)
+    assert isinstance(shared_steps, list)
+    assert all(isinstance(r, float) for r in avg_ratios)
+    assert all(isinstance(s, tuple) and len(s) == 2 for s in shared_steps)
+
+def test_multi_oct_subdiv():
+    peaks = [11, 24, 32, 44]
+    oct_divs, ratios = multi_oct_subdiv(peaks, max_sub=100)
+
+    assert isinstance(oct_divs, list)
+    assert isinstance(ratios, np.ndarray)
+    assert all(isinstance(o, (int, np.integer)) for o in oct_divs)
+    assert all(isinstance(r, float) for r in ratios)
+
+def test_convergents():
+    ratio = 3 / 2
+    result = convergents(ratio)
+
+    assert isinstance(result, list)
+    assert all(isinstance(c, tuple) and len(c) == 2 for c in result)
+
+def test_MOS_metric_harmonic_mean():
+    MOS_dict = {
+        "steps": [12, 24, 36],
+        "harmsim": [0.8, 0.6, 0.7]
+    }
+    result = MOS_metric_harmonic_mean(MOS_dict, metric="harmsim")
+
+    assert isinstance(result, float)
+    assert 0 <= result <= 1  # Harmonic similarity should be within a valid range
+
+def test_generator_to_stern_brocot_fractions():
+    gen = 3 / 2
+    limit = 20
+    result = generator_to_stern_brocot_fractions(gen, limit)
+
+    assert isinstance(result, list)
+    assert all(isinstance(f, tuple) and len(f) == 2 for f in result)
+    assert all(isinstance(n, int) and isinstance(d, int) for f in result for n, d in [f])

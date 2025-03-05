@@ -1190,7 +1190,7 @@ def interval_exponents(interval, n_steps):
     for n in range(n_steps):
         n += 1
         list_intervals.append(interval**n)
-    return list_intervals[:-1]
+    return list_intervals
 
 
 def interval_to_radian(interval):
