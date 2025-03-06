@@ -120,7 +120,7 @@ class transitional_harmony(object):
         trans_subharm : list of float
             The list of transitional subharmonic tension values for each pair of windows.
         time_vec_final : list of float
-            The corresponding list of time values.
+            The corresponding list of time values, corresponding to the middle of each pair of windows.
         subharm_melody : list of tuple of int
             The list of pairs of indices of the closest common subharmonic in each pair of windows.
 
@@ -200,9 +200,9 @@ class transitional_harmony(object):
             for i in range(len(IFs)-1):
                 list1 = IFs[i]
                 list2 = IFs[i+1]    
-                #print('list1', list1)
-                #print('list2', list2)
-                if all(v == 0 for v in list1) or all(v == 0 for v in list2):
+                print('list1', list1)
+                print('list2', list2)
+                if all(v == 0 for v in list1) or all(v == 0 for v in list2) or any(v<0 for v in list1) or any(v<0 for v in list2):
                     print("One of the lists is only zeros, skipping computation...")
                     continue  # Skip to the next iteration
                 a, b, c, d, pairs_melody = compute_subharmonics_2lists(list1, list2, n_harmonics=10, delta_lim=delta_lim, c=2.1)
