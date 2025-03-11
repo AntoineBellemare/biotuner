@@ -1445,17 +1445,16 @@ def create_midi(
 ):
     """
     Creates a MIDI file from a given set of chords and durations.
-    The microtonal parameter allows for pitch bends to be included
-    and relies on multiple notes being played simultaneously on different channels.
+    Ensures all tracks move forward even if some chords have fewer notes.
 
     Parameters:
     ----------
     chords : list
         List of chords, where each chord is a list of frequencies.
-    velocities : list
-        List of list of velocities for each note in each chord.
     durations : list
         List of durations (in beats) for each chord.
+    velocities : list
+        List of list of velocities for each note in each chord.
     subdivision : int
         Number of subdivisions per beat (default: 1).
     microtonal : bool
@@ -1470,6 +1469,7 @@ def create_midi(
     """
     if velocities is None:
         velocities = [[64] * len(chord) for chord in chords]
+
     # Create a new MIDI file
     mid = MidiFile()
 
@@ -1483,15 +1483,11 @@ def create_midi(
                 # Convert frequency to MIDI note
                 midi_note = 69 + 12 * math.log2(frequency / 440)
                 rounded_midi_note = int(midi_note)
-                # Check the limits of the MIDI note
                 if 0 < rounded_midi_note < 127:
                     rounded_midi_frequency = 440 * 2 ** ((rounded_midi_note - 69) / 12)
-                    # pitch_bend = int((frequency-rounded_midi_frequency)*8192/100)
                     pitch_bend = int((midi_note - rounded_midi_note) * (8192))
                     midi_notes.append(rounded_midi_note)
                     pitchbends.append(pitch_bend)
-                else:
-                    continue
             midi_chords.append(midi_notes)
             midi_pitchbends.append(pitchbends)
         return midi_chords, midi_pitchbends
@@ -1510,31 +1506,35 @@ def create_midi(
     ticks_per_beat = int(ticks_per_beat / (1 / subdivision))
 
     # Iterate through the chords and durations
-    for chord, duration, pitchbend, velocity in zip(
-        midi_chords, durations, pitchbends, velocities
-    ):
-        for i, (note, pb, vel) in enumerate(zip(chord, pitchbend, velocity)):
+    for chord, duration, pitchbend, velocity in zip(midi_chords, durations, pitchbends, velocities):
+        for i in range(max_notes):
             track = tracks[i]
 
-            # Add a pitch bend message for each note in the chord
-            if microtonal is True:
-                # print('pitchweel', pb)
-                track.append(Message("pitchwheel", pitch=pb, channel=i, time=1))
+            if i < len(chord):  # If there is a note for this track
+                note = chord[i]
+                pb = pitchbend[i] if microtonal else 0
+                vel = velocity[i]
 
-            track.append(Message("note_on", note=note, velocity=vel, channel=i, time=1))
-            track.append(
-                Message(
-                    "note_off",
-                    note=note,
-                    velocity=vel,
-                    channel=i,
-                    time=int(duration * ticks_per_beat),
+                if microtonal:
+                    track.append(Message("pitchwheel", pitch=pb, channel=i, time=1))
+
+                track.append(Message("note_on", note=note, velocity=vel, channel=i, time=1))
+                track.append(
+                    Message(
+                        "note_off",
+                        note=note,
+                        velocity=vel,
+                        channel=i,
+                        time=int(duration * ticks_per_beat),
+                    )
                 )
-            )
+            else:  # If there is no note in this chord, insert a rest to keep timing aligned
+                track.append(Message("note_off", note=0, velocity=0, time=int(duration * ticks_per_beat)))
 
     # Save the MIDI file
-    mid.save(str(filename) + ".mid")
+    mid.save(f"{filename}.mid")
     return mid
+
 
 
 """-----------------------------OTHERS----------------------------------"""
@@ -1581,7 +1581,7 @@ def create_SCL(scale, name):
     outF = open(name + ".scl", "w")
     outF.writelines(output)
     outF.close()
-    return
+    return output
 
 
 def scale_interval_names(scale, reduce=False):
@@ -1773,6 +1773,28 @@ def chunk_ts(data, sf, overlap=10, precision=1):
         pairs.append((i, i + chunk_size))
         i = i + chunk_size - overlap_samp
     return pairs
+
+def segment_time_series(data, bound_times):
+    """
+    Segment the time series data based on provided boundary times.
+    
+    Args:
+        data (np.array): The full time series data.
+        bound_times (np.array): The boundary times for segmentation.
+        
+    Returns:
+        list of np.array: A list containing each segment of the time series.
+    """
+    segments = []
+    start_time = 0
+    # Create segments of the time series
+    for end_time in bound_times:
+        segments.append(data[int(start_time):int(end_time)])
+        start_time = end_time
+    # Add the last segment
+    segments.append(data[int(start_time):])
+    return segments
+
 
 
 def string_to_list(string):

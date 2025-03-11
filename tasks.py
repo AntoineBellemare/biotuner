@@ -3,6 +3,7 @@ import os
 import sys
 import subprocess
 from pathlib import Path
+import pkg_resources
 
 @task
 def setup_venv(ctx, env_path=".venv"):
@@ -104,16 +105,48 @@ def test(ctx):
     tests_path = repo_root / "tests"
 
     if not tests_path.exists():
-        print(f"❌ Error: Tests directory not found at {tests_path}")
+        print(f"Error: Tests directory not found at {tests_path}")
         return
 
-    print(f"🚀 Running tests in {tests_path}...")
+    print(f"Running tests in {tests_path}...")
 
     # Run pytest
     result = subprocess.run(["pytest", str(tests_path)], check=False)
 
     if result.returncode == 0:
-        print("✅ All tests passed successfully!")
+        print("All tests passed successfully!")
     else:
-        print("❌ Some tests failed. Check the output above.")
+        print("Some tests failed. Check the output above.")
 
+
+
+@task
+def gui(ctx):
+    """
+    Install GUI dependencies if missing and start the Streamlit GUI.
+    """
+
+    # Ensure we're in the project root
+    repo_root = Path(__file__).resolve().parent
+    os.chdir(repo_root)
+
+    print("🔍 Checking GUI dependencies...")
+
+    # List of required GUI dependencies
+    gui_dependencies = [
+        "streamlit", "streamlit-echarts", "librosa", "sounddevice"
+    ]
+
+    # Check installed packages
+    installed_packages = {pkg.key for pkg in pkg_resources.working_set}
+    missing_deps = [dep for dep in gui_dependencies if dep not in installed_packages]
+
+    if missing_deps:
+        print(f"📦 Installing missing GUI dependencies: {missing_deps}...")
+        subprocess.run([sys.executable, "-m", "pip", "install"] + missing_deps, check=True, stdout=subprocess.DEVNULL)
+    else:
+        print("✅ All GUI dependencies are already installed.")
+
+    # Start the GUI
+    print("🚀 Launching GUI...")
+    subprocess.run(["streamlit", "run", "gui.py"], check=True)
