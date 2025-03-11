@@ -38,7 +38,8 @@
 </p>
 
 
-🧬🎵 Visit the [documentation page](https://antoinebellemare.github.io/biotuner/)
+# 🧬🎵 **[Biotuner Documentation](https://antoinebellemare.github.io/biotuner/)** 
+
 
 
 # **Installation**
@@ -150,11 +151,8 @@ streamlit run gui.py
 > **Note:** If you use this option, you must first install the GUI dependencies. You can install them using:
 
 ```sh
-pip install ".[interactive]"
+pip install ".[gui]"
 ```
-Replace `gui.py` with the actual filename if different.
-
----
 
 ### Access the Interface
 
