@@ -196,6 +196,7 @@ st.markdown(
 )
 
 # --- Sidebar Configuration ---
+
 st.sidebar.title("⚙️ Biotuner Settings")
 
 # Peak Extraction Methods
@@ -237,7 +238,28 @@ n_peaks = st.sidebar.number_input(
 )
 
 # --- Main Interface ---
-st.title("Harmonic Analysis of Time Series")
+col1, col2 = st.columns([1, 5])
+with col1:
+    st.image("assets/biotuner_logo.png", width=150)
+with col2:
+    st.markdown(
+        """
+        <style>
+        .custom-title {
+            margin-bottom: 0px; /* Adjust spacing between title and subtitle */
+        }
+        .custom-subtitle {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        </style>
+        <h1 class="custom-title">Biotuner Graphical Interface</h1>
+        <h3 class="custom-subtitle"><i>Harmonic Analysis of Time Series</i></h3>
+        """,
+        unsafe_allow_html=True
+    )
+
+
 #st.markdown("Upload your **audio or data file** to analyze its **harmonic properties**.")
 
 # File Upload
