@@ -19,8 +19,9 @@
   </a>
   
   <a href="https://antoinebellemare.github.io/biotuner/">
-    <img alt="Documentation" src="https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fantoinebellemare.github.io%2Fbiotuner%2F">
-  </a>
+    <img alt="Biotuner Docs" src="https://img.shields.io/website?label=Docs&up_color=blue&url=https%3A%2F%2Fantoinebellemare.github.io%2Fbiotuner%2F">
+</a>
+
   
   <a href="https://github.com/AntoineBellemare/biotuner/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/AntoineBellemare/biotuner">
@@ -37,9 +38,7 @@
   
 </p>
 
-
-# 🧬🎵 **[Biotuner Documentation](https://antoinebellemare.github.io/biotuner/)** 
-
+<!-- 🧬![Biotuner](https://img.shields.io/badge/Biotuner-Documentation-blue?style=for-the-badge&logo=bookstack) 🎹 -->
 
 
 # **Installation**
