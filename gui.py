@@ -16,6 +16,76 @@ import sounddevice as sd
 import time
 import os
 import io
+import plotly.graph_objects as go
+from music21 import stream, chord, note
+import base64
+
+
+import tempfile
+from music21 import stream, chord, note
+
+def musicxml_to_base64(xml_bytes):
+    """ Convert MusicXML file bytes to base64 for embedding in HTML. """
+    return base64.b64encode(xml_bytes.getvalue()).decode("utf-8")
+
+def chords_to_musicxml(chords, bound_times, fname="chord_progression"):
+    """
+    Convert extracted chords into a MusicXML file with valid durations.
+    
+    Parameters:
+    - chords: list of chord frequencies
+    - bound_times: list of time stamps for each chord (in sample indices)
+    - fname: filename for saving the MusicXML file
+    
+    Returns:
+    - xml_bytes: BytesIO object containing the MusicXML data
+    """
+
+    score = stream.Score()
+    part = stream.Part()
+
+    # Convert bound times to note durations
+    durations = [bound_times[i+1] - bound_times[i] for i in range(len(bound_times) - 1)]
+    durations = [d / max(durations) for d in durations]  # Normalize durations
+
+    # Standard durations for music notation
+    standard_durations = [4.0, 2.0, 1.0, 0.5, 0.25, 0.125]  # Whole, Half, Quarter, Eighth, Sixteenth
+
+    for i, chord_freqs in enumerate(chords):
+        if len(chord_freqs) == 0:
+            continue  # Skip empty chords
+
+        # Convert frequencies to closest MIDI notes
+        midi_pitches = [round(69 + 12 * np.log2(f / 440.0)) for f in chord_freqs]
+
+        # Create a chord object
+        music_chord = chord.Chord(midi_pitches)
+
+        # Find the closest standard duration
+        duration = max(0.25, durations[i] * 4)  # Ensure minimum duration
+        closest_duration = min(standard_durations, key=lambda x: abs(x - duration))  # Snap to valid duration
+
+        music_chord.duration.quarterLength = closest_duration  # Assign duration
+
+        part.append(music_chord)
+
+    score.append(part)
+
+    # Save to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".musicxml") as tmpfile:
+        temp_filename = tmpfile.name
+        score.write(fmt="musicxml", fp=temp_filename)  # Save to file
+
+    # Read back into BytesIO
+    with open(temp_filename, "rb") as f:
+        xml_bytes = io.BytesIO(f.read())
+
+    xml_bytes.seek(0)  # Reset buffer position
+
+    return xml_bytes
+
+
+
 
 def generate_segments(data, n_segments=64, sf=44100):
     feature = librosa.feature.spectral_centroid(y=data, sr=sf, n_fft=1000)
@@ -168,6 +238,12 @@ if "sampling_rate" not in st.session_state:
     st.session_state.sampling_rate = None
 if "num_steps" not in st.session_state:
     st.session_state.num_steps = 7
+if "selection" not in st.session_state:
+    st.session_state.selection = None
+if "start_time" not in st.session_state:
+    st.session_state.start_time = 0.0
+if "end_time" not in st.session_state:
+    st.session_state.end_time = None  # Will be set dynamically
 
 
 # Apply Dark Theme Styling
@@ -194,7 +270,17 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
+st.markdown(
+    """
+    <style>
+    div[data-testid="stNumberInput"] { 
+        position: relative; 
+        z-index: 999;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 # --- Sidebar Configuration ---
 
 st.sidebar.title("⚙️ Biotuner Settings")
@@ -270,26 +356,83 @@ if uploaded_file:
     
     # --- Process WAV File ---
     if uploaded_file.name.endswith('.wav'):
-        st.write("🔊 Processing audio file:", uploaded_file.name)
+        #st.write("🔊 Processing audio file:", uploaded_file.name)
         
         # Load audio
         y, sr = librosa.load(uploaded_file, sr=None)
-        st.session_state.uploaded_data = y
-        st.session_state.sampling_rate = sr
-        
-        # Plot time series
-        fig, ax = plt.subplots(figsize=(8, 4))
-        fig.patch.set_alpha(0.0)
-        ax.patch.set_alpha(0.0)
-        librosa.display.waveshow(y, sr=sr, ax=ax, color='#40E0D0')
-        ax.set_title("Waveform", color='white')
-        ax.set_xlabel("Time (s)", color='white')
-        ax.set_ylabel("Amplitude", color='white')
-        ax.tick_params(axis='x', colors='white')
-        ax.tick_params(axis='y', colors='white')
-        # remove gridlines
-        ax.grid(False)
-        st.pyplot(fig)
+        st.session_state.uploaded_data = y  # Store original data
+        print('Data uploaded:', len(st.session_state.uploaded_data))
+        st.session_state.sampling_rate = sr  # Store sampling rate
+
+        # Time array
+        time_axis = np.linspace(0, len(y) / sr, num=len(y))
+
+        # Default end time is the full length of the signal
+        if st.session_state.end_time is None:
+            st.session_state.end_time = time_axis[-1]
+
+        # UI for manual selection
+        # st.write("🔍 Select the time range to highlight:")
+        col1, col2 = st.columns(2)
+        start_manual = col1.number_input("Start Time (s)", min_value=0.0, value=st.session_state.start_time, step=0.1, format="%.2f")
+        end_manual = col2.number_input("End Time (s)", min_value=0.0, value=st.session_state.end_time, step=0.1, format="%.2f")
+
+        # Confirm Selection Button
+
+        # Store the new selection in session state
+        st.session_state.start_time = start_manual
+        st.session_state.end_time = end_manual
+
+        # Extract selected portion
+        selected_indices = (time_axis >= st.session_state.start_time) & (time_axis <= st.session_state.end_time)
+        selected_signal = y[selected_indices]
+
+        # Update `uploaded_data` with selected portion
+        st.session_state.uploaded_data = np.copy(selected_signal)
+        print('selected signal length:', len(st.session_state.uploaded_data))
+
+        #st.success(f"✅ Selection Updated: {st.session_state.start_time:.2f}s - {st.session_state.end_time:.2f}s")
+
+        # Create Plotly figure with highlighted selection
+        fig = go.Figure()
+
+        # Add the full waveform
+        fig.add_trace(go.Scatter(x=time_axis, y=y, mode="lines", name="Audio Signal", line=dict(color="deepskyblue")))
+
+        # Add highlighted selected region
+        selected_indices = (time_axis >= st.session_state.start_time) & (time_axis <= st.session_state.end_time)
+        fig.add_trace(go.Scatter(
+            x=time_axis[selected_indices], 
+            y=y[selected_indices], 
+            mode="lines", 
+            name="Selected Region", 
+            line=dict(color="red", width=3)
+        ))
+
+        # Update layout
+        fig.update_layout(
+            title="Interactive Waveform Selection",
+            xaxis_title="Time (seconds)",
+            yaxis_title="Amplitude",
+            height=400  # Set a fixed height
+        )
+
+
+        # Display Plotly chart
+        st.plotly_chart(fig, use_container_width=True)
+        # # Plot time series
+        # fig, ax = plt.subplots(figsize=(8, 4))
+        # fig.patch.set_alpha(0.0)
+        # ax.patch.set_alpha(0.0)
+        # librosa.display.waveshow(y, sr=sr, ax=ax, color='#40E0D0')
+        # ax.set_title("Waveform", color='white')
+        # ax.set_xlabel("Time (s)", color='white')
+        # ax.set_ylabel("Amplitude", color='white')
+        # ax.tick_params(axis='x', colors='white')
+        # ax.tick_params(axis='y', colors='white')
+        # # remove gridlines
+        # ax.grid(False)
+        # st.pyplot(fig)
 
     # --- Process CSV File ---
     # --- Process CSV File ---
@@ -339,10 +482,9 @@ with tab1:
     )
     max_denom = st.number_input("Max Denominator", min_value=1, value=100, step=1)
 
-    if st.button("Run Tuning Analysis"):
-        if st.session_state.uploaded_data is None:
-            st.error("Please upload and process a file first.")
-        else:
+    if st.session_state.uploaded_data is not None:
+        if st.button("Run Tuning Analysis"):
+            print('length of uploaded data:', len(st.session_state.uploaded_data))
             # Initialize Biotuner Object
             biotuning = compute_biotuner(
                 sf=st.session_state.sampling_rate, 
@@ -407,7 +549,7 @@ with tab1:
             st.session_state.tuning_consonance = tuning_consonance
 
     # --- Plot Tuning Analysis ---
-    if "tuning" in st.session_state:
+    if "tuning" in st.session_state and st.session_state.tuning is not None:
         st.subheader("🎵 Tuning Analysis Results")
 
         # Create two columns: left for tuning list, right for the wheel
@@ -613,10 +755,11 @@ with tab2:
     st.subheader("Chords Analysis")
 
     microtonal = st.radio("Microtonal?", ["Yes", "No"])
-
+    st.session_state.microtonal = microtonal  # Store selection
     n_segments = st.slider("Number of Segments", 1, 128, 16)
-
+    st.session_state.n_segments = n_segments  # Store selection
     n_oct_up = st.slider("Number of Octaves Up", 0, 10, 5)
+    st.session_state.n_oct_up = n_oct_up  # Store selection
 
     # Generate log-spaced values from 1 Hz to 10,000 Hz
     log_values = np.logspace(np.log10(1), np.log10(10000), num=50)
@@ -633,12 +776,13 @@ with tab2:
         options=log_values.tolist(),  # Convert to list for Streamlit
         value=100  # Ensure this value exists in `options`
     )
+    st.session_state.max_freq = max_freq  # Store selection
     total_duration = st.number_input("Total Duration (s)", min_value=1, value=30, step=1)
 
     if st.button("Generate Chords"):
 
         segments, bound_times = generate_segments(data_,
-                                                  n_segments=n_segments, sf=st.session_state.sampling_rate)
+                                                  n_segments=st.session_state.n_segments, sf=st.session_state.sampling_rate)
         print('Number of segments:', len(segments))
         print('Length of segments:', [len(s) for s in segments])
         # Plot the time series and the change points
@@ -655,19 +799,29 @@ with tab2:
         ax.legend(loc='upper right', frameon=False, fontsize='large', facecolor='none', edgecolor='none', labelcolor='white')
         # remove gridlines
         ax.grid(False)
-        st.pyplot(fig)
+        # Store the plot in session state
+        st.session_state["chords_plot"] = fig
+        
 
         chords = extract_chords(segments, method=method_mapping[peak_extraction_method],
                                 n_peaks=n_peaks, peaks_idxs=None, precision=precision,
-                                max_freq=max_freq, sf=st.session_state.sampling_rate) 
+                                max_freq=st.session_state.max_freq, sf=st.session_state.sampling_rate) 
+        
+        xml_bytes = chords_to_musicxml(chords, bound_times)
+
         print('CHORDS', chords, 'NUmber of chords:', len(chords))
-        MIDI_file = chords_to_MIDI(chords,  bound_times, n_oct_up=n_oct_up, fname='test',
-                                   foldername='', microtonal=microtonal, max_beat_duration=8,
+        MIDI_file = chords_to_MIDI(chords,  bound_times, n_oct_up=st.session_state.n_oct_up, fname='test',
+                                   foldername='', microtonal=st.session_state.microtonal, max_beat_duration=8,
                                    total_duration=total_duration)
         st.write("Chords extracted successfully!")
+
+
         # Convert MIDI file to byte stream for download
         midi_bytes = io.BytesIO()
         MIDI_file.save("temp.mid")  # Save the MIDI file to a temporary path
+        # **Store XML and MIDI in session state**
+        st.session_state["xml_bytes"] = xml_bytes
+        st.session_state["midi_file"] = MIDI_file
 
         # Read the saved file into a byte stream
         with open("temp.mid", "rb") as f:
@@ -675,13 +829,71 @@ with tab2:
 
         midi_bytes.seek(0)  # Move to the beginning of the file
 
-        # Create a download button
+    # Always display the stored plot if it exists
+    if "chords_plot" in st.session_state:
+        st.pyplot(st.session_state["chords_plot"])
+
+    # Show download buttons only if the data exists
+    if "xml_bytes" in st.session_state:
+        st.download_button(
+            label="🎼 Download MusicXML File",
+            data=st.session_state["xml_bytes"],
+            file_name="chord_progression.musicxml",
+            mime="application/vnd.recordare.musicxml"
+        )
+
+    if "midi_file" in st.session_state:
+        midi_bytes = io.BytesIO()
+        st.session_state["midi_file"].save("temp.mid")
+        with open("temp.mid", "rb") as f:
+            midi_bytes.write(f.read())
+        midi_bytes.seek(0)
+
         st.download_button(
             label="💾 Download MIDI File",
             data=midi_bytes,
             file_name="generated_chords.mid",
             mime="audio/midi"
         )
+
+    if "xml_bytes" in st.session_state and st.button("Show MusicXML Score"):
+        # Convert MusicXML to base64
+        xml_data = st.session_state["xml_bytes"].getvalue().decode()
+        musicxml_b64 = base64.b64encode(xml_data.encode()).decode()
+
+        # Adjust Verovio settings for better rendering
+        verovio_html = f"""
+        <iframe width="100%" height="700px" 
+            style="border: none; overflow: hidden;"
+            src="data:text/html;base64,{base64.b64encode(f'''
+            <html>
+            <head>
+                <script src="https://www.verovio.org/javascript/latest/verovio-toolkit.js"></script>
+            </head>
+            <body>
+                <div id="music-container"></div>
+                <script>
+                    let vrvToolkit = new verovio.toolkit();
+                    let musicXmlData = atob("{musicxml_b64}");
+                    
+                    // Render Verovio with adaptive page height
+                    let options = {{
+                        pageHeight: 2000,  // Increase for better fitting
+                        pageWidth: 1200, 
+                        scale: 60,  // Adjust to fit more notation
+                        ignoreLayout: 1
+                    }};
+                    
+                    let svgData = vrvToolkit.renderData(musicXmlData, options);
+                    document.getElementById("music-container").innerHTML = svgData;
+                </script>
+            </body>
+            </html>'''.encode()).decode()}">
+        </iframe>
+        """
+
+        st.markdown(verovio_html, unsafe_allow_html=True)
+
 # --- Rhythms Section ---
 with tab3:
     st.subheader("Rhythmic Patterns (Coming Soon)")
