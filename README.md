@@ -124,6 +124,43 @@ biotuning.peaks_extraction(data, peaks_function='FOOOF') #extract spectral peaks
 biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
 
 ```
+# Running the Biotuner GUI
+
+You can run the Biotuner graphical interface using **Invoke** or **Streamlit**.
+
+## Option 1: Run via Invoke (Recommended)
+
+If you have `invoke` installed and set up, simply run:
+
+```sh
+invoke gui
+```
+This command will ensure all dependencies are installed before launching the GUI.
+
+![image](https://github.com/user-attachments/assets/5566dea7-378c-4621-9ec8-7e2ef6991c57)
+
+## Option 2: Run via Streamlit
+
+If you prefer to start the GUI manually, run:
+
+```sh
+streamlit run gui.py
+```
+
+> **Note:** If you use this option, you must first install the GUI dependencies. You can install them using:
+
+```sh
+pip install ".[interactive]"
+```
+Replace `gui.py` with the actual filename if different.
+
+---
+
+### Access the Interface
+
+Once the GUI starts, you should see a local URL in the terminal, such as:
+
+[http://localhost:8501/](http://localhost:8501/)
 
 <div align="center" style="width: 50%; margin: auto; text-align: center;">
 
@@ -133,7 +170,7 @@ biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
     <img src="https://github.com/user-attachments/assets/7e99e0ec-a1da-44f2-8ad9-bdfce8f4a36f" alt="biotuner_multimodal_02" width="50%">
   </p>
 
-The figure below illustrates Biotuner's ability to extract harmonic structures across different biological and physical systems. It showcases harmonic ratios detected in biosignals from the **brain**, **heart**, and **plants**, as well as their correspondence with audio signals. By analyzing the fundamental frequency relationships in these diverse modalities, Biotuner enables a cross-domain exploration of resonance and tuning in biological and artificial systems.
+The figure above illustrates Biotuner's ability to extract harmonic structures across different biological and physical systems. It showcases harmonic ratios detected in biosignals from the **brain**, **heart**, and **plants**, as well as their correspondence with audio signals. By analyzing the fundamental frequency relationships in these diverse modalities, Biotuner enables a cross-domain exploration of resonance and tuning in biological and artificial systems.
 
 </div>
 
