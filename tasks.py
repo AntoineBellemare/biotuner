@@ -149,4 +149,4 @@ def gui(ctx):
 
     # Start the GUI
     print("🚀 Launching GUI...")
-    subprocess.run(["streamlit", "run", "gui.py"], check=True)
+    subprocess.run(["streamlit", "run", "app/gui.py"], check=True)

@@ -83,7 +83,7 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
 
         """
     # Perform initial operations and get cleaned PSD
-    freqs, psd = compute_frequency_and_psd(signal, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax)
+    freqs, psd = compute_frequency_and_psd(signal, precision_hz, smoothness=smoothness, fs=fs, noverlap=noverlap, fmin=fmin, fmax=fmax)
     psd_clean = apply_power_law_remove(freqs, psd, power_law_remove)
     psd_min = np.min(psd_clean)
     psd_max = np.max(psd_clean)
@@ -246,7 +246,7 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
         plt.show()
         return df, harmonicity_matrix
 
-def compute_phase_values(signal, precision_hz, fs, noverlap, smoothness):
+def compute_phase_values(signal, precision_hz, fs=1000, noverlap=10, smoothness=1):
     '''
     Compute the phase matrix of a signal using the Short-Time Fourier Transform (STFT).
     

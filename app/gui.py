@@ -37,6 +37,27 @@ import json
 
 import random
 
+def update_matrix_with_highlighted_ratios(tuning, highlighted_ratios):
+    """
+    Update the consonance matrix and highlight specific ratios used in the current chord.
+
+    Parameters:
+    - tuning: The full tuning list.
+    - highlighted_ratios: The subset of tuning ratios used in the chord.
+    """
+    fig, ax = plt.subplots(figsize=(6, 6))
+    
+    # Compute the consonance matrix
+    cons_matrix = consonance_matrix(tuning, metric_function=dyad_similarity, cmap="magma", fig=fig)
+
+    # Highlight used ratios
+    for i, ratio1 in enumerate(tuning):
+        for j, ratio2 in enumerate(tuning):
+            if ratio1 in highlighted_ratios and ratio2 in highlighted_ratios:
+                ax.add_patch(plt.Rectangle((j, i), 1, 1, color="lime", alpha=0.5))
+
+    # Display the updated matrix
+    st.pyplot(fig)
 
 
 
@@ -53,7 +74,7 @@ def generate_chord_wave(tuning, base_freq=440, duration=1.0, sample_rate=44100):
     Returns:
     - numpy array containing the waveform of the chord.
     """
-    num_notes = random.randint(3, 4)  # Select 3 to 4 notes for the chord
+    num_notes = random.randint(3, 5)  # Choose random number of notes in the chord
     selected_ratios = random.sample(list(tuning), num_notes)  # Choose random tuning ratios
     freqs = [base_freq * float(Fraction(str(ratio))) for ratio in selected_ratios]
 
@@ -88,6 +109,30 @@ def play_random_chords(tuning, num_chords=3, base_freq=440, duration=1.0, sample
     """
     for _ in range(num_chords):
         chord_wave, freqs = generate_chord_wave(tuning, base_freq, duration, sample_rate)
+        print(f"🎵 Playing Chord with frequencies: {[round(f, 2) for f in freqs]} Hz")
+        sd.play(chord_wave, samplerate=sample_rate)
+        time.sleep(duration + silence_duration)
+    sd.stop()
+
+def play_random_chords_with_highlight(tuning, num_chords=3, base_freq=440, duration=1.0, sample_rate=44100, silence_duration=0.2):
+    """
+    Play a sequence of random chords and update the consonance matrix in real-time.
+    
+    Parameters:
+    - tuning: List of frequency ratios.
+    - num_chords: Number of chords to play.
+    - base_freq: The fundamental frequency.
+    - duration: Duration of each chord.
+    - sample_rate: Sampling rate.
+    - silence_duration: Pause between chords.
+    """
+    for _ in range(num_chords):
+        chord_wave, freqs = generate_chord_wave(tuning, base_freq, duration, sample_rate)
+        used_ratios = [f / base_freq for f in freqs]  # Compute played ratios
+        
+        # Update the consonance matrix
+        update_matrix_with_highlighted_ratios(tuning, used_ratios)
+        
         print(f"🎵 Playing Chord with frequencies: {[round(f, 2) for f in freqs]} Hz")
         sd.play(chord_wave, samplerate=sample_rate)
         time.sleep(duration + silence_duration)
@@ -396,12 +441,6 @@ def chords_to_musicxml(chords, bound_times, fname="chord_progression", total_dur
     return xml_bytes
 
 
-
-
-import numpy as np
-import librosa
-
-
 def generate_segments(data, n_segments=64, sf=44100, time_resolution=10, frequency_resolution=1000):
     """
     Extracts spectral centroid features and segments audio.
@@ -425,20 +464,24 @@ def generate_segments(data, n_segments=64, sf=44100, time_resolution=10, frequen
     print(f'Using frequency_resolution={n_fft} samples, time_resolution={time_resolution} ms → hop_length={hop_length} samples')
 
     # Compute spectral centroid feature
-    feature = librosa.feature.spectral_centroid(y=data, sr=sf, n_fft=n_fft, hop_length=hop_length)
+    feature = librosa.feature.spectral_centroid(y=data, sr=sf, n_fft=n_fft, hop_length=hop_length).squeeze()
     #feature = librosa.feature.spectral_flatness(y=data, n_fft=n_fft, hop_length=hop_length)
-
+    
     # Check feature size before segmentation
-    n_features = feature.shape[1]  # Number of time steps in feature extraction
+    n_features = feature.shape[0]  # Number of time steps in feature extraction
     print("Feature shape:", feature.shape, "Number of features:", n_features, 'Requested segments:', n_segments)
 
     try:
+        #similarity_matrix = librosa.segment.recurrence_matrix(feature.reshape(1, -1), mode='affinity', self=True)
+        #bounds = librosa.segment.agglomerative(similarity_matrix, n_segments)
+
         # Segment using agglomerative clustering
         bounds = librosa.segment.agglomerative(feature, n_segments)
 
         # Convert from frames to time
-        bound_times = librosa.frames_to_time(bounds, sr=sf)
-        bound_times = np.clip(bound_times, 0, len(data) / sf)  # Ensure within bounds
+        bound_times = librosa.frames_to_time(bounds, sr=sf, hop_length=hop_length)
+        #bound_times = bound_times / bound_times[-1] * (len(data) / sf)
+
         bound_samples = (bound_times * sf).astype(int)
 
         # Generate segments
@@ -450,13 +493,12 @@ def generate_segments(data, n_segments=64, sf=44100, time_resolution=10, frequen
         num_valid_segments = len(valid_segments)
 
         # Check if enough valid segments are generated
-        if num_valid_segments < 0.25 * n_segments:
+        if num_valid_segments < 0.15 * n_segments:
             st.warning(f"⚠️ Only {num_valid_segments} valid segments generated, fewer than requested {n_segments}.")
             st.write("""
                 🔧 **Try adjusting the following parameters:**
                 - Increase the **length of the signal** (more than 2 seconds)
-                - Increase the **time resolution** (e.g., from 10ms to 50ms)
-                - Increase the **FFT window size** (e.g., from 1000 to 2048)
+                - Decrease the **time resolution** 
                 - Reduce the **number of segments** (e.g., from 64 to a lower value)
             """)
             return segments, bound_samples
@@ -467,11 +509,11 @@ def generate_segments(data, n_segments=64, sf=44100, time_resolution=10, frequen
         st.error(f"🚨 Segmentation Error: {e}")
         st.write("""
             🔧 **Try adjusting the following parameters:**
-            - Incase the **length of the signal** (more than 2 seconds)
-            - Increase the **time resolution** (e.g., from 10ms to 50ms)
-            - Increase the **FFT window size** (e.g., from 1000 to 2048)
+            - Increase the **length of the signal** (more than 2 seconds)
+            - Decrease the **time resolution** 
             - Reduce the **number of segments** (e.g., from 64 to a lower value)
         """)
+        st.stop()
         return [], []
 
 
@@ -507,7 +549,7 @@ def extract_chords(segments, method='cepstrum', n_peaks=5, peaks_idxs=None, prec
     n_segments_removed = 0
     for segment in segments[1:]:
         #print('segment size:', segment.size)
-        if segment.size < sf/2:
+        if segment.size < sf/10:
             n_segments_removed += 1
             continue
         if np.isnan(segment).any():
@@ -935,8 +977,54 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
+data_example_folder = "app/data_example"
 
-uploaded_file = st.file_uploader("Upload your **audio or data file**", type=["wav", "mp3", "csv"])
+import os
+from os.path import join
+import shutil
+# Ensure the folder exists
+if not os.path.exists(data_example_folder):
+    os.makedirs(data_example_folder)
+
+# --- File Upload Section ---
+st.markdown("### Upload Your File")
+uploaded_file = st.file_uploader("Upload an **audio or data file**", type=["wav", "mp3", "csv"])
+
+# --- Download Example Files Button ---
+if st.button("Download Example Files Folder", key="download_examples", help="Click to download the example files folder"):
+    zip_filename = "data_example.zip"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.make_archive(os.path.join(tmpdir, "data_example"), 'zip', data_example_folder)
+        with open(os.path.join(tmpdir, "data_example.zip"), "rb") as f:
+            st.download_button(
+                label="Download Example Files",
+                data=f.read(),
+                file_name=zip_filename,
+                mime="application/zip",
+                key="download_button",
+                on_click=lambda: None  # Trigger the download directly
+            )
+
+
+# # --- Example Files Section ---
+# st.markdown("### Or Choose an Example File")
+# example_files = [f for f in os.listdir(data_example_folder) if f.endswith((".wav", ".mp3", ".csv"))]
+
+# if example_files:
+#     selected_example = st.selectbox("Select an example file:", example_files, index=0)
+#     load_example = st.button("Load Example File")
+# else:
+#     st.warning("No example files found in `data_example/`. Please add some example files.")
+#     selected_example = None
+#     load_example = False
+
+# # --- Process Uploaded or Example File ---
+
+
+# if load_example and selected_example:
+#     file_path = os.path.join(data_example_folder, selected_example)
+
+
 
 if uploaded_file:
     st.success("✅ File uploaded successfully!")
@@ -1074,7 +1162,7 @@ with tab1:
                     sf=st.session_state.sampling_rate, 
                     peaks_function=method_mapping[st.session_state.peak_method],
                     precision=precision, 
-                    n_harm=10
+                    n_harm=10,
                 )
 
                 # Extract spectral peaks
@@ -1084,7 +1172,9 @@ with tab1:
                     max_freq=sampling_frequency / 2, 
                     n_peaks=n_peaks,
                     graph=False, 
-                    min_harms=2
+                    min_harms=2,
+                    EIMC_order=3,
+                    min_IMs=2
                 )
             except:
                 if st.session_state.peak_method in ["Harmonic Recurrence", "Intermodulation Components"]:
@@ -1393,11 +1483,19 @@ with tab2:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        frequency_resolution = st.number_input("Frequency Resolution (samples)", min_value=1, value=1000, step=1)
+        if st.session_state.sampling_rate is not None and st.session_state.sampling_rate > 1000:  # High SF (e.g., audio data)
+            freq_res = 1024  # Lower n_fft for better temporal resolution
+        else:  # Low SF (e.g., wind data)
+            freq_res = 8192  # Higher n_fft for better harmonic resolution
+        frequency_resolution = st.number_input("Frequency Resolution (samples)", min_value=1, value=freq_res, step=1)
         st.session_state.frequency_resolution = frequency_resolution  # Store selection
 
     with col2:
-        time_resolution = st.number_input("Temporal Resolution (ms)", min_value=1, value=10, step=1)
+        if st.session_state.sampling_rate is not None and st.session_state.sampling_rate > 1000:  # High SF (e.g., audio data)
+            time_res = 10  # Short time window
+        else:  # Low SF (e.g., wind data)
+            time_res = 1000  # Long time window
+        time_resolution = st.number_input("Temporal Resolution (ms)", min_value=1, value=time_res, step=1)
 
     with col3:
         total_duration = st.number_input("Total Duration (s)", min_value=1, value=30, step=1)
@@ -1433,8 +1531,13 @@ with tab2:
                                 max_freq=st.session_state.max_freq, sf=st.session_state.sampling_rate) 
         st.write(f"Number of segments removed: {n_segments_removed}")
         if len(chords) <= 1:
-            st.error("No chords extracted. Please adjust the parameters."
-            "")
+            st.error("⚠️ No chords extracted. Try adjusting the parameters.")
+            st.write("""
+            🔧 **Suggested Fixes:**
+            - Reduce the **precision** (e.g., from **1Hz to 0.5Hz**) to capture more harmonic peaks.
+            - Change the **peak extraction method** to see if another approach works better.
+            """)
+
             st.stop()
         
         xml_bytes = chords_to_musicxml(chords, bound_times, total_duration=total_duration)

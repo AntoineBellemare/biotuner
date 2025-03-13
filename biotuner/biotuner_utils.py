@@ -1831,7 +1831,7 @@ def safe_mean(lst):
 
 
 def compute_frequency_and_psd(
-    signal, precision_hz, smoothness, fs, noverlap, fmin=None, fmax=None
+    signal, precision_hz, smoothness=1, fs=1000, noverlap=1, fmin=None, fmax=None
 ):
     """
     Compute the frequencies and power spectral density (PSD) of a signal using Welch method.
@@ -1861,6 +1861,8 @@ def compute_frequency_and_psd(
         Power spectral density of the signal.
     """
     nperseg = int(fs / precision_hz)
+    print('Nperseg:', nperseg)
+    print('Noverlap:', noverlap)
     freqs, psd = welch(
         signal, fs, nperseg=int(nperseg / smoothness), nfft=nperseg, noverlap=noverlap
     )
