@@ -850,7 +850,19 @@ n_peaks = st.sidebar.number_input(
 # --- Main Interface ---
 col1, col2 = st.columns([1, 5])
 with col1:
-    st.image("assets/biotuner_logo.png", width=150)
+    image_path = "assets/biotuner_logo.png"
+    
+    if "biotuner_logo" not in st.session_state:
+        if os.path.exists(image_path):  # Ensure the file exists
+            with open(image_path, "rb") as f:
+                st.session_state.biotuner_logo = f.read()  # Store image data in session state
+        else:
+            st.session_state.biotuner_logo = None  # Handle missing file case
+
+    if st.session_state.biotuner_logo:
+        st.image(st.session_state.biotuner_logo, width=150)
+    else:
+        st.warning("⚠️ Logo image not found. Please check deployment.")
 with col2:
     st.markdown(
         """
@@ -1134,7 +1146,7 @@ if uploaded_file:
 
     # --- Process CSV File ---
     elif uploaded_file.name.endswith('.csv'):
-        st.write("📊 Processing CSV file:", uploaded_file.name)
+        #st.write("📊 Processing CSV file:", uploaded_file.name)
         
 
         st.session_state.csv_data = pd.read_csv(uploaded_file)
@@ -1381,10 +1393,36 @@ with tab1:
 
         # Keep consonance matrix below
         st.write("### Tuning Consonance Matrix")
+        # Create figure and ensure background is transparent
+        fig, ax = plt.subplots(figsize=(4, 3))
+        fig.patch.set_alpha(0.0)  # Make figure background transparent
+        ax.patch.set_alpha(0.0)  # Make axis background transparent
+        # adjust text size
+        plt.rcParams.update({
+            'font.size': 6, 
+            'axes.labelsize': 8, 
+            'axes.titlesize': 8,
+            'text.color': 'white',
+            'axes.labelcolor': 'white',
+            'xtick.color': 'white',
+            'ytick.color': 'white',
+            'ytick.labelsize': 8,
+            'xtick.labelsize': 8,
+            'legend.fontsize': 8  # Smaller legend font size
+        })
+
+        # Generate consonance matrix with transparent background
         cons_matrix_harmsim = consonance_matrix(
-            st.session_state.tuning, metric_function=dyad_similarity, vmin=0, vmax=50, cmap='magma', fig=None
+            st.session_state.tuning,
+            metric_function=dyad_similarity,
+            vmin=0,
+            vmax=50,
+            cmap='magma',
+            fig=fig  # Pass the modified figure
         )
-        st.pyplot(cons_matrix_harmsim)
+
+
+        st.pyplot(fig)
 
 
     if "tuning" in st.session_state:
@@ -1515,10 +1553,36 @@ with tab1:
         """, unsafe_allow_html=True)
         # Keep consonance matrix below
         st.write("### Reduced Tuning Consonance Matrix")
-        cons_matrix_reduced = consonance_matrix(
-            st.session_state.reduced_tuning, metric_function=dyad_similarity, vmin=0, vmax=50, cmap='magma', fig=None
+        # Create figure and ensure background is transparent
+        fig2, ax = plt.subplots(figsize=(4, 3))
+        fig2.patch.set_alpha(0.0)  # Make figure background transparent
+        ax.patch.set_alpha(0.0)  # Make axis background transparent
+        # adjust text size
+        plt.rcParams.update({
+            'font.size': 6, 
+            'axes.labelsize': 8, 
+            'axes.titlesize': 8,
+            'text.color': 'white',
+            'axes.labelcolor': 'white',
+            'xtick.color': 'white',
+            'ytick.color': 'white',
+            'ytick.labelsize': 8,
+            'xtick.labelsize': 8,
+            'legend.fontsize': 8  # Smaller legend font size
+        })
+
+        # Generate consonance matrix with transparent background
+        cons_matrixreduced = consonance_matrix(
+            st.session_state.reduced_tuning,
+            metric_function=dyad_similarity,
+            vmin=0,
+            vmax=50,
+            cmap='magma',
+            fig=fig2  # Pass the modified figure
         )
-        st.pyplot(cons_matrix_reduced)
+
+
+        st.pyplot(fig2)
 
 
 
@@ -1871,4 +1935,7 @@ st.markdown("🔬 **Biotuner v0.0.16** | 🎵 Designed for Harmonic Analysis | �
 #   --memory=2Gi \
 #   --cpu=2 \
 #   --timeout=100s \
-#   --allow-unauthenticated
+#   --allow-unauthenticated \
+#   --min-instances=0 \
+#   --max-instances=5
+
