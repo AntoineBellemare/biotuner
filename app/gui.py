@@ -25,7 +25,7 @@ import matplotlib.colors as mcolors
 import wave
 import tempfile
 from music21 import stream, chord, note
-
+from biotuner.dictionaries import interval_catalog
 import json
 from biotuner.biocolors import audible2visible, scale2freqs, wavelength_to_rgb
 from biotuner.biotuner_object import dyad_similarity
@@ -36,6 +36,97 @@ from struct import pack
 import json
 
 import random
+
+st.set_page_config(page_title="Biotuner", page_icon="🐚")
+st.markdown("""
+    <style>
+        /* Ensure assets load from the correct relative path */
+        body { font-family: Arial, sans-serif; }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        /* Default button styling */
+        .stButton>button {
+            background-color: #6A5ACD;  /* Original color */
+            color: white;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 18px;
+            transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+        }
+
+        /* Change button color when clicked */
+        .stButton>button:active {
+            background-color: #FFB6C1 !important;  /* Soft pink */
+            color: black !important;
+            border: 2px solid white !important;  /* White border when clicked */
+        }
+
+        /* Optional: Keep the button in clicked state for a short time */
+        .stButton>button:focus {
+            background-color: #FFB6C1 !important;  /* Keep the clicked color */
+            color: black !important;
+            border: 2px solid white !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# st.markdown(
+#     """
+#     <script>
+#         window.onload = function() {
+#             window.scrollTo(0, 0);
+#         }
+#     </script>
+#     """,
+#     unsafe_allow_html=True
+# )
+
+
+# Convert interval catalog to dictionary for lookup
+interval_dict = {str(value): name for name, value in interval_catalog}
+
+import io
+
+def generate_chords_wav(tuning, num_chords, base_freq=300, duration=2):
+    # Your existing logic to generate chords and save to a WAV file
+    # For example:
+    wav_file_path = save_random_chords(tuning, num_chords, base_freq, duration)
+    
+    # Read the file data into memory
+    with open(wav_file_path, "rb") as f:
+        wav_data = f.read()
+    
+    return wav_data
+
+
+def play_tuning(tuning, base_freq=120, duration=0.2, sample_rate=44100):
+    """
+    Generate and play sine waves corresponding to the tuning.
+    tuning: List of frequency ratios (relative to base frequency)
+    base_freq: Reference frequency (default: Middle C = 261.63 Hz)
+    duration: Note duration in seconds
+    sample_rate: Sampling rate for audio
+    """
+    for ratio in tuning:
+        freq = base_freq * ratio  # Convert ratio to Hz
+        t = np.linspace(0, duration, int(sample_rate * duration), False)
+        wave = 0.5 * np.sin(2 * np.pi * freq * t)  # Generate sine wave
+        # create a more complex tone using FM synthesis
+        modulator = 0.5 * np.sin(2 * np.pi * 2 * freq * t)
+        wave = 0.5 * np.sin(2 * np.pi * (freq + 5 * modulator) * t)
+
+        print(f"🎵 Playing {freq:.2f} Hz")  # Display the frequency
+        sd.play(wave, samplerate=sample_rate)
+        time.sleep(duration)  # Hold the note
+        sd.stop()
+        
+def match_intervals(tuning_values):
+    """Map tuning values to interval names if they exist in the catalog."""
+    tuning_names = [interval_dict.get(str(value), "") for value in tuning_values]
+    return tuning_names
 
 def update_matrix_with_highlighted_ratios(tuning, highlighted_ratios):
     """
@@ -517,8 +608,6 @@ def generate_segments(data, n_segments=64, sf=44100, time_resolution=10, frequen
         return [], []
 
 
-
-
 def extract_chords(segments, method='cepstrum', n_peaks=5, peaks_idxs=None, precision=0.01, max_freq=100, sf=44100):
     """
     Extract chords from segments using spectral peaks detection.
@@ -665,7 +754,7 @@ st.markdown(
     <style>
         body { background-color: #121212; color: #f5deb3; }
         .stButton>button { 
-            background-color: #FFB6C1; 
+            background-color: #6A5ACD; 
             color: white; 
             border-radius: 10px; 
             padding: 12px 24px; 
@@ -988,22 +1077,22 @@ if not os.path.exists(data_example_folder):
 
 # --- File Upload Section ---
 st.markdown("### Upload Your File")
-uploaded_file = st.file_uploader("Upload an **audio or data file**", type=["wav", "mp3", "csv"])
+uploaded_file = st.file_uploader("", type=["wav", "mp3", "csv"])
 
 # --- Download Example Files Button ---
-if st.button("Download Example Files Folder", key="download_examples", help="Click to download the example files folder"):
-    zip_filename = "data_example.zip"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.make_archive(os.path.join(tmpdir, "data_example"), 'zip', data_example_folder)
-        with open(os.path.join(tmpdir, "data_example.zip"), "rb") as f:
-            st.download_button(
-                label="Download Example Files",
-                data=f.read(),
-                file_name=zip_filename,
-                mime="application/zip",
-                key="download_button",
-                on_click=lambda: None  # Trigger the download directly
-            )
+
+zip_filename = "data_example.zip"
+with tempfile.TemporaryDirectory() as tmpdir:
+    shutil.make_archive(os.path.join(tmpdir, "data_example"), 'zip', data_example_folder)
+    with open(os.path.join(tmpdir, "data_example.zip"), "rb") as f:
+        st.download_button(
+            label="Download Example Files",
+            data=f.read(),
+            file_name=zip_filename,
+            mime="application/zip",
+            key="download_button",
+            on_click=lambda: None  # Trigger the download directly
+        )
 
 
 # # --- Example Files Section ---
@@ -1243,7 +1332,7 @@ with tab1:
         st.subheader("🎵 Tuning Analysis Results")
 
         # Create two columns: left for tuning list, right for the wheel
-        col1, col2 = st.columns([1, 2])  # 1:1 ratio (adjust if needed)
+        col1, col2 = st.columns([1, 1])  # 1:1 ratio (adjust if needed)
 
         with col1:
             st.write("### Tuning Values")
@@ -1252,9 +1341,9 @@ with tab1:
             df_tuning = pd.DataFrame({
                 "Ratio": st.session_state.tuning,
             })
-
+            df_tuning["Interval Name"] = match_intervals(df_tuning["Ratio"])
             # Display as dataframe with width 200px
-            st.dataframe(df_tuning, width=200)
+            st.dataframe(df_tuning, width=800)
 
 
         with col2:
@@ -1300,63 +1389,60 @@ with tab1:
 
     if "tuning" in st.session_state:
         
-        st.subheader("🔊 Play Tuning")
-        num_chords = st.slider("🎵 Number of Random Chords", min_value=1, max_value=10, value=3)
-        st.session_state.num_chords = num_chords  # Store selection
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("🎶 Play Random Chords"):
-                play_random_chords(st.session_state.tuning, num_chords=st.session_state.num_chords, base_freq=300, duration=2)
-            if st.button("💾 Save Random Chords as .wav"):
-                wav_file_path = save_random_chords(st.session_state.tuning, num_chords=st.session_state.num_chords, base_freq=300, duration=2)
-                with open(wav_file_path, "rb") as f:
-                    st.download_button(
-                        label="⬇️ Download Chords as WAV",
-                        data=f,
-                        file_name="random_chords.wav",
-                        mime="audio/wav"
-                    )
-                #play_random_chord(st.session_state.tuning, base_freq=300, duration=2)
-        with col2:
-            if st.button("Play Tuning"):
-                def play_tuning(tuning, base_freq=120, duration=0.2, sample_rate=44100):
-                    """
-                    Generate and play sine waves corresponding to the tuning.
-                    tuning: List of frequency ratios (relative to base frequency)
-                    base_freq: Reference frequency (default: Middle C = 261.63 Hz)
-                    duration: Note duration in seconds
-                    sample_rate: Sampling rate for audio
-                    """
-                    for ratio in tuning:
-                        freq = base_freq * ratio  # Convert ratio to Hz
-                        t = np.linspace(0, duration, int(sample_rate * duration), False)
-                        wave = 0.5 * np.sin(2 * np.pi * freq * t)  # Generate sine wave
-                        # create a more complex tone using FM synthesis
-                        modulator = 0.5 * np.sin(2 * np.pi * 2 * freq * t)
-                        wave = 0.5 * np.sin(2 * np.pi * (freq + 5 * modulator) * t)
+        num_chords = st.slider("Number of Random Chords", min_value=1, max_value=10, value=3)
+        st.session_state.num_chords = num_chords  # Store selection 
+        col_play, col_save = st.columns(2)
 
-                        print(f"🎵 Playing {freq:.2f} Hz")  # Display the frequency
-                        sd.play(wave, samplerate=sample_rate)
-                        time.sleep(duration)  # Hold the note
-                        sd.stop()
-                
+        with col_play:
+            # st.subheader("🔊 Play and Save Tuning")
+            
+            st.markdown("### 🔊 Play")
+            if st.button("▶️ Play Tuning"):
                 tuning = [float(Fraction(str(x))) for x in st.session_state.tuning]
                 play_tuning(tuning)
-        with col3:
-            if st.button("Save Tuning"):
-                # add 2/1 to the tuning
-                st.session_state.tuning = np.append(st.session_state.tuning, 2)
-                scl_content = create_SCL(st.session_state.tuning, 'biotuning')
-                st.download_button(
-                    label="Download SCL File",
-                    data=scl_content,
-                    file_name="tuning.scl",
-                    mime="text/plain"
-                )
+
+            if st.button("🎶 Play Random Chords"):
+                play_random_chords(st.session_state.tuning, num_chords=st.session_state.num_chords, base_freq=300, duration=2)
+
+        with col_save:
+            st.markdown("### 💾 Save")
+            # Generate the tuning file once
+            tuning_with_octave = np.append(st.session_state.tuning, 2)  # Add 2/1 to tuning
+            scl_content = create_SCL(tuning_with_octave, 'biotuning')
+
+            # Download button for Tuning
+            st.download_button(
+                label="⬇️ Download SCL File",
+                data=scl_content,
+                file_name="tuning.scl",
+                mime="text/plain"
+            )
+
+            # Generate the WAV file once
+            wav_file_path = save_random_chords(
+                st.session_state.tuning,
+                st.session_state.num_chords,
+                base_freq=300,
+                duration=2
+            )
+
+            # Read the binary WAV data
+            with open(wav_file_path, "rb") as f:
+                wav_data = f.read()
+
+            # Download button for Chords
+            st.download_button(
+                label="⬇️ Download Random Chords",
+                data=wav_data,
+                file_name="random_chords.wav",
+                mime="audio/wav"
+            )
+
+          
 
         st.subheader("Reduce Tuning")
 
-        num_steps = st.slider("Select number of steps:", 2, len(st.session_state.tuning), st.session_state.num_steps)
+        num_steps = st.slider("Number of steps:", 2, len(st.session_state.tuning), st.session_state.num_steps)
         st.session_state.num_steps = num_steps  # Store selection
 
         if st.button("Reduce Tuning"):
@@ -1380,7 +1466,7 @@ with tab1:
         st.subheader("🎵 Reduced Tuning Analysis")
 
         # Create two columns: left for reduced tuning list, right for the wheel
-        col1, col2 = st.columns([1, 2])  # 1:1 ratio (adjust if needed)
+        col1, col2 = st.columns([1, 1])  # 1:1 ratio (adjust if needed)
 
         with col1:
             reduced_tuning = st.session_state.reduced_tuning
@@ -1391,10 +1477,10 @@ with tab1:
             df_reduced_tuning = pd.DataFrame({
                 "Ratio": reduced_tuning
             })
-
+            df_reduced_tuning["Interval Name"] = match_intervals(df_reduced_tuning["Ratio"])
             # Display as table (same as original tuning table)
             st.write("### Reduced Tuning Values")
-            st.dataframe(df_reduced_tuning, width=200)  # Adjust width if needed
+            st.dataframe(df_reduced_tuning, width=800)  # Adjust width if needed
 
         with col2:
             # Compute new tuning consonance metric
@@ -1438,16 +1524,56 @@ with tab1:
 
     # --- Save Reduced Tuning Button ---
     if "reduced_tuning" in st.session_state:
-        if st.button("Save Reduced Tuning"):
-            # add 2/1 to the tuning
-            st.session_state.reduced_tuning = np.append(st.session_state.reduced_tuning, 2)
-            scl_content_reduced = create_SCL(st.session_state.reduced_tuning, 'biotuning_reduced')
+        num_chords_reduced = st.slider("Number of Random Chords (Reduced Tuning)", min_value=1, max_value=10, value=3)
+        st.session_state.num_chords_reduced = num_chords_reduced  # Store selection
+
+        col_play_reduced, col_save_reduced = st.columns(2)
+
+        with col_play_reduced:
+            st.markdown("### 🔊 Play (Reduced Tuning)")
+
+            if st.button("▶️ Play Reduced Tuning"):
+                reduced_tuning = [float(Fraction(str(x))) for x in st.session_state.reduced_tuning]
+                play_tuning(reduced_tuning)
+
+            if st.button("🎶 Play Random Chords (Reduced)"):
+                play_random_chords(st.session_state.reduced_tuning, num_chords=st.session_state.num_chords_reduced, base_freq=300, duration=2)
+
+        with col_save_reduced:
+            st.markdown("### 💾 Save (Reduced Tuning)")
+
+            # Generate the reduced tuning file once
+            tuning_with_octave_reduced = np.append(st.session_state.reduced_tuning, 2)  # Add 2/1 to tuning
+            scl_content_reduced = create_SCL(tuning_with_octave_reduced, 'biotuning_reduced')
+
+            # Download button for Reduced Tuning
             st.download_button(
-                label="Download Reduced SCL File",
+                label="⬇️ Download Reduced SCL File",
                 data=scl_content_reduced,
                 file_name="reduced_tuning.scl",
                 mime="text/plain"
             )
+
+            # Generate the WAV file for reduced tuning once
+            wav_file_path_reduced = save_random_chords(
+                st.session_state.reduced_tuning,
+                st.session_state.num_chords_reduced,
+                base_freq=300,
+                duration=2
+            )
+
+            # Read the binary WAV data
+            with open(wav_file_path_reduced, "rb") as f:
+                wav_data_reduced = f.read()
+
+            # Download button for Random Chords (Reduced Tuning)
+            st.download_button(
+                label="⬇️ Download Random Chords (Reduced)",
+                data=wav_data_reduced,
+                file_name="random_chords_reduced.wav",
+                mime="audio/wav"
+            )
+
 
 
 
