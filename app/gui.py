@@ -1530,17 +1530,17 @@ with tab1:
         col_play_reduced, col_save_reduced = st.columns(2)
 
         with col_play_reduced:
-            st.markdown("### 🔊 Play (Reduced Tuning)")
+            st.markdown("### 🔊 Play")
 
-            if st.button("▶️ Play Reduced Tuning"):
+            if st.button("▶️ Tuning"):
                 reduced_tuning = [float(Fraction(str(x))) for x in st.session_state.reduced_tuning]
                 play_tuning(reduced_tuning)
 
-            if st.button("🎶 Play Random Chords (Reduced)"):
+            if st.button("🎶 Random Chords"):
                 play_random_chords(st.session_state.reduced_tuning, num_chords=st.session_state.num_chords_reduced, base_freq=300, duration=2)
 
         with col_save_reduced:
-            st.markdown("### 💾 Save (Reduced Tuning)")
+            st.markdown("### 💾 Save")
 
             # Generate the reduced tuning file once
             tuning_with_octave_reduced = np.append(st.session_state.reduced_tuning, 2)  # Add 2/1 to tuning
@@ -1548,7 +1548,7 @@ with tab1:
 
             # Download button for Reduced Tuning
             st.download_button(
-                label="⬇️ Download Reduced SCL File",
+                label="⬇️ Download SCL File",
                 data=scl_content_reduced,
                 file_name="reduced_tuning.scl",
                 mime="text/plain"
@@ -1568,7 +1568,7 @@ with tab1:
 
             # Download button for Random Chords (Reduced Tuning)
             st.download_button(
-                label="⬇️ Download Random Chords (Reduced)",
+                label="⬇️ Download Random Chords",
                 data=wav_data_reduced,
                 file_name="random_chords_reduced.wav",
                 mime="audio/wav"
