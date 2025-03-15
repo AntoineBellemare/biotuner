@@ -90,6 +90,18 @@ interval_dict = {str(value): name for name, value in interval_catalog}
 
 import io
 
+def downsample_audio(y, sr, target_length=5000):
+    """Downsample the audio for visualization to prevent long browser rendering."""
+    if len(y) > target_length:
+        factor = len(y) // target_length
+        y_downsampled = y[::factor]
+        time_axis = np.linspace(0, len(y) / sr, num=len(y_downsampled))
+    else:
+        y_downsampled = y
+        time_axis = np.linspace(0, len(y) / sr, num=len(y))
+    
+    return time_axis, y_downsampled
+
 def generate_chords_wav(tuning, num_chords, base_freq=300, duration=2):
     # Your existing logic to generate chords and save to a WAV file
     # For example:
@@ -739,7 +751,7 @@ if "uploaded_data" not in st.session_state:
 if "sampling_rate" not in st.session_state:
     st.session_state.sampling_rate = None
 if "num_steps" not in st.session_state:
-    st.session_state.num_steps = 7
+    st.session_state.num_steps = 3
 if "selection" not in st.session_state:
     st.session_state.selection = None
 if "start_time" not in st.session_state:
@@ -1190,28 +1202,44 @@ if uploaded_file:
 
     # Create Plotly figure with highlighted selection
     fig = go.Figure()
-
-    # Add the full waveform
-    fig.add_trace(go.Scatter(x=time_axis, y=st.session_state.uploaded_data, mode="lines", name="Audio Signal", line=dict(color="deepskyblue")))
-
-    # Add highlighted selected region
     selected_indices = (time_axis >= st.session_state.start_time) & (time_axis <= st.session_state.end_time)
-    fig.add_trace(go.Scatter(
-        x=time_axis[selected_indices], 
-        y=selected_signal, 
-        mode="lines", 
-        name="Selected Region", 
-        line=dict(color="red", width=3)
-    ))
 
-    # Update layout
-    fig.update_layout(
-        title="Interactive Waveform Selection",
-        xaxis_title="Time (seconds)",
-        yaxis_title="Amplitude",
-        height=400  # Set a fixed height
-    )
+    if uploaded_file.name.endswith('.wav') or uploaded_file.name.endswith('.mp3'):
+        downsamples_signal = st.session_state.uploaded_data[::10]
+        # Add highlighted selected region
+        
+        time_axis_downsampled = time_axis[::10]
+        selected_signal_downsampled = selected_signal[::10]
+        selected_indices_downsampled = selected_indices[::10]
 
+        # Add the full waveform
+        fig.add_trace(go.Scatter(x=time_axis_downsampled, y=downsamples_signal, mode="lines", name="Audio Signal", line=dict(color="deepskyblue")))
+        fig.add_trace(go.Scatter(
+            x=time_axis_downsampled[selected_indices_downsampled],
+            y=selected_signal_downsampled,
+            mode="lines", 
+            name="Selected Region", 
+            line=dict(color="red", width=3)
+        ))
+
+        # Update layout
+        fig.update_layout(
+            title="Interactive Waveform Selection",
+            xaxis_title="Time (seconds)",
+            yaxis_title="Amplitude",
+            height=400  # Set a fixed height
+        )
+
+    elif uploaded_file.name.endswith('.csv'):
+        # plot the signal and selected signal without downsampling
+        fig.add_trace(go.Scatter(x=time_axis, y=st.session_state.uploaded_data, mode="lines", name="Time Series", line=dict(color="deepskyblue")))
+        fig.add_trace(go.Scatter(
+            x=time_axis[selected_indices],
+            y=selected_signal,
+            mode="lines", 
+            name="Selected Region", 
+            line=dict(color="red", width=3)
+        ))
     # Update `uploaded_data` with selected portion
     st.session_state.uploaded_data = np.copy(selected_signal)
     print('selected signal length:', len(st.session_state.uploaded_data))
@@ -1410,7 +1438,14 @@ with tab1:
             'xtick.labelsize': 8,
             'legend.fontsize': 8  # Smaller legend font size
         })
+        # Manually adjust text colors for Streamlit's dark theme
+        ax.set_title("", color="white")
+        ax.set_xlabel("Ratio Index", color="white")
+        ax.set_ylabel("Ratio Index", color="white")
 
+        # Set tick labels color
+        ax.tick_params(axis="x", colors="white")
+        ax.tick_params(axis="y", colors="white")
         # Generate consonance matrix with transparent background
         cons_matrix_harmsim = consonance_matrix(
             st.session_state.tuning,
@@ -1455,7 +1490,7 @@ with tab1:
                 file_name="tuning.scl",
                 mime="text/plain"
             )
-
+            
             # Generate the WAV file once
             wav_file_path = save_random_chords(
                 st.session_state.tuning,
@@ -1571,6 +1606,10 @@ with tab1:
             'legend.fontsize': 8  # Smaller legend font size
         })
 
+        #ax.set_title("Consonance Matrix", color="white")
+        ax.set_xlabel("Ratio Index", color="white")
+        ax.set_ylabel("Ratio Index", color="white")
+
         # Generate consonance matrix with transparent background
         cons_matrixreduced = consonance_matrix(
             st.session_state.reduced_tuning,
@@ -1618,26 +1657,30 @@ with tab1:
                 mime="text/plain"
             )
 
-            # Generate the WAV file for reduced tuning once
-            wav_file_path_reduced = save_random_chords(
-                st.session_state.reduced_tuning,
-                st.session_state.num_chords_reduced,
-                base_freq=300,
-                duration=2
-            )
+            try:
+                # Generate the WAV file for reduced tuning once
+                wav_file_path_reduced = save_random_chords(
+                    st.session_state.reduced_tuning,
+                    st.session_state.num_chords_reduced,
+                    base_freq=300,
+                    duration=2
+                )
 
-            # Read the binary WAV data
-            with open(wav_file_path_reduced, "rb") as f:
-                wav_data_reduced = f.read()
+                # Read the binary WAV data
+                with open(wav_file_path_reduced, "rb") as f:
+                    wav_data_reduced = f.read()
 
-            # Download button for Random Chords (Reduced Tuning)
-            st.download_button(
-                label="⬇️ Download Random Chords",
-                data=wav_data_reduced,
-                file_name="random_chords_reduced.wav",
-                mime="audio/wav"
-            )
-
+                # Download button for Random Chords (Reduced Tuning)
+                st.download_button(
+                    label="⬇️ Download Random Chords",
+                    data=wav_data_reduced,
+                    file_name="random_chords_reduced.wav",
+                    mime="audio/wav"
+                )
+            except ValueError:
+                st.error("⚠️ The number of chords is higher than the number of unique tuning ratios. "
+                         "Please reduce the number of chords or add more unique tuning ratios.")
+                st.stop()
 
 
 
