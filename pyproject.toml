@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biotuner"
-version = "0.0.16"
+version = "0.0.17"
 description = "Time series harmonic analysis for adaptive tuning systems and microtonal exploration"
 authors = [
     { name = "Antoine Bellemare", email = "antoine.bellemare9@gmail.com" }
