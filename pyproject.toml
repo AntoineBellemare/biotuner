@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biotuner"
-version = "0.0.17"
+version = "0.0.18"
 description = "Time series harmonic analysis for adaptive tuning systems and microtonal exploration"
 authors = [
     { name = "Antoine Bellemare", email = "antoine.bellemare9@gmail.com" }
@@ -21,7 +21,7 @@ classifiers = [
 license = { text = "MIT" }
 readme = { file = "README.md", content-type = "text/markdown" }
 keywords = ["biosignal", "harmony", "tuning", "eeg", "microtonality", "music", "time series"]
-requires-python = ">=3.6, <3.12"
+requires-python = ">=3.6"
 dependencies = [
     "matplotlib>=3.5.3",
     "seaborn>=0.12.1",
