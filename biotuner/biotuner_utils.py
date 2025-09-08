@@ -1540,7 +1540,7 @@ def create_midi(
 """-----------------------------OTHERS----------------------------------"""
 
 
-def create_SCL(scale, name):
+def create_SCL(scale, name, write=True):
     """
     Create a Scala scale file.
     The Scala file can be used to tune various things, most
@@ -1578,9 +1578,10 @@ def create_SCL(scale, name):
         else:
             representation = "%0.5f" % ratios2cents([degree])[0]
         output = output + "\n%s" % representation
-    outF = open(name + ".scl", "w")
-    outF.writelines(output)
-    outF.close()
+    if write is True:
+        outF = open(name + ".scl", "w")
+        outF.writelines(output)
+        outF.close()
     return output
 
 
@@ -1861,8 +1862,6 @@ def compute_frequency_and_psd(
         Power spectral density of the signal.
     """
     nperseg = int(fs / precision_hz)
-    print('Nperseg:', nperseg)
-    print('Noverlap:', noverlap)
     freqs, psd = welch(
         signal, fs, nperseg=int(nperseg / smoothness), nfft=nperseg, noverlap=noverlap
     )
