@@ -669,6 +669,203 @@ class compute_biotuner(object):
             self.extended_peaks_ratios_cons, b = consonant_ratios(self.extended_peaks, scale_cons_limit, sub=False)
         return self.extended_peaks, self.extended_amps, self.extended_peaks_ratios
 
+    def plot_peaks(self, xmin=1, xmax=60, show_bands=True, show_matrix=False, 
+                   matrix_metric='harmsim', **kwargs):
+        """
+        Plot the extracted peaks with unified biotuner styling.
+        
+        This is a convenience method that calls the plot_peaks function from plot_utils.
+        All parameters from plot_peaks are supported.
+        
+        Parameters
+        ----------
+        xmin : float, default=1
+            Minimum frequency for x-axis (Hz)
+        xmax : float, default=60
+            Maximum frequency for x-axis (Hz)
+        show_bands : bool, default=True
+            Whether to show frequency bands (Delta, Theta, Alpha, etc.)
+        show_matrix : bool, default=False
+            Whether to show a 3-panel layout with harmonicity matrix
+        matrix_metric : str, default='harmsim'
+            Metric for harmonicity matrix: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+        **kwargs : dict
+            Additional parameters passed to plot_peaks, including:
+            - n_peaks : int (for harmonic_recurrence method)
+            - n_pairs : int (for EIMC method)
+            - use_db : bool (for dB scale)
+            - etc.
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object
+        ax : matplotlib.axes.Axes or np.ndarray
+            Single axes (if show_matrix=False) or array of 3 axes (if show_matrix=True)
+            
+        Examples
+        --------
+        >>> bt = compute_biotuner(sf=1000, peaks_function='FOOOF')
+        >>> bt.peaks_extraction(data=signal, min_freq=1, max_freq=50)
+        >>> fig, ax = bt.plot_peaks(show_bands=True, show_matrix=True)
+        >>> plt.show()
+        
+        >>> # With EIMC method
+        >>> bt = compute_biotuner(sf=1000, peaks_function='EIMC')
+        >>> bt.peaks_extraction(data=signal, min_freq=1, max_freq=50)
+        >>> fig, ax = bt.plot_peaks(n_pairs=3, show_matrix=True)
+        """
+        from biotuner.plot_utils import plot_peaks as _plot_peaks
+        
+        return _plot_peaks(
+            bt_object=self,
+            xmin=xmin,
+            xmax=xmax,
+            show_bands=show_bands,
+            show_matrix=show_matrix,
+            matrix_metric=matrix_metric,
+            **kwargs
+        )
+
+    def plot_tuning(self, tuning='peaks_ratios', metric='harmsim', 
+                    ratio_type='all', vmin=None, vmax=None,
+                    panels=4, extra_panels=None, show_summary=True,
+                    figsize=None, **kwargs):
+        """
+        Plot comprehensive tuning analysis with unified biotuner styling.
+        
+        This is a convenience method that calls plot_tuning_ratios from plot_utils.
+        
+        Parameters
+        ----------
+        tuning : str, default='peaks_ratios'
+            Which tuning to plot:
+            - 'diss_curve': Dissonance curve scale (requires compute_diss_curve first)
+            - 'HE': Harmonic entropy scale (requires compute_harmonic_entropy first)
+            - 'harm_tuning': Harmonic tuning (auto-computed if needed)
+            - 'harm_fit_tuning': Harmonic fit tuning (auto-computed if needed)
+            - 'peaks_ratios': Peaks ratios (auto-computed if needed)
+            - 'euler_fokker': Euler-Fokker scale (auto-computed if needed)
+        metric : str, default='harmsim'
+            Metric for consonance matrix: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+        ratio_type : str, default='all'
+            Type of ratios: 'all', 'pos_harm', 'sub_harm'
+        vmin : float, optional
+            Minimum value for color scale
+        vmax : float, optional
+            Maximum value for color scale
+        panels : int, default=4
+            Number of panels (2, 4, or 5 with summary)
+        extra_panels : list of str, optional
+            Extra panels for 4-panel mode. Default: ['step_sizes', 'consonance_profile']
+            Options: 'step_sizes', 'consonance_profile', 'interval_distribution', 'harmonic_deviation'
+        show_summary : bool, default=True
+            Show 5th summary panel with interval matches
+        figsize : tuple, optional
+            Figure size. Default: (16, 16)
+        **kwargs : dict
+            Additional parameters passed to plot_tuning_ratios
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object
+            
+        Examples
+        --------
+        >>> bt = compute_biotuner(sf=1000)
+        >>> bt.peaks_extraction(data=signal)
+        >>> fig = bt.plot_tuning_ratios(tuning='peaks_ratios')
+        >>> plt.show()
+        
+        >>> # Plot dissonance curve scale
+        >>> bt.compute_diss_curve(input_type='peaks', plot=False)
+        >>> fig = bt.plot_tuning_ratios(tuning='diss_curve')
+        
+        >>> # Plot harmonic tuning (auto-computed)
+        >>> fig = bt.plot_tuning_ratios(tuning='harm_tuning')
+        """
+        from biotuner.plot_utils import plot_tuning as _plot_tuning
+        
+        # Set defaults
+        if figsize is None:
+            figsize = (16, 16)
+        if extra_panels is None:
+            extra_panels = ['step_sizes', 'consonance_profile']
+        
+        # Get the appropriate tuning scale
+        tuning_data = None
+        
+        if tuning == 'diss_curve':
+            if not hasattr(self, 'diss_scale'):
+                raise RuntimeError(
+                    "Dissonance curve not computed. Please run compute_diss_curve() first:\n"
+                    "  bt.compute_diss_curve(input_type='peaks', plot=True)"
+                )
+            tuning_data = self.diss_scale
+        
+        elif tuning == 'HE':
+            if not hasattr(self, 'HE_scale'):
+                raise RuntimeError(
+                    "Harmonic entropy not computed. Please run compute_harmonic_entropy() first:\n"
+                    "  bt.compute_harmonic_entropy(input_type='peaks', plot_entropy=True)"
+                )
+            tuning_data = self.HE_scale
+        
+        elif tuning == 'harm_tuning':
+            # Check if cached result exists
+            if hasattr(self, 'harm_tuning_scale'):
+                tuning_data = self.harm_tuning_scale
+            else:
+                print("→ Computing harmonic_tuning() automatically...")
+                tuning_data = self.harmonic_tuning()  # Method will store to self.harm_tuning_scale
+        
+        elif tuning == 'harm_fit_tuning':
+            # Check if cached result exists
+            if hasattr(self, 'harm_fit_tuning_scale'):
+                tuning_data = self.harm_fit_tuning_scale
+            else:
+                print("→ Computing harmonic_fit_tuning() automatically...")
+                tuning_data = self.harmonic_fit_tuning()  # Method will store to self.harm_fit_tuning_scale
+        
+        elif tuning == 'peaks_ratios':
+            if not hasattr(self, 'peaks_ratios'):
+                print("→ Computing peaks_ratios from peaks automatically...")
+                from biotuner.biotuner_utils import compute_peak_ratios
+                tuning_data = compute_peak_ratios(self.peaks, rebound=True, octave=self.octave, 
+                                                   sub=self.compute_sub_ratios)
+                self.peaks_ratios = tuning_data
+            else:
+                tuning_data = self.peaks_ratios
+        
+        elif tuning == 'euler_fokker':
+            # Check if euler_fokker attribute exists and is NOT callable (i.e., it's data)
+            if hasattr(self, 'euler_fokker'):
+                tuning_data = self.euler_fokker
+            else:
+                print("→ Computing euler_fokker_scale() automatically...")
+                tuning_data = self.euler_fokker_scale()  # Method will store to self.euler_fokker
+        
+        else:
+            raise ValueError(
+                f"Unknown tuning type: {tuning}. Must be one of: "
+                "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', 'euler_fokker'"
+            )
+        
+        # Call the plot function
+        return _plot_tuning(
+            tuning=tuning_data,
+            metric=metric,
+            ratio_type=ratio_type,
+            vmin=vmin,
+            vmax=vmax,
+            panels=panels,
+            extra_panels=extra_panels,
+            show_summary=show_summary,
+            figsize=figsize,
+            **kwargs
+        )
+
     def ratios_extension(self, ratios, ratio_fit_bounds=0.001, ratios_n_harms=None):
         """
         This method takes a series of ratios as input and returns the
@@ -1047,6 +1244,11 @@ class compute_biotuner(object):
             plot=plot,
             n_tet_grid=n_tet_grid,
         )
+        
+        # Store dissonance curve for plotting
+        self.diss = diss
+        self.ratio_diss = np.linspace(1, max_ratio, len(diss))
+        
         self.diss_scale_cons, b = consonant_ratios(self.diss_scale, scale_cons_limit, sub=False, input_type="ratios")
         self.scale_metrics["diss_euler"] = euler_diss
         self.scale_metrics["dissonance"] = diss_avg
@@ -1135,6 +1337,11 @@ class compute_biotuner(object):
             plot_tenney=plot_tenney,
             octave=octave,
         )
+        
+        # Store harmonic entropy curve for plotting
+        self.HE = HE_all  # Full entropy curve
+        self.ratio_HE = np.arange(1, octave, res)  # X-axis for entropy curve
+        
         self.HE_scale = HE_scale[0]
         self.HE_scale_cons, b = consonant_ratios(self.HE_scale, scale_cons_limit, sub=False, input_type="ratios")
         self.scale_metrics["HE"] = HE
@@ -1207,7 +1414,7 @@ class compute_biotuner(object):
 
         """
         if list_harmonics is None:
-            if self.peak_function == "harmonic_recurrence":
+            if self.peaks_function == "harmonic_recurrence":
                 list_harmonics = self.all_harmonics
             else:
                 print("No list of harmonics provided")
@@ -1216,7 +1423,7 @@ class compute_biotuner(object):
             ratios.append(rebound(1 * i, min_ratio, max_ratio, octave))
         ratios = list(set(ratios))
         ratios = list(np.sort(np.array(ratios)))
-        self.harmonic_tuning = ratios
+        self.harm_tuning_scale = ratios  # Store to non-conflicting name
         return ratios
 
     def harmonic_fit_tuning(self, n_harm=128, bounds=0.1, n_common_harms=2):
@@ -1248,8 +1455,8 @@ class compute_biotuner(object):
         """
 
         _, harmonics, common_h, _ = harmonic_fit(self.peaks, n_harm=n_harm, bounds=bounds, n_common_harms=n_common_harms)
-        self.harmonic_fit_tuning = harmonic_tuning(common_h)
-        return self.harmonic_fit_tuning
+        self.harm_fit_tuning_scale = harmonic_tuning(common_h)  # Store to non-conflicting name
+        return self.harm_fit_tuning_scale
 
     def pac(
         self,
@@ -1691,6 +1898,9 @@ class compute_biotuner(object):
                 extended_returns=True,
                 graph=graph,
             )
+            # Convert PSD to dB for consistency with other methods
+            self.psd = 10.0 * np.log10(np.maximum(self.psd, 1e-12))
+            self.psd = np.real(self.psd)
 
         if (
             peaks_function == "EMD"
@@ -1997,6 +2207,9 @@ class compute_biotuner(object):
                 max_freq=max_freq,
                 plot_cepstrum=graph,
             )
+            # Store cepstrum data for later visualization
+            self.cepstrum = cepstrum_
+            self.quefrency_vector = quefrency_vector
             peaks_temp_, amps_temp_ = cepstral_peaks(cepstrum_, quefrency_vector, 1 / min_freq, 1 / max_freq)
             peaks_temp_ = list(np.flip(peaks_temp_))
             peaks_temp = [np.round(p, 2) for p in peaks_temp_]
