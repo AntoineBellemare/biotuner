@@ -1,0 +1,382 @@
+"""
+Biotuner Plotting Configuration
+================================
+
+This module provides consistent color schemes, styles, and configuration
+for all biotuner visualizations.
+
+Author: Biotuner Team
+"""
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from typing import Dict, Any, Optional
+
+# ============================================================================
+# Color Palettes
+# ============================================================================
+
+BIOTUNER_COLORS = {
+    'primary': '#2E86AB',      # Blue - main signal
+    'secondary': '#A23B72',    # Purple - harmonics
+    'accent': '#F18F01',       # Orange - peaks/markers
+    'success': '#06A77D',      # Green - positive indicators
+    'warning': '#D4AF37',      # Gold - warnings
+    'danger': '#C73E1D',       # Red - errors/references
+    'dark': '#1F1F1F',         # Dark gray - text
+    'light': '#E8E9EB',        # Light gray - backgrounds
+}
+
+# EMD/IMF color gradients (from deep to light)
+EMD_COLORS = ['#0B3954', '#087E8B', '#3AAFA9', '#BFD7EA', '#DEF2F1']
+
+# Frequency band colors (standard EEG bands)
+BAND_COLORS = {
+    'delta': '#8B4513',    # Brown
+    'theta': '#DAA520',    # Goldenrod
+    'alpha': '#FFA500',    # Orange
+    'beta': '#FFD700',     # Gold
+    'gamma': '#F0E68C',    # Khaki
+}
+
+BAND_NAMES = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+
+# Standard frequency bands (Hz)
+FREQ_BANDS = {
+    'delta': [0.5, 4],
+    'theta': [4, 8],
+    'alpha': [8, 13],
+    'beta': [13, 30],
+    'gamma': [30, 100],
+}
+
+# Alternative color palettes for different use cases
+PALETTES = {
+    'viridis': 'viridis',
+    'plasma': 'plasma',
+    'coolwarm': 'coolwarm',
+    'spectral': 'Spectral',
+    'biotuner_gradient': sns.color_palette([
+        BIOTUNER_COLORS['primary'],
+        BIOTUNER_COLORS['secondary'],
+        BIOTUNER_COLORS['accent'],
+        BIOTUNER_COLORS['success'],
+        BIOTUNER_COLORS['warning']
+    ])
+}
+
+# ============================================================================
+# Default Plot Parameters
+# ============================================================================
+
+DEFAULT_STYLE = {
+    'figure.figsize': (12, 7),
+    'figure.dpi': 100,
+    'figure.facecolor': 'white',
+    
+    # Font sizes - increased for better readability
+    'font.size': 14,
+    'font.family': 'sans-serif',
+    'font.sans-serif': ['Arial', 'DejaVu Sans', 'Liberation Sans'],
+    'axes.labelsize': 16,
+    'axes.titlesize': 20,
+    'axes.titleweight': 'bold',
+    'xtick.labelsize': 13,
+    'ytick.labelsize': 13,
+    'legend.fontsize': 13,
+    'legend.title_fontsize': 14,
+    
+    # Line properties - modern, clean look
+    'lines.linewidth': 2.5,
+    'lines.markersize': 8,
+    'lines.antialiased': True,
+    
+    # Grid - subtle and modern
+    'grid.alpha': 0.25,
+    'grid.linestyle': '-',
+    'grid.linewidth': 0.6,
+    'grid.color': '#E0E0E0',
+    
+    # Axes - clean, modern appearance
+    'axes.linewidth': 1.8,
+    'axes.edgecolor': '#424242',
+    'axes.grid': True,
+    'axes.axisbelow': True,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+    'axes.labelweight': 'normal',
+    'axes.labelcolor': '#333333',
+    
+    # Legend - modern styling
+    'legend.frameon': True,
+    'legend.framealpha': 0.95,
+    'legend.fancybox': True,
+    'legend.shadow': False,
+    'legend.edgecolor': '#CCCCCC',
+}
+
+# Specific configurations for different plot types
+PLOT_CONFIGS = {
+    'psd': {
+        'figsize': (12, 7),
+        'xlabel': 'Frequency (Hz)',
+        'ylabel': 'Power Spectral Density',
+        'grid': True,
+        'title_prefix': 'Power Spectrum - ',
+        'band_label_position': 'top',  # Consistent positioning
+    },
+    'emd': {
+        'figsize': (14, 8),
+        'xlabel': 'Frequency (Hz)',
+        'ylabel': 'Power',
+        'grid': True,
+        'title': 'Empirical Mode Decomposition',
+        'xscale': 'log',
+        'yscale': 'symlog',
+        'band_label_position': 'top',  # Consistent positioning
+    },
+    'harmonic': {
+        'figsize': (12, 7),
+        'xlabel': 'Frequency (Hz)',
+        'ylabel': 'Power Spectral Density',
+        'grid': True,
+        'title': 'Harmonic Recurrence',
+        'band_label_position': 'top',  # Consistent positioning
+    },
+    'entropy': {
+        'figsize': (12, 5),
+        'xlabel': 'Frequency Ratio',
+        'ylabel': 'Harmonic Entropy',
+        'grid': True,
+        'title': 'Harmonic Entropy Curve',
+    },
+    'dissonance': {
+        'figsize': (14, 7),
+        'xlabel': 'Frequency Ratio',
+        'ylabel': 'Dissonance',
+        'grid': True,
+        'title': 'Dissonance Curve',
+    },
+    'rhythm': {
+        'figsize': (9, 9),
+        'aspect': 'equal',
+        'title': 'Euclidean Rhythms',
+    },
+}
+
+# ============================================================================
+# Style Functions
+# ============================================================================
+
+def set_biotuner_style(style: str = 'whitegrid'):
+    """
+    Apply consistent biotuner plotting style globally.
+    
+    Parameters
+    ----------
+    style : str, default='whitegrid'
+        Seaborn style to use as base. Options: 'whitegrid', 'darkgrid', 
+        'white', 'dark', 'ticks'
+    
+    Examples
+    --------
+    >>> from biotuner.plot_config import set_biotuner_style
+    >>> set_biotuner_style()
+    """
+    sns.set_style(style)
+    plt.rcParams.update(DEFAULT_STYLE)
+
+
+def reset_style():
+    """Reset matplotlib to default style."""
+    plt.rcdefaults()
+
+
+def get_color_palette(name: str = 'biotuner_gradient', n_colors: Optional[int] = None):
+    """
+    Get a color palette for plotting.
+    
+    Parameters
+    ----------
+    name : str, default='biotuner_gradient'
+        Name of the palette. Options: 'viridis', 'plasma', 'coolwarm',
+        'spectral', 'biotuner_gradient'
+    n_colors : int, optional
+        Number of colors to return. If None, returns full palette.
+    
+    Returns
+    -------
+    palette : list
+        List of color codes
+    
+    Examples
+    --------
+    >>> colors = get_color_palette('biotuner_gradient', n_colors=5)
+    """
+    if name in PALETTES:
+        if isinstance(PALETTES[name], str):
+            return sns.color_palette(PALETTES[name], n_colors=n_colors)
+        else:
+            palette = PALETTES[name]
+            if n_colors:
+                # If requesting more colors than available, interpolate
+                if n_colors > len(palette):
+                    # Use seaborn to blend the palette into more colors
+                    return sns.blend_palette(palette, n_colors=n_colors)
+                else:
+                    return palette[:n_colors]
+            return palette
+    else:
+        # Fallback to seaborn palette
+        return sns.color_palette(name, n_colors=n_colors)
+
+
+def get_emd_colors(n_imfs: int = 5):
+    """
+    Get colors for EMD/IMF plotting.
+    
+    Parameters
+    ----------
+    n_imfs : int, default=5
+        Number of IMFs to generate colors for
+    
+    Returns
+    -------
+    colors : list
+        List of color codes for each IMF
+    
+    Examples
+    --------
+    >>> colors = get_emd_colors(n_imfs=5)
+    """
+    if n_imfs <= len(EMD_COLORS):
+        return EMD_COLORS[:n_imfs]
+    else:
+        # Generate additional colors using gradient
+        return sns.color_palette('viridis', n_colors=n_imfs)
+
+
+def get_band_colors(bands: Optional[list] = None):
+    """
+    Get colors for frequency bands.
+    
+    Parameters
+    ----------
+    bands : list, optional
+        List of band names. If None, uses standard EEG bands.
+    
+    Returns
+    -------
+    colors : list or dict
+        Colors for each band
+    
+    Examples
+    --------
+    >>> colors = get_band_colors(['delta', 'theta', 'alpha'])
+    """
+    if bands is None:
+        return BAND_COLORS
+    else:
+        return [BAND_COLORS.get(band, BIOTUNER_COLORS['primary']) for band in bands]
+
+
+# ============================================================================
+# Plot Configuration Helpers
+# ============================================================================
+
+def get_plot_config(plot_type: str) -> Dict[str, Any]:
+    """
+    Get configuration dictionary for a specific plot type.
+    
+    Parameters
+    ----------
+    plot_type : str
+        Type of plot: 'psd', 'emd', 'harmonic', 'entropy', 'dissonance', 'rhythm'
+    
+    Returns
+    -------
+    config : dict
+        Configuration parameters for the plot
+    
+    Examples
+    --------
+    >>> config = get_plot_config('psd')
+    >>> fig, ax = plt.subplots(figsize=config['figsize'])
+    """
+    return PLOT_CONFIGS.get(plot_type, PLOT_CONFIGS['psd']).copy()
+
+
+def update_plot_config(plot_type: str, **kwargs) -> Dict[str, Any]:
+    """
+    Get plot configuration and update with custom parameters.
+    
+    Parameters
+    ----------
+    plot_type : str
+        Type of plot
+    **kwargs
+        Custom parameters to override defaults
+    
+    Returns
+    -------
+    config : dict
+        Updated configuration
+    
+    Examples
+    --------
+    >>> config = update_plot_config('psd', figsize=(12, 8), title='My Custom Title')
+    """
+    config = get_plot_config(plot_type)
+    config.update(kwargs)
+    return config
+
+
+# ============================================================================
+# Context Managers
+# ============================================================================
+
+class biotuner_style:
+    """
+    Context manager for temporarily applying biotuner style.
+    
+    Examples
+    --------
+    >>> with biotuner_style():
+    ...     plt.plot([1, 2, 3], [1, 4, 9])
+    ...     plt.show()
+    """
+    
+    def __init__(self, style: str = 'whitegrid'):
+        self.style = style
+        self.original_params = plt.rcParams.copy()
+    
+    def __enter__(self):
+        set_biotuner_style(self.style)
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        plt.rcParams.update(self.original_params)
+
+
+# ============================================================================
+# Export all public symbols
+# ============================================================================
+
+__all__ = [
+    'BIOTUNER_COLORS',
+    'EMD_COLORS',
+    'BAND_COLORS',
+    'BAND_NAMES',
+    'FREQ_BANDS',
+    'PALETTES',
+    'DEFAULT_STYLE',
+    'PLOT_CONFIGS',
+    'set_biotuner_style',
+    'reset_style',
+    'get_color_palette',
+    'get_emd_colors',
+    'get_band_colors',
+    'get_plot_config',
+    'update_plot_config',
+    'biotuner_style',
+]
