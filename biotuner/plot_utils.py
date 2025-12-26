@@ -2353,12 +2353,22 @@ def plot_tuning(
     cbar.set_label(metric_labels.get(metric, 'Metric'), fontsize=14, fontweight='normal')
     cbar.ax.tick_params(labelsize=12)
     
-    # Add labels
+    # Add labels with fractions
     n_values = len(scale)
     axes[1].set_xticks(range(n_values))
     axes[1].set_yticks(range(n_values))
-    axes[1].set_xticklabels([f'{v:.2f}' for v in scale], fontsize=11, rotation=45)
-    axes[1].set_yticklabels([f'{v:.2f}' for v in scale], fontsize=11)
+    
+    # Convert scale values to fractions for labels
+    fraction_labels = []
+    for v in scale:
+        frac = Fraction(v).limit_denominator(1000)
+        if frac.denominator == 1:
+            fraction_labels.append(str(frac.numerator))
+        else:
+            fraction_labels.append(f'{frac.numerator}/{frac.denominator}')
+    
+    axes[1].set_xticklabels(fraction_labels, fontsize=11, rotation=45)
+    axes[1].set_yticklabels(fraction_labels, fontsize=11)
     
     # Styling
     axes[1].set_xlabel('Tuning Ratio', fontsize=16, fontweight='normal')
