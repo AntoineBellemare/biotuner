@@ -360,6 +360,7 @@ def compute_FOOOF(
     noverlap=None,
     nperseg=None,
     nfft=None,
+    smooth=1,
     n_peaks=5,
     extended_returns=False,
     graph=False,
@@ -383,12 +384,14 @@ def compute_FOOOF(
         Maximum frequency to consider as a peak.
     noverlap : int, default=None
         Number of points to overlap between segments.
-        If None, noverlap = nperseg // 2.
+        If None, noverlap = nperseg // 2 (50% overlap, scipy default).
     nperseg : int
         Length of each segment.
     nfft : int, default=None
         Length of the FFT used, if a zero padded FFT is desired.
-        If None, the FFT length is nperseg.
+        If None, calculated from precision.
+    smooth : int, default=1
+        Smoothing factor. nperseg = nfft / smooth. Matches other methods.
     n_peaks : int, default=5
         Maximum number of peaks. If FOOOF finds higher number of peaks,
         the peaks with highest amplitude will be retained.
@@ -426,9 +429,9 @@ def compute_FOOOF(
     if nperseg is None:
         mult = 1 / precision
         nfft = sf * mult
-        nperseg = nfft
-        noverlap = nperseg // 10
+        nperseg = int(nfft / smooth)  # Match extract_welch_peaks calculation
     freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
+    # Keep PSD linear - FOOOF does log conversion internally
     fm = FOOOF(peak_width_limits=[precision * 2, 3], max_n_peaks=50, min_peak_height=0.2)
     freq_range = [(sf / len(data)) * 2, max_freq]
     fm.fit(freqs, psd, freq_range)
