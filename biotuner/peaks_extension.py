@@ -159,8 +159,9 @@ def harmonic_fit(
         Mode of the natural sub-harmonic function when function='div'.
         See EEG_harmonics_div function.
     n_common_harms : int, default=5
-        Number of harmonic positions to be sent to
-        the most_common_harmonics output.
+        Minimum number of times a harmonic position must appear across
+        different peak pairs to be included in most_common_harmonics output.
+        Acts as a threshold filter (not a limit on number of results).
 
     Returns
     -------
@@ -169,7 +170,8 @@ def harmonic_fit(
     harmonics_pos : list
         Positions of the harmonics that match.
     most_common_harmonics : list
-        Harmonics that are present at least 'n_common_harms' times.
+        Harmonic positions that appear at least n_common_harms times across
+        peak pairs, sorted by frequency of occurrence (most common first).
     matching_positions : list of lists
         Each sublist corresponds to an harmonic fit, the first number
         is the frequency and the two others are harmonic positions.
@@ -221,11 +223,19 @@ def harmonic_fit(
         harmonics_pos = []
 
     # Compute most common harmonics
+    # Filter harmonics that appear at least n_common_harms times (as per docstring)
+    # Then take all such harmonics (not just top N)
+    harmonic_counts = Counter(harmonics_pos)
     most_common_harmonics = [
-        h
-        for h, h_count in Counter(harmonics_pos).most_common(n_common_harms)
-        if h_count > 1
+        h for h, h_count in harmonic_counts.items() 
+        if h_count >= n_common_harms
     ]
+    # Sort by frequency (most common first), then by harmonic position
+    most_common_harmonics = sorted(
+        most_common_harmonics, 
+        key=lambda h: (harmonic_counts[h], h), 
+        reverse=True
+    )
     harmonics_pos = sorted(set(harmonics_pos))
 
     # Prepare harm_fit
