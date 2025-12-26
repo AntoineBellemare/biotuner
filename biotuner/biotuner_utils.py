@@ -1955,3 +1955,247 @@ def __product_other_freqs(spec, indices, synthetic=(), t=None):
 
 def functools_reduce(a):
     return functools.reduce(operator.concat, a)
+
+
+"""------------------------------MUSIC THEORY UTILITIES-----------------------------"""
+
+def freq_to_note(freq, a4=440.0):
+    """
+    Convert a frequency to the closest musical note in 12-TET (twelve-tone equal temperament).
+    
+    Parameters
+    ----------
+    freq : float
+        Frequency in Hz
+    a4 : float, default=440.0
+        Reference frequency for A4
+        
+    Returns
+    -------
+    note_name : str
+        Note name with octave (e.g., 'A4', 'C#5')
+    cents : float
+        Deviation from the note in cents (100 cents = 1 semitone)
+        
+    Examples
+    --------
+    >>> freq_to_note(440.0)
+    ('A4', 0.0)
+    >>> freq_to_note(261.63)
+    ('C4', 0.0)
+    >>> freq_to_note(10.0)
+    ('D#1', -13.7)
+    """
+    note_names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    
+    # Calculate the number of semitones from A4
+    semitones_from_a4 = 12 * np.log2(freq / a4)
+    
+    # Round to nearest semitone
+    semitone = round(semitones_from_a4)
+    
+    # Calculate cents deviation
+    cents = (semitones_from_a4 - semitone) * 100
+    
+    # A4 is note index 9 (A) in octave 4
+    # Calculate note index and octave
+    note_idx = (9 + semitone) % 12  # 9 is A in the list
+    octave = 4 + (9 + semitone) // 12
+    
+    note_name = f"{note_names[note_idx]}{octave}"
+    
+    return note_name, cents
+
+
+def peaks_to_notes(peaks, a4=440.0, cents_threshold=50):
+    """
+    Convert an array of peak frequencies to musical notes.
+    
+    Parameters
+    ----------
+    peaks : array_like
+        Array of frequencies in Hz
+    a4 : float, default=440.0
+        Reference frequency for A4
+    cents_threshold : float, default=50
+        Maximum cents deviation to consider a peak "in tune"
+        
+    Returns
+    -------
+    notes_info : list of dict
+        List of dictionaries with keys: 'freq', 'note', 'cents', 'in_tune'
+        
+    Examples
+    --------
+    >>> peaks = [261.63, 329.63, 392.0]
+    >>> peaks_to_notes(peaks)
+    [{'freq': 261.63, 'note': 'C4', 'cents': 0.0, 'in_tune': True}, ...]
+    """
+    notes_info = []
+    for freq in peaks:
+        note, cents = freq_to_note(freq, a4=a4)
+        in_tune = abs(cents) <= cents_threshold
+        notes_info.append({
+            'freq': freq,
+            'note': note,
+            'cents': cents,
+            'in_tune': in_tune
+        })
+    return notes_info
+
+
+def identify_mode(peaks, a4=440.0):
+    """
+    Identify the closest musical mode/scale from a set of peak frequencies.
+    
+    Compares the intervals between peaks to common Western modes:
+    Ionian (Major), Dorian, Phrygian, Lydian, Mixolydian, Aeolian (Minor), Locrian
+    
+    Parameters
+    ----------
+    peaks : array_like
+        Array of frequencies in Hz
+    a4 : float, default=440.0
+        Reference frequency for A4
+        
+    Returns
+    -------
+    mode_name : str
+        Name of the closest mode
+    similarity : float
+        Similarity score (0-100%)
+    root_note : str
+        Estimated root note
+        
+    Examples
+    --------
+    >>> peaks = [261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 493.88]  # C major
+    >>> identify_mode(peaks)
+    ('Ionian (Major)', 95.2, 'C4')
+    """
+    if len(peaks) < 3:
+        return "Insufficient peaks", 0.0, "N/A"
+    
+    # Define mode intervals in semitones (from root)
+    # Group modes: Full modes (7 notes) are prioritized over pentatonic/blues (5-6 notes)
+    full_modes = {
+        'Ionian (Major)': [0, 2, 4, 5, 7, 9, 11],
+        'Dorian': [0, 2, 3, 5, 7, 9, 10],
+        'Phrygian': [0, 1, 3, 5, 7, 8, 10],
+        'Lydian': [0, 2, 4, 6, 7, 9, 11],
+        'Mixolydian': [0, 2, 4, 5, 7, 9, 10],
+        'Aeolian (Minor)': [0, 2, 3, 5, 7, 8, 10],
+        'Locrian': [0, 1, 3, 5, 6, 8, 10],
+    }
+    
+    partial_modes = {
+        'Pentatonic Major': [0, 2, 4, 7, 9],
+        'Pentatonic Minor': [0, 3, 5, 7, 10],
+        'Blues': [0, 3, 5, 6, 7, 10],
+    }
+    
+    # Convert peaks to semitones relative to lowest peak
+    sorted_peaks = np.sort(peaks)
+    semitones = [12 * np.log2(f / sorted_peaks[0]) for f in sorted_peaks]
+    
+    # Normalize to octave (modulo 12)
+    semitones_normalized = [s % 12 for s in semitones]
+    semitones_normalized = sorted(list(set([round(s) for s in semitones_normalized])))
+    
+    # Require at least 3 unique pitch classes
+    if len(semitones_normalized) < 3:
+        return "Insufficient peaks", 0.0, "N/A"
+    
+    # Compare to each mode
+    best_mode = "Unknown"
+    best_similarity = 0
+    best_root = "N/A"
+    best_root_freq = 0
+    best_offset = 0
+    best_is_partial = False
+    
+    # Try full modes first
+    for mode_name, mode_intervals in full_modes.items():
+        # Try different rotations (transpositions)
+        for offset in range(12):
+            shifted_intervals = [(i + offset) % 12 for i in mode_intervals]
+            
+            # Calculate similarity using a stricter metric
+            # Require high coverage of BOTH the mode AND the peaks
+            intersection = len(set(semitones_normalized) & set(shifted_intervals))
+            
+            # What % of the mode's notes are present in the peaks?
+            mode_coverage = intersection / len(mode_intervals) * 100
+            
+            # What % of the peaks match the mode?
+            peak_coverage = intersection / len(semitones_normalized) * 100
+            
+            # Use harmonic mean to require BOTH to be high
+            # (prevents modes with fewer notes from matching too easily)
+            if mode_coverage > 0 and peak_coverage > 0:
+                similarity = 2 * (mode_coverage * peak_coverage) / (mode_coverage + peak_coverage)
+            else:
+                similarity = 0
+            
+            # Require at least 4 matching intervals AND at least 60% mode coverage
+            if intersection >= 4 and mode_coverage >= 60 and similarity > best_similarity:
+                best_similarity = similarity
+                best_mode = mode_name
+                best_is_partial = False
+                best_offset = offset
+    
+    # Only try partial modes if no good full mode match (or if full mode score is low)
+    # AND apply a stricter penalty to partial mode scores
+    if best_similarity < 70:
+        for mode_name, mode_intervals in partial_modes.items():
+            for offset in range(12):
+                shifted_intervals = [(i + offset) % 12 for i in mode_intervals]
+                
+                intersection = len(set(semitones_normalized) & set(shifted_intervals))
+                
+                # Same stricter metric for partial modes
+                mode_coverage = intersection / len(mode_intervals) * 100
+                peak_coverage = intersection / len(semitones_normalized) * 100
+                
+                if mode_coverage > 0 and peak_coverage > 0:
+                    # Apply 20% penalty to partial modes (they have fewer notes so match too easily)
+                    similarity = 2 * (mode_coverage * peak_coverage) / (mode_coverage + peak_coverage) * 0.8
+                else:
+                    similarity = 0
+                
+                # Require at least 4 matching intervals AND 80% mode coverage for pentatonic/blues
+                if intersection >= 4 and mode_coverage >= 80 and similarity > best_similarity:
+                    best_similarity = similarity
+                    best_mode = mode_name
+                    best_is_partial = True
+                    best_offset = offset
+    
+    # Find the root note: pick the actual peak closest to what would be the root
+    # The theoretical root is the note at offset semitones from the lowest peak
+    theoretical_root_freq = sorted_peaks[0] * (2 ** (best_offset / 12))
+    
+    # Find which actual peak is closest to this theoretical root (within an octave)
+    best_root_freq = sorted_peaks[0]  # Default to lowest peak
+    min_distance = float('inf')
+    
+    for peak in sorted_peaks:
+        # Check distance in semitones (modulo 12 for octave equivalence)
+        theoretical_semitones = 12 * np.log2(theoretical_root_freq / sorted_peaks[0])
+        peak_semitones = 12 * np.log2(peak / sorted_peaks[0])
+        
+        # Distance in pitch class space (0-12)
+        distance = abs((theoretical_semitones % 12) - (peak_semitones % 12))
+        distance = min(distance, 12 - distance)  # Account for wraparound
+        
+        if distance < min_distance:
+            min_distance = distance
+            best_root_freq = peak
+    
+    best_root, _ = freq_to_note(best_root_freq, a4=a4)
+    
+    # Require minimum 60% similarity for any valid match (raised from 50%)
+    # This prevents spurious matches with random EEG peaks
+    if best_similarity < 60:
+        return "Unknown", best_similarity, "N/A"
+    
+    return best_mode, best_similarity, best_root
