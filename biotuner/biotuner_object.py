@@ -1633,13 +1633,13 @@ class compute_biotuner(object):
                 RuntimeError("HE_scale not computed. Call the compute_harmonic_entropy method first.")
         if scale == "harmonic_fit_tuning":
             try:
-                scale = self.harmonic_fit_tuning
+                scale = self.harm_fit_tuning_scale
             # raise error if harmonic_fit_tuning is not computed
             except:
                 RuntimeError("harmonic_fit_tuning not computed. Call the harmonic_fit_tuning method first.")
         if scale == "harmonic_tuning":
             try:
-                scale = self.harmonic_tuning
+                scale = self.harm_tuning_scale
             # raise error if harmonic_tuning is not computed
             except:
                 RuntimeError(
