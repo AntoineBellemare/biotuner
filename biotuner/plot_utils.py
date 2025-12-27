@@ -2010,6 +2010,8 @@ def plot_tuning_harmonic(
     -------
     fig, ax : matplotlib figure and axes
     """
+    from fractions import Fraction
+    
     set_biotuner_style()
     
     if figsize is None:
@@ -2067,6 +2069,8 @@ def plot_tuning(
     panels: int = 4,
     extra_panels: Optional[List[str]] = None,
     show_summary: bool = True,
+    show_source_curve: bool = True,
+    max_denom: int = 100,
     figsize: Optional[Tuple[float, float]] = None,
     **kwargs
 ) -> plt.Figure:
@@ -2112,6 +2116,14 @@ def plot_tuning(
         Default: ['step_sizes', 'consonance_profile']
     show_summary : bool, default=True
         If True, adds a 5th panel with overall harmonicity and interval matches
+    show_source_curve : bool, default=True
+        If True and tuning is 'diss_curve' or 'HE', shows the source curve
+        (dissonance or entropy) as a top full-width panel. Requires biotuner
+        object passed via bt_object kwarg.
+    max_denom : int, default=100
+        Maximum denominator for fraction simplification when displaying ratios.
+        Converts float ratios to fractions (e.g., 5/4 instead of 1.25).
+        Lower values produce simpler fractions. Default 100 works well for most scales.
     figsize : tuple, optional
         Figure size (auto-adjusted based on panels if None)
     
@@ -2129,34 +2141,90 @@ def plot_tuning(
     if extra_panels is None:
         extra_panels = ['step_sizes', 'consonance_profile']
     
-    # Auto-adjust figsize based on panels
+    # Check if we need to show source curve (for diss_curve or HE tunings)
+    bt_object = kwargs.get('bt_object', None)
+    tuning_name = kwargs.get('tuning_name', None)  # Name of the tuning being plotted
+    needs_source_curve = False
+    source_curve_type = None
+    
+    if show_source_curve and tuning_name in ['diss_curve', 'HE']:
+        if bt_object is not None:
+            if tuning_name == 'diss_curve' and hasattr(bt_object, 'ratio_diss') and hasattr(bt_object, 'diss'):
+                needs_source_curve = True
+                source_curve_type = 'dissonance'
+            elif tuning_name == 'HE' and hasattr(bt_object, 'ratio_HE') and hasattr(bt_object, 'HE'):
+                needs_source_curve = True
+                source_curve_type = 'entropy'
+    
+    # Auto-adjust figsize based on panels and source curve
     if figsize is None:
-        if panels == 2:
-            figsize = (16, 6)
-        elif show_summary and panels >= 4:
-            figsize = (16, 16)  # Extra height for summary panel
-        else:  # 4 panels
-            figsize = (16, 13)
+        if needs_source_curve:
+            # Add extra height for source curve at top - INCREASED for better table spacing
+            if panels == 2:
+                figsize = (16, 14)  # 2 panels + source curve
+            elif show_summary and panels >= 4:
+                figsize = (16, 30)  # 5 panels + source curve - INCREASED height for more table rows
+            else:  # 4 panels
+                figsize = (16, 19)  # 4 panels + source curve - more height
+        else:
+            if panels == 2:
+                figsize = (16, 6)
+            elif show_summary and panels >= 4:
+                figsize = (16, 16)  # Extra height for summary panel
+            else:  # 4 panels
+                figsize = (16, 13)
     
     # Create figure with appropriate layout
-    if panels == 2:
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
-        axes = [ax1, ax2]
-    elif show_summary and panels >= 4:
-        # 5 panels: 2x2 grid + wide bottom panel
+    if needs_source_curve:
+        # Layout with source curve at top - INCREASED SPACING to prevent title overlap
         fig = plt.figure(figsize=figsize)
-        gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.7], hspace=0.45, wspace=0.30)
-        ax1 = fig.add_subplot(gs[0, 0])
-        ax2 = fig.add_subplot(gs[0, 1])
-        ax3 = fig.add_subplot(gs[1, 0])
-        ax4 = fig.add_subplot(gs[1, 1])
-        ax5 = fig.add_subplot(gs[2, :])  # Wide bottom panel
-        axes = [ax1, ax2, ax3, ax4, ax5]
-    else:  # 4 panels
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=figsize)
-        axes = [ax1, ax2, ax3, ax4]
-        # Add more vertical spacing between rows to prevent overlap
-        plt.subplots_adjust(hspace=0.35, wspace=0.25)
+        
+        if panels == 2:
+            # Top: source curve (full width), Bottom: 1x2 grid
+            gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], hspace=0.60, wspace=0.30)
+            ax_curve = fig.add_subplot(gs[0, :])  # Top full width
+            ax1 = fig.add_subplot(gs[1, 0])
+            ax2 = fig.add_subplot(gs[1, 1])
+            axes = [ax1, ax2]
+        elif show_summary and panels >= 4:
+            # Top: source curve, Middle: 2x2 grid, Bottom: summary
+            gs = fig.add_gridspec(4, 2, height_ratios=[0.9, 1, 1, 1.3], hspace=0.60, wspace=0.30)
+            ax_curve = fig.add_subplot(gs[0, :])  # Top full width
+            ax1 = fig.add_subplot(gs[1, 0])
+            ax2 = fig.add_subplot(gs[1, 1])
+            ax3 = fig.add_subplot(gs[2, 0])
+            ax4 = fig.add_subplot(gs[2, 1])
+            ax5 = fig.add_subplot(gs[3, :])  # Bottom full width
+            axes = [ax1, ax2, ax3, ax4, ax5]
+        else:  # 4 panels
+            # Top: source curve, Bottom: 2x2 grid
+            gs = fig.add_gridspec(3, 2, height_ratios=[0.9, 1, 1], hspace=0.60, wspace=0.30)
+            ax_curve = fig.add_subplot(gs[0, :])  # Top full width
+            ax1 = fig.add_subplot(gs[1, 0])
+            ax2 = fig.add_subplot(gs[1, 1])
+            ax3 = fig.add_subplot(gs[2, 0])
+            ax4 = fig.add_subplot(gs[2, 1])
+            axes = [ax1, ax2, ax3, ax4]
+    else:
+        # Original layout without source curve
+        if panels == 2:
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+            axes = [ax1, ax2]
+        elif show_summary and panels >= 4:
+            # 5 panels: 2x2 grid + wide bottom panel
+            fig = plt.figure(figsize=figsize)
+            gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.7], hspace=0.45, wspace=0.30)
+            ax1 = fig.add_subplot(gs[0, 0])
+            ax2 = fig.add_subplot(gs[0, 1])
+            ax3 = fig.add_subplot(gs[1, 0])
+            ax4 = fig.add_subplot(gs[1, 1])
+            ax5 = fig.add_subplot(gs[2, :])  # Wide bottom panel
+            axes = [ax1, ax2, ax3, ax4, ax5]
+        else:  # 4 panels
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=figsize)
+            axes = [ax1, ax2, ax3, ax4]
+            # Add more vertical spacing between rows to prevent overlap
+            plt.subplots_adjust(hspace=0.35, wspace=0.25)
     
     # Determine which tuning to use
     if tuning is not None:
@@ -2197,15 +2265,17 @@ def plot_tuning(
     
     # Add values on top with fractions
     for i, (cent, ratio) in enumerate(zip(cents, scale)):
-        # Convert ratio to fraction
-        frac = Fraction(ratio).limit_denominator(1000)
+        # Convert ratio to fraction using max_denom parameter
+        frac = Fraction(ratio).limit_denominator(max_denom)
         ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
         axes[0].text(i, cent + 20, f'{cent:.0f}¢\n{ratio_str}', 
                 ha='center', va='bottom', fontsize=9, fontweight='semibold')
     
     axes[0].set_xlabel('Interval Index', fontsize=16, fontweight='normal')
     axes[0].set_ylabel('Cents', fontsize=16, fontweight='normal')
-    axes[0].set_title('Tuning Scale', fontsize=20, fontweight='bold', pad=15)
+    # Reduce title padding when source curve present to prevent overlap
+    title_pad = 10 if needs_source_curve else 15
+    axes[0].set_title('Tuning Scale', fontsize=20, fontweight='bold', pad=title_pad)
     axes[0].set_xticks(range(n_notes))
     axes[0].set_xticklabels([f'{i+1}' for i in range(n_notes)], fontsize=13)
     axes[0].axhline(1200, color=BIOTUNER_COLORS['dark'], linestyle='--', 
@@ -2214,13 +2284,13 @@ def plot_tuning(
     axes[0].grid(True, alpha=0.25, axis='y')
     
     # RIGHT PANEL: Consonance matrix using biotuner's tuning_cons_matrix
-    # Map metric names to functions
+    # Map metric names to functions - all use simplified fractions for consistency
     metric_functions = {
-        'harmsim': dyad_similarity,
-        'cons': compute_consonance,
-        'tenney': lambda r: 1 / (1 + np.log2(Fraction(r).limit_denominator(1000).numerator * 
-                                              Fraction(r).limit_denominator(1000).denominator)),
-        'denom': lambda r: 1 / (1 + Fraction(r).limit_denominator(1000).denominator),
+        'harmsim': lambda r: dyad_similarity(float(Fraction(r).limit_denominator(max_denom))),
+        'cons': lambda r: compute_consonance(float(Fraction(r).limit_denominator(max_denom))),
+        'tenney': lambda r: 1 / (1 + np.log2(Fraction(r).limit_denominator(max_denom).numerator * 
+                                              Fraction(r).limit_denominator(max_denom).denominator)),
+        'denom': lambda r: 1 / (1 + Fraction(r).limit_denominator(max_denom).denominator),
     }
     
     metric_labels = {
@@ -2280,7 +2350,7 @@ def plot_tuning(
             """Helper to compute inverted subharmonic tension for a single ratio."""
             try:
                 fundamental = 100.0
-                frac = Fraction(ratio).limit_denominator(1000)
+                frac = Fraction(ratio).limit_denominator(max_denom)
                 freq1 = fundamental
                 freq2 = fundamental * (frac.numerator / frac.denominator)
                 chord = np.array([freq1, freq2])
@@ -2361,7 +2431,7 @@ def plot_tuning(
     # Convert scale values to fractions for labels
     fraction_labels = []
     for v in scale:
-        frac = Fraction(v).limit_denominator(1000)
+        frac = Fraction(v).limit_denominator(max_denom)
         if frac.denominator == 1:
             fraction_labels.append(str(frac.numerator))
         else:
@@ -2375,7 +2445,7 @@ def plot_tuning(
     axes[1].set_ylabel('Tuning Ratio', fontsize=16, fontweight='normal')
     title_suffix = f' ({ratio_type})' if ratio_type != 'all' else ''
     axes[1].set_title(f'Consonance Matrix{title_suffix}\n{metric_labels.get(metric, metric)}', 
-                 fontsize=20, fontweight='bold', pad=15)
+                 fontsize=20, fontweight='bold', pad=title_pad)
     
     # ===== EXTRA PANELS (if panels >= 4) =====
     if panels >= 4 and len(axes) >= 4:
@@ -2405,7 +2475,7 @@ def plot_tuning(
             
             axes[2].set_xlabel('Step Number', fontsize=16, fontweight='normal')
             axes[2].set_ylabel('Step Size (cents)', fontsize=16, fontweight='normal')
-            axes[2].set_title('Melodic Intervals (Step Sizes)', fontsize=20, fontweight='bold', pad=15)
+            axes[2].set_title('Melodic Intervals (Step Sizes)', fontsize=20, fontweight='bold', pad=title_pad)
             axes[2].set_xticks(range(len(step_cents)))
             axes[2].set_xticklabels([f'{i+1}→{i+2}' for i in range(len(step_cents))], 
                                    fontsize=11, rotation=45)
@@ -2426,7 +2496,7 @@ def plot_tuning(
             
             axes[2].set_xlabel('Interval Size (cents)', fontsize=16, fontweight='normal')
             axes[2].set_ylabel('Frequency', fontsize=16, fontweight='normal')
-            axes[2].set_title('Interval Distribution', fontsize=20, fontweight='bold', pad=15)
+            axes[2].set_title('Interval Distribution', fontsize=20, fontweight='bold', pad=title_pad)
             axes[2].grid(True, alpha=0.25, axis='y')
         
         # Panel 4: Consonance profile or harmonic deviation
@@ -2471,7 +2541,7 @@ def plot_tuning(
             
             axes[3].set_xlabel('Scale Degree', fontsize=16, fontweight='normal')
             axes[3].set_ylabel(f'{metric_labels.get(metric, "Consonance")} Distribution', fontsize=16, fontweight='normal')
-            axes[3].set_title('Consonance Profile (Violin Plot)', fontsize=20, fontweight='bold', pad=15)
+            axes[3].set_title('Consonance Profile (Violin Plot)', fontsize=20, fontweight='bold', pad=title_pad)
             axes[3].set_xticks(positions)
             axes[3].set_xticklabels([f'{i+1}' for i in range(len(consonance_distributions))], fontsize=13)
             axes[3].grid(True, alpha=0.25, axis='y')
@@ -2511,7 +2581,7 @@ def plot_tuning(
             
             axes[3].set_xlabel('Scale Degree', fontsize=16, fontweight='normal')
             axes[3].set_ylabel('Deviation from Ideal (cents)', fontsize=16, fontweight='normal')
-            axes[3].set_title('Harmonic Deviation', fontsize=20, fontweight='bold', pad=15)
+            axes[3].set_title('Harmonic Deviation', fontsize=20, fontweight='bold', pad=title_pad)
             axes[3].set_xticks(range(len(deviations_cents)))
             axes[3].set_xticklabels([f'{i+1}' for i in range(len(deviations_cents))], fontsize=13)
             axes[3].legend(fontsize=12, framealpha=0.95)
@@ -2559,24 +2629,29 @@ def plot_tuning(
         
         # === CENTERED TABLE ===
         if matched_intervals:
+            # Sort by deviation (lowest first) and take top 10
+            sorted_by_deviation = sorted(matched_intervals, key=lambda x: x[2])  # x[2] is deviation
+            top_intervals = sorted_by_deviation[:10]  # Top 10 closest matches
+            
             # Title
-            axes[4].text(0.50, 0.95, f'Known Intervals ({len(matched_intervals)} matched)', 
+            total_matched = len(matched_intervals)
+            shown_count = len(top_intervals)
+            title = f'Known Intervals (Top {shown_count} of {total_matched} matched)' if total_matched > 10 else f'Known Intervals ({total_matched} matched)'
+            axes[4].text(0.50, 0.95, title, 
                         transform=axes[4].transAxes,
                         fontsize=18, fontweight='bold',
                         ha='center',
                         color=BIOTUNER_COLORS['dark'])
             
-            # Prepare table data
-            sorted_intervals = sorted(matched_intervals, key=lambda x: x[0])
+            # Prepare table data - sorted by ratio for display
+            sorted_intervals = sorted(top_intervals, key=lambda x: x[0])
             
-            # Limit to 10 rows to fit nicely (more rows since we have more space)
-            max_rows = 10
             table_data = []
             
-            for ratio, name, deviation in sorted_intervals[:max_rows]:
+            for ratio, name, deviation in sorted_intervals:
                 ratio_cents = 1200 * np.log2(ratio)
                 # Convert ratio to fraction
-                frac = Fraction(ratio).limit_denominator(1000)
+                frac = Fraction(ratio).limit_denominator(max_denom)
                 ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
                 # Don't truncate interval names
                 display_name = name
@@ -2587,26 +2662,38 @@ def plot_tuning(
                     f'±{deviation:.1f}¢'
                 ])
             
-            # Create table - FULL WIDTH
+            # Create table - FULL WIDTH with adaptive sizing
             if table_data:
                 col_labels = ['Ratio', 'Cents', 'Interval Name', 'Dev']
                 
-                # Calculate table position and size - FULL WIDTH
-                table_height = min(0.82, 0.075 * (len(table_data) + 1))
-                table_width = 0.95  # Nearly full width
-                table_left = 0.025  # Small left margin
+                # Adaptive row height based on number of rows
+                # Extra spacing when source curve is present (more vertical space available)
+                num_rows = len(table_data)
+                if num_rows <= 10:
+                    row_scale = 4.0 if needs_source_curve else 2.8
+                    fontsize = 12
+                else:
+                    # Maintain good spacing even with many rows
+                    row_scale = 4.5 if needs_source_curve else 2.7
+                    fontsize = 11
+                
+                # Use most of panel for table
+                table_height = 0.84
+                table_width = 0.95
+                table_left = 0.025
+                table_bottom = 0.08
                 
                 table = axes[4].table(
                     cellText=table_data,
                     colLabels=col_labels,
                     cellLoc='left',
                     loc='center',
-                    bbox=[table_left, 0.90 - table_height, table_width, table_height]
+                    bbox=[table_left, table_bottom, table_width, table_height]
                 )
                 
                 table.auto_set_font_size(False)
-                table.set_fontsize(14)  # BIGGER font
-                table.scale(1, 2.0)  # BIGGER row height
+                table.set_fontsize(fontsize)
+                table.scale(1, row_scale)
                 
                 # Set column widths for full width layout
                 for i in range(len(table_data) + 1):  # +1 for header
@@ -2619,9 +2706,9 @@ def plot_tuning(
                 for i in range(len(col_labels)):
                     cell = table[(0, i)]
                     cell.set_facecolor(BIOTUNER_COLORS['primary'])
-                    cell.set_text_props(weight='bold', color='white', fontsize=15)  # BIGGER header
+                    cell.set_text_props(weight='bold', color='white', fontsize=fontsize+1)
                     cell.set_edgecolor(BIOTUNER_COLORS['dark'])
-                    cell.set_linewidth(2.0)  # Thicker border
+                    cell.set_linewidth(2.0)
                 
                 # Style data rows
                 for i in range(1, len(table_data) + 1):
@@ -2637,24 +2724,15 @@ def plot_tuning(
                         
                         # Color code deviation column
                         if j == 3:  # Deviation column
-                            dev_val = matched_intervals[i-1][2]
+                            dev_val = sorted_intervals[i-1][2]  # Use sorted_intervals, not matched_intervals
                             if dev_val < 2:
-                                cell.set_text_props(color='#28a745', weight='bold', fontsize=14)
+                                cell.set_text_props(color='#28a745', weight='bold', fontsize=fontsize)
                             elif dev_val < 4:
-                                cell.set_text_props(color='#ffc107', weight='bold', fontsize=14)
+                                cell.set_text_props(color='#ffc107', weight='bold', fontsize=fontsize)
                             else:
-                                cell.set_text_props(fontsize=14)
+                                cell.set_text_props(fontsize=fontsize)
                         else:
-                            cell.set_text_props(fontsize=14)
-                
-                # Show count if more intervals exist
-                if len(matched_intervals) > max_rows:
-                    axes[4].text(0.50, 0.05,
-                               f'+ {len(matched_intervals) - max_rows} more intervals...',
-                               transform=axes[4].transAxes,
-                               fontsize=12, style='italic',
-                               ha='center',
-                               color=BIOTUNER_COLORS['dark'])
+                            cell.set_text_props(fontsize=fontsize)
         else:
             # No matches
             axes[4].text(0.50, 0.55, 'No matching known intervals\nfound within ±5¢ tolerance', 
@@ -2667,175 +2745,61 @@ def plot_tuning(
                                  linewidth=1.5,
                                  alpha=0.8))
     
-    # Use tight_layout only for 2-panel mode; custom spacing already set for 4/5-panel
-    if panels == 2:
+    # Plot source curve if needed (before returning)
+    if needs_source_curve and source_curve_type is not None:
+        if source_curve_type == 'dissonance':
+            # Plot dissonance curve
+            ax_curve.plot(bt_object.ratio_diss, bt_object.diss, 
+                         color=BIOTUNER_COLORS['danger'], linewidth=2.5, label='Dissonance')
+            
+            # Mark minima from scale
+            if hasattr(bt_object, 'diss_scale'):
+                for ratio in bt_object.diss_scale:
+                    if 1.0 <= ratio <= 2.0:
+                        idx = np.argmin(np.abs(bt_object.ratio_diss - ratio))
+                        ax_curve.plot(ratio, bt_object.diss[idx], 'o',
+                                    color=BIOTUNER_COLORS['accent'], markersize=8,
+                                    markeredgecolor=BIOTUNER_COLORS['dark'], markeredgewidth=1.5)
+                        ax_curve.axvline(ratio, color=BIOTUNER_COLORS['dark'],
+                                       linestyle='--', linewidth=1.5, alpha=0.4)
+            
+            ax_curve.set_xlim([1.0, 2.0])
+            ax_curve.set_xlabel('Frequency Ratio', fontsize=16, fontweight='normal')
+            ax_curve.set_ylabel('Sensory Dissonance', fontsize=16, fontweight='normal')
+            ax_curve.set_title('Dissonance Curve (Source)', fontsize=20, fontweight='bold', pad=15)
+            ax_curve.legend(fontsize=13, framealpha=0.95)
+            ax_curve.grid(True, alpha=0.25)
+            
+        elif source_curve_type == 'entropy':
+            # Plot harmonic entropy curve
+            ax_curve.plot(bt_object.ratio_HE, bt_object.HE,
+                         color=BIOTUNER_COLORS['primary'], linewidth=2.5, label='Harmonic Entropy')
+            
+            # Mark minima from scale
+            if hasattr(bt_object, 'HE_scale'):
+                for ratio in bt_object.HE_scale:
+                    if 1.0 <= ratio <= 2.0:
+                        idx = np.argmin(np.abs(bt_object.ratio_HE - ratio))
+                        ax_curve.plot(ratio, bt_object.HE[idx], 'o',
+                                    color=BIOTUNER_COLORS['accent'], markersize=8,
+                                    markeredgecolor=BIOTUNER_COLORS['dark'], markeredgewidth=1.5)
+                        ax_curve.axvline(ratio, color=BIOTUNER_COLORS['dark'],
+                                       linestyle='--', linewidth=1.5, alpha=0.4)
+            
+            ax_curve.set_xlim([1.0, 2.0])
+            ax_curve.set_xlabel('Frequency Ratio', fontsize=16, fontweight='normal')
+            ax_curve.set_ylabel('Harmonic Entropy', fontsize=16, fontweight='normal')
+            ax_curve.set_title('Harmonic Entropy Curve (Source)', fontsize=20, fontweight='bold', pad=15)
+            ax_curve.legend(fontsize=13, framealpha=0.95)
+            ax_curve.grid(True, alpha=0.25)
+    
+    # Use tight_layout only for 2-panel mode without source curve; custom spacing already set for others
+    if panels == 2 and not needs_source_curve:
         plt.tight_layout()
     
     return fig
 
 
-def plot_tuning_comparison(
-    biotuner_obj,
-    panels: List[str] = ['dissonance', 'entropy', 'harmonic', 'ratios'],
-    figsize: Optional[Tuple[float, float]] = None,
-    **kwargs
-) -> plt.Figure:
-    """
-    Create multi-panel tuning comparison with unified biotuner styling.
-    
-    Parameters
-    ----------
-    biotuner_obj : compute_biotuner
-        Biotuner object with computed tuning metrics
-    panels : list of str
-        Panels to include: 'dissonance', 'entropy', 'harmonic', 'ratios'
-    figsize : tuple, optional
-        Figure size
-    
-    Returns
-    -------
-    fig : matplotlib figure
-    """
-    set_biotuner_style()
-    
-    if figsize is None:
-        figsize = (16, 14)
-    
-    n_panels = len(panels)
-    if n_panels == 4:
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=figsize)
-        axes = [ax1, ax2, ax3, ax4]
-    elif n_panels == 3:
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
-        axes = [ax1, ax2, ax3]
-    elif n_panels == 2:
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
-        axes = [ax1, ax2]
-    else:
-        fig, ax1 = plt.subplots(figsize=figsize)
-        axes = [ax1]
-    
-    # Plot each panel
-    panel_idx = 0
-    for panel_name in panels:
-        if panel_name == 'ratios' and hasattr(biotuner_obj, 'peaks'):
-            # Ratios plot creates its own 2-panel figure, skip for multi-panel comparison
-            continue
-        
-        ax = axes[panel_idx]
-        panel_idx += 1
-        
-        if panel_name == 'dissonance' and hasattr(biotuner_obj, 'diss'):
-            plot_tuning_dissonance(
-                biotuner_obj.ratio_diss,
-                biotuner_obj.diss,
-                biotuner_obj.diss_scale if hasattr(biotuner_obj, 'diss_scale') else None,
-                ax=ax
-            )
-        elif panel_name == 'entropy' and hasattr(biotuner_obj, 'HE'):
-            plot_tuning_entropy(
-                biotuner_obj.ratio_HE,
-                biotuner_obj.HE,
-                biotuner_obj.HE_scale if hasattr(biotuner_obj, 'HE_scale') else None,
-                ax=ax
-            )
-        elif panel_name == 'harmonic' and hasattr(biotuner_obj, 'peaks'):
-            harmonic_tuning = biotuner_obj.harmonic_tuning()
-            plot_tuning_harmonic(harmonic_tuning, biotuner_obj.peaks, ax=ax)
-    
-    plt.tight_layout()
-    return fig
-
-
-def plot_tuning_complete(
-    biotuner_obj,
-    include_psd: bool = True,
-    figsize: Optional[Tuple[float, float]] = None,
-    **kwargs
-) -> plt.Figure:
-    """
-    Create comprehensive tuning visualization panel with all analyses.
-    
-    Parameters
-    ----------
-    biotuner_obj : compute_biotuner
-        Biotuner object with computed tuning metrics
-    include_psd : bool, default=True
-        Include PSD with peaks at top
-    figsize : tuple, optional
-        Figure size
-    
-    Returns
-    -------
-    fig : matplotlib figure
-    """
-    set_biotuner_style()
-    
-    if figsize is None:
-        figsize = (18, 16)
-    
-    if include_psd:
-        fig = plt.figure(figsize=figsize)
-        gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
-        
-        # Top: PSD with peaks (spanning both columns)
-        ax_psd = fig.add_subplot(gs[0, :])
-        if hasattr(biotuner_obj, 'freqs') and hasattr(biotuner_obj, 'psd'):
-            plot_psd_peaks(
-                biotuner_obj.freqs,
-                biotuner_obj.psd,
-                biotuner_obj.peaks,
-                xmin=1, xmax=50,
-                title="Power Spectral Density with Detected Peaks",
-                show_bands=True,
-                ax=ax_psd
-            )
-        
-        # Middle row: Dissonance and Entropy
-        ax_diss = fig.add_subplot(gs[1, 0])
-        ax_entropy = fig.add_subplot(gs[1, 1])
-        
-        # Bottom row: Harmonic tuning and Ratios
-        ax_harm = fig.add_subplot(gs[2, 0])
-        ax_ratios = fig.add_subplot(gs[2, 1])
-        
-    else:
-        fig, ((ax_diss, ax_entropy), (ax_harm, ax_ratios)) = plt.subplots(
-            2, 2, figsize=figsize
-        )
-    
-    # Plot dissonance
-    if hasattr(biotuner_obj, 'diss'):
-        plot_tuning_dissonance(
-            biotuner_obj.ratio_diss,
-            biotuner_obj.diss,
-            biotuner_obj.diss_scale if hasattr(biotuner_obj, 'diss_scale') else None,
-            ax=ax_diss
-        )
-    
-    # Plot entropy
-    if hasattr(biotuner_obj, 'HE'):
-        plot_tuning_entropy(
-            biotuner_obj.ratio_HE,
-            biotuner_obj.HE,
-            biotuner_obj.HE_scale if hasattr(biotuner_obj, 'HE_scale') else None,
-            ax=ax_entropy
-        )
-    
-    # Plot harmonic tuning
-    if hasattr(biotuner_obj, 'peaks'):
-        harmonic_tuning = biotuner_obj.harmonic_tuning()
-        plot_tuning_harmonic(harmonic_tuning, biotuner_obj.peaks, ax=ax_harm)
-    
-    # Note: Ratios panel now creates its own 2-panel figure
-    # For complete view, show it separately or modify layout
-    ax_ratios.text(0.5, 0.5, 'Use plot_tuning_ratios()\nseparately for\ntuning + matrix view',
-                  ha='center', va='center', fontsize=14, transform=ax_ratios.transAxes)
-    ax_ratios.set_title('Peaks Ratios Analysis', fontsize=20, fontweight='bold', pad=15)
-    ax_ratios.axis('off')
-    
-    plt.tight_layout()
-    return fig
 
 
 # ============================================================================
@@ -2852,7 +2816,7 @@ __all__ = [
     'plot_tuning_dissonance',
     'plot_tuning_entropy',
     'plot_tuning_harmonic',
-    'plot_tuning_ratios',
+    'plot_tuning',
     'plot_tuning_comparison',
     'plot_tuning_complete',
 ]

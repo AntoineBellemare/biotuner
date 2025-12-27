@@ -730,7 +730,7 @@ class compute_biotuner(object):
     def plot_tuning(self, tuning='peaks_ratios', metric='harmsim', 
                     ratio_type='all', vmin=None, vmax=None,
                     panels=4, extra_panels=None, show_summary=True,
-                    figsize=None, **kwargs):
+                    show_source_curve=True, max_denom=100, figsize=None, **kwargs):
         """
         Plot comprehensive tuning analysis with unified biotuner styling.
         
@@ -761,6 +761,12 @@ class compute_biotuner(object):
             Options: 'step_sizes', 'consonance_profile', 'interval_distribution', 'harmonic_deviation'
         show_summary : bool, default=True
             Show 5th summary panel with interval matches
+        show_source_curve : bool, default=True
+            If True and tuning is 'diss_curve' or 'HE', automatically shows
+            the source curve (dissonance or entropy) as a top full-width panel
+        max_denom : int, default=100
+            Maximum denominator for fraction simplification (e.g., 5/4 instead of 1.25).
+            Lower values produce simpler fractions. Default 100 works well for most scales.
         figsize : tuple, optional
             Figure size. Default: (16, 16)
         **kwargs : dict
@@ -852,7 +858,7 @@ class compute_biotuner(object):
                 "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', 'euler_fokker'"
             )
         
-        # Call the plot function
+        # Call the plot function with bt_object and tuning_name for source curve support
         return _plot_tuning(
             tuning=tuning_data,
             metric=metric,
@@ -862,7 +868,11 @@ class compute_biotuner(object):
             panels=panels,
             extra_panels=extra_panels,
             show_summary=show_summary,
+            show_source_curve=show_source_curve,
+            max_denom=max_denom,
             figsize=figsize,
+            bt_object=self,  # Pass biotuner object for source curve access
+            tuning_name=tuning,  # Pass tuning name to identify curve type
             **kwargs
         )
 
