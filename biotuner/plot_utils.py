@@ -3774,10 +3774,19 @@ def plot_harmonic_fit_network(
     """
     set_biotuner_style()
     
+    # Determine if standalone or embedded
+    is_standalone = ax is None
+    
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
     else:
         fig = ax.get_figure()
+    
+    # Scale font sizes based on usage
+    title_size = 28 if is_standalone else 18
+    label_size = 16 if is_standalone else 11
+    edge_label_size = 14 if is_standalone else 9
+    legend_size = 14 if is_standalone else 9
     
     n_peaks = len(peaks)
     
@@ -3837,7 +3846,7 @@ def plot_harmonic_fit_network(
             mid_x = (node_x[i] + node_x[j]) / 2
             mid_y = (node_y[i] + node_y[j]) / 2
             ax.text(mid_x, mid_y, str(shared), 
-                    fontsize=9, ha='center', va='center', fontweight='bold',
+                    fontsize=edge_label_size, ha='center', va='center', fontweight='bold',
                     bbox=dict(boxstyle='circle,pad=0.2', facecolor='white', 
                              edgecolor=color, alpha=0.95, linewidth=1.5),
                     color=color, zorder=2)
@@ -3850,7 +3859,7 @@ def plot_harmonic_fit_network(
         # Add frequency labels
         label_offset = 1.25
         ax.text(node_x[i]*label_offset, node_y[i]*label_offset, 
-                f'{peaks[i]:.1f} Hz', fontsize=11, ha='center', va='center',
+                f'{peaks[i]:.1f} Hz', fontsize=label_size, ha='center', va='center',
                 bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
                          edgecolor=colors[i], alpha=0.9, linewidth=2))
     
@@ -3860,7 +3869,7 @@ def plot_harmonic_fit_network(
     ax.axis('off')
     
     ax.set_title(f'Harmonic Network ({function.upper()}, n={n_harm})', 
-                  fontsize=18, fontweight='bold', pad=15)
+                  fontsize=title_size, fontweight='bold', pad=15)
     
     # Add legend
     from matplotlib.lines import Line2D
@@ -3869,7 +3878,7 @@ def plot_harmonic_fit_network(
                markersize=10, label='Node size = amplitude'),
         Line2D([0], [0], color='gray', linewidth=2, label='Edge # = shared harmonics')
     ]
-    ax.legend(handles=legend_elements, loc='upper left', fontsize=9, 
+    ax.legend(handles=legend_elements, loc='upper left', fontsize=legend_size, 
               framealpha=0.9, edgecolor='lightgray', fancybox=True)
     
     plt.tight_layout()
@@ -3924,7 +3933,7 @@ def plot_harmonic_fit_matrix(
     for i in range(n_peaks):
         for j in range(i, n_peaks):
             if i == j:
-                connectivity_matrix[i, j] = n_harm
+                connectivity_matrix[i, j] = np.nan  # Diagonal = NaN (will be black)
             else:
                 harms_i = multi_harmonics[i]
                 harms_j = multi_harmonics[j]
@@ -3932,13 +3941,25 @@ def plot_harmonic_fit_matrix(
                 connectivity_matrix[i, j] = shared
                 connectivity_matrix[j, i] = shared
     
+    # Colormap (same as tuning/peak matrices)
+    from matplotlib.colors import LinearSegmentedColormap
+    colors_list = ['#8B4513', '#CD5C5C', '#F4A460', '#FFD700', '#90EE90', '#48D1CC', '#40E0D0']
+    custom_cmap = LinearSegmentedColormap.from_list('orange_to_turquoise', colors_list)
+    custom_cmap.set_bad(color='black')  # NaN values will be black
+    
+    # Calculate vmin/vmax excluding diagonal
+    off_diagonal = connectivity_matrix[~np.isnan(connectivity_matrix)]
+    vmin = 0
+    vmax = np.max(off_diagonal) if len(off_diagonal) > 0 else 1
+    
     # Plot heatmap
-    im = ax.imshow(connectivity_matrix, cmap='YlOrRd', aspect='auto',
-                    interpolation='nearest', vmin=0)
+    im = ax.imshow(connectivity_matrix, cmap=custom_cmap, aspect='auto',
+                    interpolation='nearest', vmin=vmin, vmax=vmax)
     
     # Add colorbar
     cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     cbar.set_label('Shared Harmonics', fontsize=14, rotation=270, labelpad=20)
+    cbar.ax.tick_params(labelsize=12)
     
     # Set ticks and labels
     ax.set_xticks(np.arange(n_peaks))
@@ -3954,8 +3975,11 @@ def plot_harmonic_fit_matrix(
     # Annotate cells with values
     for i in range(n_peaks):
         for j in range(n_peaks):
-            if connectivity_matrix[i, j] > 0:
-                text_color = 'white' if connectivity_matrix[i, j] > n_harm/2 else 'black'
+            if i == j:
+                # Don't annotate diagonal
+                continue
+            elif connectivity_matrix[i, j] > 0:
+                text_color = 'white' if connectivity_matrix[i, j] > vmax/2 else 'black'
                 ax.text(j, i, f'{int(connectivity_matrix[i, j])}',
                         ha='center', va='center', color=text_color, fontsize=10)
     
@@ -4275,9 +4299,9 @@ def plot_harmonic_fit_summary(
     
     # Create figure with custom grid layout
     fig = plt.figure(figsize=figsize)
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], hspace=0.3, wspace=0.35)
-    ax1 = fig.add_subplot(gs[0, 0])  # Top-left
-    ax3 = fig.add_subplot(gs[1, 0])  # Bottom-left
+    gs = fig.add_gridspec(2, 2, height_ratios=[1.5, 1], hspace=0.3, wspace=0.35)
+    ax1 = fig.add_subplot(gs[0, 0])  # Top-left (network - taller)
+    ax3 = fig.add_subplot(gs[1, 0])  # Bottom-left (matrix)
     
     fig.suptitle(f'Harmonic Fit Analysis ({function.upper()}, n={n_harm})', 
                  fontsize=22, fontweight='bold', y=0.98)
