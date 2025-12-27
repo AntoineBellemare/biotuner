@@ -726,6 +726,88 @@ class compute_biotuner(object):
             matrix_metric=matrix_metric,
             **kwargs
         )
+    
+    # Individual plotting methods for peaks
+    def plot_peaks_summary(self, xmin=1, xmax=60, show_bands=True, show_matrix=True, 
+                          matrix_metric='harmsim', **kwargs):
+        """Alias for plot_peaks() - plots comprehensive peak summary."""
+        return self.plot_peaks(xmin, xmax, show_bands, show_matrix, matrix_metric, **kwargs)
+    
+    def plot_peaks_spectrum(self, xmin=1, xmax=60, show_bands=True, **kwargs):
+        """
+        Plot only the spectral peaks on PSD (no additional panels).
+        
+        Parameters
+        ----------
+        xmin, xmax : float
+            Frequency range
+        show_bands : bool, default=True
+            Whether to show frequency bands
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_peaks_spectrum
+        
+        return plot_peaks_spectrum(
+            bt_object=self,
+            xmin=xmin,
+            xmax=xmax,
+            show_bands=show_bands,
+            **kwargs
+        )
+    
+    def plot_peaks_amplitude(self, xmin=1, xmax=60, **kwargs):
+        """
+        Plot peak amplitude distribution as bar chart.
+        
+        Parameters
+        ----------
+        xmin, xmax : float
+            Frequency range
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_peaks_amplitude
+        
+        return plot_peaks_amplitude(
+            peaks=self.peaks,
+            bt_object=self,
+            xmin=xmin,
+            xmax=xmax,
+            **kwargs
+        )
+    
+    def plot_peaks_matrix(self, metric='harmsim', **kwargs):
+        """
+        Plot peak ratios harmonicity matrix.
+        
+        Parameters
+        ----------
+        metric : str, default='harmsim'
+            Metric for matrix: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_peaks_matrix
+        
+        return plot_peaks_matrix(
+            peaks=self.peaks,
+            metric=metric,
+            bt_object=self,
+            **kwargs
+        )
 
     def plot_tuning(self, tuning='peaks_ratios', metric='harmsim', 
                     ratio_type='all', vmin=None, vmax=None,
@@ -873,6 +955,674 @@ class compute_biotuner(object):
             figsize=figsize,
             bt_object=self,  # Pass biotuner object for source curve access
             tuning_name=tuning,  # Pass tuning name to identify curve type
+            **kwargs
+        )
+    
+    # Individual plotting methods for tuning
+    def plot_tuning_summary(self, tuning='peaks_ratios', metric='harmsim', 
+                           ratio_type='all', vmin=None, vmax=None,
+                           panels=4, extra_panels=None, show_summary=True,
+                           show_source_curve=True, max_denom=100, figsize=None, **kwargs):
+        """Alias for plot_tuning() - plots comprehensive tuning summary."""
+        return self.plot_tuning(tuning, metric, ratio_type, vmin, vmax, panels, 
+                               extra_panels, show_summary, show_source_curve, max_denom, figsize, **kwargs)
+    
+    def plot_tuning_scale(self, tuning='peaks_ratios', max_denom=100, figsize=None, **kwargs):
+        """
+        Plot only the tuning scale as bar chart (no other panels).
+        
+        Parameters
+        ----------
+        tuning : str, default='peaks_ratios'
+            Which tuning to plot
+        max_denom : int, default=100
+            Maximum denominator for fractions
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_scale
+        
+        # Get tuning data (reuse logic from plot_tuning)
+        tuning_data = self._get_tuning_data(tuning)
+        
+        return plot_tuning_scale(
+            tuning=tuning_data,
+            max_denom=max_denom,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def plot_tuning_matrix(self, tuning='peaks_ratios', metric='harmsim', 
+                          ratio_type='all', vmin=None, vmax=None,
+                          max_denom=100, figsize=None, **kwargs):
+        """
+        Plot only the consonance matrix for a tuning (no other panels).
+        
+        Parameters
+        ----------
+        tuning : str, default='peaks_ratios'
+            Which tuning to plot
+        metric : str, default='harmsim'
+            Consonance metric
+        ratio_type : str, default='all'
+            Ratio type: 'all', 'pos_harm', 'sub_harm'
+        vmin, vmax : float, optional
+            Color scale limits
+        max_denom : int, default=100
+            Maximum denominator for fractions
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_matrix
+        
+        # Get tuning data
+        tuning_data = self._get_tuning_data(tuning)
+        
+        return plot_tuning_matrix(
+            tuning=tuning_data,
+            metric=metric,
+            ratio_type=ratio_type,
+            vmin=vmin,
+            vmax=vmax,
+            max_denom=max_denom,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def plot_tuning_intervals(self, tuning='peaks_ratios', max_denom=100, figsize=None, **kwargs):
+        """
+        Plot melodic intervals (step sizes) between adjacent notes.
+        
+        Parameters
+        ----------
+        tuning : str, default='peaks_ratios'
+            Which tuning to plot
+        max_denom : int, default=100
+            Maximum denominator for fractions
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_intervals
+        
+        # Get tuning data
+        tuning_data = self._get_tuning_data(tuning)
+        
+        return plot_tuning_intervals(
+            tuning=tuning_data,
+            max_denom=max_denom,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def plot_tuning_consonance_profile(self, tuning='peaks_ratios', metric='harmsim',
+                                       ratio_type='all', max_denom=100, figsize=None, **kwargs):
+        """
+        Plot consonance profile showing distribution of consonance for each scale degree.
+        
+        Parameters
+        ----------
+        tuning : str, default='peaks_ratios'
+            Which tuning to plot
+        metric : str, default='harmsim'
+            Consonance metric
+        ratio_type : str, default='all'
+            Ratio type: 'all', 'pos_harm', 'sub_harm'
+        max_denom : int, default=100
+            Maximum denominator for fractions
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_consonance_profile
+        
+        # Get tuning data
+        tuning_data = self._get_tuning_data(tuning)
+        
+        return plot_tuning_consonance_profile(
+            tuning=tuning_data,
+            metric=metric,
+            ratio_type=ratio_type,
+            max_denom=max_denom,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def plot_tuning_curve(self, curve_type='auto', max_ratio=2.0, show_minima=True, 
+                         figsize=None, **kwargs):
+        """
+        Plot source curve (dissonance or harmonic entropy) with local minima.
+        
+        Parameters
+        ----------
+        curve_type : str, default='auto'
+            Type of curve: 'dissonance', 'entropy', or 'auto' (auto-detect from available data)
+        max_ratio : float, default=2.0
+            Maximum ratio to display
+        show_minima : bool, default=True
+            Show markers at local minima
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_curve
+        
+        # Auto-detect curve type if needed
+        if curve_type == 'auto':
+            if hasattr(self, 'diss') and hasattr(self, 'ratio_diss'):
+                curve_type = 'dissonance'
+            elif hasattr(self, 'HE') and hasattr(self, 'ratio_HE'):
+                curve_type = 'entropy'
+            else:
+                raise RuntimeError(
+                    "No curve data found. Please run either:\n"
+                    "  bt.compute_diss_curve() for dissonance curve, or\n"
+                    "  bt.compute_harmonic_entropy() for entropy curve"
+                )
+        
+        return plot_tuning_curve(
+            bt_object=self,
+            curve_type=curve_type,
+            max_ratio=max_ratio,
+            show_minima=show_minima,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def plot_tuning_interval_table(self, tuning='peaks_ratios', max_denom=100, 
+                                   tolerance_cents=5.0, max_intervals=10, 
+                                   figsize=None, **kwargs):
+        """
+        Plot a table showing known musical intervals matched to the tuning scale.
+        
+        Parameters
+        ----------
+        tuning : str or list, default='peaks_ratios'
+            Tuning type or list of ratios
+        max_denom : int, default=100
+            Maximum denominator for fractions
+        tolerance_cents : float, default=5.0
+            Tolerance in cents for matching intervals
+        max_intervals : int, default=10
+            Maximum number of intervals to display
+        figsize : tuple, optional
+            Figure size
+        **kwargs : dict
+            Additional parameters
+            
+        Returns
+        -------
+        fig, ax : matplotlib figure and axes
+        """
+        from biotuner.plot_utils import plot_tuning_interval_table
+        
+        # Get tuning data
+        if isinstance(tuning, str):
+            tuning_data = self._get_tuning_data(tuning)
+        else:
+            tuning_data = tuning
+        
+        return plot_tuning_interval_table(
+            tuning=tuning_data,
+            max_denom=max_denom,
+            tolerance_cents=tolerance_cents,
+            max_intervals=max_intervals,
+            figsize=figsize,
+            **kwargs
+        )
+    
+    def _get_tuning_data(self, tuning):
+        """Helper method to extract tuning data based on tuning type."""
+        if tuning == 'diss_curve':
+            if not hasattr(self, 'diss_scale'):
+                raise RuntimeError(
+                    "Dissonance curve not computed. Please run compute_diss_curve() first:\n"
+                    "  bt.compute_diss_curve(input_type='peaks', plot=True)"
+                )
+            return self.diss_scale
+        
+        elif tuning == 'HE':
+            if not hasattr(self, 'HE_scale'):
+                raise RuntimeError(
+                    "Harmonic entropy not computed. Please run compute_harmonic_entropy() first:\n"
+                    "  bt.compute_harmonic_entropy(input_type='peaks', plot_entropy=True)"
+                )
+            return self.HE_scale
+        
+        elif tuning == 'harm_tuning':
+            if hasattr(self, 'harm_tuning_scale'):
+                return self.harm_tuning_scale
+            else:
+                print("→ Computing harmonic_tuning() automatically...")
+                return self.harmonic_tuning()
+        
+        elif tuning == 'harm_fit_tuning':
+            if hasattr(self, 'harm_fit_tuning_scale'):
+                return self.harm_fit_tuning_scale
+            else:
+                print("→ Computing harmonic_fit_tuning() automatically...")
+                return self.harmonic_fit_tuning()
+        
+        elif tuning == 'peaks_ratios':
+            if not hasattr(self, 'peaks_ratios'):
+                print("→ Computing peaks_ratios from peaks automatically...")
+                from biotuner.biotuner_utils import compute_peak_ratios
+                tuning_data = compute_peak_ratios(self.peaks, rebound=True, octave=self.octave, 
+                                                   sub=self.compute_sub_ratios)
+                self.peaks_ratios = tuning_data
+                return tuning_data
+            else:
+                return self.peaks_ratios
+        
+        elif tuning == 'euler_fokker':
+            if hasattr(self, 'euler_fokker'):
+                return self.euler_fokker
+            else:
+                print("→ Computing euler_fokker_scale() automatically...")
+                return self.euler_fokker_scale()
+        
+        else:
+            raise ValueError(
+                f"Unknown tuning type: {tuning}. Must be one of: "
+                "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', 'euler_fokker'"
+            )
+
+    def plot_harmonic_fit(self, n_harm=None, harm_bounds=0.5, function='mult', 
+                         div_mode='div', xmin=1, xmax=60, show_bands=True,
+                         figsize=(16, 12), **kwargs):
+        """
+        Plot comprehensive harmonic fit analysis showing harmonic structures.
+        
+        This visualization shows how peaks relate harmonically to each other,
+        displaying original peaks, extended peaks, harmonic relationships,
+        and consonance patterns across multiple intuitive panels.
+        
+        Parameters
+        ----------
+        n_harm : int, optional
+            Number of harmonics to compute. Default: self.n_harm
+        harm_bounds : float, default=0.5
+            Maximum distance (Hz) between frequencies to consider a harmonic fit
+        function : str, default='mult'
+            Harmonic function type:
+            - 'mult': Natural harmonics (x, 2x, 3x, ...)
+            - 'div': Sub-harmonics (x, x/2, x/3, ...)
+            - 'exp': Exponential harmonics (x, x^2, x^3, ...)
+        div_mode : str, default='div'
+            Sub-harmonic mode when function='div':
+            - 'div': x, x/2, x/3, ...
+            - 'div_add': x, x+x/2, x+x/3, ...
+            - 'div_sub': x, x-x/2, x-x/3, ...
+        xmin : float, default=1
+            Minimum frequency (Hz) for x-axis
+        xmax : float, default=60
+            Maximum frequency (Hz) for x-axis
+        show_bands : bool, default=True
+            Whether to show EEG frequency bands
+        figsize : tuple, default=(16, 12)
+            Figure size (width, height)
+        **kwargs : dict
+            Additional plotting parameters
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object
+        axes : np.ndarray
+            Array of axes (2x2 grid)
+            
+        Examples
+        --------
+        >>> bt = compute_biotuner(sf=1000)
+        >>> bt.peaks_extraction(data=signal)
+        >>> fig, axes = bt.plot_harmonic_fit(n_harm=10)
+        >>> plt.show()
+        
+        >>> # Focus on sub-harmonic relationships
+        >>> fig, axes = bt.plot_harmonic_fit(function='div', n_harm=5)
+        
+        Notes
+        -----
+        The plot contains 4 panels:
+        1. Top-left: Original peaks with their harmonic series overlay
+        2. Top-right: Original vs Extended peaks comparison
+        3. Bottom-left: Harmonic connectivity/relationship matrix
+        4. Bottom-right: Consonance analysis and fit quality
+        """
+        from biotuner.plot_utils import plot_harmonic_fit as _plot_harmonic_fit
+        
+        if n_harm is None:
+            n_harm = self.n_harm
+            
+        # Check if peaks exist
+        if not hasattr(self, 'peaks') or len(self.peaks) == 0:
+            raise RuntimeError(
+                "No peaks found. Please run peaks_extraction() first:\n"
+                "  bt.peaks_extraction(data=signal, min_freq=1, max_freq=50)"
+            )
+        
+        # Compute harmonic fit if not already done
+        harm_fit, harmonics_pos, common_harms, matching_pos = harmonic_fit(
+            self.peaks, 
+            n_harm=n_harm, 
+            bounds=harm_bounds,
+            function=function,
+            div_mode=div_mode
+        )
+        
+        # Get extended peaks if available, otherwise use peaks
+        if hasattr(self, 'extended_peaks') and len(self.extended_peaks) > 0:
+            extended_peaks = self.extended_peaks
+            extended_amps = self.extended_amps if hasattr(self, 'extended_amps') else None
+        else:
+            extended_peaks = None
+            extended_amps = None
+        
+        return _plot_harmonic_fit(
+            peaks=self.peaks,
+            amps=self.amps,
+            freqs=self.freqs,
+            psd=self.psd,
+            harm_fit=harm_fit,
+            harmonics_pos=harmonics_pos,
+            common_harms=common_harms,
+            matching_pos=matching_pos,
+            extended_peaks=extended_peaks,
+            extended_amps=extended_amps,
+            n_harm=n_harm,
+            harm_bounds=harm_bounds,
+            function=function,
+            xmin=xmin,
+            xmax=xmax,
+            show_bands=show_bands,
+            figsize=figsize,
+            **kwargs
+        )
+
+    def plot_harmonic_fit_network(
+        self,
+        n_harm: int = None,
+        harm_bounds: float = 0.5,
+        function: str = 'mult',
+        figsize: tuple = (10, 10),
+        ax = None,
+        **kwargs
+    ):
+        """
+        Plot harmonic network showing relationships between peaks.
+        
+        Creates a circular network where nodes are peaks and edges show
+        the number of shared harmonics between peak pairs.
+        
+        Parameters
+        ----------
+        n_harm : int, optional
+            Number of harmonics per peak. Default: self.n_harm
+        harm_bounds : float, default=0.5
+            Frequency threshold (Hz) for considering harmonics as matching
+        function : str, default='mult'
+            Harmonic function: 'mult', 'div', or 'exp'
+        figsize : tuple, default=(10, 10)
+            Figure size
+        ax : plt.Axes, optional
+            Existing axes to plot on
+        **kwargs : dict
+            Additional plotting parameters
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+        ax : matplotlib.axes.Axes
+        """
+        from biotuner.plot_utils import plot_harmonic_fit_network
+        from biotuner.peaks_extension import EEG_harmonics_mult, EEG_harmonics_div
+        
+        if n_harm is None:
+            n_harm = self.n_harm
+            
+        if not hasattr(self, 'peaks') or len(self.peaks) == 0:
+            raise RuntimeError("No peaks found. Run peaks_extraction() first.")
+        
+        # Generate harmonics
+        if function == 'mult':
+            multi_harmonics = EEG_harmonics_mult(self.peaks, n_harm)
+        elif function == 'div':
+            multi_harmonics, _ = EEG_harmonics_div(self.peaks, n_harm, mode='div')
+        else:
+            import numpy as np
+            multi_harmonics = np.array([[p**h for p in self.peaks] for h in range(1, n_harm + 1)])
+            multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+        
+        return plot_harmonic_fit_network(
+            peaks=self.peaks,
+            amps=self.amps,
+            multi_harmonics=multi_harmonics,
+            n_harm=n_harm,
+            harm_bounds=harm_bounds,
+            function=function,
+            figsize=figsize,
+            ax=ax,
+            **kwargs
+        )
+
+    def plot_harmonic_fit_matrix(
+        self,
+        n_harm: int = None,
+        harm_bounds: float = 0.5,
+        figsize: tuple = (8, 7),
+        ax = None,
+        **kwargs
+    ):
+        """
+        Plot harmonic connectivity matrix showing shared harmonics between peak pairs.
+        
+        Parameters
+        ----------
+        n_harm : int, optional
+            Number of harmonics per peak. Default: self.n_harm
+        harm_bounds : float, default=0.5
+            Frequency threshold (Hz) for considering harmonics as matching
+        figsize : tuple, default=(8, 7)
+            Figure size
+        ax : plt.Axes, optional
+            Existing axes to plot on
+        **kwargs : dict
+            Additional plotting parameters
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+        ax : matplotlib.axes.Axes
+        """
+        from biotuner.plot_utils import plot_harmonic_fit_matrix
+        from biotuner.peaks_extension import EEG_harmonics_mult, EEG_harmonics_div
+        
+        if n_harm is None:
+            n_harm = self.n_harm
+            
+        if not hasattr(self, 'peaks') or len(self.peaks) == 0:
+            raise RuntimeError("No peaks found. Run peaks_extraction() first.")
+        
+        # Generate harmonics
+        function = kwargs.get('function', 'mult')
+        if function == 'mult':
+            multi_harmonics = EEG_harmonics_mult(self.peaks, n_harm)
+        elif function == 'div':
+            multi_harmonics, _ = EEG_harmonics_div(self.peaks, n_harm, mode='div')
+        else:
+            import numpy as np
+            multi_harmonics = np.array([[p**h for p in self.peaks] for h in range(1, n_harm + 1)])
+            multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+        
+        return plot_harmonic_fit_matrix(
+            peaks=self.peaks,
+            multi_harmonics=multi_harmonics,
+            n_harm=n_harm,
+            harm_bounds=harm_bounds,
+            figsize=figsize,
+            ax=ax,
+            **kwargs
+        )
+
+    def plot_harmonic_fit_positions(
+        self,
+        n_harm: int = None,
+        harm_bounds: float = 0.5,
+        function: str = 'mult',
+        figsize: tuple = (14, 6),
+        **kwargs
+    ):
+        """
+        Plot harmonic position analysis in two side-by-side panels.
+        
+        Left panel: Bipartite network showing which harmonic positions are shared
+        Right panel: Histogram of harmonic position distribution
+        
+        Parameters
+        ----------
+        n_harm : int, optional
+            Number of harmonics per peak. Default: self.n_harm
+        harm_bounds : float, default=0.5
+            Frequency threshold (Hz) for considering harmonics as matching
+        function : str, default='mult'
+            Harmonic function: 'mult', 'div', or 'exp'
+        figsize : tuple, default=(14, 6)
+            Figure size
+        **kwargs : dict
+            Additional plotting parameters
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+        axes : np.ndarray
+            Array of axes [ax_left, ax_right]
+        """
+        from biotuner.plot_utils import plot_harmonic_fit_positions
+        from biotuner.peaks_extension import EEG_harmonics_mult, EEG_harmonics_div
+        from biotuner.peaks_extension import harmonic_fit
+        
+        if n_harm is None:
+            n_harm = self.n_harm
+            
+        if not hasattr(self, 'peaks') or len(self.peaks) == 0:
+            raise RuntimeError("No peaks found. Run peaks_extraction() first.")
+        
+        # Generate harmonics
+        if function == 'mult':
+            multi_harmonics = EEG_harmonics_mult(self.peaks, n_harm)
+        elif function == 'div':
+            multi_harmonics, _ = EEG_harmonics_div(self.peaks, n_harm, mode='div')
+        else:
+            import numpy as np
+            multi_harmonics = np.array([[p**h for p in self.peaks] for h in range(1, n_harm + 1)])
+            multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+        
+        # Get common harmonics
+        _, _, common_harms, _ = harmonic_fit(
+            self.peaks,
+            n_harm=n_harm,
+            bounds=harm_bounds,
+            function=function
+        )
+        
+        return plot_harmonic_fit_positions(
+            peaks=self.peaks,
+            amps=self.amps,
+            multi_harmonics=multi_harmonics,
+            common_harms=common_harms,
+            n_harm=n_harm,
+            harm_bounds=harm_bounds,
+            function=function,
+            figsize=figsize,
+            **kwargs
+        )
+
+    def plot_harmonic_position_mappings(
+        self, 
+        n_harm: int = 10, 
+        harm_bounds: float = 0.5,
+        function: str = 'mult',
+        figsize: tuple = (14, 10),
+        **kwargs
+    ):
+        """
+        Plot harmonic position mappings between peak pairs.
+        
+        Shows which specific harmonic positions (1st, 2nd, 3rd, etc.) of one peak
+        match with which harmonic positions of another peak.
+        
+        Parameters
+        ----------
+        n_harm : int, default=10
+            Number of harmonics to compute for each peak
+        harm_bounds : float, default=0.5
+            Frequency threshold (Hz) for considering harmonics as matching
+        function : str, default='mult'
+            Harmonic function to use:
+            - 'mult': Natural harmonics (f, 2f, 3f, ...)
+            - 'div': Sub-harmonics (f, f/2, f/3, ...)
+        figsize : tuple, default=(14, 10)
+            Figure size (width, height) in inches
+        **kwargs : dict
+            Additional keyword arguments passed to the plotting function
+            
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object
+        ax : matplotlib.axes.Axes
+            The axes object
+            
+        Examples
+        --------
+        >>> bt.plot_harmonic_position_mappings(n_harm=10, harm_bounds=0.5)
+        >>> bt.plot_harmonic_position_mappings(n_harm=15, function='div')
+        """
+        from biotuner.plot_utils import plot_harmonic_position_mappings as _plot_harmonic_position_mappings
+        
+        # Generate harmonic series
+        if function == 'mult':
+            from biotuner.peaks_extension import EEG_harmonics_mult
+            multi_harmonics = EEG_harmonics_mult(self.peaks, n_harm)
+        else:  # div
+            from biotuner.peaks_extension import EEG_harmonics_div
+            multi_harmonics = EEG_harmonics_div(self.peaks, n_harm)
+        
+        return _plot_harmonic_position_mappings(
+            peaks=self.peaks,
+            amps=self.amps,
+            multi_harmonics=multi_harmonics,
+            n_harm=n_harm,
+            harm_bounds=harm_bounds,
+            function=function,
+            figsize=figsize,
             **kwargs
         )
 

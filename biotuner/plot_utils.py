@@ -1417,7 +1417,297 @@ def create_comparison_plot(
 # Unified Plot Dispatcher
 # ============================================================================
 
-def plot_peaks(
+def plot_peaks_spectrum(
+    method: str = None,
+    freqs: Union[np.ndarray, List[np.ndarray]] = None,
+    psd: Union[np.ndarray, List[np.ndarray]] = None,
+    peaks: np.ndarray = None,
+    xmin: float = 1,
+    xmax: float = 60,
+    show_bands: bool = False,
+    bt_object = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot spectral peaks on PSD (spectrum only, no additional panels).
+    
+    This plots only the power spectral density with detected peaks overlaid.
+    
+    Parameters
+    ----------
+    method : str, optional
+        Peak extraction method: 'EMD', 'EEMD', 'CEEMDAN', 'FOOOF', 
+        'harmonic_recurrence', 'EIMC', 'cepstrum', 'bicoherence', 'PAC',
+        'fixed', 'adapt', 'HH1D_max', etc.
+        If bt_object is provided, method will be extracted from it.
+    freqs : np.ndarray or list of np.ndarray, optional
+        Frequency vector(s). Not required if bt_object or IMFs are provided.
+    psd : np.ndarray or list of np.ndarray, optional
+        PSD data. Not required if bt_object or IMFs are provided.
+    peaks : np.ndarray, optional
+        Detected peak frequencies. Extracted from bt_object if not provided.
+    xmin, xmax : float
+        Frequency range
+    show_bands : bool, default=False
+        Whether to overlay frequency bands
+    bt_object : compute_biotuner, optional
+        Biotuner object. If provided, attributes will be extracted automatically.
+    **kwargs
+        Method-specific parameters
+    
+    Returns
+    -------
+    fig : plt.Figure
+        Matplotlib figure
+    ax : plt.Axes
+        Matplotlib axes
+    
+    Examples
+    --------
+    >>> # Using biotuner object (recommended)
+    >>> bt = compute_biotuner(sf=1000, peaks_function='FOOOF')
+    >>> bt.peaks_extraction(data=signal, min_freq=1, max_freq=50)
+    >>> fig, ax = plot_peaks_spectrum(bt_object=bt, show_bands=True)
+    >>> 
+    >>> # Manual mode (backward compatible)
+    >>> fig, ax = plot_peaks_spectrum('FOOOF', freqs, psd, peaks, show_bands=True)
+    """
+    # If biotuner object provided, extract attributes
+    if bt_object is not None:
+        # Extract method from peaks_function
+        if method is None:
+            method = bt_object.peaks_function
+        
+        # Extract peaks
+        if peaks is None and hasattr(bt_object, 'peaks'):
+            peaks = bt_object.peaks
+        
+        # Extract freqs and psd (for most methods)
+        if freqs is None and hasattr(bt_object, 'freqs'):
+            freqs = bt_object.freqs
+        if psd is None and hasattr(bt_object, 'psd'):
+            psd = bt_object.psd
+        
+        # Extract method-specific attributes
+        # Cepstrum
+        if method == 'cepstrum':
+            if 'quefrency_vector' not in kwargs and hasattr(bt_object, 'quefrency_vector'):
+                kwargs['quefrency_vector'] = bt_object.quefrency_vector
+            if 'cepstrum' not in kwargs and hasattr(bt_object, 'cepstrum'):
+                kwargs['cepstrum'] = bt_object.cepstrum
+        
+        # EMD methods
+        if method in ['EMD', 'EEMD', 'CEEMDAN', 'EMD_FOOOF']:
+            if 'IMFs' not in kwargs and hasattr(bt_object, 'IMFs'):
+                kwargs['IMFs'] = bt_object.IMFs
+            if 'sf' not in kwargs and hasattr(bt_object, 'sf'):
+                kwargs['sf'] = bt_object.sf
+        
+        # Harmonic recurrence
+        if method == 'harmonic_recurrence':
+            if 'harm_peaks_fit' not in kwargs and hasattr(bt_object, 'harm_peaks_fit'):
+                kwargs['harm_peaks_fit'] = bt_object.harm_peaks_fit
+        
+        # EIMC
+        if method == 'EIMC':
+            if 'EIMC_all' not in kwargs and hasattr(bt_object, 'EIMC_all'):
+                kwargs['EIMC_all'] = bt_object.EIMC_all
+    
+    # Ensure method is provided
+    if method is None:
+        raise ValueError("Either 'method' parameter or 'bt_object' must be provided")
+    
+    # Ensure peaks are provided
+    if peaks is None:
+        raise ValueError("Peaks not found. Ensure bt_object has peaks or provide peaks parameter.")
+    
+    # EMD-based methods
+    if method in ['EMD', 'EEMD', 'CEEMDAN', 'EMD_FOOOF']:
+        # Check if IMFs are provided directly in kwargs
+        if 'IMFs' in kwargs:
+            result = plot_emd_peaks(peaks=peaks, xmin=xmin, xmax=xmax, 
+                                   show_bands=show_bands, **kwargs)
+        else:
+            result = plot_emd_peaks(freqs, psd, peaks, xmin=xmin, xmax=xmax, 
+                                   show_bands=show_bands, **kwargs)
+    
+    # EIMC - use specialized visualization for intermodulation components
+    elif method == 'EIMC':
+        if 'EIMC_all' in kwargs:
+            # Use specialized EIMC visualization
+            EIMC_all = kwargs.pop('EIMC_all')
+            n_pairs = kwargs.pop('n_pairs', 5)
+            color = kwargs.pop('color', BIOTUNER_COLORS['dark'])
+            
+            result = plot_eimc_peaks(
+                freqs, psd, peaks, EIMC_all,
+                xmin=xmin, xmax=xmax,
+                n_pairs=n_pairs,
+                show_bands=show_bands,
+                color=color,
+                **kwargs
+            )
+        else:
+            # Fallback to standard plot if no EIMC data
+            result = plot_psd_peaks(freqs, psd, peaks, xmin=xmin, xmax=xmax,
+                                   method=method, show_bands=show_bands, **kwargs)
+    
+    # Harmonic recurrence - use specialized visualization with new style
+    elif method == 'harmonic_recurrence':
+        if 'harm_peaks_fit' in kwargs:
+            # Use specialized harmonic visualization with new styling
+            harm_peaks_fit = kwargs.pop('harm_peaks_fit')
+            n_peaks = kwargs.pop('n_peaks', 5)
+            color = kwargs.pop('color', BIOTUNER_COLORS['dark'])
+            
+            result = plot_harmonic_peaks(
+                freqs, psd, harm_peaks_fit,
+                xmin=xmin, xmax=xmax,
+                n_peaks=n_peaks,
+                show_bands=show_bands,
+                color=color,
+                selected_peaks=peaks,
+                **kwargs
+            )
+        else:
+            # Fallback to standard plot if no harmonic fit data
+            result = plot_psd_peaks(freqs, psd, peaks, xmin=xmin, xmax=xmax,
+                                   method=method, show_bands=show_bands, **kwargs)
+    
+    # Cepstrum - use specialized quefrency-based visualization
+    elif method == 'cepstrum':
+        # For cepstrum, we expect 'quefrency_vector' and 'cepstrum' in kwargs
+        if 'quefrency_vector' in kwargs and 'cepstrum' in kwargs:
+            quefrency_vector = kwargs.pop('quefrency_vector')
+            cepstrum = kwargs.pop('cepstrum')
+            result = plot_cepstrum_peaks(quefrency_vector, cepstrum, peaks, 
+                                        xmin=xmin, xmax=xmax,
+                                        method=method, show_bands=show_bands, **kwargs)
+        else:
+            # Fallback to standard plot if quefrency data not provided
+            result = plot_psd_peaks(freqs, psd, peaks, xmin=xmin, xmax=xmax,
+                                   method=method, show_bands=show_bands, **kwargs)
+    
+    # All other methods (FOOOF, fixed, adapt, EIMC, PAC, bicoherence, HH1D_max, etc.)
+    else:
+        result = plot_psd_peaks(freqs, psd, peaks, xmin=xmin, xmax=xmax,
+                               method=method, show_bands=show_bands, **kwargs)
+    
+    return result
+
+
+def plot_peaks_amplitude(
+    peaks: np.ndarray,
+    amps: np.ndarray = None,
+    xmin: float = 1,
+    xmax: float = 60,
+    bt_object = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot peak amplitude distribution as a bar chart.
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies
+    amps : np.ndarray, optional
+        Peak amplitudes. Extracted from bt_object if not provided.
+    xmin, xmax : float
+        Frequency range
+    bt_object : compute_biotuner, optional
+        Biotuner object for extracting attributes
+    **kwargs
+        Additional parameters for _plot_peak_amplitude_distribution
+    
+    Returns
+    -------
+    fig : plt.Figure
+        Matplotlib figure
+    ax : plt.Axes
+        Matplotlib axes
+    
+    Examples
+    --------
+    >>> bt = compute_biotuner(sf=1000)
+    >>> bt.peaks_extraction(data=signal)
+    >>> fig, ax = plot_peaks_amplitude(bt_object=bt)
+    """
+    # Extract from bt_object if provided
+    if bt_object is not None:
+        if peaks is None and hasattr(bt_object, 'peaks'):
+            peaks = bt_object.peaks
+        if amps is None and hasattr(bt_object, 'amps'):
+            amps = bt_object.amps
+    
+    if peaks is None:
+        raise ValueError("Peaks must be provided or bt_object must have peaks attribute")
+    if amps is None:
+        raise ValueError("Amplitudes must be provided or bt_object must have amps attribute")
+    
+    # Create figure
+    fig, ax = plt.subplots(figsize=(8, 6))
+    
+    # Plot amplitude distribution
+    _plot_peak_amplitude_distribution(ax, peaks, amps, xmin, xmax, **kwargs)
+    
+    return fig, ax
+
+
+def plot_peaks_matrix(
+    peaks: np.ndarray,
+    metric: str = 'harmsim',
+    bt_object = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot peak ratios harmonicity matrix.
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies
+    metric : str, default='harmsim'
+        Metric for matrix: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+    bt_object : compute_biotuner, optional
+        Biotuner object for extracting peaks
+    **kwargs
+        Additional parameters for _plot_peak_ratios_matrix
+    
+    Returns
+    -------
+    fig : plt.Figure
+        Matplotlib figure
+    ax : plt.Axes
+        Matplotlib axes
+    
+    Examples
+    --------
+    >>> bt = compute_biotuner(sf=1000)
+    >>> bt.peaks_extraction(data=signal)
+    >>> fig, ax = plot_peaks_matrix(bt_object=bt, metric='harmsim')
+    """
+    # Extract from bt_object if provided
+    if bt_object is not None and peaks is None:
+        if hasattr(bt_object, 'peaks'):
+            peaks = bt_object.peaks
+    
+    if peaks is None:
+        raise ValueError("Peaks must be provided or bt_object must have peaks attribute")
+    
+    if len(peaks) < 2:
+        raise ValueError("At least 2 peaks required for matrix visualization")
+    
+    # Create figure
+    fig, ax = plt.subplots(figsize=(8, 7))
+    
+    # Plot matrix
+    _plot_peak_ratios_matrix(ax, peaks, metric, **kwargs)
+    
+    return fig, ax
+
+
+def plot_peaks_summary(
     method: str = None,
     freqs: Union[np.ndarray, List[np.ndarray]] = None,
     psd: Union[np.ndarray, List[np.ndarray]] = None,
@@ -1431,7 +1721,10 @@ def plot_peaks(
     **kwargs
 ) -> Tuple[plt.Figure, Union[plt.Axes, np.ndarray]]:
     """
-    Universal plotting function for peak extraction results.
+    Universal summary plotting function for peak extraction results.
+    
+    Plots a comprehensive summary with spectrum, amplitude distribution, and optionally harmonicity matrix.
+    For individual plots, use plot_peaks_spectrum(), plot_peaks_amplitude(), or plot_peaks_matrix().
     
     Automatically dispatches to the appropriate plotting function based on method.
     Can accept a biotuner object directly for simplified usage.
@@ -1794,6 +2087,10 @@ def plot_peaks(
     return result
 
 
+# Backward compatibility alias
+plot_peaks = plot_peaks_summary
+
+
 # ============================================================================
 # Tuning Visualization Functions
 # ============================================================================
@@ -1979,28 +2276,105 @@ def plot_tuning_entropy(
     return fig, ax
 
 
-def plot_tuning_harmonic(
+def plot_tuning_scale(
     tuning: List[float],
-    peaks: Optional[np.ndarray] = None,
-    octave: float = 2,
-    show_cents: bool = True,
+    max_denom: int = 100,
     figsize: Optional[Tuple[float, float]] = None,
     ax: Optional[plt.Axes] = None,
     **kwargs
 ) -> Tuple[plt.Figure, plt.Axes]:
     """
-    Plot harmonic tuning visualization with unified biotuner styling.
+    Plot tuning scale as bar chart showing cents and ratios.
     
     Parameters
     ----------
     tuning : list of float
-        Scale/tuning as frequency ratios
-    peaks : np.ndarray, optional
-        Original spectral peaks
-    octave : float, default=2
-        Octave value
-    show_cents : bool, default=True
-        Show cent values above notes
+        Tuning scale as frequency ratios
+    max_denom : int, default=100
+        Maximum denominator for fraction display
+    figsize : tuple, optional
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes to plot on
+    
+    Returns
+    -------
+    fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> bt = compute_biotuner(sf=1000)
+    >>> bt.peaks_extraction(data=signal)
+    >>> tuning = bt.harmonic_tuning()
+    >>> fig, ax = plot_tuning_scale(tuning)
+    """
+    from fractions import Fraction
+    
+    set_biotuner_style()
+    
+    if figsize is None:
+        figsize = (12, 6)
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    # Convert ratios to cents
+    cents = [1200 * np.log2(ratio) if ratio > 0 else 0 for ratio in tuning]
+    n_notes = len(tuning)
+    colors = get_color_palette('biotuner_gradient', n_colors=n_notes)
+    
+    bars = ax.bar(range(n_notes), cents, color=colors, 
+                   edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5, alpha=0.8)
+    
+    # Add values on top with fractions
+    for i, (cent, ratio) in enumerate(zip(cents, tuning)):
+        frac = Fraction(ratio).limit_denominator(max_denom)
+        ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
+        ax.text(i, cent + 20, f'{cent:.0f}¢\n{ratio_str}', 
+                ha='center', va='bottom', fontsize=9, fontweight='semibold')
+    
+    ax.set_xlabel('Interval Index', fontsize=16, fontweight='normal')
+    ax.set_ylabel('Cents', fontsize=16, fontweight='normal')
+    ax.set_title('Tuning Scale', fontsize=20, fontweight='bold', pad=15)
+    ax.set_xticks(range(n_notes))
+    ax.set_xticklabels([f'{i+1}' for i in range(n_notes)], fontsize=13)
+    ax.axhline(1200, color=BIOTUNER_COLORS['dark'], linestyle='--', 
+               linewidth=1.5, alpha=0.5, label='Octave')
+    ax.legend(fontsize=12, framealpha=0.95)
+    ax.grid(True, alpha=0.25, axis='y')
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_tuning_matrix(
+    tuning: List[float],
+    metric: str = 'harmsim',
+    ratio_type: str = 'all',
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+    max_denom: int = 100,
+    figsize: Optional[Tuple[float, float]] = None,
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot consonance matrix for tuning scale.
+    
+    Parameters
+    ----------
+    tuning : list of float
+        Tuning scale as frequency ratios
+    metric : str, default='harmsim'
+        Consonance metric: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+    ratio_type : str, default='all'
+        Ratio type: 'all', 'pos_harm', 'sub_harm'
+    vmin, vmax : float, optional
+        Color scale limits
+    max_denom : int, default=100
+        Maximum denominator for fractions
     figsize : tuple, optional
         Figure size
     ax : plt.Axes, optional
@@ -2009,56 +2383,674 @@ def plot_tuning_harmonic(
     Returns
     -------
     fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> fig, ax = plot_tuning_matrix(tuning, metric='harmsim')
     """
+    from biotuner.metrics import dyad_similarity, compute_consonance
     from fractions import Fraction
+    from matplotlib.colors import LinearSegmentedColormap
     
     set_biotuner_style()
     
     if figsize is None:
-        figsize = (14, 6)
+        figsize = (8, 7)
     
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
     else:
         fig = ax.get_figure()
     
-    # Convert ratios to cents
-    cents = [1200 * np.log2(ratio) for ratio in tuning]
+    # Metric functions
+    metric_functions = {
+        'harmsim': lambda r: dyad_similarity(float(Fraction(r).limit_denominator(max_denom))),
+        'cons': lambda r: compute_consonance(float(Fraction(r).limit_denominator(max_denom))),
+        'tenney': lambda r: 1 / (1 + np.log2(Fraction(r).limit_denominator(max_denom).numerator * 
+                                              Fraction(r).limit_denominator(max_denom).denominator)),
+        'denom': lambda r: 1 / (1 + Fraction(r).limit_denominator(max_denom).denominator),
+    }
     
-    # Create color palette
-    n_notes = len(tuning)
-    colors = get_color_palette('biotuner_gradient', n_colors=n_notes)
+    metric_labels = {
+        'harmsim': 'Harmonic Similarity',
+        'cons': 'Consonance',
+        'tenney': 'Tenney Height (inv.)',
+        'denom': 'Denominator (inv.)',
+        'subharm_tension': 'Subharm Tension (inv.)'
+    }
     
-    # Plot tuning as bars
-    bars = ax.bar(range(n_notes), cents, color=colors, 
-                  edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5,
-                  alpha=0.8)
+    # Compute consonance matrix
+    n_values = len(tuning)
+    cons_matrix = np.zeros((n_values, n_values))
     
-    # Add cent values on top if requested
-    if show_cents:
-        for i, (cent, ratio) in enumerate(zip(cents, tuning)):
-            # Convert ratio to fraction
-            frac = Fraction(ratio).limit_denominator(1000)
-            ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
-            ax.text(i, cent + 20, f'{cent:.0f}¢\n{ratio_str}', 
-                   ha='center', va='bottom', fontsize=10, fontweight='semibold')
+    if metric in metric_functions:
+        metric_fn = metric_functions[metric]
+        
+        for i in range(n_values):
+            for j in range(n_values):
+                if i == j:
+                    cons_matrix[i, j] = 0
+                else:
+                    ratio = tuning[j] / tuning[i]
+                    
+                    if ratio_type == 'all':
+                        actual_ratio = ratio if ratio >= 1 else 1/ratio
+                        cons_matrix[i, j] = metric_fn(actual_ratio)
+                    elif ratio_type == 'pos_harm':
+                        if ratio > 1:
+                            cons_matrix[i, j] = metric_fn(ratio)
+                    elif ratio_type == 'sub_harm':
+                        if ratio < 1:
+                            cons_matrix[i, j] = metric_fn(1/ratio)
+        
+        if metric == 'cons':
+            cons_matrix = cons_matrix * 100
+        elif metric in ['tenney', 'denom']:
+            cons_matrix = cons_matrix * 100
     
-    # Styling
-    ax.set_xlabel('Scale Degree', fontsize=16, fontweight='normal')
-    ax.set_ylabel('Cents', fontsize=16, fontweight='normal')
-    ax.set_title('Harmonic Tuning', fontsize=20, fontweight='bold', pad=15)
-    ax.set_xticks(range(n_notes))
-    ax.set_xticklabels([f'{i+1}' for i in range(n_notes)], fontsize=13)
-    ax.axhline(1200, color=BIOTUNER_COLORS['dark'], linestyle='--', 
-              linewidth=1.5, alpha=0.5, label='Octave (1200¢)')
-    ax.legend(fontsize=13, framealpha=0.95)
+    # Auto-adjust vmin/vmax
+    if vmin is None or vmax is None:
+        non_zero = cons_matrix[cons_matrix != 0]
+        if len(non_zero) > 0:
+            if vmin is None:
+                vmin = np.percentile(non_zero, 5)
+            if vmax is None:
+                vmax = np.percentile(non_zero, 95)
+        else:
+            vmin = 0
+            vmax = 100
+    
+    # Colormap
+    colors_list = ['#8B4513', '#CD5C5C', '#F4A460', '#FFD700', '#90EE90', '#48D1CC', '#40E0D0']
+    custom_cmap = LinearSegmentedColormap.from_list('orange_to_turquoise', colors_list)
+    cmap = custom_cmap if metric in ['harmsim', 'cons'] else custom_cmap.reversed()
+    
+    # Plot heatmap
+    im = ax.imshow(cons_matrix, cmap=cmap, vmin=vmin, vmax=vmax, 
+                    aspect='auto', origin='lower')
+    
+    # Colorbar
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label(metric_labels.get(metric, 'Metric'), fontsize=14, fontweight='normal')
+    cbar.ax.tick_params(labelsize=12)
+    
+    # Labels
+    fraction_labels = []
+    for v in tuning:
+        frac = Fraction(v).limit_denominator(max_denom)
+        if frac.denominator == 1:
+            fraction_labels.append(str(frac.numerator))
+        else:
+            fraction_labels.append(f'{frac.numerator}/{frac.denominator}')
+    
+    ax.set_xticks(range(n_values))
+    ax.set_yticks(range(n_values))
+    ax.set_xticklabels(fraction_labels, fontsize=11, rotation=45)
+    ax.set_yticklabels(fraction_labels, fontsize=11)
+    
+    ax.set_xlabel('Tuning Ratio', fontsize=16, fontweight='normal')
+    ax.set_ylabel('Tuning Ratio', fontsize=16, fontweight='normal')
+    title_suffix = f' ({ratio_type})' if ratio_type != 'all' else ''
+    ax.set_title(f'Consonance Matrix{title_suffix}\n{metric_labels.get(metric, metric)}', 
+                 fontsize=20, fontweight='bold', pad=15)
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_tuning_intervals(
+    tuning: List[float],
+    max_denom: int = 100,
+    figsize: Optional[Tuple[float, float]] = None,
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot melodic intervals (step sizes) between adjacent notes in tuning.
+    
+    Parameters
+    ----------
+    tuning : list of float
+        Tuning scale as frequency ratios
+    max_denom : int, default=100
+        Maximum denominator for fractions
+    figsize : tuple, optional
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+    
+    Returns
+    -------
+    fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> fig, ax = plot_tuning_intervals(tuning)
+    """
+    set_biotuner_style()
+    
+    if figsize is None:
+        figsize = (12, 6)
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    # Compute step sizes (melodic intervals between adjacent notes)
+    step_cents = []
+    for i in range(len(tuning) - 1):
+        step_ratio = tuning[i + 1] / tuning[i]
+        step_cents.append(1200 * np.log2(step_ratio))
+    
+    # Plot step sizes
+    step_colors = get_color_palette('biotuner_gradient', n_colors=len(step_cents))
+    bars = ax.bar(range(len(step_cents)), step_cents, color=step_colors,
+                  edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5, alpha=0.8)
+    
+    # Add values on bars
+    for i, cent in enumerate(step_cents):
+        ax.text(i, cent + 5, f'{cent:.0f}¢', 
+               ha='center', va='bottom', fontsize=10, fontweight='semibold')
+    
+    # Reference lines for common intervals
+    ax.axhline(100, color=BIOTUNER_COLORS['secondary'], linestyle=':', 
+              linewidth=1.5, alpha=0.5, label='Semitone (100¢)')
+    ax.axhline(200, color=BIOTUNER_COLORS['accent'], linestyle=':', 
+              linewidth=1.5, alpha=0.5, label='Whole tone (200¢)')
+    
+    ax.set_xlabel('Step Number', fontsize=16, fontweight='normal')
+    ax.set_ylabel('Step Size (cents)', fontsize=16, fontweight='normal')
+    ax.set_title('Melodic Intervals (Step Sizes)', fontsize=20, fontweight='bold', pad=15)
+    ax.set_xticks(range(len(step_cents)))
+    ax.set_xticklabels([f'{i+1}→{i+2}' for i in range(len(step_cents))], 
+                       fontsize=11, rotation=45)
+    ax.legend(fontsize=12, framealpha=0.95, loc='upper right')
     ax.grid(True, alpha=0.25, axis='y')
     
     plt.tight_layout()
     return fig, ax
 
 
-def plot_tuning(
+def plot_tuning_consonance_profile(
+    tuning: List[float],
+    metric: str = 'harmsim',
+    ratio_type: str = 'all',
+    max_denom: int = 100,
+    figsize: Optional[Tuple[float, float]] = None,
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot consonance profile showing distribution of consonance values for each scale degree.
+    
+    Parameters
+    ----------
+    tuning : list of float
+        Tuning scale as frequency ratios
+    metric : str, default='harmsim'
+        Consonance metric: 'harmsim', 'cons', 'tenney', 'denom', 'subharm_tension'
+    ratio_type : str, default='all'
+        Ratio type: 'all', 'pos_harm', 'sub_harm'
+    max_denom : int, default=100
+        Maximum denominator for fractions
+    figsize : tuple, optional
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+    
+    Returns
+    -------
+    fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> fig, ax = plot_tuning_consonance_profile(tuning, metric='harmsim')
+    """
+    from biotuner.metrics import dyad_similarity, compute_consonance
+    from fractions import Fraction
+    
+    set_biotuner_style()
+    
+    if figsize is None:
+        figsize = (12, 6)
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    # Metric functions
+    metric_functions = {
+        'harmsim': lambda r: dyad_similarity(float(Fraction(r).limit_denominator(max_denom))),
+        'cons': lambda r: compute_consonance(float(Fraction(r).limit_denominator(max_denom))),
+        'tenney': lambda r: 1 / (1 + np.log2(Fraction(r).limit_denominator(max_denom).numerator * 
+                                              Fraction(r).limit_denominator(max_denom).denominator)),
+        'denom': lambda r: 1 / (1 + Fraction(r).limit_denominator(max_denom).denominator),
+    }
+    
+    metric_labels = {
+        'harmsim': 'Harmonic Similarity',
+        'cons': 'Consonance',
+        'tenney': 'Tenney Height (inv.)',
+        'denom': 'Denominator (inv.)',
+        'subharm_tension': 'Subharm Tension (inv.)'
+    }
+    
+    # Compute consonance matrix
+    n_values = len(tuning)
+    cons_matrix = np.zeros((n_values, n_values))
+    
+    if metric in metric_functions:
+        metric_fn = metric_functions[metric]
+        
+        for i in range(n_values):
+            for j in range(n_values):
+                if i == j:
+                    cons_matrix[i, j] = 0
+                else:
+                    ratio = tuning[j] / tuning[i]
+                    
+                    if ratio_type == 'all':
+                        actual_ratio = ratio if ratio >= 1 else 1/ratio
+                        cons_matrix[i, j] = metric_fn(actual_ratio)
+                    elif ratio_type == 'pos_harm':
+                        if ratio > 1:
+                            cons_matrix[i, j] = metric_fn(ratio)
+                    elif ratio_type == 'sub_harm':
+                        if ratio < 1:
+                            cons_matrix[i, j] = metric_fn(1/ratio)
+        
+        if metric == 'cons':
+            cons_matrix = cons_matrix * 100
+        elif metric in ['tenney', 'denom']:
+            cons_matrix = cons_matrix * 100
+    
+    # Collect consonance distributions for each scale degree
+    consonance_distributions = []
+    for i in range(len(tuning)):
+        row_values = cons_matrix[i, :]
+        # Exclude diagonal (self-comparison) and zeros
+        non_diag = [row_values[j] for j in range(len(row_values)) if j != i and row_values[j] != 0]
+        if len(non_diag) > 0:
+            consonance_distributions.append(non_diag)
+        else:
+            consonance_distributions.append([0])  # Fallback
+    
+    # Create violin plot
+    positions = list(range(len(consonance_distributions)))
+    parts = ax.violinplot(
+        consonance_distributions,
+        positions=positions,
+        widths=0.7,
+        showmeans=True,
+        showextrema=True
+    )
+    
+    # Color the violin plots with gradient
+    profile_colors = list(get_color_palette('biotuner_gradient', n_colors=len(consonance_distributions)))
+    # Ensure we have the right number of bodies
+    n_bodies = len(parts['bodies'])
+    for i in range(min(n_bodies, len(profile_colors))):
+        parts['bodies'][i].set_facecolor(profile_colors[i])
+        parts['bodies'][i].set_alpha(0.7)
+        parts['bodies'][i].set_edgecolor(BIOTUNER_COLORS['dark'])
+        parts['bodies'][i].set_linewidth(1.5)
+    
+    # Style the mean/extrema lines
+    for partname in ('cmeans', 'cmaxes', 'cmins', 'cbars'):
+        if partname in parts:
+            vp = parts[partname]
+            vp.set_edgecolor(BIOTUNER_COLORS['dark'])
+            vp.set_linewidth(1.5)
+    
+    # Convert tuning to fraction labels for x-axis
+    from fractions import Fraction
+    fraction_labels = []
+    for v in tuning:
+        frac = Fraction(v).limit_denominator(max_denom)
+        if frac.denominator == 1:
+            fraction_labels.append(str(frac.numerator))
+        else:
+            fraction_labels.append(f'{frac.numerator}/{frac.denominator}')
+    
+    ax.set_xlabel('Tuning Ratio', fontsize=16, fontweight='normal')
+    ax.set_ylabel(f'{metric_labels.get(metric, "Consonance")} Distribution', fontsize=16, fontweight='normal')
+    ax.set_title('Consonance Profile (Violin Plot)', fontsize=20, fontweight='bold', pad=15)
+    ax.set_xticks(positions)
+    ax.set_xticklabels(fraction_labels, fontsize=11, rotation=45)
+    ax.grid(True, alpha=0.25, axis='y')
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_tuning_curve(
+    bt_object=None,
+    curve_type: str = 'dissonance',
+    ratio_vec: Optional[np.ndarray] = None,
+    curve_data: Optional[np.ndarray] = None,
+    scale: Optional[List[float]] = None,
+    max_ratio: float = 2.0,
+    show_minima: bool = True,
+    figsize: Optional[Tuple[float, float]] = None,
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot source curve (dissonance or harmonic entropy) with local minima.
+    
+    Parameters
+    ----------
+    bt_object : compute_biotuner, optional
+        Biotuner object to extract curve data from
+    curve_type : str, default='dissonance'
+        Type of curve: 'dissonance' or 'entropy'
+    ratio_vec : np.ndarray, optional
+        Ratio vector for x-axis. Extracted from bt_object if not provided.
+    curve_data : np.ndarray, optional
+        Curve values for y-axis. Extracted from bt_object if not provided.
+    scale : list of float, optional
+        Scale derived from curve minima. Extracted from bt_object if not provided.
+    max_ratio : float, default=2.0
+        Maximum ratio to display
+    show_minima : bool, default=True
+        Show markers at local minima
+    figsize : tuple, optional
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+    
+    Returns
+    -------
+    fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> # From biotuner object
+    >>> fig, ax = plot_tuning_curve(bt_object=bt, curve_type='dissonance')
+    >>> 
+    >>> # Manual data
+    >>> fig, ax = plot_tuning_curve(
+    ...     ratio_vec=ratios, 
+    ...     curve_data=diss_curve, 
+    ...     scale=diss_scale,
+    ...     curve_type='dissonance'
+    ... )
+    """
+    set_biotuner_style()
+    
+    if figsize is None:
+        figsize = (12, 7)
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    # Extract data from bt_object if provided
+    if bt_object is not None:
+        if curve_type == 'dissonance':
+            if ratio_vec is None and hasattr(bt_object, 'ratio_diss'):
+                ratio_vec = bt_object.ratio_diss
+            if curve_data is None and hasattr(bt_object, 'diss'):
+                curve_data = bt_object.diss
+            if scale is None and hasattr(bt_object, 'diss_scale'):
+                scale = bt_object.diss_scale
+        elif curve_type == 'entropy':
+            if ratio_vec is None and hasattr(bt_object, 'ratio_HE'):
+                ratio_vec = bt_object.ratio_HE
+            if curve_data is None and hasattr(bt_object, 'HE'):
+                curve_data = bt_object.HE
+            if scale is None and hasattr(bt_object, 'HE_scale'):
+                scale = bt_object.HE_scale
+    
+    if ratio_vec is None or curve_data is None:
+        raise ValueError("Either bt_object or both ratio_vec and curve_data must be provided")
+    
+    # Plot curve
+    if curve_type == 'dissonance':
+        color = BIOTUNER_COLORS['danger']
+        label = 'Dissonance'
+        ylabel = 'Dissonance'
+        title = 'Dissonance Curve'
+    else:  # entropy
+        color = BIOTUNER_COLORS['primary']
+        label = 'Harmonic Entropy'
+        ylabel = 'Harmonic Entropy'
+        title = 'Harmonic Entropy Curve'
+    
+    ax.plot(ratio_vec, curve_data, color=color, linewidth=2.5, label=label)
+    
+    # Mark local minima
+    if show_minima and scale is not None:
+        for ratio in scale:
+            if 1.0 <= ratio <= max_ratio:
+                # Find closest index in ratio_vec
+                idx = np.argmin(np.abs(ratio_vec - ratio))
+                ax.plot(ratio, curve_data[idx], 'o', 
+                       color=BIOTUNER_COLORS['accent'], 
+                       markersize=10, markeredgecolor=BIOTUNER_COLORS['dark'],
+                       markeredgewidth=1.5, label='Local Minima' if ratio == scale[0] else '')
+                ax.axvline(ratio, color=BIOTUNER_COLORS['dark'], 
+                          linestyle='--', linewidth=1.5, alpha=0.5)
+    
+    # Styling
+    ax.set_xlim([1.0, max_ratio])
+    ax.set_xlabel('Frequency Ratio', fontsize=16, fontweight='normal')
+    ax.set_ylabel(ylabel, fontsize=16, fontweight='normal')
+    ax.set_title(title, fontsize=20, fontweight='bold', pad=15)
+    
+    # Only show legend if minima are displayed
+    if show_minima and scale is not None:
+        ax.legend(fontsize=13, framealpha=0.95)
+    
+    ax.grid(True, alpha=0.25)
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_tuning_interval_table(
+    tuning: List[float],
+    max_denom: int = 100,
+    tolerance_cents: float = 5.0,
+    max_intervals: Optional[int] = None,
+    figsize: Optional[Tuple[float, float]] = None,
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot a table showing known musical intervals matched to the tuning scale.
+    
+    Parameters
+    ----------
+    tuning : list of float
+        Tuning scale as frequency ratios
+    max_denom : int, default=100
+        Maximum denominator for fractions
+    tolerance_cents : float, default=5.0
+        Tolerance in cents for matching intervals
+    max_intervals : int, optional
+        Maximum number of intervals to display. If None, show all matches.
+    figsize : tuple, optional
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+    
+    Returns
+    -------
+    fig, ax : matplotlib figure and axes
+    
+    Examples
+    --------
+    >>> fig, ax = plot_tuning_interval_table(tuning, max_intervals=15)
+    """
+    from biotuner.dictionaries import interval_catalog
+    from fractions import Fraction
+    
+    set_biotuner_style()
+    
+    if figsize is None:
+        figsize = (12, 8)
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    # Clear the axis
+    ax.axis('off')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    
+    # Find matching known intervals (within tolerance)
+    matched_intervals = []
+    
+    for ratio in tuning:
+        ratio_cents = 1200 * np.log2(ratio) if ratio > 0 else 0
+        
+        # Check against interval catalog
+        for interval_name, interval_ratio in interval_catalog:
+            try:
+                # Convert sympy ratio to float
+                catalog_ratio = float(interval_ratio)
+                catalog_cents = 1200 * np.log2(catalog_ratio) if catalog_ratio > 0 else 0
+                
+                # Check if within tolerance
+                if abs(ratio_cents - catalog_cents) < tolerance_cents:
+                    matched_intervals.append((ratio, interval_name, abs(ratio_cents - catalog_cents)))
+                    break  # Only match first interval found
+            except:
+                continue
+    
+    # Create table
+    if matched_intervals:
+        # Sort by deviation (lowest first) and take top N (or all if max_intervals is None)
+        sorted_by_deviation = sorted(matched_intervals, key=lambda x: x[2])  # x[2] is deviation
+        if max_intervals is not None:
+            top_intervals = sorted_by_deviation[:max_intervals]
+        else:
+            top_intervals = sorted_by_deviation
+        
+        # Title
+        total_matched = len(matched_intervals)
+        shown_count = len(top_intervals)
+        title = f'Known Intervals (Top {shown_count} of {total_matched} matched)' if max_intervals is not None and total_matched > max_intervals else f'Known Intervals ({total_matched} matched)'
+        ax.text(0.50, 0.95, title, 
+                transform=ax.transAxes,
+                fontsize=18, fontweight='bold',
+                ha='center',
+                color=BIOTUNER_COLORS['dark'])
+        
+        # Prepare table data - sorted by ratio for display
+        sorted_intervals = sorted(top_intervals, key=lambda x: x[0])
+        
+        table_data = []
+        
+        for ratio, name, deviation in sorted_intervals:
+            ratio_cents = 1200 * np.log2(ratio)
+            # Convert ratio to fraction
+            frac = Fraction(ratio).limit_denominator(max_denom)
+            ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
+            # Don't truncate interval names
+            display_name = name
+            table_data.append([
+                ratio_str,
+                f'{ratio_cents:.1f}¢',
+                display_name,
+                f'±{deviation:.1f}¢'
+            ])
+        
+        # Create table - FULL WIDTH with adaptive sizing
+        if table_data:
+            col_labels = ['Ratio', 'Cents', 'Interval Name', 'Dev']
+            
+            # Adaptive row height based on number of rows
+            num_rows = len(table_data)
+            if num_rows <= 10:
+                row_scale = 1.8
+                fontsize = 12
+            elif num_rows <= 20:
+                row_scale = 1.6
+                fontsize = 11
+            else:
+                row_scale = 1.4
+                fontsize = 10
+            
+            # Use most of panel for table
+            table_height = 0.84
+            table_width = 0.95
+            table_left = 0.025
+            table_bottom = 0.08
+            
+            table = ax.table(
+                cellText=table_data,
+                colLabels=col_labels,
+                cellLoc='left',
+                loc='center',
+                bbox=[table_left, table_bottom, table_width, table_height]
+            )
+            
+            table.auto_set_font_size(False)
+            table.set_fontsize(fontsize)
+            table.scale(1, row_scale)
+            
+            # Set column widths for full width layout
+            for i in range(len(table_data) + 1):  # +1 for header
+                table[(i, 0)].set_width(0.12)  # Ratio
+                table[(i, 1)].set_width(0.11)  # Cents
+                table[(i, 2)].set_width(0.67)  # Interval Name (use most space)
+                table[(i, 3)].set_width(0.10)  # Dev
+            
+            # Style header
+            for i in range(len(col_labels)):
+                cell = table[(0, i)]
+                cell.set_facecolor(BIOTUNER_COLORS['primary'])
+                cell.set_text_props(weight='bold', color='white', fontsize=fontsize+1)
+                cell.set_edgecolor(BIOTUNER_COLORS['dark'])
+                cell.set_linewidth(2.0)
+            
+            # Style data rows
+            for i in range(1, len(table_data) + 1):
+                for j in range(len(col_labels)):
+                    cell = table[(i, j)]
+                    # Alternate row colors
+                    if i % 2 == 0:
+                        cell.set_facecolor('#f8f9fa')
+                    else:
+                        cell.set_facecolor('white')
+                    cell.set_edgecolor('#dee2e6')
+                    cell.set_linewidth(1.0)
+                    
+                    # Color code deviation column
+                    if j == 3:  # Deviation column
+                        dev_val = sorted_intervals[i-1][2]
+                        if dev_val < 2:
+                            cell.set_text_props(color='#28a745', weight='bold', fontsize=fontsize)
+                        elif dev_val < 4:
+                            cell.set_text_props(color='#ffc107', weight='bold', fontsize=fontsize)
+                        else:
+                            cell.set_text_props(fontsize=fontsize)
+                    else:
+                        cell.set_text_props(fontsize=fontsize)
+    else:
+        # No matches
+        ax.text(0.50, 0.55, 'No matching known intervals\nfound within ±5¢ tolerance', 
+                transform=ax.transAxes,
+                fontsize=12,
+                ha='center', va='center',
+                bbox=dict(boxstyle='round,pad=1', 
+                         facecolor='#f8d7da',
+                         edgecolor='#f5c6cb',
+                         linewidth=1.5,
+                         alpha=0.8))
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_tuning_summary(
     tuning: Optional[List[float]] = None,
     peaks: Optional[np.ndarray] = None,
     ratios: Optional[List[float]] = None,
@@ -2075,7 +3067,10 @@ def plot_tuning(
     **kwargs
 ) -> plt.Figure:
     """
-    Plot comprehensive tuning analysis with 2, 4, or 5 panels (with summary).
+    Plot comprehensive tuning analysis summary with 2, 4, or 5 panels.
+    
+    For individual plots, use plot_tuning_scale(), plot_tuning_matrix(), plot_tuning_dissonance(), 
+    plot_tuning_entropy(), or plot_tuning_harmonic().
     
     Parameters
     ----------
@@ -2254,37 +3249,41 @@ def plot_tuning(
         # If sympy not available or no symbolic objects, just ensure numeric
         scale = [float(x) for x in scale]
     
-    # LEFT PANEL: Tuning visualization
-    # Convert ratios to cents
-    cents = [1200 * np.log2(ratio) if ratio > 0 else 0 for ratio in scale]
-    n_notes = len(scale)
-    colors = get_color_palette('biotuner_gradient', n_colors=n_notes)
-    
-    bars = axes[0].bar(range(n_notes), cents, color=colors, 
-                   edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5, alpha=0.8)
-    
-    # Add values on top with fractions
-    for i, (cent, ratio) in enumerate(zip(cents, scale)):
-        # Convert ratio to fraction using max_denom parameter
-        frac = Fraction(ratio).limit_denominator(max_denom)
-        ratio_str = f'{frac.numerator}/{frac.denominator}' if frac.denominator != 1 else str(frac.numerator)
-        axes[0].text(i, cent + 20, f'{cent:.0f}¢\n{ratio_str}', 
-                ha='center', va='bottom', fontsize=9, fontweight='semibold')
-    
-    axes[0].set_xlabel('Interval Index', fontsize=16, fontweight='normal')
-    axes[0].set_ylabel('Cents', fontsize=16, fontweight='normal')
     # Reduce title padding when source curve present to prevent overlap
     title_pad = 10 if needs_source_curve else 15
-    axes[0].set_title('Tuning Scale', fontsize=20, fontweight='bold', pad=title_pad)
-    axes[0].set_xticks(range(n_notes))
-    axes[0].set_xticklabels([f'{i+1}' for i in range(n_notes)], fontsize=13)
-    axes[0].axhline(1200, color=BIOTUNER_COLORS['dark'], linestyle='--', 
-               linewidth=1.5, alpha=0.5, label='Octave')
-    axes[0].legend(fontsize=12, framealpha=0.95)
-    axes[0].grid(True, alpha=0.25, axis='y')
     
-    # RIGHT PANEL: Consonance matrix using biotuner's tuning_cons_matrix
-    # Map metric names to functions - all use simplified fractions for consistency
+    # PANEL 1: Tuning scale - call individual method
+    plot_tuning_scale(tuning=scale, max_denom=max_denom, ax=axes[0])
+    # Override title padding for consistency
+    axes[0].set_title('Tuning Scale', fontsize=20, fontweight='bold', pad=title_pad)
+    
+    # PANEL 2: Consonance matrix - call individual method
+    plot_tuning_matrix(
+        tuning=scale, 
+        metric=metric, 
+        ratio_type=ratio_type,
+        vmin=vmin,
+        vmax=vmax,
+        max_denom=max_denom,
+        ax=axes[1]
+    )
+    # Override title padding for consistency
+    title_suffix = f' ({ratio_type})' if ratio_type != 'all' else ''
+    metric_labels = {
+        'harmsim': 'Harmonic Similarity',
+        'cons': 'Consonance',
+        'tenney': 'Tenney Height (inv.)',
+        'denom': 'Denominator (inv.)',
+        'subharm_tension': 'Subharm Tension (inv.)'
+    }
+    axes[1].set_title(f'Consonance Matrix{title_suffix}\n{metric_labels.get(metric, metric)}', 
+                      fontsize=20, fontweight='bold', pad=title_pad)
+    
+    # Store cons_matrix for summary panel (need to recompute for now)
+    # TODO: Refactor to return cons_matrix from plot_tuning_matrix
+    from biotuner.metrics import dyad_similarity, compute_consonance
+    from fractions import Fraction
+    
     metric_functions = {
         'harmsim': lambda r: dyad_similarity(float(Fraction(r).limit_denominator(max_denom))),
         'cons': lambda r: compute_consonance(float(Fraction(r).limit_denominator(max_denom))),
@@ -2293,15 +3292,7 @@ def plot_tuning(
         'denom': lambda r: 1 / (1 + Fraction(r).limit_denominator(max_denom).denominator),
     }
     
-    metric_labels = {
-        'harmsim': 'Harmonic Similarity',
-        'cons': 'Consonance',
-        'tenney': 'Tenney Height (inv.)',
-        'denom': 'Denominator (inv.)',
-        'subharm_tension': 'Subharm Tension (inv.)'
-    }
-    
-    # Compute consonance matrix manually with proper ratio_type handling
+    # Quick recompute for summary panel
     n_values = len(scale)
     cons_matrix = np.zeros((n_values, n_values))
     
@@ -2414,14 +3405,8 @@ def plot_tuning(
         # Higher is worse (more dissonant/complex) - reversed
         cmap = custom_cmap.reversed()
     
-    # Plot heatmap
-    im = axes[1].imshow(cons_matrix, cmap=cmap, vmin=vmin, vmax=vmax, 
-                    aspect='auto', origin='lower')
-    
-    # Add colorbar
-    cbar = plt.colorbar(im, ax=axes[1])
-    cbar.set_label(metric_labels.get(metric, 'Metric'), fontsize=14, fontweight='normal')
-    cbar.ax.tick_params(labelsize=12)
+    # Note: plot_tuning_matrix() already added the colorbar, no need to add another
+    # The colorbar is created by the individual method call above
     
     # Add labels with fractions
     n_values = len(scale)
@@ -2449,38 +3434,10 @@ def plot_tuning(
     
     # ===== EXTRA PANELS (if panels >= 4) =====
     if panels >= 4 and len(axes) >= 4:
-        # Panel 3: Step sizes or interval distribution
+        # Panel 3: Call individual method for step sizes or interval distribution
         if 'step_sizes' in extra_panels:
-            # Compute step sizes (melodic intervals between adjacent notes)
-            step_cents = []
-            for i in range(len(scale) - 1):
-                step_ratio = scale[i + 1] / scale[i]
-                step_cents.append(1200 * np.log2(step_ratio))
-            
-            # Plot step sizes
-            step_colors = get_color_palette('biotuner_gradient', n_colors=len(step_cents))
-            bars = axes[2].bar(range(len(step_cents)), step_cents, color=step_colors,
-                              edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5, alpha=0.8)
-            
-            # Add values on bars
-            for i, cent in enumerate(step_cents):
-                axes[2].text(i, cent + 5, f'{cent:.0f}¢', 
-                           ha='center', va='bottom', fontsize=10, fontweight='semibold')
-            
-            # Reference lines for common intervals
-            axes[2].axhline(100, color=BIOTUNER_COLORS['secondary'], linestyle=':', 
-                          linewidth=1.5, alpha=0.5, label='Semitone (100¢)')
-            axes[2].axhline(200, color=BIOTUNER_COLORS['accent'], linestyle=':', 
-                          linewidth=1.5, alpha=0.5, label='Whole tone (200¢)')
-            
-            axes[2].set_xlabel('Step Number', fontsize=16, fontweight='normal')
-            axes[2].set_ylabel('Step Size (cents)', fontsize=16, fontweight='normal')
+            plot_tuning_intervals(tuning=scale, max_denom=max_denom, ax=axes[2])
             axes[2].set_title('Melodic Intervals (Step Sizes)', fontsize=20, fontweight='bold', pad=title_pad)
-            axes[2].set_xticks(range(len(step_cents)))
-            axes[2].set_xticklabels([f'{i+1}→{i+2}' for i in range(len(step_cents))], 
-                                   fontsize=11, rotation=45)
-            axes[2].legend(fontsize=12, framealpha=0.95, loc='upper right')
-            axes[2].grid(True, alpha=0.25, axis='y')
             
         elif 'interval_distribution' in extra_panels:
             # Compute all intervals in the tuning
@@ -2499,52 +3456,16 @@ def plot_tuning(
             axes[2].set_title('Interval Distribution', fontsize=20, fontweight='bold', pad=title_pad)
             axes[2].grid(True, alpha=0.25, axis='y')
         
-        # Panel 4: Consonance profile or harmonic deviation
+        # Panel 4: Call individual method for consonance profile or harmonic deviation
         if 'consonance_profile' in extra_panels:
-            # Collect consonance distributions for each scale degree
-            consonance_distributions = []
-            for i in range(len(scale)):
-                row_values = cons_matrix[i, :]
-                # Exclude diagonal (self-comparison) and zeros
-                non_diag = [row_values[j] for j in range(len(row_values)) if j != i and row_values[j] != 0]
-                if len(non_diag) > 0:
-                    consonance_distributions.append(non_diag)
-                else:
-                    consonance_distributions.append([0])  # Fallback
-            
-            # Create violin plot
-            positions = list(range(len(consonance_distributions)))
-            parts = axes[3].violinplot(
-                consonance_distributions,
-                positions=positions,
-                widths=0.7,
-                showmeans=True,
-                showextrema=True
+            plot_tuning_consonance_profile(
+                tuning=scale, 
+                metric=metric,
+                ratio_type=ratio_type,
+                max_denom=max_denom,
+                ax=axes[3]
             )
-            
-            # Color the violin plots with gradient
-            profile_colors = list(get_color_palette('biotuner_gradient', n_colors=len(consonance_distributions)))
-            # Ensure we have the right number of bodies
-            n_bodies = len(parts['bodies'])
-            for i in range(min(n_bodies, len(profile_colors))):
-                parts['bodies'][i].set_facecolor(profile_colors[i])
-                parts['bodies'][i].set_alpha(0.7)
-                parts['bodies'][i].set_edgecolor(BIOTUNER_COLORS['dark'])
-                parts['bodies'][i].set_linewidth(1.5)
-            
-            # Style the mean/extrema lines
-            for partname in ('cmeans', 'cmaxes', 'cmins', 'cbars'):
-                if partname in parts:
-                    vp = parts[partname]
-                    vp.set_edgecolor(BIOTUNER_COLORS['dark'])
-                    vp.set_linewidth(1.5)
-            
-            axes[3].set_xlabel('Scale Degree', fontsize=16, fontweight='normal')
-            axes[3].set_ylabel(f'{metric_labels.get(metric, "Consonance")} Distribution', fontsize=16, fontweight='normal')
             axes[3].set_title('Consonance Profile (Violin Plot)', fontsize=20, fontweight='bold', pad=title_pad)
-            axes[3].set_xticks(positions)
-            axes[3].set_xticklabels([f'{i+1}' for i in range(len(consonance_distributions))], fontsize=13)
-            axes[3].grid(True, alpha=0.25, axis='y')
             
         elif 'harmonic_deviation' in extra_panels:
             # Compute deviation from ideal harmonic ratios (1, 2, 3, 4, 5, 6...)
@@ -2800,6 +3721,826 @@ def plot_tuning(
     return fig
 
 
+# Backward compatibility alias
+plot_tuning = plot_tuning_summary
+
+
+# ============================================================================
+# Harmonic Fit Visualization
+# ============================================================================
+
+def plot_harmonic_fit_network(
+    peaks: np.ndarray,
+    amps: np.ndarray,
+    multi_harmonics: np.ndarray,
+    n_harm: int = 10,
+    harm_bounds: float = 0.5,
+    function: str = 'mult',
+    figsize: tuple = (10, 10),
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot harmonic network showing relationships between peaks.
+    
+    Creates a circular network where nodes are peaks and edges show
+    the number of shared harmonics between peak pairs.
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies in Hz
+    amps : np.ndarray
+        Peak amplitudes
+    multi_harmonics : np.ndarray
+        Pre-computed harmonic series for each peak (n_peaks x n_harm)
+    n_harm : int, default=10
+        Number of harmonics per peak
+    harm_bounds : float, default=0.5
+        Frequency threshold (Hz) for considering harmonics as matching
+    function : str, default='mult'
+        Harmonic function used ('mult' or 'div')
+    figsize : tuple, default=(10, 10)
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    ax : matplotlib.axes.Axes
+        Axes object
+    """
+    set_biotuner_style()
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    n_peaks = len(peaks)
+    
+    # Create network layout - circular arrangement
+    theta = np.linspace(0, 2*np.pi, n_peaks, endpoint=False)
+    node_x = np.cos(theta)
+    node_y = np.sin(theta)
+    
+    # Normalize amplitudes for node sizing
+    norm_amps = (amps - amps.min()) / (amps.max() - amps.min() + 1e-10)
+    node_sizes = 300 + norm_amps * 1200
+    
+    # Color palette
+    colors = sns.color_palette('husl', n_peaks)
+    
+    # Draw edges for harmonic relationships
+    max_shared = 0
+    edge_data = []
+    
+    # First pass: collect edge data and find max
+    for i in range(n_peaks):
+        for j in range(i+1, n_peaks):
+            harms_i = multi_harmonics[i]
+            harms_j = multi_harmonics[j]
+            shared = sum(1 for hi in harms_i for hj in harms_j if abs(hi - hj) < harm_bounds)
+            
+            if shared > 0:
+                edge_data.append((i, j, shared))
+                max_shared = max(max_shared, shared)
+    
+    # Second pass: draw edges with variable styling
+    for i, j, shared in edge_data:
+        strength_ratio = shared / max(max_shared, 1)
+        
+        if strength_ratio < 0.3:
+            linestyle = ':'
+            alpha = 0.3
+            linewidth = 0.5
+            color = '#CCCCCC'
+        elif strength_ratio < 0.6:
+            linestyle = '--'
+            alpha = 0.5
+            linewidth = 1.5
+            color = '#999999'
+        else:
+            linestyle = '-'
+            alpha = 0.8
+            linewidth = 2.5 + strength_ratio * 2
+            color = '#444444'
+        
+        ax.plot([node_x[i], node_x[j]], [node_y[i], node_y[j]], 
+                color=color, alpha=alpha, linewidth=linewidth, 
+                linestyle=linestyle, zorder=1)
+        
+        # Add shared count label on edge (only if 2 or more)
+        if shared >= 2:
+            mid_x = (node_x[i] + node_x[j]) / 2
+            mid_y = (node_y[i] + node_y[j]) / 2
+            ax.text(mid_x, mid_y, str(shared), 
+                    fontsize=9, ha='center', va='center', fontweight='bold',
+                    bbox=dict(boxstyle='circle,pad=0.2', facecolor='white', 
+                             edgecolor=color, alpha=0.95, linewidth=1.5),
+                    color=color, zorder=2)
+    
+    # Draw nodes
+    for i in range(n_peaks):
+        ax.scatter(node_x[i], node_y[i], s=node_sizes[i], c=[colors[i]], 
+                   edgecolors=BIOTUNER_COLORS['dark'], linewidths=2.5, 
+                   zorder=3, alpha=0.9)
+        # Add frequency labels
+        label_offset = 1.25
+        ax.text(node_x[i]*label_offset, node_y[i]*label_offset, 
+                f'{peaks[i]:.1f} Hz', fontsize=11, ha='center', va='center',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
+                         edgecolor=colors[i], alpha=0.9, linewidth=2))
+    
+    ax.set_xlim([-1.65, 1.65])
+    ax.set_ylim([-1.65, 1.65])
+    ax.set_aspect('equal')
+    ax.axis('off')
+    
+    ax.set_title(f'Harmonic Network ({function.upper()}, n={n_harm})', 
+                  fontsize=18, fontweight='bold', pad=15)
+    
+    # Add legend
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', 
+               markersize=10, label='Node size = amplitude'),
+        Line2D([0], [0], color='gray', linewidth=2, label='Edge # = shared harmonics')
+    ]
+    ax.legend(handles=legend_elements, loc='upper left', fontsize=9, 
+              framealpha=0.9, edgecolor='lightgray', fancybox=True)
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_harmonic_fit_matrix(
+    peaks: np.ndarray,
+    multi_harmonics: np.ndarray,
+    n_harm: int = 10,
+    harm_bounds: float = 0.5,
+    figsize: tuple = (8, 7),
+    ax: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot harmonic connectivity matrix showing shared harmonics between peak pairs.
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies in Hz
+    multi_harmonics : np.ndarray
+        Pre-computed harmonic series for each peak (n_peaks x n_harm)
+    n_harm : int, default=10
+        Number of harmonics per peak
+    harm_bounds : float, default=0.5
+        Frequency threshold (Hz) for considering harmonics as matching
+    figsize : tuple, default=(8, 7)
+        Figure size
+    ax : plt.Axes, optional
+        Existing axes
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    ax : matplotlib.axes.Axes
+        Axes object
+    """
+    set_biotuner_style()
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+    
+    n_peaks = len(peaks)
+    connectivity_matrix = np.zeros((n_peaks, n_peaks))
+    
+    # Count shared harmonics between peak pairs
+    for i in range(n_peaks):
+        for j in range(i, n_peaks):
+            if i == j:
+                connectivity_matrix[i, j] = n_harm
+            else:
+                harms_i = multi_harmonics[i]
+                harms_j = multi_harmonics[j]
+                shared = sum(1 for hi in harms_i for hj in harms_j if abs(hi - hj) < harm_bounds)
+                connectivity_matrix[i, j] = shared
+                connectivity_matrix[j, i] = shared
+    
+    # Plot heatmap
+    im = ax.imshow(connectivity_matrix, cmap='YlOrRd', aspect='auto',
+                    interpolation='nearest', vmin=0)
+    
+    # Add colorbar
+    cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cbar.set_label('Shared Harmonics', fontsize=14, rotation=270, labelpad=20)
+    
+    # Set ticks and labels
+    ax.set_xticks(np.arange(n_peaks))
+    ax.set_yticks(np.arange(n_peaks))
+    ax.set_xticklabels([f'{p:.1f}' for p in peaks], fontsize=11)
+    ax.set_yticklabels([f'{p:.1f}' for p in peaks], fontsize=11)
+    
+    # Add grid
+    ax.set_xticks(np.arange(n_peaks) - 0.5, minor=True)
+    ax.set_yticks(np.arange(n_peaks) - 0.5, minor=True)
+    ax.grid(which='minor', color='white', linestyle='-', linewidth=2)
+    
+    # Annotate cells with values
+    for i in range(n_peaks):
+        for j in range(n_peaks):
+            if connectivity_matrix[i, j] > 0:
+                text_color = 'white' if connectivity_matrix[i, j] > n_harm/2 else 'black'
+                ax.text(j, i, f'{int(connectivity_matrix[i, j])}',
+                        ha='center', va='center', color=text_color, fontsize=10)
+    
+    ax.set_xlabel('Peak Frequency (Hz)', fontsize=16)
+    ax.set_ylabel('Peak Frequency (Hz)', fontsize=16)
+    ax.set_title('Harmonic Connectivity Matrix', fontsize=16, fontweight='bold', pad=10)
+    
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_harmonic_fit_positions(
+    peaks: np.ndarray,
+    amps: np.ndarray,
+    multi_harmonics: np.ndarray,
+    common_harms: list,
+    n_harm: int = 10,
+    harm_bounds: float = 0.5,
+    function: str = 'mult',
+    figsize: tuple = (14, 6),
+    ax_left: Optional[plt.Axes] = None,
+    ax_right: Optional[plt.Axes] = None,
+    **kwargs
+) -> Tuple[plt.Figure, np.ndarray]:
+    """
+    Plot harmonic position analysis in two side-by-side panels.
+    
+    Left panel: Bipartite network showing which harmonic positions are shared
+    Right panel: Histogram of harmonic position distribution
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies in Hz
+    amps : np.ndarray
+        Peak amplitudes
+    multi_harmonics : np.ndarray
+        Pre-computed harmonic series for each peak (n_peaks x n_harm)
+    common_harms : list
+        List of most commonly used harmonic positions
+    n_harm : int, default=10
+        Number of harmonics per peak
+    harm_bounds : float, default=0.5
+        Frequency threshold (Hz) for considering harmonics as matching
+    function : str, default='mult'
+        Harmonic function used ('mult' or 'div')
+    figsize : tuple, default=(14, 6)
+        Figure size (only used if axes not provided)
+    ax_left : plt.Axes, optional
+        Existing axes for left panel
+    ax_right : plt.Axes, optional
+        Existing axes for right panel
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    axes : np.ndarray
+        Array of axes [ax_left, ax_right]
+    """
+    from collections import Counter
+    
+    set_biotuner_style()
+    
+    if ax_left is None or ax_right is None:
+        fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=figsize)
+    else:
+        fig = ax_left.get_figure()
+    n_peaks = len(peaks)
+    colors = sns.color_palette('husl', n_peaks)
+    
+    # ========== LEFT PANEL: Bipartite Network ==========
+    
+    peak_harmonic_connections = {}
+    harmonic_pos_usage = Counter()
+    
+    for i in range(n_peaks):
+        peak_harmonic_connections[i] = Counter()
+        for j in range(n_peaks):
+            if i != j:
+                harms_i = multi_harmonics[i]
+                harms_j = multi_harmonics[j]
+                for h_i_idx, hi in enumerate(harms_i):
+                    for h_j_idx, hj in enumerate(harms_j):
+                        if abs(hi - hj) < harm_bounds:
+                            h_pos = h_i_idx + 1
+                            if h_pos <= 10:
+                                peak_harmonic_connections[i][h_pos] += 1
+                                harmonic_pos_usage[h_pos] += 1
+    
+    top_positions = sorted([k for k, v in harmonic_pos_usage.items() if v > 0])[:8]
+    
+    if top_positions:
+        peak_x = 0.15
+        harm_x = 0.85
+        
+        peak_y_positions = np.linspace(0.12, 0.88, n_peaks)
+        harm_y_positions = np.linspace(0.12, 0.88, len(top_positions))
+        
+        harm_pos_to_y = {pos: y for pos, y in zip(top_positions, harm_y_positions)}
+        
+        # Draw connections
+        for peak_idx in range(n_peaks):
+            for h_pos in top_positions:
+                if h_pos in peak_harmonic_connections[peak_idx]:
+                    count = peak_harmonic_connections[peak_idx][h_pos]
+                    if count > 0:
+                        y1 = peak_y_positions[peak_idx]
+                        y2 = harm_pos_to_y[h_pos]
+                        
+                        alpha = min(0.7, 0.2 + count / 5)
+                        linewidth = 0.5 + count / 2
+                        
+                        ax_left.plot([peak_x + 0.05, harm_x - 0.05], [y1, y2],
+                                color=colors[peak_idx], alpha=alpha, 
+                                linewidth=linewidth, zorder=1)
+        
+        # Draw peak nodes
+        for i, (peak, y_pos) in enumerate(zip(peaks, peak_y_positions)):
+            ax_left.scatter(peak_x, y_pos, s=500, c=[colors[i]], 
+                       edgecolors=BIOTUNER_COLORS['dark'], linewidths=2, 
+                       zorder=3, alpha=0.9)
+            ax_left.text(peak_x - 0.08, y_pos, f'{peak:.1f} Hz', 
+                    fontsize=10, ha='right', va='center', fontweight='bold',
+                    color=colors[i])
+        
+        # Draw harmonic position nodes
+        for h_pos, y_pos in harm_pos_to_y.items():
+            total_connections = harmonic_pos_usage[h_pos]
+            node_size = 250 + total_connections * 45
+            node_color = BIOTUNER_COLORS['success'] if total_connections >= 3 else BIOTUNER_COLORS['accent']
+            
+            ax_left.scatter(harm_x, y_pos, s=node_size, c=node_color,
+                       edgecolors=BIOTUNER_COLORS['dark'], linewidths=1.8, 
+                       marker='s', zorder=3, alpha=0.85)
+            suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(h_pos, 'th')
+            ax_left.text(harm_x + 0.08, y_pos, f'{h_pos}{suffix}', 
+                    fontsize=11, ha='left', va='center', fontweight='bold',
+                    color=BIOTUNER_COLORS['dark'])
+            ax_left.text(harm_x, y_pos, str(total_connections), 
+                    fontsize=8, ha='center', va='center', 
+                    color='white', fontweight='bold', zorder=4)
+        
+        # Section labels
+        ax_left.text(peak_x, 0.97, 'Peaks', fontsize=13, ha='center', va='top',
+                fontweight='bold', color=BIOTUNER_COLORS['dark'])
+        ax_left.text(harm_x, 0.97, 'Harmonics', fontsize=13, ha='center', va='top',
+                fontweight='bold', color=BIOTUNER_COLORS['dark'])
+        
+        ax_left.set_xlim([0, 1])
+        ax_left.set_ylim([0, 1])
+        ax_left.axis('off')
+        
+        # Legend
+        legend_text = (
+            f"Line thickness ∝ strength\n"
+            f"Square size ∝ usage\n"
+            f"Green = ≥3 peaks share"
+        )
+        ax_left.text(0.5, 0.02, legend_text, fontsize=9, ha='center', va='bottom',
+                transform=ax_left.transAxes,
+                bbox=dict(boxstyle='round,pad=0.4', facecolor='wheat', 
+                         alpha=0.5, edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.2))
+    else:
+        ax_left.text(0.5, 0.5, 'No shared harmonic positions',
+                ha='center', va='center', fontsize=12, transform=ax_left.transAxes)
+        ax_left.axis('off')
+    
+    ax_left.set_title('Shared Harmonic Positions\n(which harmonics are used)', 
+                  fontsize=16, fontweight='bold', pad=10)
+    
+    # ========== RIGHT PANEL: Position Distribution ==========
+    
+    # Count all harmonic positions
+    all_harm_positions = []
+    for i in range(n_peaks):
+        for j in range(i+1, n_peaks):
+            harms_i = multi_harmonics[i]
+            harms_j = multi_harmonics[j]
+            for h_i_idx, hi in enumerate(harms_i):
+                for h_j_idx, hj in enumerate(harms_j):
+                    if abs(hi - hj) < harm_bounds:
+                        all_harm_positions.append(h_i_idx + 1)
+                        all_harm_positions.append(h_j_idx + 1)
+    
+    if all_harm_positions:
+        position_counts = Counter(all_harm_positions)
+        positions = sorted(position_counts.keys())
+        counts = [position_counts[p] for p in positions]
+        
+        positions_arr = np.array(positions)
+        counts_arr = np.array(counts)
+        norm_counts = counts_arr / counts_arr.max()
+        
+        bars = ax_right.bar(positions, counts, color=BIOTUNER_COLORS['accent'], 
+                      edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5, alpha=0.8)
+        
+        for bar, norm_count in zip(bars, norm_counts):
+            bar.set_alpha(0.4 + norm_count * 0.6)
+        
+        # Highlight common harmonics
+        if common_harms:
+            for ch in common_harms[:5]:
+                if ch in positions:
+                    idx = positions.index(ch)
+                    bars[idx].set_color(BIOTUNER_COLORS['success'])
+                    bars[idx].set_edgecolor('gold')
+                    bars[idx].set_linewidth(3)
+        
+        ax_right.set_xlabel('Harmonic Position', fontsize=16, fontweight='normal')
+        ax_right.set_ylabel('Match Count', fontsize=16, fontweight='normal')
+        ax_right.set_title('Harmonic Position Distribution\n(green = most common)', 
+                     fontsize=18, fontweight='bold', pad=10)
+        ax_right.grid(True, alpha=0.25, axis='y')
+        ax_right.set_xticks(positions)
+        
+        # Add value labels
+        for pos, count in zip(positions, counts):
+            ax_right.text(pos, count + max(counts)*0.02, str(count),
+                    ha='center', va='bottom', fontsize=10, fontweight='bold')
+        
+        # Stats box
+        stats_text = f"Total matches: {sum(counts)}\n"
+        stats_text += f"Unique positions: {len(positions)}\n"
+        stats_text += f"Most common: {positions[np.argmax(counts)]} ({max(counts)}×)"
+        
+        ax_right.text(0.98, 0.97, stats_text, transform=ax_right.transAxes,
+                fontsize=10, verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.4, 
+                         edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5))
+    else:
+        ax_right.text(0.5, 0.5, 'No harmonic matches found', 
+                ha='center', va='center', fontsize=12,
+                transform=ax_right.transAxes)
+        ax_right.set_title('Harmonic Position Distribution', 
+                     fontsize=16, fontweight='bold', pad=10)
+        ax_right.axis('off')
+    
+    plt.tight_layout()
+    return fig, np.array([ax_left, ax_right])
+
+
+def plot_harmonic_fit_summary(
+    peaks: np.ndarray,
+    amps: np.ndarray,
+    freqs: np.ndarray,
+    psd: np.ndarray,
+    harm_fit: list,
+    harmonics_pos: list,
+    common_harms: list,
+    matching_pos: list,
+    extended_peaks: Optional[np.ndarray] = None,
+    extended_amps: Optional[np.ndarray] = None,
+    n_harm: int = 10,
+    harm_bounds: float = 0.5,
+    function: str = 'mult',
+    xmin: float = 1,
+    xmax: float = 60,
+    show_bands: bool = True,
+    figsize: tuple = (16, 12),
+    **kwargs
+) -> Tuple[plt.Figure, np.ndarray]:
+    """
+    Create comprehensive harmonic fit visualization with 4 panels.
+    
+    Panels:
+    1. Top-left: Harmonic network graph
+    2. Top-right: Shared harmonic positions & distribution
+    3. Bottom-left: Harmonic connectivity matrix
+    4. Bottom-right: Harmonic position distribution
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Original peak frequencies
+    amps : np.ndarray
+        Peak amplitudes
+    freqs : np.ndarray
+        Full frequency array from PSD
+    psd : np.ndarray
+        Power spectral density values
+    harm_fit : list
+        Fitted harmonic frequencies
+    harmonics_pos : list
+        Harmonic positions that matched
+    common_harms : list
+        Most common harmonic positions
+    matching_pos : list
+        Detailed matching position information
+    extended_peaks : np.ndarray, optional
+        Extended peaks from peaks_extension
+    extended_amps : np.ndarray, optional
+        Extended peak amplitudes
+    n_harm : int, default=10
+        Number of harmonics computed
+    harm_bounds : float, default=0.5
+        Harmonic fit boundary threshold
+    function : str, default='mult'
+        Harmonic function used ('mult', 'div', 'exp')
+    xmin, xmax : float
+        Frequency range for visualization
+    show_bands : bool, default=True
+        Whether to show EEG frequency bands
+    figsize : tuple, default=(16, 12)
+        Figure size
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    axes : np.ndarray
+        2x2 array of axes
+    """
+    from biotuner.peaks_extension import EEG_harmonics_mult, EEG_harmonics_div
+    
+    set_biotuner_style()
+    
+    # Create figure with custom grid layout
+    fig = plt.figure(figsize=figsize)
+    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], hspace=0.3, wspace=0.35)
+    ax1 = fig.add_subplot(gs[0, 0])  # Top-left
+    ax3 = fig.add_subplot(gs[1, 0])  # Bottom-left
+    
+    fig.suptitle(f'Harmonic Fit Analysis ({function.upper()}, n={n_harm})', 
+                 fontsize=22, fontweight='bold', y=0.98)
+    
+    # Generate harmonics for each peak
+    if function == 'mult':
+        multi_harmonics = EEG_harmonics_mult(peaks, n_harm)
+    elif function == 'div':
+        multi_harmonics, _ = EEG_harmonics_div(peaks, n_harm, mode='div')
+    else:
+        multi_harmonics = np.array([[p**h for p in peaks] for h in range(1, n_harm + 1)])
+        multi_harmonics = np.moveaxis(multi_harmonics, 0, 1)
+    
+    # ========================================================================
+    # Panel 1 (Top-Left): Harmonic Network Graph
+    # ========================================================================
+    _, ax1 = plot_harmonic_fit_network(
+        peaks=peaks,
+        amps=amps,
+        multi_harmonics=multi_harmonics,
+        n_harm=n_harm,
+        harm_bounds=harm_bounds,
+        function=function,
+        ax=ax1,
+        **kwargs
+    )
+    
+    # ========================================================================
+    # Panel 2 (Bottom-Left): Harmonic Connectivity Matrix
+    # ========================================================================
+    _, ax3 = plot_harmonic_fit_matrix(
+        peaks=peaks,
+        multi_harmonics=multi_harmonics,
+        n_harm=n_harm,
+        harm_bounds=harm_bounds,
+        ax=ax3,
+        **kwargs
+    )
+    
+    # ========================================================================
+    # Right Side (Panels 2 & 4): Harmonic Positions
+    # ========================================================================
+    # Use remaining grid space for position plots
+    gs_right = gs[0:2, 1].subgridspec(2, 1, hspace=0.3)
+    ax2 = fig.add_subplot(gs_right[0])
+    ax4 = fig.add_subplot(gs_right[1])
+    
+    # Plot harmonic positions directly into our axes
+    _, _ = plot_harmonic_fit_positions(
+        peaks=peaks,
+        amps=amps,
+        multi_harmonics=multi_harmonics,
+        common_harms=common_harms,
+        n_harm=n_harm,
+        harm_bounds=harm_bounds,
+        function=function,
+        ax_left=ax2,
+        ax_right=ax4,
+        **kwargs
+    )
+    
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    
+    # Return axes as 2x2 array for compatibility
+    axes = np.array([[ax1, ax2], [ax3, ax4]])
+    return fig, axes
+
+
+# Backward compatibility alias
+plot_harmonic_fit = plot_harmonic_fit_summary
+
+
+
+
+def plot_harmonic_position_mappings(
+    peaks: np.ndarray,
+    amps: np.ndarray,
+    multi_harmonics: np.ndarray,
+    n_harm: int = 10,
+    harm_bounds: float = 0.5,
+    function: str = 'mult',
+    figsize: tuple = (14, 10),
+    **kwargs
+) -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Plot harmonic position mappings between peak pairs in a circular network layout.
+    
+    Shows which specific harmonic positions (1st, 2nd, 3rd, etc.) of one peak
+    match with which harmonic positions of another peak. Edges are labeled with
+    the matching harmonic positions (e.g., "2nd↔5th" means the 2nd harmonic of 
+    one peak matches the 5th harmonic of another).
+    
+    Parameters
+    ----------
+    peaks : np.ndarray
+        Peak frequencies in Hz
+    amps : np.ndarray
+        Peak amplitudes
+    multi_harmonics : np.ndarray
+        Pre-computed harmonic series for each peak (n_peaks x n_harm)
+    n_harm : int, default=10
+        Number of harmonics per peak
+    harm_bounds : float, default=0.5
+        Frequency threshold (Hz) for considering harmonics as matching
+    function : str, default='mult'
+        Harmonic function used ('mult' or 'div')
+    figsize : tuple, default=(14, 10)
+        Figure size
+        
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Figure object
+    ax : matplotlib.axes.Axes
+        Axes object
+    """
+    set_biotuner_style()
+    
+    n_peaks = len(peaks)
+    
+    # Create figure
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # Collect specific harmonic position matches between peak pairs
+    peak_pair_harmonics = {}
+    
+    for i in range(n_peaks):
+        for j in range(i+1, n_peaks):
+            harms_i = multi_harmonics[i]
+            harms_j = multi_harmonics[j]
+            matches = []
+            
+            for h_i_idx, hi in enumerate(harms_i):
+                for h_j_idx, hj in enumerate(harms_j):
+                    if abs(hi - hj) < harm_bounds:
+                        h_i_pos = h_i_idx + 1
+                        h_j_pos = h_j_idx + 1
+                        matches.append((h_i_pos, h_j_pos, (hi + hj) / 2))
+            
+            if matches:
+                peak_pair_harmonics[(i, j)] = matches
+    
+    if peak_pair_harmonics:
+        # Circular layout for peaks
+        theta = np.linspace(0, 2*np.pi, n_peaks, endpoint=False)
+        node_x = 0.5 + 0.32 * np.cos(theta)
+        node_y = 0.5 + 0.38 * np.sin(theta)
+        
+        # Assign colors to peaks
+        cmap = plt.cm.viridis
+        colors = [cmap(i / n_peaks) for i in range(n_peaks)]
+        
+        # Draw edges with harmonic position labels
+        for (i, j), matches in peak_pair_harmonics.items():
+            x1, y1 = node_x[i], node_y[i]
+            x2, y2 = node_x[j], node_y[j]
+            
+            n_matches = len(matches)
+            
+            # Style edges by number of matches
+            if n_matches >= 3:
+                linewidth = 3
+                alpha = 0.6
+                color = BIOTUNER_COLORS['success']
+            elif n_matches >= 2:
+                linewidth = 2
+                alpha = 0.5
+                color = BIOTUNER_COLORS['warning']
+            else:
+                linewidth = 1.2
+                alpha = 0.35
+                color = BIOTUNER_COLORS['dark']
+            
+            ax.plot([x1, x2], [y1, y2], color=color, 
+                    linewidth=linewidth, alpha=alpha, zorder=1)
+            
+            # Add label showing harmonic position matches
+            mid_x, mid_y = (x1 + x2) / 2, (y1 + y2) / 2
+            
+            label_lines = []
+            for h_i, h_j, freq in matches[:2]:  # Show top 2 matches
+                suffix_i = {1: 'st', 2: 'nd', 3: 'rd'}.get(h_i, 'th')
+                suffix_j = {1: 'st', 2: 'nd', 3: 'rd'}.get(h_j, 'th')
+                label_lines.append(f"{h_i}{suffix_i}↔{h_j}{suffix_j}")
+            
+            if n_matches > 2:
+                label_lines.append(f"+{n_matches-2}")
+            
+            label_text = '\n'.join(label_lines)
+            
+            # Offset label perpendicular to edge
+            offset_angle = np.arctan2(y2 - y1, x2 - x1) + np.pi/2
+            label_offset = 0.025
+            label_x = mid_x + label_offset * np.cos(offset_angle)
+            label_y = mid_y + label_offset * np.sin(offset_angle)
+            
+            ax.text(label_x, label_y, label_text, 
+                    fontsize=9, ha='center', va='center',
+                    bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
+                             edgecolor=color, alpha=0.9, linewidth=1.5),
+                    fontweight='bold', color=color)
+        
+        # Draw peak nodes
+        for i, (peak, x, y, color) in enumerate(zip(peaks, node_x, node_y, colors)):
+            norm_amp = (amps[i] - amps.min()) / (amps.max() - amps.min() + 1e-10)
+            node_size = 500 + norm_amp * 800
+            
+            ax.scatter(x, y, s=node_size, c=[color], 
+                       edgecolors=BIOTUNER_COLORS['dark'], linewidths=2.5, 
+                       zorder=5, alpha=0.95)
+            
+            # Position label outside the node
+            label_angle = theta[i]
+            label_offset = 0.14
+            label_x = 0.5 + (0.32 + label_offset) * np.cos(label_angle)
+            label_y = 0.5 + (0.38 + label_offset) * np.sin(label_angle)
+            
+            ax.text(label_x, label_y, f'{peak:.1f} Hz', 
+                    fontsize=12, ha='center', va='center', fontweight='bold',
+                    bbox=dict(boxstyle='round,pad=0.4', facecolor=color, 
+                             edgecolor=BIOTUNER_COLORS['dark'], alpha=0.95, linewidth=2.5),
+                    color='white')
+        
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
+        ax.set_aspect('equal')
+        ax.axis('off')
+        
+        # Add legend
+        from matplotlib.lines import Line2D
+        legend_elements = [
+            Line2D([0], [0], color=BIOTUNER_COLORS['success'], linewidth=3,
+                   label='≥3 matches'),
+            Line2D([0], [0], color=BIOTUNER_COLORS['warning'], linewidth=2,
+                   label='2 matches'),
+            Line2D([0], [0], color=BIOTUNER_COLORS['dark'], linewidth=1.2,
+                   label='1 match')
+        ]
+        ax.legend(handles=legend_elements, loc='upper right', 
+                 fontsize=11, framealpha=0.95, title='Connection Strength',
+                 bbox_to_anchor=(1.0, 1.0))
+        
+        # Add explanation box
+        explanation = (
+            "Edge labels show which harmonic of peak A ↔ which harmonic of peak B\n"
+            "e.g., '2nd↔5th' = 2nd harmonic of one matches 5th of the other"
+        )
+        ax.text(0.5, 0.02, explanation, transform=ax.transAxes,
+               fontsize=10, ha='center', va='bottom',
+               bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow',
+                        alpha=0.85, edgecolor=BIOTUNER_COLORS['dark'], linewidth=1.5))
+    else:
+        ax.text(0.5, 0.5, 'No harmonic matches between peaks',
+               ha='center', va='center', fontsize=16, transform=ax.transAxes,
+               fontweight='bold', color=BIOTUNER_COLORS['dark'])
+        ax.axis('off')
+    
+    ax.set_title(f'Harmonic Position Mappings Between Peak Pairs\n({function.upper()}, n_harm={n_harm}, tolerance=±{harm_bounds} Hz)',
+                 fontsize=20, fontweight='bold', pad=20)
+    
+    plt.tight_layout()
+    
+    return fig, ax
 
 
 # ============================================================================
@@ -2819,4 +4560,7 @@ __all__ = [
     'plot_tuning',
     'plot_tuning_comparison',
     'plot_tuning_complete',
+    # Harmonic analysis plots
+    'plot_harmonic_fit',
+    'plot_harmonic_position_mappings',
 ]
