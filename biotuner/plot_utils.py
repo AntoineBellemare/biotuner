@@ -3979,7 +3979,7 @@ def plot_harmonic_fit_matrix(
                 # Don't annotate diagonal
                 continue
             elif connectivity_matrix[i, j] > 0:
-                text_color = 'white' if connectivity_matrix[i, j] > vmax/2 else 'black'
+                text_color = 'black' if connectivity_matrix[i, j] > vmax/2 else 'white'
                 ax.text(j, i, f'{int(connectivity_matrix[i, j])}',
                         ha='center', va='center', color=text_color, fontsize=10)
     
