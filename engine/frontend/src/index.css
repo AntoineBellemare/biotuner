@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #e5e7eb;
+  background-color: #0a0a0a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6A5ACD;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFB6C1;
+}
+
+/* Moving glow animation for New Analysis button */
+@keyframes moving-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 217, 255, 0.3), 
+                0 0 10px rgba(0, 217, 255, 0.2), 
+                -20px 0 30px rgba(0, 217, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.4), 
+                0 0 20px rgba(0, 217, 255, 0.3), 
+                20px 0 40px rgba(0, 217, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0, 217, 255, 0.3), 
+                0 0 10px rgba(0, 217, 255, 0.2), 
+                -20px 0 30px rgba(0, 217, 255, 0.1);
+  }
+}
+
+.animate-moving-glow {
+  animation: moving-glow 3s ease-in-out infinite;
+}
+
+.animate-moving-glow:hover {
+  animation: moving-glow 1.5s ease-in-out infinite;
+}
+
+/* Button transitions */
+button {
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Custom animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(106, 90, 205, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(106, 90, 205, 0.8);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
