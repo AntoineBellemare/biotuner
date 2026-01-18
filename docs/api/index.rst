@@ -9,6 +9,7 @@ API
    :maxdepth: 2
 
    biotuner_object
+   biotuner_group
    metrics
    peaks_extraction
    peaks_extension
