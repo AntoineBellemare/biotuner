@@ -10,6 +10,7 @@ Author: Biotuner Team
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.colors import LinearSegmentedColormap
 from typing import Dict, Any, Optional
 
 # ============================================================================
@@ -47,7 +48,7 @@ FREQ_BANDS = {
     'theta': [4, 8],
     'alpha': [8, 13],
     'beta': [13, 30],
-    'gamma': [30, 100],
+    'gamma': [30, 60],
 }
 
 # Alternative color palettes for different use cases
@@ -62,8 +63,42 @@ PALETTES = {
         BIOTUNER_COLORS['accent'],
         BIOTUNER_COLORS['success'],
         BIOTUNER_COLORS['warning']
-    ])
+    ]),
+    'biotuner_matrix': sns.blend_palette([
+        '#1A1A2E',  # Dark navy
+        '#16213E',  # Navy blue
+        '#0F4C75',  # Ocean blue
+        '#3282B8',  # Bright blue
+        '#BBE1FA',  # Light blue
+        '#FFFFFF',  # White (center)
+        '#FFE5B4',  # Peach
+        '#FFAD60',  # Light orange
+        '#F18F01',  # Orange
+        '#C73E1D',  # Red-orange
+        '#9A031E'   # Deep red
+    ], as_cmap=False),
+    'biotuner_diverging': sns.blend_palette([
+        '#0B3954',  # Deep blue
+        '#2E86AB',  # Primary blue
+        '#E8E9EB',  # Light neutral
+        '#F18F01',  # Orange
+        '#C73E1D'   # Red
+    ], as_cmap=False),
 }
+
+# Create matplotlib colormaps from the biotuner palettes
+# Use the same orange-to-turquoise palette as in plot_utils for consistency
+BIOTUNER_MATRIX_CMAP = LinearSegmentedColormap.from_list(
+    'biotuner_matrix',
+    ['#8B4513', '#CD5C5C', '#F4A460', '#FFD700', '#90EE90', '#48D1CC', '#40E0D0'],
+    N=256
+)
+
+BIOTUNER_DIVERGING_CMAP = LinearSegmentedColormap.from_list(
+    'biotuner_diverging',
+    ['#0B3954', '#2E86AB', '#E8E9EB', '#F18F01', '#C73E1D'],
+    N=256
+)
 
 # ============================================================================
 # Default Plot Parameters
@@ -161,6 +196,85 @@ PLOT_CONFIGS = {
         'figsize': (9, 9),
         'aspect': 'equal',
         'title': 'Euclidean Rhythms',
+    },
+    # Group-level plots (BiotunerGroup)
+    'group_peaks': {
+        'figsize': (14, 7),
+        'xlabel': 'Frequency (Hz)',
+        'ylabel': 'Power',
+        'grid': True,
+        'title_prefix': 'Group Peak Spectrum - ',
+        'aggregate_color': '#2E86AB',
+        'individual_alpha': 0.08,
+        'peak_marker_color': '#F18F01',
+        'peak_marker_size': 10,
+        'band_label_position': 'top',
+    },
+    'group_metric_dist': {
+        'figsize': (11, 7),
+        'title_prefix': 'Metric Distribution - ',
+        'palette': 'biotuner_gradient',
+    },
+    'group_metric_matrix': {
+        'figsize': None,  # Calculated dynamically
+        'cmap': 'biotuner_matrix',
+        'title_prefix': 'Metric Matrix - ',
+        'linewidths': 0.8,
+        'linecolor': 'white',
+    },
+    'group_tuning_histogram': {
+        'figsize': (14, 7),
+        'xlabel': 'Interval Ratio',
+        'ylabel': 'Frequency',
+        'title_prefix': 'Interval Distribution - ',
+        'bins': 50,
+        'color': '#2E86AB',
+        'alpha': 0.75,
+    },
+    'group_tuning_common': {
+        'figsize': (12, 8),
+        'xlabel': 'Number of Occurrences',
+        'title_prefix': 'Most Common Intervals - ',
+        'color': '#2E86AB',
+        'bar_alpha': 0.85,
+    },
+    'group_scale_dist': {
+        'figsize': (12, 7),
+        'xlabel': 'Scale Size (number of notes)',
+        'ylabel': 'Frequency',
+        'title_prefix': 'Scale Size Distribution - ',
+        'color': '#2E86AB',
+        'alpha': 0.75,
+        'mean_line_color': '#C73E1D',
+    },
+    'group_tuning_comparison': {
+        'figsize': (14, 8),
+        'xlabel': 'Interval Ratio',
+        'ylabel': 'Time Series',
+        'title_prefix': 'Tuning Comparison - ',
+        'line_width': 2.5,
+        'alpha': 0.8,
+    },
+    'group_peak_distribution': {
+        'figsize': (14, 6),
+        'xlabel': 'Frequency (Hz)',
+        'ylabel': 'Count',
+        'title': 'Distribution of All Detected Peaks',
+        'bins': 50,
+        'color': '#88D8E8',
+        'edgecolor': 'white',
+        'alpha': 0.85,
+        'band_line_color': '#C73E1D',
+        'band_line_alpha': 0.6,
+        'band_text_color': '#C73E1D',
+    },
+    'group_comparison': {
+        'figsize': (11, 7),
+        'palette': 'biotuner_gradient',
+        'title_prefix': 'Group Comparison - ',
+        'point_size': 5,
+        'point_alpha': 0.4,
+        'point_color': '#1F1F1F',
     },
 }
 
@@ -369,6 +483,8 @@ __all__ = [
     'BAND_NAMES',
     'FREQ_BANDS',
     'PALETTES',
+    'BIOTUNER_MATRIX_CMAP',
+    'BIOTUNER_DIVERGING_CMAP',
     'DEFAULT_STYLE',
     'PLOT_CONFIGS',
     'set_biotuner_style',

@@ -38,6 +38,17 @@
   
 </p>
 
+## ✨ Features
+
+- **🎵 Harmonic Analysis**: Extract harmonic structures from biosignals using music theory principles
+- **📊 Multiple Peak Detection Methods**: FOOOF, EMD, fixed-frequency, and harmonic-recurrence based methods
+- **🧮 Harmonicity Metrics**: Compute consonance, dissonance, harmonic similarity, Tenney height, and more
+- **🎹 Musical Applications**: Generate musical scales, tuning systems, and MIDI output from biosignals
+- **🔬 Group Analysis (BETA)**: Batch processing for multiple time series with automatic aggregation
+- **📈 Rich Visualizations**: Publication-ready plots for spectral analysis and harmonic relationships
+- **🧠 Multi-modal Support**: Compatible with EEG, ECG, EMG, plant signals, and other biosignals
+- **🎨 Interactive GUI**: Graphical interface for easy exploration
+
 <!-- 🧬![Biotuner](https://img.shields.io/badge/Biotuner-Documentation-blue?style=for-the-badge&logo=bookstack) 🎹 -->
 
 
@@ -118,46 +129,56 @@ If all tests pass ✅, your installation is complete!
 
 # Simple use case
 
+## Single Time Series Analysis
+
 ```python
-biotuning = biotuner(sf = 1000) #initialize the object
-biotuning.peaks_extraction(data, peaks_function='FOOOF') #extract spectral peaks
-biotuning.compute_peaks_metrics() #get consonance metrics for spectral peaks
+from biotuner import biotuner
 
-```
-# Running the Biotuner GUI
+# Initialize the object
+biotuning = biotuner(sf=1000)
 
-You can run the Biotuner graphical interface using **Invoke** or **Streamlit**.
+# Extract spectral peaks
+biotuning.peaks_extraction(data, peaks_function='FOOOF')
 
-## Option 1: Run via Invoke (Recommended)
-
-If you have `invoke` installed and set up, simply run:
-
-```sh
-invoke gui
-```
-This command will ensure all dependencies are installed before launching the GUI.
-
-![image](https://github.com/user-attachments/assets/5566dea7-378c-4621-9ec8-7e2ef6991c57)
-
-## Option 2: Run via Streamlit
-
-If you prefer to start the GUI manually, run:
-
-```sh
-streamlit run gui.py
+# Get consonance metrics for spectral peaks
+biotuning.compute_peaks_metrics()
 ```
 
-> **Note:** If you use this option, you must first install the GUI dependencies. You can install them using:
+## Group Analysis (🧪 BETA)
 
-```sh
-pip install ".[gui]"
+Analyze multiple time series simultaneously with automatic aggregation and group comparisons:
+
+```python
+from biotuner import BiotunerGroup
+import numpy as np
+
+# Multiple trials or electrodes: shape (n_series, n_samples)
+data = np.random.randn(10, 5000)
+
+# Create group object
+btg = BiotunerGroup(data, sf=1000, axis_labels=['trials'])
+
+# Run analysis pipeline
+btg.compute_peaks(peaks_function='FOOOF', min_freq=1, max_freq=50)
+btg.compute_metrics(n_harm=10)
+
+# Get summary statistics
+summary = btg.summary()
 ```
 
-### Access the Interface
+> **Note:** The BiotunerGroup module is currently in beta. The API may change in future releases.
 
-Once the GUI starts, you should see a local URL in the terminal, such as:
+---
 
-[http://localhost:8501/](http://localhost:8501/)
+## 🌐 Biotuner Engine - Web Interface
+
+Explore Biotuner's capabilities through our interactive web interface:
+
+**[biotuner-engine.kairos-hive.org](https://biotuner-engine.kairos-hive.org)**
+
+The Biotuner Engine provides a user-friendly web application to analyze biosignals, visualize harmonic structures, and explore musical applications directly in your browser—no installation required!
+
+---
 
 <div align="center" style="width: 50%; margin: auto; text-align: center;">
 
@@ -177,3 +198,46 @@ The figure above illustrates Biotuner's ability to extract harmonic structures a
 
 ![biotuner_peaks_extraction](https://user-images.githubusercontent.com/49297774/156813349-ddcd40d0-57c9-41f2-b62a-7cbb4213e515.jpg)
 
+---
+
+## 📚 Documentation & Resources
+
+- **[Full Documentation](https://antoinebellemare.github.io/biotuner/)** - Complete API reference and tutorials
+- **[Getting Started Guide](https://antoinebellemare.github.io/biotuner/getting_started.html)** - Step-by-step introduction
+- **[API Reference](https://antoinebellemare.github.io/biotuner/api/index.html)** - Detailed function and class documentation
+  - [BiotunerObject](https://antoinebellemare.github.io/biotuner/api/biotuner_object.html) - Single time series analysis
+  - [BiotunerGroup (BETA)](https://antoinebellemare.github.io/biotuner/api/biotuner_group.html) - Group analysis
+  - [Metrics](https://antoinebellemare.github.io/biotuner/api/metrics.html) - Harmonicity metrics
+  - [Peak Extraction](https://antoinebellemare.github.io/biotuner/api/peaks_extraction.html) - Peak detection methods
+- **[Examples & Notebooks](https://antoinebellemare.github.io/biotuner/examples/index.html)** - Jupyter notebook tutorials
+
+## 🤝 Contributing
+
+We welcome contributions! Whether it's:
+
+- 🐛 Bug reports
+- 💡 Feature requests
+- 📝 Documentation improvements
+- 🔧 Code contributions
+
+Please feel free to open an issue or submit a pull request on [GitHub](https://github.com/AntoineBellemare/biotuner).
+
+## 📄 License
+
+Biotuner is licensed under the [MIT License](LICENSE.txt).
+
+## 📖 Citation
+
+If you use Biotuner in your research, please cite our work. See the [citation guide](https://antoinebellemare.github.io/biotuner/cite_us.html) for more information.
+
+## 💬 Support
+
+- **Issues**: [GitHub Issues](https://github.com/AntoineBellemare/biotuner/issues)
+- **Email**: antoine.bellemare9@gmail.com
+- **Documentation**: [https://antoinebellemare.github.io/biotuner/](https://antoinebellemare.github.io/biotuner/)
+
+---
+
+<p align="center">
+  Made with ❤️ by the Biotuner development team
+</p>
