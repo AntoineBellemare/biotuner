@@ -11,9 +11,7 @@ BiotunerGroup (BETA)
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-   biotuner.biotuner_group
-
+   
 .. automodule:: biotuner.biotuner_group
    :members:
    :undoc-members:
