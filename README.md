@@ -132,10 +132,10 @@ If all tests pass ✅, your installation is complete!
 ## Single Time Series Analysis
 
 ```python
-from biotuner import biotuner
+from biotuner import compute_biotuner
 
 # Initialize the object
-biotuning = biotuner(sf=1000)
+biotuning = compute_biotuner(sf=1000)
 
 # Extract spectral peaks
 biotuning.peaks_extraction(data, peaks_function='FOOOF')
