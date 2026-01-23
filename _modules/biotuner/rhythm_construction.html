@@ -1,0 +1,914 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.rhythm_construction &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/rhythm_construction';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.rhythm_construction</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">scale2frac</span><span class="p">,</span> <span class="n">getPairs</span>
+
+
+<div class="viewcode-block" id="scale2euclid">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.scale2euclid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scale2euclid</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">max_denom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate Euclidean rhythms based on a list of scale factors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scale : List of float</span>
+<span class="sd">        A list of positive floats representing the scale steps.</span>
+<span class="sd">    max_denom : int, default=10</span>
+<span class="sd">        An integer representing the maximum denominator allowed for the</span>
+<span class="sd">        fractions generated by scale2frac().</span>
+<span class="sd">    mode : str, default=&#39;normal&#39;</span>
+<span class="sd">        A string representing the mode of Euclidean rhythms to generate.</span>
+<span class="sd">        Mode options:</span>
+<span class="sd">            &#39;normal&#39; : generate rhythms with `num` steps distributed over &quot;denom&quot; beats.</span>
+<span class="sd">            &#39;full&#39; : generate rhythms with all possible combinations</span>
+<span class="sd">                     of `num` and `denom` for a given `scale`.\</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    euclid_patterns : List of lists</span>
+<span class="sd">        A list of lists containing the Euclidean rhythms generated</span>
+<span class="sd">        by the function.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If `scale` is not a list of positive floats, or `max_denom` is not</span>
+<span class="sd">        an integer.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `max_denom` is not a positive integer.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The `scale` parameter is first converted into fractions using the scale2frac()</span>
+<span class="sd">    function. Euclidean rhythms are then generated based on the `num` and `denom`</span>
+<span class="sd">    values of the fractions, using the bjorklund() function. If `mode` is set</span>
+<span class="sd">    to &quot;normal&quot;, the function generates one rhythm for each fraction where</span>
+<span class="sd">    `denom` is less than or equal to `max_denom`. If `mode` is set to &quot;full&quot;,</span>
+<span class="sd">    the function generates all possible combinations of `num` and `denom` for</span>
+<span class="sd">    each fraction where `denom` is less than or equal to `max_denom`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; scale2euclid([1.33, 1.5, 1.75], max_denom=8, mode=&quot;normal&quot;)</span>
+<span class="sd">    [[1, 1, 1, 0], [1, 1, 0], [1, 0, 1, 0, 1, 0, 1]]</span>
+
+<span class="sd">    &gt;&gt;&gt; scale2euclid([1.33, 1.5, 1.75], max_denom=8, mode=&quot;full&quot;)</span>
+<span class="sd">    [[1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],</span>
+<span class="sd">    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="sd">    [1, 0, 1, 0, 1, 0], [1, 0, 0, 1, 0, 0],</span>
+<span class="sd">    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="sd">    [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">euclid_patterns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">frac</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="n">max_denom</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;normal&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">denom</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">max_denom</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">denom</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">max_denom</span><span class="p">:</span>
+                <span class="n">steps</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">n</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+                    <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">euclid_patterns</span></div>
+
+
+
+<div class="viewcode-block" id="invert_ratio">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.invert_ratio">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_steps_down</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">limit_denom</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverts a given ratio by dividing 1 by it, then dividing the result by the ratio n_steps_down times.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    ratio : float</span>
+<span class="sd">        The ratio to be inverted.</span>
+<span class="sd">    n_steps_down : int</span>
+<span class="sd">        The number of times to divide the ratio.</span>
+<span class="sd">    limit_denom : int, default=64</span>
+<span class="sd">        The maximum denominator of the fraction returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    Tuple [sp.Rational, float]</span>
+
+<span class="sd">        - The resulting fraction after dividing 1 by the ratio and then dividing it n_steps_down times.</span>
+<span class="sd">        - The resulting float after dividing 1 by the ratio and then dividing it n_steps_down times.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inverted_ratio</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">n_steps_down</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n_steps_down</span><span class="p">:</span>
+            <span class="n">inverted_ratio</span> <span class="o">=</span> <span class="n">inverted_ratio</span> <span class="o">/</span> <span class="n">ratio</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">frac</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Rational</span><span class="p">(</span><span class="n">inverted_ratio</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">limit_denom</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">frac</span><span class="p">,</span> <span class="n">inverted_ratio</span></div>
+
+
+
+<div class="viewcode-block" id="binome2euclid">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.binome2euclid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">binome2euclid</span><span class="p">(</span><span class="n">binome</span><span class="p">,</span> <span class="n">n_steps_down</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">limit_denom</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a set of two ratios to Euclidean rhythms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binome : list of two floats</span>
+<span class="sd">        The two ratios to be converted.</span>
+<span class="sd">    n_steps_down : int, default=1</span>
+<span class="sd">        The number of times to apply the inversion operator.</span>
+<span class="sd">    limit_denom : int, default=64</span>
+<span class="sd">        The maximum denominator to be used when approximating fractions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - the generated Euclidean rhythms</span>
+<span class="sd">        - the inverted ratios</span>
+<span class="sd">        - the approximated fractions.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The Euclidean rhythms are generated using the bjorklund algorithm, as implemented in the bjorklund function. The</span>
+<span class="sd">    input ratios are inverted according to the number of steps specified by the n_steps_down parameter. The resulting</span>
+<span class="sd">    ratios are then used to generate a pair of approximated fractions, which are combined to produce the final</span>
+<span class="sd">    Euclidean rhythms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">euclid_patterns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_binome</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_frac1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">invert_ratio</span><span class="p">(</span><span class="n">binome</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_steps_down</span><span class="p">,</span> <span class="n">limit_denom</span><span class="o">=</span><span class="n">limit_denom</span><span class="p">)</span>
+    <span class="n">new_frac2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">invert_ratio</span><span class="p">(</span><span class="n">binome</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_steps_down</span><span class="p">,</span> <span class="n">limit_denom</span><span class="o">=</span><span class="n">limit_denom</span><span class="p">)</span>
+    <span class="n">new_binome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+    <span class="n">new_binome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+    <span class="n">frac</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">new_binome</span><span class="p">,</span> <span class="n">limit_denom</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">denom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">denom</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">new_denom</span> <span class="o">=</span> <span class="n">denom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">denom</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">new_denom</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">denom</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">new_denom</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">denom</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_denom</span> <span class="o">=</span> <span class="n">denom</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">new_denom</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">euclid_patterns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bjorklund</span><span class="p">(</span><span class="n">new_denom</span><span class="p">,</span> <span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">euclid_patterns</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">new_frac1</span><span class="p">,</span> <span class="n">new_frac2</span><span class="p">],</span>
+        <span class="p">[[</span><span class="n">num</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">denom</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">new_denom</span><span class="p">],</span> <span class="p">[</span><span class="n">num</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">denom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_denom</span><span class="p">]],</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="consonant_euclid">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.consonant_euclid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">consonant_euclid</span><span class="p">(</span>
+    <span class="n">scale</span><span class="p">,</span> <span class="n">n_steps_down</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">limit_denom</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">limit_cons</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">limit_denom_final</span><span class="o">=</span><span class="mi">16</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Euclidean rhythms and consonant steps between them based on a given scale.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scale : list of floats</span>
+<span class="sd">        Musical scale.</span>
+<span class="sd">    n_steps_down : int, default=2</span>
+<span class="sd">        The number of steps the Euclidean rhythms is shifted down.</span>
+<span class="sd">    limit_denom : int, default=64</span>
+<span class="sd">        The upper bound of the denominator of the resulting fractions.</span>
+<span class="sd">    limit_cons : float, default=0.1</span>
+<span class="sd">        The lower bound of the consonance measure.</span>
+<span class="sd">    limit_denom_final : int, default=16</span>
+<span class="sd">        The upper bound of the denominator of the final consonant steps.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    euclid_final, cons_step : (list[list], list[int])</span>
+<span class="sd">        A tuple containing the following elements:</span>
+<span class="sd">        - List of lists representing the Euclidean rhythms that satisfy the given consonance measure and denominator bounds.</span>
+<span class="sd">        - List of integers representing the consonant steps between the Euclidean rhythms.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">getPairs</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">new_steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">euclid_final</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">euclid</span><span class="p">,</span> <span class="n">fracs</span><span class="p">,</span> <span class="n">new_ratios</span> <span class="o">=</span> <span class="n">binome2euclid</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n_steps_down</span><span class="p">,</span> <span class="n">limit_denom</span><span class="p">)</span>
+        <span class="c1"># print(&#39;new_ratios&#39;, new_ratios)</span>
+        <span class="n">new_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_ratios</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">pairs_steps</span> <span class="o">=</span> <span class="n">getPairs</span><span class="p">(</span><span class="n">new_steps</span><span class="p">)</span>
+    <span class="n">cons_steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">steps</span> <span class="ow">in</span> <span class="n">pairs_steps</span><span class="p">:</span>
+        <span class="c1"># print(steps)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">steps1</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">numerator</span>
+            <span class="n">steps2</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Fraction</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">denominator</span>
+            <span class="p">)</span>
+            <span class="c1"># print(steps1, steps2)</span>
+            <span class="n">cons</span> <span class="o">=</span> <span class="p">(</span><span class="n">steps1</span> <span class="o">+</span> <span class="n">steps2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">steps1</span> <span class="o">*</span> <span class="n">steps2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">cons</span> <span class="o">&gt;=</span> <span class="n">limit_cons</span>
+                <span class="ow">and</span> <span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">limit_denom_final</span>
+                <span class="ow">and</span> <span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">limit_denom_final</span>
+            <span class="p">):</span>
+                <span class="n">cons_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">cons_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">euclid</span><span class="p">,</span> <span class="n">fracs</span><span class="p">,</span> <span class="n">new_ratios</span> <span class="o">=</span> <span class="n">binome2euclid</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n_steps_down</span><span class="p">,</span> <span class="n">limit_denom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_ratios</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">cons_steps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">euclid_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">euclid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">euclid_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">euclid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>  <span class="c1"># exception for when only one euclid has been computed (when limit_denom is very low, chances to have a division by zero)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="n">euclid_final</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">euclid_final</span><span class="p">)</span>
+    <span class="n">euclid_final</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">euclid_final</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">euclid_final</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">euclid_final</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">euclid_final</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">euclid_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">euclid_final</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">euclid_final</span><span class="p">,</span> <span class="n">cons_steps</span></div>
+
+
+
+<div class="viewcode-block" id="interval_vector">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.interval_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interval_vector</span><span class="p">(</span><span class="n">euclid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the interval vector for a given Euclidean rhythm.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    euclid : array_like</span>
+<span class="sd">        A binary array representing a Euclidean rhythm. Must have at least one pulse.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Interval_vector : numpy.ndarray</span>
+<span class="sd">        An interval vector as a numpy array.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; euclid = [1, 1, 0, 1, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; interval_vector(euclid)</span>
+<span class="sd">    array([1, 2, 1, 2, 1])</span>
+
+<span class="sd">    &gt;&gt;&gt; euclid = [1, 0, 0, 1, 0, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; interval_vector(euclid)</span>
+<span class="sd">    array([3, 3, 1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">euclid</span><span class="p">)</span> <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">euclid</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">vector</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="n">indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+    <span class="n">vector</span> <span class="o">=</span> <span class="n">vector</span> <span class="o">+</span> <span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="n">indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">vector</span></div>
+
+
+
+<div class="viewcode-block" id="bjorklund">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.bjorklund">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bjorklund</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">pulses</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a Euclidean rhythm pattern using Bjorklund&#39;s algorithm.</span>
+<span class="sd">    From https://github.com/brianhouse/bjorklund</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    steps : int</span>
+<span class="sd">        The number of steps in the pattern.</span>
+<span class="sd">    pulses : int</span>
+<span class="sd">        The number of pulses in the pattern.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pattern : numpy.ndarray</span>
+<span class="sd">        A binary Euclidean rhythm pattern with the specified number of steps and pulses.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `pulses` is greater than `steps`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Generate a Euclidean rhythm pattern with 16 steps and 5 pulses:</span>
+
+<span class="sd">    &gt;&gt;&gt; bjorklund(16, 5)</span>
+<span class="sd">    array([1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+    <span class="n">pulses</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pulses</span> <span class="o">&gt;</span> <span class="n">steps</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">remainders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">divisor</span> <span class="o">=</span> <span class="n">steps</span> <span class="o">-</span> <span class="n">pulses</span>
+    <span class="n">remainders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">divisor</span> <span class="o">//</span> <span class="n">remainders</span><span class="p">[</span><span class="n">level</span><span class="p">])</span>
+        <span class="n">remainders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">divisor</span> <span class="o">%</span> <span class="n">remainders</span><span class="p">[</span><span class="n">level</span><span class="p">])</span>
+        <span class="n">divisor</span> <span class="o">=</span> <span class="n">remainders</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">remainders</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">divisor</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="n">pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="n">level</span><span class="p">]):</span>
+                <span class="n">build</span><span class="p">(</span><span class="n">level</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">remainders</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">build</span><span class="p">(</span><span class="n">level</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">build</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span> <span class="o">+</span> <span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">pattern</span></div>
+
+
+
+<div class="viewcode-block" id="interval_vec_to_string">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.interval_vec_to_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interval_vec_to_string</span><span class="p">(</span><span class="n">interval_vectors</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list of interval vectors to a list of string representations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    interval_vectors : list of array_like</span>
+<span class="sd">        A list of interval vectors, where each interval vector is an array_like object representing</span>
+<span class="sd">        the number of steps between each hit.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    strings : list of str</span>
+<span class="sd">        A list of string representations of the interval vectors, where each string is of the form</span>
+<span class="sd">        &#39;E(n,k)&#39;, where n is the number of hits and k is the number of steps.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; interval_vectors = [[2, 2, 2, 2, 1], [3, 3, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; interval_vec_to_string(interval_vectors)</span>
+<span class="sd">    [&#39;E(5,9)&#39;, &#39;E(3,7)&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">interval_vectors</span><span class="p">:</span>
+        <span class="n">strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;E(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">strings</span></div>
+
+
+
+<div class="viewcode-block" id="euclid_string_to_referent">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.euclid_string_to_referent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclid_string_to_referent</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">dict_rhythms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function takes a list of strings of Euclidean rhythms represented in the E(n,k) format</span>
+<span class="sd">    and returns a list of their referents in the given dictionary of rhythms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    strings : list of str</span>
+<span class="sd">        A list of Euclidean rhythms represented as E(n,k) strings.</span>
+<span class="sd">    dict_rhythms : dict</span>
+<span class="sd">        A dictionary of rhythms where keys are the E(n,k) representation and values are the referents.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    referent : list of str</span>
+<span class="sd">        A list of the referents of the input rhythms. &quot;None&quot; is used for rhythms not found in the dictionary.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.dictionaries import dict_rhythms</span>
+<span class="sd">    &gt;&gt;&gt; strings = [&quot;E(5,9)&quot;, &quot;E(9,16)&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; euclid_string_to_referent(strings, dict_rhythms)</span>
+<span class="sd">    [&#39;It is a popular Arabic rhythm called Agsag-Samai. Started on the second onset,</span>
+<span class="sd">    it is a drum pattern used by the Venda in South Africa, as well as a Rumanian folk-dance rhythm.</span>
+<span class="sd">    It is also the rhythmic pattern of the Sigaktistos rhythm of Greece,</span>
+<span class="sd">    and the Samai aktsak rhythm of Turkey. Started on the third onset,</span>
+<span class="sd">    it is the rhythmic pattern of the Nawahiid rhythm of Turkey.&#39;,</span>
+<span class="sd">    &#39;It is a rhythm necklace used in the Central African Republic.</span>
+<span class="sd">    When it is started on the second onset it is a bell pattern of</span>
+<span class="sd">    the Luba people of Congo. When it is started on the fourth onset</span>
+<span class="sd">    it is a rhythm played in West and Central Africa, as well as a cow-bell</span>
+<span class="sd">    pattern in the Brazilian samba. When it is started on the penultimate onset</span>
+<span class="sd">    it is the bell pattern of the Ngbaka-Maibo rhythms of the Central African Republic.&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">referent</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">dict_rhythms</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">referent</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_rhythms</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">referent</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">referent</span></div>
+
+
+
+<div class="viewcode-block" id="euclid_long_to_short">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.euclid_long_to_short">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclid_long_to_short</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a long Euclidean rhythm pattern to a short representation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pattern : list of int</span>
+<span class="sd">        The long Euclidean rhythm pattern, represented as a list of integers</span>
+<span class="sd">        where 1 represents a hit and 0 represents a rest.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of int</span>
+<span class="sd">        A list with two integers representing the short representation of the</span>
+<span class="sd">        rhythm. The first integer represents the number of hits in the rhythm</span>
+<span class="sd">        and the second integer represents the total number of steps.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; euclid_long_to_short([1, 0, 1, 0, 1, 0, 1])</span>
+<span class="sd">    [3, 7]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">hits</span><span class="p">,</span> <span class="n">steps</span><span class="p">]</span></div>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_optimal_offsets</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the optimal offset values for a set of Euclidean rhythms</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pulses_steps (List[Tuple[int,int]]): A list of tuple, where each tuple</span>
+<span class="sd">        represent the number of pulses and steps of a rhythm.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List[int]: A list of offset values for the rhythms in pulses_steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offsets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">pulses</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">):</span>
+        <span class="n">lcm</span> <span class="o">=</span> <span class="n">pulses</span> <span class="o">*</span> <span class="n">steps</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">pulses</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+        <span class="c1">#offset = (lcm // pulses - 1) * steps % pulses</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">steps</span> <span class="o">-</span> <span class="n">pulses</span> <span class="o">*</span> <span class="p">(</span><span class="n">steps</span> <span class="o">//</span> <span class="n">pulses</span><span class="p">))</span> <span class="o">%</span> <span class="n">steps</span>
+        <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">offsets</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">lcm</span>
+
+<div class="viewcode-block" id="find_optimal_offsets">
+<a class="viewcode-back" href="../../api/rhythm_construction.html#biotuner.rhythm_construction.find_optimal_offsets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_optimal_offsets</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the optimal offset values for a set of Euclidean rhythms that aligns</span>
+<span class="sd">    multiple pulses from different rhythms together.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pulses_steps (List[Tuple[int,int]]): A list of tuples, where each tuple</span>
+<span class="sd">        represent the number of pulses and steps of a rhythm.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List[int]: A list of optimal offset values for the rhythms in pulses_steps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate the least common multiple (LCM) of all the rhythms&#39; steps</span>
+    <span class="n">total_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">steps</span> <span class="k">for</span> <span class="n">pulses</span><span class="p">,</span> <span class="n">steps</span> <span class="ow">in</span> <span class="n">pulses_steps</span><span class="p">]</span>
+    <span class="n">lcm_steps</span> <span class="o">=</span> <span class="n">lcm</span><span class="p">(</span><span class="o">*</span><span class="n">total_steps</span><span class="p">)</span>
+    
+    <span class="c1"># Generate all possible rhythms with offsets</span>
+    <span class="n">rhythms_with_offsets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pulses</span><span class="p">,</span> <span class="n">steps</span> <span class="ow">in</span> <span class="n">pulses_steps</span><span class="p">:</span>
+        <span class="n">rhythm_offsets</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span> <span class="o">%</span> <span class="n">steps</span> <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pulses</span><span class="p">)]</span>
+        <span class="n">rhythms_with_offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rhythm_offsets</span><span class="p">)</span>
+    
+    <span class="c1"># Search for the combination of offsets that maximizes pulse alignment</span>
+    <span class="n">max_alignment</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">optimal_offsets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pulses_steps</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">offsets</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">rhythms_with_offsets</span><span class="p">):</span>
+        <span class="n">alignment</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lcm_steps</span><span class="p">)</span> <span class="k">if</span> <span class="n">offsets</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">alignment</span> <span class="o">&gt;</span> <span class="n">max_alignment</span><span class="p">:</span>
+            <span class="n">max_alignment</span> <span class="o">=</span> <span class="n">alignment</span>
+            <span class="n">optimal_offsets</span> <span class="o">=</span> <span class="n">offsets</span>
+    
+    <span class="k">return</span> <span class="n">optimal_offsets</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

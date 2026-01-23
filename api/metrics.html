@@ -1,0 +1,1385 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Harmonicity Metrics &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/metrics';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scale construction" href="scale_construction.html" />
+    <link rel="prev" title="Peaks Extension" href="peaks_extension.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Harmonicity Metrics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/metrics.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Harmonicity Metrics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_consonance"><code class="docutils literal notranslate"><span class="pre">compute_consonance()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.euler"><code class="docutils literal notranslate"><span class="pre">euler()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tenneyHeight"><code class="docutils literal notranslate"><span class="pre">tenneyHeight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.integral_tenneyHeight"><code class="docutils literal notranslate"><span class="pre">integral_tenneyHeight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.metric_denom"><code class="docutils literal notranslate"><span class="pre">metric_denom()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.dyad_similarity"><code class="docutils literal notranslate"><span class="pre">dyad_similarity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.peaks_to_harmsim"><code class="docutils literal notranslate"><span class="pre">peaks_to_harmsim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_p_q"><code class="docutils literal notranslate"><span class="pre">sum_p_q()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_distinct_intervals"><code class="docutils literal notranslate"><span class="pre">sum_distinct_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.metric_3"><code class="docutils literal notranslate"><span class="pre">metric_3()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_p_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_p_q_for_all_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_q_for_all_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.ratios2harmsim"><code class="docutils literal notranslate"><span class="pre">ratios2harmsim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tuning_cons_matrix"><code class="docutils literal notranslate"><span class="pre">tuning_cons_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tuning_to_metrics"><code class="docutils literal notranslate"><span class="pre">tuning_to_metrics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.timepoint_consonance"><code class="docutils literal notranslate"><span class="pre">timepoint_consonance()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonics"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonic_tension"><code class="docutils literal notranslate"><span class="pre">compute_subharmonic_tension()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonics_2lists"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics_2lists()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.consonant_ratios"><code class="docutils literal notranslate"><span class="pre">consonant_ratios()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.consonance_peaks"><code class="docutils literal notranslate"><span class="pre">consonance_peaks()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_flatness"><code class="docutils literal notranslate"><span class="pre">spectral_flatness()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_entropy"><code class="docutils literal notranslate"><span class="pre">spectral_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_spread"><code class="docutils literal notranslate"><span class="pre">spectral_spread()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.higuchi_fd"><code class="docutils literal notranslate"><span class="pre">higuchi_fd()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="harmonicity-metrics">
+<h1>Harmonicity Metrics<a class="headerlink" href="#harmonicity-metrics" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-biotuner.metrics">
+<dt class="sig sig-object py" id="biotuner.metrics.compute_consonance">
+<span class="sig-name descname"><span class="pre">compute_consonance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#compute_consonance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.compute_consonance" title="Link to this definition">#</a></dt>
+<dd><p>Compute metric of consonance from a single ratio of frequencies in the form (a+b)/(a*b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>float</em>) – The ratio of frequencies.</p></li>
+<li><p><strong>limit</strong> (<em>int, default=1000</em>) – The maximum value of the denominator of the fraction representing the ratio.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cons</strong> (<em>float</em>) – The consonance value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">compute_consonance</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="go">0.8333333333333334</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">compute_consonance</span><span class="p">(</span><span class="mi">16</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="go">0.1736111111111111</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.euler">
+<span class="sig-name descname"><span class="pre">euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numbers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#euler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.euler" title="Link to this definition">#</a></dt>
+<dd><p>Euler’s “gradus suavitatis” (degree of sweetness) function
+Return the “degree of sweetness” of a musical interval or chord expressed
+as a ratio of frequencies a:b:c, according to Euler’s formula
+Greater values indicate more dissonance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*numbers</strong> (<em>List or Array of int</em>) – Frequencies</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>euler</strong> (<em>int</em>) – Euler Gradus Suavitatis.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euler</span><span class="p">(</span><span class="o">*</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">39</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">27</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euler</span><span class="p">(</span><span class="o">*</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">17</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.tenneyHeight">
+<span class="sig-name descname"><span class="pre">tenneyHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#tenneyHeight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.tenneyHeight" title="Link to this definition">#</a></dt>
+<dd><p>Tenney Height is a measure of inharmonicity calculated on
+two frequencies (a/b) reduced in their simplest form.
+It can also be called the log product complexity of a given interval.
+This function computes the Tenney Height pairwise across a list of peaks.
+Higher values represents higher dissonance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List (float)</em>) – frequencies</p></li>
+<li><p><strong>avg</strong> (<em>bool, default=True</em>) – When set to True, all tenney heights are averaged.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tenney</strong> (<em>float</em>) – Tenney Height</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">6.170342327181719</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">27</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">4.371319977187242</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.integral_tenneyHeight">
+<span class="sig-name descname"><span class="pre">integral_tenneyHeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#integral_tenneyHeight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.integral_tenneyHeight" title="Link to this definition">#</a></dt>
+<dd><p>Integral Tenney Height is a measure of inharmonicity calculated on
+a list of frequencies. It considers the prime factorization of the
+numerator and denominator of each interval, reflecting the complexity
+of the interval. Higher values represent higher dissonance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List (float)</em>) – List of frequencies.</p></li>
+<li><p><strong>avg</strong> (<em>bool, default=True</em>) – When set to True, the average of Tenney Heights is returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tenney</strong> (<em>float</em>) – Integral Tenney Height.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">integral_tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">12.28</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">27</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">integral_tenneyHeight</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+<span class="go">8.49</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.metric_denom">
+<span class="sig-name descname"><span class="pre">metric_denom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#metric_denom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.metric_denom" title="Link to this definition">#</a></dt>
+<dd><p>Function that computes the denominator of the normalized ratio.
+Higher value represents higher dissonance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ratio</strong> (<em>float</em>) – frequency ratio</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> (<em>float</em>) – denominator of the normalized ratio</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metric_denom</span><span class="p">(</span><span class="mf">1.50</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metric_denom</span><span class="p">(</span><span class="mf">1.51</span><span class="p">)</span>
+<span class="go">100</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.dyad_similarity">
+<span class="sig-name descname"><span class="pre">dyad_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#dyad_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.dyad_similarity" title="Link to this definition">#</a></dt>
+<dd><p>This function computes the similarity between a dyad of frequencies
+and the natural harmonic series of their greatest common divisor. Higher value represents higher harmonicity.
+Implemented from Gill and Purves (2009)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ratio</strong> (<em>float</em>) – frequency ratio</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z</strong> (<em>float</em>) – dyad similarity</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dyad_similarity</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">66.66666666666666</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dyad_similarity</span><span class="p">(</span><span class="mi">16</span><span class="o">/</span><span class="mi">9</span><span class="p">)</span>
+<span class="go">16.666666666666664</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.peaks_to_harmsim">
+<span class="sig-name descname"><span class="pre">peaks_to_harmsim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#peaks_to_harmsim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.peaks_to_harmsim" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.sum_p_q">
+<span class="sig-name descname"><span class="pre">sum_p_q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#sum_p_q"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.sum_p_q" title="Link to this definition">#</a></dt>
+<dd><p>Calculate a metric for a scale.
+This is an estimate of scale consonance. It is derived
+from summing the numerators and denominators of the
+scale degrees.</p>
+<p>Smaller values are more consonant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – The scale.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with the metric value.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Note that this metric looks at the degrees of the scale, so it is somewhat
+tonic-focused. The similar metric <code class="docutils literal notranslate"><span class="pre">sum_p_q_for_all_intervals()</span></code> is similar,
+but it sums the numerator and denominator values for all distinct intervals within
+the scale.</p>
+<p>While the metric is numerically defined for ratios expressed as irrational or
+transcendental numbers, it is really only meaningful for scales with just
+degrees (ratios expressed as rational numbers).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sum_p_q</span><span class="p">(</span><span class="n">create_pythagorean_scale</span><span class="p">())</span>
+<span class="go">{&#39;sum_p_q&#39;: 3138}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.sum_distinct_intervals">
+<span class="sig-name descname"><span class="pre">sum_distinct_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#sum_distinct_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.sum_distinct_intervals" title="Link to this definition">#</a></dt>
+<dd><p>Calculate a metric for a scale.
+This metric is an estimate of scale consonance. Numerically
+it is the number of distinct intervals within the
+scale (including all ratios and their inversions).
+Smaller values are more consonant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – The scale.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with the metric value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sum_distinct_intervals</span><span class="p">(</span><span class="n">create_pythagorean_scale</span><span class="p">())</span>
+<span class="go">{&#39;sum_distinct_intervals&#39;: 22}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.metric_3">
+<span class="sig-name descname"><span class="pre">metric_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#metric_3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.metric_3" title="Link to this definition">#</a></dt>
+<dd><p>Calculate a metric for a scale</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – The scale.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with the metric value.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Metric 3 is an estimate of scale consonance. Given a
+ratio p/q, it is a heuristic given by the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{align}
+m_3 &amp;= \sum{\frac{1}{\frac{p-q}{q}}} \
+&amp;= \sum{\frac{q}{p-q}}
+\end{align}\]</div>
+<p>Smaller values are more consonant.</p>
+<p>The summation takes place over all of the intervals in the scale. It does not
+form a set of distinct intervals.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.sum_p_q_for_all_intervals">
+<span class="sig-name descname"><span class="pre">sum_p_q_for_all_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#sum_p_q_for_all_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.sum_p_q_for_all_intervals" title="Link to this definition">#</a></dt>
+<dd><p>Calculate a metric for a scale</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – The scale.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with the metric value.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This metric is an estimate of scale consonance. It is formed by examining
+all unique intervals in the scale, and creating a numeric value based upon
+the summation of the numerators and denominators for all those intervals.</p>
+<p>While the metric is numerically defined for ratios expressed as irrational or
+transcendental numbers, it is really only meaningful for scales with just
+degrees (ratios expressed as rational numbers).</p>
+<p>Smaller values are more consonant.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.sum_q_for_all_intervals">
+<span class="sig-name descname"><span class="pre">sum_q_for_all_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#sum_q_for_all_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.sum_q_for_all_intervals" title="Link to this definition">#</a></dt>
+<dd><p>Calculate a metric for a scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale</strong> (<em>List</em>) – The scale.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with the metric value.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This metric is an estimate of scale consonance. It is summation
+of the denominators of the normalized distinct ratios
+of the scale.</p>
+<p>Smaller values are more consonant.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.ratios2harmsim">
+<span class="sig-name descname"><span class="pre">ratios2harmsim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#ratios2harmsim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.ratios2harmsim" title="Link to this definition">#</a></dt>
+<dd><p>Metric of harmonic similarity represents the degree of similarity
+between a tuning and the natural harmonic series.
+This function uses the dyad_similarity function on a set of ratios.
+Implemented from Gill and Purves (2009)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ratios</strong> (<em>List (float)</em>) – list of frequency ratios (forming a tuning)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>similarity</strong> (<em>List (float)</em>) – list of percentage of similarity for each ratios</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">16</span><span class="o">/</span><span class="mi">9</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratios2harmsim</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+<span class="go">array([66.66666667, 50.        , 16.66666667])</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p>Gill, K. Z., &amp; Purves, D. (2009). A biological rationale for musical
+consonance. Proceedings of the National Academy of Sciences, 106(29),
+12174-12179.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.tuning_cons_matrix">
+<span class="sig-name descname"><span class="pre">tuning_cons_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pos_harm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#tuning_cons_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.tuning_cons_matrix" title="Link to this definition">#</a></dt>
+<dd><p>This function gives a tuning metric corresponding to the averaged metric
+for each pairs of ratios</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>tuning</strong> (<em>List (float)</em>) – List of tuning steps (classically between 1 (unison) and 2 (octave))</p></li>
+<li><p><strong>function</strong> (<em>function</em>) – {‘dyad_similarity’, ‘compute_consonance’, ‘metric_denom’}</p></li>
+<li><p><strong>ratio_type</strong> (<em>str, default=’pos_harm’</em>) –</p>
+<dl class="simple">
+<dt>choice:</dt><dd><ul class="simple">
+<li><p>‘pos_harm’ : a/b when a&gt;b</p></li>
+<li><p>‘sub_harm’ : a/b when a&lt;b</p></li>
+<li><p>‘all’: pos_harm + sub_harm</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>metric_values</strong> (<em>List</em>) – list of the size of input corresponding to the averaged harmonicity between a step
+and all other steps.</p></li>
+<li><p><strong>metric_avg</strong> (<em>float</em>) – metric value averaged across all steps</p></li>
+<li><p><strong>full_matrix</strong> (<em>List[List]</em>) – full matrix [n, n] of metric values for each pair of ratios</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.13</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">1.89</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function</span> <span class="o">=</span> <span class="n">dyad_similarity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuning_cons_matrix</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">ratio_type</span><span class="o">=</span><span class="s2">&quot;pos_harm&quot;</span><span class="p">)</span>
+<span class="go">([nan,</span>
+<span class="go">1.8761061946902655,</span>
+<span class="go">14.517994100294985,</span>
+<span class="go">8.079064918934504,</span>
+<span class="go">15.143364606205779,</span>
+<span class="go">10.567105885817467,</span>
+<span class="go">12.66150677394233,</span>
+<span class="go">10.398481038234042],</span>
+<span class="go">10.398481038234042)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.13</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">1.89</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function</span> <span class="o">=</span> <span class="n">compute_consonance</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuning_cons_matrix</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">ratio_type</span><span class="o">=</span><span class="s2">&quot;pos_harm&quot;</span><span class="p">)</span>
+<span class="go">([nan,</span>
+<span class="go">0.018849557522123892,</span>
+<span class="go">0.1618997050147493,</span>
+<span class="go">0.08918417725730254,</span>
+<span class="go">0.17648067513917537,</span>
+<span class="go">0.1223854594889003,</span>
+<span class="go">0.1428532247343695,</span>
+<span class="go">0.11630349967694496],</span>
+<span class="go">0.11630349967694496)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.tuning_to_metrics">
+<span class="sig-name descname"><span class="pre">tuning_to_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdenom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#tuning_to_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.tuning_to_metrics" title="Link to this definition">#</a></dt>
+<dd><p>This function computes the tuning metrics of the PyTuning library
+(<a class="reference external" href="https://pytuning.readthedocs.io/en/0.7.2/metrics.html">https://pytuning.readthedocs.io/en/0.7.2/metrics.html</a>)
+and other tuning metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tuning</strong> (<em>List (float)</em>) – List of ratios corresponding to tuning steps</p></li>
+<li><p><strong>maxdenom</strong> (<em>int (default=1000)</em>) – Maximum denominator of the fraction representing each tuning step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>tuning_metrics</strong> (<em>dictionary</em>) – keys correspond to metrics names</p></li>
+<li><p><strong>tuning_metrics_list</strong> (<em>List (float)</em>) – List of values corresponding to all computed metrics
+(in the same order as dictionary)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.13</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">1.89</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="go">{&#39;sum_p_q&#39;: 1029,</span>
+<span class="go">&#39;sum_distinct_intervals&#39;: 56,</span>
+<span class="go">&#39;metric_3&#39;: 20.6720768749949,</span>
+<span class="go">&#39;sum_p_q_for_all_intervals&#39;: 10794,</span>
+<span class="go">&#39;sum_q_for_all_intervals&#39;: 5244,</span>
+<span class="go">&#39;harm_sim&#39;: 31.14,</span>
+<span class="go">&#39;matrix_harm_sim&#39;: 10.398481038234042,</span>
+<span class="go">&#39;matrix_cons&#39;: 0.11630349967694496,</span>
+<span class="go">&#39;matrix_denom&#39;: 83.64285714285714}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.timepoint_consonance">
+<span class="sig-name descname"><span class="pre">timepoint_consonance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cons'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#timepoint_consonance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.timepoint_consonance" title="Link to this definition">#</a></dt>
+<dd><p>Function that keeps moments of consonance
+from multiple time series of peak frequencies.
+Can be used with the <code class="xref py py-func docutils literal notranslate"><span class="pre">biotuner.biotuner_object.compute_spectromorph()</span></code> function
+to compute timepoint consonance across the time series of spectral centroïd (or other
+spectromorphological metrics) derived from each Intrinsic Mode Function (IMF) using
+Empirical Mode Decomposition. This function can also be used of the instantaneous frequencies
+associated with each IMF.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>data</strong> (<em>List of lists (float)</em>) – Axis 0 represents moments in time
+Axis 1 represents the sets of frequencies</p></li>
+<li><p><strong>method</strong> (<em>str, default=’cons’</em>) –</p>
+<dl class="simple">
+<dt>‘cons’:</dt><dd><p>will compute pairwise consonance between
+frequency peaks in the form of (a+b)/(a*b)</p>
+</dd>
+<dt>‘euler’:</dt><dd><p>will compute Euler’s gradus suavitatis</p>
+</dd>
+<dt>‘harmsim’:</dt><dd><p>will compute harmonic similarity using dyad_similarity function.</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>limit</strong> (<em>float, default=0.2</em>) –</p>
+<p>limit of consonance under which the set of frequencies are not retained</p>
+<blockquote>
+<div><dl>
+<dt>When method = ‘cons’</dt><dd><p>–&gt; See <a class="reference internal" href="#biotuner.metrics.compute_consonance" title="biotuner.metrics.compute_consonance"><code class="xref py py-func docutils literal notranslate"><span class="pre">biotuner.metrics.compute_consonance()</span></code></a> to refer to consonance values to common intervals</p>
+</dd>
+<dt>When method = ‘euler’</dt><dd><p>Major (4:5:6) = 9</p>
+<p>Minor (10:12:15) = 9</p>
+<p>Major 7th (8:10:12:15) = 10</p>
+<p>Minor 7th (10:12:15:18) = 11</p>
+<p>Diminish (20:24:29) = 38</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>min_notes</strong> (<em>int, default=3</em>) – Minimal number of consonant frequencies in the chords.</p>
+<p>Only relevant when method is set to ‘cons’.</p>
+</li>
+<li><p><strong>n_harms</strong> (<em>int, default=5</em>) – Number of harmonics to compute for each frequency.</p>
+<p>Only relevant when method is set to ‘subharm_tension’.</p>
+</li>
+<li><p><strong>delta_lim</strong> (<em>float, default=20</em>) – Maximal distance between subharmonics of different frequencies
+to consider them as common subharmonics.</p>
+<p>Only relevant when method is set to ‘subharm_tension’.</p>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>chords</strong> (<em>List of lists (float)</em>) – Axis 0 represents moments in time
+Axis 1 represents the sets of consonant frequencies</p></li>
+<li><p><strong>positions</strong> (<em>List (int)</em>) – positions on Axis 0</p></li>
+<li><p><strong>tr_harm</strong> (<em>List (float)</em>) – List of harmonicity value for each time point.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;USING RANDOM DATA&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set the number of time series and the number of samples per time series</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_time_series</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define the frequency range</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">min_freq</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">max_freq</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">precision</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Generate the random time series</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rand_integers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">min_freq</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">precision</span><span class="p">,</span> <span class="n">max_freq</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">precision</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_time_series</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time_series</span> <span class="o">=</span> <span class="n">rand_integers</span> <span class="o">/</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">timepoint_consonance</span><span class="p">(</span><span class="n">time_series</span><span class="p">,</span>
+<span class="go">                                 method=&quot;cons&quot;,</span>
+<span class="go">                                 limit=0.2,</span>
+<span class="go">                                 min_notes=3,</span>
+<span class="go">                                 graph=False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc</span>
+<span class="go">[[23.1, 84.7, 74.8, 81.6],</span>
+<span class="go">[30.0, 75.0, 42.0],</span>
+<span class="go">[10.0, 24.0, 32.5],</span>
+<span class="go">[93.6, 83.2, 33.8],</span>
+<span class="go">[67.6, 91.0, 18.2],</span>
+<span class="go">[72.8, 11.7, 49.5, 89.1],</span>
+<span class="go">[95.4, 53.0, 52.0, 64.0],</span>
+<span class="go">[37.0, 44.4, 37.8, 69.3],</span>
+<span class="go">[19.8, 50.4, 32.4],</span>
+<span class="go">[21.5, 43.0, 17.2],</span>
+<span class="go">[15.0, 54.0, 29.0, 92.8],</span>
+<span class="go">[55.9, 30.1, 99.0, 40.5],</span>
+<span class="go">[55.8, 21.7, 99.2],</span>
+<span class="go">[30.5, 22.4, 12.6, 91.5]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;USING THE BIOTUNER OBJECT&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data_examples/EEG_pareidolia/parei_occi_L.npy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Keep a single time series.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize biotuner object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;EMD&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract spectral peaks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bt</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute timepoint consonance using Spectral Centroid on IMFs.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bt</span><span class="o">.</span><span class="n">compute_spectromorph</span><span class="p">(</span>
+<span class="go">        method=&quot;SpectralCentroid&quot;,</span>
+<span class="go">        overlap=1,</span>
+<span class="go">        comp_chords=True,</span>
+<span class="go">        min_notes=4,</span>
+<span class="go">        cons_limit=0.2,</span>
+<span class="go">        cons_chord_method=&quot;cons&quot;,</span>
+<span class="go">        graph=False,</span>
+<span class="go">    )</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bt</span><span class="o">.</span><span class="n">spectro_chords</span>
+<span class="go">[[15.47, 6.63, 31.68, 2.42],</span>
+<span class="go">[5.72, 12.71, 26.64, 2.59],</span>
+<span class="go">[15.31, 6.38, 2.53, 64.77],</span>
+<span class="go">[67.59, 2.7, 33.79, 16.8]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.compute_subharmonics">
+<span class="sig-name descname"><span class="pre">compute_subharmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harmonics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#compute_subharmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.compute_subharmonics" title="Link to this definition">#</a></dt>
+<dd><p>Compute subharmonics of a chord and find the common subharmonics within a given delta limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chord</strong> (<em>list of int</em>) – A list of integers representing the chord.</p></li>
+<li><p><strong>n_harmonics</strong> (<em>int</em>) – The number of harmonics to compute.</p></li>
+<li><p><strong>delta_lim</strong> (<em>float</em>) – The limit of delta between two subharmonics to be considered common.
+This value is in milliseconds (ms).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>subharms</strong> (<em>list of list of float</em>) – A list of lists of subharmonics for each element in the chord.</p></li>
+<li><p><strong>common_subs</strong> (<em>list of list of float</em>) – A list of lists of common subharmonics within the delta limit.</p></li>
+<li><p><strong>delta_t</strong> (<em>list of float</em>) – A list of delta values for the common subharmonics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subharms</span><span class="p">,</span> <span class="n">common_subharms</span><span class="p">,</span> <span class="n">delta_t</span> <span class="o">=</span> <span class="n">compute_subharmonics</span><span class="p">(</span><span class="n">chord</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subharms&#39;</span><span class="p">,</span> <span class="n">subharms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;common_subharms&#39;</span><span class="p">,</span> <span class="n">common_subharms</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;delta_t&#39;</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+<span class="go">subharms [[333.3333333333333, 666.6666666666666, 1000.0, 1333.3333333333333, 1666.6666666666667],</span>
+<span class="go">[200.0, 400.0, 600.0, 800.0, 1000.0],</span>
+<span class="go">[142.85714285714286, 285.7142857142857, 428.57142857142856, 571.4285714285714, 714.2857142857143]]</span>
+<span class="go">common_subharms [[1000.0, 1000.0]]</span>
+<span class="go">delta_t [0.0]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.compute_subharmonic_tension">
+<span class="sig-name descname"><span class="pre">compute_subharmonic_tension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harmonics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#compute_subharmonic_tension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.compute_subharmonic_tension" title="Link to this definition">#</a></dt>
+<dd><p>Computes the subharmonic tension for a set of frequencies,
+based on the common subharmonics of a minimum of 2 or 3 frequencies.
+This metric has been adapted from Chan et al. (2019).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chord</strong> (<em>numpy array, shape (n,)</em>) – Array containing the frequencies to compute subharmonic tension on.</p></li>
+<li><p><strong>n_harmonics</strong> (<em>int</em>) – Number of subharmonics to compute for each frequency.</p></li>
+<li><p><strong>delta_lim</strong> (<em>float</em>) – Maximal distance between subharmonics of different frequencies
+to consider them as common subharmonics.</p></li>
+<li><p><strong>min_notes</strong> (<em>int, {2, 3}, default=2</em>) – Minimal number of notes to consider common subharmonics.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>common_subs</strong> (<em>numpy array, shape (m,)</em>) – Array containing the common subharmonics.</p></li>
+<li><p><strong>delta_t</strong> (<em>numpy array, shape (m,)</em>) – Array containing the subharmonic distances.</p></li>
+<li><p><strong>subharm_tension</strong> (<em>float or str</em>) – The subharmonic tension value, calculated as the average of the product
+of the subharmonic distance and the subharmonic frequency over all
+subharmonic pairs. Returns “NaN” if no valid subharmonic pairs are found.</p></li>
+<li><p><strong>harm_temp</strong> (<em>numpy array, shape (m,)</em>) – Array containing the subharmonic harmonic values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm_tension</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">(</span><span class="n">chord</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subharm_tension</span>
+<span class="go">[0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chord</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">71</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm_tension</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">(</span><span class="n">chord</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subharm_tension</span>
+<span class="go">[0.23539483720429924]</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The subharmonic tension is a measure of the perceived stability of a musical chord.
+The subharmonic tension is calculated as the average of the product of the
+subharmonic distance and the subharmonic frequency over all subharmonic pairs.
+A subharmonic is a frequency that is an integer divisor of another frequency.
+Common subharmonics are defined as subharmonics that are shared by at least
+<cite>min_notes</cite> notes in the chord.</p>
+<p class="rubric">References</p>
+<p>Chan, P. Y., Dong, M., &amp; Li, H. (2019). The science of harmony:A psychophysical basis
+for perceptual tensions and resolutions in music. Research, 2019.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.compute_subharmonics_2lists">
+<span class="sig-name descname"><span class="pre">compute_subharmonics_2lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harmonics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#compute_subharmonics_2lists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.compute_subharmonics_2lists" title="Link to this definition">#</a></dt>
+<dd><p>Compute the subharmonic tension (Chan et al., 2019) for pairs of frequencies
+from two different lists, based on the common subharmonics of each pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list1</strong> (<em>list of floats</em>) – Values of the first set of frequencies to compute subharmonic tension on.</p></li>
+<li><p><strong>list2</strong> (<em>list of floats</em>) – Values of the second set of frequencies to compute subharmonic tension on.</p></li>
+<li><p><strong>n_harmonics</strong> (<em>int</em>) – Number of subharmonics to compute for each frequency.</p></li>
+<li><p><strong>delta_lim</strong> (<em>float</em>) – Maximal distance between subharmonics of different frequencies
+to consider them as common subharmonics.</p></li>
+<li><p><strong>c</strong> (<em>float, default=2.1</em>) – Constant parameter for computing subharmonic tension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>common_subs<span class="classifier">list of lists (floats)</span></dt><dd><p>List of common subharmonics found for each pair of frequencies.</p>
+</dd>
+<dt>delta_t<span class="classifier">list of lists (floats)</span></dt><dd><p>List of the smallest differences between common subharmonics found
+for each pair of frequencies.</p>
+</dd>
+<dt>sub_tension_final<span class="classifier">float</span></dt><dd><p>The overall subharmonic tension value computed by averaging across
+all pairs of frequencies.</p>
+</dd>
+<dt>harm_temp<span class="classifier">list of floats</span></dt><dd><p>List of harmonic tensions for each subharmonic tension computed.</p>
+</dd>
+<dt>pair_melody<span class="classifier">list of floats</span></dt><dd><p>List containing the pair of frequency with the lowest subharmonic tension.
+Could be used in transitional harmony to derive subharmonic melodies.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_harms</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">delta_lim</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">sub_tension</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">pair_melody</span> <span class="o">=</span> <span class="n">compute_subharmonics_2lists</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">,</span> <span class="n">n_harms</span><span class="p">,</span> <span class="n">delta_lim</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subtension</span><span class="p">,</span> <span class="n">pair_melody</span>
+<span class="go">(0.05213398154647142,(5, 20))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.consonant_ratios">
+<span class="sig-name descname"><span class="pre">consonant_ratios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cons'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_rebound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#consonant_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.consonant_ratios" title="Link to this definition">#</a></dt>
+<dd><p>Function that computes integer ratios from peaks with higher consonance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>List (float)</em>) – Data can whether be frequency values or frequency ratios</p></li>
+<li><p><strong>limit</strong> (<em>float</em>) – minimum consonance value to keep associated pairs of peaks</p></li>
+<li><p><strong>sub</strong> (<em>boolean, default=False</em>) – When set to True, include ratios a/b when a &lt; b.</p></li>
+<li><p><strong>input_type</strong> (<em>str, default=’peaks’</em>) – Choose between:
+- ‘peaks’
+- ‘ratios’</p></li>
+<li><p><strong>metric</strong> (<em>str, default=’cons’</em>) – Choose between:
+- ‘cons’
+- ‘harmsim’</p></li>
+<li><p><strong>set_rebound</strong> (<em>bool, default=True</em>) – Defines if the ratios are rebounded between 1 and 2.
+Only valid when input_type = ‘peaks’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cons_ratios</strong> (<em>List (float)</em>) – list of consonant ratios</p></li>
+<li><p><strong>consonance</strong> (<em>List (float)</em>) – list of associated consonance values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.34</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="mf">1.86</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cons_ratios</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">consonant_ratios</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                        <span class="mf">0.2</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                        <span class="n">sub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                        <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;ratios&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cons&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cons_ratios</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="go">(array([1.  , 1.25, 1.5 ]), [2.0, 0.45, 0.8333333333333334])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freqs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">consonant_ratios</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                    <span class="mf">0.2</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                    <span class="n">sub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;ratios&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cons&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="go">(array([1.222, 1.5  , 1.833]),</span>
+<span class="go"> [0.20202020202020202, 0.8333333333333334, 0.25757575757575757])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.consonance_peaks">
+<span class="sig-name descname"><span class="pre">consonance_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_pairs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#consonance_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.consonance_peaks" title="Link to this definition">#</a></dt>
+<dd><p>This function computes consonance (for a given ratio a/b, when a &lt; 2b),
+which is computed with the formula (a+b)/(a*b)) for each pair of peaks.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>peaks</strong> (<em>list of floats</em>) – Peaks represent local maximum in a spectrum.</p></li>
+<li><p><strong>limit</strong> (<em>float</em>) –</p>
+<p>Minimum consonance value to keep associated pairs of peaks.</p>
+<blockquote>
+<div><p>Comparisons with familiar ratios:
+Unison-frequency ratio 1:1 yields a value of 2</p>
+<p>Octave-frequency ratio 2:1 yields a value of 1.5</p>
+<p>Perfect 5th-frequency ratio 3:2 yields a value of 0.833</p>
+<p>Perfect 4th-frequency ratio 4:3 yields a value of 0.583</p>
+<p>Major 6th-frequency ratio 5:3 yields a value of 0.533</p>
+<p>Major 3rd-frequency ratio 5:4 yields a value of 0.45</p>
+<p>Minor 3rd-frequency ratio 5:6 yields a value of 0.366</p>
+<p>Minor 6th-frequency ratio 5:8 yields a value of 0.325</p>
+<p>Major 2nd-frequency ratio 8:9 yields a value of 0.236</p>
+<p>Major 7th-frequency ratio 8:15 yields a value of 0.192</p>
+<p>Minor 7th-frequency ratio 9:16 yields a value of 0.174</p>
+<p>Minor 2nd-frequency ratio 15:16 yields a value of 0.129</p>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>limit_pairs<span class="classifier">bool, default=True</span></dt><dd><p>Whether to compute consonance only for ratios where a &gt; b.
+If False, also use ratios where a &lt; b by dividing b iteratively.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>consonance</strong> (<em>list of floats</em>) – Consonance scores for each pair of consonant peaks.</p></li>
+<li><p><strong>cons_pairs</strong> (<em>list of lists of floats</em>) – List of lists of each pair of consonant peaks.</p></li>
+<li><p><strong>cons_peaks</strong> (<em>list of floats</em>) – List of consonant peaks (no duplicates).</p></li>
+<li><p><strong>cons_tot</strong> (<em>float</em>) – Averaged consonance value for each pair of peaks.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">21</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">consonance</span><span class="p">,</span> <span class="n">cons_pairs</span><span class="p">,</span> <span class="n">cons_peaks</span><span class="p">,</span> <span class="n">cons_tot</span> <span class="o">=</span> <span class="n">consonance_peaks</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">limit_pairs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">consonance</span><span class="p">,</span> <span class="n">cons_pairs</span><span class="p">,</span> <span class="n">cons_peaks</span><span class="p">,</span> <span class="n">cons_tot</span>
+<span class="go">([1.3333333333333333, 1.1428571428571428],</span>
+<span class="go"> [[3, 9], [3, 21]],</span>
+<span class="go"> [9, 3, 21],</span>
+<span class="go"> 0.31024531024531027)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.spectral_flatness">
+<span class="sig-name descname"><span class="pre">spectral_flatness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harmonicity_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#spectral_flatness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.spectral_flatness" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the spectral flatness of a power spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>harmonicity_values</strong> (<em>ndarray</em>) – Harmonicity values of the signal.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Spectral flatness of the signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.spectral_entropy">
+<span class="sig-name descname"><span class="pre">spectral_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harmonicity_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#spectral_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.spectral_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the spectral entropy of a power spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>harmonicity_values</strong> (<em>ndarray</em>) – Harmonicity values of the signal.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Spectral entropy of the signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.spectral_spread">
+<span class="sig-name descname"><span class="pre">spectral_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#spectral_spread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.spectral_spread" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the spectral spread of a power spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>ndarray</em>) – Frequencies for which the PSD is computed.</p></li>
+<li><p><strong>psd</strong> (<em>ndarray</em>) – Power spectral density of the signal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Spectral spread of the signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.metrics.higuchi_fd">
+<span class="sig-name descname"><span class="pre">higuchi_fd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/metrics.html#higuchi_fd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.metrics.higuchi_fd" title="Link to this definition">#</a></dt>
+<dd><p>Compute Higuchi Fractal Dimension of a power spectrum.</p>
+<p>HFD is a technique used to determine the self-similarity
+of a signal. It has been widely used in analyzing time-series data, especially
+for detecting chaotic behavior in time-series data. Here we apply it the characterize
+the complexity of a power spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – The power spectrum data.</p></li>
+<li><p><strong>kmax</strong> (<em>int</em>) – The maximum delay; should be less than len(data)/3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The Higuchi Fractal Dimension of the time series data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="peaks_extension.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Peaks Extension</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="scale_construction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Scale construction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_consonance"><code class="docutils literal notranslate"><span class="pre">compute_consonance()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.euler"><code class="docutils literal notranslate"><span class="pre">euler()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tenneyHeight"><code class="docutils literal notranslate"><span class="pre">tenneyHeight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.integral_tenneyHeight"><code class="docutils literal notranslate"><span class="pre">integral_tenneyHeight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.metric_denom"><code class="docutils literal notranslate"><span class="pre">metric_denom()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.dyad_similarity"><code class="docutils literal notranslate"><span class="pre">dyad_similarity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.peaks_to_harmsim"><code class="docutils literal notranslate"><span class="pre">peaks_to_harmsim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_p_q"><code class="docutils literal notranslate"><span class="pre">sum_p_q()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_distinct_intervals"><code class="docutils literal notranslate"><span class="pre">sum_distinct_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.metric_3"><code class="docutils literal notranslate"><span class="pre">metric_3()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_p_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_p_q_for_all_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.sum_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_q_for_all_intervals()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.ratios2harmsim"><code class="docutils literal notranslate"><span class="pre">ratios2harmsim()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tuning_cons_matrix"><code class="docutils literal notranslate"><span class="pre">tuning_cons_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.tuning_to_metrics"><code class="docutils literal notranslate"><span class="pre">tuning_to_metrics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.timepoint_consonance"><code class="docutils literal notranslate"><span class="pre">timepoint_consonance()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonics"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonic_tension"><code class="docutils literal notranslate"><span class="pre">compute_subharmonic_tension()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.compute_subharmonics_2lists"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics_2lists()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.consonant_ratios"><code class="docutils literal notranslate"><span class="pre">consonant_ratios()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.consonance_peaks"><code class="docutils literal notranslate"><span class="pre">consonance_peaks()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_flatness"><code class="docutils literal notranslate"><span class="pre">spectral_flatness()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_entropy"><code class="docutils literal notranslate"><span class="pre">spectral_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.spectral_spread"><code class="docutils literal notranslate"><span class="pre">spectral_spread()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.metrics.higuchi_fd"><code class="docutils literal notranslate"><span class="pre">higuchi_fd()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

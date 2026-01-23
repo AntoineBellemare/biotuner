@@ -1,0 +1,810 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>From Spectral Peaks to Harmonic Spectrum Analysis &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/harmonic_spectrum/harmonic_spectrum';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Biotuner Paper Design and Implementation Examples" href="../toolbox_paper_notebook/toolbox_paper_notebook.html" />
+    <link rel="prev" title="Harmonicity metrics" href="../harmonicity_metrics/harmonicity_metrics.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/harmonic_spectrum/harmonic_spectrum.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>From Spectral Peaks to Harmonic Spectrum Analysis</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relation-between-harmonicity-and-phase-coupling">Relation between harmonicity and phase-coupling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlation-between-averaged-harmonicity-and-phase-coupling-spectrum-for-random-and-brain-signals">Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-trial-correlations-for-random-and-brain-signals">Within-trial correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-frequency-correlations-for-random-and-brain-signals">Within-frequency correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brain-signal-vs-random-signal">Brain signal VS Random signal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-vs-non-harmonic-brain-simulation">Harmonic vs Non-Harmonic Brain simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#we-will-now-compare-harmonicity-and-phase-coupling-without-normalizing-the-values-by-the-total-spectrum-power">We will now compare harmonicity and phase-coupling without normalizing the values by the total spectrum power</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Within-trial correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Within-frequency correlations for random and brain signals</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="from-spectral-peaks-to-harmonic-spectrum-analysis">
+<h1>From Spectral Peaks to Harmonic Spectrum Analysis<a class="headerlink" href="#from-spectral-peaks-to-harmonic-spectrum-analysis" title="Link to this heading">#</a></h1>
+<p>In this notebook, we will explore the concept of harmonicity and how it can be computed across the whole spectrum to provide indicators of harmonic structures in biological time series. Biological signals, such as brainwaves, often exhibit harmonic relationships. Analyzing the harmonic spectrum of a given biological signal can provide valuable insights into the underlying mechanisms and the prominent frequencies that contribute to its overall structure.</p>
+<p>The significance of these multiples, or “harmonics,” is that they have a phase relationship with the fundamental frequency which can provide meaningful insights in fields such as music, sound analysis, physics, and neuroscience.</p>
+<p><strong>Harmonic Spectrum</strong>: This is a computation that examines the harmonic relationships between the frequencies in the signal. For each frequency bin, the computation compares its frequency to every other frequency in the signal to determine the harmonic relationship, which is essentially the ratio of the two frequencies. These ratios are compared to small-integer frequency ratios that characterize musical intervals (e.g., 1:2, 3:4, etc.). The harmonic spectrum is calculated as a weighted sum of these harmonic relationships, where the weights are given by the power of the corresponding frequencies in the spectrum. This creates a single value for each frequency that reflects its harmonic relationship with all other frequencies.</p>
+<p><strong>Phase-Coupling Spectrum</strong>: This is an analysis of the relationships between the phases of different frequency components in the signal. For each frequency bin, the phase differences with all other frequencies are calculated. Each of these phase differences is transformed into a complex number using Euler’s formula, with the phase difference as the angle. The mean of these complex numbers is taken, resulting in a complex value that encapsulates the degree and consistency of phase coupling for each frequency bin. The magnitude of this complex value is then taken, resulting in a phase coupling value for each frequency bin that ranges from 0 to 1, indicating the strength of phase coupling with all other frequencies.</p>
+<p><strong>Resonance Spectrum</strong>: The resonance spectrum combines the harmonic and phase coupling measures. Specifically, the harmonic spectrum values and phase coupling values, which are each normalized to lie between 0 and 1, are multiplied together to give the resonance spectrum. This calculation results in a single value for each frequency bin that represents both its harmonic relationship with and phase coupling to all other frequencies.</p>
+<p>The harmonic, phase-coupling, and resonance spectrum provide different perspectives on the spectral properties of a signal, giving insight into harmonic relationships, phase relationships, and a measure that combines the two, respectively.</p>
+<p>Additional measures provide further characterization of the spectra, including spectral flatness (a measure of the noisiness or tonality of a spectrum), spectral entropy (a quantification of the uncertainty or randomness in the spectrum), spectral spread (a measure of the spread of the spectral distribution), and Higuchi Fractal Dimension (a measure of the complexity of the time series representing each spectrum).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;../data/EEG_example.npy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_global_harmonicity</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">harm_spectrum_df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_global_harmonicity</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                             <span class="n">noverlap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power_law_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                             <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="n">delta_lim</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">smoothness_harm</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+                                             <span class="n">n_harms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">phase_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\Antoine\anaconda3\envs\biotuner\Lib\site-packages\scipy\signal\_spectral_py.py:600: UserWarning: nperseg = 6666 is greater than input length  = 4000, using nperseg = 4000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+c:\Users\Antoine\anaconda3\envs\biotuner\Lib\site-packages\scipy\signal\_spectral_py.py:1240: UserWarning: nperseg = 6666 is greater than input length  = 4000, using nperseg = 4000
+  freqs, time, Zxx = _spectral_helper(x, x, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<img alt="../../_images/8f24767f21153747dcbf97f289ab7934078726d4a89a92ed538b88179dd49e24.png" src="../../_images/8f24767f21153747dcbf97f289ab7934078726d4a89a92ed538b88179dd49e24.png" />
+</div>
+</div>
+<section id="relation-between-harmonicity-and-phase-coupling">
+<h2>Relation between harmonicity and phase-coupling<a class="headerlink" href="#relation-between-harmonicity-and-phase-coupling" title="Link to this heading">#</a></h2>
+<p>We will now look more systematically at the relation between harmonicity and phase-coupling spectrum.</p>
+<p>First, let’s create a function to call for each list of signals we will process. This will allow to compare harmonic spectrum properties
+for different type of signals.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_spectrum_parallel</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">signal_list</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power_law_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                     <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="n">delta_lim</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">smoothness_harm</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+                     <span class="n">n_harms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">savename</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">phase_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    
+    <span class="n">spectrum</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_global_harmonicity</span><span class="p">(</span><span class="n">signal_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">precision</span><span class="p">,</span> <span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> 
+                                          <span class="n">noverlap</span><span class="o">=</span><span class="n">noverlap</span><span class="p">,</span> <span class="n">power_law_remove</span><span class="o">=</span><span class="n">power_law_remove</span><span class="p">,</span> 
+                                          <span class="n">n_peaks</span><span class="o">=</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">plot</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="n">smoothness</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> 
+                                          <span class="n">delta_lim</span><span class="o">=</span><span class="n">delta_lim</span><span class="p">,</span> <span class="n">smoothness_harm</span><span class="o">=</span><span class="n">smoothness_harm</span><span class="p">,</span> <span class="n">n_harms</span><span class="o">=</span><span class="n">n_harms</span><span class="p">,</span> 
+                                          <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">savename</span><span class="o">=</span><span class="n">savename</span><span class="p">,</span> <span class="n">phase_mode</span><span class="o">=</span><span class="n">phase_mode</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">)</span>
+    <span class="n">spectrum</span><span class="p">[</span><span class="s1">&#39;trial&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="n">spectrum</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">signal_list</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    
+    <span class="n">df_list</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+        <span class="n">delayed</span><span class="p">(</span><span class="n">compute_harmonic_spectrum_parallel</span><span class="p">)(</span><span class="n">i</span><span class="p">,</span> <span class="n">signal_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal_list</span><span class="p">)),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Computing harmonic spectrum&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we compute the spectrum for 100 trials in both brain signal and randomly generated signals</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate 100 random signals of 4000 datapoints</span>
+<span class="n">data_rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4000</span><span class="p">)</span>
+
+<span class="c1"># take 100 epochs of the EEG example data</span>
+<span class="n">brain_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="n">df_brain</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_data</span><span class="p">)</span>
+<span class="n">df_random</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">data_rnd</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 4999.17it/s]
+Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 10087.31it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Additionally to real brain signal and purely random signals, we will generate signals in which we control for the level of harmonicity between oscillations.
+To do so, we use the neurodsp toolbox to simulate brain signals with chosen oscillations and aperiodic component.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_signal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_combined</span>
+
+<span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">freqs_harm</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+<span class="n">freqs_noharm</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">5.1</span><span class="p">,</span> <span class="mf">13.1</span><span class="p">,</span> <span class="mf">17.7</span><span class="p">,</span> <span class="mf">25.6</span><span class="p">,</span> <span class="mf">29.9</span><span class="p">]</span>
+
+<span class="c1"># Set up simulation parameters for neurodsp</span>
+<span class="n">n_seconds</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Set n_seconds to 10</span>
+<span class="n">components_harm</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;sim_powerlaw&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;exponent&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">},</span> 
+    <span class="s1">&#39;sim_oscillation&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="n">freq</span><span class="p">}</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freqs_harm</span><span class="p">]</span>  <span class="c1"># list of dictionaries</span>
+<span class="p">}</span>
+<span class="n">components_noharm</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;sim_powerlaw&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;exponent&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">},</span> 
+    <span class="s1">&#39;sim_oscillation&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="n">freq</span><span class="p">}</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freqs_noharm</span><span class="p">]</span>  <span class="c1"># list of dictionaries</span>
+<span class="p">}</span>
+
+<span class="c1"># Each component (aperiodic &amp; oscillatory) needs a variance</span>
+<span class="n">component_variances</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs_noharm</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>  <span class="c1"># +1 for the &#39;sim_powerlaw&#39; component</span>
+
+<span class="c1"># Simulate the signals 100 times</span>
+<span class="n">brain_signal_harm</span> <span class="o">=</span> <span class="p">[</span><span class="n">sim_combined</span><span class="p">(</span><span class="n">n_seconds</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">components_harm</span><span class="p">,</span> <span class="n">component_variances</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">brain_signal_noharm</span> <span class="o">=</span> <span class="p">[</span><span class="n">sim_combined</span><span class="p">(</span><span class="n">n_seconds</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">components_noharm</span><span class="p">,</span> <span class="n">component_variances</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute harmonic spectrums</span>
+<span class="n">df_brain_sim_harm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_signal_harm</span><span class="p">)</span>
+<span class="n">df_brain_sim_noharm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_signal_noharm</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 3335.96it/s]
+Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 9991.20it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<section id="correlation-between-averaged-harmonicity-and-phase-coupling-spectrum-for-random-and-brain-signals">
+<h3>Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals<a class="headerlink" href="#correlation-between-averaged-harmonicity-and-phase-coupling-spectrum-for-random-and-brain-signals" title="Link to this heading">#</a></h3>
+<p>First, we will look at the relation between the averaged harmonicity and phase-coupling across the whole spectrum for the 100 trials. Each trial corresponds to a datapoint.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">harmonic_spectrum_plot_avg_corr</span>
+<span class="n">harmonic_spectrum_plot_avg_corr</span><span class="p">(</span><span class="n">df_brain</span><span class="p">,</span> <span class="n">df_random</span><span class="p">)</span>
+<span class="n">harmonic_spectrum_plot_avg_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Brain Signals - correlation:  -0.9473058367923763 p-value:  3.164448439918354e-05
+Random Signals - correlation:  -0.9683530570408556 p-value:  4.223921666247223e-06
+</pre></div>
+</div>
+<img alt="../../_images/789fdc36ab0fead545a0e975f42a33173264e8987ae2f31683906cda5419390f.png" src="../../_images/789fdc36ab0fead545a0e975f42a33173264e8987ae2f31683906cda5419390f.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Brain Simulation - Harmonic - correlation:  -0.9628445090331682 p-value:  7.972112131283355e-06
+Brain Simulation - Non Harmonic - correlation:  -0.984312093471142 p-value:  2.600390853574861e-07
+</pre></div>
+</div>
+<img alt="../../_images/1786d36aca8a6ed700e7ae02438395f6bfc899257380981dc7b7d7e6194c47ad.png" src="../../_images/1786d36aca8a6ed700e7ae02438395f6bfc899257380981dc7b7d7e6194c47ad.png" />
+</div>
+</div>
+<p><em>This negative correlation is pretty intense!</em></p>
+<p>I suspect it might be due to the operation of normalizing the <em>harmonicity</em> and <em>phase-coupling</em> values by the <em>total power</em> (2*total_power).</p>
+<p><strong>It is important to know</strong> that the PSD values used for deriving the total power have been normalized between 0 and 1, preventing drastic effects of power differences between signals.</p>
+<p><em>However</em>, we still see this <strong>strong negative correlation</strong>.</p>
+<p>It might be driven by the <em>variability</em> in total power across signals.</p>
+<p>To better investigate, we will look at the correlations <em><strong>within trial</strong></em> (correlating the values of the <em>harmonicity</em> and <em>phase-coupling spectrum</em> of all frequencies for each trial), and <em><strong>within frequency</strong></em> (correlating the harmonicity and phase-coupling values of all the trials for each frequency).</p>
+</section>
+<section id="within-trial-correlations-for-random-and-brain-signals">
+<h3>Within-trial correlations for random and brain signals<a class="headerlink" href="#within-trial-correlations-for-random-and-brain-signals" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">harmonic_spectrum_plot_trial_corr</span>
+
+<span class="n">harmonic_spectrum_plot_trial_corr</span><span class="p">(</span><span class="n">df_brain</span><span class="p">,</span> <span class="n">df_random</span><span class="p">)</span>
+<span class="n">harmonic_spectrum_plot_trial_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/5a06ffa148629f076f6be6581d52bfa7ca7859bab33f6c91ae89e7d83b4de19b.png" src="../../_images/5a06ffa148629f076f6be6581d52bfa7ca7859bab33f6c91ae89e7d83b4de19b.png" />
+<img alt="../../_images/a2704720fbdf747418cc72876b37ea1a7019e30657418b84e0dad5723326f1cf.png" src="../../_images/a2704720fbdf747418cc72876b37ea1a7019e30657418b84e0dad5723326f1cf.png" />
+</div>
+</div>
+</section>
+<section id="within-frequency-correlations-for-random-and-brain-signals">
+<h3>Within-frequency correlations for random and brain signals<a class="headerlink" href="#within-frequency-correlations-for-random-and-brain-signals" title="Link to this heading">#</a></h3>
+<p>Next, we compute the correlation between harmonicity and phase-coupling for each frequency bin across the 100 trials.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">harmonic_spectrum_plot_freq_corr</span>
+<span class="n">harmonic_spectrum_plot_freq_corr</span><span class="p">(</span><span class="n">df_brain</span><span class="p">,</span> <span class="n">df_random</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Signals&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Random Signals&#39;</span><span class="p">,</span>
+                                 <span class="n">mean_phase_coupling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
+<span class="n">harmonic_spectrum_plot_freq_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">,</span>
+                                 <span class="n">xlim</span><span class="o">=</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span> <span class="n">mean_phase_coupling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/7b15600cc687213a2ef950a8c1bad489abf3263437d377c4dbf5417ad647ce50.png" src="../../_images/7b15600cc687213a2ef950a8c1bad489abf3263437d377c4dbf5417ad647ce50.png" />
+<img alt="../../_images/2cb6b572eebb114659415b6444eaf239c682cdc39b1b7a77cec691a89ec403ea.png" src="../../_images/2cb6b572eebb114659415b6444eaf239c682cdc39b1b7a77cec691a89ec403ea.png" />
+</div>
+</div>
+</section>
+<section id="brain-signal-vs-random-signal">
+<h3>Brain signal VS Random signal<a class="headerlink" href="#brain-signal-vs-random-signal" title="Link to this heading">#</a></h3>
+<p>In general, the negative correlations across frequencies are much stronger in brain signals than in random signals, suggesting a stronger relationship between harmonicity and phase coupling in brain signals. Moreover, we see that in brain signals, higher harmonicity of a frequency tends to be associated with weaker correlations (specifically salient around 9Hz) while for random signals, we see an opposite trends (lower harmonicity tends to be associated with weaker correlations). Finally, we can observe a systematic decrease of harmonicity with increased in frequency specifically for random signals, while brain signals exhibit clear bumps of harmonicity in low-mid frequencies (around the theta/alpha bands).</p>
+<p>These results suggest that the relationship between these two measures in brain signals is different than in random signals.</p>
+</section>
+<section id="harmonic-vs-non-harmonic-brain-simulation">
+<h3>Harmonic vs Non-Harmonic Brain simulation<a class="headerlink" href="#harmonic-vs-non-harmonic-brain-simulation" title="Link to this heading">#</a></h3>
+</section>
+<section id="we-will-now-compare-harmonicity-and-phase-coupling-without-normalizing-the-values-by-the-total-spectrum-power">
+<h3>We will now compare harmonicity and phase-coupling without normalizing the values by the total spectrum power<a class="headerlink" href="#we-will-now-compare-harmonicity-and-phase-coupling-without-normalizing-the-values-by-the-total-spectrum-power" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_brain_no_norm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_data</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_random_no_norm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">data_rnd</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_brain_sim_harm_no_norm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_signal_harm</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_brain_sim_noharm_no_norm</span> <span class="o">=</span> <span class="n">compute_harmonic_spectrum</span><span class="p">(</span><span class="n">brain_signal_noharm</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 9986.44it/s]
+Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 10000.72it/s]
+Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 4999.77it/s]
+Computing harmonic spectrum: 100%|██████████| 10/10 [00:00&lt;00:00, 10353.75it/s]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h3>Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">harmonic_spectrum_plot_avg_corr</span><span class="p">(</span><span class="n">df_brain_no_norm</span><span class="p">,</span> <span class="n">df_random_no_norm</span><span class="p">)</span>
+<span class="n">harmonic_spectrum_plot_avg_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm_no_norm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm_no_norm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Brain Signals - correlation:  -0.3926393021034822 p-value:  0.2617156390079268
+Random Signals - correlation:  0.07115714391427305 p-value:  0.8451294965939938
+</pre></div>
+</div>
+<img alt="../../_images/dc87bd0531107e2b0507b34db1a7022510baa40bb0f52d00dcf628fe79724ed6.png" src="../../_images/dc87bd0531107e2b0507b34db1a7022510baa40bb0f52d00dcf628fe79724ed6.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Brain Simulation - Harmonic - correlation:  -0.5820481942133179 p-value:  0.07750835028850563
+Brain Simulation - Non Harmonic - correlation:  -0.02460716458915993 p-value:  0.9462044092553757
+</pre></div>
+</div>
+<img alt="../../_images/dcaee34931914093f31e754c4a353fc9f845b0d20c4fde5032815b505cf04e13.png" src="../../_images/dcaee34931914093f31e754c4a353fc9f845b0d20c4fde5032815b505cf04e13.png" />
+</div>
+</div>
+<p>This clearly demonstrates that the negative correlation of the averaged harmonicity and phase-coupling was caused by the normalization of these values by the total power of the spectrum.</p>
+</section>
+<section id="id2">
+<h3>Within-trial correlations for random and brain signals<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">harmonic_spectrum_plot_trial_corr</span><span class="p">(</span><span class="n">df_brain_no_norm</span><span class="p">,</span> <span class="n">df_random_no_norm</span><span class="p">)</span>
+<span class="n">harmonic_spectrum_plot_trial_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm_no_norm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm_no_norm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">)</span>
+<span class="n">harmonic_spectrum_plot_trial_corr</span><span class="p">(</span><span class="n">df_brain_no_norm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm_no_norm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Real Brain Data&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Simulated Brain Data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/5a06ffa148629f076f6be6581d52bfa7ca7859bab33f6c91ae89e7d83b4de19b.png" src="../../_images/5a06ffa148629f076f6be6581d52bfa7ca7859bab33f6c91ae89e7d83b4de19b.png" />
+<img alt="../../_images/a2704720fbdf747418cc72876b37ea1a7019e30657418b84e0dad5723326f1cf.png" src="../../_images/a2704720fbdf747418cc72876b37ea1a7019e30657418b84e0dad5723326f1cf.png" />
+<img alt="../../_images/eeae7a94f0bef01d8cc660079b10caa7c5ce43a0a82e1735b118544c54c65997.png" src="../../_images/eeae7a94f0bef01d8cc660079b10caa7c5ce43a0a82e1735b118544c54c65997.png" />
+</div>
+</div>
+<p>In replicating the effects similar to those observed with normalization, we have also discovered that genuine brain signals typically display more pronounced negative correlations in contrast to their simulated counterparts. This trend is not simply attributable to increased randomness in the signal as purely random data exhibit positive correlations between within-trial harmonicity and phase-coupling. Consequently, the heightened negative correlation observed between harmonicity and phase-coupling may be shaped by factors beyond the aperiodic component and oscillators, which are the principal constituents in the simulated brain signal. This suggests that there could be more intricate dynamics at play in the real brain signals, warranting further exploration.</p>
+</section>
+<section id="id3">
+<h3>Within-frequency correlations for random and brain signals<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">harmonic_spectrum_plot_freq_corr</span><span class="p">(</span><span class="n">df_brain_no_norm</span><span class="p">,</span> <span class="n">df_random_no_norm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Signals&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Random Signals&#39;</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                                 <span class="n">mean_phase_coupling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
+<span class="n">harmonic_spectrum_plot_freq_corr</span><span class="p">(</span><span class="n">df_brain_sim_harm_no_norm</span><span class="p">,</span> <span class="n">df_brain_sim_noharm_no_norm</span><span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Harmonic&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;Brain Simulation - Non Harmonic&#39;</span><span class="p">,</span>
+                                 <span class="n">mean_phase_coupling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/14b2740ea43f7e9a73d830762acfaa9a67b84d181003bad3b0ee8506198cd6a0.png" src="../../_images/14b2740ea43f7e9a73d830762acfaa9a67b84d181003bad3b0ee8506198cd6a0.png" />
+<img alt="../../_images/35662d44918b06ca74d04ec16d1f95fae7f46cbb86dd8fb0a5391820f653f677.png" src="../../_images/35662d44918b06ca74d04ec16d1f95fae7f46cbb86dd8fb0a5391820f653f677.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../harmonicity_metrics/harmonicity_metrics.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonicity metrics</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../toolbox_paper_notebook/toolbox_paper_notebook.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Biotuner Paper Design and Implementation Examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relation-between-harmonicity-and-phase-coupling">Relation between harmonicity and phase-coupling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlation-between-averaged-harmonicity-and-phase-coupling-spectrum-for-random-and-brain-signals">Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-trial-correlations-for-random-and-brain-signals">Within-trial correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-frequency-correlations-for-random-and-brain-signals">Within-frequency correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brain-signal-vs-random-signal">Brain signal VS Random signal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-vs-non-harmonic-brain-simulation">Harmonic vs Non-Harmonic Brain simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#we-will-now-compare-harmonicity-and-phase-coupling-without-normalizing-the-values-by-the-total-spectrum-power">We will now compare harmonicity and phase-coupling without normalizing the values by the total spectrum power</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Correlation between averaged harmonicity and phase-coupling spectrum for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Within-trial correlations for random and brain signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Within-frequency correlations for random and brain signals</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,678 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/index';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Biotuner object" href="biotuner_object.html" />
+    <link rel="prev" title="Phase-Amplitude Coupling" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>API Reference</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-objects">Core Objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-processing-functions">Signal Processing Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#musical-analysis-functions">Musical Analysis Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extended-analysis-objects">Extended Analysis Objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities">Utilities</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<p>Complete API documentation for harmonic analysis of biosignals.</p>
+<section id="core-objects">
+<h2>Core Objects<a class="headerlink" href="#core-objects" title="Link to this heading">#</a></h2>
+<p>Main classes for single and batch time series analysis.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_object.html#biotuner.biotuner_object.compute_biotuner"><code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_object.html#biotuner.biotuner_object.fit_biotuner"><code class="docutils literal notranslate"><span class="pre">fit_biotuner()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biotuner_group.html">BiotunerGroup (BETA)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_group.html#biotuner.biotuner_group.BiotunerGroup"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_group.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_group.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_group.html#main-methods">Main Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biotuner_group.html#see-also">See Also</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="signal-processing-functions">
+<h2>Signal Processing Functions<a class="headerlink" href="#signal-processing-functions" title="Link to this heading">#</a></h2>
+<p>Methods for spectral peak detection and extension (neuroscience/signal processing).</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.EMD_eeg"><code class="docutils literal notranslate"><span class="pre">EMD_eeg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.SSA_EEG"><code class="docutils literal notranslate"><span class="pre">SSA_EEG()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.extract_welch_peaks"><code class="docutils literal notranslate"><span class="pre">extract_welch_peaks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.compute_FOOOF"><code class="docutils literal notranslate"><span class="pre">compute_FOOOF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.HilbertHuang1D"><code class="docutils literal notranslate"><span class="pre">HilbertHuang1D()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.cepstrum"><code class="docutils literal notranslate"><span class="pre">cepstrum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.cepstral_peaks"><code class="docutils literal notranslate"><span class="pre">cepstral_peaks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.pac_frequencies"><code class="docutils literal notranslate"><span class="pre">pac_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.polycoherence"><code class="docutils literal notranslate"><span class="pre">polycoherence()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.polyspectrum_frequencies"><code class="docutils literal notranslate"><span class="pre">polyspectrum_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.harmonic_recurrence"><code class="docutils literal notranslate"><span class="pre">harmonic_recurrence()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.endogenous_intermodulations"><code class="docutils literal notranslate"><span class="pre">endogenous_intermodulations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.compute_sidebands"><code class="docutils literal notranslate"><span class="pre">compute_sidebands()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.UnivariateTransformerMixin"><code class="docutils literal notranslate"><span class="pre">UnivariateTransformerMixin</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis"><code class="docutils literal notranslate"><span class="pre">SingularSpectrumAnalysis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_mult"><code class="docutils literal notranslate"><span class="pre">EEG_harmonics_mult()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_div"><code class="docutils literal notranslate"><span class="pre">EEG_harmonics_div()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extension.html#biotuner.peaks_extension.harmonic_fit"><code class="docutils literal notranslate"><span class="pre">harmonic_fit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="peaks_extension.html#biotuner.peaks_extension.multi_consonance"><code class="docutils literal notranslate"><span class="pre">multi_consonance()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="musical-analysis-functions">
+<h2>Musical Analysis Functions<a class="headerlink" href="#musical-analysis-functions" title="Link to this heading">#</a></h2>
+<p>Music theory and harmonic metrics computation.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.compute_consonance"><code class="docutils literal notranslate"><span class="pre">compute_consonance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.euler"><code class="docutils literal notranslate"><span class="pre">euler()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.tenneyHeight"><code class="docutils literal notranslate"><span class="pre">tenneyHeight()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.integral_tenneyHeight"><code class="docutils literal notranslate"><span class="pre">integral_tenneyHeight()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.metric_denom"><code class="docutils literal notranslate"><span class="pre">metric_denom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.dyad_similarity"><code class="docutils literal notranslate"><span class="pre">dyad_similarity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.peaks_to_harmsim"><code class="docutils literal notranslate"><span class="pre">peaks_to_harmsim()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.sum_p_q"><code class="docutils literal notranslate"><span class="pre">sum_p_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.sum_distinct_intervals"><code class="docutils literal notranslate"><span class="pre">sum_distinct_intervals()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.metric_3"><code class="docutils literal notranslate"><span class="pre">metric_3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.sum_p_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_p_q_for_all_intervals()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.sum_q_for_all_intervals"><code class="docutils literal notranslate"><span class="pre">sum_q_for_all_intervals()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.ratios2harmsim"><code class="docutils literal notranslate"><span class="pre">ratios2harmsim()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.tuning_cons_matrix"><code class="docutils literal notranslate"><span class="pre">tuning_cons_matrix()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.tuning_to_metrics"><code class="docutils literal notranslate"><span class="pre">tuning_to_metrics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.timepoint_consonance"><code class="docutils literal notranslate"><span class="pre">timepoint_consonance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.compute_subharmonics"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.compute_subharmonic_tension"><code class="docutils literal notranslate"><span class="pre">compute_subharmonic_tension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.compute_subharmonics_2lists"><code class="docutils literal notranslate"><span class="pre">compute_subharmonics_2lists()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.consonant_ratios"><code class="docutils literal notranslate"><span class="pre">consonant_ratios()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.consonance_peaks"><code class="docutils literal notranslate"><span class="pre">consonance_peaks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.spectral_flatness"><code class="docutils literal notranslate"><span class="pre">spectral_flatness()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.spectral_entropy"><code class="docutils literal notranslate"><span class="pre">spectral_entropy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.spectral_spread"><code class="docutils literal notranslate"><span class="pre">spectral_spread()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#biotuner.metrics.higuchi_fd"><code class="docutils literal notranslate"><span class="pre">higuchi_fd()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scale_construction.html">Scale construction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.oct_subdiv"><code class="docutils literal notranslate"><span class="pre">oct_subdiv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.compare_oct_div"><code class="docutils literal notranslate"><span class="pre">compare_oct_div()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.multi_oct_subdiv"><code class="docutils literal notranslate"><span class="pre">multi_oct_subdiv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">harmonic_tuning()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.euler_fokker_scale"><code class="docutils literal notranslate"><span class="pre">euler_fokker_scale()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.convergents"><code class="docutils literal notranslate"><span class="pre">convergents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.dissmeasure"><code class="docutils literal notranslate"><span class="pre">dissmeasure()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.diss_curve"><code class="docutils literal notranslate"><span class="pre">diss_curve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_domain_integral"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_domain_integral()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_simple_weights"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_simple_weights()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.tuning_reduction"><code class="docutils literal notranslate"><span class="pre">tuning_reduction()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.create_mode"><code class="docutils literal notranslate"><span class="pre">create_mode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.pac_mode"><code class="docutils literal notranslate"><span class="pre">pac_mode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.tuning_range_to_MOS"><code class="docutils literal notranslate"><span class="pre">tuning_range_to_MOS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.stern_brocot_to_generator_interval"><code class="docutils literal notranslate"><span class="pre">stern_brocot_to_generator_interval()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.gen_interval_to_stern_brocot"><code class="docutils literal notranslate"><span class="pre">gen_interval_to_stern_brocot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.horogram_tree_steps"><code class="docutils literal notranslate"><span class="pre">horogram_tree_steps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.horogram_tree"><code class="docutils literal notranslate"><span class="pre">horogram_tree()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.phi_convergent_point"><code class="docutils literal notranslate"><span class="pre">phi_convergent_point()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.Stern_Brocot"><code class="docutils literal notranslate"><span class="pre">Stern_Brocot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.generator_interval_tuning"><code class="docutils literal notranslate"><span class="pre">generator_interval_tuning()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.interval_exponents"><code class="docutils literal notranslate"><span class="pre">interval_exponents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.interval_to_radian"><code class="docutils literal notranslate"><span class="pre">interval_to_radian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.tuning_to_radians"><code class="docutils literal notranslate"><span class="pre">tuning_to_radians()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.tuning_MOS_info"><code class="docutils literal notranslate"><span class="pre">tuning_MOS_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.find_MOS"><code class="docutils literal notranslate"><span class="pre">find_MOS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.MOS_metric_harmonic_mean"><code class="docutils literal notranslate"><span class="pre">MOS_metric_harmonic_mean()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.generator_to_stern_brocot_fractions"><code class="docutils literal notranslate"><span class="pre">generator_to_stern_brocot_fractions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scale_construction.html#biotuner.scale_construction.measure_symmetry"><code class="docutils literal notranslate"><span class="pre">measure_symmetry()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.scale2euclid"><code class="docutils literal notranslate"><span class="pre">scale2euclid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.invert_ratio"><code class="docutils literal notranslate"><span class="pre">invert_ratio()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.binome2euclid"><code class="docutils literal notranslate"><span class="pre">binome2euclid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.consonant_euclid"><code class="docutils literal notranslate"><span class="pre">consonant_euclid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.interval_vector"><code class="docutils literal notranslate"><span class="pre">interval_vector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.bjorklund"><code class="docutils literal notranslate"><span class="pre">bjorklund()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.interval_vec_to_string"><code class="docutils literal notranslate"><span class="pre">interval_vec_to_string()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.euclid_string_to_referent"><code class="docutils literal notranslate"><span class="pre">euclid_string_to_referent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.euclid_long_to_short"><code class="docutils literal notranslate"><span class="pre">euclid_long_to_short()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rhythm_construction.html#biotuner.rhythm_construction.find_optimal_offsets"><code class="docutils literal notranslate"><span class="pre">find_optimal_offsets()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="extended-analysis-objects">
+<h2>Extended Analysis Objects<a class="headerlink" href="#extended-analysis-objects" title="Link to this heading">#</a></h2>
+<p>Advanced objects building on biotuner_object for multi-dimensional analysis.</p>
+<ul class="simple">
+<li><p><strong>harmonic_spectrum</strong> - Analysis across frequencies</p></li>
+<li><p><strong>harmonic_connectivity</strong> - Analysis across space/sensors</p></li>
+<li><p><strong>transitional_harmony</strong> - Analysis across time</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_global_harmonicity"><code class="docutils literal notranslate"><span class="pre">compute_global_harmonicity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_phase_values"><code class="docutils literal notranslate"><span class="pre">compute_phase_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonicity_matrices"><code class="docutils literal notranslate"><span class="pre">harmonicity_matrices()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.PLV_comod"><code class="docutils literal notranslate"><span class="pre">PLV_comod()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_power"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_power()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_phase_spectrum"><code class="docutils literal notranslate"><span class="pre">compute_phase_spectrum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_resonance_values"><code class="docutils literal notranslate"><span class="pre">compute_resonance_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.find_spectral_peaks"><code class="docutils literal notranslate"><span class="pre">find_spectral_peaks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_trial_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_trial_corr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_freq_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_freq_corr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_spectrum_plot_avg_corr"><code class="docutils literal notranslate"><span class="pre">harmonic_spectrum_plot_avg_corr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony"><code class="docutils literal notranslate"><span class="pre">transitional_harmony</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Biotuner utilities</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Phase-Amplitude Coupling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="biotuner_object.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Biotuner object</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-objects">Core Objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-processing-functions">Signal Processing Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#musical-analysis-functions">Musical Analysis Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extended-analysis-objects">Extended Analysis Objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities">Utilities</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

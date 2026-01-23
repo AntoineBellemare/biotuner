@@ -1,0 +1,1833 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.scale_construction &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/scale_construction';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.scale_construction</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!bin/bash</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">nth_root</span><span class="p">,</span>
+    <span class="n">rebound</span><span class="p">,</span>
+    <span class="n">NTET_ratios</span><span class="p">,</span>
+    <span class="n">scale2frac</span><span class="p">,</span>
+    <span class="n">findsubsets</span><span class="p">,</span>
+    <span class="n">scale_from_pairs</span><span class="p">,</span>
+    <span class="n">ratio2frac</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ratios2harmsim</span><span class="p">,</span>
+    <span class="n">euler</span><span class="p">,</span>
+    <span class="n">dyad_similarity</span><span class="p">,</span>
+    <span class="n">metric_denom</span><span class="p">,</span>
+    <span class="n">tuning_cons_matrix</span><span class="p">,</span>
+    <span class="n">consonant_ratios</span><span class="p">,</span>
+    <span class="n">tuning_to_metrics</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">,</span> <span class="n">log2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">argrelextrema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contfrac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">log2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
+
+
+<span class="n">sys</span><span class="o">.</span><span class="n">setrecursionlimit</span><span class="p">(</span><span class="mi">120000</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="oct_subdiv">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.oct_subdiv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">oct_subdiv</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">octave_limit</span><span class="o">=</span><span class="mf">0.01365</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    N-TET tuning from Generator Interval.</span>
+
+<span class="sd">    This function uses a generator interval to suggest numbers of steps to divide the octave.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : float</span>
+<span class="sd">        Ratio that corresponds to the generator_interval.</span>
+<span class="sd">        For example, by giving the fifth (3/2) as generator interval,</span>
+<span class="sd">        this function will suggest to subdivide the octave in 12, 53, etc.</span>
+<span class="sd">    octave_limit : float, default=0.01365</span>
+<span class="sd">        Approximation of the octave corresponding to the acceptable distance</span>
+<span class="sd">        between the ratio of the generator interval after multiple iterations</span>
+<span class="sd">        and the octave value.</span>
+<span class="sd">        The default value of 0.01365 corresponds to the Pythagorean comma.</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        Value of the octave.</span>
+<span class="sd">    n : int, default=5</span>
+<span class="sd">        Number of suggested octave subdivisions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Octdiv : List of int</span>
+<span class="sd">        List of N-TET tunings according to the generator interval.</span>
+<span class="sd">    Octvalue : List of float</span>
+<span class="sd">        List of the approximations of the octave for each N-TET tuning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; oct_subdiv(3/2, n=3)</span>
+<span class="sd">    ([12, 53, 106], [1.0136432647705078, 1.0020903140410862, 1.0041849974949628])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Octdiv</span><span class="p">,</span> <span class="n">Octvalue</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">1</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">Octdiv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">ratio_mult</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">**</span><span class="n">i</span>
+        <span class="k">while</span> <span class="n">ratio_mult</span> <span class="o">&gt;</span> <span class="n">octave</span><span class="p">:</span>
+            <span class="n">ratio_mult</span> <span class="o">=</span> <span class="n">ratio_mult</span> <span class="o">/</span> <span class="n">octave</span>
+
+        <span class="n">rescale_ratio</span> <span class="o">=</span> <span class="n">ratio_mult</span> <span class="o">-</span> <span class="nb">round</span><span class="p">(</span><span class="n">ratio_mult</span><span class="p">)</span>
+        <span class="n">ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio_mult</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="o">-</span><span class="n">octave_limit</span> <span class="o">&lt;</span> <span class="n">rescale_ratio</span> <span class="o">&lt;</span> <span class="n">octave_limit</span><span class="p">:</span>
+            <span class="n">Octdiv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">Octvalue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio_mult</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">return</span> <span class="n">Octdiv</span><span class="p">,</span> <span class="n">Octvalue</span></div>
+
+
+
+<div class="viewcode-block" id="compare_oct_div">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.compare_oct_div">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_oct_div</span><span class="p">(</span><span class="n">Octdiv</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">Octdiv2</span><span class="o">=</span><span class="mi">53</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that compares steps for two N-TET tunings</span>
+<span class="sd">    and returns matching ratios and corresponding degrees</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Octdiv : int, default=12</span>
+<span class="sd">        First N-TET tuning number of steps.</span>
+<span class="sd">    Octdiv2 : int, default=53</span>
+<span class="sd">        Second N-TET tuning number of steps.</span>
+<span class="sd">    bounds : float, default=0.005</span>
+<span class="sd">        Maximum distance between one ratio of Octdiv and one ratio of Octdiv2</span>
+<span class="sd">        to consider a match.</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        Value of the octave</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    avg_ratios : numpy.ndarray</span>
+<span class="sd">        List of ratios corresponding to the shared steps in the two N-TET tunings</span>
+<span class="sd">    shared_steps : List of tuples</span>
+<span class="sd">        The two elements of each tuple corresponds to the tuning steps</span>
+<span class="sd">        sharing the same interval in the two N-TET tunings</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ratios, shared_steps = compare_oct_div(Octdiv=12, Octdiv2=53, bounds=0.005, octave=2)</span>
+<span class="sd">    &gt;&gt;&gt; ratios, shared_steps</span>
+<span class="sd">    ([1.124, 1.187, 1.334, 1.499, 1.78, 2.0],</span>
+<span class="sd">    [(2, 9), (3, 13), (5, 22), (7, 31), (10, 44), (12, 53)])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ListOctdiv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ListOctdiv2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">OctdivSum</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">OctdivSum2</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">i2</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">OctdivSum</span> <span class="o">&lt;</span> <span class="n">octave</span><span class="p">:</span>
+        <span class="n">OctdivSum</span> <span class="o">=</span> <span class="p">(</span><span class="n">nth_root</span><span class="p">(</span><span class="n">octave</span><span class="p">,</span> <span class="n">Octdiv</span><span class="p">))</span> <span class="o">**</span> <span class="n">i</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">ListOctdiv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OctdivSum</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">OctdivSum2</span> <span class="o">&lt;</span> <span class="n">octave</span><span class="p">:</span>
+        <span class="n">OctdivSum2</span> <span class="o">=</span> <span class="p">(</span><span class="n">nth_root</span><span class="p">(</span><span class="n">octave</span><span class="p">,</span> <span class="n">Octdiv2</span><span class="p">))</span> <span class="o">**</span> <span class="n">i2</span>
+        <span class="n">i2</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">ListOctdiv2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OctdivSum2</span><span class="p">)</span>
+    <span class="n">shared_steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">avg_ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ListOctdiv</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">harm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ListOctdiv2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">harm</span> <span class="o">-</span> <span class="n">bounds</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">harm</span> <span class="o">+</span> <span class="n">bounds</span><span class="p">:</span>
+                <span class="n">shared_steps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">avg_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">harm</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">avg_ratios</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">avg_ratios</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">avg_ratios</span><span class="p">,</span> <span class="n">shared_steps</span></div>
+
+
+
+<div class="viewcode-block" id="multi_oct_subdiv">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.multi_oct_subdiv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_oct_subdiv</span><span class="p">(</span>
+    <span class="n">peaks</span><span class="p">,</span> <span class="n">max_sub</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">octave_limit</span><span class="o">=</span><span class="mf">0.01365</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_scales</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cons_limit</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine optimal octave subdivisions based on consonant peaks ratios.</span>
+
+<span class="sd">    This function takes the most consonant peaks ratios and uses them as input for</span>
+<span class="sd">    the oct_subdiv function. Each consonant ratio generates a list of possible</span>
+<span class="sd">    octave subdivisions. The function then compares these lists and identifies</span>
+<span class="sd">    optimal octave subdivisions that are common across multiple generator intervals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    peaks : List of float</span>
+<span class="sd">        Peaks represent local maximum in a spectrum.</span>
+<span class="sd">    max_sub : int, default=100</span>
+<span class="sd">        Maximum number of intervals in N-TET tuning suggestions.</span>
+<span class="sd">    octave_limit : float, default=0.01365</span>
+<span class="sd">        Approximation of the octave corresponding to the acceptable distance</span>
+<span class="sd">        between the ratio of the generator interval after</span>
+<span class="sd">        multiple iterations and the octave value.</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        value of the octave</span>
+<span class="sd">    n_scales : int, default=10</span>
+<span class="sd">        Number of N-TET tunings to compute for each generator interval (ratio).</span>
+<span class="sd">    cons_limit : float, default=0.1</span>
+<span class="sd">        Limit for the consonance of the peaks ratios.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    multi_oct_div : List of int</span>
+<span class="sd">        List of octave subdivisions that fit with multiple generator intervals.</span>
+<span class="sd">    ratios : List of float</span>
+<span class="sd">        List of the generator intervals for which at least 1 N-TET tuning</span>
+<span class="sd">        matches with another generator interval.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; peaks = [2, 3, 9]</span>
+<span class="sd">    &gt;&gt;&gt; oct_divs, x = multi_oct_subdiv(peaks, max_sub=100)</span>
+<span class="sd">    &gt;&gt;&gt; oct_divs, x</span>
+<span class="sd">    ([53], array([1.125, 1.5  ]))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">cons</span> <span class="o">=</span> <span class="n">consonant_ratios</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">cons_limit</span><span class="p">)</span>
+    <span class="n">list_oct_div</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)):</span>
+        <span class="n">list_temp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">oct_subdiv</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">octave_limit</span><span class="p">,</span> <span class="n">octave</span><span class="p">,</span> <span class="n">n_scales</span><span class="p">)</span>
+        <span class="n">list_oct_div</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_temp</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">list_oct_div</span><span class="p">)))</span>
+    <span class="n">oct_div_temp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">oct_div_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">oct_div_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">oct_div_temp</span><span class="p">)</span>
+    <span class="n">multi_oct_div</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">oct_div_temp</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">oct_div_temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_sub</span><span class="p">:</span>
+            <span class="n">multi_oct_div</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oct_div_temp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">multi_oct_div</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Gracefully handle empty results</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="n">ratios</span>
+    <span class="k">return</span> <span class="n">multi_oct_div</span><span class="p">,</span> <span class="n">ratios</span></div>
+
+
+
+<div class="viewcode-block" id="harmonic_tuning">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.harmonic_tuning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_tuning</span><span class="p">(</span><span class="n">list_harmonics</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_ratio</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a tuning based on a list of harmonic positions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list_harmonics : List of int</span>
+<span class="sd">        harmonic positions to use in the scale construction</span>
+<span class="sd">    octave : int</span>
+<span class="sd">        value of the period reference</span>
+<span class="sd">    min_ratio : float, default=1</span>
+<span class="sd">        Value of the unison.</span>
+<span class="sd">    max_ratio : float, default=2</span>
+<span class="sd">        Value of the octave.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ratios : List of float</span>
+<span class="sd">        Generated tuning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; list_harmonics = [3, 5, 7, 9]</span>
+<span class="sd">    &gt;&gt;&gt; harmonic_tuning(list_harmonics, octave=2, min_ratio=1, max_ratio=2)</span>
+<span class="sd">    [1.125, 1.25, 1.5, 1.75]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_harmonics</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">list_harmonics</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_harmonics</span><span class="p">:</span>
+        <span class="n">ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rebound</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">min_ratio</span><span class="p">,</span> <span class="n">max_ratio</span><span class="p">,</span> <span class="n">octave</span><span class="p">))</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ratios</span><span class="p">))</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratios</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">ratios</span></div>
+
+
+
+<div class="viewcode-block" id="euler_fokker_scale">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.euler_fokker_scale">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euler_fokker_scale</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a tuning based on a set of prime factors in the Euler-Fokker Genera.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    intervals : List of int</span>
+<span class="sd">        Prime factors to use in the scale construction.</span>
+<span class="sd">    n : int, default=1</span>
+<span class="sd">        The multiplicity of each factor, controlling how many times each is used.</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        Value of the period reference.</span>
+<span class="sd">    normalize : bool, default=True</span>
+<span class="sd">        If True, normalizes the scale to fit within the octave.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scale : List of sympy.Integer or sympy.Rational</span>
+<span class="sd">        Generated tuning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; intervals = [3, 5, 7]</span>
+<span class="sd">    &gt;&gt;&gt; euler_fokker_scale(intervals, n=1, octave=2, normalize=True)</span>
+<span class="sd">    [1, 35/32, 5/4, 21/16, 3/2, 105/64, 7/4, 15/8, 2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multiplicities</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">]</span>  <span class="c1"># Each factor is used once.</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intervals</span><span class="p">)):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="p">[</span><span class="n">intervals</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span> <span class="o">*</span> <span class="n">multiplicities</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
+
+    <span class="n">potential</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span>
+                <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">potential</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="p">[</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">,</span> <span class="n">item</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="n">rebound</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="n">octave</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">octave</span><span class="p">)]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">octave</span><span class="p">)]</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generator_interval_tuning</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">harmonic_min</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that takes a generator interval and</span>
+<span class="sd">    derives a tuning based on its stacking.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    interval : float</span>
+<span class="sd">        Generator interval</span>
+<span class="sd">    steps : int, default=12</span>
+<span class="sd">        Number of steps in the scale</span>
+<span class="sd">        When default, 12-TET for interval 3/2</span>
+<span class="sd">    octave : int</span>
+<span class="sd">        Defaults to 2</span>
+<span class="sd">        Value of the octave</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuning : List of float</span>
+<span class="sd">        Generated tuning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; tuning = generator_interval_tuning(interval=3/2, steps=12, octave=2, harmonic_min=0)</span>
+<span class="sd">    &gt;&gt;&gt; tuning</span>
+<span class="sd">    [1.0,</span>
+<span class="sd">    1.06787109375,</span>
+<span class="sd">    1.125,</span>
+<span class="sd">    1.20135498046875,</span>
+<span class="sd">    1.265625,</span>
+<span class="sd">    1.3515243530273438,</span>
+<span class="sd">    1.423828125,</span>
+<span class="sd">    1.5,</span>
+<span class="sd">    1.601806640625,</span>
+<span class="sd">    1.6875,</span>
+<span class="sd">    1.802032470703125,</span>
+<span class="sd">    1.8984375]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">degree</span> <span class="o">=</span> <span class="n">interval</span><span class="o">**</span><span class="n">harmonic_min</span>
+        <span class="k">while</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="n">octave</span><span class="p">:</span>
+            <span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span> <span class="o">/</span> <span class="n">octave</span>
+        <span class="k">while</span> <span class="n">degree</span> <span class="o">&lt;</span> <span class="n">octave</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span> <span class="o">*</span> <span class="n">octave</span>
+        <span class="n">tuning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+        <span class="n">harmonic_min</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tuning</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">tuning</span>
+
+
+<div class="viewcode-block" id="convergents">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.convergents">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convergents</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the convergents of the log2 of a ratio.</span>
+<span class="sd">    The second value represents the number of steps to divide the octave</span>
+<span class="sd">    while the first value represents the number of octaves up before</span>
+<span class="sd">    the stacked ratio arrives approximately to the octave value.</span>
+<span class="sd">    For example, the output of the interval 1.5 will includes [7, 12],</span>
+<span class="sd">    which means that to approximate the fifth (1.5) in a NTET-tuning, you can</span>
+<span class="sd">    divide the octave in 12, while stacking 12 fifth will lead to the 7th octave up.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    interval : float</span>
+<span class="sd">        Interval to find convergent.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    convergents : List of lists</span>
+<span class="sd">        Each sublist corresponds to a pair of convergents.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; convergents(3/2)</span>
+<span class="sd">    [(0, 1),</span>
+<span class="sd">    (1, 1),</span>
+<span class="sd">    (1, 2),</span>
+<span class="sd">    (3, 5),</span>
+<span class="sd">    (7, 12),</span>
+<span class="sd">    (24, 41),</span>
+<span class="sd">    (31, 53),</span>
+<span class="sd">    (179, 306),</span>
+<span class="sd">    (389, 665),</span>
+<span class="sd">    (9126, 15601),</span>
+<span class="sd">    (18641, 31867)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+    <span class="n">convergents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">contfrac</span><span class="o">.</span><span class="n">convergents</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">convergents</span></div>
+
+
+
+<span class="c1"># Dissonance curves</span>
+
+
+<div class="viewcode-block" id="dissmeasure">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.dissmeasure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dissmeasure</span><span class="p">(</span><span class="n">fvec</span><span class="p">,</span> <span class="n">amp</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;min&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of partials (peak frequencies) in fvec, with amplitudes in amp,</span>
+<span class="sd">    this routine calculates the dissonance by summing the roughness of</span>
+<span class="sd">    every sine pair based on a model of Plomp-Levelt&#39;s roughness curve.</span>
+<span class="sd">    The older model (model=&#39;product&#39;) was based on the product of the two</span>
+<span class="sd">    amplitudes, but the newer model (model=&#39;min&#39;) is based on the minimum</span>
+<span class="sd">    of the two amplitudes, since this matches the beat frequency amplitude.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fvec : List</span>
+<span class="sd">        List of frequency values</span>
+<span class="sd">    amp : List</span>
+<span class="sd">        List of amplitude values</span>
+<span class="sd">    model : str, default=&#39;min&#39;</span>
+<span class="sd">        Description of parameter `model`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    D : float</span>
+<span class="sd">        Dissonance value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort by frequency</span>
+    <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">fvec</span><span class="p">)</span>
+    <span class="n">am_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">amp</span><span class="p">)[</span><span class="n">sort_idx</span><span class="p">]</span>
+    <span class="n">fr_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fvec</span><span class="p">)[</span><span class="n">sort_idx</span><span class="p">]</span>
+
+    <span class="c1"># Used to stretch dissonance curve for different freqs:</span>
+    <span class="n">Dstar</span> <span class="o">=</span> <span class="mf">0.24</span>  <span class="c1"># Point of maximum dissonance</span>
+    <span class="n">S1</span> <span class="o">=</span> <span class="mf">0.0207</span>
+    <span class="n">S2</span> <span class="o">=</span> <span class="mf">18.96</span>
+
+    <span class="n">C1</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">C2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
+
+    <span class="c1"># Plomp-Levelt roughness curve:</span>
+    <span class="n">A1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.51</span>
+    <span class="n">A2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.75</span>
+
+    <span class="c1"># Generate all combinations of frequency components</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fr_sorted</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">fr_pairs</span> <span class="o">=</span> <span class="n">fr_sorted</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">am_pairs</span> <span class="o">=</span> <span class="n">am_sorted</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="n">Fmin</span> <span class="o">=</span> <span class="n">fr_pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">Dstar</span> <span class="o">/</span> <span class="p">(</span><span class="n">S1</span> <span class="o">*</span> <span class="n">Fmin</span> <span class="o">+</span> <span class="n">S2</span><span class="p">)</span>
+    <span class="n">Fdif</span> <span class="o">=</span> <span class="n">fr_pairs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">fr_pairs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">am_pairs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;product&quot;</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">am_pairs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Older model</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;model should be &quot;min&quot; or &quot;product&quot;&#39;</span><span class="p">)</span>
+    <span class="n">SFdif</span> <span class="o">=</span> <span class="n">S</span> <span class="o">*</span> <span class="n">Fdif</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">C1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">A1</span> <span class="o">*</span> <span class="n">SFdif</span><span class="p">)</span> <span class="o">+</span> <span class="n">C2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">A2</span> <span class="o">*</span> <span class="n">SFdif</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">D</span></div>
+
+
+
+<div class="viewcode-block" id="diss_curve">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.diss_curve">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">diss_curve</span><span class="p">(</span>
+    <span class="n">freqs</span><span class="p">,</span>
+    <span class="n">amps</span><span class="p">,</span>
+    <span class="n">denom</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">euler_comp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;min&quot;</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_tet_grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function computes the dissonance curve and related metrics for</span>
+<span class="sd">    a given set of frequencies (freqs) and amplitudes (amps).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freqs : List (float)</span>
+<span class="sd">        list of frequencies associated with spectral peaks</span>
+<span class="sd">    amps : List (float)</span>
+<span class="sd">        list of amplitudes associated with freqs (must be same lenght)</span>
+<span class="sd">    denom : int, default=1000</span>
+<span class="sd">        Highest value for the denominator of each interval</span>
+<span class="sd">    max_ratio : int, default=2</span>
+<span class="sd">        Value of the maximum ratio</span>
+<span class="sd">        Set to 2 for a span of 1 octave</span>
+<span class="sd">        Set to 4 for a span of 2 octaves</span>
+<span class="sd">        Set to 8 for a span of 3 octaves</span>
+<span class="sd">        Set to 2**n for a span of n octaves</span>
+<span class="sd">    euler : bool, default=True</span>
+<span class="sd">        When set to True, compute the Euler Gradus Suavitatis</span>
+<span class="sd">        for the derived scale.</span>
+<span class="sd">    method : str, default=&#39;min&#39;</span>
+<span class="sd">        Refer to dissmeasure function for more information.</span>
+
+<span class="sd">        - &#39;min&#39;</span>
+<span class="sd">        - &#39;product&#39;</span>
+
+<span class="sd">    plot : bool, default=True</span>
+<span class="sd">        Plot the dissonance curve.</span>
+<span class="sd">    n_tet_grid : int, default=None</span>
+<span class="sd">        When an integer is given, dotted lines will be add to the plot</span>
+<span class="sd">        at steps of the given N-TET scale</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    diss : list of floats</span>
+<span class="sd">        list of dissonance values for all the intervals</span>
+<span class="sd">    intervals : List of tuples</span>
+<span class="sd">        Each tuple corresponds to the numerator and the denominator</span>
+<span class="sd">        of each scale step ratio</span>
+<span class="sd">    ratios : List of floats</span>
+<span class="sd">        list of ratios that constitute the scale</span>
+<span class="sd">    euler_score : int</span>
+<span class="sd">        value of consonance of the scale</span>
+<span class="sd">    diss : float</span>
+<span class="sd">        value of averaged dissonance of the total curve</span>
+<span class="sd">    dyad_sims : List of floats</span>
+<span class="sd">        list of dyad similarities for each ratio of the scale</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span>
+    <span class="n">r_low</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">alpharange</span> <span class="o">=</span> <span class="n">max_ratio</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">diss</span> <span class="o">=</span> <span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">amps</span><span class="p">,</span> <span class="n">amps</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">linspace</span><span class="p">(</span><span class="n">r_low</span><span class="p">,</span> <span class="n">alpharange</span><span class="p">,</span> <span class="n">n</span><span class="p">)):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">freqs</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">freqs</span><span class="p">))</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">dissmeasure</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+        <span class="n">diss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+    <span class="n">diss_minima</span> <span class="o">=</span> <span class="n">argrelextrema</span><span class="p">(</span><span class="n">diss</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">)</span>
+    <span class="n">intervals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">diss_minima</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span>
+            <span class="n">diss_minima</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">d</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_ratio</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">denom</span><span class="p">)</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">frac</span><span class="o">.</span><span class="n">numerator</span><span class="p">,</span> <span class="n">frac</span><span class="o">.</span><span class="n">denominator</span><span class="p">)</span>
+        <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
+    <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">]</span>
+    <span class="n">dyad_sims</span> <span class="o">=</span> <span class="n">ratios2harmsim</span><span class="p">(</span><span class="n">ratios</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ratios_euler</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">ratios</span>
+    <span class="n">ratios_euler</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">]</span>
+    <span class="n">euler_score</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">euler_comp</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">euler_score</span> <span class="o">=</span> <span class="n">euler</span><span class="p">(</span><span class="o">*</span><span class="n">ratios_euler</span><span class="p">)</span>
+
+        <span class="n">euler_score</span> <span class="o">=</span> <span class="n">euler_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">diss_minima</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">euler_score</span> <span class="o">=</span> <span class="s2">&quot;NaN&quot;</span>
+
+    <span class="k">if</span> <span class="n">plot</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">linspace</span><span class="p">(</span><span class="n">r_low</span><span class="p">,</span> <span class="n">alpharange</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">diss</span><span class="p">)),</span> <span class="n">diss</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">r_low</span><span class="p">,</span> <span class="n">alpharange</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                <span class="mf">1.9</span><span class="p">,</span>
+                <span class="mf">1.5</span><span class="p">,</span>
+                <span class="s2">&quot;Euler = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">euler_score</span><span class="p">)),</span>
+                <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;silver&quot;</span><span class="p">)</span>
+        <span class="c1"># Plot N-TET grid</span>
+        <span class="k">if</span> <span class="n">n_tet_grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_tet</span> <span class="o">=</span> <span class="n">NTET_ratios</span><span class="p">(</span><span class="n">n_tet_grid</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="n">max_ratio</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_tet</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+        <span class="c1"># Plot scale ticks</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">minorticks_off</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">n</span> <span class="o">/</span> <span class="n">d</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">],</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency ratio&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Dissonance&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">diss</span><span class="p">,</span> <span class="n">intervals</span><span class="p">,</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">euler_score</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">diss</span><span class="p">),</span> <span class="n">dyad_sims</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;Harmonic Entropy&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="compute_harmonic_entropy_domain_integral">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_domain_integral">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_entropy_domain_integral</span><span class="p">(</span>
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">ratio_interval</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">min_tol</span><span class="o">=</span><span class="mf">1e-15</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the harmonic entropy of a list of frequency ratios for a given set of possible intervals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratios : List of floats</span>
+<span class="sd">        List of frequency ratios.</span>
+<span class="sd">    ratio_interval : List of floats</span>
+<span class="sd">        List of possible intervals to consider.</span>
+<span class="sd">    spread : float, default=0.01</span>
+<span class="sd">        Controls the width of the Gaussian kernel used to smooth the probability density function of the ratios.</span>
+<span class="sd">    min_tol : float, default=1e-15</span>
+<span class="sd">        The smallest tolerance value for considering the probability density function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    weight_ratios : ndarray</span>
+<span class="sd">        Sorted ratios.</span>
+<span class="sd">    HE : ndarray</span>
+<span class="sd">        Harmonic entropy values for each interval in `ratio_interval`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Harmonic entropy is a measure of the deviation of a set of frequency ratios from the idealized harmonics</span>
+<span class="sd">    (integer multiples of a fundamental frequency) and is defined as:</span>
+
+<span class="sd">    HE = - sum_i(p_i * log2(p_i))</span>
+
+<span class="sd">    where p_i is the probability of a given ratio in a smoothed probability density function.</span>
+
+<span class="sd">    The `ratio_interval` defines a range of possible intervals to consider. The algorithm computes the harmonic entropy</span>
+<span class="sd">    of each possible interval in `ratio_interval` and returns an array of HE values, one for each interval.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The first step is to pre-sort the ratios to speed up computation</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="n">weight_ratios</span> <span class="o">=</span> <span class="n">ratios</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">weight_ratios</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight_ratios</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">ratio_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">)</span>
+    <span class="n">HE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">):</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
+            <span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">centers</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">spread</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="n">min_tol</span>
+        <span class="n">HE</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">ind</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">weight_ratios</span><span class="p">,</span> <span class="n">HE</span></div>
+
+
+
+<div class="viewcode-block" id="compute_harmonic_entropy_simple_weights">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_simple_weights">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_entropy_simple_weights</span><span class="p">(</span>
+    <span class="n">numerators</span><span class="p">,</span> <span class="n">denominators</span><span class="p">,</span> <span class="n">ratio_interval</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">min_tol</span><span class="o">=</span><span class="mf">1e-15</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the harmonic entropy of a set of ratios using simple weights.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    numerators : array-like</span>
+<span class="sd">        Numerators of the ratios.</span>
+<span class="sd">    denominators : array-like</span>
+<span class="sd">        Denominators of the ratios.</span>
+<span class="sd">    ratio_interval : array-like</span>
+<span class="sd">        Interval to compute the harmonic entropy over.</span>
+<span class="sd">    spread : float, default=0.01</span>
+<span class="sd">        Spread of the normal distribution used to compute the weights.</span>
+<span class="sd">    min_tol : float, default=1e-15</span>
+<span class="sd">        Minimum tolerance for the weights.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    weight_ratios : ndarray</span>
+<span class="sd">        Sorted weight ratios.</span>
+<span class="sd">    HE : ndarray</span>
+<span class="sd">        Harmonic entropy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The first step is to pre-sort the ratios to speed up computation</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">numerators</span> <span class="o">/</span> <span class="n">denominators</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="n">numerators</span> <span class="o">=</span> <span class="n">numerators</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="n">denominators</span> <span class="o">=</span> <span class="n">denominators</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="n">weight_ratios</span> <span class="o">=</span> <span class="n">ratios</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+    <span class="n">ratio_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">)</span>
+    <span class="n">HE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_interval</span><span class="p">):</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">weight_ratios</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">spread</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="n">numerators</span> <span class="o">*</span> <span class="n">denominators</span>
+        <span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">P</span> <span class="o">&gt;</span> <span class="n">min_tol</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+        <span class="n">P</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="n">HE</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">P</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">weight_ratios</span><span class="p">,</span> <span class="n">HE</span></div>
+
+
+
+<div class="viewcode-block" id="harmonic_entropy">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.harmonic_entropy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_entropy</span><span class="p">(</span>
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">plot_entropy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_tenney</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Harmonic entropy is a measure of the uncertainty in pitch perception,</span>
+<span class="sd">    and it provides a physical correlate of tonalness,one aspect of the</span>
+<span class="sd">    psychoacoustic concept of dissonance (Sethares). High tonalness corresponds</span>
+<span class="sd">    to low entropy and low tonalness corresponds to high entropy.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratios : List of floats</span>
+<span class="sd">        Ratios between each pairs of frequency peaks.</span>
+<span class="sd">    res : float, default=0.001</span>
+<span class="sd">        Resolution of the ratio steps.</span>
+<span class="sd">    spread : float, default=0.01</span>
+<span class="sd">        Spread of the normal distribution used to compute the weights.</span>
+<span class="sd">    plot_entropy : bool, default=True</span>
+<span class="sd">        When set to True, plot the harmonic entropy curve.</span>
+<span class="sd">    plot_tenney : bool, default=False</span>
+<span class="sd">        When set to True, plot the tenney heights (y-axis)</span>
+<span class="sd">        across ratios (x-axis).</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        Value of reference period.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    HE_minima : List of floats</span>
+<span class="sd">        List of ratios corresponding to minima of the harmonic entropy curve</span>
+<span class="sd">    HE_avg : float</span>
+<span class="sd">        Value of the averaged harmonic entropy</span>
+<span class="sd">    HE : List of floats</span>
+<span class="sd">        List of harmonic entropy values for each ratio.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fracs</span><span class="p">,</span> <span class="n">numerators</span><span class="p">,</span> <span class="n">denominators</span> <span class="o">=</span> <span class="n">scale2frac</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">numerators</span> <span class="o">/</span> <span class="n">denominators</span>
+    <span class="n">bendetti_heights</span> <span class="o">=</span> <span class="n">numerators</span> <span class="o">*</span> <span class="n">denominators</span>
+
+    <span class="n">tenney_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">bendetti_heights</span><span class="p">)</span>
+
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">tenney_heights</span><span class="p">)</span>  <span class="c1"># sort by Tenney height</span>
+    <span class="n">bendetti_heights</span> <span class="o">=</span> <span class="n">bendetti_heights</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="n">tenney_heights</span> <span class="o">=</span> <span class="n">tenney_heights</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="n">numerators</span> <span class="o">=</span> <span class="n">numerators</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="n">denominators</span> <span class="o">=</span> <span class="n">denominators</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">plot_tenney</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="c1"># ax.scatter(ratios, 2**tenney_heights, s=1)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">tenney_heights</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="c1"># ax.scatter(ratios[:200], tenney_heights[:200], s=1, color=&#39;r&#39;)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Next, we need to ensure a distance `d` between adjacent ratios</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bendetti_heights</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.00001</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">delta</span>
+        <span class="n">indices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">ind</span>
+    <span class="n">bendetti_heights</span> <span class="o">=</span> <span class="n">bendetti_heights</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">tenney_heights</span> <span class="o">=</span> <span class="n">tenney_heights</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">numerators</span> <span class="o">=</span> <span class="n">numerators</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">denominators</span> <span class="o">=</span> <span class="n">denominators</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">ratios</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tenney_heights</span><span class="p">)</span>
+    <span class="n">x_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">octave</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">HE</span> <span class="o">=</span> <span class="n">compute_harmonic_entropy_domain_integral</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">x_ratios</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread</span><span class="p">)</span>
+    <span class="c1"># HE = compute_harmonic_entropy_simple_weights(numerators,</span>
+    <span class="c1">#                                                denominators,</span>
+    <span class="c1">#                                                x_ratios, spread=0.01)</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">argrelextrema</span><span class="p">(</span><span class="n">HE</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">)</span>
+    <span class="n">HE_minima</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_ratios</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">HE</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">plot_entropy</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_ratios</span><span class="p">,</span> <span class="n">HE</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">HE_minima</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">HE_minima</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">octave</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency ratio&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Harmonic entropy&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">HE_minima</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">HE</span><span class="p">),</span> <span class="n">HE</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;Scale reduction&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="tuning_reduction">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.tuning_reduction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tuning_reduction</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">mode_n_steps</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ratio_type</span><span class="o">=</span><span class="s2">&quot;pos_harm&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that reduces the number of steps in a scale according</span>
+<span class="sd">    to the consonance between pairs of ratios.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tuning : List (float)</span>
+<span class="sd">        scale to reduce</span>
+<span class="sd">    mode_n_steps : int</span>
+<span class="sd">        number of steps of the reduced scale</span>
+<span class="sd">    function : function, default=compute_consonance</span>
+<span class="sd">        function used to compute the consonance between pairs of ratios</span>
+<span class="sd">        Choose between:</span>
+
+<span class="sd">        - :func:`compute_consonance &lt;biotuner.metrics.compute_consonance&gt;`</span>
+<span class="sd">        - :func:`dyad_similarity &lt;biotuner.metrics.dyad_similarity&gt;`</span>
+<span class="sd">        - :func:`metric_denom &lt;biotuner.metrics.metric_denom&gt;`</span>
+<span class="sd">    rounding : int</span>
+<span class="sd">        maximum number of decimals for each step</span>
+<span class="sd">    ratio_type : str, default=&#39;pos_harm&#39;</span>
+<span class="sd">        Choose between:</span>
+
+<span class="sd">        - &#39;pos_harm&#39;:a/b when a&gt;b</span>
+<span class="sd">        - &#39;sub_harm&#39;:a/b when a&lt;b</span>
+<span class="sd">        - &#39;all&#39;: pos_harm + sub_harm</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuning_consonance : float</span>
+<span class="sd">        Consonance value of the input tuning.</span>
+<span class="sd">    mode_out : List of floats</span>
+<span class="sd">        List of mode intervals.</span>
+<span class="sd">    mode_consonance : float</span>
+<span class="sd">        Consonance value of the output mode.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; tuning = [1, 1.21, 1.31, 1.45, 1.5, 1.7, 1.875]</span>
+<span class="sd">    &gt;&gt;&gt; harm_tuning, mode, harm_mode = tuning_reduction(tuning, mode_n_steps=5, function=dyad_similarity, rounding=4, ratio_type=&quot;pos_harm&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(&#39;Tuning harmonicity: &#39;, harm_tuning, &#39;\nMode: &#39;, mode, &#39;\nMode harmonicity: &#39;, harm_mode)</span>
+<span class="sd">    Tuning harmonicity:  9.267212965965944</span>
+<span class="sd">    Mode:  [1.5, 1, 1.875, 1.7, 1.45]</span>
+<span class="sd">    Mode harmonicity:  17.9500338066261</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># scale must be at least 4 notes</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The scale must have at least 4 notes&quot;</span><span class="p">)</span>
+    <span class="n">tuning_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mode_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tuning</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">index2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tuning</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]:</span>  <span class="c1"># not include the diagonale</span>
+                <span class="k">if</span> <span class="n">ratio_type</span> <span class="o">==</span> <span class="s2">&quot;pos_harm&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]:</span>
+                        <span class="n">entry</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">/</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span>
+                        <span class="n">mode_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">],</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]])</span>
+                        <span class="n">tuning_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">ratio_type</span> <span class="o">==</span> <span class="s2">&quot;sub_harm&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]:</span>
+                        <span class="n">entry</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">/</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span>
+                        <span class="n">mode_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">],</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]])</span>
+                        <span class="n">tuning_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">ratio_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">/</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span>
+                    <span class="n">mode_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">tuning</span><span class="p">[</span><span class="n">index1</span><span class="p">],</span> <span class="n">tuning</span><span class="p">[</span><span class="n">index2</span><span class="p">]])</span>
+                    <span class="n">tuning_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">function</span> <span class="o">==</span> <span class="n">metric_denom</span><span class="p">:</span>
+        <span class="n">cons_ratios</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tuning_values</span><span class="p">,</span> <span class="n">mode_values</span><span class="p">))]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cons_ratios</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tuning_values</span><span class="p">,</span> <span class="n">mode_values</span><span class="p">))][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">mode_</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mode_out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">mode_out</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">mode_n_steps</span><span class="p">:</span>
+        <span class="n">cons_temp</span> <span class="o">=</span> <span class="n">cons_ratios</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">mode_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cons_temp</span><span class="p">)</span>
+        <span class="n">mode_out_temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">mode_</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">mode_out_temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rounding</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mode_out_temp</span><span class="p">]</span>
+        <span class="n">mode_out</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">mode_out_temp</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">mode_out_temp</span><span class="o">.</span><span class="n">index</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">mode_n_steps</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">mode_metric</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mode_out</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">index2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mode_out</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">mode_out</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">mode_out</span><span class="p">[</span><span class="n">index2</span><span class="p">]:</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="n">mode_out</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="o">/</span> <span class="n">mode_out</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span>
+                <span class="n">mode_metric</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+    <span class="n">tuning_consonance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">tuning_values</span><span class="p">)</span>
+    <span class="n">mode_consonance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">mode_metric</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tuning_consonance</span><span class="p">,</span> <span class="n">mode_out</span><span class="p">,</span> <span class="n">mode_consonance</span></div>
+
+
+
+<div class="viewcode-block" id="create_mode">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.create_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_mode</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a mode from a tuning based on the consonance of</span>
+<span class="sd">       subsets of tuning steps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tuning : List of floats</span>
+<span class="sd">        scale to reduce</span>
+<span class="sd">    n_steps : int</span>
+<span class="sd">        number of steps of the reduced scale</span>
+<span class="sd">    function : function, default=compute_consonance</span>
+<span class="sd">        function used to compute the consonance between pairs of ratios</span>
+<span class="sd">        Choose between:</span>
+
+<span class="sd">        - :func:`compute_consonance &lt;biotuner.metrics.compute_consonance&gt;`</span>
+<span class="sd">        - :func:`dyad_similarity &lt;biotuner.metrics.dyad_similarity&gt;`</span>
+<span class="sd">        - :func:`metric_denom &lt;biotuner.metrics.metric_denom&gt;`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mode : List of floats</span>
+<span class="sd">        Reduced tuning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; tuning = [1, 1.21, 1.31, 1.45, 1.5, 1.7, 1.875]</span>
+<span class="sd">    &gt;&gt;&gt; create_mode(tuning, n_steps=5, function=dyad_similarity)</span>
+<span class="sd">    [1, 1.45, 1.5, 1.7, 1.875]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">findsubsets</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">))</span>
+    <span class="n">metric_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">met</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tuning_cons_matrix</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
+        <span class="n">metric_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">metric_values</span><span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sets</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">mode</span></div>
+
+
+
+<div class="viewcode-block" id="pac_mode">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.pac_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pac_mode</span><span class="p">(</span><span class="n">pac_freqs</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">dyad_similarity</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;subset&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the pac mode of a set of frequency pairs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pac_freqs : List of tuples</span>
+<span class="sd">        List of frequency pairs (f1, f2) representing phase-amplitude coupling.</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of steps in the tuning system.</span>
+<span class="sd">    function : function, default=dyad_similarity</span>
+<span class="sd">        A function that takes two frequencies as input and returns a similarity score.</span>
+<span class="sd">    method : str, default=&#39;subset&#39;</span>
+<span class="sd">        The method used to compute the pac mode.</span>
+<span class="sd">        Possible values:</span>
+
+<span class="sd">        - &#39;pairwise&#39;</span>
+<span class="sd">        - &#39;subset&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List</span>
+<span class="sd">        The pac mode as a list of frequencies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tuning_reduction</span><span class="p">(</span>
+            <span class="n">scale_from_pairs</span><span class="p">(</span><span class="n">pac_freqs</span><span class="p">),</span> <span class="n">mode_n_steps</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;subset&quot;</span><span class="p">:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">create_mode</span><span class="p">(</span><span class="n">scale_from_pairs</span><span class="p">(</span><span class="n">pac_freqs</span><span class="p">),</span> <span class="n">n_steps</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;--------------------------MOMENTS OF SYMMETRY---------------------------&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+
+
+<div class="viewcode-block" id="tuning_range_to_MOS">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.tuning_range_to_MOS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tuning_range_to_MOS</span><span class="p">(</span><span class="n">frac1</span><span class="p">,</span> <span class="n">frac2</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_denom_in</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_denom_out</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Moment of Symmetry (MOS) signature for a range of ratios defined by two input fractions,</span>
+<span class="sd">    and compute the generative interval for that range.</span>
+
+<span class="sd">    The MOS signature of a ratio is a tuple of integers representing the number of equally spaced intervals</span>
+<span class="sd">    that can fit into an octave when starting from the ratio, going in one direction, and repeating the</span>
+<span class="sd">    interval until the octave is filled. For example, the MOS signature of an octave is (1,0) because there</span>
+<span class="sd">    is only one interval that fits into an octave when starting from the ratio of 1:1 and going up.</span>
+<span class="sd">    The MOS signature of a perfect fifth is (0,1) because there are no smaller intervals that fit into an</span>
+<span class="sd">    octave when starting from the ratio of 3:2 and going up, but there is one larger interval that fits,</span>
+<span class="sd">    which is the octave above the perfect fifth.</span>
+
+<span class="sd">    The generative interval is the interval that corresponds to the mediant of the two input fractions.</span>
+<span class="sd">    The mediant is the fraction that lies between the two input fractions and corresponds to the interval</span>
+<span class="sd">    where small and large steps are equal.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frac1 : str or float</span>
+<span class="sd">        First ratio as a string or float.</span>
+<span class="sd">    frac2 : str or float</span>
+<span class="sd">        Second ratio as a string or float.</span>
+<span class="sd">    octave : float, default=2</span>
+<span class="sd">        The ratio of an octave.</span>
+<span class="sd">    max_denom_in : int, default=100</span>
+<span class="sd">        Maximum denominator to use when converting the input fractions to rational numbers.</span>
+<span class="sd">    max_denom_out : int, default=100</span>
+<span class="sd">        Maximum denominator to use when approximating the generative interval as a rational number.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple containing:</span>
+<span class="sd">        - the mediant as a float,</span>
+<span class="sd">        - the mediant as a fraction with a denominator not greater than `max_denom_out`,</span>
+<span class="sd">        - the generative interval as a float,</span>
+<span class="sd">        - the generative interval as a fraction with a denominator not greater than `max_denom_out`,</span>
+<span class="sd">        - the MOS signature of the generative interval as a tuple of integers,</span>
+<span class="sd">        - the MOS signature of the inverse of the generative interval as a tuple of integers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">frac1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">max_denom_in</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">frac1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">max_denom_in</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">frac2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">max_denom_in</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">frac2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">max_denom_in</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="c1"># print(a, b, c, d)</span>
+    <span class="n">mediant</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">mediant_frac</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Rational</span><span class="p">((</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">))</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">max_denom_out</span><span class="p">)</span>
+    <span class="n">gen_interval</span> <span class="o">=</span> <span class="n">octave</span> <span class="o">**</span> <span class="p">(</span><span class="n">mediant</span><span class="p">)</span>
+    <span class="n">gen_interval_frac</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Rational</span><span class="p">(</span><span class="n">octave</span> <span class="o">**</span> <span class="p">(</span><span class="n">mediant</span><span class="p">))</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span>
+        <span class="n">max_denom_out</span>
+    <span class="p">)</span>
+    <span class="n">MOS_signature</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">b</span><span class="p">]</span>
+    <span class="n">invert_MOS_signature</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">mediant</span><span class="p">,</span>
+        <span class="n">mediant_frac</span><span class="p">,</span>
+        <span class="n">gen_interval</span><span class="p">,</span>
+        <span class="n">gen_interval_frac</span><span class="p">,</span>
+        <span class="n">MOS_signature</span><span class="p">,</span>
+        <span class="n">invert_MOS_signature</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="stern_brocot_to_generator_interval">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.stern_brocot_to_generator_interval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stern_brocot_to_generator_interval</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a fraction in the stern-brocot tree to</span>
+<span class="sd">    a generator interval for moment of symmetry tunings</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : float</span>
+<span class="sd">        stern-brocot ratio</span>
+<span class="sd">    octave : float, default=2</span>
+<span class="sd">        Reference period.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gen_interval : float</span>
+<span class="sd">        Generator interval</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gen_interval</span> <span class="o">=</span> <span class="n">octave</span> <span class="o">**</span> <span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gen_interval</span></div>
+
+
+
+<div class="viewcode-block" id="gen_interval_to_stern_brocot">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.gen_interval_to_stern_brocot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_interval_to_stern_brocot</span><span class="p">(</span><span class="n">gen</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a generator interval to fraction in the stern-brocot tree.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gen : float</span>
+<span class="sd">        Generator interval.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    root_ratio : float</span>
+<span class="sd">        Fraction in the stern-brocot tree.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root_ratio</span> <span class="o">=</span> <span class="n">log2</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root_ratio</span></div>
+
+
+
+<div class="viewcode-block" id="horogram_tree_steps">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.horogram_tree_steps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">horogram_tree_steps</span><span class="p">(</span><span class="n">ratio1</span><span class="p">,</span> <span class="n">ratio2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">ratios_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ratio1</span><span class="p">,</span> <span class="n">ratio2</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">steps</span><span class="p">:</span>
+        <span class="n">ratio3</span> <span class="o">=</span> <span class="n">horogram_tree</span><span class="p">(</span><span class="n">ratio1</span><span class="p">,</span> <span class="n">ratio2</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+        <span class="n">ratios_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio3</span><span class="p">)</span>
+        <span class="n">ratio1</span> <span class="o">=</span> <span class="n">ratio2</span>
+        <span class="n">ratio2</span> <span class="o">=</span> <span class="n">ratio3</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">frac_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ratio2frac</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ratios_list</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">frac_list</span><span class="p">,</span> <span class="n">ratios_list</span></div>
+
+
+
+<div class="viewcode-block" id="horogram_tree">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.horogram_tree">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">horogram_tree</span><span class="p">(</span><span class="n">ratio1</span><span class="p">,</span> <span class="n">ratio2</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the next step of the horogram tree.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio1 : float</span>
+<span class="sd">        First ratio input.</span>
+<span class="sd">    ratio2 : float</span>
+<span class="sd">        Second ratio input.</span>
+<span class="sd">    limit : int</span>
+<span class="sd">        Limit for the denominator of the fraction.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    next_step : float</span>
+<span class="sd">        Next step of the horogram tree.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">next_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">next_step</span></div>
+
+
+
+<div class="viewcode-block" id="phi_convergent_point">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.phi_convergent_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">phi_convergent_point</span><span class="p">(</span><span class="n">ratio1</span><span class="p">,</span> <span class="n">ratio2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the phi convergent point of two ratios.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio1 : float</span>
+<span class="sd">        First ratio input.</span>
+<span class="sd">    ratio2 : float</span>
+<span class="sd">        Second ratio input.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    convergent_point : float</span>
+<span class="sd">        Phi convergent point of the two ratios.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Phi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio1</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio2</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">convergent_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">Phi</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">Phi</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convergent_point</span></div>
+
+
+
+<div class="viewcode-block" id="Stern_Brocot">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.Stern_Brocot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Stern_Brocot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Stern-Brocot tree of a given depth.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Depth of the tree.</span>
+<span class="sd">    a, b, c, d : int</span>
+<span class="sd">        Initial values for the Stern-Brocot recursion. Default is a=0, b=1, c=1, d=1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        List of fractions in the Stern-Brocot tree.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Stern_Brocot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">Stern_Brocot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">b</span> <span class="o">+</span> <span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="generator_interval_tuning">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.generator_interval_tuning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generator_interval_tuning</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">harmonic_min</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that takes a generator interval and derives a tuning based on its stacking.</span>
+<span class="sd">    interval: float</span>
+<span class="sd">        Generator interval</span>
+<span class="sd">    steps: int, default=12</span>
+<span class="sd">        Number of steps in the scale.</span>
+<span class="sd">        When set to 12 --&gt; 12-TET for interval 3/2</span>
+<span class="sd">    octave: int, default=2</span>
+<span class="sd">        Value of the octave</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">degree</span> <span class="o">=</span> <span class="n">interval</span><span class="o">**</span><span class="n">harmonic_min</span>
+        <span class="k">while</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="n">octave</span><span class="p">:</span>
+            <span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span> <span class="o">/</span> <span class="n">octave</span>
+        <span class="k">while</span> <span class="n">degree</span> <span class="o">&lt;</span> <span class="n">octave</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span> <span class="o">*</span> <span class="n">octave</span>
+        <span class="n">scale</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+        <span class="n">harmonic_min</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">scale</span><span class="p">),</span> <span class="n">scale</span></div>
+
+
+
+<div class="viewcode-block" id="interval_exponents">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.interval_exponents">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interval_exponents</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">):</span>
+    <span class="n">list_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">list_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">list_intervals</span></div>
+
+
+
+<div class="viewcode-block" id="interval_to_radian">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.interval_to_radian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interval_to_radian</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
+    <span class="n">degree</span> <span class="o">=</span> <span class="mi">360</span> <span class="o">*</span> <span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">interval</span><span class="p">))</span>
+    <span class="c1"># print(degree)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">degree</span><span class="p">),</span> <span class="n">degree</span></div>
+
+
+
+<div class="viewcode-block" id="tuning_to_radians">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.tuning_to_radians">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tuning_to_radians</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">tuning</span> <span class="o">=</span> <span class="n">generator_interval_tuning</span><span class="p">(</span>
+        <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">harmonic_min</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">radians</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># print(tuning)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">tuning</span><span class="p">:</span>
+        <span class="n">rad</span><span class="p">,</span> <span class="n">deg</span> <span class="o">=</span> <span class="n">interval_to_radian</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">radians</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rad</span><span class="p">)</span>
+        <span class="n">degrees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">radians</span><span class="p">,</span> <span class="n">degrees</span></div>
+
+
+
+<div class="viewcode-block" id="tuning_MOS_info">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.tuning_MOS_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tuning_MOS_info</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">tuning</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">generator_interval_tuning</span><span class="p">(</span>
+        <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="n">octave</span><span class="p">,</span> <span class="n">harmonic_min</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="n">tuning</span> <span class="o">+</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">tuning</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tuning</span><span class="p">)))</span>
+    <span class="n">intervals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">intervals_frac</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tuning</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">interval_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">1200</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">tuning</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1200</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">tuning</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span> <span class="mi">3</span>
+            <span class="p">)</span>
+            <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval_</span><span class="p">)</span>
+            <span class="n">intervals_frac</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Fraction</span><span class="p">(</span><span class="n">tuning</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tuning</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="c1"># print(distance)</span>
+    <span class="c1"># print(intervals_frac)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># equals to list(set(words))</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">sL</span> <span class="o">=</span> <span class="p">[</span><span class="n">steps</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">steps</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">steps</span><span class="p">))]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">((</span><span class="nb">set</span><span class="p">(</span><span class="n">intervals</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># print(&#39;Large and small steps are equal&#39;)</span>
+        <span class="n">Large</span> <span class="o">=</span> <span class="n">sL</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">small</span> <span class="o">=</span> <span class="n">sL</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Large</span> <span class="o">=</span> <span class="n">sL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">small</span> <span class="o">=</span> <span class="n">sL</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># print(sL)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">intervals</span><span class="p">)),</span> <span class="n">Large</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">tuning</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">distances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="find_MOS">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.find_MOS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_MOS</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">53</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">MOS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;sig&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;tuning&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;distances&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;distances_frac&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;NTET&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;harmsim&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;matrix_harmsim&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;stern_brocot_fracs&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">max_steps</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">n_gaps</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">tuning</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">tuning_MOS_info</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">octave</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_gaps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n_gaps</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">stern</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">interval</span><span class="p">))</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+            <span class="n">stern</span> <span class="o">=</span> <span class="p">[</span><span class="n">stern</span><span class="o">.</span><span class="n">numerator</span><span class="p">,</span> <span class="n">stern</span><span class="o">.</span><span class="n">denominator</span><span class="p">]</span>
+            <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;stern_brocot_fracs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stern</span><span class="p">)</span>
+            <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+            <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;sig&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">L</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span>
+            <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;tuning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+            <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_gaps</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;NTET&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_gaps</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;NTET&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># MOS[&#39;distances_frac&#39;].append(distances_frac)</span>
+    <span class="n">MOS_metrics</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">MOS_harmsim</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tuning</span> <span class="ow">in</span> <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;tuning&quot;</span><span class="p">]:</span>
+        <span class="n">dict_metrics</span> <span class="o">=</span> <span class="n">tuning_to_metrics</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+        <span class="n">MOS_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_metrics</span><span class="p">)</span>
+        <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;harmsim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_metrics</span><span class="p">[</span><span class="s2">&quot;harm_sim&quot;</span><span class="p">])</span>
+        <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;matrix_harmsim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_metrics</span><span class="p">[</span><span class="s2">&quot;matrix_harm_sim&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">MOS</span></div>
+
+
+
+<div class="viewcode-block" id="MOS_metric_harmonic_mean">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.MOS_metric_harmonic_mean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">MOS_metric_harmonic_mean</span><span class="p">(</span><span class="n">MOS_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">):</span>
+    <span class="n">total_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">MOS_dict</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
+    <span class="n">harm_mean</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">harmsim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">MOS_dict</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">],</span> <span class="n">MOS_dict</span><span class="p">[</span><span class="n">metric</span><span class="p">]):</span>
+        <span class="n">harm_mean_</span> <span class="o">=</span> <span class="n">step</span> <span class="o">*</span> <span class="n">harmsim</span>
+        <span class="n">harm_mean</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">harm_mean_</span><span class="p">)</span>
+    <span class="n">harm_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">harm_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_steps</span>
+    <span class="k">return</span> <span class="n">harm_mean</span></div>
+
+
+
+<div class="viewcode-block" id="generator_to_stern_brocot_fractions">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.generator_to_stern_brocot_fractions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generator_to_stern_brocot_fractions</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+    <span class="n">stern_fraction</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+        <span class="n">stern</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">stern</span> <span class="o">=</span> <span class="p">[</span><span class="n">stern</span><span class="o">.</span><span class="n">numerator</span><span class="p">,</span> <span class="n">stern</span><span class="o">.</span><span class="n">denominator</span><span class="p">]</span>
+        <span class="n">stern_fraction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stern</span><span class="p">)</span>
+    <span class="n">stern_fraction</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">stern_fraction</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">stern_fraction</span></div>
+
+
+
+<div class="viewcode-block" id="measure_symmetry">
+<a class="viewcode-back" href="../../api/scale_construction.html#biotuner.scale_construction.measure_symmetry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">measure_symmetry</span><span class="p">(</span><span class="n">generator_interval</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Measure the maximum deviation in symmetry for a given generator interval.</span>
+
+<span class="sd">    This function calculates the MOS scales for the given generator interval and determines</span>
+<span class="sd">    the maximum deviation in symmetry for the scales.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    generator_interval : int or float</span>
+<span class="sd">        The generator interval for which MOS scales will be calculated.</span>
+<span class="sd">    max_steps : int, default=20</span>
+<span class="sd">        The maximum number of steps to consider for each MOS scale calculation.</span>
+<span class="sd">    octave : int, default=2</span>
+<span class="sd">        The octave size for which the MOS scales will be calculated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The maximum deviation in symmetry for the given generator interval.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; generator_interval = 3/2</span>
+<span class="sd">    &gt;&gt;&gt; measure_symmetry(generator_interval)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MOS</span> <span class="o">=</span> <span class="n">find_MOS</span><span class="p">(</span><span class="n">generator_interval</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="n">max_steps</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="n">octave</span><span class="p">)</span>
+    <span class="n">deviations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;sig&quot;</span><span class="p">]:</span>
+        <span class="n">deviations</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sig</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">])</span>
+    <span class="n">avg_deviations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;sig&quot;</span><span class="p">]])):</span>
+        <span class="n">deviations_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">deviations</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">deviations_i</span><span class="p">:</span>
+            <span class="n">avg_deviations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">deviations_i</span><span class="p">))</span>
+    <span class="n">norm_deviations</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">MOS</span><span class="p">[</span><span class="s2">&quot;sig&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">avg_deviations</span><span class="p">]</span>
+    <span class="n">max_deviation</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">norm_deviations</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">max_deviation</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

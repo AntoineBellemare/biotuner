@@ -1,0 +1,1202 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Scale construction &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/scale_construction';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Rhythm construction" href="rhythm_construction.html" />
+    <link rel="prev" title="Harmonicity Metrics" href="metrics.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Scale construction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/scale_construction.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Scale construction</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.oct_subdiv"><code class="docutils literal notranslate"><span class="pre">oct_subdiv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compare_oct_div"><code class="docutils literal notranslate"><span class="pre">compare_oct_div()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.multi_oct_subdiv"><code class="docutils literal notranslate"><span class="pre">multi_oct_subdiv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">harmonic_tuning()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.euler_fokker_scale"><code class="docutils literal notranslate"><span class="pre">euler_fokker_scale()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.convergents"><code class="docutils literal notranslate"><span class="pre">convergents()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.dissmeasure"><code class="docutils literal notranslate"><span class="pre">dissmeasure()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.diss_curve"><code class="docutils literal notranslate"><span class="pre">diss_curve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compute_harmonic_entropy_domain_integral"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_domain_integral()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compute_harmonic_entropy_simple_weights"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_simple_weights()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_reduction"><code class="docutils literal notranslate"><span class="pre">tuning_reduction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.create_mode"><code class="docutils literal notranslate"><span class="pre">create_mode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.pac_mode"><code class="docutils literal notranslate"><span class="pre">pac_mode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_range_to_MOS"><code class="docutils literal notranslate"><span class="pre">tuning_range_to_MOS()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.stern_brocot_to_generator_interval"><code class="docutils literal notranslate"><span class="pre">stern_brocot_to_generator_interval()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.gen_interval_to_stern_brocot"><code class="docutils literal notranslate"><span class="pre">gen_interval_to_stern_brocot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.horogram_tree_steps"><code class="docutils literal notranslate"><span class="pre">horogram_tree_steps()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.horogram_tree"><code class="docutils literal notranslate"><span class="pre">horogram_tree()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.phi_convergent_point"><code class="docutils literal notranslate"><span class="pre">phi_convergent_point()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.Stern_Brocot"><code class="docutils literal notranslate"><span class="pre">Stern_Brocot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.generator_interval_tuning"><code class="docutils literal notranslate"><span class="pre">generator_interval_tuning()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.interval_exponents"><code class="docutils literal notranslate"><span class="pre">interval_exponents()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.interval_to_radian"><code class="docutils literal notranslate"><span class="pre">interval_to_radian()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_to_radians"><code class="docutils literal notranslate"><span class="pre">tuning_to_radians()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_MOS_info"><code class="docutils literal notranslate"><span class="pre">tuning_MOS_info()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.find_MOS"><code class="docutils literal notranslate"><span class="pre">find_MOS()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.MOS_metric_harmonic_mean"><code class="docutils literal notranslate"><span class="pre">MOS_metric_harmonic_mean()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.generator_to_stern_brocot_fractions"><code class="docutils literal notranslate"><span class="pre">generator_to_stern_brocot_fractions()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.measure_symmetry"><code class="docutils literal notranslate"><span class="pre">measure_symmetry()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="scale-construction">
+<h1>Scale construction<a class="headerlink" href="#scale-construction" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-biotuner.scale_construction">
+<dt class="sig sig-object py" id="biotuner.scale_construction.oct_subdiv">
+<span class="sig-name descname"><span class="pre">oct_subdiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01365</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#oct_subdiv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.oct_subdiv" title="Link to this definition">#</a></dt>
+<dd><p>N-TET tuning from Generator Interval.</p>
+<p>This function uses a generator interval to suggest numbers of steps to divide the octave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>float</em>) – Ratio that corresponds to the generator_interval.
+For example, by giving the fifth (3/2) as generator interval,
+this function will suggest to subdivide the octave in 12, 53, etc.</p></li>
+<li><p><strong>octave_limit</strong> (<em>float, default=0.01365</em>) – Approximation of the octave corresponding to the acceptable distance
+between the ratio of the generator interval after multiple iterations
+and the octave value.
+The default value of 0.01365 corresponds to the Pythagorean comma.</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – Value of the octave.</p></li>
+<li><p><strong>n</strong> (<em>int, default=5</em>) – Number of suggested octave subdivisions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Octdiv</strong> (<em>List of int</em>) – List of N-TET tunings according to the generator interval.</p></li>
+<li><p><strong>Octvalue</strong> (<em>List of float</em>) – List of the approximations of the octave for each N-TET tuning.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">oct_subdiv</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">([12, 53, 106], [1.0136432647705078, 1.0020903140410862, 1.0041849974949628])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.compare_oct_div">
+<span class="sig-name descname"><span class="pre">compare_oct_div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Octdiv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Octdiv2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#compare_oct_div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.compare_oct_div" title="Link to this definition">#</a></dt>
+<dd><p>Function that compares steps for two N-TET tunings
+and returns matching ratios and corresponding degrees</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Octdiv</strong> (<em>int, default=12</em>) – First N-TET tuning number of steps.</p></li>
+<li><p><strong>Octdiv2</strong> (<em>int, default=53</em>) – Second N-TET tuning number of steps.</p></li>
+<li><p><strong>bounds</strong> (<em>float, default=0.005</em>) – Maximum distance between one ratio of Octdiv and one ratio of Octdiv2
+to consider a match.</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – Value of the octave</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>avg_ratios</strong> (<em>numpy.ndarray</em>) – List of ratios corresponding to the shared steps in the two N-TET tunings</p></li>
+<li><p><strong>shared_steps</strong> (<em>List of tuples</em>) – The two elements of each tuple corresponds to the tuning steps
+sharing the same interval in the two N-TET tunings</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span><span class="p">,</span> <span class="n">shared_steps</span> <span class="o">=</span> <span class="n">compare_oct_div</span><span class="p">(</span><span class="n">Octdiv</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">Octdiv2</span><span class="o">=</span><span class="mi">53</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratios</span><span class="p">,</span> <span class="n">shared_steps</span>
+<span class="go">([1.124, 1.187, 1.334, 1.499, 1.78, 2.0],</span>
+<span class="go">[(2, 9), (3, 13), (5, 22), (7, 31), (10, 44), (12, 53)])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.multi_oct_subdiv">
+<span class="sig-name descname"><span class="pre">multi_oct_subdiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_sub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01365</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#multi_oct_subdiv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.multi_oct_subdiv" title="Link to this definition">#</a></dt>
+<dd><p>Determine optimal octave subdivisions based on consonant peaks ratios.</p>
+<p>This function takes the most consonant peaks ratios and uses them as input for
+the oct_subdiv function. Each consonant ratio generates a list of possible
+octave subdivisions. The function then compares these lists and identifies
+optimal octave subdivisions that are common across multiple generator intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>List of float</em>) – Peaks represent local maximum in a spectrum.</p></li>
+<li><p><strong>max_sub</strong> (<em>int, default=100</em>) – Maximum number of intervals in N-TET tuning suggestions.</p></li>
+<li><p><strong>octave_limit</strong> (<em>float, default=0.01365</em>) – Approximation of the octave corresponding to the acceptable distance
+between the ratio of the generator interval after
+multiple iterations and the octave value.</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – value of the octave</p></li>
+<li><p><strong>n_scales</strong> (<em>int, default=10</em>) – Number of N-TET tunings to compute for each generator interval (ratio).</p></li>
+<li><p><strong>cons_limit</strong> (<em>float, default=0.1</em>) – Limit for the consonance of the peaks ratios.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>multi_oct_div</strong> (<em>List of int</em>) – List of octave subdivisions that fit with multiple generator intervals.</p></li>
+<li><p><strong>ratios</strong> (<em>List of float</em>) – List of the generator intervals for which at least 1 N-TET tuning
+matches with another generator interval.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">oct_divs</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">multi_oct_subdiv</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">max_sub</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">oct_divs</span><span class="p">,</span> <span class="n">x</span>
+<span class="go">([53], array([1.125, 1.5  ]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.harmonic_tuning">
+<span class="sig-name descname"><span class="pre">harmonic_tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_harmonics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#harmonic_tuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.harmonic_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Generates a tuning based on a list of harmonic positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list_harmonics</strong> (<em>List of int</em>) – harmonic positions to use in the scale construction</p></li>
+<li><p><strong>octave</strong> (<em>int</em>) – value of the period reference</p></li>
+<li><p><strong>min_ratio</strong> (<em>float, default=1</em>) – Value of the unison.</p></li>
+<li><p><strong>max_ratio</strong> (<em>float, default=2</em>) – Value of the octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ratios</strong> (<em>List of float</em>) – Generated tuning.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list_harmonics</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic_tuning</span><span class="p">(</span><span class="n">list_harmonics</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_ratio</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[1.125, 1.25, 1.5, 1.75]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.euler_fokker_scale">
+<span class="sig-name descname"><span class="pre">euler_fokker_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#euler_fokker_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.euler_fokker_scale" title="Link to this definition">#</a></dt>
+<dd><p>Generates a tuning based on a set of prime factors in the Euler-Fokker Genera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>intervals</strong> (<em>List of int</em>) – Prime factors to use in the scale construction.</p></li>
+<li><p><strong>n</strong> (<em>int, default=1</em>) – The multiplicity of each factor, controlling how many times each is used.</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – Value of the period reference.</p></li>
+<li><p><strong>normalize</strong> (<em>bool, default=True</em>) – If True, normalizes the scale to fit within the octave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scale</strong> (<em>List of sympy.Integer or sympy.Rational</em>) – Generated tuning.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">intervals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euler_fokker_scale</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[1, 35/32, 5/4, 21/16, 3/2, 105/64, 7/4, 15/8, 2]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.convergents">
+<span class="sig-name descname"><span class="pre">convergents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#convergents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.convergents" title="Link to this definition">#</a></dt>
+<dd><p>Return the convergents of the log2 of a ratio.
+The second value represents the number of steps to divide the octave
+while the first value represents the number of octaves up before
+the stacked ratio arrives approximately to the octave value.
+For example, the output of the interval 1.5 will includes [7, 12],
+which means that to approximate the fifth (1.5) in a NTET-tuning, you can
+divide the octave in 12, while stacking 12 fifth will lead to the 7th octave up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>interval</strong> (<em>float</em>) – Interval to find convergent.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>convergents</strong> (<em>List of lists</em>) – Each sublist corresponds to a pair of convergents.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">convergents</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[(0, 1),</span>
+<span class="go">(1, 1),</span>
+<span class="go">(1, 2),</span>
+<span class="go">(3, 5),</span>
+<span class="go">(7, 12),</span>
+<span class="go">(24, 41),</span>
+<span class="go">(31, 53),</span>
+<span class="go">(179, 306),</span>
+<span class="go">(389, 665),</span>
+<span class="go">(9126, 15601),</span>
+<span class="go">(18641, 31867)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.dissmeasure">
+<span class="sig-name descname"><span class="pre">dissmeasure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fvec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#dissmeasure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.dissmeasure" title="Link to this definition">#</a></dt>
+<dd><p>Given a list of partials (peak frequencies) in fvec, with amplitudes in amp,
+this routine calculates the dissonance by summing the roughness of
+every sine pair based on a model of Plomp-Levelt’s roughness curve.
+The older model (model=’product’) was based on the product of the two
+amplitudes, but the newer model (model=’min’) is based on the minimum
+of the two amplitudes, since this matches the beat frequency amplitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fvec</strong> (<em>List</em>) – List of frequency values</p></li>
+<li><p><strong>amp</strong> (<em>List</em>) – List of amplitude values</p></li>
+<li><p><strong>model</strong> (<em>str, default=’min’</em>) – Description of parameter <cite>model</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>D</strong> (<em>float</em>) – Dissonance value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.diss_curve">
+<span class="sig-name descname"><span class="pre">diss_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">euler_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_tet_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#diss_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.diss_curve" title="Link to this definition">#</a></dt>
+<dd><p>This function computes the dissonance curve and related metrics for
+a given set of frequencies (freqs) and amplitudes (amps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freqs</strong> (<em>List (float)</em>) – list of frequencies associated with spectral peaks</p></li>
+<li><p><strong>amps</strong> (<em>List (float)</em>) – list of amplitudes associated with freqs (must be same lenght)</p></li>
+<li><p><strong>denom</strong> (<em>int, default=1000</em>) – Highest value for the denominator of each interval</p></li>
+<li><p><strong>max_ratio</strong> (<em>int, default=2</em>) – Value of the maximum ratio
+Set to 2 for a span of 1 octave
+Set to 4 for a span of 2 octaves
+Set to 8 for a span of 3 octaves
+Set to 2**n for a span of n octaves</p></li>
+<li><p><strong>euler</strong> (<em>bool, default=True</em>) – When set to True, compute the Euler Gradus Suavitatis
+for the derived scale.</p></li>
+<li><p><strong>method</strong> (<em>str, default=’min’</em>) – Refer to dissmeasure function for more information.</p>
+<ul>
+<li><p>‘min’</p></li>
+<li><p>‘product’</p></li>
+</ul>
+</li>
+<li><p><strong>plot</strong> (<em>bool, default=True</em>) – Plot the dissonance curve.</p></li>
+<li><p><strong>n_tet_grid</strong> (<em>int, default=None</em>) – When an integer is given, dotted lines will be add to the plot
+at steps of the given N-TET scale</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>diss</strong> (<em>list of floats</em>) – list of dissonance values for all the intervals</p></li>
+<li><p><strong>intervals</strong> (<em>List of tuples</em>) – Each tuple corresponds to the numerator and the denominator
+of each scale step ratio</p></li>
+<li><p><strong>ratios</strong> (<em>List of floats</em>) – list of ratios that constitute the scale</p></li>
+<li><p><strong>euler_score</strong> (<em>int</em>) – value of consonance of the scale</p></li>
+<li><p><strong>diss</strong> (<em>float</em>) – value of averaged dissonance of the total curve</p></li>
+<li><p><strong>dyad_sims</strong> (<em>List of floats</em>) – list of dyad similarities for each ratio of the scale</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.compute_harmonic_entropy_domain_integral">
+<span class="sig-name descname"><span class="pre">compute_harmonic_entropy_domain_integral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#compute_harmonic_entropy_domain_integral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.compute_harmonic_entropy_domain_integral" title="Link to this definition">#</a></dt>
+<dd><p>Computes the harmonic entropy of a list of frequency ratios for a given set of possible intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>List of floats</em>) – List of frequency ratios.</p></li>
+<li><p><strong>ratio_interval</strong> (<em>List of floats</em>) – List of possible intervals to consider.</p></li>
+<li><p><strong>spread</strong> (<em>float, default=0.01</em>) – Controls the width of the Gaussian kernel used to smooth the probability density function of the ratios.</p></li>
+<li><p><strong>min_tol</strong> (<em>float, default=1e-15</em>) – The smallest tolerance value for considering the probability density function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>weight_ratios</strong> (<em>ndarray</em>) – Sorted ratios.</p></li>
+<li><p><strong>HE</strong> (<em>ndarray</em>) – Harmonic entropy values for each interval in <cite>ratio_interval</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Harmonic entropy is a measure of the deviation of a set of frequency ratios from the idealized harmonics
+(integer multiples of a fundamental frequency) and is defined as:</p>
+<p>HE = - sum_i(p_i * log2(p_i))</p>
+<p>where p_i is the probability of a given ratio in a smoothed probability density function.</p>
+<p>The <cite>ratio_interval</cite> defines a range of possible intervals to consider. The algorithm computes the harmonic entropy
+of each possible interval in <cite>ratio_interval</cite> and returns an array of HE values, one for each interval.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.compute_harmonic_entropy_simple_weights">
+<span class="sig-name descname"><span class="pre">compute_harmonic_entropy_simple_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numerators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denominators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#compute_harmonic_entropy_simple_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.compute_harmonic_entropy_simple_weights" title="Link to this definition">#</a></dt>
+<dd><p>Compute the harmonic entropy of a set of ratios using simple weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numerators</strong> (<em>array-like</em>) – Numerators of the ratios.</p></li>
+<li><p><strong>denominators</strong> (<em>array-like</em>) – Denominators of the ratios.</p></li>
+<li><p><strong>ratio_interval</strong> (<em>array-like</em>) – Interval to compute the harmonic entropy over.</p></li>
+<li><p><strong>spread</strong> (<em>float, default=0.01</em>) – Spread of the normal distribution used to compute the weights.</p></li>
+<li><p><strong>min_tol</strong> (<em>float, default=1e-15</em>) – Minimum tolerance for the weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>weight_ratios</strong> (<em>ndarray</em>) – Sorted weight ratios.</p></li>
+<li><p><strong>HE</strong> (<em>ndarray</em>) – Harmonic entropy.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.harmonic_entropy">
+<span class="sig-name descname"><span class="pre">harmonic_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_entropy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_tenney</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#harmonic_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.harmonic_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Harmonic entropy is a measure of the uncertainty in pitch perception,
+and it provides a physical correlate of tonalness,one aspect of the
+psychoacoustic concept of dissonance (Sethares). High tonalness corresponds
+to low entropy and low tonalness corresponds to high entropy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>List of floats</em>) – Ratios between each pairs of frequency peaks.</p></li>
+<li><p><strong>res</strong> (<em>float, default=0.001</em>) – Resolution of the ratio steps.</p></li>
+<li><p><strong>spread</strong> (<em>float, default=0.01</em>) – Spread of the normal distribution used to compute the weights.</p></li>
+<li><p><strong>plot_entropy</strong> (<em>bool, default=True</em>) – When set to True, plot the harmonic entropy curve.</p></li>
+<li><p><strong>plot_tenney</strong> (<em>bool, default=False</em>) – When set to True, plot the tenney heights (y-axis)
+across ratios (x-axis).</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – Value of reference period.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>HE_minima</strong> (<em>List of floats</em>) – List of ratios corresponding to minima of the harmonic entropy curve</p></li>
+<li><p><strong>HE_avg</strong> (<em>float</em>) – Value of the averaged harmonic entropy</p></li>
+<li><p><strong>HE</strong> (<em>List of floats</em>) – List of harmonic entropy values for each ratio.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.tuning_reduction">
+<span class="sig-name descname"><span class="pre">tuning_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pos_harm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#tuning_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.tuning_reduction" title="Link to this definition">#</a></dt>
+<dd><blockquote>
+<div><p>Function that reduces the number of steps in a scale according
+to the consonance between pairs of ratios.</p>
+<dl class="simple">
+<dt>tuning<span class="classifier">List (float)</span></dt><dd><p>scale to reduce</p>
+</dd>
+<dt>mode_n_steps<span class="classifier">int</span></dt><dd><p>number of steps of the reduced scale</p>
+</dd>
+<dt>function<span class="classifier">function, default=compute_consonance</span></dt><dd><p>function used to compute the consonance between pairs of ratios
+Choose between:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.compute_consonance" title="biotuner.metrics.compute_consonance"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_consonance</span></code></a></p></li>
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.dyad_similarity" title="biotuner.metrics.dyad_similarity"><code class="xref py py-func docutils literal notranslate"><span class="pre">dyad_similarity</span></code></a></p></li>
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.metric_denom" title="biotuner.metrics.metric_denom"><code class="xref py py-func docutils literal notranslate"><span class="pre">metric_denom</span></code></a></p></li>
+</ul>
+</dd>
+<dt>rounding<span class="classifier">int</span></dt><dd><p>maximum number of decimals for each step</p>
+</dd>
+<dt>ratio_type<span class="classifier">str, default=’pos_harm’</span></dt><dd><p>Choose between:</p>
+<ul class="simple">
+<li><p>‘pos_harm’:a/b when a&gt;b</p></li>
+<li><p>‘sub_harm’:a/b when a&lt;b</p></li>
+<li><p>‘all’: pos_harm + sub_harm</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>tuning_consonance<span class="classifier">float</span></dt><dd><p>Consonance value of the input tuning.</p>
+</dd>
+<dt>mode_out<span class="classifier">List of floats</span></dt><dd><p>List of mode intervals.</p>
+</dd>
+<dt>mode_consonance<span class="classifier">float</span></dt><dd><p>Consonance value of the output mode.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.21</span><span class="p">,</span> <span class="mf">1.31</span><span class="p">,</span> <span class="mf">1.45</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.875</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harm_tuning</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">harm_mode</span> <span class="o">=</span> <span class="n">tuning_reduction</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">mode_n_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">dyad_similarity</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ratio_type</span><span class="o">=</span><span class="s2">&quot;pos_harm&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tuning harmonicity: &#39;</span><span class="p">,</span> <span class="n">harm_tuning</span><span class="p">,</span> <span class="s1">&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Mode: ‘, mode, ‘
+Mode harmonicity: ‘, harm_mode)</p>
+<blockquote>
+<div><p>Tuning harmonicity:  9.267212965965944
+Mode:  [1.5, 1, 1.875, 1.7, 1.45]
+Mode harmonicity:  17.9500338066261</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.create_mode">
+<span class="sig-name descname"><span class="pre">create_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#create_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.create_mode" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Create a mode from a tuning based on the consonance of</dt><dd><p>subsets of tuning steps.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tuning</strong> (<em>List of floats</em>) – scale to reduce</p></li>
+<li><p><strong>n_steps</strong> (<em>int</em>) – number of steps of the reduced scale</p></li>
+<li><p><strong>function</strong> (<em>function, default=compute_consonance</em>) – function used to compute the consonance between pairs of ratios
+Choose between:</p>
+<ul>
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.compute_consonance" title="biotuner.metrics.compute_consonance"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_consonance</span></code></a></p></li>
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.dyad_similarity" title="biotuner.metrics.dyad_similarity"><code class="xref py py-func docutils literal notranslate"><span class="pre">dyad_similarity</span></code></a></p></li>
+<li><p><a class="reference internal" href="metrics.html#biotuner.metrics.metric_denom" title="biotuner.metrics.metric_denom"><code class="xref py py-func docutils literal notranslate"><span class="pre">metric_denom</span></code></a></p></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>mode</strong> (<em>List of floats</em>) – Reduced tuning.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.21</span><span class="p">,</span> <span class="mf">1.31</span><span class="p">,</span> <span class="mf">1.45</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.875</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_mode</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">dyad_similarity</span><span class="p">)</span>
+<span class="go">[1, 1.45, 1.5, 1.7, 1.875]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.pac_mode">
+<span class="sig-name descname"><span class="pre">pac_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pac_freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function=&lt;function</span> <span class="pre">dyad_similarity&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method='subset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#pac_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.pac_mode" title="Link to this definition">#</a></dt>
+<dd><p>Compute the pac mode of a set of frequency pairs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pac_freqs</strong> (<em>List of tuples</em>) – List of frequency pairs (f1, f2) representing phase-amplitude coupling.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of steps in the tuning system.</p></li>
+<li><p><strong>function</strong> (<em>function, default=dyad_similarity</em>) – A function that takes two frequencies as input and returns a similarity score.</p></li>
+<li><p><strong>method</strong> (<em>str, default=’subset’</em>) – The method used to compute the pac mode.
+Possible values:</p>
+<ul>
+<li><p>‘pairwise’</p></li>
+<li><p>‘subset’</p></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>List</em> – The pac mode as a list of frequencies.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.tuning_range_to_MOS">
+<span class="sig-name descname"><span class="pre">tuning_range_to_MOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#tuning_range_to_MOS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.tuning_range_to_MOS" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Moment of Symmetry (MOS) signature for a range of ratios defined by two input fractions,
+and compute the generative interval for that range.</p>
+<p>The MOS signature of a ratio is a tuple of integers representing the number of equally spaced intervals
+that can fit into an octave when starting from the ratio, going in one direction, and repeating the
+interval until the octave is filled. For example, the MOS signature of an octave is (1,0) because there
+is only one interval that fits into an octave when starting from the ratio of 1:1 and going up.
+The MOS signature of a perfect fifth is (0,1) because there are no smaller intervals that fit into an
+octave when starting from the ratio of 3:2 and going up, but there is one larger interval that fits,
+which is the octave above the perfect fifth.</p>
+<p>The generative interval is the interval that corresponds to the mediant of the two input fractions.
+The mediant is the fraction that lies between the two input fractions and corresponds to the interval
+where small and large steps are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frac1</strong> (<em>str or float</em>) – First ratio as a string or float.</p></li>
+<li><p><strong>frac2</strong> (<em>str or float</em>) – Second ratio as a string or float.</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – The ratio of an octave.</p></li>
+<li><p><strong>max_denom_in</strong> (<em>int, default=100</em>) – Maximum denominator to use when converting the input fractions to rational numbers.</p></li>
+<li><p><strong>max_denom_out</strong> (<em>int, default=100</em>) – Maximum denominator to use when approximating the generative interval as a rational number.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple</em> – A tuple containing:
+- the mediant as a float,
+- the mediant as a fraction with a denominator not greater than <cite>max_denom_out</cite>,
+- the generative interval as a float,
+- the generative interval as a fraction with a denominator not greater than <cite>max_denom_out</cite>,
+- the MOS signature of the generative interval as a tuple of integers,
+- the MOS signature of the inverse of the generative interval as a tuple of integers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.stern_brocot_to_generator_interval">
+<span class="sig-name descname"><span class="pre">stern_brocot_to_generator_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#stern_brocot_to_generator_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.stern_brocot_to_generator_interval" title="Link to this definition">#</a></dt>
+<dd><p>Converts a fraction in the stern-brocot tree to
+a generator interval for moment of symmetry tunings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>float</em>) – stern-brocot ratio</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – Reference period.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>gen_interval</strong> (<em>float</em>) – Generator interval</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.gen_interval_to_stern_brocot">
+<span class="sig-name descname"><span class="pre">gen_interval_to_stern_brocot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#gen_interval_to_stern_brocot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.gen_interval_to_stern_brocot" title="Link to this definition">#</a></dt>
+<dd><p>Convert a generator interval to fraction in the stern-brocot tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gen</strong> (<em>float</em>) – Generator interval.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>root_ratio</strong> (<em>float</em>) – Fraction in the stern-brocot tree.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.horogram_tree_steps">
+<span class="sig-name descname"><span class="pre">horogram_tree_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#horogram_tree_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.horogram_tree_steps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.horogram_tree">
+<span class="sig-name descname"><span class="pre">horogram_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#horogram_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.horogram_tree" title="Link to this definition">#</a></dt>
+<dd><p>Compute the next step of the horogram tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio1</strong> (<em>float</em>) – First ratio input.</p></li>
+<li><p><strong>ratio2</strong> (<em>float</em>) – Second ratio input.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Limit for the denominator of the fraction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>next_step</strong> (<em>float</em>) – Next step of the horogram tree.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.phi_convergent_point">
+<span class="sig-name descname"><span class="pre">phi_convergent_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#phi_convergent_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.phi_convergent_point" title="Link to this definition">#</a></dt>
+<dd><p>Compute the phi convergent point of two ratios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio1</strong> (<em>float</em>) – First ratio input.</p></li>
+<li><p><strong>ratio2</strong> (<em>float</em>) – Second ratio input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>convergent_point</strong> (<em>float</em>) – Phi convergent point of the two ratios.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.Stern_Brocot">
+<span class="sig-name descname"><span class="pre">Stern_Brocot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#Stern_Brocot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.Stern_Brocot" title="Link to this definition">#</a></dt>
+<dd><p>Compute the Stern-Brocot tree of a given depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Depth of the tree.</p></li>
+<li><p><strong>a, b, c, d</strong> (<em>int</em>) – Initial values for the Stern-Brocot recursion. Default is a=0, b=1, c=1, d=1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em> – List of fractions in the Stern-Brocot tree.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.generator_interval_tuning">
+<span class="sig-name descname"><span class="pre">generator_interval_tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonic_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#generator_interval_tuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.generator_interval_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Function that takes a generator interval and derives a tuning based on its stacking.
+interval: float</p>
+<blockquote>
+<div><p>Generator interval</p>
+</div></blockquote>
+<dl class="simple">
+<dt>steps: int, default=12</dt><dd><p>Number of steps in the scale.
+When set to 12 –&gt; 12-TET for interval 3/2</p>
+</dd>
+<dt>octave: int, default=2</dt><dd><p>Value of the octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.interval_exponents">
+<span class="sig-name descname"><span class="pre">interval_exponents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#interval_exponents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.interval_exponents" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.interval_to_radian">
+<span class="sig-name descname"><span class="pre">interval_to_radian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#interval_to_radian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.interval_to_radian" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.tuning_to_radians">
+<span class="sig-name descname"><span class="pre">tuning_to_radians</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#tuning_to_radians"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.tuning_to_radians" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.tuning_MOS_info">
+<span class="sig-name descname"><span class="pre">tuning_MOS_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#tuning_MOS_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.tuning_MOS_info" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.find_MOS">
+<span class="sig-name descname"><span class="pre">find_MOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">53</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#find_MOS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.find_MOS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.MOS_metric_harmonic_mean">
+<span class="sig-name descname"><span class="pre">MOS_metric_harmonic_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MOS_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmsim'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#MOS_metric_harmonic_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.MOS_metric_harmonic_mean" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.generator_to_stern_brocot_fractions">
+<span class="sig-name descname"><span class="pre">generator_to_stern_brocot_fractions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#generator_to_stern_brocot_fractions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.generator_to_stern_brocot_fractions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.scale_construction.measure_symmetry">
+<span class="sig-name descname"><span class="pre">measure_symmetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/scale_construction.html#measure_symmetry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.scale_construction.measure_symmetry" title="Link to this definition">#</a></dt>
+<dd><p>Measure the maximum deviation in symmetry for a given generator interval.</p>
+<p>This function calculates the MOS scales for the given generator interval and determines
+the maximum deviation in symmetry for the scales.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator_interval</strong> (<em>int or float</em>) – The generator interval for which MOS scales will be calculated.</p></li>
+<li><p><strong>max_steps</strong> (<em>int, default=20</em>) – The maximum number of steps to consider for each MOS scale calculation.</p></li>
+<li><p><strong>octave</strong> (<em>int, default=2</em>) – The octave size for which the MOS scales will be calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The maximum deviation in symmetry for the given generator interval.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">generator_interval</span> <span class="o">=</span> <span class="mi">3</span><span class="o">/</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">measure_symmetry</span><span class="p">(</span><span class="n">generator_interval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="metrics.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonicity Metrics</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="rhythm_construction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Rhythm construction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.oct_subdiv"><code class="docutils literal notranslate"><span class="pre">oct_subdiv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compare_oct_div"><code class="docutils literal notranslate"><span class="pre">compare_oct_div()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.multi_oct_subdiv"><code class="docutils literal notranslate"><span class="pre">multi_oct_subdiv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">harmonic_tuning()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.euler_fokker_scale"><code class="docutils literal notranslate"><span class="pre">euler_fokker_scale()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.convergents"><code class="docutils literal notranslate"><span class="pre">convergents()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.dissmeasure"><code class="docutils literal notranslate"><span class="pre">dissmeasure()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.diss_curve"><code class="docutils literal notranslate"><span class="pre">diss_curve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compute_harmonic_entropy_domain_integral"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_domain_integral()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.compute_harmonic_entropy_simple_weights"><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy_simple_weights()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">harmonic_entropy()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_reduction"><code class="docutils literal notranslate"><span class="pre">tuning_reduction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.create_mode"><code class="docutils literal notranslate"><span class="pre">create_mode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.pac_mode"><code class="docutils literal notranslate"><span class="pre">pac_mode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_range_to_MOS"><code class="docutils literal notranslate"><span class="pre">tuning_range_to_MOS()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.stern_brocot_to_generator_interval"><code class="docutils literal notranslate"><span class="pre">stern_brocot_to_generator_interval()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.gen_interval_to_stern_brocot"><code class="docutils literal notranslate"><span class="pre">gen_interval_to_stern_brocot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.horogram_tree_steps"><code class="docutils literal notranslate"><span class="pre">horogram_tree_steps()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.horogram_tree"><code class="docutils literal notranslate"><span class="pre">horogram_tree()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.phi_convergent_point"><code class="docutils literal notranslate"><span class="pre">phi_convergent_point()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.Stern_Brocot"><code class="docutils literal notranslate"><span class="pre">Stern_Brocot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.generator_interval_tuning"><code class="docutils literal notranslate"><span class="pre">generator_interval_tuning()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.interval_exponents"><code class="docutils literal notranslate"><span class="pre">interval_exponents()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.interval_to_radian"><code class="docutils literal notranslate"><span class="pre">interval_to_radian()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_to_radians"><code class="docutils literal notranslate"><span class="pre">tuning_to_radians()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.tuning_MOS_info"><code class="docutils literal notranslate"><span class="pre">tuning_MOS_info()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.find_MOS"><code class="docutils literal notranslate"><span class="pre">find_MOS()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.MOS_metric_harmonic_mean"><code class="docutils literal notranslate"><span class="pre">MOS_metric_harmonic_mean()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.generator_to_stern_brocot_fractions"><code class="docutils literal notranslate"><span class="pre">generator_to_stern_brocot_fractions()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.scale_construction.measure_symmetry"><code class="docutils literal notranslate"><span class="pre">measure_symmetry()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

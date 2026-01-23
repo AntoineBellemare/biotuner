@@ -1,0 +1,1252 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>BiotunerGroup (BETA) &#8212; Biotuner 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/biotuner_group';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Peaks Extraction" href="peaks_extraction.html" />
+    <link rel="prev" title="Biotuner object" href="biotuner_object.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.1.0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.1.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">BiotunerGroup (BETA)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/biotuner_group.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>BiotunerGroup (BETA)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.objects"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.objects</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.results"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.results</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.shape"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.shape</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.n_series"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.n_series</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_peaks"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_extension"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_extension()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_metrics"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_metrics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_diss_curve"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_diss_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_harmonic_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_euler_fokker"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_euler_fokker()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_harmonic_tuning()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.get_attribute"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.get_attribute()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.summary"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.tuning_summary"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.tuning_summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.get_tuning_scales"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.get_tuning_scales()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compare_groups"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compare_groups()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_group_peaks"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_group_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_peak_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_peak_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_metric_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_matrix"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_metric_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_interval_histogram"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_interval_histogram()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_scale_size_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_scale_size_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_common_intervals"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_common_intervals()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_tuning_comparison"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_tuning_comparison()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-2d-example">Basic 2D Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-example-with-metadata">3D Example with Metadata</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-methods">Main Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-processing">Data Processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-comparison">Analysis &amp; Comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biotunergroup-beta">
+<h1>BiotunerGroup (BETA)<a class="headerlink" href="#biotunergroup-beta" title="Link to this heading">#</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>🧪 BETA Feature</strong></p>
+<p>The BiotunerGroup module is currently in beta. The API may change in future releases.
+We welcome feedback and contributions to help stabilize this feature.</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-biotuner.biotuner_group">BiotunerGroup: Group-level analysis for multiple time series</p>
+<p>This module provides a clean, elegant interface for running biotuner analysis
+on multiple time series (trials, electrodes, etc.) with automatic aggregation,
+comparison, and visualization capabilities.</p>
+<p>Author: Biotuner Team
+Date: December 2025</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BiotunerGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_objects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">biotuner_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Group-level biotuner analysis for multiple time series.</p>
+<p>This class manages multiple biotuner objects, enabling batch processing,
+aggregation of metrics, group comparisons, and unified visualizations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – Time series data with shape:
+- 2D: (n_series, n_samples) - e.g., electrodes × timepoints
+- 3D: (n_trials, n_channels, n_samples) - e.g., trials × electrodes × timepoints</p></li>
+<li><p><strong>sf</strong> (<em>int</em>) – Sampling frequency in Hz</p></li>
+<li><p><strong>axis_labels</strong> (<em>list of str, optional</em>) – Names for each dimension, e.g., [‘trials’, ‘electrodes’]
+If None, uses generic labels [‘dim0’, ‘dim1’, …]</p></li>
+<li><p><strong>metadata</strong> (<em>dict, optional</em>) – Metadata for grouping/comparison. Keys are column names, values are lists
+with length matching the first dimension of data.
+Example: {‘condition’: [‘rest’, ‘rest’, ‘task’, ‘task’], ‘subject’: [‘S1’, ‘S2’, ‘S1’, ‘S2’]}</p></li>
+<li><p><strong>store_objects</strong> (<em>bool, default=True</em>) – If True, stores all individual biotuner objects. If False, only stores
+results to save memory (individual objects not accessible).</p></li>
+<li><p><strong>**biotuner_kwargs</strong> (<em>dict</em>) – Default parameters passed to all compute_biotuner objects
+(e.g., peaks_function=’EMD’, precision=0.1, n_harm=10)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.objects" title="Link to this definition">#</a></dt>
+<dd><p>Individual biotuner objects (if store_objects=True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <a class="reference internal" href="biotuner_object.html#biotuner.biotuner_object.compute_biotuner" title="biotuner.biotuner_object.compute_biotuner">compute_biotuner</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.results">
+<span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.results" title="Link to this definition">#</a></dt>
+<dd><p>Summary DataFrame with all computed metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.shape" title="Link to this definition">#</a></dt>
+<dd><p>Shape of the input data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.n_series">
+<span class="sig-name descname"><span class="pre">n_series</span></span><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.n_series" title="Link to this definition">#</a></dt>
+<dd><p>Total number of time series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<p>Basic usage with 2D data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Single electrode across trials</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>  <span class="c1"># 10 trials, 5000 samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;FOOOF&#39;</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With 3D data and metadata:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Multiple electrodes across trials</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>  <span class="c1"># 20 trials, 64 channels, 5000 samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;rest&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">axis_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trials&#39;</span><span class="p">,</span> <span class="s1">&#39;electrodes&#39;</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;EMD&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compare groups</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comparison</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compare_groups</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">plot_metric_distribution</span><span class="p">(</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Memory-efficient mode for large datasets:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">store_objects</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>  <span class="c1"># Only summary stats kept in memory</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_peaks">
+<span class="sig-name descname"><span class="pre">compute_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peaks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_peaks" title="Link to this definition">#</a></dt>
+<dd><p>Extract spectral peaks for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks_function</strong> (<em>str, optional</em>) – Peak extraction method. If None, uses value from biotuner_kwargs or ‘EMD’</p></li>
+<li><p><strong>min_freq</strong> (<em>float, default=1</em>) – Minimum frequency for peak extraction (Hz)</p></li>
+<li><p><strong>max_freq</strong> (<em>float, default=60</em>) – Maximum frequency for peak extraction (Hz)</p></li>
+<li><p><strong>precision</strong> (<em>float, optional</em>) – Frequency precision (Hz). If None, uses value from biotuner_kwargs or 0.1</p></li>
+<li><p><strong>n_peaks</strong> (<em>int, default=5</em>) – Number of peaks to extract</p></li>
+<li><p><strong>n_jobs</strong> (<em>int, default=1</em>) – Number of parallel jobs. -1 uses all CPUs, 1 for sequential processing.
+Recommended for large datasets (&gt;50 series) or FOOOF peak detection.</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for peaks_extraction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_extension">
+<span class="sig-name descname"><span class="pre">compute_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'consonant_harmonic_fit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_extension" title="Link to this definition">#</a></dt>
+<dd><p>Compute peak extensions for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str, default=’consonant_harmonic_fit’</em>) – Extension method: ‘harmonic_fit’, ‘consonant’, ‘multi_consonant’,
+‘consonant_harmonic_fit’, ‘multi_consonant_harmonic_fit’</p></li>
+<li><p><strong>n_harm</strong> (<em>int, optional</em>) – Number of harmonics. If None, uses value from biotuner_kwargs or 10</p></li>
+<li><p><strong>n_jobs</strong> (<em>int, default=1</em>) – Number of parallel jobs. -1 uses all CPUs, 1 for sequential processing.</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for peaks_extension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_metrics">
+<span class="sig-name descname"><span class="pre">compute_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_harm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_metrics" title="Link to this definition">#</a></dt>
+<dd><p>Compute peak metrics for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_harm</strong> (<em>int, optional</em>) – Number of harmonics. If None, uses value from biotuner_kwargs or 10</p></li>
+<li><p><strong>delta_lim</strong> (<em>int, default=20</em>) – Delta limit for subharmonic tension calculation</p></li>
+<li><p><strong>n_jobs</strong> (<em>int, default=1</em>) – Number of parallel jobs. -1 uses all CPUs, 1 for sequential processing.</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for compute_peaks_metrics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_diss_curve">
+<span class="sig-name descname"><span class="pre">compute_diss_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_diss_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_diss_curve" title="Link to this definition">#</a></dt>
+<dd><p>Compute dissonance curves for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>str, default=’peaks’</em>) – Input type: ‘peaks’ or ‘extended_peaks’</p></li>
+<li><p><strong>denom</strong> (<em>int, default=1000</em>) – Denominator for dissonance curve resolution</p></li>
+<li><p><strong>max_ratio</strong> (<em>float, default=2</em>) – Maximum ratio (typically octave = 2)</p></li>
+<li><p><strong>n_jobs</strong> (<em>int, default=1</em>) – Number of parallel jobs. -1 uses all CPUs, 1 for sequential processing.</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for compute_diss_curve</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_harmonic_entropy">
+<span class="sig-name descname"><span class="pre">compute_harmonic_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_harmonic_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Compute harmonic entropy for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_type</strong> (<em>str, default=’peaks’</em>) – Input type: ‘peaks’ or ‘extended_peaks’</p></li>
+<li><p><strong>res</strong> (<em>float, default=0.001</em>) – Resolution of ratio steps</p></li>
+<li><p><strong>spread</strong> (<em>float, default=0.01</em>) – Spread of normal distribution</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – Octave value</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for compute_harmonic_entropy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_euler_fokker">
+<span class="sig-name descname"><span class="pre">compute_euler_fokker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_euler_fokker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_euler_fokker" title="Link to this definition">#</a></dt>
+<dd><p>Compute Euler-Fokker scales for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str, default=’peaks’</em>) – Method: ‘peaks’ or ‘extended_peaks’</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – Period interval</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compute_harmonic_tuning">
+<span class="sig-name descname"><span class="pre">compute_harmonic_tuning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_harmonics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><span class="pre">BiotunerGroup</span></a></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compute_harmonic_tuning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_tuning" title="Link to this definition">#</a></dt>
+<dd><p>Compute harmonic tunings for all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list_harmonics</strong> (<em>list of int, optional</em>) – Harmonic positions for scale construction</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2</em>) – Period reference</p></li>
+<li><p><strong>min_ratio</strong> (<em>float, default=1</em>) – Unison value</p></li>
+<li><p><strong>max_ratio</strong> (<em>float, default=2</em>) – Octave value</p></li>
+<li><p><strong>verbose</strong> (<em>bool, default=False</em>) – Print progress</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> (<em>BiotunerGroup</em>) – Returns self for method chaining</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.get_attribute">
+<span class="sig-name descname"><span class="pre">get_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.get_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.get_attribute" title="Link to this definition">#</a></dt>
+<dd><p>Get an attribute from all biotuner objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr_name</strong> (<em>str</em>) – Attribute name (e.g., ‘peaks’, ‘peaks_ratios’, ‘peaks_metrics’)</p></li>
+<li><p><strong>as_array</strong> (<em>bool, default=False</em>) – If True, attempt to stack results as numpy array.
+Only works if all results have the same shape.</p></li>
+<li><p><strong>missing_value</strong> (<em>any, default=np.nan</em>) – Value to use if attribute doesn’t exist for an object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> (<em>list or ndarray</em>) – List or array of attribute values from all objects</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">peaks_all</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;peaks&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">amps_all</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;amps&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratios_all</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;peaks_ratios&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.summary" title="Link to this definition">#</a></dt>
+<dd><p>Generate summary DataFrame with aggregated metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> (<em>list of str, optional</em>) – Which metrics to include. If None, includes all available metrics.
+Examples: [‘harmsim’, ‘cons’, ‘tenney’, ‘euler’, ‘n_peaks’]</p></li>
+<li><p><strong>aggregation</strong> (<em>str or list of str, default=’all’</em>) – Aggregation methods to apply:
+- ‘mean’, ‘std’, ‘median’, ‘min’, ‘max’, ‘sem’
+- ‘all’: computes all of the above
+- list: specific subset, e.g., [‘mean’, ‘std’]</p></li>
+<li><p><strong>include_index</strong> (<em>bool, default=True</em>) – Include index columns and metadata in output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Summary DataFrame with one row per time series</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get all statistics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get specific metrics and stats</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="s1">&#39;cons&#39;</span><span class="p">],</span> <span class="n">aggregation</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compare across conditions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">summary</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.tuning_summary">
+<span class="sig-name descname"><span class="pre">tuning_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.tuning_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.tuning_summary" title="Link to this definition">#</a></dt>
+<dd><p>Generate summary DataFrame focused on tuning/scale metrics.</p>
+<p>This is a convenience method that extracts only scale-related metrics
+from the full summary, making it easier to analyze tuning characteristics
+across time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>include_index</strong> (<em>bool, default=True</em>) – Include index columns and metadata in output</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Summary DataFrame with tuning metrics (scale_* columns)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compute tunings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">()</span><span class="o">.</span><span class="n">compute_harmonic_entropy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get tuning metrics summary</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuning_df</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">tuning_summary</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Compare tuning metrics across conditions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuning_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.get_tuning_scales">
+<span class="sig-name descname"><span class="pre">get_tuning_scales</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diss_scale'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.get_tuning_scales"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.get_tuning_scales" title="Link to this definition">#</a></dt>
+<dd><p>Extract tuning scales from all biotuner objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale_type</strong> (<em>str, default=’diss_scale’</em>) – Type of scale to extract:
+- ‘diss_scale’: Dissonance curve scale
+- ‘HE_scale’: Harmonic entropy scale
+- ‘euler_fokker’: Euler-Fokker scale
+- ‘harm_tuning_scale’: Harmonic tuning scale</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scales</strong> (<em>list</em>) – List of scales (each scale is a list of ratios)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scales</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">get_tuning_scales</span><span class="p">(</span><span class="s1">&#39;diss_scale&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Analyze scale sizes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean scale size: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scale_sizes</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> steps&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.compare_groups">
+<span class="sig-name descname"><span class="pre">compare_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groupby</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'harmsim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ttest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.compare_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.compare_groups" title="Link to this definition">#</a></dt>
+<dd><p>Compare metrics across metadata groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>groupby</strong> (<em>str</em>) – Metadata column to group by</p></li>
+<li><p><strong>metric</strong> (<em>str, default=’harmsim’</em>) – Metric to compare</p></li>
+<li><p><strong>test</strong> (<em>str, default=’ttest’</em>) – Statistical test: ‘ttest’, ‘anova’, ‘mannwhitneyu’, ‘kruskal’</p></li>
+<li><p><strong>alpha</strong> (<em>float, default=0.05</em>) – Significance level</p></li>
+<li><p><strong>plot</strong> (<em>bool, default=True</em>) – Generate comparison plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> (<em>pandas.DataFrame</em>) – Comparison results with statistics</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">comparison</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compare_groups</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim_mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_group_peaks">
+<span class="sig-name descname"><span class="pre">plot_group_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_individual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_bands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_individual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_group_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_group_peaks" title="Link to this definition">#</a></dt>
+<dd><p>Plot aggregated peak spectrum across all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_individual</strong> (<em>bool, default=False</em>) – Show individual PSDs in background</p></li>
+<li><p><strong>aggregate</strong> (<em>str, default=’mean’</em>) – Aggregation method: ‘mean’, ‘median’</p></li>
+<li><p><strong>xmin</strong> (<em>float, default=1</em>) – Minimum frequency (Hz)</p></li>
+<li><p><strong>xmax</strong> (<em>float, default=60</em>) – Maximum frequency (Hz)</p></li>
+<li><p><strong>show_bands</strong> (<em>bool, default=True</em>) – Show frequency band labels</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, optional</em>) – Figure size (default from plot_config)</p></li>
+<li><p><strong>alpha_individual</strong> (<em>float, optional</em>) – Transparency for individual traces (default from plot_config)</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional plotting parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_peak_distribution">
+<span class="sig-name descname"><span class="pre">plot_peak_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_bands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_peak_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_peak_distribution" title="Link to this definition">#</a></dt>
+<dd><p>Plot distribution of all detected peaks across all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xmin</strong> (<em>float, default=1</em>) – Minimum frequency (Hz)</p></li>
+<li><p><strong>xmax</strong> (<em>float, default=60</em>) – Maximum frequency (Hz)</p></li>
+<li><p><strong>bins</strong> (<em>int, optional</em>) – Number of histogram bins (default from plot_config)</p></li>
+<li><p><strong>show_bands</strong> (<em>bool, default=True</em>) – Show frequency band markers</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, optional</em>) – Figure size (default from plot_config)</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional plotting parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_metric_distribution">
+<span class="sig-name descname"><span class="pre">plot_metric_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groupby</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'violin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_metric_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_distribution" title="Link to this definition">#</a></dt>
+<dd><p>Plot distribution of a metric across time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<em>str</em>) – Metric to plot (column name from summary DataFrame)</p></li>
+<li><p><strong>groupby</strong> (<em>str, optional</em>) – Metadata column to group by</p></li>
+<li><p><strong>kind</strong> (<em>str, default=’violin’</em>) – Plot type: ‘violin’, ‘box’, ‘strip’, ‘swarm’, ‘bar’</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, optional</em>) – Figure size (default from plot_config)</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional plotting parameters passed to seaborn</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_metric_matrix">
+<span class="sig-name descname"><span class="pre">plot_metric_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'harmsim_mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_metric_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Plot metric as heatmap (for 3D data: trials × electrodes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<em>str, default=’harmsim_mean’</em>) – Metric to plot</p></li>
+<li><p><strong>cmap</strong> (<em>str, optional</em>) – Colormap (default from plot_config)</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, optional</em>) – Figure size (calculated dynamically if not provided)</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional parameters for sns.heatmap</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_interval_histogram">
+<span class="sig-name descname"><span class="pre">plot_interval_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diss_scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_common</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groupby</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_interval_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_interval_histogram" title="Link to this definition">#</a></dt>
+<dd><p>Plot histogram of all intervals across time series to identify most recurrent intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale_type</strong> (<em>str, default=’diss_scale’</em>) – Type of scale: ‘diss_scale’, ‘HE_scale’, ‘euler_fokker’, ‘harm_tuning_scale’</p></li>
+<li><p><strong>max_denom</strong> (<em>int, default=100</em>) – Maximum denominator for fraction simplification</p></li>
+<li><p><strong>bins</strong> (<em>int, default=50</em>) – Number of bins for histogram</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, default=(14, 6)</em>) – Figure size</p></li>
+<li><p><strong>show_common</strong> (<em>bool, default=True</em>) – Annotate most common intervals</p></li>
+<li><p><strong>groupby</strong> (<em>str, optional</em>) – Metadata column to color by groups</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">btg</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">plot_interval_histogram</span><span class="p">(</span><span class="s1">&#39;diss_scale&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_scale_size_distribution">
+<span class="sig-name descname"><span class="pre">plot_scale_size_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diss_scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groupby</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_scale_size_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_scale_size_distribution" title="Link to this definition">#</a></dt>
+<dd><p>Plot distribution of scale sizes (number of notes) across time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale_type</strong> (<em>str, default=’diss_scale’</em>) – Type of scale to analyze</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, default=(12, 6)</em>) – Figure size</p></li>
+<li><p><strong>groupby</strong> (<em>str, optional</em>) – Metadata column to group by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_common_intervals">
+<span class="sig-name descname"><span class="pre">plot_common_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diss_scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_occurrence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_common_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_common_intervals" title="Link to this definition">#</a></dt>
+<dd><p>Plot bar chart of most common intervals across all time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale_type</strong> (<em>str, default=’diss_scale’</em>) – Type of scale to analyze</p></li>
+<li><p><strong>top_n</strong> (<em>int, default=15</em>) – Number of top intervals to show</p></li>
+<li><p><strong>max_denom</strong> (<em>int, default=100</em>) – Maximum denominator for fractions</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, default=(12, 8)</em>) – Figure size</p></li>
+<li><p><strong>min_occurrence</strong> (<em>int, default=2</em>) – Minimum number of occurrences to include</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.biotuner_group.BiotunerGroup.plot_tuning_comparison">
+<span class="sig-name descname"><span class="pre">plot_tuning_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diss_scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/biotuner_group.html#BiotunerGroup.plot_tuning_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.biotuner_group.BiotunerGroup.plot_tuning_comparison" title="Link to this definition">#</a></dt>
+<dd><p>Compare tuning scales from multiple time series side by side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scale_type</strong> (<em>str, default=’diss_scale’</em>) – Type of scale to compare</p></li>
+<li><p><strong>indices</strong> (<em>list of int, optional</em>) – Which time series to compare (default: first 5)</p></li>
+<li><p><strong>max_denom</strong> (<em>int, default=100</em>) – Maximum denominator for fractions</p></li>
+<li><p><strong>figsize</strong> (<em>tuple, default=(14, 8)</em>) – Figure size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong> (<em>matplotlib figure and axes</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code> is a powerful class for batch processing multiple time series with the Biotuner framework.
+It extends the single-object <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> to handle multi-dimensional datasets with automatic
+aggregation, group comparisons, and unified visualizations.</p>
+<section id="key-features">
+<h3>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<p>✅ <strong>Batch Processing</strong> - Run any biotuner method on multiple time series simultaneously
+✅ <strong>Automatic Aggregation</strong> - Summary statistics computed across all series
+✅ <strong>Metadata Support</strong> - Track experimental conditions, subjects, electrodes, etc.
+✅ <strong>Group Comparisons</strong> - Statistical testing between conditions
+✅ <strong>Unified Visualizations</strong> - Consistent, publication-ready plots
+✅ <strong>Method Chaining</strong> - Clean, Pythonic API
+✅ <strong>Memory Efficient</strong> - Option to store only summaries for large datasets
+✅ <strong>Individual Access</strong> - Can still analyze individual biotuner objects</p>
+</section>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<section id="basic-2d-example">
+<h3>Basic 2D Example<a class="headerlink" href="#basic-2d-example" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiotunerGroup</span>
+
+<span class="c1"># Your data: 10 trials × 5000 samples</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>
+
+<span class="c1"># Create group object</span>
+<span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+    <span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Sampling frequency</span>
+    <span class="n">axis_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trials&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Run analysis pipeline (method chaining!)</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;FOOOF&#39;</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Get summary statistics</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="d-example-with-metadata">
+<h3>3D Example with Metadata<a class="headerlink" href="#d-example-with-metadata" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multiple electrodes across trials: 20 trials × 64 channels × 5000 samples</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>
+
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;rest&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span>
+<span class="p">}</span>
+
+<span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">sf</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">axis_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trials&#39;</span><span class="p">,</span> <span class="s1">&#39;electrodes&#39;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+<span class="p">)</span>
+
+<span class="c1"># Compute peaks and metrics</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">peaks_function</span><span class="o">=</span><span class="s1">&#39;EMD&#39;</span><span class="p">)</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">()</span>
+
+<span class="c1"># Compare groups</span>
+<span class="n">comparison</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">compare_groups</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;harm_sim&#39;</span><span class="p">,</span> <span class="s1">&#39;tenney&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="main-methods">
+<h2>Main Methods<a class="headerlink" href="#main-methods" title="Link to this heading">#</a></h2>
+<section id="data-processing">
+<h3>Data Processing<a class="headerlink" href="#data-processing" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_peaks()</span></code> - Extract spectral peaks from all series</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_extension()</span></code> - Extend peaks to harmonic series</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_metrics()</span></code> - Calculate harmonicity metrics</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_diss_curve()</span></code> - Compute dissonance curves</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_harmonic_entropy()</span></code> - Calculate harmonic entropy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_euler_fokker()</span></code> - Compute Euler-Fokker genus metrics</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_harmonic_tuning()</span></code> - Extract harmonic tuning information</p></li>
+</ul>
+</section>
+<section id="analysis-comparison">
+<h3>Analysis &amp; Comparison<a class="headerlink" href="#analysis-comparison" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">summary()</span></code> - Get aggregated statistics across all series</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tuning_summary()</span></code> - Get musical tuning parameters</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_tuning_scales()</span></code> - Extract scale information</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compare_groups()</span></code> - Statistical comparison between groups</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_attribute()</span></code> - Access specific attributes from all objects</p></li>
+</ul>
+</section>
+<section id="visualization">
+<h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_peaks()</span></code> - Visualize peaks across series</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_metric_comparison()</span></code> - Compare metrics between groups</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_euler_fokker()</span></code> - Visualize Euler-Fokker genus</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_tuning_comparison()</span></code> - Compare tuning across conditions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_harmonic_spectrum()</span></code> - Display harmonic spectra</p></li>
+</ul>
+</section>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="biotuner_object.html"><span class="doc">Biotuner object</span></a> - Single time series analysis</p></li>
+<li><p><a class="reference internal" href="metrics.html"><span class="doc">Harmonicity Metrics</span></a> - Available harmonicity metrics</p></li>
+<li><p><a class="reference internal" href="peaks_extraction.html"><span class="doc">Peaks Extraction</span></a> - Peak detection methods</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="biotuner_object.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Biotuner object</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="peaks_extraction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Peaks Extraction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.objects"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.objects</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.results"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.results</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.shape"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.shape</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.n_series"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.n_series</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_peaks"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_extension"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_extension()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_metrics"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_metrics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_diss_curve"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_diss_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_entropy"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_harmonic_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_euler_fokker"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_euler_fokker()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_tuning"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compute_harmonic_tuning()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.get_attribute"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.get_attribute()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.summary"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.tuning_summary"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.tuning_summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.get_tuning_scales"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.get_tuning_scales()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.compare_groups"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.compare_groups()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_group_peaks"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_group_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_peak_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_peak_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_metric_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_metric_matrix"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_metric_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_interval_histogram"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_interval_histogram()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_scale_size_distribution"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_scale_size_distribution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_common_intervals"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_common_intervals()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.biotuner_group.BiotunerGroup.plot_tuning_comparison"><code class="docutils literal notranslate"><span class="pre">BiotunerGroup.plot_tuning_comparison()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-2d-example">Basic 2D Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-example-with-metadata">3D Example with Metadata</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-methods">Main Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-processing">Data Processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-comparison">Analysis &amp; Comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
