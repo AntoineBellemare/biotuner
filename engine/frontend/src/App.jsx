@@ -10,6 +10,7 @@ import apiClient from './services/api'
 function App() {
   // Global state
   const [sessionId, setSessionId] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [fileInfo, setFileInfo] = useState(null)
   const [analysisConfig, setAnalysisConfig] = useState({
     method: 'harmonic_recurrence',
@@ -101,19 +102,33 @@ function App() {
   return (
     <div className="min-h-screen bg-biotuner-dark-900 text-biotuner-light flex flex-col">
       {/* Header */}
-      <Header />
+      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <Sidebar
-          config={analysisConfig}
-          onConfigChange={setAnalysisConfig}
-          fileInfo={fileInfo}
-        />
+        <div className={`
+          fixed lg:relative inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          <Sidebar
+            config={analysisConfig}
+            onConfigChange={setAnalysisConfig}
+            fileInfo={fileInfo}
+            onClose={() => setSidebarOpen(false)}
+          />
+        </div>
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto bg-biotuner-dark-800">
-          <div className="p-8 space-y-8">
+          <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
             {/* Error Banner */}
             {error && (
               <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4">
@@ -168,7 +183,7 @@ function App() {
                 <button
                   onClick={handleAnalyze}
                   disabled={loading}
-                  className="relative group px-12 py-4 rounded-lg font-semibold text-lg tracking-wide overflow-hidden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative group px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg tracking-wide overflow-hidden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto max-w-sm"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-biotuner-primary to-biotuner-secondary opacity-100 group-hover:opacity-90 transition-opacity"></div>
                   <div className="relative z-10 text-biotuner-dark-900">
@@ -180,20 +195,20 @@ function App() {
 
             {/* Results Section with distinct background */}
             {analysisResult && (
-              <div className="relative bg-gradient-to-br from-indigo-950/60 via-purple-950/50 to-slate-900/60 rounded-xl border-2 border-biotuner-primary/40 p-8 shadow-2xl backdrop-blur-sm">
+              <div className="relative bg-gradient-to-br from-indigo-950/60 via-purple-950/50 to-slate-900/60 rounded-xl border-2 border-biotuner-primary/40 p-4 sm:p-6 lg:p-8 shadow-2xl backdrop-blur-sm">
                 {/* Decorative corner accent */}
-                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-biotuner-primary/20 to-transparent rounded-tl-xl pointer-events-none"></div>
-                <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-biotuner-secondary/20 to-transparent rounded-br-xl pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-br from-biotuner-primary/20 to-transparent rounded-tl-xl pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-tl from-biotuner-secondary/20 to-transparent rounded-br-xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-biotuner-primary rounded-full animate-pulse shadow-lg shadow-biotuner-primary/50"></div>
-                      <h2 className="text-2xl font-bold text-biotuner-primary drop-shadow-lg">Analysis Results</h2>
+                      <h2 className="text-xl sm:text-2xl font-bold text-biotuner-primary drop-shadow-lg">Analysis Results</h2>
                     </div>
                     <button
                       onClick={() => setAnalysisResult(null)}
-                      className="relative px-4 py-2 rounded-lg bg-biotuner-dark-900/80 hover:bg-biotuner-dark-800 border border-biotuner-primary/40 text-sm transition-all hover:border-biotuner-primary/60 animate-moving-glow overflow-hidden group"
+                      className="relative px-4 py-2 rounded-lg bg-biotuner-dark-900/80 hover:bg-biotuner-dark-800 border border-biotuner-primary/40 text-sm transition-all hover:border-biotuner-primary/60 animate-moving-glow overflow-hidden group w-full sm:w-auto"
                     >
                       {/* Animated shine overlay */}
                       <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>

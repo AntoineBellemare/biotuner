@@ -274,41 +274,41 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Analysis Info */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-primary/30">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-primary/30">
           <h3 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Peak Method</h3>
-          <p className="text-xl font-bold text-biotuner-primary">
+          <p className="text-base sm:text-xl font-bold text-biotuner-primary truncate">
             {analysisResult.method}
           </p>
         </div>
-        <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-secondary/30">
+        <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-secondary/30">
           <h3 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Tuning Method</h3>
-          <p className="text-xl font-bold text-biotuner-secondary">
+          <p className="text-base sm:text-xl font-bold text-biotuner-secondary truncate">
             {analysisResult.tuning_method || 'peaks_ratios'}
           </p>
         </div>
-        <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-accent/30">
+        <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-accent/30">
           <h3 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Peaks Found</h3>
-          <p className="text-xl font-bold text-biotuner-accent">
+          <p className="text-base sm:text-xl font-bold text-biotuner-accent">
             {analysisResult.n_peaks}
           </p>
         </div>
-        <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-accent/30">
+        <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-accent/30">
           <h3 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Consonance</h3>
-          <p className="text-xl font-bold text-biotuner-accent">
+          <p className="text-base sm:text-xl font-bold text-biotuner-accent">
             {analysisResult.metrics?.consonance?.toFixed(3) || 'N/A'}
           </p>
         </div>
       </div>
 
       {/* Parameters Used */}
-      <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-6">
+      <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6">
         <h3 className="text-sm font-semibold text-biotuner-light/60 uppercase tracking-wider mb-4">
           Analysis Parameters
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
           <div>
             <span className="text-biotuner-light/40">Precision:</span>
             <span className="ml-2 text-biotuner-primary font-mono">{analysisResult.precision || 1} Hz</span>
@@ -330,13 +330,13 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
 
       {/* Peaks Chart */}
       <div>
-        <h3 className="text-xl font-bold mb-4">🎵 Frequency Peaks</h3>
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <ResponsiveContainer width="100%" height={300}>
+        <h3 className="text-lg sm:text-xl font-bold mb-4">🎵 Frequency Peaks</h3>
+        <div className="bg-gray-800 p-2 sm:p-4 rounded-lg">
+          <ResponsiveContainer width="100%" height={250} className="sm:!h-[300px]">
             <BarChart data={peaksData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="name" stroke="#f5deb3" />
-              <YAxis stroke="#f5deb3" label={{ value: 'Frequency (Hz)', angle: -90, position: 'insideLeft' }} />
+              <XAxis dataKey="name" stroke="#f5deb3" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#f5deb3" label={{ value: 'Frequency (Hz)', angle: -90, position: 'insideLeft', fontSize: 11 }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#1f1f1f', border: '1px solid #6A5ACD' }}
                 labelStyle={{ color: '#f5deb3' }}
@@ -358,14 +358,14 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
       {/* Tuning Values Table and Consonance Gauge */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Tuning Table */}
-        <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">📊 Tuning Values</h3>
-            <div className="flex gap-2">
+        <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+            <h3 className="text-lg sm:text-xl font-bold">📊 Tuning Values</h3>
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handlePlayTuning(analysisResult.tuning)}
                 disabled={playingTuning}
-                className="bg-biotuner-primary text-white px-4 py-2 rounded-lg hover:bg-biotuner-secondary disabled:opacity-50 flex items-center gap-2"
+                className="bg-biotuner-primary text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-biotuner-secondary disabled:opacity-50 flex items-center gap-2 text-sm"
               >
                 <Play className="w-4 h-4" />
                 {playingTuning ? 'Playing...' : 'Play Scale'}
@@ -373,15 +373,15 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
               {!playingRandomChords ? (
                 <button
                   onClick={handlePlayRandomChords}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm"
                 >
                   <Play className="w-4 h-4" />
-                  Play Chords
+                  <span className="hidden sm:inline">Play </span>Chords
                 </button>
               ) : (
                 <button
                   onClick={handleStopRandomChords}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 animate-pulse"
+                  className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 animate-pulse text-sm"
                 >
                   <Volume2 className="w-4 h-4" />
                   Stop
@@ -390,14 +390,14 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
             </div>
           </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <table className="w-full text-sm min-w-[400px]">
             <thead>
               <tr className="border-b border-biotuner-dark-600">
-                <th className="py-2 px-4 text-left text-biotuner-light/60">#</th>
-                <th className="py-2 px-4 text-left text-biotuner-light/60">Ratio</th>
-                <th className="py-2 px-4 text-left text-biotuner-light/60">Cents</th>
-                <th className="py-2 px-4 text-left text-biotuner-light/60">Interval Name</th>
+                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">#</th>
+                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Ratio</th>
+                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Cents</th>
+                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Interval Name</th>
               </tr>
             </thead>
             <tbody>
@@ -437,14 +437,14 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
         </div>
       </div>      
       {/* Right: Consonance Gauge */}
-      <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-6 flex items-center justify-center">
+      <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6 flex items-center justify-center">
         <ConsonanceGauge consonance={analysisResult.metrics?.consonance || 0} />
       </div>
     </div>
       {/* Tuning Reduction */}
-      <div className="bg-gray-800 p-6 rounded-lg border border-biotuner-purple/30">
-        <h3 className="text-xl font-bold mb-4">🔄 Tuning Reduction</h3>
-        <div className="flex items-center gap-4">
+      <div className="bg-gray-800 p-4 sm:p-6 rounded-lg border border-biotuner-purple/30">
+        <h3 className="text-lg sm:text-xl font-bold mb-4">🔄 Tuning Reduction</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <div className="flex-1">
             <label className="block text-sm mb-2">Number of Steps</label>
             <input
@@ -459,30 +459,30 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
           <button
             onClick={handleReduceTuning}
             disabled={loading}
-            className="mt-6 bg-biotuner-purple text-white px-6 py-2 rounded-lg hover:bg-biotuner-pink hover:text-black disabled:opacity-50"
+            className="sm:mt-6 bg-biotuner-purple text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-biotuner-pink hover:text-black disabled:opacity-50 w-full sm:w-auto"
           >
             {loading ? 'Reducing...' : 'Reduce Scale'}
           </button>
         </div>
 
         {reducedTuning && (
-          <div className="mt-6 space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-primary/30">
+          <div className="mt-4 sm:mt-6 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-primary/30">
                 <h4 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Original Consonance</h4>
-                <p className="text-2xl font-bold text-biotuner-primary">
+                <p className="text-xl sm:text-2xl font-bold text-biotuner-primary">
                   {reducedTuning.original_consonance?.toFixed(2) || 'N/A'}
                 </p>
               </div>
-              <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-secondary/30">
+              <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-secondary/30">
                 <h4 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Reduced Consonance</h4>
-                <p className="text-2xl font-bold text-biotuner-secondary">
+                <p className="text-xl sm:text-2xl font-bold text-biotuner-secondary">
                   {reducedTuning.reduced_consonance?.toFixed(2) || 'N/A'}
                 </p>
               </div>
-              <div className="bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-accent/30">
+              <div className="bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-accent/30">
                 <h4 className="text-xs text-biotuner-light/60 uppercase tracking-wider mb-1">Improvement</h4>
-                <p className="text-2xl font-bold text-biotuner-accent">
+                <p className="text-xl sm:text-2xl font-bold text-biotuner-accent">
                   {reducedTuning.reduced_consonance && reducedTuning.original_consonance
                     ? `${((reducedTuning.reduced_consonance / reducedTuning.original_consonance - 1) * 100).toFixed(1)}%`
                     : 'N/A'
@@ -491,19 +491,19 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
               </div>
             </div>
             
-            <div className="flex items-center justify-between bg-biotuner-dark-900 p-4 rounded-lg border border-biotuner-pink/30">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-biotuner-dark-900 p-3 sm:p-4 rounded-lg border border-biotuner-pink/30">
               <div>
-                <h4 className="font-semibold text-biotuner-pink mb-1">
+                <h4 className="font-semibold text-biotuner-pink mb-1 text-sm sm:text-base">
                   Reduced Tuning ({reducedTuning.n_steps} steps selected)
                 </h4>
-                <p className="text-sm text-biotuner-light/60">
+                <p className="text-xs sm:text-sm text-biotuner-light/60">
                   Highlighted rows in the table above show the most consonant intervals
                 </p>
               </div>
               <button
                 onClick={() => handlePlayTuning(reducedTuning.reduced_tuning, true)}
                 disabled={playingReduced}
-                className="bg-biotuner-pink text-black px-6 py-2 rounded-lg hover:bg-biotuner-purple hover:text-white disabled:opacity-50 flex items-center gap-2"
+                className="bg-biotuner-pink text-black px-4 sm:px-6 py-2 rounded-lg hover:bg-biotuner-purple hover:text-white disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <Volume2 className="w-4 h-4" />
                 {playingReduced ? 'Playing...' : 'Play Reduced'}
@@ -517,7 +517,7 @@ export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
       <div className="flex justify-center">
         <button
           onClick={downloadSCL}
-          className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-500 flex items-center gap-2"
+          className="bg-green-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-green-500 flex items-center gap-2 w-full sm:w-auto justify-center"
         >
           <Download className="w-5 h-5" />
           Download .SCL File

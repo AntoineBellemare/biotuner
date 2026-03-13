@@ -65,8 +65,8 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
   }
 
   return (
-    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4">
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-biotuner-primary" />
           <h3 className="text-sm font-semibold text-biotuner-light uppercase tracking-wider">
@@ -74,7 +74,7 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
           </h3>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           {/* Column Selector for CSV */}
           {fileInfo?.columns && fileInfo.columns.length > 1 && (
             <div className="flex items-center gap-2">
@@ -102,18 +102,21 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
       </div>
 
       {/* Signal Chart */}
-      <div className="bg-biotuner-dark-800 rounded-lg p-4 mb-4 relative">
+      <div className="bg-biotuner-dark-800 rounded-lg p-2 sm:p-4 mb-4 relative">
         {/* Applied Crop Visual Indicator */}
         {appliedCrop && (
-          <div className="absolute top-2 left-2 z-10 bg-biotuner-primary/90 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg">
+          <div className="absolute top-2 left-2 z-10 bg-biotuner-primary/90 text-white text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full flex items-center gap-1 sm:gap-2 shadow-lg">
             <Scissors className="w-3 h-3" />
-            <span>
+            <span className="hidden sm:inline">
               Cropped: {appliedCrop.start_time.toFixed(2)}s - {appliedCrop.end_time.toFixed(2)}s
+            </span>
+            <span className="sm:hidden">
+              {appliedCrop.start_time.toFixed(1)}s-{appliedCrop.end_time.toFixed(1)}s
             </span>
           </div>
         )}
         
-        <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#252525" />
             <XAxis 
@@ -174,8 +177,8 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
       </div>
 
       {/* Crop Controls */}
-      <div className="flex items-center gap-4">
-        <div className="flex-1 grid grid-cols-2 gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="flex-1 grid grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs text-biotuner-light/60 mb-1">Start Time (s)</label>
             <input
@@ -233,15 +236,16 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
         
         <button
           onClick={handleApplyCrop}
-          className="flex items-center gap-2 px-6 py-2 rounded bg-gradient-to-r from-biotuner-primary to-biotuner-secondary text-biotuner-dark-900 font-semibold hover:opacity-90 transition-opacity"
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded bg-gradient-to-r from-biotuner-primary to-biotuner-secondary text-biotuner-dark-900 font-semibold hover:opacity-90 transition-opacity text-sm sm:text-base"
         >
           <Scissors className="w-4 h-4" />
-          Apply Crop
+          <span className="sm:hidden">Crop</span>
+          <span className="hidden sm:inline">Apply Crop</span>
         </button>
       </div>
 
       {/* Info */}
-      <div className="mt-4 p-3 bg-biotuner-dark-800/50 rounded border border-biotuner-dark-600">
+      <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-biotuner-dark-800/50 rounded border border-biotuner-dark-600">
         <p className="text-xs text-biotuner-light/40">
           Selected: {((cropRange.end - cropRange.start) / 100 * (fileInfo?.duration || 0)).toFixed(2)}s 
           ({((cropRange.end - cropRange.start)).toFixed(1)}% of signal)

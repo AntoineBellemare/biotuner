@@ -23,6 +23,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  /* Prevent horizontal overflow on mobile */
+  overflow-x: hidden;
 }
 
 #root {
@@ -32,7 +34,8 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -41,11 +44,46 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #6A5ACD;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FFB6C1;
+}
+
+/* Hide scrollbar utility class */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets on mobile */
+  button, 
+  select, 
+  input[type="number"] {
+    min-height: 44px;
+  }
+  
+  /* Disable hover effects that don't work well on touch */
+  button:hover {
+    transform: none;
+  }
+}
+
+/* Prevent zoom on input focus for iOS */
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* Moving glow animation for New Analysis button */

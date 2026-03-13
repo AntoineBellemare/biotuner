@@ -14,23 +14,23 @@ export default function TabsContainer({ sessionId, analysisResult, analysisConfi
 
   return (
     <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 overflow-hidden">
-      {/* Tab Headers */}
-      <div className="flex border-b border-biotuner-dark-600 bg-biotuner-dark-900">
+      {/* Tab Headers - Scrollable on mobile */}
+      <div className="flex border-b border-biotuner-dark-600 bg-biotuner-dark-900 overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`
-              relative px-8 py-4 text-sm font-medium uppercase tracking-wider transition-all duration-300
+              relative flex-1 min-w-[100px] px-4 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-medium uppercase tracking-wider transition-all duration-300 whitespace-nowrap
               ${activeTab === tab.id
                 ? 'text-biotuner-primary'
                 : 'text-biotuner-light/40 hover:text-biotuner-light/80'
               }
             `}
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
               <span>{tab.icon}</span>
-              {tab.label}
+              <span className="hidden xs:inline">{tab.label}</span>
             </span>
             {activeTab === tab.id && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-biotuner-primary to-biotuner-secondary"></div>
@@ -40,7 +40,7 @@ export default function TabsContainer({ sessionId, analysisResult, analysisConfi
       </div>
 
       {/* Tab Content */}
-      <div className="p-8 bg-biotuner-dark-800">
+      <div className="p-4 sm:p-6 lg:p-8 bg-biotuner-dark-800">
         {activeTab === 'tuning' && (
           <TuningTab
             sessionId={sessionId}

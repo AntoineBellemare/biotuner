@@ -97,13 +97,13 @@ export default function ModalitySelector({ selected, onSelect }) {
   ]
 
   return (
-    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-8">
-      <h2 className="text-xs font-semibold mb-6 text-biotuner-light/60 uppercase tracking-wider flex items-center gap-2">
+    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6 lg:p-8">
+      <h2 className="text-xs font-semibold mb-4 sm:mb-6 text-biotuner-light/60 uppercase tracking-wider flex items-center gap-2">
         <Waves className="w-4 h-4" />
         Supported Modalities
       </h2>
       
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {modalities.map((modality) => {
           const Icon = modality.icon
           return (
@@ -111,7 +111,7 @@ export default function ModalitySelector({ selected, onSelect }) {
               key={modality.id}
               onClick={() => onSelect(modality.id)}
               className={`
-                relative group p-4 rounded-lg border-2 transition-all duration-300 overflow-hidden
+                relative group p-3 sm:p-4 rounded-lg border-2 transition-all duration-300 overflow-hidden
                 ${selected === modality.id
                   ? 'border-biotuner-primary bg-biotuner-primary/10'
                   : 'border-biotuner-dark-600 bg-biotuner-dark-800/50 hover:border-biotuner-primary/50'
@@ -119,8 +119,8 @@ export default function ModalitySelector({ selected, onSelect }) {
               `}
             >
               <div className="relative z-10 text-center">
-                <div className="text-3xl mb-2">{modality.emoji}</div>
-                <div className="text-sm font-medium text-biotuner-light">{modality.name}</div>
+                <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{modality.emoji}</div>
+                <div className="text-xs sm:text-sm font-medium text-biotuner-light leading-tight">{modality.name}</div>
               </div>
               
               {selected === modality.id && (
@@ -133,18 +133,18 @@ export default function ModalitySelector({ selected, onSelect }) {
       
       {/* Info Panel */}
       {selected && modalityInfo[selected] && (
-        <div className="mt-6 p-6 bg-biotuner-dark-800/70 rounded-lg border-l-4 border-biotuner-primary">
-          <h3 className="text-lg font-bold text-biotuner-light mb-3">
+        <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-biotuner-dark-800/70 rounded-lg border-l-4 border-biotuner-primary">
+          <h3 className="text-base sm:text-lg font-bold text-biotuner-light mb-2 sm:mb-3">
             {modalityInfo[selected].title}
           </h3>
           
-          <p className="text-biotuner-light/80 text-sm leading-relaxed mb-4">
+          <p className="text-biotuner-light/80 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
             {modalityInfo[selected].description}
           </p>
           
           {modalityInfo[selected].resources.length > 0 && (
             <>
-              <h4 className="text-xs font-semibold text-biotuner-light/60 uppercase tracking-wider mb-3">
+              <h4 className="text-xs font-semibold text-biotuner-light/60 uppercase tracking-wider mb-2 sm:mb-3">
                 Resources:
               </h4>
               <div className="space-y-2">

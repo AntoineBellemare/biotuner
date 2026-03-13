@@ -1,6 +1,6 @@
-import { Settings, Sliders, Info } from 'lucide-react'
+import { Settings, Sliders, Info, X } from 'lucide-react'
 
-export default function Sidebar({ config, onConfigChange, fileInfo }) {
+export default function Sidebar({ config, onConfigChange, fileInfo, onClose }) {
   const peakMethods = [
     { value: 'harmonic_recurrence', label: 'Harmonic Recurrence' },
     { value: 'cepstrum', label: 'Cepstrum' },
@@ -13,17 +13,27 @@ export default function Sidebar({ config, onConfigChange, fileInfo }) {
   const precisionOptions = [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]
 
   return (
-    <aside className="w-80 bg-biotuner-dark-900 border-r border-biotuner-dark-600 flex flex-col">
-      <div className="p-6 border-b border-biotuner-dark-600">
-        <div className="flex items-center gap-3 mb-2">
-          <Settings className="w-5 h-5 text-biotuner-primary" />
-          <h2 className="text-lg font-semibold tracking-wide text-biotuner-light uppercase">
-            Configuration
-          </h2>
+    <aside className="w-80 max-w-[85vw] h-full bg-biotuner-dark-900 border-r border-biotuner-dark-600 flex flex-col">
+      <div className="p-4 sm:p-6 border-b border-biotuner-dark-600">
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-3">
+            <Settings className="w-5 h-5 text-biotuner-primary" />
+            <h2 className="text-lg font-semibold tracking-wide text-biotuner-light uppercase">
+              Configuration
+            </h2>
+          </div>
+          {/* Mobile close button */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-lg hover:bg-biotuner-dark-800 transition-colors"
+            aria-label="Close sidebar"
+          >
+            <X className="w-5 h-5 text-biotuner-light/60" />
+          </button>
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
         {/* Peak Extraction Section */}
         <div className="space-y-4">
           <h3 className="text-xs font-bold text-biotuner-primary/80 uppercase tracking-widest border-b border-biotuner-dark-600 pb-2">
@@ -153,7 +163,7 @@ export default function Sidebar({ config, onConfigChange, fileInfo }) {
 
       {/* File Info */}
       {fileInfo && (
-        <div className="p-6 border-t border-biotuner-dark-600 bg-biotuner-dark-800/50">
+        <div className="p-4 sm:p-6 border-t border-biotuner-dark-600 bg-biotuner-dark-800/50">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-4 h-4 text-biotuner-primary" />
             <h3 className="text-xs font-semibold text-biotuner-light/60 uppercase tracking-wider">
@@ -163,7 +173,7 @@ export default function Sidebar({ config, onConfigChange, fileInfo }) {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-biotuner-light/40">File</span>
-              <span className="text-biotuner-light font-mono text-xs truncate max-w-[180px]">
+              <span className="text-biotuner-light font-mono text-xs truncate max-w-[140px] sm:max-w-[180px]">
                 {fileInfo.filename}
               </span>
             </div>

@@ -117,13 +117,14 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
   const cellSize = 60
 
   return (
-    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-6">
+    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6">
       <h3 className="text-sm font-semibold text-biotuner-light/60 uppercase tracking-wider mb-4">
         Consonance Matrix
       </h3>
       
-      <div className="overflow-x-auto">
-        <svg width={size * cellSize + 80} height={size * cellSize + 80}>
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="min-w-fit">
+          <svg width={size * cellSize + 80} height={size * cellSize + 80}>
           {/* Y-axis labels */}
           {Array.from({ length: size }).map((_, i) => (
             <text
@@ -190,11 +191,12 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
             })}
           </g>
         </svg>
+        </div>
       </div>
 
-      <div className="mt-6 space-y-2">
+      <div className="mt-4 sm:mt-6 space-y-2">
         <span className="text-xs text-biotuner-light/60 font-semibold">Consonance:</span>
-        <div className="h-8 rounded-lg border border-biotuner-dark-600" style={{
+        <div className="h-6 sm:h-8 rounded-lg border border-biotuner-dark-600" style={{
           background: 'linear-gradient(to right, rgb(0, 1, 4), rgb(87, 16, 110), rgb(188, 55, 84), rgb(249, 142, 9), rgb(252, 253, 191))'
         }}></div>
         <div className="flex justify-between text-xs text-biotuner-light/60">

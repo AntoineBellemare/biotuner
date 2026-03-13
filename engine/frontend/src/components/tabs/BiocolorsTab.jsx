@@ -92,40 +92,40 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Configuration */}
-      <div className="bg-gray-800 p-6 rounded-lg border border-biotuner-purple/30">
-        <h3 className="text-xl font-bold mb-4">🎨 Color Palette Settings</h3>
+      <div className="bg-gray-800 p-4 sm:p-6 rounded-lg border border-biotuner-purple/30">
+        <h3 className="text-lg sm:text-xl font-bold mb-4">🎨 Color Palette Settings</h3>
         
         {/* Palette Type Toggle */}
         <div className="mb-6">
           <label className="block text-sm mb-2 font-semibold">Palette Source</label>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => {
                 setPaletteType('tuning')
                 setColorPalette(null)
               }}
-              className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all ${
+              className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all text-sm sm:text-base ${
                 paletteType === 'tuning'
                   ? 'bg-biotuner-purple text-white ring-2 ring-biotuner-pink'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
-              🎵 From Tuning (Ratios)
+              🎵 From Tuning
             </button>
             <button
               onClick={() => {
                 setPaletteType('peaks')
                 setColorPalette(null)
               }}
-              className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all ${
+              className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all text-sm sm:text-base ${
                 paletteType === 'peaks'
                   ? 'bg-biotuner-purple text-white ring-2 ring-biotuner-pink'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
-              📊 From Peaks (Direct)
+              📊 From Peaks
             </button>
           </div>
           <p className="text-xs text-gray-400 mt-2">
@@ -140,7 +140,7 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
         {paletteType === 'tuning' && (
           <div className="mb-6">
             <label className="block text-sm mb-2 font-semibold">
-              Fundamental Frequency: <span className="text-biotuner-pink">{fundamental} Hz</span>
+              Fundamental: <span className="text-biotuner-pink">{fundamental} Hz</span>
             </label>
             <input
               type="range"
@@ -175,22 +175,22 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
       {colorPalette && (
         <>
           {/* Palette Info */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Total Colors</h3>
-              <p className="text-2xl font-bold text-biotuner-purple">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Total Colors</h3>
+              <p className="text-lg sm:text-2xl font-bold text-biotuner-purple">
                 {colorPalette.n_colors}
               </p>
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Fundamental</h3>
-              <p className="text-2xl font-bold text-biotuner-pink">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Fundamental</h3>
+              <p className="text-lg sm:text-2xl font-bold text-biotuner-pink">
                 {colorPalette.fundamental} Hz
               </p>
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Color Space</h3>
-              <p className="text-2xl font-bold text-green-400">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Color Space</h3>
+              <p className="text-lg sm:text-2xl font-bold text-green-400">
                 RGB/HSV
               </p>
             </div>
@@ -198,23 +198,23 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
 
           {/* Color Swatches */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">🌈 Color Palette</h3>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+              <h3 className="text-lg sm:text-xl font-bold">🌈 Color Palette</h3>
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={selectAllColors}
-                  className="text-sm bg-gray-700 hover:bg-biotuner-purple px-4 py-2 rounded-lg transition-colors"
+                  className="text-xs sm:text-sm bg-gray-700 hover:bg-biotuner-purple px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors"
                 >
                   Select All
                 </button>
                 <button
                   onClick={deselectAllColors}
-                  className="text-sm bg-gray-700 hover:bg-biotuner-pink hover:text-black px-4 py-2 rounded-lg transition-colors"
+                  className="text-xs sm:text-sm bg-gray-700 hover:bg-biotuner-pink hover:text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors"
                 >
-                  Deselect All
+                  Deselect
                 </button>
                 {selectedColors.size > 0 && (
-                  <span className="text-sm bg-biotuner-purple px-4 py-2 rounded-lg">
+                  <span className="text-xs sm:text-sm bg-biotuner-purple px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">
                     {selectedColors.size} selected
                   </span>
                 )}
@@ -222,7 +222,7 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
             </div>
             
             {/* Large swatches */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-4 mb-6 sm:mb-8">
               {Object.entries(colorPalette.palette).map(([name, colorData]) => {
                 const isSelected = selectedColors.has(name)
                 return (
@@ -280,57 +280,57 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
 
           {/* Color Details Table */}
           <div>
-            <h3 className="text-xl font-bold mb-4">📊 Color Details</h3>
-            <div className="bg-gray-800 rounded-lg overflow-hidden">
-              <table className="w-full">
+            <h3 className="text-lg sm:text-xl font-bold mb-4">📊 Color Details</h3>
+            <div className="bg-gray-800 rounded-lg overflow-x-auto">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-biotuner-purple/30">
                   <tr>
-                    <th className="px-4 py-3 text-left">Color</th>
-                    <th className="px-4 py-3 text-left">Hex</th>
-                    <th className="px-4 py-3 text-left">RGB</th>
-                    <th className="px-4 py-3 text-left">Frequency</th>
-                    <th className="px-4 py-3 text-left">Wavelength</th>
-                    <th className="px-4 py-3 text-left">{paletteType === 'tuning' ? 'Consonance' : 'Saturation'}</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">Color</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">Hex</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">RGB</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">Frequency</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">Wavelength</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">{paletteType === 'tuning' ? 'Consonance' : 'Saturation'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {Object.entries(colorPalette.palette).map(([name, colorData], idx) => (
                     <tr key={name} className={idx % 2 === 0 ? 'bg-gray-700/50' : ''}>
-                      <td className="px-4 py-3">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
                         <div className="flex items-center gap-2">
                           <div
-                            className="w-8 h-8 rounded"
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded flex-shrink-0"
                             style={{ backgroundColor: colorData.hex }}
                           />
-                          <span className="text-sm">{name.split('_').slice(-1)}</span>
+                          <span className="text-xs sm:text-sm">{name.split('_').slice(-1)}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 font-mono text-sm">{colorData.hex}</td>
-                      <td className="px-4 py-3 font-mono text-sm">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3 font-mono text-xs sm:text-sm">{colorData.hex}</td>
+                      <td className="px-2 sm:px-4 py-2 sm:py-3 font-mono text-xs sm:text-sm">
                         {colorData.rgb.join(', ')}
                       </td>
-                      <td className="px-4 py-3">{colorData.frequency.toFixed(2)} Hz</td>
-                      <td className="px-4 py-3">{colorData.wavelength.toFixed(0)} nm</td>
-                      <td className="px-4 py-3">
+                      <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">{colorData.frequency.toFixed(2)} Hz</td>
+                      <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">{colorData.wavelength.toFixed(0)} nm</td>
+                      <td className="px-2 sm:px-4 py-2 sm:py-3">
                         {colorData.consonance !== undefined ? (
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 min-w-[120px]">
                             <div className="flex-1 bg-gray-600 rounded-full h-2">
                               <div
                                 className="bg-biotuner-pink h-2 rounded-full"
                                 style={{ width: `${colorData.consonance * 100}%` }}
                               />
                             </div>
-                            <span className="text-sm">{colorData.consonance.toFixed(3)}</span>
+                            <span className="text-xs sm:text-sm">{colorData.consonance.toFixed(3)}</span>
                           </div>
                         ) : colorData.saturation !== undefined ? (
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 min-w-[120px]">
                             <div className="flex-1 bg-gray-600 rounded-full h-2">
                               <div
                                 className="bg-biotuner-purple h-2 rounded-full"
                                 style={{ width: `${colorData.saturation * 100}%` }}
                               />
                             </div>
-                            <span className="text-sm">{colorData.saturation.toFixed(3)}</span>
+                            <span className="text-xs sm:text-sm">{colorData.saturation.toFixed(3)}</span>
                           </div>
                         ) : (
                           <span className="text-gray-500">N/A</span>
@@ -345,20 +345,20 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
 
           {/* Export Buttons */}
           <div>
-            <h3 className="text-xl font-bold mb-4">
+            <h3 className="text-lg sm:text-xl font-bold mb-4">
               💾 Export Palette
               {selectedColors.size > 0 && (
-                <span className="text-sm text-biotuner-pink ml-2">
-                  (exporting {selectedColors.size} selected colors)
+                <span className="text-xs sm:text-sm text-biotuner-pink ml-2">
+                  (exporting {selectedColors.size} selected)
                 </span>
               )}
             </h3>
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
               {['ase', 'json', 'svg', 'css', 'gpl'].map((format) => (
                 <button
                   key={format}
                   onClick={() => handleExportPalette(format)}
-                  className="bg-biotuner-purple text-white px-6 py-3 rounded-lg font-semibold hover:bg-biotuner-pink hover:text-black flex items-center gap-2"
+                  className="bg-biotuner-purple text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-biotuner-pink hover:text-black flex items-center gap-2 text-sm sm:text-base"
                 >
                   <Download className="w-4 h-4" />
                   {format.toUpperCase()}

@@ -197,16 +197,16 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Configuration */}
-      <div className="bg-gray-800 p-6 rounded-lg border border-biotuner-purple/30">
-        <h3 className="text-xl font-bold mb-4">⚙️ Chord Generation Settings</h3>
+      <div className="bg-gray-800 p-4 sm:p-6 rounded-lg border border-biotuner-purple/30">
+        <h3 className="text-lg sm:text-xl font-bold mb-4">⚙️ Chord Generation Settings</h3>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm mb-2">
               Number of Segments
-              <span className="text-xs text-gray-400 ml-2">(Target: how many temporal chunks)</span>
+              <span className="text-xs text-gray-400 ml-2 hidden sm:inline">(Target: how many temporal chunks)</span>
             </label>
             <input
               type="number"
@@ -216,7 +216,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               onChange={(e) => setChordConfig({ ...chordConfig, n_segments: parseInt(e.target.value) })}
               className="w-full bg-gray-700 border border-biotuner-purple/50 rounded-lg p-2"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1 hidden sm:block">
               💡 More segments = shorter, more granular chords. Actual count may vary based on signal.
             </p>
           </div>
@@ -224,7 +224,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           <div>
             <label className="block text-sm mb-2">
               Peaks per Chord
-              <span className="text-xs text-gray-400 ml-2">(Notes in each chord)</span>
+              <span className="text-xs text-gray-400 ml-2 hidden sm:inline">(Notes in each chord)</span>
             </label>
             <input
               type="number"
@@ -234,7 +234,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               onChange={(e) => setChordConfig({ ...chordConfig, n_peaks: parseInt(e.target.value) })}
               className="w-full bg-gray-700 border border-biotuner-purple/50 rounded-lg p-2"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1 hidden sm:block">
               💡 How many frequency peaks to extract from each segment.
             </p>
           </div>
@@ -242,7 +242,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           <div>
             <label className="block text-sm mb-2">
               Time Resolution (ms)
-              <span className="text-xs text-gray-400 ml-2">(Temporal detail)</span>
+              <span className="text-xs text-gray-400 ml-2 hidden sm:inline">(Temporal detail)</span>
             </label>
             <input
               type="number"
@@ -252,7 +252,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               onChange={(e) => setChordConfig({ ...chordConfig, time_resolution: parseInt(e.target.value) })}
               className="w-full bg-gray-700 border border-biotuner-purple/50 rounded-lg p-2"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1 hidden sm:block">
               💡 Lower = more temporal precision (try 10-50ms). Higher = smoother segments.
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           <div>
             <label className="block text-sm mb-2">
               Frequency Resolution
-              <span className="text-xs text-gray-400 ml-2">(FFT window size)</span>
+              <span className="text-xs text-gray-400 ml-2 hidden sm:inline">(FFT window size)</span>
             </label>
             <input
               type="number"
@@ -271,7 +271,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               onChange={(e) => setChordConfig({ ...chordConfig, frequency_resolution: parseInt(e.target.value) })}
               className="w-full bg-gray-700 border border-biotuner-purple/50 rounded-lg p-2"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1 hidden sm:block">
               💡 Higher = better frequency detail (1024-2048 for most signals).
             </p>
           </div>
@@ -279,10 +279,10 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
 
         {/* Advanced Settings */}
         <details className="mt-6 bg-gray-700/50 rounded-lg border border-biotuner-purple/30">
-          <summary className="cursor-pointer p-4 font-semibold text-biotuner-purple hover:text-biotuner-pink">
+          <summary className="cursor-pointer p-3 sm:p-4 font-semibold text-biotuner-purple hover:text-biotuner-pink text-sm sm:text-base">
             ⚙️ Advanced Chord Settings
           </summary>
-          <div className="p-4 grid grid-cols-2 gap-4">
+          <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm mb-2">
                 Peak Prominence
@@ -335,44 +335,44 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
       {chords && (
         <>
           {/* Chord Info */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Total Chords</h3>
-              <p className="text-2xl font-bold text-biotuner-purple">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Total Chords</h3>
+              <p className="text-lg sm:text-2xl font-bold text-biotuner-purple">
                 {chords.n_segments}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1 hidden sm:block">
                 (requested {chordConfig.n_segments})
               </p>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Non-Empty Chords</h3>
-              <p className="text-2xl font-bold text-biotuner-pink">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Non-Empty</h3>
+              <p className="text-lg sm:text-2xl font-bold text-biotuner-pink">
                 {chords.chords.filter(c => c && c.length > 0).length}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                {((chords.chords.filter(c => c && c.length > 0).length / chords.n_segments) * 100).toFixed(0)}% success rate
+                {((chords.chords.filter(c => c && c.length > 0).length / chords.n_segments) * 100).toFixed(0)}% <span className="hidden sm:inline">success rate</span>
               </p>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Octave Shift</h3>
-              <p className="text-2xl font-bold text-green-400">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Octave Shift</h3>
+              <p className="text-lg sm:text-2xl font-bold text-green-400">
                 {chords.n_oct_up || 7}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                x{Math.pow(2, chords.n_oct_up || 7)} multiplier
+                x{Math.pow(2, chords.n_oct_up || 7)}
               </p>
             </div>
 
             {chords.midi_range && (
-              <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-                <h3 className="text-sm text-gray-400 mb-1">MIDI Range</h3>
-                <p className="text-2xl font-bold text-blue-400">
-                  {chords.midi_range.min} - {chords.midi_range.max}
+              <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+                <h3 className="text-xs sm:text-sm text-gray-400 mb-1">MIDI Range</h3>
+                <p className="text-lg sm:text-2xl font-bold text-blue-400">
+                  {chords.midi_range.min}-{chords.midi_range.max}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-1 hidden sm:block">
                   Median: {chords.midi_range.median}
                 </p>
               </div>
@@ -380,19 +380,19 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           </div>
 
           {/* Duration Info */}
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Avg Duration</h3>
-              <p className="text-2xl font-bold text-biotuner-pink">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Avg Duration</h3>
+              <p className="text-lg sm:text-2xl font-bold text-biotuner-pink">
                 {chords.segment_durations 
                   ? (chords.segment_durations.reduce((a, b) => a + b, 0) / chords.segment_durations.length).toFixed(2) 
                   : 'N/A'
                 }s
               </p>
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg border border-biotuner-purple/30">
-              <h3 className="text-sm text-gray-400 mb-1">Peaks Method</h3>
-              <p className="text-2xl font-bold text-green-400">
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg border border-biotuner-purple/30">
+              <h3 className="text-xs sm:text-sm text-gray-400 mb-1">Peaks Method</h3>
+              <p className="text-lg sm:text-2xl font-bold text-green-400 truncate">
                 {chords.method || 'N/A'}
               </p>
             </div>
@@ -401,9 +401,9 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           {/* Signal Visualization with Segment Boundaries */}
           {fileInfo && fileInfo.preview_data && (
             <div>
-              <h3 className="text-xl font-bold mb-4">📊 Signal with Segment Boundaries</h3>
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <ResponsiveContainer width="100%" height={300}>
+              <h3 className="text-lg sm:text-xl font-bold mb-4">📊 Signal with Segment Boundaries</h3>
+              <div className="bg-gray-800 p-2 sm:p-4 rounded-lg">
+                <ResponsiveContainer width="100%" height={250} className="sm:!h-[300px]">
                   <LineChart 
                     data={(() => {
                       // Use the maximum boundary time as the reference duration
@@ -523,7 +523,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
 
           {/* Segment Length Distribution */}
           <div>
-            <h3 className="text-xl font-bold mb-4">📊 Segment Length Distribution</h3>
+            <h3 className="text-lg sm:text-xl font-bold mb-4">📊 Segment Length Distribution</h3>
             
             {/* Check for highly skewed distribution */}
             {(() => {
@@ -533,9 +533,9 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               const isSkewed = max > avg * 10 // If max is 10x larger than average
               
               return isSkewed && (
-                <div className="bg-yellow-900/30 border border-yellow-500/50 rounded-lg p-4 mb-4">
-                  <h4 className="text-yellow-400 font-bold mb-2">⚠️ Highly Uneven Distribution Detected</h4>
-                  <p className="text-sm text-yellow-200 mb-2">
+                <div className="bg-yellow-900/30 border border-yellow-500/50 rounded-lg p-3 sm:p-4 mb-4">
+                  <h4 className="text-yellow-400 font-bold mb-2 text-sm sm:text-base">⚠️ Highly Uneven Distribution Detected</h4>
+                  <p className="text-xs sm:text-sm text-yellow-200 mb-2">
                     Your segments are very unbalanced (max: {max.toFixed(2)}s, avg: {avg.toFixed(2)}s). 
                     This might indicate suboptimal parameters.
                   </p>
@@ -552,8 +552,8 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
               )
             })()}
             
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <ResponsiveContainer width="100%" height={250}>
+            <div className="bg-gray-800 p-3 sm:p-4 rounded-lg">
+              <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
                 <BarChart 
                   data={chords.segment_durations.map((dur, idx) => ({
                     segment: idx + 1,
@@ -597,45 +597,48 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 justify-center flex-wrap">
+          <div className="flex gap-2 sm:gap-4 justify-center flex-wrap">
             <button
               onClick={handlePlayChords}
-              className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-500 flex items-center gap-2"
+              className="bg-green-600 text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-green-500 flex items-center gap-2 text-sm sm:text-base"
             >
-              <Play className="w-5 h-5" />
-              Play Sample Chords
+              <Play className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Play Sample Chords</span>
+              <span className="sm:hidden">Play</span>
             </button>
             
             <button
               onClick={handleExportMIDI}
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-500 flex items-center gap-2"
+              className="bg-blue-600 text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-blue-500 flex items-center gap-2 text-sm sm:text-base"
             >
-              <Download className="w-5 h-5" />
-              Download MIDI
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Download MIDI</span>
+              <span className="sm:hidden">MIDI</span>
             </button>
 
             <button
               onClick={handleExportMusicXML}
-              className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-500 flex items-center gap-2"
+              className="bg-purple-600 text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-purple-500 flex items-center gap-2 text-sm sm:text-base"
             >
-              <Download className="w-5 h-5" />
-              Download MusicXML
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Download MusicXML</span>
+              <span className="sm:hidden">XML</span>
             </button>
 
             <button
               onClick={() => setShowScore(!showScore)}
-              className="bg-biotuner-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-biotuner-pink flex items-center gap-2"
+              className="bg-biotuner-secondary text-white px-4 sm:px-8 py-2 sm:py-3 rounded-lg font-semibold hover:bg-biotuner-pink flex items-center gap-2 text-sm sm:text-base"
             >
-              <Music className="w-5 h-5" />
-              {showScore ? 'Hide' : 'Show'} Musical Score
+              <Music className="w-4 h-4 sm:w-5 sm:h-5" />
+              {showScore ? 'Hide' : 'Show'} <span className="hidden sm:inline">Musical</span> Score
             </button>
           </div>
 
           {/* Musical Score Viewer */}
           {showScore && (
-            <div className="bg-gray-800 p-6 rounded-lg border border-biotuner-secondary/30">
-              <h3 className="text-xl font-bold mb-4">🎼 Musical Score</h3>
-              <div className="bg-white rounded-lg p-4" id="score-container">
+            <div className="bg-gray-800 p-4 sm:p-6 rounded-lg border border-biotuner-secondary/30">
+              <h3 className="text-lg sm:text-xl font-bold mb-4">🎼 Musical Score</h3>
+              <div className="bg-white rounded-lg p-2 sm:p-4 overflow-x-auto" id="score-container">
                 <div className="text-center text-gray-600 py-8">
                   <p className="mb-2">Loading Verovio music engraver...</p>
                   <p className="text-sm">Musical score rendering will appear here</p>
