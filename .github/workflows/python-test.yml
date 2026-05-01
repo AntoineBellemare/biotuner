@@ -31,6 +31,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-cov coverage
           pip install -r requirements.txt
+          # Test-only deps that are otherwise optional in pyproject.toml
+          pip install scikit-learn ripser hmmlearn
           # IMPORTANT: Use editable install so coverage tracks files correctly
           pip install -e .
 
@@ -50,6 +52,7 @@ jobs:
           path: test-reports/test-results-${{ matrix.python-version }}.xml
 
       - name: Debug Coverage File
+        if: always() && hashFiles('coverage.xml') != ''
         run: |
           echo ">>> Checking coverage.xml (first 50 lines) ..."
           head -n 50 coverage.xml
@@ -57,11 +60,11 @@ jobs:
           grep "<source>" coverage.xml || echo "No source path found!"
 
       - name: Upload coverage to Codecov
+        if: always() && hashFiles('coverage.xml') != ''
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}  # Set this in GitHub Secrets
+          token: ${{ secrets.CODECOV_TOKEN }}
           slug: AntoineBellemare/biotuner
           files: coverage.xml
-          fail_ci_if_error: true  # Fail if upload fails
-          verbose: true  # Debugging
-          root_dir: biotuner  # Ensure correct root directory
+          fail_ci_if_error: false  # don't fail the whole CI on a codecov hiccup
+          verbose: true
