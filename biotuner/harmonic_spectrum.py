@@ -15,10 +15,10 @@ import matplotlib.lines as mlines
 from scipy.stats import ttest_ind
 
 
-def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=False,
+def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1, fs=1000, power_law_remove=True,
                                n_peaks=5, metric='harmsim', n_harms=10, delta_lim=20, min_notes=2, plot=False, smoothness=1,
                                smoothness_harm=1, save=False, savename='', phase_mode=None, normalize=True,
-                               return_fig=False):
+                               bandwidth_correction=False, detrend_harmonicity=False, return_fig=False):
     """
     Compute global harmonicity, phase coupling, and resonance spectrum from a signal.
 
@@ -51,7 +51,7 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
             'subharm_tension' : Subharmonic tension
     n_harms : int, default=10
         Number of harmonics to consider in dyad similarity computation.
-    delta_lim : float, default=0.1
+    delta_lim : float, default=20
         Limit in ms used when metric is 'subharm_tension'.
     min_notes : int, default=2
         Minimum number of notes for dyad similarity computation.
@@ -70,6 +70,15 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
     normalize : bool, default=True
         If True, normalize the harmonicity and phase coupling values
         by dividing by the total power.
+    bandwidth_correction : bool, default=False
+        If True, apply correction for the bias that lower frequencies have
+        more potential harmonic partners within the analysis bandwidth.
+        This corrects the systematic advantage of low frequencies.
+    detrend_harmonicity : bool, default=False
+        If True, remove linear trend from harmonicity, phase coupling, and 
+        resonance spectra. This eliminates systematic frequency-dependent bias
+        (e.g., bandwidth effects) while preserving relative structure.
+        Applied after bandwidth_correction if both are enabled.
 
     Returns
     -------
@@ -94,20 +103,33 @@ def compute_global_harmonicity(signal, precision_hz, fmin=1, fmax=30, noverlap=1
 
     # Compute dyad similarities and phase couplings
     harmonicity_matrix = harmonicity_matrices(freqs, metric, n_harms, delta_lim, min_notes=min_notes)
-    phase_coupling_matrix = PLV_comod(phase_vector)
+    phase_coupling_matrix = PLV_comod(phase_vector, freqs, psd_clean)
     
     # Compute harmonicity and phase coupling values
-    phase_coupling_values = compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, psd_weight=phase_mode,
-                                                                                                     normalize=normalize)
+    phase_coupling_values = compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, normalize=normalize)
     
     harmonicity_values, harmonicity_matrix = compute_harmonic_power(freqs, harmonicity_matrix, psd_clean,
-                                                                                                     normalize=normalize)
-    # apply smoothing to harmonicity values
-    #print(phase_coupling_values)
+                                                                                                     normalize=normalize,
+                                                                                                     bandwidth_correction=bandwidth_correction,
+                                                                                                     fmin=fmin, fmax=fmax)
+    
+    # Apply smoothing to harmonicity and phase coupling first
     harmonicity_values = gaussian_filter(harmonicity_values, smoothness_harm)
     phase_coupling_values = gaussian_filter(phase_coupling_values, smoothness_harm)
     
-    # Compute resonance values
+    # Apply detrending if requested (removes linear trend/slope)
+    if detrend_harmonicity:
+        harmonicity_values = detrend(harmonicity_values, type='linear')
+        # Rescale to [0, 1] after detrending to maintain interpretability
+        if len(harmonicity_values) > 0 and (np.max(harmonicity_values) - np.min(harmonicity_values)) > 0:
+            harmonicity_values = (harmonicity_values - np.min(harmonicity_values)) / (np.max(harmonicity_values) - np.min(harmonicity_values))
+        
+        phase_coupling_values = detrend(phase_coupling_values, type='linear')
+        if len(phase_coupling_values) > 0 and (np.max(phase_coupling_values) - np.min(phase_coupling_values)) > 0:
+            phase_coupling_values = (phase_coupling_values - np.min(phase_coupling_values)) / (np.max(phase_coupling_values) - np.min(phase_coupling_values))
+    
+    # Compute resonance AFTER smoothing and detrending to ensure it reflects the processed spectra
+    # This preserves the relationship at every frequency point after all transformations
     resonance_values = compute_resonance_values(harmonicity_values, phase_coupling_values)
 
     # Find peaks in the spectra
@@ -308,33 +330,184 @@ def harmonicity_matrices(freqs, metric='harmsim', n_harms=5, delta_lim=150, min_
                     harmonicity[i, j] = 1-subharm[0]
     return harmonicity
 
-def PLV_comod(phase):
-    '''
-    Compute the phase coupling matrix of frequencies.
-    The phase coupling metric is the Phase Locking Value.
-
+def get_harmonic_ratio(freq_i, freq_j, max_n=3, max_m=3, tolerance=0.05):
+    """
+    Identify if two frequencies are at an n:m harmonic ratio.
+    
     Parameters
     ----------
-    phase: ndarray
-        The phase vector of fft.
+    freq_i : float
+        First frequency.
+    freq_j : float
+        Second frequency.
+    max_n : int, default=3
+        Maximum value for n in n:m ratio.
+    max_m : int, default=3
+        Maximum value for m in n:m ratio.
+    tolerance : float, default=0.05
+        Relative tolerance for ratio matching (5%).
+    
+    Returns
+    -------
+    tuple or None
+        (n, m) if frequencies are harmonically related, None otherwise.
+    """
+    if freq_i == 0:
+        return None
+        
+    ratio = freq_j / freq_i
+    
+    # Search for best n:m match
+    best_match = None
+    min_error = float('inf')
+    
+    for n in range(1, max_n + 1):
+        for m in range(1, max_m + 1):
+            expected_ratio = m / n
+            error = abs(ratio - expected_ratio) / expected_ratio
+            
+            if error < tolerance and error < min_error:
+                min_error = error
+                best_match = (n, m)
+    
+    return best_match
+
+
+def compute_nm_plv(phase_i, phase_j, n, m):
+    """
+    Compute Phase Locking Value for n:m phase locking.
+    Tests if n*φᵢ - m*φⱼ is constant over time.
+    
+    Parameters
+    ----------
+    phase_i : ndarray
+        Phase time series for frequency i.
+    phase_j : ndarray
+        Phase time series for frequency j.
+    n : int
+        Multiplier for phase i.
+    m : int
+        Multiplier for phase j.
+    
+    Returns
+    -------
+    float
+        PLV value [0, 1] indicating strength of n:m phase coupling.
+    """
+    # n:m phase difference
+    phase_diff = n * phase_i - m * phase_j
+    # PLV: magnitude of mean complex exponential
+    plv = np.abs(np.mean(np.exp(1j * phase_diff)))
+    return plv
+
+
+def PLV_comod(phase, freqs, psd_clean):
+    """
+    Compute pure phase coupling matrix using n:m phase locking detection.
+    
+    This function measures phase locking independent of harmonic relationships.
+    The n:m ratio detection determines which phase relationship to test, but
+    the output PLV is not weighted by harmonic similarity. This prevents
+    double-counting when combining with harmonicity in the resonance spectrum.
+    
+    Parameters
+    ----------
+    phase : ndarray
+        Phase matrix from STFT, shape (n_freqs, n_times).
+    freqs : ndarray
+        Array of frequencies.
+    psd_clean : ndarray
+        Cleaned power spectral density (not used but kept for API consistency).
 
     Returns
     -------
-    tuple of ndarrays
-        The harmonicity and the phase coupling matrix.
-    '''
-    phase_coupling_matrix = np.zeros((len(phase), len(phase)))
-    for i, f1 in enumerate(phase):
-        for j, f2 in enumerate(phase):
-            phase_diff = np.abs(phase[i] - phase[j])
-            phase_coupling_matrix[i, j] = np.abs(np.mean(np.exp(1j * phase_diff), axis=-1))
+    ndarray
+        Phase coupling matrix (n_freqs, n_freqs) containing pure PLV values [0, 1].
+        
+    Notes
+    -----
+    The algorithm:
+    - For frequencies at detectable n:m ratios: computes n:m PLV
+    - For other frequencies: computes standard 1:1 PLV
+    - No harmonic weighting applied (kept independent for resonance calculation)
+    - PLV measures phase synchronization strength regardless of harmonic structure
+    """
+    n_freqs = len(freqs)  # Use freqs length, not phase (they may differ)
+    phase_coupling_matrix = np.zeros((n_freqs, n_freqs))
+    
+    for i in range(n_freqs):
+        for j in range(i + 1, n_freqs):  # Upper triangle only (matrix is symmetric)
+            # Find best n:m harmonic ratio
+            ratio_result = get_harmonic_ratio(freqs[i], freqs[j], 
+                                             max_n=3, max_m=3, tolerance=0.05)
+            
+            if ratio_result is not None:
+                # Test phase coupling at detected n:m ratio
+                n, m = ratio_result
+                plv = compute_nm_plv(phase[i], phase[j], n, m)
+            else:
+                # No exact ratio found - use standard 1:1 PLV
+                phase_diff = phase[i] - phase[j]
+                plv = np.abs(np.mean(np.exp(1j * phase_diff)))
+            
+            # Store pure PLV - no harmonic weighting!
+            phase_coupling_matrix[i, j] = plv
+            phase_coupling_matrix[j, i] = plv
+    
     return phase_coupling_matrix
 
 
 
-def compute_harmonic_power(freqs, dyad_similarities, psd_clean, normalize=True):
+def count_theoretical_harmonic_partners(freq, fmin, fmax, max_ratio=5):
+    """
+    Count theoretical maximum number of harmonic partners within bandwidth.
+    
+    This function counts how many frequencies at simple n:m ratios (up to max_ratio)
+    would fall within the analysis bandwidth [fmin, fmax] for a given frequency.
+    Lower frequencies have more potential partners, creating systematic bias.
+    
+    Parameters
+    ----------
+    freq : float
+        The frequency to analyze.
+    fmin : float
+        Minimum frequency of analysis bandwidth.
+    fmax : float
+        Maximum frequency of analysis bandwidth.
+    max_ratio : int, default=5
+        Maximum value for n and m in n:m ratios to consider.
+    
+    Returns
+    -------
+    int
+        Number of theoretical harmonic partners within bandwidth.
+    """
+    n_partners = 0
+    
+    for n in range(1, max_ratio + 1):
+        for m in range(1, max_ratio + 1):
+            if n == m:
+                continue
+                
+            # Calculate where n:m harmonic would be
+            harmonic_freq = freq * (m / n)
+            
+            # Check if it falls within analysis bandwidth
+            if fmin <= harmonic_freq <= fmax:
+                n_partners += 1
+    
+    return n_partners
+
+
+def compute_harmonic_power(freqs, dyad_similarities, psd_clean, normalize=True,
+                          bandwidth_correction=False, fmin=1, fmax=30):
     '''
-    Compute harmonicity values and phase coupling values for each frequency.
+    Compute harmonicity as probability-weighted average of dyad similarities.
+    
+    The harmonicity of frequency i represents the expected harmonic similarity
+    with other frequencies, weighted by the joint probability of observing
+    each frequency pair. This formulation is scale-invariant and not sensitive
+    to spectral shape or total power distribution.
 
     Parameters
     ----------
@@ -345,78 +518,133 @@ def compute_harmonic_power(freqs, dyad_similarities, psd_clean, normalize=True):
     psd_clean : ndarray
         The cleaned Power Spectral Density (PSD).
     normalize : bool, default=True
-        If True, normalize the harmonicity values
-        by dividing by the total power.
+        If True, compute harmonicity as weighted average (recommended).
+        If False, compute as sum of weighted harmonic contributions.
+    bandwidth_correction : bool, default=False
+        If True, apply correction for bandwidth bias where lower frequencies
+        have more potential harmonic partners within the analysis range.
+    fmin : float, default=1
+        Minimum frequency of analysis bandwidth (used for bandwidth correction).
+    fmax : float, default=30
+        Maximum frequency of analysis bandwidth (used for bandwidth correction).
 
     Returns
     -------
     tuple of ndarrays
         The harmonicity values and the harmonicity matrix.
+        
+    Notes
+    -----
+    The weighting uses psd_prob[i] * psd_prob[j] which requires both
+    frequencies to have high power for high harmonicity contribution,
+    preserving the conceptual model that harmonic relationships need
+    both frequencies to be present with significant power.
+    
+    Bandwidth correction addresses the systematic bias that lower frequencies
+    have more of their harmonic series within typical analysis windows,
+    leading to artificially inflated harmonicity scores.
     '''
+    # Normalize PSD to probability distribution (sums to 1)
+    psd_prob = psd_clean / np.sum(psd_clean)
+    
     harmonicity_values = np.zeros(len(freqs))
-    total_power = np.sum(psd_clean)
     harmonicity_matrix = np.zeros((len(freqs), len(freqs)))
+    
     for i in range(len(freqs)):
-        weighted_sum_harmonicity = 0
         for j in range(len(freqs)):
             if i != j:
-                weighted_sum_harmonicity += dyad_similarities[i, j] * (psd_clean[i] * psd_clean[j])
-                harmonicity_matrix[i, j] = (dyad_similarities[i, j] * (psd_clean[i] * psd_clean[j]))/total_power         
+                harmonicity_matrix[i, j] = dyad_similarities[i, j] * psd_prob[i] * psd_prob[j]
+        
+        # h[i] = p_i * sum_j(sim(i,j) * p_j)
+        # Both frequencies must have power (p_i gates the result),
+        # and the sum over j is power-weighted by the partner frequency.
+        # Scale-invariant: p = psd / sum(psd) cancels any global amplitude factor.
         if normalize is True:
-            harmonicity_values[i] = weighted_sum_harmonicity / (2 * total_power)
-        if normalize is False:        
-            harmonicity_values[i] = weighted_sum_harmonicity
-    ##print(phase_coupling_values)
+            harmonicity_values[i] = psd_prob[i] * np.sum(
+                dyad_similarities[i, :] * psd_prob
+            ) - dyad_similarities[i, i] * psd_prob[i] ** 2  # exclude self-pair
+        else:
+            harmonicity_values[i] = np.sum(harmonicity_matrix[i, :])
+    
+    # Apply bandwidth correction if requested
+    if bandwidth_correction:
+        # Compute max possible harmonics based on actual frequency range
+        # The lowest frequency has the most potential harmonic partners
+        # Count how many integer harmonics of fmin fit within [fmin, fmax]
+        max_possible_partners = int(fmax / fmin) - 1  # -1 to exclude fundamental
+        
+        for i in range(len(freqs)):
+            # Count how many harmonics of this frequency fall within the bandwidth
+            n_partners = int(fmax / freqs[i]) - 1  # -1 to exclude fundamental
+            
+            if n_partners > 0:
+                # Correction factor: normalize by proportion of available partners
+                # Frequencies with fewer partners get boosted
+                correction = max_possible_partners / n_partners
+                harmonicity_values[i] = harmonicity_values[i] * correction
+            
     return harmonicity_values, harmonicity_matrix
 
-def compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, psd_weight=True,
-                                                         normalize=True):
-    '''
-    Compute harmonicity values and phase coupling values for each frequency.
+def compute_phase_spectrum(freqs, phase_coupling_matrix, psd_clean, normalize=True):
+    """
+    Compute phase coupling spectrum as probability-weighted average.
+    
+    The phase coupling value for each frequency represents the expected 
+    phase coupling strength with other frequencies, weighted by the joint
+    probability of observing each frequency pair.
 
     Parameters
     ----------
     freqs : ndarray
         Array of frequencies.
     phase_coupling_matrix : ndarray
-        The phase coupling matrix.
+        The phase coupling matrix (n_freqs, n_freqs).
     psd_clean : ndarray
         The cleaned Power Spectral Density (PSD).
-    phase_matrix : ndarray
-        The phase matrix of the signal.
     normalize : bool, default=True
-        If True, normalize the phase coupling values
-        by dividing by the total power.
+        If True, compute as weighted average (recommended).
+        If False, compute as sum of weighted contributions.
 
     Returns
     -------
-    tuple of ndarrays
-        The harmonicity values and the phase coupling values.
-    '''
+    ndarray
+        Phase coupling values for each frequency.
+        
+    Notes
+    -----
+    Uses the same probability-weighted averaging approach as compute_harmonic_power
+    to ensure consistency and scale-invariance.
+    """
+    # Normalize PSD to probability distribution (sums to 1)
+    psd_prob = psd_clean / np.sum(psd_clean)
+    
     phase_coupling_values = np.zeros(len(freqs))
-    total_power = np.sum(psd_clean)
+    
     for i in range(len(freqs)):
-        weighted_sum_phase_coupling = 0
-        for j in range(len(freqs)):
-            if i != j:
-                if psd_weight == 'weighted':
-                    weighted_sum_phase_coupling += phase_coupling_matrix[i, j] * (psd_clean[i] * psd_clean[j])
-                else:
-                    weighted_sum_phase_coupling += phase_coupling_matrix[i, j]
-                
+        # pc[i] = p_i * sum_j(plv(i,j) * p_j)
+        # Mirrors the harmonicity formula: both frequencies must have power.
         if normalize is True:
-            phase_coupling_values[i] = weighted_sum_phase_coupling / (2 * total_power)
-        if normalize is False:        
-            phase_coupling_values[i] = weighted_sum_phase_coupling
-    ##print(phase_coupling_values)
+            phase_coupling_values[i] = psd_prob[i] * np.sum(
+                phase_coupling_matrix[i, :] * psd_prob
+            ) - phase_coupling_matrix[i, i] * psd_prob[i] ** 2  # exclude self-pair
+        else:
+            phase_coupling_values[i] = np.sum(
+                phase_coupling_matrix[i, :] * psd_prob[i] * psd_prob
+            ) - phase_coupling_matrix[i, i] * psd_prob[i] ** 2  # exclude self-pair
+            
     return phase_coupling_values
 
 
 def compute_resonance_values(harmonicity_values, phase_coupling_values):
     """
     Compute resonance values from harmonicity and phase coupling values.
-    Resonance values are computed as the product of harmonicity and phase coupling values
-    normalized between 0 and 1.
+    
+    Resonance is the product of harmonicity and phase coupling, representing
+    frequencies where both harmonic structure AND phase synchronization are present.
+    
+    This function preserves the natural scaling of the input spectra rather than
+    normalizing to [0,1], which would destroy the relationship between harmonicity
+    and phase coupling.
 
     Parameters
     ----------
@@ -429,15 +657,17 @@ def compute_resonance_values(harmonicity_values, phase_coupling_values):
     -------
     ndarray
         Resonance values for each frequency.
-    """
-    # Normalize the harmonicity and phase coupling values
-    normalized_harmonicity_values = (harmonicity_values - np.min(harmonicity_values)) / (np.max(harmonicity_values) - np.min(harmonicity_values))
-    normalized_phase_coupling_values = (phase_coupling_values - np.min(phase_coupling_values)) / (np.max(phase_coupling_values) - np.min(phase_coupling_values))
         
-    
-    # Compute the resonance values
-    resonance_values = normalized_harmonicity_values * normalized_phase_coupling_values
-    #resonance_values = harmonicity_values * phase_coupling_values
+    Notes
+    -----
+    The product is computed directly without normalization to preserve the
+    independence of harmonicity and phase coupling measures. Both inputs
+    are already probability-weighted averages, so their product is meaningful.
+    """
+    # Direct product without normalization
+    # Both harmonicity and phase_coupling are already computed as 
+    # probability-weighted averages, so they're on comparable scales
+    resonance_values = harmonicity_values * phase_coupling_values
 
     return resonance_values
 

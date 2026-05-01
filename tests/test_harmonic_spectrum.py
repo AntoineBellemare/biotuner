@@ -107,24 +107,34 @@ def test_harmonicity_matrices_deterministic():
 def test_PLV_comod_shape():
     """phase shape (F, T) → output shape (F, F)."""
     rng = np.random.default_rng(0)
-    phase = rng.uniform(-np.pi, np.pi, size=(8, 50))
-    M = PLV_comod(phase)
-    assert M.shape == (8, 8)
-
-
-def test_PLV_comod_diagonal_is_one():
-    """Phase difference of a frequency with itself is zero → PLV = 1."""
-    rng = np.random.default_rng(0)
-    phase = rng.uniform(-np.pi, np.pi, size=(6, 30))
-    M = PLV_comod(phase)
-    assert np.allclose(np.diag(M), 1.0)
+    F, T = 8, 50
+    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
+    freqs = np.linspace(1, 30, F)
+    psd = np.ones(F)
+    M = PLV_comod(phase, freqs, psd)
+    assert M.shape == (F, F)
 
 
 def test_PLV_comod_values_in_unit_range():
     rng = np.random.default_rng(0)
-    phase = rng.uniform(-np.pi, np.pi, size=(6, 30))
-    M = PLV_comod(phase)
-    assert np.all(M >= 0) and np.all(M <= 1.0 + 1e-12)
+    F, T = 6, 30
+    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
+    freqs = np.linspace(1, 30, F)
+    psd = np.ones(F)
+    M = PLV_comod(phase, freqs, psd)
+    assert np.all(M >= 0)
+    assert np.all(M <= 1.0 + 1e-12)
+
+
+def test_PLV_comod_symmetric():
+    """The phase-coupling matrix is symmetric."""
+    rng = np.random.default_rng(0)
+    F, T = 6, 30
+    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
+    freqs = np.linspace(1, 30, F)
+    psd = np.ones(F)
+    M = PLV_comod(phase, freqs, psd)
+    assert np.allclose(M, M.T)
 
 
 # ─── 2. Per-frequency spectra ──────────────────────────────────────────────
@@ -150,20 +160,28 @@ def test_compute_harmonic_power_diagonal_zero():
     assert np.allclose(np.diag(H_mat), 0.0)
 
 
-def test_compute_harmonic_power_normalisation_factor():
-    """Normalised values equal weighted_sum / (2 * total_power)."""
+def test_compute_harmonic_power_uses_probability_weighting():
+    """The new formulation uses psd_prob = psd / sum(psd) — scale-invariant.
+
+    Multiplying psd by a constant should not change harmonicity values.
+    """
     F = 4
     freqs = np.arange(1.0, F + 1)
-    dyad = np.ones((F, F))
+    rng = np.random.default_rng(0)
+    dyad = rng.uniform(0, 1, size=(F, F))
     psd = np.array([1.0, 2.0, 3.0, 4.0])
-    H_norm, _ = compute_harmonic_power(freqs, dyad, psd, normalize=True)
-    H_unnorm, _ = compute_harmonic_power(freqs, dyad, psd, normalize=False)
-    total = psd.sum()
-    assert np.allclose(H_norm * (2 * total), H_unnorm)
+    H_a, _ = compute_harmonic_power(freqs, dyad, psd, normalize=True)
+    H_b, _ = compute_harmonic_power(freqs, dyad, psd * 10.0, normalize=True)
+    assert np.allclose(H_a, H_b)
 
 
 def test_compute_harmonic_power_vectorised_equivalence():
-    """Closed-form vectorisation should match the function output."""
+    """Closed-form vectorisation should match the function output.
+
+    New formulation:  H_i = p_i * (D · p)_i - D_ii * p_i**2
+    where p_i = P_i / sum(P).
+    Matrix entry: M[i, j] = D[i, j] * p_i * p_j (off-diagonal only).
+    """
     rng = np.random.default_rng(7)
     F = 6
     freqs = np.linspace(1, 20, F)
@@ -171,27 +189,13 @@ def test_compute_harmonic_power_vectorised_equivalence():
     psd = rng.uniform(0.1, 1, size=F)
     H_vec, H_mat = compute_harmonic_power(freqs, dyad, psd, normalize=True)
 
-    total = psd.sum()
-    PP = np.outer(psd, psd)
+    p = psd / psd.sum()
+    PP = np.outer(p, p)
     np.fill_diagonal(PP, 0.0)
-    expected_mat = (dyad * PP) / total
-    expected_vec = (dyad * PP).sum(axis=1) / (2.0 * total)
+    expected_mat = dyad * PP
+    expected_vec = p * (dyad @ p) - np.diag(dyad) * (p ** 2)
     assert np.allclose(H_mat, expected_mat)
     assert np.allclose(H_vec, expected_vec)
-
-
-def test_compute_phase_spectrum_psd_weighted_vs_uniform():
-    """psd_weight='weighted' multiplies by P_iP_j; otherwise it doesn't."""
-    F = 4
-    freqs = np.arange(1.0, F + 1)
-    plv = np.full((F, F), 0.5)
-    psd = np.array([1.0, 2.0, 3.0, 4.0])
-    weighted = compute_phase_spectrum(freqs, plv, psd, psd_weight="weighted",
-                                       normalize=False)
-    uniform = compute_phase_spectrum(freqs, plv, psd, psd_weight=None,
-                                      normalize=False)
-    # Uniform is independent of psd; weighted scales with P_i × Σ P_j
-    assert not np.allclose(weighted, uniform)
 
 
 def test_compute_phase_spectrum_shape():
@@ -203,24 +207,34 @@ def test_compute_phase_spectrum_shape():
     assert out.shape == (F,)
 
 
-def test_compute_resonance_values_in_unit_range():
-    h = np.array([0.1, 0.5, 0.9, 0.4])
-    p = np.array([0.3, 0.6, 0.2, 0.8])
-    r = compute_resonance_values(h, p)
-    # Each input is min-max normalised before multiplication; product is in [0, 1]
-    assert np.all(r >= 0.0)
-    assert np.all(r <= 1.0 + 1e-12)
+def test_compute_phase_spectrum_normalized_uses_psd_prob():
+    """The probability-weighted formulation depends on PSD shape."""
+    F = 4
+    freqs = np.arange(1.0, F + 1)
+    plv = np.full((F, F), 0.5)
+    flat_psd = np.ones(F)
+    skewed_psd = np.array([4.0, 1.0, 1.0, 1.0])
+    out_flat = compute_phase_spectrum(freqs, plv, flat_psd, normalize=True)
+    out_skew = compute_phase_spectrum(freqs, plv, skewed_psd, normalize=True)
+    # Different PSD shapes produce different per-frequency phase coupling
+    assert not np.allclose(out_flat, out_skew)
 
 
-def test_compute_resonance_values_min_max_normalisation():
-    """Closed form: r = ((h - min h) / range h) * ((p - min p) / range p)."""
+def test_compute_resonance_values_is_direct_product():
+    """The current implementation is the direct element-wise product
+    (no min-max normalisation, to preserve the natural scaling of the
+    probability-weighted inputs)."""
     h = np.array([1.0, 2.0, 4.0])
     p = np.array([10.0, 20.0, 30.0])
     r = compute_resonance_values(h, p)
-    h_norm = (h - h.min()) / (h.max() - h.min())
-    p_norm = (p - p.min()) / (p.max() - p.min())
-    expected = h_norm * p_norm
-    assert np.allclose(r, expected)
+    assert np.allclose(r, h * p)
+
+
+def test_compute_resonance_values_nonnegative_when_inputs_nonnegative():
+    h = np.array([0.1, 0.5, 0.9, 0.4])
+    p = np.array([0.3, 0.6, 0.2, 0.8])
+    r = compute_resonance_values(h, p)
+    assert np.all(r >= 0.0)
 
 
 def test_compute_resonance_values_length_matches_input():
