@@ -2993,10 +2993,11 @@ class compute_biotuner(object):
         # print('FINAL PEAKS', peaks)
         if peaks_function != "PAC" and peaks_function != "bicoherence":
             amps = np.array(amps)[peaks_idx]
-            amps = np.array(amps)[peaks_idx]
         # filter out peaks that are not in min max range
         peaks_idx = np.where((np.array(peaks) >= min_freq) & (np.array(peaks) <= max_freq))[0]
         peaks = np.array(peaks)[peaks_idx]
+        if peaks_function != "PAC" and peaks_function != "bicoherence":
+            amps = np.array(amps)[peaks_idx]
 
         return peaks, amps
 

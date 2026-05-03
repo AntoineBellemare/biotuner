@@ -85,7 +85,7 @@ def _plot_peak_amplitude_distribution(
     
     if color is None:
         color = BIOTUNER_COLORS['accent']
-    
+
     # Filter peaks within range
     mask = (peaks >= xmin) & (peaks <= xmax)
     peaks_filtered = peaks[mask]
