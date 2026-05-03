@@ -45,6 +45,7 @@
 - **🧮 Harmonicity Metrics**: Compute consonance, dissonance, harmonic similarity, Tenney height, and more
 - **🎹 Musical Applications**: Generate musical scales, tuning systems, and MIDI output from biosignals
 - **🔬 Group Analysis (BETA)**: Batch processing for multiple time series with automatic aggregation
+- **🔷 Harmonic Geometry (BETA)**: Lift any chord / spectrum into 2-D & 3-D geometric structures — Lissajous curves, Chladni acoustic plates, Stern-Brocot trees, IFS attractors, torus knots, harmonic point clouds — with a per-method metrics layer for quantitative analysis
 - **📈 Rich Visualizations**: Publication-ready plots for spectral analysis and harmonic relationships
 - **🧠 Multi-modal Support**: Compatible with EEG, ECG, EMG, plant signals, and other biosignals
 - **🎨 Interactive GUI**: Graphical interface for easy exploration
@@ -170,6 +171,53 @@ summary = btg.summary()
 
 ---
 
+## 🔷 Harmonic Geometry (🧪 BETA)
+
+`biotuner.harmonic_geometry` lifts any harmonic content (a chord, a spectral
+peak set, an EEG window) into structured **2-D and 3-D geometry**, plus a
+**per-method metrics layer** for quantitative analysis. Useful for
+visual exploration, scientific comparison across chords / signals, and
+animation of time-resolved harmonic transitions.
+
+**What's inside** (each generator emits a typed `GeometryData`):
+
+| Family | Generators |
+|---|---|
+| 2-D curves | `lissajous_2d / 3d / compound / phase_drift / pairwise_grid`, `lissajous_topology` |
+| Damped trajectories | `harmonograph_lateral / rotary / 3d`, `harmonograph_from_peaks` |
+| Polygons & circular | `star_polygon`, `times_table_circle`, `times_table_from_input`, `tuning_circle`, `rose_curve`, `epicycloid`, `hypocycloid`, `interval_vector_diagram`, `polygon_chord_pattern`, `consonance_polygon` |
+| Acoustic plates | `chladni_field_rectangular / circular / polygon / 3d_box`, `chladni_from_input`, `chladni_nodal_lines / surfaces` |
+| Fractal & number-theoretic | `stern_brocot_tree`, `continued_fraction_rectangles`, `farey_sequence_layout` (circle / line / ford), `subharmonic_tree` (depth + polar layouts), `ifs_harmonic` |
+| Generative | `lsystem_from_ratios`, `recursive_polygon`, `self_similar_tuning`, `geometry_sequence` |
+| 3-D geometry | `lissajous_tube`, `harmonic_knot` (T(p,q) from chord ratios), `harmonic_surface`, `lsystem_3d`, `recursive_polyhedron` (per-face bump + apex twist), `harmonic_point_cloud` (5 surfaces incl. Klein, hyperbolic, MOS) |
+
+```python
+from biotuner.harmonic_geometry import (
+    HarmonicInput, harmonic_knot, geometry_metrics, plotting,
+)
+
+# Bridge from biotuner peaks into the geometry layer
+inp = HarmonicInput(ratios=[1, 5/4, 3/2, 7/4])     # Dom7 chord
+g   = harmonic_knot(inp)                            # T(p, q) torus knot
+print(geometry_metrics(g))                          # winding_p, winding_q, n_vertices, …
+plotting.plot_geometry(g)
+```
+
+**Metrics monitoring**: every generator sets `metadata['kind']`; `geometry_metrics(g)` dispatches to one of **37 per-method extractors** that yield method-specific scalars on top of the generic structural stats. Trajectories over `HarmonicSequence` (e.g. windowed biotuner output) come via `sequence_metrics(seq, generator, **kw)`, with radar / line-plot helpers in `plotting`. Append-only `MetricsLog` exports CSV / JSON for downstream stats.
+
+```python
+from biotuner.harmonic_geometry import MetricsLog
+log = MetricsLog()
+for chord_name, ratios in chord_table.items():
+    log.log_geometry(harmonic_knot(HarmonicInput(ratios=ratios)),
+                     label=chord_name)
+log.to_csv("knot_metrics.csv")
+```
+
+> **Note:** The harmonic_geometry module is currently in beta. The API surface (37 generators) is stable but optional dependencies (`scikit-image` for nodal extraction; `Pillow` for image embedding) are not yet declared as a `[project.optional-dependencies]` group.
+
+---
+
 ## 🌐 Biotuner Engine - Web Interface
 
 Explore Biotuner's capabilities through our interactive web interface:
@@ -207,6 +255,7 @@ The figure above illustrates Biotuner's ability to extract harmonic structures a
 - **[API Reference](https://antoinebellemare.github.io/biotuner/api/index.html)** - Detailed function and class documentation
   - [BiotunerObject](https://antoinebellemare.github.io/biotuner/api/biotuner_object.html) - Single time series analysis
   - [BiotunerGroup (BETA)](https://antoinebellemare.github.io/biotuner/api/biotuner_group.html) - Group analysis
+  - Harmonic Geometry (BETA) - 2-D & 3-D geometric structures + metrics layer (sphinx page coming soon)
   - [Metrics](https://antoinebellemare.github.io/biotuner/api/metrics.html) - Harmonicity metrics
   - [Peak Extraction](https://antoinebellemare.github.io/biotuner/api/peaks_extraction.html) - Peak detection methods
 - **[Examples & Notebooks](https://antoinebellemare.github.io/biotuner/examples/index.html)** - Jupyter notebook tutorials
