@@ -120,33 +120,7 @@ def test(ctx):
 
 
 
-@task
-def gui(ctx):
-    """
-    Install GUI dependencies if missing and start the Streamlit GUI.
-    """
-
-    # Ensure we're in the project root
-    repo_root = Path(__file__).resolve().parent
-    os.chdir(repo_root)
-
-    print("🔍 Checking GUI dependencies...")
-
-    # List of required GUI dependencies
-    gui_dependencies = [
-        "streamlit", "streamlit-echarts", "librosa", "sounddevice"
-    ]
-
-    # Check installed packages
-    installed_packages = {pkg.key for pkg in pkg_resources.working_set}
-    missing_deps = [dep for dep in gui_dependencies if dep not in installed_packages]
-
-    if missing_deps:
-        print(f"📦 Installing missing GUI dependencies: {missing_deps}...")
-        subprocess.run([sys.executable, "-m", "pip", "install"] + missing_deps, check=True, stdout=subprocess.DEVNULL)
-    else:
-        print("✅ All GUI dependencies are already installed.")
-
-    # Start the GUI
-    print("🚀 Launching GUI...")
-    subprocess.run(["streamlit", "run", "app/gui.py"], check=True)
+# Note: the legacy `gui` invoke task (Streamlit single-file GUI in app/gui.py)
+# was removed alongside the deletion of `app/` and `assets/`. The GUI is now
+# the FastAPI + React stack under `engine/`; see engine/README.md or the
+# hosted instance at https://biotuner-engine.kairos-hive.org for usage.
