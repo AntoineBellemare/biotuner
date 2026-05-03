@@ -1452,17 +1452,17 @@ class BiotunerGroup:
     
     def plot_metric_matrix(
         self,
-        metric: str = 'harmsim_mean',
+        metric: str = 'harmsim',
         cmap: Optional[str] = None,
         figsize: Optional[Tuple[float, float]] = None,
         **kwargs
     ):
         """
         Plot metric as heatmap (for 3D data: trials × electrodes).
-        
+
         Parameters
         ----------
-        metric : str, default='harmsim_mean'
+        metric : str, default='harmsim'
             Metric to plot
         cmap : str, optional
             Colormap (default from plot_config)

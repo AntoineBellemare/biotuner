@@ -44,3 +44,9 @@ Coupling
 
    phase_amplitude_coupling/phase_amplitude_coupling
 
+Visualization
+=============
+.. toctree::
+   :maxdepth: 2
+
+   plotting/plotting
