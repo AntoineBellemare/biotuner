@@ -2197,5 +2197,116 @@ def identify_mode(peaks, a4=440.0):
     # This prevents spurious matches with random EEG peaks
     if best_similarity < 60:
         return "Unknown", best_similarity, "N/A"
-    
+
     return best_mode, best_similarity, best_root
+
+
+# ---------------------------------------------------------------------------
+# Array / signal utilities (migrated from biotuner2d)
+# ---------------------------------------------------------------------------
+
+def combine_dims(a, start=0, count=2):
+    """Reshape an array by collapsing *count* dimensions starting at *start*.
+
+    Parameters
+    ----------
+    a : ndarray
+    start : int, default=0
+        First dimension to collapse.
+    count : int, default=2
+        Number of consecutive dimensions to merge.
+
+    Returns
+    -------
+    ndarray
+        Array with *count* dimensions replaced by one.
+    """
+    s = a.shape
+    return np.reshape(a, s[:start] + (-1,) + s[start + count:])
+
+
+def slice_data(data, sf, window=1):
+    """Slice a 1D or 2D time series into non-overlapping windows.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_samples,) or (n_series, n_samples)
+        Input signal(s).
+    sf : int
+        Sampling frequency (Hz).
+    window : float, default=1
+        Window length in seconds.
+
+    Returns
+    -------
+    sliced : ndarray
+        * 1D input → shape ``(n_windows, window_len)``
+        * 2D input → shape ``(n_series, n_windows, window_len)``
+    """
+    window_len = int(window * sf)
+
+    if np.ndim(data) == 1:
+        n_windows = len(data) // window_len
+        sliced = [data[i * window_len:(i + 1) * window_len] for i in range(n_windows)]
+        return np.array(sliced)
+
+    if np.ndim(data) == 2:
+        n_windows = data.shape[1] // window_len
+        sliced = []
+        for series in data:
+            sliced.append([series[i * window_len:(i + 1) * window_len] for i in range(n_windows)])
+        return np.array(sliced)
+
+    raise ValueError("data must be 1D or 2D")
+
+
+def resample_2d(data, sf, target_sf):
+    """Resample each row of a 2D array to a new sampling frequency.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_series, n_samples)
+        Input signals.
+    sf : int
+        Original sampling frequency (Hz).
+    target_sf : int
+        Target sampling frequency (Hz).
+
+    Returns
+    -------
+    resampled : ndarray, shape (n_series, n_new_samples)
+    """
+    from scipy import signal as _signal
+    sf_ratio = sf / target_sf
+    return np.array([
+        _signal.resample(row, int(len(row) / sf_ratio))
+        for row in data
+    ])
+
+
+def equate_dimensions(data1, data2):
+    """Trim two arrays to matching shapes along both axes.
+
+    Truncates the longer array along the first axis (number of series) and
+    the second axis (number of samples) so that both arrays have identical
+    shapes.
+
+    Parameters
+    ----------
+    data1, data2 : ndarray, shape (n, n_samples)
+        Input arrays.
+
+    Returns
+    -------
+    data1, data2 : ndarray
+        Trimmed arrays with identical shapes.
+    """
+    n = min(len(data1), len(data2))
+    data1 = data1[:n]
+    data2 = data2[:n]
+
+    t = min(data1.shape[1], data2.shape[1])
+    data1 = data1[:, :t]
+    data2 = data2[:, :t]
+
+    return data1, data2

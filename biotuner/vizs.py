@@ -1193,3 +1193,114 @@ def plot_harm_entropy(peaks_dict, ax=None, colors=None):
         ax.set_ylabel("Harmonic Entropy", fontsize=14)
         ax.legend(loc="lower right", fontsize=12, title="N Harmonics", title_fontsize=13)
     return HE_scale
+
+
+def diss_curve_multi(
+    freqs_list,
+    amps_list,
+    labels,
+    denom=10,
+    max_ratio=2,
+    bound=0.1,
+    n_tet_grid=None,
+    data_type="Electrodes",
+):
+    """Plot dissonance curves for multiple channels/electrodes simultaneously.
+
+    Finds shared dissonance minima across all channels by looking for minima
+    that occur within *bound* of each other, converts them to just-intonation
+    fractions, and marks them with vertical lines.
+
+    Parameters
+    ----------
+    freqs_list : list of array-like
+        Peak frequencies for each channel (in Hz).
+    amps_list : list of array-like
+        Corresponding amplitudes for each channel.
+    labels : list of str
+        Label for each channel (used in the legend).
+    denom : int, default=10
+        Maximum denominator when approximating minima as fractions.
+    max_ratio : float, default=2
+        Upper limit of the frequency ratio axis (typically 2 for one octave).
+    bound : float, default=0.1
+        Two minima are considered shared if they fall within *bound* index
+        units of each other.
+    n_tet_grid : int or None, default=None
+        If set, overlay equally-tempered grid lines for this n-TET system
+        (e.g. ``12`` for 12-TET).
+    data_type : str, default='Electrodes'
+        Legend title.
+
+    Returns
+    -------
+    diss_minima_tot : list of list
+        Raw minima indices (in the ratio array) for each channel.
+    """
+    from numpy import linspace, empty, concatenate
+    from scipy.signal import argrelextrema
+    from fractions import Fraction
+
+    from biotuner.biotuner_utils import NTET_ratios
+    from biotuner.scale_construction import dissmeasure
+
+    n = 1000
+    plt.figure(figsize=(18, 8))
+    diss_minima_tot = []
+
+    for fr, am, lab in zip(freqs_list, amps_list, labels):
+        # Scale peak frequencies to a reference range (×128) for dissmeasure
+        fr_scaled = np.array([x * 128 for x in fr])
+        am_norm = np.interp(am, (np.min(am), np.max(am)), (0.3, 0.7))
+
+        diss = empty(n)
+        a = concatenate((am_norm, am_norm))
+        for i, alpha in enumerate(linspace(1, max_ratio, n)):
+            f = concatenate((fr_scaled, alpha * fr_scaled))
+            diss[i] = dissmeasure(f, a, 'min')
+
+        plt.plot(linspace(1, max_ratio, n), diss, label=lab)
+
+        minima_idx = argrelextrema(diss, np.less)[0]
+        diss_minima_tot.append(list(minima_idx))
+
+    # Find shared minima (close across channels)
+    all_idx = sorted([idx for channel in diss_minima_tot for idx in channel])
+    shared = []
+    for i in range(len(all_idx) - 1):
+        if (all_idx[i + 1] - all_idx[i]) < bound:
+            shared.append((all_idx[i] + all_idx[i + 1]) / 2)
+
+    # Convert shared minima to JI fractions
+    intervals = []
+    for m in shared:
+        frac = Fraction(m / (n / (max_ratio - 1)) + 1).limit_denominator(denom)
+        intervals.append((frac.numerator, frac.denominator))
+    intervals.append((2, 1))  # always include the octave
+
+    for num, den in intervals:
+        plt.axvline(num / den, color='silver', linewidth=1)
+
+    plt.xscale('linear')
+    plt.xlim(1, max_ratio)
+    plt.minorticks_off()
+    plt.xticks(
+        [num / den for num, den in intervals],
+        [f'{num}/{den}' for num, den in intervals],
+        fontsize=14,
+    )
+    plt.yticks(fontsize=14)
+    plt.xlabel('Frequency ratio', fontsize=14)
+    plt.ylabel('Sensory dissonance', fontsize=14)
+    ax = plt.gca()
+    ax.set_facecolor('white')
+    ax.axhline(linewidth=1, color='black')
+
+    if n_tet_grid is not None:
+        for ratio in NTET_ratios(n_tet_grid, max_ratio=max_ratio):
+            plt.axvline(ratio, color='red', linestyle='--', linewidth=0.8)
+
+    leg = plt.legend(fontsize=12)
+    leg.set_title(data_type, prop={'size': 16})
+    plt.tight_layout()
+    return diss_minima_tot
