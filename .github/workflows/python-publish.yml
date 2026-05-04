@@ -18,7 +18,7 @@ on:
       - '*'  # Triggers on all tag pushes
 
 permissions:
-  contents: read
+  contents: write   # needed to create GitHub Releases
 
 jobs:
   deploy:
@@ -35,8 +35,17 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
-    - name: Publish package
+    - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: ${{ github.ref_name }}
+        generate_release_notes: true
+        files: |
+          dist/*.tar.gz
+          dist/*.whl
