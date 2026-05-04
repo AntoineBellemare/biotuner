@@ -1,3 +1,13 @@
+"""biotuner.rhythm_construction — rhythm and polyrhythm construction from scales.
+
+Module type: Functions
+
+Euclidean rhythms, discrete polyrhythms (LCM grids), continuous-time
+polyrhythms (irrational ratios), second-order recursive polyrhythms,
+evolving rhythm processes (phase shift, metric modulation, density ramps,
+onset interpolation), MIDI / OSC export, and rich visualizations.
+"""
+
 import numpy as np
 from fractions import Fraction
 from collections import Counter
@@ -490,3 +500,2617 @@ def find_optimal_offsets(pulses_steps):
             optimal_offsets = offsets
     
     return optimal_offsets
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def euclidean_rhythm(pulses, steps, offset=0):
+    """
+    Generate a Euclidean rhythm.
+    Args:
+        pulses (int): The number of pulses in the rhythm.
+        steps (int): The number of steps in the rhythm.
+        offset (int): An offset for the rhythm in pulses.
+    Returns:
+        List[int]: A binary list representing the rhythm, where 1 indicates a pulse and 0 indicates no pulse.
+    """
+    rhythm = [0] * steps
+    for i in range(pulses):
+        rhythm[(i * steps // pulses + offset) % steps] = 1
+    return rhythm
+
+
+def visualize_rhythms(pulses_steps, offsets=None, plot_size=6, tolerance=0.1, cmap="Set3"):
+    """
+    Visualize multiple Euclidean rhythms.
+
+    Parameters
+    ----------
+    pulses_steps : list of tuple
+        A list of tuple, where each tuple represent the number of pulses and steps of a rhythm.
+    offsets : list of int, optional
+        A list of offsets for each rhythm in pulses_steps.
+    plot_size : int, optional
+        The size of the plot.
+    tolerance : float, optional
+        The tolerance for considering two pulses to be in the same rhythm.
+
+    Returns
+    -------
+    None
+    """
+    fig, ax = plt.subplots(figsize=(plot_size, plot_size))
+    colors = sns.color_palette(cmap, n_colors=len(pulses_steps))
+    pulses_positions = []
+    for i, (pulses, steps) in enumerate(pulses_steps):
+        offset = offsets[i] if offsets else 0
+        rhythm = euclidean_rhythm(pulses, steps, offset)
+        angles = np.linspace(0, 2 * np.pi, steps, endpoint=False)
+        radius = (i + 1) * 0.15
+        x = radius * np.cos(angles)
+        y = radius * np.sin(angles)
+        ax.scatter(x, y, s=100, color=colors[i % len(colors)], alpha=0.7)  # Circle alpha
+        pulse_pos = []
+        for j, value in enumerate(rhythm):
+            if value == 1:
+                ax.scatter(x[j], y[j], s=230, color=colors[i % len(colors)], alpha=1)
+                pulse_pos.append((x[j], y[j], np.arctan2(y[j], x[j])))
+        # Draw a filled circle around the pulse with the desired alpha transparency
+        circle = plt.Circle((0, 0), radius=radius, color=colors[i % len(colors)], alpha=0.5, fill=False)
+        ax.add_patch(circle)  # Use add_patch instead of add_artist
+
+        pulses_positions.append(pulse_pos)
+    for i in range(len(pulses_positions)):
+        for j in range(i + 1, len(pulses_positions)):
+            for pulse1 in pulses_positions[i]:
+                for pulse2 in pulses_positions[j]:
+                    if abs(pulse1[2] - pulse2[2]) < tolerance:
+                        ax.plot([0, pulse1[0], pulse2[0]], [0, pulse1[1], pulse2[1]], "k-", lw=2)
+    # ax.set_aspect("equal")
+    ax.set_xlim(-(np.max(x)) - 0.1, np.max(x) + 0.1)
+    ax.set_ylim(-(np.max(y)) - 0.1, np.max(y) + 0.1)
+    # Remove grid and tick labels
+    plt.grid(False)
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    plt.show()
+
+
+# ---------------------------------------------------------------------------
+# Polyrhythm Grid
+# ---------------------------------------------------------------------------
+
+from math import gcd
+from functools import reduce
+import seaborn as sns
+
+
+def _lcm_list(values):
+    """Return the least common multiple of a list of integers."""
+    return reduce(lambda a, b: a * b // gcd(a, b), values)
+
+
+def scale2polyrhythm(scale, max_denom=16):
+    """
+    Build a polyrhythmic grid from a list of scale ratios.
+
+    Each ratio ``p/q`` contributes one voice: ``p`` pulses distributed over
+    ``q`` steps using Bjorklund's algorithm.  All voices are then tiled to the
+    LCM of every step-count so they share a common timeline.
+
+    Parameters
+    ----------
+    scale : list of float
+        Frequency ratios (e.g. peaks from biotuner analysis).
+    max_denom : int, default=16
+        Maximum denominator when approximating each ratio as a fraction.
+
+    Returns
+    -------
+    voices : list of list of int
+        Binary onset patterns, all of length ``lcm_steps``.
+    coincidences : numpy.ndarray of int
+        Number of simultaneous onsets at each position in the LCM grid.
+    coincidence_positions : list of int
+        Zero-indexed positions where 2 or more voices sound together.
+    labels : list of str
+        Voice label, e.g. ``"E(3,4)"``.
+    lcm_steps : int
+        Length of the common grid.
+
+    Examples
+    --------
+    >>> voices, coinc, coinc_pos, labels, L = scale2polyrhythm([1.333, 1.5, 1.75])
+    >>> labels
+    ['E(3,4)', 'E(2,3)', 'E(3,4)']
+    """
+    frac, nums, denoms = scale2frac(scale, maxdenom=max_denom)
+
+    raw_voices, raw_labels, step_counts = [], [], []
+    for n, d in zip(nums, denoms):
+        # bjorklund(steps, pulses): for ratio n/d, steps=n, pulses=d
+        # Valid when pulses < steps (d < n) and steps fit in budget
+        if n > max_denom or d == 0 or d >= n:
+            continue
+        try:
+            pattern = bjorklund(n, d)
+            raw_voices.append(pattern)
+            raw_labels.append(f"E({d},{n})")
+            step_counts.append(n)
+        except Exception:
+            continue
+
+    if not raw_voices:
+        return [], np.array([]), [], [], 1
+
+    lcm_steps = _lcm_list(step_counts)
+
+    voices = []
+    for voice, steps in zip(raw_voices, step_counts):
+        repeat = lcm_steps // steps
+        voices.append(voice * repeat)
+
+    coincidences = np.sum(voices, axis=0)
+    coincidence_positions = [i for i, v in enumerate(coincidences) if v >= 2]
+
+    return voices, coincidences, coincidence_positions, raw_labels, lcm_steps
+
+
+# ---------------------------------------------------------------------------
+# Visualization A – Piano Roll
+# ---------------------------------------------------------------------------
+
+def plot_polyrhythm_piano_roll(
+    scale,
+    max_denom=16,
+    cmap="Set2",
+    figsize=None,
+    title="Polyrhythm Grid – Piano Roll",
+):
+    """
+    Visualize a polyrhythmic grid as a piano roll.
+
+    Each row is one rhythmic voice derived from the scale ratios.  Filled
+    cells mark onsets; columns where two or more voices coincide are
+    highlighted with a translucent orange bar.
+
+    Parameters
+    ----------
+    scale : list of float
+        Frequency ratios passed to :func:`scale2polyrhythm`.
+    max_denom : int, default=16
+        Maximum denominator for fraction approximation.
+    cmap : str, default="Set2"
+        Seaborn / Matplotlib colour palette name for voice colours.
+    figsize : tuple or None
+        Figure size.  Defaults to ``(lcm_steps * 0.45, n_voices * 0.9)``.
+    title : str
+        Plot title.
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    """
+    voices, coincidences, coinc_pos, labels, lcm_steps = scale2polyrhythm(
+        scale, max_denom=max_denom
+    )
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    n_voices = len(voices)
+    if figsize is None:
+        figsize = (max(8, lcm_steps * 0.45), max(2, n_voices * 0.9))
+
+    fig, ax = plt.subplots(figsize=figsize)
+    colors = sns.color_palette(cmap, n_colors=n_voices)
+
+    for row, (voice, label, color) in enumerate(zip(voices, labels, colors)):
+        for col, onset in enumerate(voice):
+            face = color if onset else "white"
+            rect = plt.Rectangle(
+                (col, row), 1, 1,
+                facecolor=face,
+                edgecolor="#aaaaaa",
+                linewidth=0.6,
+            )
+            ax.add_patch(rect)
+
+    # Highlight coincidence columns
+    for col in coinc_pos:
+        ax.add_patch(
+            plt.Rectangle(
+                (col, 0), 1, n_voices,
+                facecolor="orange",
+                alpha=0.25,
+                linewidth=0,
+            )
+        )
+
+    ax.set_xlim(0, lcm_steps)
+    ax.set_ylim(0, n_voices)
+    ax.set_xticks(np.arange(lcm_steps) + 0.5)
+    ax.set_xticklabels(np.arange(lcm_steps), fontsize=8)
+    ax.set_yticks(np.arange(n_voices) + 0.5)
+    ax.set_yticklabels(labels, fontsize=9)
+    ax.set_xlabel("Step (LCM grid)")
+    ax.set_title(title)
+    plt.tight_layout()
+    return fig, ax
+
+
+# ---------------------------------------------------------------------------
+# Visualization B – Coincidence Density Curve
+# ---------------------------------------------------------------------------
+
+def plot_polyrhythm_coincidence(
+    scale,
+    max_denom=16,
+    cmap="Set2",
+    figsize=(10, 3),
+    title="Polyrhythm Grid – Coincidence Density",
+):
+    """
+    Plot the number of simultaneous onsets across all rhythmic voices over time.
+
+    The filled area shows rhythmic *tension*: peaks mark structural downbeats
+    where multiple voices land together; troughs are moments of dispersion.
+    Individual voice onset markers are drawn at the bottom.
+
+    Parameters
+    ----------
+    scale : list of float
+        Frequency ratios passed to :func:`scale2polyrhythm`.
+    max_denom : int, default=16
+        Maximum denominator for fraction approximation.
+    cmap : str, default="Set2"
+        Colour palette for individual voice rug marks.
+    figsize : tuple, default=(10, 3)
+        Figure size.
+    title : str
+        Plot title.
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    """
+    voices, coincidences, coinc_pos, labels, lcm_steps = scale2polyrhythm(
+        scale, max_denom=max_denom
+    )
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    colors = sns.color_palette(cmap, n_colors=len(voices))
+    steps = np.arange(lcm_steps)
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Filled density area
+    ax.fill_between(steps + 0.5, coincidences, alpha=0.35, color="steelblue", step="mid")
+    ax.step(steps + 0.5, coincidences, where="mid", color="steelblue", linewidth=1.4)
+
+    # Individual voice rug marks at the bottom
+    for i, (voice, color, label) in enumerate(zip(voices, colors, labels)):
+        onset_positions = [j + 0.5 for j, v in enumerate(voice) if v]
+        y_offset = -(i + 1) * 0.18
+        ax.scatter(
+            onset_positions,
+            [y_offset] * len(onset_positions),
+            color=color,
+            s=40,
+            zorder=3,
+            label=label,
+            clip_on=False,
+        )
+
+    ax.set_xlim(0, lcm_steps)
+    ax.set_xlabel("Step (LCM grid)")
+    ax.set_ylabel("Simultaneous onsets")
+    ax.set_title(title)
+    ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    ax.legend(loc="upper right", fontsize=8, framealpha=0.7)
+    plt.tight_layout()
+    return fig, ax
+
+
+# ---------------------------------------------------------------------------
+# Visualization F – Coincidence Matrix Heatmap
+# ---------------------------------------------------------------------------
+
+def plot_polyrhythm_coincidence_matrix(
+    scale,
+    max_denom=16,
+    cmap="YlOrRd",
+    figsize=None,
+    title="Polyrhythm Grid – Coincidence Matrix",
+):
+    """
+    Heatmap of pairwise coincidences between rhythmic voices.
+
+    ``matrix[i][j]`` counts how many steps in the LCM grid have onsets in
+    both voice i and voice j.  The diagonal gives each voice's total onset
+    count.  Highly consonant ratio pairs cluster in the upper-left corner
+    after sorting by onset density.
+
+    Parameters
+    ----------
+    scale : list of float
+    max_denom : int, default=16
+    cmap : str, default="YlOrRd"
+    figsize : tuple or None
+    title : str
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    matrix : numpy.ndarray
+        The raw coincidence matrix (n_voices × n_voices).
+    """
+    voices, _, _, labels, lcm_steps = scale2polyrhythm(scale, max_denom=max_denom)
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    n = len(voices)
+    matrix = np.zeros((n, n), dtype=int)
+    for i in range(n):
+        for j in range(n):
+            matrix[i, j] = sum(
+                1 for t in range(lcm_steps) if voices[i][t] and voices[j][t]
+            )
+
+    if figsize is None:
+        figsize = (max(4, n * 0.9 + 1), max(3, n * 0.9))
+
+    fig, ax = plt.subplots(figsize=figsize)
+    im = ax.imshow(matrix, cmap=cmap, aspect="equal")
+    plt.colorbar(im, ax=ax, label="Shared onsets")
+
+    ax.set_xticks(range(n))
+    ax.set_yticks(range(n))
+    ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=9)
+    ax.set_yticklabels(labels, fontsize=9)
+
+    for i in range(n):
+        for j in range(n):
+            ax.text(j, i, str(matrix[i, j]),
+                    ha="center", va="center", fontsize=10,
+                    color="white" if matrix[i, j] > matrix.max() * 0.6 else "black")
+
+    ax.set_title(title)
+    plt.tight_layout()
+    return fig, ax, matrix
+
+
+# ---------------------------------------------------------------------------
+# Live Music Outputs
+# ---------------------------------------------------------------------------
+
+# Default GM drum map for voice-to-note assignment
+_GM_DRUM_NOTES = [36, 38, 42, 46, 41, 43, 45, 49]  # kick, snare, closed-HH, open-HH, …
+
+# Named subdivision constants  (steps per 4/4 bar)
+# Pass these as the ``subdivisions`` argument of any MIDI export function.
+SUBDIV_WHOLE        =  1   # whole note
+SUBDIV_HALF         =  2   # half note
+SUBDIV_QUARTER      =  4   # quarter note
+SUBDIV_EIGHTH       =  8   # 8th note
+SUBDIV_SIXTEENTH    = 16   # 16th note  (default)
+SUBDIV_32ND         = 32   # 32nd note
+SUBDIV_TRIP_QUARTER =  6   # quarter-note triplet
+SUBDIV_TRIP_EIGHTH  = 12   # 8th-note triplet
+SUBDIV_TRIP_16TH    = 24   # 16th-note triplet
+
+# Convenience aliases
+SUBDIV_ALIASES = {
+    "whole": SUBDIV_WHOLE, "half": SUBDIV_HALF,
+    "quarter": SUBDIV_QUARTER, "8th": SUBDIV_EIGHTH,
+    "16th": SUBDIV_SIXTEENTH, "32nd": SUBDIV_32ND,
+    "t_quarter": SUBDIV_TRIP_QUARTER, "t_8th": SUBDIV_TRIP_EIGHTH,
+    "t_16th": SUBDIV_TRIP_16TH,
+}
+
+# Reverse map for human-readable labels
+_SUBDIV_NAMES = {v: k for k, v in SUBDIV_ALIASES.items()}
+
+
+def _subdiv_name(n):
+    """Return a human-readable string for a subdivision integer (e.g. 16 → '16th')."""
+    return _SUBDIV_NAMES.get(n, f"{n}-subdiv")
+
+
+def _resolve_subdivisions(subdivisions, n_voices, default=16):
+    """
+    Normalise the ``subdivisions`` argument to a list of ints, one per voice.
+
+    Accepts
+    -------
+    * ``None``         → ``[default] * n_voices``
+    * ``int``          → same value repeated for every voice
+    * ``str``          → looked up in SUBDIV_ALIASES (e.g. ``'16th'``, ``'8th'``)
+    * ``list of int``  → used as-is (single-element broadcast to n_voices)
+    * ``list of str``  → each element looked up in SUBDIV_ALIASES
+    """
+    def _one(s):
+        if isinstance(s, (int, float)):
+            return int(s)
+        if isinstance(s, str):
+            val = SUBDIV_ALIASES.get(s)
+            if val is not None:
+                return val
+            # Try stripping common suffixes: '16th' → int('16'), '8th' → 8
+            stripped = s.replace("th", "").replace("nd", "").replace("rd", "").replace("st", "")
+            try:
+                return int(stripped)
+            except ValueError:
+                raise ValueError(
+                    f"Unknown subdivision '{s}'. "
+                    f"Valid strings: {list(SUBDIV_ALIASES.keys())}"
+                )
+        raise TypeError(f"subdivisions must be int or str, got {type(s)}")
+
+    if subdivisions is None:
+        return [default] * n_voices
+    if isinstance(subdivisions, (int, float, str)):
+        return [_one(subdivisions)] * n_voices
+    # list / tuple
+    resolved = [_one(s) for s in subdivisions]
+    if len(resolved) == 1:
+        return resolved * n_voices
+    if len(resolved) != n_voices:
+        raise ValueError(
+            f"subdivisions length ({len(resolved)}) must match n_voices ({n_voices}) "
+            "or be a single value."
+        )
+    return resolved
+
+
+def polyrhythm_to_midi(
+    scale,
+    bpm=120,
+    steps_per_bar=16,
+    subdivisions=None,
+    notes=None,
+    velocity=100,
+    max_denom=16,
+    output_path="polyrhythm.mid",
+    n_bars=1,
+):
+    """
+    Export a polyrhythmic grid as a multi-track MIDI file.
+
+    Each rhythmic voice is a separate MIDI track on GM drum channel 9.
+
+    Parameters
+    ----------
+    scale : list of float
+    bpm : float, default=120
+    steps_per_bar : int, default=16
+        Global fallback subdivision when ``subdivisions`` is ``None``.
+    subdivisions : int | str | list | None
+        Per-voice grid resolution.  See :data:`SUBDIV_SIXTEENTH` and siblings
+        for named constants, or use ``'8th'``, ``'16th'``, ``'quarter'`` etc.
+        A single value is broadcast to all voices; a list assigns one per voice.
+        Examples::
+
+            subdivisions=SUBDIV_SIXTEENTH          # all voices at 16th notes
+            subdivisions=['16th', '8th', 'quarter']  # three different grids
+            subdivisions=[16, 8, 4]                # same, numeric
+    notes : list of int or None
+    velocity : int, default=100
+    max_denom : int, default=16
+    output_path : str
+    n_bars : int, default=1
+
+    Returns
+    -------
+    str  — resolved output path.
+    """
+    import mido
+    import math
+
+    voices, _, _, labels, lcm_steps = scale2polyrhythm(scale, max_denom=max_denom)
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    if notes is None:
+        notes = [_GM_DRUM_NOTES[i % len(_GM_DRUM_NOTES)] for i in range(len(voices))]
+
+    subdiv_list = _resolve_subdivisions(subdivisions, len(voices), default=steps_per_bar)
+
+    ticks_per_beat = 480
+    bar_ticks = 4 * ticks_per_beat          # 1920 ticks = one 4/4 bar
+    total_ticks = n_bars * bar_ticks
+    # LCM step duration — how long one grid step lasts in ticks.
+    # All voices share this timeline; subdivision only controls quantization.
+    step_ticks = bar_ticks / steps_per_bar  # float, e.g. 120.0 at steps_per_bar=16
+    # Total steps needed to fill n_bars
+    total_steps = math.ceil(total_ticks / step_ticks)
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+    tempo_track = mido.MidiTrack()
+    mid.tracks.append(tempo_track)
+    tempo_track.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+    tempo_track.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+
+    for i, (voice, label, note) in enumerate(zip(voices, labels, notes)):
+        subdiv = subdiv_list[i]
+        # Grid size for this voice (ticks between quantized positions)
+        grid_ticks = bar_ticks / subdiv        # e.g. 120 for 16ths, 240 for 8ths
+        note_len = max(1, int(grid_ticks) - 10)
+
+        track = mido.MidiTrack()
+        mid.tracks.append(track)
+        track.append(mido.MetaMessage(
+            "track_name",
+            name=f"{label} [{_subdiv_name(subdiv)}]",
+            time=0
+        ))
+
+        events = []
+        seen = set()  # deduplicate quantized positions
+        for step in range(total_steps):
+            if voice[step % lcm_steps]:
+                raw_tick = step * step_ticks
+                # Snap to nearest grid position for this voice
+                q_tick = int(round(raw_tick / grid_ticks) * grid_ticks)
+                if q_tick < total_ticks and q_tick not in seen:
+                    seen.add(q_tick)
+                    events.append((q_tick, "on", note, velocity))
+                    events.append((q_tick + note_len, "off", note, 0))
+
+        events.sort(key=lambda e: e[0])
+        cur = 0
+        for abs_tick, kind, pitch, vel in events:
+            delta = abs_tick - cur
+            cur = abs_tick
+            track.append(mido.Message(
+                "note_on" if kind == "on" else "note_off",
+                channel=9, note=pitch, velocity=vel, time=delta
+            ))
+        track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+def euclid_polyrhythm_to_midi(
+    rhythms,
+    bpm=120,
+    notes=None,
+    velocity=100,
+    note_length=60,
+    mode="bar",
+    base_subdivision=16,
+    output_path="euclid_polyrhythm.mid",
+    n_bars=4,
+):
+    """
+    Export Euclidean polyrhythms as MIDI, with each voice on its own independent grid.
+
+    Two timing modes control when voices realign:
+
+    ``mode='bar'`` (default — shared bar)
+        Every voice divides the same bar into ``steps`` equal slices.
+        All voices restart at every bar boundary → realign every 1 bar.
+        Use this to hear how different Euclidean patterns feel *within* the
+        same metrical unit.
+
+    ``mode='free'`` (independent cycles)
+        All voices share the same base step size
+        (``bar_ticks / base_subdivision``), so each voice's cycle is
+        proportional to its ``steps`` count.  Voices only realign at
+        LCM(all steps) base-steps — potentially many bars away.
+        Use this for true polyrhythmic drift::
+
+            E(3,8)  + E(4,12) + E(5,7)  →  LCM(8,12,7)=168 steps
+            at base_subdivision=16  →  168/16 = 10.5 bars before realignment
+
+    Parameters
+    ----------
+    rhythms : list of (int, int)
+        Each tuple is ``(pulses, steps)`` — the two parameters of a Euclidean
+        rhythm.  Examples::
+
+            [(3, 8), (4, 12), (5, 7)]   # three independent grids
+            [(3, 4), (2, 3)]            # 3-against-4 over 2-against-3
+    bpm : float, default=120
+    notes : list of int or None
+        MIDI note per voice.  Defaults to the GM drum map.
+    velocity : int, default=100
+    note_length : int, default=60
+        Duration of each hit in MIDI ticks (480 PPQ).  60 ticks ≈ 62 ms at
+        120 BPM.  Automatically clamped below the step duration.
+    mode : {'bar', 'free'}, default='bar'
+        Timing model — see above.
+    base_subdivision : int, default=16
+        Only used in ``mode='free'``.  Number of equal divisions per bar that
+        defines the shared step size.  16 = 16th notes, 8 = 8th notes, etc.
+    output_path : str
+    n_bars : int, default=4
+        Number of bars to write.  In ``'free'`` mode the actual output length
+        may differ slightly because voices are tiled until the total exceeds
+        ``n_bars`` bars.
+
+    Returns
+    -------
+    str  — resolved output path.
+
+    Examples
+    --------
+    >>> # shared bar — all voices restart every bar
+    >>> euclid_polyrhythm_to_midi([(3,8),(4,12),(5,7)], mode='bar',
+    ...                           n_bars=8, output_path="euclid_bar.mid")
+    >>> # free cycles — realign only every 10.5 bars
+    >>> euclid_polyrhythm_to_midi([(3,8),(4,12),(5,7)], mode='free',
+    ...                           n_bars=16, output_path="euclid_free.mid")
+    """
+    import mido
+    import math
+
+    if notes is None:
+        notes = [_GM_DRUM_NOTES[i % len(_GM_DRUM_NOTES)] for i in range(len(rhythms))]
+
+    ticks_per_beat = 480
+    bar_ticks = 4 * ticks_per_beat      # 1920 ticks = one 4/4 bar
+    total_ticks = n_bars * bar_ticks
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+    tmpl = mido.MidiTrack()
+    mid.tracks.append(tmpl)
+    tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+    tmpl.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+
+    if mode == "free":
+        # All voices share one absolute step size; cycles have different lengths.
+        base_step_ticks = bar_ticks / base_subdivision   # e.g. 120.0 for 16th notes
+        # Total steps to write = enough to cover n_bars
+        total_base_steps = math.ceil(total_ticks / base_step_ticks)
+
+        for i, (pulses, steps) in enumerate(rhythms):
+            pattern = bjorklund(steps, pulses)
+            note = notes[i]
+            # Each step of this voice = steps × base_step_ticks / steps = base_step_ticks
+            # Wait — in free mode every step of EVERY voice = base_step_ticks.
+            # The voice cycles every `steps` base-steps.
+            step_dur = base_step_ticks          # absolute duration per step
+            nlen = max(1, min(note_length, int(step_dur) - 10))
+            cycle_ticks = steps * step_dur      # ticks per full cycle of this voice
+
+            track = mido.MidiTrack()
+            mid.tracks.append(track)
+            track.append(mido.MetaMessage(
+                "track_name",
+                name=f"E({pulses},{steps}) free",
+                time=0,
+            ))
+
+            events = []
+            s = 0
+            while True:
+                t_on = int(round(s * step_dur))
+                if t_on >= total_ticks:
+                    break
+                if pattern[s % steps]:
+                    events.append((t_on, "on",  note, velocity))
+                    events.append((t_on + nlen, "off", note, 0))
+                s += 1
+
+            events.sort()
+            cur = 0
+            for abs_tick, kind, pitch, vel in events:
+                delta = abs_tick - cur
+                cur = abs_tick
+                track.append(mido.Message(
+                    "note_on" if kind == "on" else "note_off",
+                    channel=9, note=pitch, velocity=vel, time=delta,
+                ))
+            track.append(mido.MetaMessage("end_of_track", time=0))
+
+    else:  # mode == 'bar'
+        # Every voice divides the same bar; all restart each bar.
+        for i, (pulses, steps) in enumerate(rhythms):
+            pattern = bjorklund(steps, pulses)
+            note = notes[i]
+            step_dur = bar_ticks / steps        # float
+            nlen = max(1, min(note_length, int(step_dur) - 10))
+
+            track = mido.MidiTrack()
+            mid.tracks.append(track)
+            track.append(mido.MetaMessage(
+                "track_name",
+                name=f"E({pulses},{steps})",
+                time=0,
+            ))
+
+            events = []
+            total_pattern_steps = n_bars * steps
+            for s in range(total_pattern_steps):
+                if pattern[s % steps]:
+                    t_on = int(round(s * step_dur))
+                    events.append((t_on, "on",  note, velocity))
+                    events.append((t_on + nlen, "off", note, 0))
+
+            events.sort()
+            cur = 0
+            for abs_tick, kind, pitch, vel in events:
+                delta = abs_tick - cur
+                cur = abs_tick
+                track.append(mido.Message(
+                    "note_on" if kind == "on" else "note_off",
+                    channel=9, note=pitch, velocity=vel, time=delta,
+                ))
+            track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+
+def polyrhythm_to_osc_score(
+    scale,
+    bpm=120,
+    steps_per_bar=16,
+    max_denom=16,
+    host="127.0.0.1",
+    port=9000,
+    base_address="/polyrhythm",
+):
+    """
+    Build a timed OSC score from a polyrhythmic grid.
+
+    Returns a list of ``(time_sec, address, args)`` tuples — one entry per
+    onset across all voices.  This is the offline score representation;
+    use :func:`polyrhythm_send_osc` to play it in real-time.
+
+    OSC addresses emitted:
+
+    * ``{base}/voice/{i}``  – onset on voice i  (args: step, beat_pos_float)
+    * ``{base}/coincidence`` – simultaneous onset on 2+ voices (args: step, n_voices)
+
+    Parameters
+    ----------
+    scale : list of float
+    bpm : float, default=120
+    steps_per_bar : int, default=16
+    max_denom : int, default=16
+    host : str, default="127.0.0.1"  (informational, stored in returned dict)
+    port : int, default=9000
+    base_address : str, default="/polyrhythm"
+
+    Returns
+    -------
+    score : list of tuple
+        Sorted list of ``(time_sec, address, args_list)``.
+    meta : dict
+        ``{"host", "port", "bpm", "lcm_steps", "labels", "step_dur_sec"}``.
+    """
+    voices, coincidences, _, labels, lcm_steps = scale2polyrhythm(
+        scale, max_denom=max_denom
+    )
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    sec_per_beat = 60.0 / bpm
+    sec_per_step = sec_per_beat * (4.0 / steps_per_bar)
+
+    score = []
+    for step in range(lcm_steps):
+        t = step * sec_per_step
+        beat_pos = step * (4.0 / steps_per_bar)
+        for i, voice in enumerate(voices):
+            if voice[step]:
+                score.append((t, f"{base_address}/voice/{i}", [step, beat_pos]))
+        if coincidences[step] >= 2:
+            score.append((t, f"{base_address}/coincidence", [step, int(coincidences[step])]))
+
+    score.sort(key=lambda x: x[0])
+    meta = {
+        "host": host,
+        "port": port,
+        "bpm": bpm,
+        "lcm_steps": lcm_steps,
+        "labels": labels,
+        "step_dur_sec": sec_per_step,
+    }
+    return score, meta
+
+
+def polyrhythm_send_osc(
+    scale,
+    bpm=120,
+    steps_per_bar=16,
+    max_denom=16,
+    host="127.0.0.1",
+    port=9000,
+    base_address="/polyrhythm",
+    n_loops=1,
+):
+    """
+    Play a polyrhythmic grid in real-time by sending OSC messages.
+
+    Iterates through the LCM grid step-by-step at the given tempo,
+    sending ``/polyrhythm/voice/{i}`` messages for every onset.
+    Blocks until ``n_loops`` cycles complete (use a thread for background use).
+
+    Targets: Ableton Live + Max4Live ``[udpreceive]``, SuperCollider,
+    VCV Rack, TouchDesigner, Pure Data, etc.
+
+    Parameters
+    ----------
+    scale : list of float
+    bpm : float, default=120
+    steps_per_bar : int, default=16
+    max_denom : int, default=16
+    host : str, default="127.0.0.1"
+    port : int, default=9000
+    base_address : str, default="/polyrhythm"
+    n_loops : int, default=1
+        Number of times to loop the pattern.
+
+    Returns
+    -------
+    None
+    """
+    import time
+    from pythonosc import udp_client
+
+    score, meta = polyrhythm_to_osc_score(
+        scale, bpm=bpm, steps_per_bar=steps_per_bar,
+        max_denom=max_denom, host=host, port=port,
+        base_address=base_address,
+    )
+
+    client = udp_client.SimpleUDPClient(host, port)
+    cycle_dur = meta["lcm_steps"] * meta["step_dur_sec"]
+
+    for loop in range(n_loops):
+        t0 = time.perf_counter()
+        for t_rel, address, args in score:
+            target = t0 + t_rel
+            now = time.perf_counter()
+            if target > now:
+                time.sleep(target - now)
+            client.send_message(address, args)
+        # Wait for cycle to finish cleanly
+        elapsed = time.perf_counter() - t0
+        remaining = cycle_dur - elapsed
+        if remaining > 0:
+            time.sleep(remaining)
+
+
+def polyrhythm_dump_osc_patterns(
+    scale,
+    max_denom=16,
+    host="127.0.0.1",
+    port=9000,
+    base_address="/polyrhythm",
+):
+    """
+    Send the full binary patterns to an OSC receiver in one shot.
+
+    Fires a single OSC message per voice containing the complete binary
+    pattern as a list of ints.  Useful for syncing pattern state to a
+    receiver (e.g. a Max4Live device or a custom step-sequencer) without
+    real-time playback.
+
+    Addresses emitted:
+
+    * ``{base}/voice/{i}/pattern``  – full binary list, length = LCM steps
+    * ``{base}/meta/labels``        – voice labels as a string
+    * ``{base}/meta/lcm``           – LCM step count (int)
+
+    Parameters
+    ----------
+    scale : list of float
+    max_denom : int, default=16
+    host : str, default="127.0.0.1"
+    port : int, default=9000
+    base_address : str, default="/polyrhythm"
+    """
+    from pythonosc import udp_client
+
+    voices, _, _, labels, lcm_steps = scale2polyrhythm(scale, max_denom=max_denom)
+    if not voices:
+        raise ValueError("No valid rhythmic voices could be derived from the scale.")
+
+    client = udp_client.SimpleUDPClient(host, port)
+    for i, (voice, label) in enumerate(zip(voices, labels)):
+        client.send_message(f"{base_address}/voice/{i}/pattern", voice)
+    client.send_message(f"{base_address}/meta/labels", str(labels))
+    client.send_message(f"{base_address}/meta/lcm", lcm_steps)
+
+
+# ===========================================================================
+# Non-Euclidean Polyrhythms
+# ===========================================================================
+
+def scale2polyrhythm_iso(scale, max_denom=16):
+    """
+    Build an isochronous (classically spaced) polyrhythm from scale ratios.
+
+    Unlike the Bjorklund approach, each ratio ``p/q`` contributes *two* voices:
+    one voice of ``p`` evenly-spaced pulses and one of ``q`` evenly-spaced pulses,
+    both over ``lcm(p, q)`` steps.  This is the classical drummer's polyrhythm:
+    3-against-2, 4-against-3, etc.
+
+    Parameters
+    ----------
+    scale : list of float
+    max_denom : int, default=16
+
+    Returns
+    -------
+    voices, coincidences, coincidence_positions, labels, lcm_steps
+        Same signature as :func:`scale2polyrhythm`.
+
+    Examples
+    --------
+    >>> voices, _, _, labels, L = scale2polyrhythm_iso([3/2])
+    >>> labels   # 3 against 2 over LCM=6
+    ['iso(2,6)', 'iso(3,6)']
+    """
+    frac, nums, denoms = scale2frac(scale, maxdenom=max_denom)
+
+    pulse_counts = []
+    for n, d in zip(nums, denoms):
+        if 0 < d <= max_denom and 0 < n <= max_denom and n != d:
+            for p in (n, d):
+                if p not in pulse_counts:
+                    pulse_counts.append(p)
+
+    if not pulse_counts:
+        return [], np.array([]), [], [], 1
+
+    lcm_steps = _lcm_list(pulse_counts)
+
+    voices, labels = [], []
+    for p in pulse_counts:
+        pattern = [0] * lcm_steps
+        for i in range(p):
+            pos = round(i * lcm_steps / p) % lcm_steps
+            pattern[pos] = 1
+        voices.append(pattern)
+        labels.append(f"iso({p},{lcm_steps})")
+
+    coincidences = np.sum(voices, axis=0)
+    coinc_pos = [i for i, v in enumerate(coincidences) if v >= 2]
+    return voices, coincidences, coinc_pos, labels, lcm_steps
+
+
+def scale2polyrhythm_harmonic(scale, n_harmonics=4, lcm_cap=64):
+    """
+    Place onsets at harmonic series positions derived from each ratio.
+
+    For ratio ``r``, the ``k``-th onset is placed at position
+    ``floor(k / r * lcm_steps)`` — mapping the integer harmonic series of ``r``
+    into a discrete time grid.  This produces inharmonic polyrhythms when
+    ``r`` is irrational, and interlocking regular patterns when ``r`` is simple.
+
+    Parameters
+    ----------
+    scale : list of float
+        Frequency ratios.
+    n_harmonics : int, default=4
+        Number of harmonics per ratio voice.
+    lcm_cap : int, default=64
+        Upper bound for the LCM grid (prevents explosion for irrational ratios).
+
+    Returns
+    -------
+    voices, coincidences, coincidence_positions, labels, lcm_steps
+    """
+    # Choose a grid: lcm of denominators (capped)
+    frac, nums, denoms = scale2frac(scale, maxdenom=lcm_cap)
+    valid = [(n, d) for n, d in zip(nums, denoms) if 0 < d <= lcm_cap and n > 0]
+    if not valid:
+        return [], np.array([]), [], [], 1
+
+    denom_list = [d for _, d in valid]
+    lcm_steps = min(_lcm_list(denom_list), lcm_cap)
+
+    voices, labels = [], []
+    for (n, d), r in zip(valid, scale):
+        pattern = [0] * lcm_steps
+        for k in range(1, n_harmonics + 1):
+            pos = int((k / r) * lcm_steps / n_harmonics) % lcm_steps
+            pattern[pos] = 1
+        voices.append(pattern)
+        labels.append(f"harm({r:.3f})")
+
+    coincidences = np.sum(voices, axis=0)
+    coinc_pos = [i for i, v in enumerate(coincidences) if v >= 2]
+    return voices, coincidences, coinc_pos, labels, lcm_steps
+
+
+# ===========================================================================
+# Evolving Rhythms
+# ===========================================================================
+
+def evolve_phase_shift(pattern, n_cycles=8, shift_per_cycle=1):
+    """
+    Reich-style phase shifting between a pattern and a shifted copy.
+
+    A fixed ``pattern`` (voice 0) is held constant while a shifted copy
+    (voice 1) advances by ``shift_per_cycle`` steps each cycle.  Returns a
+    3-D array ``(n_cycles, 2, len(pattern))`` and a 2-D coincidence matrix
+    ``(n_cycles, len(pattern))`` counting overlaps at each step.
+
+    Parameters
+    ----------
+    pattern : list of int
+        Binary onset pattern (one cycle).
+    n_cycles : int, default=8
+        Number of evolution steps to generate.
+    shift_per_cycle : int, default=1
+        How many steps the second voice advances each cycle.
+
+    Returns
+    -------
+    evolution : numpy.ndarray, shape (n_cycles, 2, L)
+        ``evolution[c, 0]`` = fixed voice at cycle c,
+        ``evolution[c, 1]`` = shifted copy at cycle c.
+    coincidences : numpy.ndarray, shape (n_cycles, L)
+        Simultaneous onsets per step per cycle.
+
+    Examples
+    --------
+    >>> evo, coinc = evolve_phase_shift([1,0,1,0,1,0,1,0], n_cycles=8)
+    >>> evo.shape
+    (8, 2, 8)
+    """
+    L = len(pattern)
+    p = np.array(pattern, dtype=int)
+    evolution = np.zeros((n_cycles, 2, L), dtype=int)
+    for c in range(n_cycles):
+        offset = (c * shift_per_cycle) % L
+        evolution[c, 0] = p
+        evolution[c, 1] = np.roll(p, offset)
+    coincidences = evolution[:, 0] + evolution[:, 1]
+    return evolution, coincidences
+
+
+def evolve_metric_modulation(scale, n_cycles=6, bpm_start=120):
+    """
+    Build a metric modulation chain from a list of ratios.
+
+    Each ratio in ``scale`` defines a tempo multiplier applied to the current
+    BPM.  The pattern at each cycle uses the Bjorklund algorithm for the
+    current ratio, scaled to a common reference grid of ``ref_steps`` steps.
+
+    Returns
+    -------
+    patterns : list of list
+        Binary pattern per cycle (length = ``ref_steps``).
+    bpms : list of float
+        Tempo at each cycle.
+    labels : list of str
+    """
+    frac, nums, denoms = scale2frac(scale, maxdenom=32)
+    valid = [(n, d) for n, d in zip(nums, denoms) if 0 < d <= 32 and n > d]
+
+    # reference grid = lcm of all step-counts, capped at 64
+    if not valid:
+        return [], [], []
+    step_counts = [n for n, d in valid]
+    ref_steps = min(_lcm_list(step_counts), 64)
+
+    patterns, bpms, labels = [], [], []
+    bpm = bpm_start
+    for cycle_idx in range(min(n_cycles, len(valid))):
+        n, d = valid[cycle_idx % len(valid)]
+        try:
+            raw = bjorklund(n, d)
+        except Exception:
+            continue
+        repeat = ref_steps // n
+        tiled = (raw * repeat)[:ref_steps]
+        patterns.append(tiled)
+        bpms.append(round(bpm, 2))
+        labels.append(f"cycle {cycle_idx+1}: E({d},{n}) @ {bpm:.1f} bpm")
+        bpm *= n / d  # tempo multiplied by the ratio
+
+    return patterns, bpms, labels
+
+
+def evolve_onset_interpolation(pattern_a, pattern_b, n_frames=8):
+    """
+    Gradually morph onset positions from ``pattern_a`` to ``pattern_b``.
+
+    Onset positions in ``pattern_a`` are linearly moved toward the nearest
+    target position in ``pattern_b`` over ``n_frames`` frames.  At frame 0
+    the result equals ``pattern_a``; at frame ``n_frames - 1`` it equals
+    ``pattern_b``.  Intermediate frames occupy fractional positions, rounded
+    to the nearest grid step.
+
+    Both patterns must have the same length.  If onset counts differ, the
+    shorter is padded with positions from the longer.
+
+    Parameters
+    ----------
+    pattern_a : list of int
+    pattern_b : list of int
+    n_frames : int, default=8
+
+    Returns
+    -------
+    frames : numpy.ndarray, shape (n_frames, L)
+        Binary onset matrix per frame.
+    """
+    L = len(pattern_a)
+    assert len(pattern_b) == L, "Patterns must have the same length."
+
+    pos_a = [i for i, v in enumerate(pattern_a) if v]
+    pos_b = [i for i, v in enumerate(pattern_b) if v]
+
+    # Pad shorter list by repeating its last position
+    while len(pos_a) < len(pos_b):
+        pos_a.append(pos_a[-1] if pos_a else 0)
+    while len(pos_b) < len(pos_a):
+        pos_b.append(pos_b[-1] if pos_b else 0)
+
+    pos_a = np.array(pos_a, dtype=float)
+    pos_b = np.array(pos_b, dtype=float)
+
+    frames = np.zeros((n_frames, L), dtype=int)
+    for f in range(n_frames):
+        t = f / max(n_frames - 1, 1)
+        interp = (1 - t) * pos_a + t * pos_b
+        for p in np.round(interp).astype(int):
+            frames[f, p % L] = 1
+    return frames
+
+
+def evolve_density_ramp(pattern, n_cycles=8, direction="grow"):
+    """
+    Progressively add or remove onsets from a pattern over cycles.
+
+    Onsets are added (``direction='grow'``) or removed (``direction='shrink'``)
+    one-by-one in order of their position in the pattern, producing a ramp
+    from silence to the full pattern or vice versa.
+
+    Parameters
+    ----------
+    pattern : list of int
+    n_cycles : int, default=8
+    direction : {"grow", "shrink"}
+
+    Returns
+    -------
+    frames : numpy.ndarray, shape (n_cycles, len(pattern))
+    """
+    positions = [i for i, v in enumerate(pattern) if v]
+    n_onsets = len(positions)
+    L = len(pattern)
+    frames = np.zeros((n_cycles, L), dtype=int)
+
+    for c in range(n_cycles):
+        count = int(round((c + 1) * n_onsets / n_cycles))
+        count = max(0, min(count, n_onsets))
+        active = positions[:count] if direction == "grow" else positions[n_onsets - count:]
+        for p in active:
+            frames[c, p] = 1
+    return frames
+
+
+# ===========================================================================
+# Evolution Visualizations
+# ===========================================================================
+
+def plot_rhythm_evolution(
+    frames,
+    labels=None,
+    title="Rhythm Evolution",
+    cmap="Blues",
+    figsize=None,
+):
+    """
+    Visualize an evolving rhythm as a time-unrolled piano roll.
+
+    Rows = cycles / frames (time flows downward), columns = grid steps.
+    Each filled cell marks an onset; intensity can reflect coincidence count.
+
+    Parameters
+    ----------
+    frames : numpy.ndarray, shape (n_cycles, L)
+        Binary or integer matrix.  Each row is one cycle / frame.
+    labels : list of str or None
+        Row labels (cycle names).
+    title : str
+    cmap : str, default="Blues"
+    figsize : tuple or None
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    """
+    n_cycles, L = frames.shape
+    if figsize is None:
+        figsize = (max(8, L * 0.45), max(3, n_cycles * 0.55))
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.imshow(
+        frames,
+        cmap=cmap,
+        aspect="auto",
+        interpolation="nearest",
+        origin="upper",
+        vmin=0,
+        vmax=max(1, frames.max()),
+    )
+
+    ax.set_xticks(range(L))
+    ax.set_xticklabels(range(L), fontsize=7)
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Cycle")
+
+    if labels:
+        ax.set_yticks(range(len(labels)))
+        ax.set_yticklabels(labels, fontsize=8)
+    else:
+        ax.set_yticks(range(n_cycles))
+        ax.set_yticklabels([f"cycle {i}" for i in range(n_cycles)], fontsize=8)
+
+    ax.set_title(title)
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_phase_shift_evolution(
+    pattern,
+    n_cycles=8,
+    shift_per_cycle=1,
+    cmap="Set2",
+    figsize=None,
+    title="Phase Shift Evolution (Reich process)",
+):
+    """
+    Visualize a Reich-style phase shift as two side-by-side evolution grids
+    plus a third panel showing coincidence count per step per cycle.
+
+    Parameters
+    ----------
+    pattern : list of int
+    n_cycles : int, default=8
+    shift_per_cycle : int, default=1
+    cmap : str, default="Set2"
+    figsize : tuple or None
+    title : str
+
+    Returns
+    -------
+    fig, axes : matplotlib Figure and array of 3 Axes
+    """
+    evolution, coincidences = evolve_phase_shift(pattern, n_cycles, shift_per_cycle)
+    L = len(pattern)
+    n_cycles_actual = evolution.shape[0]
+
+    if figsize is None:
+        figsize = (max(12, L * 0.55), max(4, n_cycles_actual * 0.55))
+
+    fig, axes = plt.subplots(1, 3, figsize=figsize, sharey=True)
+    cycle_labels = [f"shift={c * shift_per_cycle}" for c in range(n_cycles_actual)]
+
+    colors = sns.color_palette(cmap, 2)
+
+    for voice_idx, (ax, label, color) in enumerate(
+        zip(axes[:2], ["Voice A (fixed)", "Voice B (shifted)"], colors)
+    ):
+        ax.imshow(
+            evolution[:, voice_idx, :],
+            cmap=None,
+            aspect="auto",
+            interpolation="nearest",
+            origin="upper",
+        )
+        # Redraw with colour
+        data = evolution[:, voice_idx, :]
+        rgba = np.ones((*data.shape, 4))
+        rgba[data == 1] = [*color, 1.0]
+        rgba[data == 0] = [0.95, 0.95, 0.95, 1.0]
+        ax.imshow(rgba, aspect="auto", interpolation="nearest", origin="upper")
+        ax.set_title(label, fontsize=9)
+        ax.set_xticks(range(L))
+        ax.set_xticklabels(range(L), fontsize=7)
+        ax.set_xlabel("Step")
+
+    # Coincidence panel
+    axes[2].imshow(
+        coincidences, cmap="YlOrRd", aspect="auto",
+        interpolation="nearest", origin="upper",
+        vmin=0, vmax=2,
+    )
+    axes[2].set_title("Coincidences", fontsize=9)
+    axes[2].set_xticks(range(L))
+    axes[2].set_xticklabels(range(L), fontsize=7)
+    axes[2].set_xlabel("Step")
+
+    axes[0].set_yticks(range(n_cycles_actual))
+    axes[0].set_yticklabels(cycle_labels, fontsize=8)
+    axes[0].set_ylabel("Cycle")
+
+    fig.suptitle(title, fontsize=11, fontweight="bold")
+    plt.tight_layout()
+    return fig, axes
+
+
+# ===========================================================================
+# Continuous-Time (Real) Polyrhythms
+# ===========================================================================
+#
+# All functions below work in *seconds*, not grid steps.
+# A ratio p/q produces two independent isochronous streams:
+#   • p equally-spaced onsets in [0, duration)   ← the numerator voice
+#   • q equally-spaced onsets in [0, duration)   ← the denominator voice
+# This is the canonical 2:3, 3:4, 5:7, … polyrhythm — no LCM grid needed.
+# ===========================================================================
+
+def scale2polyrhythm_continuous(scale, duration=1.0, max_denom=16):
+    """
+    Derive real polyrhythmic voices as **continuous onset times** in seconds.
+
+    For each ratio ``p/q`` in ``scale``, two independent isochronous streams
+    are created: ``p`` equally-spaced onsets and ``q`` equally-spaced onsets,
+    both spanning ``[0, duration)``.  Duplicate pulse-counts across ratios are
+    merged so the returned list contains unique voices only.
+
+    Unlike the LCM-grid approach, onset times are stored as **floats** — there
+    is no shared discrete grid.  A 5:7 polyrhythm is genuinely 5 against 7,
+    not a 35-step grid approximation.
+
+    Parameters
+    ----------
+    scale : list of float
+        Frequency ratios (e.g. peak frequencies from biotuner).
+    duration : float, default=1.0
+        Duration of one cycle in seconds.
+    max_denom : int, default=16
+        Maximum denominator when approximating each ratio as a fraction.
+
+    Returns
+    -------
+    onset_times : list of list of float
+        ``onset_times[i]`` = sorted onset positions (seconds) for voice ``i``.
+    labels : list of str
+        Human-readable label per voice, e.g. ``"3-pulse (0.33 s)"``.
+    pulse_counts : list of int
+        Number of pulses per voice (sorted ascending).
+    duration : float
+        The cycle duration (echoed for convenience).
+
+    Examples
+    --------
+    >>> times, labels, counts, dur = scale2polyrhythm_continuous([3/2], duration=2.0)
+    >>> counts        # 2-against-3
+    [2, 3]
+    >>> times[0]      # 2 pulses over 2 s
+    [0.0, 1.0]
+    >>> times[1]      # 3 pulses over 2 s
+    [0.0, 0.667, 1.333]
+    """
+    frac, nums, denoms = scale2frac(scale, maxdenom=max_denom)
+
+    voices = {}  # pulse_count → onset list
+    for n, d in zip(nums, denoms):
+        if n > 0 and d > 0 and n <= max_denom and d <= max_denom and n != d:
+            for p in (n, d):
+                if p not in voices:
+                    voices[p] = [k * duration / p for k in range(p)]
+
+    pulse_counts = sorted(voices.keys())
+    onset_times = [voices[p] for p in pulse_counts]
+    ioi = [duration / p for p in pulse_counts]
+    labels = [f"{p}-pulse  (IOI={ioi[i]*1000:.1f} ms)" for i, p in enumerate(pulse_counts)]
+    return onset_times, labels, pulse_counts, duration
+
+
+def coincidences_continuous(onset_times, tolerance_sec=0.005):
+    """
+    Find near-simultaneous onsets across continuous-time voices.
+
+    Parameters
+    ----------
+    onset_times : list of list of float
+        Per-voice onset positions in seconds.
+    tolerance_sec : float, default=0.005
+        Maximum time gap (seconds) for two onsets to be considered coincident.
+
+    Returns
+    -------
+    coinc : list of dict
+        Each entry: ``{"time": float, "voices": list of int}``.
+        Sorted by time.
+    """
+    from itertools import combinations
+
+    all_events = []
+    for i, times in enumerate(onset_times):
+        for t in times:
+            all_events.append((t, i))
+    all_events.sort()
+
+    coinc = []
+    used = set()
+    for idx, (t, vi) in enumerate(all_events):
+        if idx in used:
+            continue
+        group_voices = [vi]
+        group_times = [t]
+        for jdx in range(idx + 1, len(all_events)):
+            t2, vj = all_events[jdx]
+            if t2 - t > tolerance_sec:
+                break
+            if vj not in group_voices:
+                group_voices.append(vj)
+                group_times.append(t2)
+                used.add(jdx)
+        if len(group_voices) >= 2:
+            coinc.append({"time": float(np.mean(group_times)), "voices": sorted(group_voices)})
+            used.add(idx)
+
+    return sorted(coinc, key=lambda x: x["time"])
+
+
+def plot_polyrhythm_score(
+    scale,
+    duration=1.0,
+    max_denom=16,
+    cmap="Set2",
+    figsize=(12, 4),
+    tolerance_sec=0.005,
+    title=None,
+):
+    """
+    Score-style visualization of a continuous-time polyrhythm.
+
+    Each voice is drawn as a horizontal staff line.  Onset ticks are stem
+    marks (vertical lines) at exact time positions — **no discrete grid**.
+    Vertical grey bars connect onsets that coincide within ``tolerance_sec``.
+    The inter-onset interval (IOI) is annotated below each staff.
+
+    This is the standard way to notate 2:3, 3:4, 5:7, etc. polyrhythms in
+    contemporary music notation.
+
+    Parameters
+    ----------
+    scale : list of float
+    duration : float, default=1.0
+    max_denom : int, default=16
+    cmap : str, default="Set2"
+    figsize : tuple, default=(12, 4)
+    tolerance_sec : float, default=0.005
+        Onset gap to treat as a coincidence for alignment lines.
+    title : str or None
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    """
+    onset_times, labels, pulse_counts, dur = scale2polyrhythm_continuous(
+        scale, duration=duration, max_denom=max_denom
+    )
+    if not onset_times:
+        raise ValueError("No valid voices derived from scale.")
+
+    coinc = coincidences_continuous(onset_times, tolerance_sec)
+    colors = sns.color_palette(cmap, n_colors=len(onset_times))
+    n = len(onset_times)
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    y_positions = list(range(n))
+
+    for row, (times, label, color) in enumerate(zip(onset_times, labels, colors)):
+        y = y_positions[row]
+        # Staff line
+        ax.hlines(y, 0, dur, colors="#cccccc", linewidth=1.5, zorder=1)
+        # Onset stems
+        for t in times:
+            ax.plot([t, t], [y - 0.3, y + 0.3], color=color, linewidth=2.5, zorder=3)
+            ax.scatter(t, y, s=55, color=color, zorder=4, clip_on=False)
+        # Label left side
+        ax.text(-0.02 * dur, y, label, ha="right", va="center",
+                fontsize=8.5, color=color, fontweight="bold")
+
+    # Coincidence alignment bars
+    for c in coinc:
+        rows = c["voices"]
+        y_min = min(y_positions[r] for r in rows) - 0.32
+        y_max = max(y_positions[r] for r in rows) + 0.32
+        ax.plot([c["time"], c["time"]], [y_min, y_max],
+                color="black", linewidth=1.2, alpha=0.45, linestyle="--", zorder=2)
+
+    # Cycle boundary
+    ax.axvline(0, color="black", linewidth=1.5)
+    ax.axvline(dur, color="black", linewidth=1.5)
+
+    # Ratio annotations at top
+    ax.set_ylim(-0.7, n - 0.3)
+    ax.set_xlim(-0.08 * dur, dur * 1.02)
+    ax.set_xlabel("Time (s)", fontsize=9)
+    ax.set_yticks([])
+
+    ratio_str = " : ".join(str(p) for p in pulse_counts)
+    default_title = f"Continuous Polyrhythm  {ratio_str}  |  {dur:.2f} s cycle"
+    ax.set_title(title or default_title, fontsize=10, fontweight="bold")
+
+    # Duration bracket
+    ax.annotate("", xy=(dur, -0.6), xytext=(0, -0.6),
+                arrowprops=dict(arrowstyle="<->", color="grey", lw=1.2))
+    ax.text(dur / 2, -0.7, f"{dur:.2f} s", ha="center", va="top", fontsize=8, color="grey")
+
+    plt.tight_layout()
+    return fig, ax
+
+
+def plot_polyrhythm_phase_wheel(
+    scale,
+    duration=1.0,
+    max_denom=16,
+    cmap="Set2",
+    figsize=(5, 5),
+    title=None,
+):
+    """
+    Single shared clock-face view of a continuous-time polyrhythm.
+
+    All voices are drawn on the **same circle** — what varies is the angular
+    spacing of each voice's spokes.  A 2-pulse stream places two spokes 180°
+    apart; a 3-pulse stream places three spokes 120° apart; a 5-pulse stream
+    places five spokes 72° apart.  Where spokes overlap, voices coincide.
+
+    This is fundamentally different from the Euclidean concentric-ring wheel:
+    there, each voice lives on its own ring sized to its LCM grid position.
+    Here, the clock face is continuous time — a 2:3 polyrhythm and a 3:4
+    polyrhythm genuinely look different because the angular gaps between
+    coincidences change.
+
+    Parameters
+    ----------
+    scale : list of float
+    duration : float, default=1.0
+    max_denom : int, default=16
+    cmap : str, default="Set2"
+    figsize : tuple, default=(5, 5)
+    title : str or None
+
+    Returns
+    -------
+    fig, ax : matplotlib Figure and Axes
+    """
+    onset_times, labels, pulse_counts, dur = scale2polyrhythm_continuous(
+        scale, duration=duration, max_denom=max_denom
+    )
+    if not onset_times:
+        raise ValueError("No valid voices derived from scale.")
+
+    colors = sns.color_palette(cmap, n_colors=len(onset_times))
+    n = len(onset_times)
+    RADIUS = 0.82
+
+    fig, ax = plt.subplots(figsize=figsize, subplot_kw={"aspect": "equal"})
+    ax.axis("off")
+
+    # One shared circle
+    circ = plt.Circle((0, 0), RADIUS, fill=False, color="#cccccc", linewidth=1.5)
+    ax.add_patch(circ)
+
+    # Fine tick marks around the rim (like a clock)
+    n_ticks = max(60, sum(pulse_counts) * 4)
+    for k in range(n_ticks):
+        a = 2 * np.pi * k / n_ticks - np.pi / 2
+        r0 = RADIUS - 0.03
+        r1 = RADIUS + 0.01
+        ax.plot([r0 * np.cos(a), r1 * np.cos(a)],
+                [r0 * np.sin(a), r1 * np.sin(a)],
+                color="#dddddd", linewidth=0.5, zorder=1)
+
+    # Draw each voice's spokes on the shared clock face
+    for i, (times, label, color) in enumerate(zip(onset_times, labels, colors)):
+        angles = [2 * np.pi * t / dur - np.pi / 2 for t in times]
+        spoke_r = RADIUS * (0.55 + 0.45 * (i + 1) / (n + 1))  # graduated spoke length
+
+        for a in angles:
+            ax.plot([0, RADIUS * np.cos(a)],
+                    [0, RADIUS * np.sin(a)],
+                    color=color, linewidth=2.0, alpha=0.65, zorder=2 + i)
+            # Dot on the rim
+            ax.scatter(RADIUS * np.cos(a), RADIUS * np.sin(a),
+                       s=90, color=color, zorder=5 + i, clip_on=False)
+
+        # Label near each dot (first onset only, at 12 o'clock area)
+        a0 = angles[0]
+        ax.text((RADIUS + 0.14) * np.cos(a0),
+                (RADIUS + 0.14) * np.sin(a0),
+                f"  {pulse_counts[i]}×",
+                color=color, fontsize=8.5, fontweight="bold",
+                ha="left", va="center")
+
+    # Mark coincidences (onsets from different voices within tolerance)
+    coinc = coincidences_continuous(onset_times, tolerance_sec=duration * 0.01)
+    for c in coinc:
+        a = 2 * np.pi * c["time"] / dur - np.pi / 2
+        ax.plot([0, RADIUS * np.cos(a)], [0, RADIUS * np.sin(a)],
+                color="black", linewidth=1.2, alpha=0.35,
+                linestyle="--", zorder=1)
+        ax.scatter(RADIUS * np.cos(a), RADIUS * np.sin(a),
+                   s=200, facecolors="none", edgecolors="black",
+                   linewidths=1.5, zorder=10)
+
+    # Centre dot
+    ax.scatter(0, 0, s=30, color="black", zorder=10)
+
+    ratio_str = " : ".join(str(p) for p in pulse_counts)
+    ax.set_xlim(-1.28, 1.28)
+    ax.set_ylim(-1.28, 1.28)
+
+    # Custom legend
+    legend_handles = [
+        plt.Line2D([0], [0], color=c, linewidth=2.5, label=lb)
+        for c, lb in zip(colors, labels)
+    ]
+    ax.legend(handles=legend_handles, loc="lower center",
+              bbox_to_anchor=(0.5, -0.06), fontsize=8, ncol=min(3, n))
+    ax.set_title(title or f"Phase Wheel  {ratio_str}", fontsize=10, fontweight="bold", pad=4)
+    plt.tight_layout()
+    return fig, ax
+
+
+def polyrhythm_continuous_to_midi(
+    scale,
+    duration_sec=2.0,
+    bpm=120,
+    notes=None,
+    velocity=100,
+    max_denom=16,
+    output_path="polyrhythm_continuous.mid",
+    n_bars=4,
+):
+    """
+    Export a continuous-time polyrhythm to MIDI with exact delta-time resolution.
+
+    Onset times are stored as MIDI delta-ticks with 480 PPQ resolution,
+    giving sub-millisecond accuracy for the inter-stream phase relationships.
+    The result is a genuine polyrhythm clip — not a quantised step sequencer.
+
+    Parameters
+    ----------
+    scale : list of float
+    duration_sec : float, default=2.0
+        Duration of one cycle in seconds.
+    bpm : float, default=120
+    notes : list of int or None
+        GM note numbers per voice.
+    velocity : int, default=100
+    max_denom : int, default=16
+    output_path : str, default="polyrhythm_continuous.mid"
+    n_bars : int, default=4
+        Number of cycles to write.
+
+    Returns
+    -------
+    str  — output path
+    """
+    import mido
+
+    onset_times, labels, pulse_counts, dur = scale2polyrhythm_continuous(
+        scale, duration=duration_sec, max_denom=max_denom
+    )
+    if not onset_times:
+        raise ValueError("No valid voices derived from scale.")
+
+    if notes is None:
+        notes = [_GM_DRUM_NOTES[i % len(_GM_DRUM_NOTES)] for i in range(len(onset_times))]
+
+    ticks_per_beat = 480
+    sec_per_beat = 60.0 / bpm
+    ticks_per_sec = ticks_per_beat / sec_per_beat
+    note_dur_ticks = int(0.04 * ticks_per_sec)  # 40 ms staccato
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+
+    # Tempo track
+    tmpl = mido.MidiTrack()
+    mid.tracks.append(tmpl)
+    tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+
+    for i, (times, label, note) in enumerate(zip(onset_times, labels, notes)):
+        track = mido.MidiTrack()
+        mid.tracks.append(track)
+        track.append(mido.MetaMessage("track_name", name=label, time=0))
+
+        events = []
+        for bar in range(n_bars):
+            offset_sec = bar * duration_sec
+            for t in times:
+                abs_sec = offset_sec + t
+                t_on = int(abs_sec * ticks_per_sec)
+                t_off = t_on + note_dur_ticks
+                events.append((t_on, "on", note, velocity))
+                events.append((t_off, "off", note, 0))
+
+        events.sort()
+        cur = 0
+        for abs_tick, kind, pitch, vel in events:
+            delta = abs_tick - cur
+            cur = abs_tick
+            track.append(mido.Message(
+                "note_on" if kind == "on" else "note_off",
+                channel=9, note=pitch, velocity=vel, time=delta
+            ))
+        track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+# ---------------------------------------------------------------------------
+# 2nd-order polyrhythms
+# ---------------------------------------------------------------------------
+
+def extract_coincidence_rhythm(
+    onset_times,
+    duration,
+    tolerance_sec=None,
+    min_voices=2,
+):
+    """
+    Extract the meta-rhythm formed by multi-voice coincidences.
+
+    Given ``N`` isochronous streams, finds every moment where at least
+    ``min_voices`` streams fire near-simultaneously and returns the resulting
+    coincidence times plus their IOI structure.
+
+    The inter-onset intervals of the coincidence sequence, normalised by their
+    minimum, become a new ``scale`` that can be fed into a second-order
+    polyrhythm analysis.
+
+    Parameters
+    ----------
+    onset_times : list of list of float
+    duration : float
+    tolerance_sec : float or None  (default 1 % of duration)
+    min_voices : int, default 2
+
+    Returns
+    -------
+    coinc_times : list of float
+    coinc_voices : list of list of int
+    iois : numpy.ndarray  (empty if < 2 coincidences)
+    ioi_scale : list of float  (IOI ratios > 1, deduplicated; empty if trivial)
+    voice_count : list of int
+    """
+    if tolerance_sec is None:
+        tolerance_sec = duration * 0.01
+
+    coinc = coincidences_continuous(onset_times, tolerance_sec=tolerance_sec)
+    coinc = [c for c in coinc if len(c["voices"]) >= min_voices]
+
+    if not coinc:
+        return [], [], np.array([]), [], []
+
+    coinc_times = [c["time"] for c in coinc]
+    coinc_voices = [c["voices"] for c in coinc]
+    voice_count = [len(v) for v in coinc_voices]
+
+    iois = np.diff(coinc_times)
+
+    if len(iois) < 2:
+        return coinc_times, coinc_voices, iois, [], voice_count
+
+    ioi_min = iois.min()
+    if ioi_min <= 0:
+        return coinc_times, coinc_voices, iois, [], voice_count
+
+    ioi_scale = sorted(set(round(r, 6) for r in (iois / ioi_min) if r > 1.0 + 1e-9))
+
+    return coinc_times, coinc_voices, iois, ioi_scale, voice_count
+
+
+def second_order_polyrhythm(
+    scale,
+    duration=2.0,
+    max_denom=16,
+    tolerance_sec=None,
+    min_voices=2,
+    n_orders=2,
+):
+    """
+    Build a hierarchy of polyrhythms where each level's coincidences seed the next.
+
+    Algorithm
+    ---------
+    1. Build the 1st-order polyrhythm from ``scale``.
+    2. Find multi-voice coincidences → extract the meta-rhythm.
+    3. Derive IOI ratios from the meta-rhythm.
+    4. Repeat from step 1 using the IOI ratios as the new scale,
+       up to ``n_orders`` total levels.
+
+    Parameters
+    ----------
+    scale : list of float
+    duration : float, default 2.0
+    max_denom : int, default 16
+    tolerance_sec : float or None
+    min_voices : int, default 2
+    n_orders : int, default 2
+
+    Returns
+    -------
+    orders : list of dict
+        Keys per entry: ``"order"``, ``"scale"``, ``"onset_times"``,
+        ``"labels"``, ``"pulse_counts"``, ``"coinc_times"``,
+        ``"coinc_voices"``, ``"voice_count"``, ``"iois"``,
+        ``"ioi_scale"``, ``"n_coinc"``.
+    """
+    if tolerance_sec is None:
+        tolerance_sec = duration * 0.01
+
+    orders = []
+    current_scale = list(scale)
+
+    for order_idx in range(1, n_orders + 1):
+        if not current_scale:
+            break
+
+        try:
+            onset_times, labels, pulse_counts, dur = scale2polyrhythm_continuous(
+                current_scale, duration=duration, max_denom=max_denom
+            )
+        except Exception:
+            break
+
+        if not onset_times:
+            break
+
+        coinc_times, coinc_voices, iois, ioi_scale, voice_count = extract_coincidence_rhythm(
+            onset_times, duration, tolerance_sec=tolerance_sec, min_voices=min_voices
+        )
+
+        orders.append({
+            "order": order_idx,
+            "scale": current_scale,
+            "onset_times": onset_times,
+            "labels": labels,
+            "pulse_counts": pulse_counts,
+            "coinc_times": coinc_times,
+            "coinc_voices": coinc_voices,
+            "voice_count": voice_count,
+            "iois": iois,
+            "ioi_scale": ioi_scale,
+            "n_coinc": len(coinc_times),
+        })
+
+        if not ioi_scale or order_idx >= n_orders:
+            break
+
+        current_scale = ioi_scale
+
+    return orders
+
+
+def plot_second_order_polyrhythm(
+    scale,
+    duration=2.0,
+    max_denom=16,
+    tolerance_sec=None,
+    min_voices=2,
+    n_orders=2,
+    cmap="Set2",
+    figsize=None,
+    title=None,
+):
+    """
+    Multi-row score showing each order of a polyrhythm hierarchy.
+
+    For every level the plot shows:
+    * A voice-score row  — all streams with stem marks at exact float positions.
+    * A coincidence row  — the meta-rhythm extracted from that level, coloured
+      by multiplicity (how many voices fire together), with IOI values annotated
+      and the derived 2nd-order scale printed on the x-axis.
+
+    Parameters
+    ----------
+    scale : list of float
+    duration : float, default 2.0
+    max_denom : int, default 16
+    tolerance_sec : float or None
+    min_voices : int, default 2
+    n_orders : int, default 2
+    cmap : str, default "Set2"
+    figsize : tuple or None
+    title : str or None
+
+    Returns
+    -------
+    fig : matplotlib Figure
+    axes : list of matplotlib Axes
+    orders : list of dict  (raw data from ``second_order_polyrhythm``)
+    """
+    orders = second_order_polyrhythm(
+        scale,
+        duration=duration,
+        max_denom=max_denom,
+        tolerance_sec=tolerance_sec,
+        min_voices=min_voices,
+        n_orders=n_orders,
+    )
+
+    if not orders:
+        raise ValueError("No voices derived from the given scale.")
+
+    # 2 rows per order level (voice score + coincidence meta-rhythm)
+    n_rows = 2 * len(orders)
+
+    if figsize is None:
+        figsize = (13, 2.4 * n_rows)
+
+    fig, axes = plt.subplots(n_rows, 1, figsize=figsize, sharex=False)
+    if n_rows == 1:
+        axes = [axes]
+    axes = list(axes)
+
+    ax_idx = 0
+    mult_cmap = plt.cm.YlOrRd
+
+    for o in orders:
+        order_num = o["order"]
+        onset_times = o["onset_times"]
+        labels = o["labels"]
+        coinc_times = o["coinc_times"]
+        voice_count = o["voice_count"]
+        iois = o["iois"]
+        ioi_scale = o["ioi_scale"]
+        dur = duration
+
+        n_voices = len(onset_times)
+        voice_colors = sns.color_palette(cmap, n_colors=max(n_voices, 1))
+
+        # ── Voice score row ──────────────────────────────────────────────
+        ax = axes[ax_idx]
+        ax_idx += 1
+        ax.set_xlim(-0.02 * dur, 1.05 * dur)
+        ax.set_ylim(-0.5, n_voices - 0.5)
+        ax.set_yticks(range(n_voices))
+        ax.set_yticklabels(labels, fontsize=7)
+        ax.set_ylabel(f"Order {order_num}\nvoices", fontsize=8, labelpad=4)
+
+        for i, (times, color) in enumerate(zip(onset_times, voice_colors)):
+            ax.hlines(i, 0, dur, color=color, linewidth=0.5, alpha=0.2, linestyles="--")
+            for t in times:
+                ax.vlines(t, i - 0.35, i + 0.35, color=color, linewidth=2.5, alpha=0.85)
+
+        # Grey dotted verticals at coincidences
+        for ct in coinc_times:
+            ax.axvline(ct, color="#999999", linewidth=0.7, linestyle=":", alpha=0.6, zorder=0)
+
+        ax.set_xticks([])
+        ax.spines[["top", "right", "bottom"]].set_visible(False)
+
+        # ── Coincidence meta-rhythm row ──────────────────────────────────
+        ax2 = axes[ax_idx]
+        ax_idx += 1
+        ax2.set_xlim(-0.02 * dur, 1.05 * dur)
+        ax2.set_ylim(-0.6, 0.6)
+        ax2.set_yticks([0])
+        ax2.set_yticklabels([f"coinc\n(≥{min_voices} voices)"], fontsize=7)
+
+        max_mult = max(voice_count) if voice_count else 2
+        for ct, vc in zip(coinc_times, voice_count):
+            norm_mult = (vc - min_voices) / max(1, max_mult - min_voices)
+            col = mult_cmap(0.3 + 0.6 * norm_mult)
+            ax2.vlines(ct, -0.40, 0.40, color=col, linewidth=4, alpha=0.9)
+            ax2.text(ct, 0.44, str(vc), ha="center", va="bottom", fontsize=6.5, color=col)
+
+        # IOI labels between consecutive coincidences
+        for k, ioi_val in enumerate(iois):
+            mid_t = (coinc_times[k] + coinc_times[k + 1]) / 2
+            ax2.text(mid_t, -0.52, f"{ioi_val*1000:.0f} ms",
+                     ha="center", va="top", fontsize=6, color="#555555")
+
+        # x-axis annotation: derived scale or "no further structure"
+        if ioi_scale:
+            ratio_str = " : ".join(
+                f"{r:.4g}" if r != int(r) else str(int(r)) for r in ioi_scale
+            )
+            ax2.set_xlabel(
+                f"Meta-rhythm IOI ratios  →  2nd-order input scale: [{ratio_str}]",
+                fontsize=8, labelpad=5, color="#333333"
+            )
+        else:
+            n_c = len(coinc_times)
+            ax2.set_xlabel(
+                f"{n_c} coincidence(s) — all IOIs identical, no further ratio structure",
+                fontsize=8, labelpad=5, color="#888888"
+            )
+
+        ax2.hlines(0, 0, dur, color="#dddddd", linewidth=0.8)
+        tick_positions = np.linspace(0, dur, 9)
+        ax2.set_xticks(tick_positions)
+        ax2.set_xticklabels([f"{t:.2f}" for t in tick_positions], fontsize=6)
+        ax2.spines[["top", "right"]].set_visible(False)
+
+    axes[ax_idx - 1].set_xlabel("Time (s)", fontsize=9)
+
+    fig.suptitle(
+        title or f"2nd-order polyrhythm  |  input scale {[round(r,4) for r in scale]}",
+        fontsize=11, fontweight="bold", y=1.01
+    )
+    plt.tight_layout()
+    return fig, axes, orders
+
+
+# ---------------------------------------------------------------------------
+# MIDI export for grid-voice types (iso, harmonic, any binary voice list)
+# ---------------------------------------------------------------------------
+
+def voices_to_midi(
+    voices,
+    labels,
+    lcm_steps,
+    bpm=120,
+    steps_per_bar=16,
+    subdivisions=None,
+    notes=None,
+    velocity=100,
+    output_path="voices.mid",
+    n_bars=4,
+):
+    """
+    Generic MIDI exporter for any list of binary rhythmic voices.
+
+    Accepts pre-computed ``(voices, labels, lcm_steps)`` as returned by
+    :func:`scale2polyrhythm`, :func:`scale2polyrhythm_iso`, or
+    :func:`scale2polyrhythm_harmonic`.  Each voice becomes one MIDI track on
+    GM drum channel 9.
+
+    Parameters
+    ----------
+    voices : list of list of int
+        Binary onset patterns, each of length ``lcm_steps``.
+    labels : list of str
+    lcm_steps : int
+    bpm : float, default=120
+    steps_per_bar : int, default=16
+        Global fallback when ``subdivisions`` is ``None``.
+    subdivisions : int | str | list | None
+        Per-voice grid resolution.  Controls how densely each voice reads its
+        pattern in real time.  Use named constants or strings::
+
+            voices_to_midi(v, l, L, subdivisions=[16, 8, 4])
+            # voice 0 → 16th notes, voice 1 → 8th notes, voice 2 → quarter notes
+
+            voices_to_midi(v, l, L, subdivisions=['16th', '8th', 't_8th'])
+            # voice 0 → 16ths, voice 1 → 8ths, voice 2 → 8th-note triplets
+
+        A single value (int or str) is broadcast to all voices.
+        Valid string aliases: ``'whole' 'half' 'quarter' '8th' '16th' '32nd'
+        't_quarter' 't_8th' 't_16th'``.
+    notes : list of int or None
+    velocity : int, default=100
+    output_path : str
+    n_bars : int, default=4
+
+    Returns
+    -------
+    str  — resolved output path.
+
+    Examples
+    --------
+    >>> voices, _, _, labels, L = scale2polyrhythm_iso([3/2])
+    >>> # all voices at 16th-note grid
+    >>> voices_to_midi(voices, labels, L, bpm=90, output_path="iso.mid")
+    >>> # voice 0 at 16ths, voice 1 at 8ths, rest at quarter notes
+    >>> voices_to_midi(voices, labels, L, bpm=90,
+    ...               subdivisions=[16, 8, 4, 4, 4],
+    ...               output_path="iso_mixed.mid")
+    """
+    import mido
+    import math
+
+    if notes is None:
+        notes = [_GM_DRUM_NOTES[i % len(_GM_DRUM_NOTES)] for i in range(len(voices))]
+
+    subdiv_list = _resolve_subdivisions(subdivisions, len(voices), default=steps_per_bar)
+
+    ticks_per_beat = 480
+    bar_ticks = 4 * ticks_per_beat          # 1920 ticks = one 4/4 bar
+    total_ticks = n_bars * bar_ticks
+    # LCM step duration shared by all voices
+    step_ticks = bar_ticks / steps_per_bar  # float
+    total_steps = math.ceil(total_ticks / step_ticks)
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+    tmpl = mido.MidiTrack()
+    mid.tracks.append(tmpl)
+    tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+    tmpl.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+
+    for i, (voice, label, note) in enumerate(zip(voices, labels, notes)):
+        subdiv = subdiv_list[i]
+        grid_ticks = bar_ticks / subdiv     # e.g. 120.0 for 16ths, 240.0 for 8ths
+        note_len = max(1, int(grid_ticks) - 10)
+
+        track = mido.MidiTrack()
+        mid.tracks.append(track)
+        track.append(mido.MetaMessage(
+            "track_name",
+            name=f"{label} [{_subdiv_name(subdiv)}]",
+            time=0
+        ))
+
+        events = []
+        seen = set()
+        for step in range(total_steps):
+            if voice[step % lcm_steps]:
+                raw_tick = step * step_ticks
+                q_tick = int(round(raw_tick / grid_ticks) * grid_ticks)
+                if q_tick < total_ticks and q_tick not in seen:
+                    seen.add(q_tick)
+                    events.append((q_tick, "on", note, velocity))
+                    events.append((q_tick + note_len, "off", note, 0))
+
+        events.sort()
+        cur = 0
+        for abs_tick, kind, pitch, vel in events:
+            delta = abs_tick - cur
+            cur = abs_tick
+            track.append(mido.Message(
+                "note_on" if kind == "on" else "note_off",
+                channel=9, note=pitch, velocity=vel, time=delta
+            ))
+        track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+# ---------------------------------------------------------------------------
+# MIDI export for evolving frames (phase-shift, interpolation, density ramp)
+# ---------------------------------------------------------------------------
+
+def frames_to_midi(
+    frames,
+    bpm=120,
+    steps_per_bar=None,
+    subdivisions=None,
+    notes=None,
+    velocity=100,
+    output_path="evolution.mid",
+    voice_labels=None,
+    mode="clips",
+):
+    """
+    Export an evolving rhythm sequence to MIDI.
+
+    Two modes control how the evolution is arranged in the file:
+
+    ``mode='clips'`` *(default)*
+        Each frame gets its **own MIDI track**, all starting at t=0.  Every
+        track is exactly one bar long.  In a DAW (Ableton, Logic, …) you get
+        ``n_frames`` independent one-bar clips you can trigger, layer, or mute
+        individually — ideal for live performance or A/B comparison.
+        Each frame is assigned a distinct drum note so they sound different.
+
+    ``mode='sequence'``
+        The classic linear layout: one track per voice, with all frames
+        played back-to-back as consecutive bars.  Useful for hearing the
+        full evolution arc in one pass.
+
+    Input shapes
+    ------------
+    * 2-D ``(n_frames, L)`` — one evolving voice.
+    * 3-D ``(n_frames, n_voices, L)`` — several voices per frame
+      (e.g. :func:`evolve_phase_shift` returns ``(n_cycles, 2, L)``).  In
+      ``'clips'`` mode each frame gets one track that contains all voices
+      at different pitches; in ``'sequence'`` mode each voice gets its own
+      long track.
+
+    Parameters
+    ----------
+    frames : array-like, shape (n_frames, L) or (n_frames, n_voices, L)
+    bpm : float, default=120
+    steps_per_bar : int or None
+        Grid steps per bar.  Defaults to L.
+    notes : list of int or None
+        Base GM note list.  In ``'clips'`` mode each frame shifts up the list.
+    velocity : int, default=100
+    output_path : str
+    voice_labels : list of str or None
+    mode : {'clips', 'sequence'}, default='clips'
+
+    Returns
+    -------
+    str  — resolved output path.
+
+    Examples
+    --------
+    >>> evo, _ = evolve_phase_shift([1,0,1,0,1,0,1,0], n_cycles=8)
+    >>> frames_to_midi(evo, bpm=100, output_path="phase_shift.mid")      # 8 clip tracks
+    'phase_shift.mid'
+
+    >>> frames = evolve_onset_interpolation(pattern_a, pattern_b, n_frames=8)
+    >>> frames_to_midi(frames, bpm=120, mode='sequence',
+    ...               output_path="interpolation_seq.mid")               # linear arc
+    'interpolation_seq.mid'
+    """
+    import mido
+
+    frames = np.array(frames)
+    if frames.ndim == 2:
+        frames = frames[:, np.newaxis, :]          # (n_frames, 1, L)
+
+    n_frames, n_voices, L = frames.shape
+
+    if steps_per_bar is None:
+        steps_per_bar = L
+
+    subdiv_list = _resolve_subdivisions(subdivisions, n_voices, default=steps_per_bar)
+
+    ticks_per_beat = 480
+    bar_ticks = 4 * ticks_per_beat
+    # Step duration shared across all voices (float for precision)
+    step_ticks = bar_ticks / steps_per_bar  # e.g. 1920/16 = 120.0
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+    tmpl = mido.MidiTrack()
+    mid.tracks.append(tmpl)
+    tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+    tmpl.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+
+    if mode == "clips":
+        # One MIDI track per frame, all starting at t=0, one bar long.
+        for frame_idx in range(n_frames):
+            label = (
+                voice_labels[frame_idx] if voice_labels and frame_idx < len(voice_labels)
+                else f"frame {frame_idx + 1}"
+            )
+            track = mido.MidiTrack()
+            mid.tracks.append(track)
+            track.append(mido.MetaMessage("track_name", name=label, time=0))
+
+            events = []
+            seen = set()
+            for v in range(n_voices):
+                subdiv = subdiv_list[v]
+                grid_ticks = bar_ticks / subdiv   # quantization grid size
+                note_len = max(1, int(grid_ticks) - 10)
+                note = _GM_DRUM_NOTES[(frame_idx * n_voices + v) % len(_GM_DRUM_NOTES)]
+                if notes is not None and v < len(notes):
+                    note = notes[v]
+                for step in range(L):
+                    if frames[frame_idx, v, step]:
+                        raw_tick = step * step_ticks
+                        q_tick = int(round(raw_tick / grid_ticks) * grid_ticks)
+                        key = (v, q_tick)
+                        if q_tick < bar_ticks and key not in seen:
+                            seen.add(key)
+                            events.append((q_tick, "on", note, velocity))
+                            events.append((q_tick + note_len, "off", note, 0))
+
+            events.sort()
+            cur = 0
+            for abs_tick, kind, pitch, vel in events:
+                delta = abs_tick - cur
+                cur = abs_tick
+                track.append(mido.Message(
+                    "note_on" if kind == "on" else "note_off",
+                    channel=9, note=pitch, velocity=vel, time=delta
+                ))
+            track.append(mido.MetaMessage("end_of_track", time=0))
+
+    else:  # sequence
+        import math
+        base_notes = notes or [_GM_DRUM_NOTES[i % len(_GM_DRUM_NOTES)] for i in range(n_voices)]
+        if voice_labels is None:
+            voice_labels = [f"voice {i + 1}" for i in range(n_voices)]
+
+        for v in range(n_voices):
+            subdiv = subdiv_list[v]
+            grid_ticks = bar_ticks / subdiv
+            note_len = max(1, int(grid_ticks) - 10)
+
+            track = mido.MidiTrack()
+            mid.tracks.append(track)
+            track.append(mido.MetaMessage(
+                "track_name",
+                name=f"{voice_labels[v]} [{_subdiv_name(subdiv)}]",
+                time=0
+            ))
+
+            events = []
+            seen = set()
+            for frame_idx in range(n_frames):
+                bar_offset = frame_idx * bar_ticks
+                for step in range(L):
+                    if frames[frame_idx, v, step]:
+                        raw_tick = step * step_ticks
+                        q_tick = int(round(raw_tick / grid_ticks) * grid_ticks)
+                        abs_tick = bar_offset + q_tick
+                        key = (frame_idx, v, q_tick)
+                        if key not in seen:
+                            seen.add(key)
+                            events.append((abs_tick, "on", base_notes[v], velocity))
+                            events.append((abs_tick + note_len, "off", base_notes[v], 0))
+
+            events.sort()
+            cur = 0
+            for abs_tick, kind, pitch, vel in events:
+                delta = abs_tick - cur
+                cur = abs_tick
+                track.append(mido.Message(
+                    "note_on" if kind == "on" else "note_off",
+                    channel=9, note=pitch, velocity=vel, time=delta
+                ))
+            track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+# ---------------------------------------------------------------------------
+# MIDI export for metric modulation (per-bar BPM automation)
+# ---------------------------------------------------------------------------
+
+def metric_modulation_to_midi(
+    patterns,
+    bpms,
+    labels,
+    bpm=120,
+    steps_per_bar=16,
+    notes=None,
+    velocity=100,
+    output_path="metric_modulation.mid",
+    tempo_automation=False,
+):
+    """
+    Export a metric modulation sequence to MIDI.
+
+    Accepts the output of :func:`evolve_metric_modulation`.
+
+    **Default behaviour** (``tempo_automation=False``)
+        Each cycle pattern becomes its **own MIDI track**, all at a single
+        fixed BPM.  The file does *not* contain any tempo-change events, so
+        loading it into a DAW will not alter your project tempo.  Each track
+        is one bar long and can be triggered or layered independently.
+        The BPM ratio encoded in each pattern is expressed through the rhythm
+        itself (denser/sparser hits), not through clock speed.
+
+    **Automation mode** (``tempo_automation=True``)
+        All cycles are merged into a single track with a MIDI ``set_tempo``
+        event at the start of every bar.  Use this only when you intentionally
+        want the MIDI file to drive the host transport tempo.
+
+    Parameters
+    ----------
+    patterns : list of list of int
+    bpms : list of float
+        Tempo at each cycle (informational in default mode; structural in
+        automation mode).
+    labels : list of str
+    bpm : float, default=120
+        Fixed project BPM used when ``tempo_automation=False``.
+    steps_per_bar : int, default=16
+    notes : list of int or None
+        One GM note per cycle track.  Default: cycles through the GM drum map.
+    velocity : int, default=100
+    output_path : str
+    tempo_automation : bool, default=False
+        When ``True``, inject per-bar tempo changes (old behaviour).
+
+    Returns
+    -------
+    str  — resolved output path.
+
+    Examples
+    --------
+    >>> pats, bpms, labels = evolve_metric_modulation([3/2, 5/4], bpm_start=90)
+    >>> metric_modulation_to_midi(pats, bpms, labels, bpm=90,
+    ...                           output_path="modulation.mid")
+    'modulation.mid'
+    """
+    import mido
+
+    if not patterns:
+        raise ValueError("Empty patterns list.")
+
+    L = len(patterns[0])
+    ticks_per_beat = 480
+    beats_per_step = 4.0 / steps_per_bar
+    ticks_per_step = int(ticks_per_beat * beats_per_step)
+    note_len = max(1, ticks_per_step - 10)
+    bar_ticks = L * ticks_per_step
+
+    mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+    tmpl = mido.MidiTrack()
+    mid.tracks.append(tmpl)
+    tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+    tmpl.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
+
+    if not tempo_automation:
+        # ── One track per cycle, fixed BPM, no tempo events ──────────────
+        for cycle_idx, (pattern, cycle_bpm) in enumerate(zip(patterns, bpms)):
+            note = (
+                notes[cycle_idx % len(notes)] if notes
+                else _GM_DRUM_NOTES[cycle_idx % len(_GM_DRUM_NOTES)]
+            )
+            label = labels[cycle_idx] if cycle_idx < len(labels) else f"cycle {cycle_idx + 1}"
+            track = mido.MidiTrack()
+            mid.tracks.append(track)
+            track.append(mido.MetaMessage(
+                "track_name",
+                name=f"{label} ({cycle_bpm:.0f} bpm)",
+                time=0
+            ))
+            events = []
+            for step, hit in enumerate(pattern):
+                if hit:
+                    t_on = step * ticks_per_step
+                    events.append((t_on, "on", note, velocity))
+                    events.append((t_on + note_len, "off", note, 0))
+            events.sort()
+            cur = 0
+            for abs_tick, kind, pitch, vel in events:
+                delta = abs_tick - cur
+                cur = abs_tick
+                track.append(mido.Message(
+                    "note_on" if kind == "on" else "note_off",
+                    channel=9, note=pitch, velocity=vel, time=delta
+                ))
+            track.append(mido.MetaMessage("end_of_track", time=0))
+
+    else:
+        # ── Merged track with per-bar tempo automation ────────────────────
+        note = (notes[0] if isinstance(notes, list) else notes) or 36
+        track = mido.MidiTrack()
+        mid.tracks.append(track)
+
+        events = []
+        for cycle_idx, (pattern, cycle_bpm) in enumerate(zip(patterns, bpms)):
+            bar_start = cycle_idx * bar_ticks
+            events.append((bar_start, "tempo", int(mido.bpm2tempo(cycle_bpm)), None))
+            lbl = labels[cycle_idx] if cycle_idx < len(labels) else f"cycle {cycle_idx + 1}"
+            events.append((bar_start, "marker", lbl, None))
+            for step, hit in enumerate(pattern):
+                if hit:
+                    t_on = bar_start + step * ticks_per_step
+                    events.append((t_on, "on", note, velocity))
+                    events.append((t_on + note_len, "off", note, 0))
+
+        events.sort(key=lambda e: (e[0], 0 if e[1] in ("tempo", "marker") else 1))
+        cur = 0
+        for evt in events:
+            delta = evt[0] - cur
+            cur = evt[0]
+            if evt[1] == "tempo":
+                track.append(mido.MetaMessage("set_tempo", tempo=evt[2], time=delta))
+            elif evt[1] == "marker":
+                track.append(mido.MetaMessage("marker", text=evt[2], time=delta))
+            elif evt[1] == "on":
+                track.append(mido.Message("note_on", channel=9, note=evt[2], velocity=evt[3], time=delta))
+            elif evt[1] == "off":
+                track.append(mido.Message("note_off", channel=9, note=evt[2], velocity=0, time=delta))
+        track.append(mido.MetaMessage("end_of_track", time=0))
+
+    mid.save(output_path)
+    return output_path
+
+
+# ---------------------------------------------------------------------------
+# MIDI export for 2nd-order polyrhythm hierarchy
+# ---------------------------------------------------------------------------
+
+def second_order_polyrhythm_to_midi(
+    orders,
+    bpm=120,
+    duration_sec=2.0,
+    notes=None,
+    velocity=100,
+    output_path="second_order.mid",
+    n_bars=4,
+    separate_files=False,
+):
+    """
+    Export a 2nd-order polyrhythm hierarchy to MIDI.
+
+    Accepts the list of order dicts returned by :func:`second_order_polyrhythm`.
+    Two export modes are available:
+
+    * ``separate_files=False`` (default) — all levels stacked into one file.
+      Order 1 voices occupy the first ``k`` tracks; order 2 voices follow.
+      Each voice is a separate track on GM drum channel 9.  Voices from
+      different orders use different drum notes so they are audibly distinct.
+
+    * ``separate_files=True`` — one MIDI file per order level, named
+      ``<stem>_order1.mid``, ``<stem>_order2.mid``, etc.
+
+    Parameters
+    ----------
+    orders : list of dict
+        Output of :func:`second_order_polyrhythm`.
+    bpm : float, default=120
+    duration_sec : float, default=2.0
+        Duration of one cycle in seconds.
+    notes : list of list of int or None
+        ``notes[i]`` = GM notes for order ``i``.  Auto-assigned when ``None``.
+    velocity : int, default=100
+    output_path : str
+    n_bars : int, default=4
+    separate_files : bool, default=False
+
+    Returns
+    -------
+    list of str  — output path(s).
+    """
+    import mido
+    from pathlib import Path
+
+    if not orders:
+        raise ValueError("Empty orders list.")
+
+    ticks_per_beat = 480
+    sec_per_beat = 60.0 / bpm
+    ticks_per_sec = ticks_per_beat / sec_per_beat
+    note_dur_ticks = int(0.04 * ticks_per_sec)
+
+    # Note groups per order: order 1 → kicks/snares, order 2 → hi-hats/toms
+    default_notes_by_order = [
+        [36, 38, 42, 46],   # order 1
+        [41, 43, 45, 49],   # order 2
+        [50, 51, 52, 53],   # order 3
+    ]
+
+    def _make_file(order_list, fpath):
+        mid = mido.MidiFile(ticks_per_beat=ticks_per_beat)
+        tmpl = mido.MidiTrack()
+        mid.tracks.append(tmpl)
+        tmpl.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(bpm), time=0))
+
+        for o in order_list:
+            order_num = o["order"]
+            onset_times_list = o["onset_times"]
+            labels = o["labels"]
+            note_pool = (
+                notes[order_num - 1] if notes and order_num - 1 < len(notes)
+                else default_notes_by_order[(order_num - 1) % len(default_notes_by_order)]
+            )
+
+            for i, (times, label) in enumerate(zip(onset_times_list, labels)):
+                track = mido.MidiTrack()
+                mid.tracks.append(track)
+                track.append(mido.MetaMessage("track_name",
+                                               name=f"ord{order_num}_{label}", time=0))
+                note = note_pool[i % len(note_pool)]
+
+                events = []
+                for bar in range(n_bars):
+                    offset_sec = bar * duration_sec
+                    for t in times:
+                        t_on = int((offset_sec + t) * ticks_per_sec)
+                        events.append((t_on, "on", note, velocity))
+                        events.append((t_on + note_dur_ticks, "off", note, 0))
+
+                events.sort()
+                cur = 0
+                for abs_tick, kind, pitch, vel in events:
+                    delta = abs_tick - cur
+                    cur = abs_tick
+                    track.append(mido.Message(
+                        "note_on" if kind == "on" else "note_off",
+                        channel=9, note=pitch, velocity=vel, time=delta
+                    ))
+                track.append(mido.MetaMessage("end_of_track", time=0))
+
+        mid.save(fpath)
+        return str(fpath)
+
+    if separate_files:
+        stem = Path(output_path).with_suffix("")
+        paths = []
+        for o in orders:
+            fpath = f"{stem}_order{o['order']}.mid"
+            _make_file([o], fpath)
+            paths.append(fpath)
+        return paths
+    else:
+        return [_make_file(orders, output_path)]
