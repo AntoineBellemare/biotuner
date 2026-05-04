@@ -3,6 +3,8 @@ biotuner/harmonic_sequence_viz.py
 ===================================
 Visualization utilities for the ``harmonic_sequence`` module.
 
+Module type: Functions
+
 Every function accepts an optional ``ax`` argument so panels can be embedded
 in larger figure layouts.  When ``ax`` is ``None`` a new figure is created.
 

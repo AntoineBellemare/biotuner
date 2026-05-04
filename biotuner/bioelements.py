@@ -1,3 +1,8 @@
+"""biotuner.bioelements — match biosignal peaks to atomic spectral lines (H, O, N, …).
+
+Module type: Functions
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

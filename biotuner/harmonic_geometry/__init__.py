@@ -2,9 +2,14 @@
 biotuner.harmonic_geometry
 ==========================
 
+Module type: Subpackage
+
 Pure-data geometric structures derived from harmonic inputs (ratios, peaks,
 amplitudes, phases). This module produces structured numpy / dataclass output;
 rendering is the responsibility of downstream layers.
+
+Submodules: chladni, fractal, generative, geometry_3d, geometry_data,
+harmonograph, inputs, lissajous, metrics, plotting, polygon_circular.
 """
 
 from biotuner.harmonic_geometry.geometry_data import GeometryData, GeomType

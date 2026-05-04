@@ -1,6 +1,8 @@
 """
 Surrogate signal generation and comparison for BiotunerGroup analysis.
 
+Module type: Functions
+
 Surrogates are signal controls that preserve specific statistical properties
 (spectrum, amplitude distribution) while destroying others (phase relationships,
 nonlinear structure). Comparing real vs. surrogate BiotunerGroup metrics lets

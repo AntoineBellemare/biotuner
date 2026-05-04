@@ -3,6 +3,8 @@ biotuner/harmonic_sequence.py
 ==============================
 Temporal harmonic-structure learning from successive biotuner outputs.
 
+Module type: Objects
+
 Six complementary approaches build on the outputs of compute_biotuner to
 learn or model the way harmonic content evolves over time:
 

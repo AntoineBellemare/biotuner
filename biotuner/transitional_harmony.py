@@ -1,3 +1,12 @@
+"""biotuner.transitional_harmony — pipeline class for time-resolved harmonic transitions.
+
+Module type: Object
+
+Builds successive Biotuner states across time chunks and computes the
+subharmonic tension / harmonicity transitions between them. Output drives
+``TimbreSequence`` constructors in :mod:`biotuner.harmonic_timbre`.
+"""
+
 from biotuner.biotuner_object import compute_biotuner
 from biotuner.biotuner_utils import chunk_ts
 from matplotlib.pyplot import figure

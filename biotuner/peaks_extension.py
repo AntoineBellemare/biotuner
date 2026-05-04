@@ -1,3 +1,8 @@
+"""biotuner.peaks_extension — extend a peak set with harmonics / consonant fits.
+
+Module type: Functions
+"""
+
 import numpy as np
 import itertools
 from biotuner.biotuner_utils import rebound, compareLists

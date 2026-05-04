@@ -1,4 +1,12 @@
 #!bin/bash
+"""biotuner.scale_construction — construct scales from peaks.
+
+Module type: Functions
+
+Sethares dissonance curve, Plomp-Levelt roughness, harmonic entropy,
+Euler-Fokker genera, harmonic tunings, and N-TET utilities.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys

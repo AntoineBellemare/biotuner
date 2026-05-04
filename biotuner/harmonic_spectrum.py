@@ -1,3 +1,11 @@
+"""biotuner.harmonic_spectrum — harmonicity-field computations from PSDs.
+
+Module type: Functions
+
+Resonance values, phase coherence, harmonic power, harmonicity matrices, and
+peak-finding utilities operating on power spectral densities.
+"""
+
 import numpy as np
 from scipy.signal import detrend, welch, find_peaks, stft
 from scipy.optimize import curve_fit

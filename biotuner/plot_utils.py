@@ -2,6 +2,8 @@
 Biotuner Plotting Utilities
 ============================
 
+Module type: Functions
+
 This module provides unified plotting functions for all biotuner visualizations,
 ensuring consistent styling across different peak extraction methods and analyses.
 

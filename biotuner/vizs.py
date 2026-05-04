@@ -1,3 +1,11 @@
+"""biotuner.vizs — visualizations of biotuner outputs.
+
+Module type: Functions
+
+Dissonance-curve plots, sideband / intermodulation plots, scale plots, and
+companion utilities for scale and timbre demonstrations.
+"""
+
 from numpy import sin, pi, linspace
 from pylab import plot, subplot
 from matplotlib.pyplot import figure

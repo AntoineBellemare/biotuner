@@ -1,3 +1,13 @@
+"""biotuner.biotuner_object — main pipeline class :class:`compute_biotuner`.
+
+Module type: Object
+
+Wraps peak extraction, ratio computation, scale construction, harmonic metrics,
+PAC, IMFs, FOOOF, rhythm derivation, and listening helpers in a single fitted
+object that downstream modules (transitional_harmony, harmonic_connectivity,
+harmonic_timbre, …) consume.
+"""
+
 from fooof import FOOOF
 import scipy.signal
 import matplotlib.pyplot as plt

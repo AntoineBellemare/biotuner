@@ -1,3 +1,11 @@
+"""biotuner.metrics — consonance and tuning metrics.
+
+Module type: Functions
+
+Tenney height, Euler gradus suavitatis, dyad similarity, harmonic similarity,
+subharmonic tension, harmonic entropy, and consonant-ratio selection.
+"""
+
 import numpy as np
 from fractions import Fraction
 import biotuner

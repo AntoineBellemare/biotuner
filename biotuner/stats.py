@@ -1,6 +1,8 @@
 """
 Statistical comparison functions for BiotunerGroup analyses.
 
+Module type: Functions
+
 These functions accept :class:`~biotuner.biotuner_group.BiotunerGroup` objects
 (or their ``.summary()`` DataFrames) and perform group-level statistical tests
 on harmonicity metrics.

@@ -248,6 +248,73 @@ The figure above illustrates Biotuner's ability to extract harmonic structures a
 
 ---
 
+## 🧭 Package Architecture
+
+The biotuner package is organized by *kind* — stateful pipeline classes first, then subpackages, then pure-function modules, then reference data. Each module declares its kind in its docstring header (`Module type: Functions / Object / Objects / Data / Subpackage`), so the same information is also visible from the source.
+
+### Objects (stateful pipeline classes)
+
+| Module | What it does |
+|---|---|
+| `biotuner_object` | `compute_biotuner` — the main pipeline class: peaks, ratios, scales, metrics, PAC, IMFs, FOOOF, rhythm |
+| `biotuner_group` | `BiotunerGroup` — multi-trial / multi-channel runs with aggregation |
+| `harmonic_connectivity` | PAC, CFC, intermodulation pipeline across channels / bands |
+| `transitional_harmony` | Time-resolved harmonic-state transitions across signal chunks |
+| `harmonic_sequence` | Markov / DMD / topology / grammar / Wasserstein / latent-space models of harmonic evolution |
+
+### Subpackages
+
+| Module | What it does |
+|---|---|
+| `harmonic_geometry/` | Lissajous, Chladni, harmonograph, polygon/circular, fractal, 3D point clouds & surfaces — each as a submodule |
+
+### Functions
+
+| Module | What it does |
+|---|---|
+| `peaks_extraction` | Welch / FOOOF / EMD / Hilbert-Huang / cepstrum, plus PAC frequencies, polycoherence, intermodulation |
+| `peaks_extension` | Extend a peak set with harmonics / consonant fits |
+| `scale_construction` | Sethares dissonance curve, harmonic entropy, Euler-Fokker, harmonic tunings |
+| `rhythm_construction` | Euclidean / discrete & continuous polyrhythms / second-order / evolution / MIDI / OSC |
+| `metrics` | Tenney height, Euler gradus, dyad similarity, harmonic similarity, subharmonic tension |
+| `harmonic_spectrum` | Harmonicity / resonance / phase fields from PSDs |
+| `biocolors` | Map biosignal frequencies to visible-light wavelengths and RGB |
+| `bioelements` | Match biosignal peaks to atomic spectral lines (H, O, N, …) |
+| `biotuner_mne` | MNE-Python integration entry point |
+| `stats` | Group-level tests on biotuner metrics |
+| `surrogates` | Surrogate-data generation and comparison |
+| `vizs` | Dissonance curves, sidebands, scales, demos |
+| `plot_utils` | Unified plotting helpers (consistent styling across analyses) |
+| `plot_config` | Color schemes and styles for biotuner plots |
+| `harmonic_sequence_viz` | Plots for `harmonic_sequence` outputs |
+| `biotuner_utils` | Signal generation, `.scl` writer, MIDI helpers, ratio math |
+
+### Data
+
+| Module | What it does |
+|---|---|
+| `dictionaries` | Rhythm pattern names, interval names |
+
+**Reading the table:**
+- *Object* / *Objects* — module's primary API is one or more classes; instantiate, then call methods.
+- *Subpackage* — folder with its own submodules; see its `__init__.py` for the public surface.
+- *Functions* — module is a flat collection of pure functions; import what you need.
+- *Data* — module exposes data tables (dicts, constants); import and read.
+
+The kind tag also lives at the top of every module file:
+
+```python
+"""biotuner.peaks_extraction — extract spectral peaks from biosignals.
+
+Module type: Functions
+...
+"""
+```
+
+so `help(biotuner.peaks_extraction)` and IDE tooltips surface the same information.
+
+---
+
 ## 📚 Documentation & Resources
 
 - **[Full Documentation](https://antoinebellemare.github.io/biotuner/)** - Complete API reference and tutorials

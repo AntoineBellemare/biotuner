@@ -1,3 +1,8 @@
+"""biotuner.biocolors — map biosignal frequencies to visible-light wavelengths and RGB colors.
+
+Module type: Functions
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation

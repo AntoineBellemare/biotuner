@@ -1,3 +1,11 @@
+"""biotuner.peaks_extraction — extract spectral peaks from biosignals.
+
+Module type: Functions
+
+Methods: Welch, FOOOF, EMD / EEMD / CEEMDAN, Hilbert-Huang, cepstrum,
+plus PAC frequencies, polycoherence, and endogenous intermodulation.
+"""
+
 import numpy as np
 import emd
 import matplotlib.pyplot as plt

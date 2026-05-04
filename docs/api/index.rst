@@ -8,21 +8,43 @@ API Reference
 
 Complete API documentation for harmonic analysis of biosignals.
 
-Core Objects
-------------
+The package is organized by *kind* — stateful pipeline classes first, then
+subpackages, then pure-function modules. Each module declares its kind in
+its docstring header (``Module type: Functions / Object / Objects /
+Data / Subpackage``). Not every Python module in the repository has a
+documentation page yet — pages are added as modules are cleaned up and
+stabilized.
 
-Main classes for single and batch time series analysis.
+Objects
+-------
+
+Stateful pipeline classes — instantiate and call methods.
 
 .. toctree::
    :maxdepth: 2
 
    biotuner_object
    biotuner_group
+   harmonic_connectivity
+   transitional_harmony
+   harmonic_sequence
 
-Signal Processing Functions
-----------------------------
+Subpackages
+-----------
 
-Methods for spectral peak detection and extension (neuroscience/signal processing).
+Folders with their own internal structure; each lists its submodules.
+
+.. toctree::
+   :maxdepth: 2
+
+   harmonic_geometry
+
+Functions
+---------
+
+Pure-function modules — import what you need.
+
+Peak extraction & extension:
 
 .. toctree::
    :maxdepth: 2
@@ -30,10 +52,7 @@ Methods for spectral peak detection and extension (neuroscience/signal processin
    peaks_extraction
    peaks_extension
 
-Musical Analysis Functions
----------------------------
-
-Music theory and harmonic metrics computation.
+Scale, rhythm & metrics:
 
 .. toctree::
    :maxdepth: 2
@@ -42,24 +61,38 @@ Music theory and harmonic metrics computation.
    scale_construction
    rhythm_construction
 
-Extended Analysis Objects
---------------------------
-
-Advanced objects building on biotuner_object for multi-dimensional analysis.
-
-* **harmonic_spectrum** - Analysis across frequencies
-* **harmonic_connectivity** - Analysis across space/sensors  
-* **transitional_harmony** - Analysis across time
+Spectral analysis:
 
 .. toctree::
    :maxdepth: 2
 
    harmonic_spectrum
-   harmonic_connectivity
-   transitional_harmony
 
-Utilities
----------
+Integrations:
+
+.. toctree::
+   :maxdepth: 2
+
+   biotuner_mne
+
+Statistics:
+
+.. toctree::
+   :maxdepth: 2
+
+   stats
+   surrogates
+
+Visualization:
+
+.. toctree::
+   :maxdepth: 2
+
+   plot_utils
+   plot_config
+   harmonic_sequence_viz
+
+Helpers:
 
 .. toctree::
    :maxdepth: 2

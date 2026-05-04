@@ -2,6 +2,8 @@
 Biotuner Plotting Configuration
 ================================
 
+Module type: Functions
+
 This module provides consistent color schemes, styles, and configuration
 for all biotuner visualizations.
 

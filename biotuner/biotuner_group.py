@@ -1,6 +1,8 @@
 """
 BiotunerGroup: Group-level analysis for multiple time series
 
+Module type: Object
+
 This module provides a clean, elegant interface for running biotuner analysis
 on multiple time series (trials, electrodes, etc.) with automatic aggregation,
 comparison, and visualization capabilities.

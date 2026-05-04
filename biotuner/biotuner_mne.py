@@ -1,6 +1,8 @@
 """
 MNE integration for biotuner.
 
+Module type: Functions
+
 Provides :func:`biotuner_mne`, which computes biotuner metrics for every
 trial × electrode combination in an MNE Epochs object and returns a
 pandas DataFrame (optionally saved to CSV).

@@ -1,3 +1,12 @@
+"""biotuner.harmonic_connectivity — cross-frequency / cross-channel coupling pipeline.
+
+Module type: Object
+
+Computes phase-amplitude coupling (PAC), cross-frequency coupling (CFC),
+endogenous intermodulation, and harmonicity matrices between biosignal
+channels or frequency bands.
+"""
+
 import numpy as np
 from biotuner.biotuner_object import compute_biotuner
 from biotuner.metrics import ratios2harmsim, compute_subharmonics_2lists, euler, dyad_similarity

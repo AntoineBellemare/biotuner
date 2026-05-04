@@ -1,3 +1,8 @@
+"""biotuner.dictionaries — reference data: rhythm-pattern names, interval names, etc.
+
+Module type: Data
+"""
+
 import sympy as sp
 dict_rhythms = {
   "E(2,3)" : "A common Afro-Cuban drum pattern when started on the second onset as in [101]. For example, it is the conga rhythm of the (6/8)-time Swing Tumbao. It is common in Latin American music, as for example in the Cueca, and the coros de clave. It is common in Arabic music, as for example in the Al Taer rhythm of Nubia. It is also a rhythmic pattern of the Drum Dance of the Slavey Indians of Northern Canada",

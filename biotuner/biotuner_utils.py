@@ -1,4 +1,9 @@
 #!bin/bash
+"""biotuner.biotuner_utils — shared helpers: signal generation, .scl I/O, MIDI, ratio math.
+
+Module type: Functions
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
