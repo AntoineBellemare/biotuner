@@ -1,5 +1,14 @@
-# This workflow will upload a Python Package using Twine when a tag is pushed
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
+# Release flow: pushing a git tag publishes the package to PyPI and creates
+# a GitHub Release. To cut a release:
+#
+#   1. Bump version in pyproject.toml, biotuner/__init__.py, docs/conf.py.
+#   2. Commit and push to main.
+#   3. git tag v<version>  (e.g. v0.2.0)
+#   4. git push origin v<version>
+#
+# The tag push triggers this workflow. Tag = release. Keep all three
+# version sources in sync before tagging — the tag itself is what makes
+# the release official.
 
 name: Upload Python Package
 
