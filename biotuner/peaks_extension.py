@@ -260,6 +260,205 @@ def harmonic_fit(
     return harm_fit, harmonics_pos, most_common_harmonics, matching_positions
 
 
+"""EXTENDED PEAKS from intermodulation (sum / difference tones)"""
+
+
+def intermodulation_spectrum(
+    peaks,
+    amplitudes=None,
+    max_order=2,
+    sum_diff=("sum", "diff"),
+    drop_negative=True,
+    min_freq=0.0,
+    drop_originals=False,
+    dedupe=True,
+    dedupe_tol=1e-6,
+):
+    """Compute intermodulation distortion (IMD) products of a peak set.
+
+    For each ordered pair ``(i, j)`` of distinct peaks and integer
+    coefficients ``(m, n)`` with ``m + n = order``, ``m >= 1``,
+    ``n >= 1``, generate the IMD products::
+
+        m * f_i + n * f_j   (sum-type product)
+        m * f_i - n * f_j   (difference-type product)
+
+    with amplitudes ``(a_i ** m) * (a_j ** n)`` (the standard
+    power-series nonlinearity model: a memoryless polynomial of order
+    ``order`` produces order-``order`` IMD products with amplitudes
+    proportional to the product of input amplitudes raised to the
+    matching coefficients).
+
+    These products are the *Tartini* (combination) tones perceived in
+    a chord: the brain's auditory system generates them via cochlear
+    nonlinearity, and many chord-resolution effects are explained by
+    where the IMD products fall on the consonance lattice. They are
+    also the spectral primitive for n-limit tuning theory: the
+    ``n``-limit of a chord is, equivalently, the largest prime in any
+    of its IMD products.
+
+    Parameters
+    ----------
+    peaks : sequence of float
+        Input peak frequencies in Hz.
+    amplitudes : sequence of float, optional
+        Per-peak amplitudes. Defaults to uniform ``1 / N``.
+    max_order : int, default=2
+        Maximum IMD order ``m + n`` to compute. ``2`` gives the
+        textbook ``f_i ± f_j`` set; ``3`` adds ``2 f_i ± f_j`` and
+        ``f_i ± 2 f_j``; higher orders proliferate quickly.
+    sum_diff : tuple of {'sum', 'diff'}, default=('sum', 'diff')
+        Which IMD families to include.
+    drop_negative : bool, default=True
+        Discard products with ``f < 0`` (sign-flipped difference terms).
+    min_freq : float, default=0.0
+        Discard products below this frequency (Hz).
+    drop_originals : bool, default=False
+        Exclude the original input peaks from the output. ``False`` (the
+        default) prepends the originals so the output is ``originals +
+        IMD products``.
+    dedupe : bool, default=True
+        If True, products that land on the same frequency (within
+        ``dedupe_tol``) are merged: their amplitudes are summed.
+    dedupe_tol : float, default=1e-6
+        Frequency tolerance for the dedupe pass.
+
+    Returns
+    -------
+    peaks_out : numpy.ndarray
+        Output peak frequencies sorted ascending.
+    amps_out : numpy.ndarray
+        Corresponding amplitudes.
+    sources : list
+        Records of how each output peak was generated. Each record is a
+        list of ``(m, n, i, j, sign)`` tuples (one tuple per
+        contribution; multiple after dedupe). Originals (when included)
+        carry the sentinel record ``(0, 0, i, i, '0')``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> peaks, amps, _ = intermodulation_spectrum(
+    ...     [100.0, 150.0], amplitudes=[1.0, 1.0], max_order=2,
+    ... )
+    >>> sorted(peaks.tolist())
+    [50.0, 100.0, 150.0, 250.0]
+
+    Notes
+    -----
+    Used by ``biotuner.harmonic_geometry`` to enrich a chord with its
+    IMD-derived peaks before rendering. Composition pattern::
+
+        from biotuner.peaks_extension import intermodulation_spectrum
+        from biotuner.harmonic_geometry import (
+            HarmonicInput, quasicrystal_field_2d,
+        )
+        chord = HarmonicInput(peaks=[100.0, 125.0, 150.0])
+        imd_peaks, imd_amps, _ = intermodulation_spectrum(
+            chord.peaks, chord.amplitudes,
+        )
+        rich = HarmonicInput(peaks=imd_peaks, amplitudes=imd_amps)
+        field = quasicrystal_field_2d(rich)
+    """
+    if max_order < 2:
+        raise ValueError(f"max_order must be >= 2, got {max_order!r}.")
+
+    invalid_types = set(sum_diff) - {"sum", "diff"}
+    if invalid_types:
+        raise ValueError(
+            f"sum_diff entries must be 'sum' or 'diff', got {sum_diff!r}."
+        )
+    if dedupe_tol < 0:
+        raise ValueError(f"dedupe_tol must be >= 0, got {dedupe_tol!r}.")
+
+    peaks_in = np.asarray(peaks, dtype=np.float64)
+    n = peaks_in.shape[0]
+    if n == 0:
+        return np.empty(0), np.empty(0), []
+    if amplitudes is None:
+        amps_in = np.full(n, 1.0 / max(n, 1), dtype=np.float64)
+    else:
+        amps_in = np.asarray(amplitudes, dtype=np.float64)
+        if amps_in.shape[0] != n:
+            raise ValueError(
+                f"amplitudes has length {amps_in.shape[0]} but {n} peaks were given."
+            )
+
+    out_peaks = []
+    out_amps = []
+    out_sources = []
+
+    if not drop_originals:
+        for i in range(n):
+            out_peaks.append(float(peaks_in[i]))
+            out_amps.append(float(amps_in[i]))
+            out_sources.append((0, 0, i, i, "0"))
+
+    if n >= 2:
+        for order in range(2, max_order + 1):
+            for m in range(1, order):
+                k = order - m
+                for i in range(n):
+                    for j in range(n):
+                        if i == j:
+                            continue
+                        fi = peaks_in[i]
+                        fj = peaks_in[j]
+                        amp_ij = (amps_in[i] ** m) * (amps_in[j] ** k)
+                        if "sum" in sum_diff:
+                            f = m * fi + k * fj
+                            if f >= min_freq and (
+                                not drop_negative or f >= 0
+                            ):
+                                out_peaks.append(float(f))
+                                out_amps.append(float(amp_ij))
+                                out_sources.append((m, k, i, j, "+"))
+                        if "diff" in sum_diff:
+                            f = m * fi - k * fj
+                            if (not drop_negative or f >= 0) and f >= min_freq:
+                                out_peaks.append(float(f))
+                                out_amps.append(float(amp_ij))
+                                out_sources.append((m, k, i, j, "-"))
+
+    # Sort everything by frequency, then optionally dedupe.
+    arr_p = np.asarray(out_peaks, dtype=np.float64)
+    arr_a = np.asarray(out_amps, dtype=np.float64)
+    order_idx = np.argsort(arr_p)
+    arr_p = arr_p[order_idx]
+    arr_a = arr_a[order_idx]
+    sorted_sources = [out_sources[i] for i in order_idx.tolist()]
+
+    if dedupe and arr_p.size > 0:
+        merged_peaks = []
+        merged_amps = []
+        merged_sources = []
+        cur_p = arr_p[0]
+        cur_a = arr_a[0]
+        cur_src = [sorted_sources[0]]
+        for k_idx in range(1, arr_p.size):
+            if abs(arr_p[k_idx] - cur_p) <= dedupe_tol:
+                # Merge.
+                cur_a = cur_a + arr_a[k_idx]
+                cur_src.append(sorted_sources[k_idx])
+            else:
+                merged_peaks.append(cur_p)
+                merged_amps.append(cur_a)
+                merged_sources.append(cur_src)
+                cur_p = arr_p[k_idx]
+                cur_a = arr_a[k_idx]
+                cur_src = [sorted_sources[k_idx]]
+        merged_peaks.append(cur_p)
+        merged_amps.append(cur_a)
+        merged_sources.append(cur_src)
+        return (
+            np.asarray(merged_peaks, dtype=np.float64),
+            np.asarray(merged_amps, dtype=np.float64),
+            merged_sources,
+        )
+
+    return arr_p, arr_a, [[s] for s in sorted_sources]
+
+
 """EXTENDED PEAKS from restrictions"""
 
 
