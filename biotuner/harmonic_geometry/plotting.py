@@ -364,6 +364,145 @@ def draw_point_cloud_3d(ax, geom: GeometryData,
     ax.scatter(V[:, 0], V[:, 1], V[:, 2], c=color, s=size, alpha=alpha)
 
 
+def draw_spherical_harmonic_field(
+    ax,
+    geom: GeometryData,
+    cmap: str = "RdBu_r",
+    radius: float = 1.0,
+    alpha: float = 1.0,
+    vmax: Optional[float] = None,
+) -> Any:
+    """Render a spherical-harmonic ``(θ, φ)`` field on the unit sphere.
+
+    The ``coordinates`` array (shape ``(n_theta, n_phi)``) is mapped
+    through ``cmap`` and painted as ``facecolors`` on a 3-D sphere
+    surface plot. Designed for the output of
+    :func:`.spherical_harmonics.spherical_harmonic_field`,
+    :func:`.spherical_harmonics.spherical_harmonic_from_input`, and
+    :func:`.spherical_harmonics.single_spherical_harmonic`.
+
+    Parameters
+    ----------
+    ax : matplotlib 3-D axis
+    geom : GeometryData with ``geom_type='field_2d'`` and ``field_grid``
+        the ``(THETA, PHI)`` meshgrid (physics convention: θ polar,
+        φ azimuthal).
+    cmap : str, default='RdBu_r'
+        Diverging colormap; signed fields look natural with this default.
+    radius : float, default=1.0
+        Sphere radius.
+    alpha : float, default=1.0
+    vmax : float, optional
+        Override the symmetric colour limit. Defaults to the field's
+        peak absolute value.
+    """
+    import matplotlib.pyplot as plt
+    field = np.asarray(geom.coordinates)
+    if np.iscomplexobj(field):
+        field = field.real
+    grid = geom.field_grid
+    if grid is None:
+        raise ValueError(
+            "draw_spherical_harmonic_field expects field_grid=(THETA, PHI)."
+        )
+    THETA, PHI = grid
+
+    X = radius * np.sin(THETA) * np.cos(PHI)
+    Y = radius * np.sin(THETA) * np.sin(PHI)
+    Z = radius * np.cos(THETA)
+
+    if vmax is None:
+        vmax = float(np.nanmax(np.abs(field))) or 1.0
+    norm = np.clip((field + vmax) / (2.0 * vmax), 0.0, 1.0)
+    cm = plt.get_cmap(cmap)
+    facecolors = cm(norm)
+
+    surf = ax.plot_surface(
+        X, Y, Z,
+        facecolors=facecolors,
+        rstride=1, cstride=1,
+        antialiased=False,
+        shade=False,
+        linewidth=0,
+        alpha=alpha,
+    )
+    lim = radius * 1.05
+    ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_zlim(-lim, lim)
+    ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
+    try:
+        ax.set_box_aspect([1, 1, 1])
+    except Exception:
+        pass
+    return surf
+
+
+def draw_spherical_harmonic_mesh(
+    ax,
+    geom: GeometryData,
+    cmap: str = "RdBu_r",
+    edge_color: Optional[str] = None,
+    alpha: float = 1.0,
+    lw: float = 0.0,
+) -> Any:
+    """Wobbled-radius spherical-harmonic mesh with face colours from weights.
+
+    The ``geom.weights`` array is the per-vertex normalised field
+    amplitude (in ``[-1, 1]``). Each triangle is coloured by the mean of
+    its three vertex weights mapped through ``cmap``.
+
+    Parameters
+    ----------
+    ax : matplotlib 3-D axis
+    geom : GeometryData with ``geom_type='mesh_3d'``, populated ``faces``
+        and ``weights`` (see
+        :func:`.spherical_harmonics.spherical_harmonic_mesh`).
+    cmap : str, default='RdBu_r'
+    edge_color : str, optional
+        Triangle outline colour. Default ``None`` (no edge outlines).
+    alpha : float, default=1.0
+    lw : float, default=0.0
+    """
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+    import matplotlib.pyplot as plt
+
+    V = np.asarray(geom.coordinates)
+    F = np.asarray(geom.faces)
+    polys = [V[tri] for tri in F]
+    if geom.weights is not None and len(geom.weights) == len(V):
+        W = np.asarray(geom.weights)
+        face_w = W[F].mean(axis=1)
+        norm = np.clip((face_w + 1.0) / 2.0, 0.0, 1.0)
+        cm = plt.get_cmap(cmap)
+        facecolors = cm(norm)
+        coll = Poly3DCollection(
+            polys,
+            alpha=alpha,
+            facecolors=facecolors,
+            edgecolor=edge_color or "none",
+            linewidth=lw,
+        )
+    else:
+        coll = Poly3DCollection(
+            polys,
+            alpha=alpha,
+            facecolor=PALETTE["blue"],
+            edgecolor=edge_color or "none",
+            linewidth=lw,
+        )
+    ax.add_collection3d(coll)
+    rmax = float(np.linalg.norm(V, axis=1).max())
+    pad = 0.05
+    ax.set_xlim(-rmax - pad, rmax + pad)
+    ax.set_ylim(-rmax - pad, rmax + pad)
+    ax.set_zlim(-rmax - pad, rmax + pad)
+    ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
+    try:
+        ax.set_box_aspect([1, 1, 1])
+    except Exception:
+        pass
+    return coll
+
+
 def draw_curve_3d(ax, geom: GeometryData,
                   color: str = PALETTE["blue"], lw: float = 0.6) -> None:
     """3-D polyline."""
@@ -433,6 +572,22 @@ def plot_geometry(geom: GeometryData, ax=None, **kwargs):
     if gt == "graph" and _is_3d_tree(geom):
         # graphs in 3-D fall back to a 3-D line collection
         fn, ndim = draw_tree_3d, 3
+    # Spherical-harmonic outputs share geom_types with generic field/mesh
+    # data but want a domain-specific renderer (sphere surface or weight-
+    # coloured wobbled mesh). Detect via metadata.kind.
+    kind = (geom.metadata or {}).get("kind", "")
+    if (
+        gt == "field_2d"
+        and kind
+        in (
+            "spherical_harmonic_field",
+            "spherical_harmonic_single",
+            "spherical_harmonic_temporal",
+        )
+    ):
+        fn, ndim = draw_spherical_harmonic_field, 3
+    elif gt == "mesh_3d" and kind == "spherical_harmonic_mesh":
+        fn, ndim = draw_spherical_harmonic_mesh, 3
     if ax is None:
         fig = plt.figure(figsize=(5, 5))
         if ndim == 3:

@@ -9,7 +9,8 @@ amplitudes, phases). This module produces structured numpy / dataclass output;
 rendering is the responsibility of downstream layers.
 
 Submodules: chladni, fractal, generative, geometry_3d, geometry_data,
-harmonograph, inputs, lissajous, metrics, plotting, polygon_circular.
+harmonograph, inputs, lissajous, metrics, plotting, polygon_circular,
+spherical_harmonics.
 """
 
 from biotuner.harmonic_geometry.geometry_data import GeometryData, GeomType
@@ -45,6 +46,18 @@ from biotuner.harmonic_geometry.chladni import (
     chladni_nodal_surfaces,
     chladni_temporal,
     ratios_to_modes,
+)
+
+# Spherical harmonics (eigenmodes of the Laplacian on the unit sphere —
+# the closed-surface analogue of Chladni plate modes; also the basis used
+# in higher-order ambisonics).
+from biotuner.harmonic_geometry.spherical_harmonics import (
+    ratios_to_modes_lm,
+    single_spherical_harmonic,
+    spherical_harmonic_field,
+    spherical_harmonic_from_input,
+    spherical_harmonic_mesh,
+    spherical_harmonic_temporal,
 )
 
 # Polygon / circular
@@ -131,6 +144,13 @@ __all__ = [
     "chladni_nodal_surfaces",
     "chladni_temporal",
     "ratios_to_modes",
+    # Spherical harmonics (closed-surface eigenmodes)
+    "ratios_to_modes_lm",
+    "single_spherical_harmonic",
+    "spherical_harmonic_field",
+    "spherical_harmonic_from_input",
+    "spherical_harmonic_mesh",
+    "spherical_harmonic_temporal",
     # Polygon / circular
     "consonance_polygon",
     "epicycloid",
