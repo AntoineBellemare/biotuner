@@ -3114,3 +3114,197 @@ def second_order_polyrhythm_to_midi(
         return paths
     else:
         return [_make_file(orders, output_path)]
+
+
+# =============================================================================
+#   Beats — temporal interference of close-frequency components
+# =============================================================================
+#
+# When two sinusoids of nearby frequencies superpose, the resulting waveform
+# has a slowly-varying amplitude envelope at the *beat frequency*
+# |f_1 − f_2|. Multi-component chords generalise this: the squared sum
+# Σ_i a_i cos(2π f_i t) produces an envelope whose periodicities are the
+# pairwise differences, with amplitudes proportional to a_i · a_j.
+#
+# This is the *temporal* counterpart to the spatial interference patterns
+# produced by ``biotuner.harmonic_geometry.interference_patterns`` — chord
+# components mixing in time rather than in space. Beats are also the
+# perceptual basis of acoustic *roughness* (rapid beats ⇒ dissonance),
+# which dovetails directly with biotuner's existing harmonicity metrics.
+
+
+def beat_envelope(
+    peaks,
+    amplitudes=None,
+    duration_s=1.0,
+    sr=1000,
+    *,
+    return_signal=False,
+):
+    """Time-domain amplitude envelope of a multi-frequency superposition.
+
+    Builds the signal::
+
+        x(t) = Σ_i  a_i · cos(2π · f_i · t)
+
+    sampled at ``sr`` Hz over ``duration_s`` seconds, then returns its
+    instantaneous amplitude envelope ``|x(t)|`` (or ``|x(t)|²`` via the
+    standard Hilbert-transform analytic signal).
+
+    For a 2-tone chord with close frequencies, the envelope shows the
+    classical *beat* at ``|f_1 − f_2|``. For a multi-tone chord, the
+    envelope is a more complex periodic function whose Fourier content
+    is the chord's pairwise-difference spectrum — the temporal
+    counterpart to the spatial interference fields in
+    :mod:`biotuner.harmonic_geometry.interference_patterns`.
+
+    Parameters
+    ----------
+    peaks : sequence of float
+        Component frequencies (Hz).
+    amplitudes : sequence of float, optional
+        Per-component amplitudes. Defaults to uniform.
+    duration_s : float, default=1.0
+        Duration of the signal in seconds.
+    sr : int, default=1000
+        Sampling rate (Hz).
+    return_signal : bool, default=False
+        If True, also return the raw signal ``x(t)`` alongside the
+        envelope (useful for inspection / plotting).
+
+    Returns
+    -------
+    t : numpy.ndarray
+        Time axis (length ``int(duration_s * sr)``).
+    envelope : numpy.ndarray
+        Instantaneous amplitude envelope ``|x_analytic(t)|``.
+    signal : numpy.ndarray, only if ``return_signal=True``
+        The raw signal ``x(t)``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> t, env = beat_envelope([100.0, 102.0], duration_s=2.0, sr=2000)
+    >>> # Beat period = 1 / |102 - 100| = 0.5 s
+    >>> # Envelope minima should be ~0.5 s apart.
+    """
+    if duration_s <= 0:
+        raise ValueError(f"duration_s must be > 0, got {duration_s!r}.")
+    if sr <= 0:
+        raise ValueError(f"sr must be > 0, got {sr!r}.")
+    peaks_arr = np.asarray(peaks, dtype=np.float64)
+    n = peaks_arr.shape[0]
+    if n == 0:
+        raise ValueError("peaks must be non-empty.")
+    if amplitudes is None:
+        amps_arr = np.full(n, 1.0 / n, dtype=np.float64)
+    else:
+        amps_arr = np.asarray(amplitudes, dtype=np.float64)
+        if amps_arr.shape[0] != n:
+            raise ValueError(
+                f"amplitudes has length {amps_arr.shape[0]} but {n} peaks were given."
+            )
+
+    n_samples = int(round(duration_s * sr))
+    if n_samples < 2:
+        raise ValueError(
+            f"duration_s={duration_s} at sr={sr} gives < 2 samples."
+        )
+    t = np.arange(n_samples, dtype=np.float64) / float(sr)
+
+    signal = np.zeros(n_samples, dtype=np.float64)
+    for f, a in zip(peaks_arr, amps_arr):
+        signal += a * np.cos(2.0 * np.pi * f * t)
+
+    # Hilbert transform → analytic signal → instantaneous amplitude.
+    from scipy.signal import hilbert as _hilbert
+    analytic = _hilbert(signal)
+    envelope = np.abs(analytic)
+
+    if return_signal:
+        return t, envelope, signal
+    return t, envelope
+
+
+def beat_spectrogram(
+    peaks,
+    amplitudes=None,
+    duration_s=2.0,
+    sr=1000,
+    *,
+    n_fft=512,
+    hop=128,
+    window="hann",
+    log_power=True,
+):
+    """Time-frequency representation of a chord's beating signal.
+
+    Builds the multi-frequency superposition (see :func:`beat_envelope`)
+    and returns a short-time Fourier transform magnitude. The chord's
+    fundamental frequencies appear as horizontal bands; their
+    intermodulation produces vertical "beat" stripes whose density
+    encodes pairwise differences.
+
+    Parameters
+    ----------
+    peaks : sequence of float
+    amplitudes : sequence of float, optional
+    duration_s : float, default=2.0
+    sr : int, default=1000
+    n_fft : int, default=512
+        FFT length (in samples).
+    hop : int, default=128
+        Step between successive FFT windows (in samples).
+    window : str, default='hann'
+        Window function name (passed to ``scipy.signal.get_window``).
+    log_power : bool, default=True
+        If True, return ``log(1 + |S|²)``; otherwise return ``|S|``.
+
+    Returns
+    -------
+    t : numpy.ndarray
+        Time axis (frame centres, length = number of STFT frames).
+    f : numpy.ndarray
+        Frequency axis (length ``n_fft // 2 + 1``).
+    S : numpy.ndarray
+        Spectrogram of shape ``(len(f), len(t))``.
+    """
+    if n_fft < 8:
+        raise ValueError(f"n_fft must be >= 8, got {n_fft!r}.")
+    if hop < 1:
+        raise ValueError(f"hop must be >= 1, got {hop!r}.")
+
+    t_full, _, signal = beat_envelope(
+        peaks, amplitudes=amplitudes,
+        duration_s=duration_s, sr=sr,
+        return_signal=True,
+    )
+
+    from scipy.signal import get_window
+    win = get_window(window, n_fft, fftbins=True)
+
+    n_samples = signal.shape[0]
+    if n_samples < n_fft:
+        raise ValueError(
+            f"signal length ({n_samples}) is shorter than n_fft ({n_fft})."
+        )
+    n_frames = 1 + (n_samples - n_fft) // hop
+    if n_frames < 1:
+        raise ValueError(
+            f"hop={hop} too large for n_samples={n_samples}, n_fft={n_fft}."
+        )
+    n_freq = n_fft // 2 + 1
+
+    S = np.empty((n_freq, n_frames), dtype=np.float64)
+    for k in range(n_frames):
+        start = k * hop
+        frame = signal[start:start + n_fft] * win
+        spec = np.fft.rfft(frame, n=n_fft)
+        if log_power:
+            S[:, k] = np.log1p(np.abs(spec) ** 2)
+        else:
+            S[:, k] = np.abs(spec)
+
+    f_axis = np.fft.rfftfreq(n_fft, d=1.0 / sr)
+    t_axis = (np.arange(n_frames) * hop + n_fft / 2.0) / sr
+    return t_axis, f_axis, S
