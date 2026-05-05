@@ -503,6 +503,73 @@ def draw_spherical_harmonic_mesh(
     return coll
 
 
+def draw_interference_field_2d(
+    geom: GeometryData,
+    ax,
+    cmap: str = "inferno",
+    show_sources: bool = False,
+    source_color: str = "#ff66cc",
+    source_size: float = 14.0,
+) -> Any:
+    """Multi-source interference renderer with optional source-position dots.
+
+    Uses a perceptual colormap on intensity / amplitude fields (no
+    negative values) and a diverging cmap when the field is signed
+    (``output='real'``).
+
+    Parameters
+    ----------
+    geom : GeometryData with ``metadata.kind='interference_field_2d'``.
+    ax : matplotlib 2-D axis
+    cmap : str, default='inferno'
+    show_sources : bool, default=False
+        If True, plot the emitter positions as a magenta scatter on top
+        of the field. Reads geometry parameters to recompute positions.
+    """
+    field = np.asarray(geom.coordinates, dtype=np.float64)
+    grid = geom.field_grid
+    if grid is None:
+        raise ValueError(
+            "draw_interference_field_2d expects field_grid=(X, Y)."
+        )
+    X, Y = grid
+
+    has_negative = bool(field.min() < 0)
+    used_cmap = "RdBu_r" if has_negative else cmap
+    if has_negative:
+        vmax = float(np.nanmax(np.abs(field))) or 1.0
+        vmin = -vmax
+    else:
+        vmin = float(np.nanmin(field))
+        vmax = float(np.nanmax(field)) or 1.0
+
+    mesh = ax.pcolormesh(
+        X, Y, field, cmap=used_cmap, vmin=vmin, vmax=vmax, shading="auto"
+    )
+
+    if show_sources:
+        params = geom.parameters or {}
+        layout = params.get("layout", "line")
+        spacing = params.get("spacing", 1.0)
+        n_sources = (geom.metadata or {}).get("n_sources", 0)
+        if n_sources > 0:
+            try:
+                from biotuner.harmonic_geometry.interference_patterns import (
+                    _emitter_positions,
+                )
+                pos = _emitter_positions(n_sources, layout, spacing)
+                ax.scatter(
+                    pos[:, 0], pos[:, 1],
+                    c=source_color, s=source_size,
+                    edgecolors="white", linewidths=0.5, zorder=3,
+                )
+            except Exception:
+                pass
+
+    ax.set_aspect("equal")
+    return mesh
+
+
 def draw_curve_3d(ax, geom: GeometryData,
                   color: str = PALETTE["blue"], lw: float = 0.6) -> None:
     """3-D polyline."""
@@ -588,6 +655,10 @@ def plot_geometry(geom: GeometryData, ax=None, **kwargs):
         fn, ndim = draw_spherical_harmonic_field, 3
     elif gt == "mesh_3d" and kind == "spherical_harmonic_mesh":
         fn, ndim = draw_spherical_harmonic_mesh, 3
+    # Open-medium multi-source interference field — perceptual cmap +
+    # optional emitter dots.
+    elif gt == "field_2d" and kind == "interference_field_2d":
+        fn, ndim = draw_interference_field_2d, 2
     if ax is None:
         fig = plt.figure(figsize=(5, 5))
         if ndim == 3:

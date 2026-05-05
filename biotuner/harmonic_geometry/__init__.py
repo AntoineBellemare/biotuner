@@ -8,9 +8,9 @@ Pure-data geometric structures derived from harmonic inputs (ratios, peaks,
 amplitudes, phases). This module produces structured numpy / dataclass output;
 rendering is the responsibility of downstream layers.
 
-Submodules: chladni, fractal, generative, geometry_3d, geometry_data,
-harmonograph, inputs, lissajous, metrics, plotting, polygon_circular,
-spherical_harmonics.
+Submodules: chladni, extensions, fractal, generative, geometry_3d,
+geometry_data, harmonograph, inputs, interference_patterns, lissajous,
+metrics, plotting, polygon_circular, spherical_harmonics, transitions.
 """
 
 from biotuner.harmonic_geometry.geometry_data import GeometryData, GeomType
@@ -58,6 +58,35 @@ from biotuner.harmonic_geometry.spherical_harmonics import (
     spherical_harmonic_from_input,
     spherical_harmonic_mesh,
     spherical_harmonic_temporal,
+)
+
+# Interference patterns (open-medium travelling-wave fields: harmonic
+# interference, quasicrystal, standing-wave lattice, vortex spiral, and
+# multi-source Young's-style fringes).
+from biotuner.harmonic_geometry.interference_patterns import (
+    harmonic_interference_field_2d,
+    interference_field_2d,
+    quasicrystal_field_2d,
+    standing_wave_lattice_2d,
+    vortex_field_2d,
+)
+
+# HarmonicInput extension helpers — bridge peaks_extension /
+# scale_construction (which work on plain arrays) with HarmonicInput.
+# Used to enrich a chord with derived harmonics before rendering.
+from biotuner.harmonic_geometry.extensions import (
+    extend_harmonic_fit,
+    extend_harmonic_tuning,
+    extend_harmonics,
+    extend_subharmonics,
+)
+
+# Transitions — animation-pipeline morphing between chords, extension
+# levels, and rendering paradigms.
+from biotuner.harmonic_geometry.transitions import (
+    blend_fields,
+    fade_in_components,
+    interpolate_chords,
 )
 
 # Polygon / circular
@@ -151,6 +180,21 @@ __all__ = [
     "spherical_harmonic_from_input",
     "spherical_harmonic_mesh",
     "spherical_harmonic_temporal",
+    # Interference patterns (open-medium fields)
+    "harmonic_interference_field_2d",
+    "interference_field_2d",
+    "quasicrystal_field_2d",
+    "standing_wave_lattice_2d",
+    "vortex_field_2d",
+    # HarmonicInput extensions
+    "extend_harmonic_fit",
+    "extend_harmonic_tuning",
+    "extend_harmonics",
+    "extend_subharmonics",
+    # Transitions for animation
+    "blend_fields",
+    "fade_in_components",
+    "interpolate_chords",
     # Polygon / circular
     "consonance_polygon",
     "epicycloid",
