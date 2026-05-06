@@ -35,6 +35,7 @@ from biotuner.harmonic_sequence import (
     encode_ji_matrix,
     TUNING_ATTRS,
 )
+from biotuner import harmonic_timbre  # noqa: F401  (subpackage; importable as biotuner.harmonic_timbre)
 import numpy as np
 import pandas as pd
 import scipy
