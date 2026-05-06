@@ -17,7 +17,14 @@ import os
 from typing import Iterable
 
 import numpy as np
-import soundfile as sf
+
+# soundfile is a heavy/optional dependency (libsndfile binding). Import lazily
+# in the functions that actually write WAVs so ``import biotuner`` succeeds in
+# environments where libsndfile isn't available.
+try:
+    import soundfile as sf
+except ImportError:  # pragma: no cover - environment-dependent
+    sf = None
 
 from biotuner.harmonic_timbre.cross_modal import write_sidecar
 from biotuner.harmonic_timbre.exporters._common import (
@@ -84,6 +91,11 @@ def export_wav_pack(
             'sidecar': {...},   # only if include_sidecar
         }``
     """
+    if sf is None:
+        raise ImportError(
+            "export_wav_pack requires the 'soundfile' package. "
+            "Install with: pip install soundfile"
+        )
     timbre.validate()
 
     pitches = list(reference_pitches_midi)

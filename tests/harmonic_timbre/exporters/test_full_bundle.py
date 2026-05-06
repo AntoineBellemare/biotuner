@@ -7,7 +7,9 @@ import os
 
 import pytest
 
-from biotuner.harmonic_timbre.exporters import export_full_bundle
+pytest.importorskip("soundfile")
+
+from biotuner.harmonic_timbre.exporters import export_full_bundle  # noqa: E402
 
 
 def test_full_bundle_creates_all_subdirs(tmp_path, matched_timbre):

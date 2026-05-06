@@ -6,7 +6,8 @@ import os
 
 import numpy as np
 import pytest
-import soundfile as sf
+
+sf = pytest.importorskip("soundfile")
 
 from biotuner.harmonic_timbre.exporters import (
     export_wavetable,

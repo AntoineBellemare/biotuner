@@ -39,7 +39,21 @@ import os
 from typing import Iterable, Sequence
 
 import numpy as np
-import soundfile as sf
+
+# soundfile is a heavy/optional dependency (libsndfile binding). Import lazily
+# so ``import biotuner`` succeeds in environments without libsndfile.
+try:
+    import soundfile as sf
+except ImportError:  # pragma: no cover - environment-dependent
+    sf = None
+
+
+def _require_sf():
+    if sf is None:
+        raise ImportError(
+            "Wavetable export requires the 'soundfile' package. "
+            "Install with: pip install soundfile"
+        )
 
 from biotuner.harmonic_timbre.cross_modal import write_sidecar
 from biotuner.harmonic_timbre.exporters._common import write_manifest
@@ -238,6 +252,7 @@ def export_wavetable(
         full = np.concatenate(frames).astype(np.float32, copy=False)
 
     sr = 48000
+    _require_sf()
     sf.write(out_path, full, sr, subtype=subtype)
 
     manifest = {
@@ -362,6 +377,7 @@ def export_wavetable_from_imfs(
 
     full = np.concatenate(frames)
     sr = 48000
+    _require_sf()
     sf.write(out_path, full, sr, subtype=subtype)
 
     manifest = {
@@ -500,6 +516,7 @@ def export_wavetable_morph(
 
     full = np.concatenate(frames).astype(np.float32, copy=False)
     sr = 48000
+    _require_sf()
     sf.write(out_path, full, sr, subtype=subtype)
 
     manifest = {

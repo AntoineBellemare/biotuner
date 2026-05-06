@@ -25,7 +25,12 @@ from __future__ import annotations
 import os
 from typing import Iterable
 
-import soundfile as sf
+# soundfile is a heavy/optional dependency (libsndfile binding). Import lazily
+# so ``import biotuner`` succeeds in environments without libsndfile.
+try:
+    import soundfile as sf
+except ImportError:  # pragma: no cover - environment-dependent
+    sf = None
 
 from biotuner.harmonic_timbre.cross_modal import write_sidecar
 from biotuner.harmonic_timbre.exporters._common import (
@@ -77,6 +82,11 @@ def export_sfz(
     os.makedirs(paths["samples"], exist_ok=True)
     os.makedirs(paths["dir"], exist_ok=True)
 
+    if sf is None:
+        raise ImportError(
+            "export_sfz requires the 'soundfile' package. "
+            "Install with: pip install soundfile"
+        )
     subtype = {16: "PCM_16", 24: "PCM_24", 32: "FLOAT"}.get(bit_depth)
     if subtype is None:
         raise ValueError(f"export_sfz: unsupported bit_depth {bit_depth}")

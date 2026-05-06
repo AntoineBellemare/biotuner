@@ -9,7 +9,13 @@ import os
 from typing import Iterable
 
 import numpy as np
-import soundfile as sf
+
+# soundfile is a heavy/optional dependency (libsndfile binding). Import lazily
+# so ``import biotuner`` succeeds in environments without libsndfile.
+try:
+    import soundfile as sf
+except ImportError:  # pragma: no cover - environment-dependent
+    sf = None
 
 from biotuner.harmonic_timbre.cross_modal import write_sidecar
 from biotuner.harmonic_timbre.exporters._common import write_manifest
@@ -277,6 +283,11 @@ def export_full_bundle_sequence(
             f"Known: {sorted(known)}"
         )
 
+    if sf is None:
+        raise ImportError(
+            "export_full_bundle_sequence requires the 'soundfile' package. "
+            "Install with: pip install soundfile"
+        )
     os.makedirs(out_dir, exist_ok=True)
     results: dict = {"frames": []}
 

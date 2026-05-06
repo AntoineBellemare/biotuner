@@ -5,7 +5,11 @@ from __future__ import annotations
 import os
 import re
 
-from biotuner.harmonic_timbre.exporters import export_sfz
+import pytest
+
+pytest.importorskip("soundfile")
+
+from biotuner.harmonic_timbre.exporters import export_sfz  # noqa: E402
 
 
 def test_sfz_writes_instrument_and_samples(tmp_path, matched_timbre, short_pitches):

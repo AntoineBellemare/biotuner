@@ -6,7 +6,9 @@ import json
 import os
 
 import numpy as np
-import soundfile as sf
+import pytest
+
+sf = pytest.importorskip("soundfile")
 
 from biotuner.harmonic_timbre.exporters import export_wav_pack
 
