@@ -221,6 +221,260 @@ class Timbre:
         return Timbre(**kw)
 
     # ------------------------------------------------------------------
+    # Spectral enrichment transforms (wavetable-rich palette)
+    # ------------------------------------------------------------------
+    # All five return a new Timbre and never mutate self. They rebuild
+    # ``partials_hz``, ``amplitudes`` and ``phases`` consistently and
+    # apply a bandlimit so single-cycle wavetables stay safe through
+    # ~MIDI 84 (partial bin <= ``max_bin``) without per-octave mipmaps.
+    # The 0.7-1.2 rolloff sweet spot, integer-ratio constraint on intermod
+    # sidebands, and the Schroeder phase formula come from the wavetable
+    # design research summarized in this module's design notes.
+
+    def with_intermod_sidebands(
+        self,
+        bt: Any,
+        *,
+        depth: float = 0.5,
+        integer_ratio_only: bool = True,
+        ratio_tolerance: float = 0.05,
+        max_bin: int = 512,
+    ) -> "Timbre":
+        """Add intermodulation sidebands at ``f1 ± f2`` for each pair.
+
+        Reads ``bt.endogenous_intermodulations`` (list of ``(f1, f2)``
+        pairs as written by
+        :func:`biotuner.peaks_extraction.endogenous_intermodulations`).
+        Each pair contributes two static partials at ``f1 + f2`` and
+        ``|f1 - f2|`` with amplitude ``depth * min(amp(f1), amp(f2))``.
+
+        This is the *literal sideband interpretation at DC* — the same
+        partials you'd get from AM with carrier ``f1`` and modulator
+        ``f2``, but precomputed into a single cycle.
+
+        Parameters
+        ----------
+        bt
+            A biotuner-like object with an ``endogenous_intermodulations``
+            attribute. If the attribute is missing or empty, ``self`` is
+            returned unchanged.
+        depth : float, default=0.5
+            Amplitude of each sideband relative to the weaker source
+            partial.
+        integer_ratio_only : bool, default=True
+            If True, only emit sidebands when ``f1/f2`` is within
+            ``ratio_tolerance`` of an integer ratio (preserves harmonic
+            character). Non-integer ratios destroy pitch perception fast.
+        ratio_tolerance : float, default=0.05
+            Relative tolerance (5%) for the integer-ratio test.
+        max_bin : int, default=512
+            Drop sidebands whose partial bin exceeds this. Keeps single-
+            cycle wavetables alias-free up to ~MIDI 84.
+        """
+        intermod = getattr(bt, "endogenous_intermodulations", None)
+        if intermod is None or len(intermod) == 0:
+            return self
+
+        partials = np.asarray(self.partials_hz, dtype=np.float64)
+        amps = np.asarray(self.amplitudes, dtype=np.float64)
+        phases = _resolve_phases_or_zeros(self)
+        base = float(self.base_freq) if self.base_freq > 0 else 1.0
+        new_p, new_a, new_ph = [], [], []
+
+        for entry in intermod:
+            try:
+                f1, f2 = float(entry[0]), float(entry[1])
+            except (TypeError, ValueError, IndexError):
+                continue
+            if f1 <= 0 or f2 <= 0:
+                continue
+            if integer_ratio_only and not _is_integer_ratio(f1, f2, ratio_tolerance):
+                continue
+            i1 = int(np.argmin(np.abs(partials - f1)))
+            i2 = int(np.argmin(np.abs(partials - f2)))
+            a_side = float(depth) * float(min(amps[i1], amps[i2]))
+            for f in (f1 + f2, abs(f1 - f2)):
+                if f <= 0:
+                    continue
+                new_p.append(f)
+                new_a.append(a_side)
+                new_ph.append(0.0)
+
+        if not new_p:
+            return self
+        merged_p = np.concatenate([partials, np.asarray(new_p)])
+        merged_a = np.concatenate([amps, np.asarray(new_a)])
+        merged_ph = np.concatenate([phases, np.asarray(new_ph)])
+        merged_p, merged_a, merged_ph = _bandlimit(
+            merged_p, merged_a, merged_ph, base, max_bin
+        )
+        return self.with_partials(
+            partials_hz=merged_p, amplitudes=merged_a, phases=merged_ph,
+        )
+
+    def with_harmonic_stack(
+        self,
+        n: int = 4,
+        *,
+        rolloff: float = 0.9,
+        max_bin: int = 512,
+    ) -> "Timbre":
+        """Add ``2·f, 3·f, ..., n·f`` overtones to each existing partial.
+
+        Each overtone ``h`` of source partial ``fk`` is added with
+        amplitude ``amps[k] / h**rolloff``. Inharmonic biosignal peaks
+        (e.g. EMD-derived) thereby acquire the overtone series of
+        natural acoustic sources, replacing flat single-partial-per-IMF
+        wavetables with audibly warmer ones.
+
+        Parameters
+        ----------
+        n : int, default=4
+            Number of overtones per source partial. ``n=4`` adds
+            ``2f, 3f, 4f, 5f``.
+        rolloff : float, default=0.9
+            Amplitude exponent. The 0.7-1.2 window is the sweet spot
+            in Serum/Vital factory tables; <0.7 buzzes, >1.2 dulls.
+        max_bin : int, default=512
+            Drop overtones whose partial bin exceeds this.
+        """
+        if n <= 0:
+            return self
+        partials = np.asarray(self.partials_hz, dtype=np.float64)
+        amps = np.asarray(self.amplitudes, dtype=np.float64)
+        phases = _resolve_phases_or_zeros(self)
+        base = float(self.base_freq) if self.base_freq > 0 else 1.0
+
+        harmonics = np.arange(2, 2 + int(n), dtype=np.float64)
+        # Outer product: (n_partials, n_harmonics)
+        new_p = (partials[:, None] * harmonics[None, :]).reshape(-1)
+        atten = np.power(harmonics, float(rolloff))
+        new_a = (amps[:, None] / atten[None, :]).reshape(-1)
+        new_ph = np.zeros_like(new_p)
+
+        merged_p = np.concatenate([partials, new_p])
+        merged_a = np.concatenate([amps, new_a])
+        merged_ph = np.concatenate([phases, new_ph])
+        merged_p, merged_a, merged_ph = _bandlimit(
+            merged_p, merged_a, merged_ph, base, max_bin
+        )
+        return self.with_partials(
+            partials_hz=merged_p, amplitudes=merged_a, phases=merged_ph,
+        )
+
+    def with_phase_mode(
+        self,
+        mode: str = "schroeder",
+        *,
+        seed: int = 0,
+    ) -> "Timbre":
+        """Replace partial phases according to a named scheme.
+
+        Same magnitude spectrum, different phase: large perceptual
+        difference for short/percussive sounds, smaller-but-real for
+        sustained tones.
+
+        Parameters
+        ----------
+        mode : {'cosine', 'schroeder', 'random', 'biosignal'}
+            ``'cosine'`` — all phases zero; spike-shaped time waveform,
+            crest factor ~12 dB, "clicky/buzzy".
+            ``'schroeder'`` — ``φ_k = -π·k(k-1)/N``; near-flat envelope,
+            crest factor ~3 dB, "fat" and easier to mix loud (default).
+            ``'random'`` — uniform phases; diffuse/noisy, good for pads.
+            ``'biosignal'`` — leave existing phases untouched (no-op).
+        seed : int, default=0
+            Seed for ``'random'``.
+        """
+        valid = ("cosine", "schroeder", "random", "biosignal")
+        if mode not in valid:
+            raise ValueError(f"phase mode must be one of {valid}, got {mode!r}")
+        if mode == "biosignal":
+            return self
+        n = self.n_partials()
+        if mode == "cosine":
+            new_phases = np.zeros(n, dtype=np.float64)
+        elif mode == "schroeder":
+            k = np.arange(1, n + 1, dtype=np.float64)
+            new_phases = (-np.pi * k * (k - 1.0) / float(n)) % (2.0 * np.pi)
+        else:  # random
+            rng = np.random.default_rng(int(seed))
+            new_phases = rng.uniform(0.0, 2.0 * np.pi, size=n)
+        return self.with_partials(phases=new_phases)
+
+    def with_formant(
+        self,
+        center_hz: float = 2000.0,
+        *,
+        width_hz: float = 800.0,
+        gain_db: float = 4.0,
+    ) -> "Timbre":
+        """Multiplicative spectral envelope bump (formant).
+
+        Boosts amplitudes of partials near ``center_hz`` with a Gaussian
+        envelope of standard deviation ``width_hz``. This is the
+        presence-band trick used in nearly every "rich" pad/lead
+        wavetable; the multiplicative form preserves partial count and
+        only reshapes the spectral envelope.
+
+        Parameters
+        ----------
+        center_hz : float, default=2000.0
+            Formant center frequency. The 1500-2500 Hz "presence band"
+            is typical for non-vocal richness; vowel formants live at
+            500-1000 (F1) and 1500-2500 (F2).
+        width_hz : float, default=800.0
+            Gaussian standard deviation in Hz. Wider = broader bump.
+        gain_db : float, default=4.0
+            Peak gain at the formant center.
+        """
+        if width_hz <= 0:
+            raise ValueError("width_hz must be positive")
+        partials = np.asarray(self.partials_hz, dtype=np.float64)
+        amps = np.asarray(self.amplitudes, dtype=np.float64)
+        gain_lin = 10.0 ** (float(gain_db) / 20.0)
+        bump = np.exp(-0.5 * ((partials - float(center_hz)) / float(width_hz)) ** 2)
+        # Multiplicative envelope: 1.0 baseline outside the bump, gain_lin at center.
+        envelope = 1.0 + (gain_lin - 1.0) * bump
+        new_amps = amps * envelope
+        return self.with_partials(amplitudes=new_amps)
+
+    def with_slight_detune(
+        self,
+        *,
+        percent: float = 1.0,
+        n_partials: int = 3,
+        seed: int = 0,
+    ) -> "Timbre":
+        """Detune ``n_partials`` random partials by up to ``±percent``%.
+
+        The Bilbao/Smith stretched-string trick: nudging a few partials
+        of an otherwise-harmonic timbre by 0.3-2% adds "organic shimmer"
+        without losing pitch perception. Distinct from the full
+        inharmonic-series constructors in :mod:`inharmonic` (those
+        rebuild every partial; this only nudges a chosen few).
+
+        Parameters
+        ----------
+        percent : float, default=1.0
+            Maximum detuning magnitude in percent (0.5-2 is musical).
+        n_partials : int, default=3
+            How many partials to perturb (chosen with the seed).
+        seed : int, default=0
+            RNG seed.
+        """
+        n_total = self.n_partials()
+        if n_total == 0 or percent <= 0 or n_partials <= 0:
+            return self
+        rng = np.random.default_rng(int(seed))
+        n_pick = int(min(n_partials, n_total))
+        idx = rng.choice(n_total, size=n_pick, replace=False)
+        deltas = rng.uniform(-1.0, 1.0, size=n_pick) * (float(percent) / 100.0)
+        new_partials = np.asarray(self.partials_hz, dtype=np.float64).copy()
+        new_partials[idx] = new_partials[idx] * (1.0 + deltas)
+        return self.with_partials(partials_hz=new_partials)
+
+    # ------------------------------------------------------------------
     # Persistence: JSON (metadata) + .npz (arrays)
     # ------------------------------------------------------------------
     def save(self, path: str) -> str:
@@ -476,6 +730,48 @@ class TimbreSequence:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+def _resolve_phases_or_zeros(timbre: "Timbre") -> np.ndarray:
+    """Return ``timbre.phases`` if set, otherwise an array of zeros."""
+    if timbre.phases is None:
+        return np.zeros(timbre.n_partials(), dtype=np.float64)
+    return np.asarray(timbre.phases, dtype=np.float64)
+
+
+def _is_integer_ratio(f1: float, f2: float, tolerance: float) -> bool:
+    """True if ``f1/f2`` (or its reciprocal) is within ``tolerance`` of an int.
+
+    Used by :meth:`Timbre.with_intermod_sidebands` to keep sideband
+    products harmonic when ``integer_ratio_only=True``.
+    """
+    if f1 <= 0 or f2 <= 0:
+        return False
+    r = f1 / f2 if f1 >= f2 else f2 / f1
+    nearest = round(r)
+    if nearest <= 0:
+        return False
+    return abs(r - nearest) / nearest <= tolerance
+
+
+def _bandlimit(
+    partials: np.ndarray,
+    amplitudes: np.ndarray,
+    phases: np.ndarray,
+    base_freq: float,
+    max_bin: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Drop partials whose bin index ``partial/base_freq`` exceeds ``max_bin``.
+
+    Single-cycle wavetables of length 2048 have 1024 useful bins. Capping
+    at ``max_bin=512`` keeps the table alias-free up to roughly MIDI 84
+    without per-octave mipmapping.
+    """
+    if max_bin <= 0 or base_freq <= 0:
+        return partials, amplitudes, phases
+    keep = (partials / base_freq) <= float(max_bin)
+    keep &= partials > 0
+    return partials[keep], amplitudes[keep], phases[keep]
+
 
 def _strip_known_suffixes(path: str) -> str:
     for suffix in (".json", ".npz"):

@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import math
 import os
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Sequence
 
 import numpy as np
 
@@ -69,7 +69,11 @@ _TARGET_PROFILES = {
     "generic": (2048, "FLOAT"),
 }
 
-_EVOLUTIONS = ("tilt", "harmonic_buildup", "amp_morph", "phase_sweep")
+_EVOLUTIONS = (
+    "tilt", "harmonic_buildup", "amp_morph", "phase_sweep",
+    # Spectral enrichment buildups (use Timbre transforms under the hood):
+    "intermod_buildup", "harmonic_stack", "formant_sweep",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -130,6 +134,37 @@ def _frame_with_phase_sweep(
     )
 
 
+def _frame_with_intermod_sidebands(
+    timbre: Timbre, bt, depth: float, *, table_size: int
+) -> np.ndarray:
+    """Frame whose intermodulation sidebands ramp up to ``depth``."""
+    if depth <= 0 or bt is None:
+        return render_wavetable_cycle(timbre, table_size=table_size)
+    enriched = timbre.with_intermod_sidebands(bt, depth=float(depth))
+    return render_wavetable_cycle(enriched, table_size=table_size)
+
+
+def _frame_with_harmonic_stack(
+    timbre: Timbre, n_overtones: int, rolloff: float, *, table_size: int
+) -> np.ndarray:
+    """Frame with ``n_overtones`` harmonic overtones stacked on each partial."""
+    if n_overtones <= 0:
+        return render_wavetable_cycle(timbre, table_size=table_size)
+    enriched = timbre.with_harmonic_stack(n=int(n_overtones), rolloff=float(rolloff))
+    return render_wavetable_cycle(enriched, table_size=table_size)
+
+
+def _frame_with_formant(
+    timbre: Timbre, center_hz: float, width_hz: float, gain_db: float,
+    *, table_size: int,
+) -> np.ndarray:
+    """Frame with a formant bump at ``center_hz``."""
+    enriched = timbre.with_formant(
+        center_hz=float(center_hz), width_hz=float(width_hz), gain_db=float(gain_db),
+    )
+    return render_wavetable_cycle(enriched, table_size=table_size)
+
+
 def _normalize_cycle(buf: np.ndarray, peak: float = 0.99) -> np.ndarray:
     m = float(np.max(np.abs(buf))) if buf.size else 0.0
     if m <= 0:
@@ -181,6 +216,14 @@ def export_wavetable(
     table_size: int | None = None,
     seed: int = 0,
     include_sidecar: bool = True,
+    # Spectral enrichment params (used by the new evolution modes):
+    bt: Any = None,
+    intermod_depth_range: tuple[float, float] = (0.0, 0.6),
+    harmonic_stack_range: tuple[int, int] = (0, 4),
+    harmonic_stack_rolloff: float = 0.9,
+    formant_center_range: tuple[float, float] = (1000.0, 3000.0),
+    formant_width_hz: float = 800.0,
+    formant_gain_db: float = 4.0,
 ) -> dict:
     """Write a single- or multi-frame wavetable WAV from a single Timbre.
 
@@ -204,6 +247,14 @@ def export_wavetable(
           the timbre's matched amplitudes (frame N-1).
         * ``'phase_sweep'``      — partial phases offset by
           ``phase_range[0] → [1]`` across frames.
+        * ``'intermod_buildup'`` — intermodulation sidebands ``f1 ± f2``
+          ramp in across frames. Requires ``bt=`` (a biotuner-like object
+          exposing ``endogenous_intermodulations``).
+        * ``'harmonic_stack'``   — harmonic overtones (``2f, 3f, …``) of
+          each partial fade in across frames; rolloff controlled by
+          ``harmonic_stack_rolloff`` (sweet spot 0.7-1.2).
+        * ``'formant_sweep'``    — multiplicative formant bump sweeps
+          ``formant_center_range[0] → [1]`` Hz (vowel-like "ah → ee").
     tilt_range : (float, float), default=(0.0, 2.5)
         Used when ``evolution='tilt'``.
     phase_range : (float, float), default=(0, 2π)
@@ -212,6 +263,21 @@ def export_wavetable(
         Per-frame samples. Default is target-specific (2048).
     seed : int, default=0
         RNG seed for ``evolution='amp_morph'``.
+    bt : object, optional
+        biotuner-like object with ``endogenous_intermodulations``.
+        Required for ``evolution='intermod_buildup'``.
+    intermod_depth_range : (float, float), default=(0.0, 0.6)
+        Sideband depth ramp for ``'intermod_buildup'``.
+    harmonic_stack_range : (int, int), default=(0, 4)
+        Number of overtones added per source partial across frames.
+    harmonic_stack_rolloff : float, default=0.9
+        Amplitude rolloff exponent for stacked harmonics.
+    formant_center_range : (float, float), default=(1000.0, 3000.0)
+        Hz range for the formant center sweep.
+    formant_width_hz : float, default=800.0
+        Gaussian standard deviation of the formant bump.
+    formant_gain_db : float, default=4.0
+        Peak gain at the formant center.
 
     Returns
     -------
@@ -250,6 +316,39 @@ def export_wavetable(
         offsets = np.linspace(phase_range[0], phase_range[1], n_frames)
         frames = [_frame_with_phase_sweep(timbre, float(p), table_size=table_size) for p in offsets]
         full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "intermod_buildup":
+        if bt is None:
+            raise ValueError(
+                "evolution='intermod_buildup' requires bt= (a biotuner-like "
+                "object exposing endogenous_intermodulations)"
+            )
+        depths = np.linspace(intermod_depth_range[0], intermod_depth_range[1], n_frames)
+        frames = [
+            _frame_with_intermod_sidebands(timbre, bt, float(d), table_size=table_size)
+            for d in depths
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "harmonic_stack":
+        n_overtones = np.linspace(
+            harmonic_stack_range[0], harmonic_stack_range[1], n_frames
+        ).round().astype(int)
+        frames = [
+            _frame_with_harmonic_stack(
+                timbre, int(k), harmonic_stack_rolloff, table_size=table_size,
+            )
+            for k in n_overtones
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "formant_sweep":
+        centers = np.linspace(formant_center_range[0], formant_center_range[1], n_frames)
+        frames = [
+            _frame_with_formant(
+                timbre, float(c), formant_width_hz, formant_gain_db,
+                table_size=table_size,
+            )
+            for c in centers
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
 
     sr = 48000
     _require_sf()
@@ -263,7 +362,15 @@ def export_wavetable(
         "table_size": int(table_size),
         "n_frames": int(n_frames),
         "evolution": evolution if n_frames > 1 else "single_cycle",
-        "evolution_params": _evolution_params(evolution, n_frames, tilt_range, phase_range, seed),
+        "evolution_params": _evolution_params(
+            evolution, n_frames, tilt_range, phase_range, seed,
+            intermod_depth_range=intermod_depth_range,
+            harmonic_stack_range=harmonic_stack_range,
+            harmonic_stack_rolloff=harmonic_stack_rolloff,
+            formant_center_range=formant_center_range,
+            formant_width_hz=formant_width_hz,
+            formant_gain_db=formant_gain_db,
+        ),
         "subtype": subtype,
         "samplerate": sr,
         "timbre": _summarize_timbre(timbre),
@@ -278,7 +385,16 @@ def export_wavetable(
     return result
 
 
-def _evolution_params(evolution, n_frames, tilt_range, phase_range, seed):
+def _evolution_params(
+    evolution, n_frames, tilt_range, phase_range, seed,
+    *,
+    intermod_depth_range=None,
+    harmonic_stack_range=None,
+    harmonic_stack_rolloff=None,
+    formant_center_range=None,
+    formant_width_hz=None,
+    formant_gain_db=None,
+):
     if n_frames == 1:
         return {}
     if evolution == "tilt":
@@ -289,6 +405,19 @@ def _evolution_params(evolution, n_frames, tilt_range, phase_range, seed):
         return {"seed": seed}
     if evolution == "phase_sweep":
         return {"phase_range": list(phase_range)}
+    if evolution == "intermod_buildup":
+        return {"intermod_depth_range": list(intermod_depth_range or (0.0, 0.6))}
+    if evolution == "harmonic_stack":
+        return {
+            "harmonic_stack_range": list(harmonic_stack_range or (0, 4)),
+            "rolloff": float(harmonic_stack_rolloff if harmonic_stack_rolloff is not None else 0.9),
+        }
+    if evolution == "formant_sweep":
+        return {
+            "formant_center_range": list(formant_center_range or (1000.0, 3000.0)),
+            "width_hz": float(formant_width_hz if formant_width_hz is not None else 800.0),
+            "gain_db": float(formant_gain_db if formant_gain_db is not None else 4.0),
+        }
     return {}
 
 

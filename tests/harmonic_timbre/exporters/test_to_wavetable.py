@@ -169,3 +169,76 @@ def test_wavetable_morph_n_frames_minimum(tmp_path, matched_timbre):
         export_wavetable_morph(
             matched_timbre, matched_timbre, str(tmp_path / "x"), n_frames=1,
         )
+
+
+# ---------------------------------------------------------------------------
+# Spectral enrichment evolution modes (intermod_buildup, harmonic_stack,
+# formant_sweep)
+# ---------------------------------------------------------------------------
+
+class _StubBt:
+    def __init__(self, intermod):
+        self.endogenous_intermodulations = intermod
+
+
+def test_evolution_harmonic_stack(tmp_path, matched_timbre):
+    out = export_wavetable(
+        matched_timbre, str(tmp_path / "stack"),
+        n_frames=4, evolution="harmonic_stack",
+        harmonic_stack_range=(0, 4), harmonic_stack_rolloff=0.9,
+        include_sidecar=False,
+    )
+    audio, _sr = sf.read(out["wavetable"])
+    assert audio.size == 4 * 2048
+    # Last frame should have more high-frequency content than first.
+    f0 = np.abs(np.fft.rfft(audio[:2048]))
+    flast = np.abs(np.fft.rfft(audio[-2048:]))
+    assert flast[10:200].sum() > f0[10:200].sum()
+
+
+def test_evolution_formant_sweep(tmp_path, matched_timbre):
+    out = export_wavetable(
+        matched_timbre, str(tmp_path / "form"),
+        n_frames=3, evolution="formant_sweep",
+        formant_center_range=(1000.0, 3000.0),
+        formant_width_hz=400.0, formant_gain_db=6.0,
+        include_sidecar=False,
+    )
+    audio, _sr = sf.read(out["wavetable"])
+    assert audio.size == 3 * 2048
+
+
+def test_evolution_intermod_buildup(tmp_path, matched_timbre):
+    bt = _StubBt([(matched_timbre.partials_hz[0], matched_timbre.partials_hz[1])])
+    out = export_wavetable(
+        matched_timbre, str(tmp_path / "imd"),
+        n_frames=3, evolution="intermod_buildup",
+        bt=bt, intermod_depth_range=(0.0, 0.7),
+        include_sidecar=False,
+    )
+    audio, _sr = sf.read(out["wavetable"])
+    assert audio.size == 3 * 2048
+
+
+def test_evolution_intermod_buildup_requires_bt(tmp_path, matched_timbre):
+    with pytest.raises(ValueError, match="intermod_buildup"):
+        export_wavetable(
+            matched_timbre, str(tmp_path / "imd"),
+            n_frames=3, evolution="intermod_buildup",
+            include_sidecar=False,
+        )
+
+
+def test_evolution_harmonic_stack_manifest_records_params(tmp_path, matched_timbre):
+    import json
+    out = export_wavetable(
+        matched_timbre, str(tmp_path / "stack"),
+        n_frames=3, evolution="harmonic_stack",
+        harmonic_stack_range=(0, 3), harmonic_stack_rolloff=0.8,
+        include_sidecar=False,
+    )
+    with open(out["manifest"], "r", encoding="utf-8") as fp:
+        m = json.load(fp)
+    assert m["evolution"] == "harmonic_stack"
+    assert m["evolution_params"]["harmonic_stack_range"] == [0, 3]
+    assert m["evolution_params"]["rolloff"] == 0.8
