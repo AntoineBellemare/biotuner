@@ -219,6 +219,10 @@ class TestChordCoupling:
 
 class TestBoundaryOutput:
     def test_boundary_returns_curve_set(self, major):
+        # Boundary extraction uses skimage.measure.find_contours; skip on
+        # environments where scikit-image is not installed (it's an optional
+        # dependency surfaced only by this output_mode).
+        pytest.importorskip("skimage")
         out = Crystallization(grid_radius=25, n_steps=200,
                               humidity=2e-4, output_resolution=96,
                               output_mode="boundary").respond(major)
