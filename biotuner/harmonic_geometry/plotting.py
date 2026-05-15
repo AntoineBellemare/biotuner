@@ -277,6 +277,121 @@ def draw_field_2d(geom: GeometryData, ax,
     return mesh
 
 
+def draw_vector_field_2d(geom: GeometryData, ax,
+                         style: str = "streamlines",
+                         cmap: str = "viridis",
+                         density: float = 1.2,
+                         scale: Optional[float] = None,
+                         step: int = 10,
+                         color_by_magnitude: bool = True,
+                         background: Optional[np.ndarray] = None,
+                         background_cmap: str = "Greys",
+                         background_alpha: float = 0.6,
+                         linewidth: float = 0.8) -> Any:
+    """Render a 2-D vector field stored as ``(H, W, 2)`` in ``coordinates``.
+
+    Parameters
+    ----------
+    geom : GeometryData with ``geom_type='vector_field_2d'``
+        ``coordinates`` is ``(H, W, 2)`` giving ``(u, v)`` per cell;
+        ``field_grid`` is ``(X, Y)`` meshgrids.
+    style : {"streamlines", "quiver"}
+        ``"streamlines"`` (default) draws integral curves of the field;
+        ``"quiver"`` draws arrows at a coarsened grid (one arrow per
+        ``step`` cells).
+    background : ndarray, optional
+        Scalar field of the same shape as ``coordinates[..., 0]`` rendered
+        underneath the vectors (e.g. the parent wave field).
+    """
+    field = np.asarray(geom.coordinates)
+    if field.ndim != 3 or field.shape[-1] != 2:
+        raise ValueError(
+            f"draw_vector_field_2d expects (H, W, 2); got {field.shape}."
+        )
+    u = field[..., 0]
+    v = field[..., 1]
+    grid = geom.field_grid
+    if grid is None:
+        ny, nx = u.shape
+        X, Y = np.meshgrid(np.arange(nx), np.arange(ny))
+    else:
+        X, Y = grid
+
+    if background is not None:
+        bg = np.asarray(background)
+        bv = float(np.nanmax(np.abs(bg))) or 1.0
+        ax.pcolormesh(X, Y, bg, cmap=background_cmap,
+                      vmin=-bv, vmax=bv, shading="auto",
+                      alpha=background_alpha, zorder=0)
+
+    if style == "quiver":
+        s = max(int(step), 1)
+        Xc = X[::s, ::s]
+        Yc = Y[::s, ::s]
+        Uc = u[::s, ::s]
+        Vc = v[::s, ::s]
+        mag = np.hypot(Uc, Vc) if color_by_magnitude else None
+        kw: Dict[str, Any] = {"angles": "xy", "scale_units": "xy",
+                              "pivot": "mid", "width": 0.003}
+        if scale is not None:
+            kw["scale"] = scale
+        if mag is not None:
+            quiv = ax.quiver(Xc, Yc, Uc, Vc, mag, cmap=cmap, **kw)
+        else:
+            quiv = ax.quiver(Xc, Yc, Uc, Vc, **kw)
+        axis_clean(ax)
+        return quiv
+
+    # streamlines (default)
+    mag = np.hypot(u, v)
+    color = mag if color_by_magnitude else None
+    sl = ax.streamplot(
+        X, Y, u, v,
+        density=density,
+        color=color if color is not None else "0.2",
+        cmap=cmap if color is not None else None,
+        linewidth=linewidth,
+        arrowsize=0.7,
+    )
+    axis_clean(ax)
+    return sl
+
+
+def draw_vector_field_3d(ax, geom: GeometryData,
+                         step: int = 4,
+                         length: float = 0.05,
+                         color: str = "0.25",
+                         linewidth: float = 0.6) -> Any:
+    """Quiver-style renderer for a 3-D vector field ``(D, H, W, 3)``.
+
+    Only a sparse subgrid is drawn (every ``step``-th cell along each
+    axis) — otherwise the plot is unreadable. Intended for diagnostic
+    visualization rather than production rendering.
+    """
+    field = np.asarray(geom.coordinates)
+    if field.ndim != 4 or field.shape[-1] != 3:
+        raise ValueError(
+            f"draw_vector_field_3d expects (D, H, W, 3); got {field.shape}."
+        )
+    grid = geom.field_grid
+    if grid is None:
+        nz, ny, nx, _ = field.shape
+        X, Y, Z = np.meshgrid(
+            np.arange(nx), np.arange(ny), np.arange(nz), indexing="ij"
+        )
+    else:
+        X, Y, Z = grid
+
+    s = max(int(step), 1)
+    return ax.quiver(
+        X[::s, ::s, ::s], Y[::s, ::s, ::s], Z[::s, ::s, ::s],
+        field[::s, ::s, ::s, 0],
+        field[::s, ::s, ::s, 1],
+        field[::s, ::s, ::s, 2],
+        length=length, color=color, linewidth=linewidth, normalize=True,
+    )
+
+
 def draw_image(geom: GeometryData, ax,
                cmap: str = "inferno", origin: str = "lower",
                extent: Optional[Tuple[float, float, float, float]] = None,
@@ -602,6 +717,8 @@ _DISPATCH: Dict[str, Tuple[Callable[..., Any], int]] = {
     "point_cloud_3d":   (draw_point_cloud_3d,  3),
     "mesh_3d":          (draw_mesh_3d,         3),
     "tree_3d":          (draw_tree_3d,         3),
+    "vector_field_2d":  (draw_vector_field_2d, 2),
+    "vector_field_3d":  (draw_vector_field_3d, 3),
 }
 
 

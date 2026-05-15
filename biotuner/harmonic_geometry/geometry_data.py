@@ -50,6 +50,10 @@ import numpy as np
 # - 'polygon_set'     : coordinates is list of (N_i, D) polygon vertex arrays
 # - 'mesh_3d'         : coordinates is (V, 3) vertex array;
 #                       faces is (F, 3) integer triangle indices
+# - 'vector_field_2d' : coordinates is (H, W, 2) (u, v) components;
+#                       field_grid = (X_meshgrid, Y_meshgrid)
+# - 'vector_field_3d' : coordinates is (D, H, W, 3) (u, v, w) components;
+#                       field_grid = (X_meshgrid, Y_meshgrid, Z_meshgrid)
 GEOM_TYPES = (
     "curve_2d",
     "curve_3d",
@@ -64,6 +68,8 @@ GEOM_TYPES = (
     "polygon",
     "polygon_set",
     "mesh_3d",
+    "vector_field_2d",
+    "vector_field_3d",
 )
 
 # Type alias for type checkers; runtime is just `str`.

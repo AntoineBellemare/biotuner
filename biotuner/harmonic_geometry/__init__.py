@@ -35,8 +35,38 @@ from biotuner.harmonic_geometry.harmonograph import (
     harmonograph_rotary,
 )
 
-# Chladni
-from biotuner.harmonic_geometry.chladni import (
+# Media: family-organized response operators (eigenmode, wave_field,
+# parametric, transport, morphogenetic). The historical chladni /
+# spherical_harmonics / interference_patterns modules survive as
+# compatibility shims that re-export from media.eigenmode / media.wave_field.
+from biotuner.harmonic_geometry import media  # noqa: F401
+from biotuner.harmonic_geometry.media import (
+    Acoustic,
+    Box3D,
+    Circular,
+    ClosedSurface,
+    Crystallization,
+    Domain,
+    Elastic,
+    Faraday,
+    Granular,
+    Interference,
+    Medium,
+    Pipeline,
+    PlasmaLattice,
+    PolygonDomain,
+    ReactionDiffusion,
+    Rectangular,
+    RigidPlate,
+    Sphere,
+    Streaming,
+    Tracer,
+)
+from biotuner.harmonic_geometry.media import coupling  # noqa: F401
+from biotuner.harmonic_geometry.media import structure  # noqa: F401
+
+# Chladni (functional API — now lives in media.eigenmode.rigid_plate).
+from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
     chladni_field_3d_box,
     chladni_field_circular,
     chladni_field_polygon,
@@ -48,10 +78,9 @@ from biotuner.harmonic_geometry.chladni import (
     ratios_to_modes,
 )
 
-# Spherical harmonics (eigenmodes of the Laplacian on the unit sphere —
-# the closed-surface analogue of Chladni plate modes; also the basis used
-# in higher-order ambisonics).
-from biotuner.harmonic_geometry.spherical_harmonics import (
+# Spherical harmonics (functional API — now lives in
+# media.eigenmode.closed_surface). The basis used in higher-order ambisonics.
+from biotuner.harmonic_geometry.media.eigenmode.closed_surface import (
     ratios_to_modes_lm,
     single_spherical_harmonic,
     spherical_harmonic_field,
@@ -60,10 +89,10 @@ from biotuner.harmonic_geometry.spherical_harmonics import (
     spherical_harmonic_temporal,
 )
 
-# Interference patterns (open-medium travelling-wave fields: harmonic
-# interference, quasicrystal, standing-wave lattice, vortex spiral, and
-# multi-source Young's-style fringes).
-from biotuner.harmonic_geometry.interference_patterns import (
+# Interference patterns (functional API — now lives in
+# media.wave_field.interference): harmonic interference, quasicrystal,
+# standing-wave lattice, vortex spiral, multi-source Young's-style fringes.
+from biotuner.harmonic_geometry.media.wave_field.interference import (
     harmonic_interference_field_2d,
     interference_field_2d,
     quasicrystal_field_2d,
@@ -145,6 +174,28 @@ from biotuner.harmonic_geometry.metrics import (
 )
 
 __all__ = [
+    # Media framework (family-organized response operators)
+    "media",
+    "Medium",
+    "Pipeline",
+    "Domain",
+    "Rectangular",
+    "Circular",
+    "PolygonDomain",
+    "Box3D",
+    "Sphere",
+    "RigidPlate",
+    "ClosedSurface",
+    "Elastic",
+    "PlasmaLattice",
+    "Interference",
+    "Acoustic",
+    "Faraday",
+    "Granular",
+    "Tracer",
+    "Streaming",
+    "Crystallization",
+    "ReactionDiffusion",
     # Core data
     "GeometryData",
     "GeomType",
