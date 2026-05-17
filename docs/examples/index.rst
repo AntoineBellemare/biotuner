@@ -44,9 +44,25 @@ Coupling
 
    phase_amplitude_coupling/phase_amplitude_coupling
 
-Visualization
-=============
+Harmonic geometry
+=================
 .. toctree::
    :maxdepth: 2
 
-   plotting/plotting
+   harmonic_geometry/01_lissajous_and_harmonograph
+   harmonic_geometry/02_chladni_and_spherical_harmonics
+   harmonic_geometry/03_circular_patterns
+   harmonic_geometry/04_fractal_and_generative
+   harmonic_geometry/05_three_dimensional
+   harmonic_geometry/06_metrics_and_transitions
+
+Harmonic geometry — media (chord-driven response operators)
+===========================================================
+.. toctree::
+   :maxdepth: 2
+
+   harmonic_geometry_media/01_media_protocol_and_pipelines
+   harmonic_geometry_media/02_eigenmode_and_wave_field
+   harmonic_geometry_media/03_parametric_and_transport
+   harmonic_geometry_media/04_morphogenetic
+

@@ -727,6 +727,53 @@ def _is_3d_tree(geom: GeometryData) -> bool:
     return coords.ndim == 2 and coords.shape[1] == 3
 
 
+def _accepts_kwarg(fn: Callable[..., Any], name: str) -> bool:
+    """Cheap predicate: does ``fn`` accept ``name`` as a keyword arg?
+
+    Used by :func:`gallery` to avoid injecting ``color=`` into drawers
+    that paint via a colormap (e.g. :func:`draw_field_2d`,
+    :func:`draw_polygon_set`, :func:`draw_spherical_harmonic_field`)
+    and would otherwise raise ``TypeError: got unexpected keyword
+    argument 'color'``.
+    """
+    import inspect
+    try:
+        sig = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return True  # be permissive for C-implemented callables
+    for p in sig.parameters.values():
+        if p.kind is inspect.Parameter.VAR_KEYWORD:
+            return True
+        if p.name == name:
+            return True
+    return False
+
+
+def _resolve_dispatch(geom: GeometryData) -> Tuple[Callable[..., Any], int]:
+    """Return the ``(drawer, ndim)`` pair that :func:`plot_geometry` will
+    end up using for ``geom``. Centralised so :func:`gallery` and
+    :func:`plot_geometry` always agree on the axis projection and on
+    whether the drawer accepts the standard ``color`` keyword."""
+    gt = geom.geom_type
+    fn, ndim = _DISPATCH.get(gt, (draw_curve_2d, 2))
+    if gt == "tree" and _is_3d_tree(geom):
+        fn, ndim = draw_tree_3d, 3
+    elif gt == "graph" and _is_3d_tree(geom):
+        fn, ndim = draw_tree_3d, 3
+    kind = (geom.metadata or {}).get("kind", "")
+    if gt == "field_2d" and kind in (
+        "spherical_harmonic_field",
+        "spherical_harmonic_single",
+        "spherical_harmonic_temporal",
+    ):
+        fn, ndim = draw_spherical_harmonic_field, 3
+    elif gt == "mesh_3d" and kind == "spherical_harmonic_mesh":
+        fn, ndim = draw_spherical_harmonic_mesh, 3
+    elif gt == "field_2d" and kind == "interference_field_2d":
+        fn, ndim = draw_interference_field_2d, 2
+    return fn, ndim
+
+
 def plot_geometry(geom: GeometryData, ax=None, **kwargs):
     """Auto-route a :class:`GeometryData` to the matching renderer.
 
@@ -830,8 +877,12 @@ def gallery(geometries: Sequence[GeometryData],
                   else list(color) if color is not None else CHORD_COLORS)
     draw_kwargs = dict(draw_kwargs or {})
     for k, g in enumerate(geometries):
-        gt = g.geom_type
-        is3 = _DISPATCH.get(gt, (None, 2))[1] == 3 or _is_3d_tree(g)
+        # Use the unified dispatch so the axis projection matches the
+        # drawer plot_geometry will actually call (e.g. spherical-harmonic
+        # fields render onto a sphere and need a 3-D axis even though the
+        # underlying geom_type is 'field_2d').
+        chosen_drawer, ndim = _resolve_dispatch(g)
+        is3 = ndim == 3
         if is3:
             ax = fig.add_subplot(n_rows, n_cols, k + 1, projection="3d")
             ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
@@ -842,7 +893,11 @@ def gallery(geometries: Sequence[GeometryData],
         else:
             ax = fig.add_subplot(n_rows, n_cols, k + 1)
         kw = dict(draw_kwargs)
-        if "color" not in kw:
+        # Only inject `color=` if the drawer accepts it; field-style
+        # drawers (chladni, interference, spherical-harmonic, polygon_set)
+        # paint via a colormap and would raise on color=.
+        target_drawer = renderer if renderer is not None else chosen_drawer
+        if "color" not in kw and _accepts_kwarg(target_drawer, "color"):
             kw["color"] = colors_arr[k % len(colors_arr)]
         if renderer is not None:
             if is3:
