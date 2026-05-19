@@ -346,6 +346,23 @@ def _d4_symmetrize(field: np.ndarray, mode: str = "max") -> np.ndarray:
     raise ValueError(f"_d4_symmetrize mode must be 'max' or 'sum'; got {mode!r}.")
 
 
+def _cap_modes(modes: Sequence[float], max_mode: Optional[float]) -> List[float]:
+    """Proportionally scale a list of wavenumbers down so ``max(modes) <= max_mode``.
+
+    Uniform divide-by-factor — preserves the chord's ratio structure
+    (every entry scales by the same factor). Floats are kept as floats;
+    when callers want integers they cast afterwards. Returns the list
+    unchanged when ``max_mode`` is ``None`` or already satisfied.
+    """
+    if max_mode is None or not modes:
+        return list(modes)
+    peak = max(abs(float(m)) for m in modes)
+    if peak <= float(max_mode):
+        return list(modes)
+    factor = peak / float(max_mode)
+    return [float(m) / factor for m in modes]
+
+
 def chladni_field_pairwise(
     int_modes: Sequence[float],
     *,
@@ -356,6 +373,7 @@ def chladni_field_pairwise(
     Ly: float = 1.0,
     resolution: int = 400,
     symmetry: str = "none",
+    max_mode: Optional[float] = None,
 ) -> GeometryData:
     """Pairwise cosine-product field on a (square) plate.
 
@@ -401,6 +419,10 @@ def chladni_field_pairwise(
             f"got {list(int_modes)!r}."
         )
 
+    # Optionally cap the peak wavenumber so high-LCM chords (e.g. just-
+    # intoned Dim7 → [35, 42, 49, 60]) still produce visible features
+    # rather than a fine-grained lattice.
+    int_modes = _cap_modes(int_modes, max_mode)
     # NOTE: pair components are kept as the caller's numeric type — float
     # values are valid mid-animation interpolations between integer chord
     # keyframes (they just don't produce crisp standing-wave eigenmodes).
@@ -462,6 +484,7 @@ def chladni_field_triple_antisymmetric(
     Ly: float = 1.0,
     resolution: int = 400,
     symmetry: str = "none",
+    max_mode: Optional[float] = None,
 ) -> GeometryData:
     """Triple-antisymmetric field for chords of three or more ratios.
 
@@ -480,6 +503,7 @@ def chladni_field_triple_antisymmetric(
             "chladni_field_triple_antisymmetric needs at least 3 modes; "
             f"got {list(int_modes)!r}."
         )
+    int_modes = _cap_modes(int_modes, max_mode)
     triples = [
         (float(int_modes[i]), float(int_modes[j]), float(int_modes[k]))
         for i in range(len(int_modes))
@@ -1257,9 +1281,14 @@ class RigidPlate(_Medium):
     mode_strategy : str, default 'stern_brocot'
         Only honoured when ``mode_scheme='per_ratio'``. Forwarded to
         :func:`ratios_to_modes`.
-    max_mode : int, default 20
-        Only honoured when ``mode_scheme='per_ratio'``. Forwarded to
-        :func:`ratios_to_modes`.
+    max_mode : int or float, default 20
+        For ``mode_scheme='per_ratio'``: forwarded to
+        :func:`ratios_to_modes` (caps the Stern-Brocot search).
+        For the cymatics schemes: caps the peak wavenumber so high-LCM
+        chords (e.g. just-intoned Dim7 → ``[35, 42, 49, 60]``) are
+        proportionally scaled down to ``max_mode`` before the field is
+        built. Ratios are preserved; entries are kept as floats.
+        Set ``max_mode=None`` to disable scaling.
     symmetry : {'none', 'd4_max', 'd4_sum'}, default 'none'
         Optional D4 symmetrisation (max-orbit or average over rotations
         and reflections). Only available on the pairwise / triple
@@ -1437,6 +1466,7 @@ class RigidPlate(_Medium):
                 "Ly": plate_kwargs.get("Ly", 1.0),
                 "resolution": plate_kwargs.get("resolution", 400),
                 "symmetry": self.symmetry,
+                "max_mode": self.max_mode,
             }
             if self.mode_scheme == "pairwise_antisymmetric":
                 geom = chladni_field_pairwise(
