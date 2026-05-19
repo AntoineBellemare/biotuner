@@ -1,0 +1,24 @@
+{
+  "name": "harmonic-geometry-animation",
+  "version": "0.1.0",
+  "description": "Educational animation of biotuner.harmonic_geometry Phase 1-3 outputs",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "build": "remotion render src/index.ts MainVideo out/harmonic-geometry.mp4",
+    "build-webm": "remotion render src/index.ts MainVideo out/harmonic-geometry.webm --codec=vp8"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.249",
+    "@remotion/cli": "4.0.249",
+    "@remotion/renderer": "4.0.249",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.249"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
+    "typescript": "5.6.3"
+  }
+}
