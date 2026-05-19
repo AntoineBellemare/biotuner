@@ -101,6 +101,13 @@ class PaletteExportRequest(BaseModel):
     filename: str = Field(default="palette")
 
 
+class TuningExportRequest(BaseModel):
+    """Request for tuning export (.scl / .tun / .txt / .json)"""
+    tuning: List[float]
+    description: str = Field(default="Biotuner-derived tuning")
+    filename: str = Field(default="biotuner_tuning")
+
+
 class SessionState(BaseModel):
     """Session state storage"""
     session_id: str

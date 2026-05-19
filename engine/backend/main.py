@@ -19,6 +19,7 @@ from services.biotuner_service import BiotunerService
 from services.audio_service import AudioService
 from services.chord_service import ChordService
 from services.color_service import ColorService
+from services.tuning_export_service import export as export_tuning_data
 from models.schemas import (
     AnalysisConfig,
     AnalysisResult,
@@ -30,7 +31,8 @@ from models.schemas import (
     ChordAudioRequest,
     MidiExportRequest,
     MusicXMLRequest,
-    PaletteExportRequest
+    PaletteExportRequest,
+    TuningExportRequest,
 )
 
 # Initialize FastAPI app
@@ -574,6 +576,33 @@ async def export_palette(
             headers={"Content-Disposition": f"attachment; filename={request.filename}.{format}"}
         )
     
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Tuning Export
+# ============================================================================
+
+@app.post("/api/export-tuning/{fmt}")
+async def export_tuning(fmt: str, request: TuningExportRequest):
+    """Export the active tuning in `scl`, `tun`, `txt`, or `json` format."""
+    try:
+        data, mime = export_tuning_data(
+            fmt,
+            request.tuning,
+            description=request.description,
+            filename=request.filename,
+        )
+        return StreamingResponse(
+            io.BytesIO(data),
+            media_type=mime,
+            headers={
+                "Content-Disposition": f"attachment; filename={request.filename}.{fmt.lower()}"
+            },
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
