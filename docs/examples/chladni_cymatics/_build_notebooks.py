@@ -371,7 +371,90 @@ plotting.gallery(
     fig_width=10.0,
 );
 """),
-    ("md", """## 7. Triple-antisymmetric — chords of ≥3 ratios
+    ("md", """## 7. Painted rendering — robust for higher wavenumbers
+
+The classical sand-particle rendering reads as "individual grains" when
+the chord's peak wavenumber climbs above ~15 — each nodal patch then
+shrinks below the visible particle-cluster scale. ``plotting.draw_chladni_painted``
+is an imshow-based alternative that:
+
+- auto-scales σ inversely with the chord's peak wavenumber (so stripe
+  width tracks the local wavelength — high-WN chords automatically get
+  thinner stripes),
+- auto-scales grid resolution proportional to the peak wavenumber,
+- renders with a perceptual luminance ramp (``afmhot`` by default) +
+  gamma midtone brightening + a 1-pixel anti-alias blur.
+
+Result: bold flowing curves at *every* wavenumber range, without having
+to tune σ manually. Two styles:
+
+- ``style='nodal'`` (default) — Gaussian-of-zero-crossing density.
+- ``style='envelope'`` — heavy smoothing of ``|w|²`` to wash out the
+  finest wavenumber detail and show the macroscopic energy distribution.
+  Useful when the chord's mathematics genuinely produces a dense lattice
+  (e.g. when wavenumbers can't be capped without losing the chord's
+  identity).
+"""),
+    ("code", """from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+    _auto_resolution_for_modes,
+)
+
+# A wider range of chords — small to mid wavenumbers — all rendered with
+# the painted nodal style, auto-σ, auto-resolution.
+GAMUT = [
+    ("Major\\n[4, 5, 6]",        [4, 5, 6]),
+    ("Sus4\\n[6, 8, 9]",         [6, 8, 9]),
+    ("Dom7\\n[4, 5, 6, 7]",      [4, 5, 6, 7]),
+    ("Dim7\\n[5, 6, 7, 9]",      [5, 6, 7, 9]),
+    ("Tritone\\n[5, 7]",          [5, 7]),
+    ("Just 11\\n[8, 11]",         [8, 11]),
+    ("Quintal\\n[3, 7, 11]",      [3, 7, 11]),
+    ("11-limit\\n[9, 11, 13, 17]", [9, 11, 13, 17]),
+]
+
+fig, axes = plt.subplots(2, 4, figsize=(18, 9.5), facecolor="black")
+for ax, (name, chord) in zip(axes.flat, GAMUT):
+    field = chladni_field_pairwise(
+        chord, antisymmetric=True, symmetry="d4_max",
+        resolution=_auto_resolution_for_modes(chord),
+    )
+    plotting.draw_chladni_painted(field, ax, style="nodal", gamma=0.85)
+    ax.set_title(name, color="white", fontsize=11)
+fig.suptitle(
+    "Painted Chladni — auto-σ, auto-resolution, perceptual colormap (afmhot)",
+    color="white", fontsize=13, y=0.995,
+)
+fig.tight_layout(pad=0.6);
+"""),
+    ("md", """### `envelope` mode — last-resort smoothing for blown-up chords
+
+When the chord's `Fraction` form has high LCM (e.g. 12-TET Dim7 →
+``[35, 42, 49, 60]``) **and** you don't want to cap the wavenumbers,
+``style='envelope'`` shows the smoothed ``|w|²`` energy distribution
+instead of trying to draw 60+ nodal lines per side. The chord-fingerprint
+survives as a coarser pattern."""),
+    ("code", """dim7_blown = [35, 42, 49, 60]
+field_blown = chladni_field_pairwise(
+    dim7_blown, antisymmetric=True, symmetry="d4_max",
+    resolution=_auto_resolution_for_modes(dim7_blown),
+)
+field_capped = chladni_field_pairwise(
+    dim7_blown, antisymmetric=True, symmetry="d4_max",
+    resolution=_auto_resolution_for_modes(dim7_blown), max_mode=12,
+)
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5.2), facecolor="black")
+plotting.draw_chladni_painted(field_blown,  axes[0], style="nodal",    gamma=0.85)
+axes[0].set_title("no cap, style='nodal'\\n(fine lattice)", color="white", fontsize=11)
+plotting.draw_chladni_painted(field_blown,  axes[1], style="envelope", gamma=0.85)
+axes[1].set_title("no cap, style='envelope'\\n(macroscopic envelope)", color="white", fontsize=11)
+plotting.draw_chladni_painted(field_capped, axes[2], style="nodal",    gamma=0.85)
+axes[2].set_title("max_mode=12, style='nodal'\\n(scaled-down + bold)", color="white", fontsize=11)
+fig.suptitle("Dim7 [35, 42, 49, 60] — three ways to make it visible",
+             color="white", fontsize=13, y=1.01)
+fig.tight_layout();
+"""),
+    ("md", """## 8. Triple-antisymmetric — chords of ≥3 ratios
 
 The triple-antisymmetric scheme sums the cyclic chain of antisymmetric
 pair-modes over every distinct triple in the chord:
@@ -397,7 +480,7 @@ plotting.gallery(geoms, n_cols=4, titles=list(CHORDS_INT.keys()),
                  suptitle="Triple-antisymmetric + D4 max + nodal density",
                  fig_width=16.0);
 """),
-    ("md", """## 8. Animation — chord-sequence morph
+    ("md", """## 9. Animation — chord-sequence morph
 
 ``plotting.animate_chord_sequence`` drives any chord→geometry builder
 through a cosine-eased loop. Each keyframe is an integer-ratio list;
@@ -450,6 +533,8 @@ print("rendered:", os.path.getsize("renders/chladni_morph_demo.mp4"), "bytes")
 | smooth D4 averaging | `symmetry="d4_sum"` instead of `"d4_max"` |
 | cap high-LCM chords | pass `max_mode=12` (or any cap) to the pairwise / triple builders |
 | chord-morph MP4 | `plotting.animate_chord_sequence([chord1, chord2, ...], builder, save_path=...)` |
+| painted aesthetic, auto-σ | `plotting.draw_chladni_painted(field, ax, style="nodal")` |
+| painted aesthetic for blown-up chords | `plotting.draw_chladni_painted(field, ax, style="envelope")` |
 """),
 ]
 

@@ -915,6 +915,117 @@ def gallery(geometries: Sequence[GeometryData],
     return fig, axes
 
 
+def draw_chladni_painted(
+    geom: GeometryData,
+    ax,
+    *,
+    cmap: str = "afmhot",
+    blur_radius_px: Optional[float] = None,
+    gamma: float = 0.75,
+    bg_color: str = "black",
+    style: str = "nodal",
+    envelope_smoothing: float = 0.04,
+) -> Any:
+    """Render a cymatics field as bold continuous curves on a black plate.
+
+    Two styles, both robust to high-wavenumber chords:
+
+    * ``style='nodal'`` (default) — render the Gaussian-of-zero-crossing
+      density on a perceptual colormap with a light Gaussian blur. Works
+      well for chords with peak wavenumber ≲ 15. At higher wavenumbers
+      each nodal patch shrinks below the blur radius and the rendering
+      degrades to a fine lattice.
+
+    * ``style='envelope'`` — render a heavily-smoothed ``|w|²`` envelope.
+      The fine wavenumber detail is washed out and what remains is the
+      macroscopic energy distribution of the chord. **This is the
+      recommended style for chords with peak wavenumber ≳ 20** — it
+      preserves the chord-fingerprint while reading as bold flowing
+      shapes regardless of the integer denominators.
+
+    Parameters
+    ----------
+    geom : GeometryData
+        Either a ``field_2d`` density (already passed through
+        :func:`chladni_nodal_density`) or a signed amplitude field.
+        ``style='envelope'`` always recomputes from the signed amplitude;
+        ``style='nodal'`` accepts a precomputed density.
+    ax : matplotlib axis
+    cmap : str, default 'afmhot'
+        Perceptual luminance ramp. Other good picks: ``'inferno'``,
+        ``'cubehelix'``, ``'gist_heat'``, ``'magma'``.
+    blur_radius_px : float, optional
+        Gaussian blur σ in **pixels**. When ``None`` (default), auto-set
+        to ~half a nodal-line width based on the chord's peak wavenumber
+        (read from ``geom.parameters['int_modes']``). Pass a number to
+        override.
+    gamma : float, default 0.75
+        Output midtone brightening. ``< 1`` brightens.
+    bg_color : str, default 'black'
+    style : {'nodal', 'envelope'}, default 'nodal'
+    envelope_smoothing : float, default 0.08
+        For ``style='envelope'``: Gaussian σ in **plate units** (so 0.08
+        ≈ 8% of plate width). Larger → smoother / more macroscopic.
+    """
+    from scipy.ndimage import gaussian_filter
+
+    field = np.asarray(geom.coordinates, dtype=np.float64)
+    if field.ndim != 2:
+        raise ValueError(
+            f"draw_chladni_painted needs a 2-D field; got shape {field.shape}."
+        )
+    valid = np.isfinite(field)
+
+    if style not in ("nodal", "envelope"):
+        raise ValueError(f"style must be 'nodal' or 'envelope'; got {style!r}.")
+
+    if style == "envelope":
+        # Smoothed |w|² envelope. ``envelope_smoothing`` is in plate-fraction
+        # units — e.g. 0.04 ≈ 4% of plate width. Larger values progressively
+        # discard fine wavenumber detail, revealing the chord's macroscopic
+        # energy distribution. The squaring step removes the signed-zero
+        # nodal contrast; smoothing then absorbs the remaining ripple.
+        H, W = field.shape
+        sigma_px = max(1.0, envelope_smoothing * min(H, W))
+        sq = np.where(valid, field * field, 0.0)
+        img = gaussian_filter(sq, sigma=sigma_px)
+    else:
+        # nodal style: convert through Gaussian-of-zero-crossing if the
+        # input is still a signed amplitude. Apply at most a 1-pixel
+        # anti-alias blur (NOT a stripe-thickening blur — the stripe
+        # thickness is already controlled by σ).
+        from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+            chladni_nodal_density,
+        )
+        if float(np.nanmin(field)) < -1e-12:
+            density_geom = chladni_nodal_density(geom)  # auto-σ from modes
+            density = np.asarray(density_geom.coordinates, dtype=np.float64)
+        else:
+            density = field
+        img = np.where(valid, density, 0.0)
+        bpx = 0.7 if blur_radius_px is None else float(blur_radius_px)
+        if bpx > 0:
+            img = gaussian_filter(img, sigma=bpx)
+
+    peak = float(img.max()) or 1.0
+    img = img / peak
+    if gamma != 1.0:
+        img = np.power(np.clip(img, 0.0, 1.0), gamma)
+
+    if geom.field_grid is not None:
+        X, Y = geom.field_grid[:2]
+        extent = (float(X.min()), float(X.max()),
+                  float(Y.min()), float(Y.max()))
+    else:
+        extent = (0.0, 1.0, 0.0, 1.0)
+    ax.set_facecolor(bg_color)
+    art = ax.imshow(img, extent=extent, origin="lower", cmap=cmap,
+                    aspect="equal", interpolation="bilinear",
+                    vmin=0.0, vmax=1.0)
+    ax.set_xticks([]); ax.set_yticks([])
+    return art
+
+
 def animate_chord_sequence(
     chords: Sequence[Sequence[float]],
     builder: Callable[[Sequence[float]], GeometryData],

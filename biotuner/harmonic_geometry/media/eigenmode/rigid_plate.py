@@ -346,6 +346,36 @@ def _d4_symmetrize(field: np.ndarray, mode: str = "max") -> np.ndarray:
     raise ValueError(f"_d4_symmetrize mode must be 'max' or 'sum'; got {mode!r}.")
 
 
+def _auto_sigma_for_modes(
+    modes: Sequence[float], *, base: float = 0.5,
+    lo: float = 0.005, hi: float = 0.12,
+) -> float:
+    """Compute a "visually consistent" σ for the nodal-density transform.
+
+    σ scales inversely with the chord's peak wavenumber so the stripe width
+    stays a roughly constant fraction of the local wave period. ``base=0.5``
+    yields σ ≈ 0.05 at peak WN = 10 and σ ≈ 0.008 at peak WN = 60.
+    """
+    if not modes:
+        return base
+    peak = max(abs(float(m)) for m in modes) or 1.0
+    return max(lo, min(hi, base / peak))
+
+
+def _auto_resolution_for_modes(
+    modes: Sequence[float], *, floor: int = 400, oversample: int = 8,
+) -> int:
+    """Pick a grid resolution that samples the highest wavenumber adequately.
+
+    Default: at least 8 grid points per wavelength, floor 400. So peak WN=60
+    → resolution 480; peak WN=10 → resolution 400.
+    """
+    if not modes:
+        return floor
+    peak = max(abs(float(m)) for m in modes) or 1.0
+    return max(floor, int(round(oversample * peak)))
+
+
 def _cap_modes(modes: Sequence[float], max_mode: Optional[float]) -> List[float]:
     """Proportionally scale a list of wavenumbers down so ``max(modes) <= max_mode``.
 
@@ -557,7 +587,7 @@ def chladni_field_triple_antisymmetric(
 def chladni_nodal_density(
     field_geom: GeometryData,
     *,
-    sigma: float = 0.05,
+    sigma: Optional[float] = None,
     mode: str = "nodal",
 ) -> GeometryData:
     """Map a signed amplitude field to a "sand" density.
@@ -573,9 +603,14 @@ def chladni_nodal_density(
     field_geom : GeometryData
         Must have ``geom_type='field_2d'`` (or ``field_3d``). The
         ``coordinates`` array is the signed amplitude ``w``.
-    sigma : float, default 0.05
+    sigma : float, optional
         Stripe half-width relative to the amplitude scale. Smaller →
         razor-thin nodal stripes; larger → wider, softer stripes.
+        When ``None`` (default), σ is auto-derived from the field's
+        ``parameters['int_modes']`` (if present) so that stripe width
+        scales inversely with the chord's peak wavenumber — keeping the
+        stripe-to-wavelength ratio roughly constant across very different
+        chords. Fallback to ``0.05`` if no mode metadata is present.
     mode : {'nodal', 'antinodal'}, default 'nodal'
     """
     if field_geom.geom_type not in ("field_2d", "field_3d"):
@@ -583,10 +618,16 @@ def chladni_nodal_density(
             f"chladni_nodal_density expects a field_2d or field_3d "
             f"GeometryData; got geom_type={field_geom.geom_type!r}."
         )
-    if sigma <= 0:
-        raise ValueError(f"sigma must be > 0, got {sigma!r}.")
     if mode not in ("nodal", "antinodal"):
         raise ValueError(f"mode must be 'nodal' or 'antinodal'; got {mode!r}.")
+    if sigma is None:
+        modes_meta = (field_geom.parameters or {}).get("int_modes")
+        if modes_meta:
+            sigma = _auto_sigma_for_modes(modes_meta)
+        else:
+            sigma = 0.05
+    if sigma <= 0:
+        raise ValueError(f"sigma must be > 0, got {sigma!r}.")
     w = np.asarray(field_geom.coordinates, dtype=float)
     nodal = np.exp(-(w * w) / (sigma * sigma))
     density = nodal if mode == "nodal" else (1.0 - nodal)

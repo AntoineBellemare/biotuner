@@ -183,10 +183,14 @@ class Granular(Medium):
         Bypasses the standard Boltzmann formulation
         (``affinity``/``temperature``/``field_kind``) — those are
         ignored when ``nodal_emphasis=True``.
-    sigma : float, default=0.05
-        Stripe half-width for the nodal-emphasis transform (relative to
-        the input amplitude scale). Smaller → razor-thin sand stripes;
-        larger → wider, softer stripes.
+    sigma : float, optional
+        Stripe half-width for the nodal-emphasis transform. When
+        ``None`` (the default) σ is auto-derived from the upstream
+        field's ``parameters['int_modes']`` so that stripe width
+        scales inversely with the chord's peak wavenumber — high-WN
+        chords (e.g. Dim7 = [35, 42, 49, 60]) get small σ; low-WN
+        chords get larger σ. Pass an explicit float to override.
+        Ignored when ``nodal_emphasis=False``.
 
     Notes
     -----
@@ -210,7 +214,7 @@ class Granular(Medium):
         n_particles: int = 4000,
         seed: Optional[int] = None,
         nodal_emphasis: bool = False,
-        sigma: float = 0.05,
+        sigma: Optional[float] = None,
     ) -> None:
         if field_kind not in _VALID_FIELD_KINDS:
             raise ValueError(
@@ -230,7 +234,7 @@ class Granular(Medium):
             raise ValueError(
                 f"n_particles must be >= 1; got {n_particles!r}."
             )
-        if sigma <= 0:
+        if sigma is not None and sigma <= 0:
             raise ValueError(f"sigma must be > 0; got {sigma!r}.")
         self.affinity = float(affinity)
         self.temperature = float(temperature)
@@ -239,7 +243,7 @@ class Granular(Medium):
         self.n_particles = int(n_particles)
         self.seed = seed
         self.nodal_emphasis = bool(nodal_emphasis)
-        self.sigma = float(sigma)
+        self.sigma = sigma  # None == auto-scale from upstream metadata
 
     # ----------------------------------------------------------- contract
 
@@ -280,7 +284,7 @@ class Granular(Medium):
         nodal_emphasis = bool(
             overrides.pop("nodal_emphasis", self.nodal_emphasis)
         )
-        sigma = float(overrides.pop("sigma", self.sigma))
+        sigma = overrides.pop("sigma", self.sigma)  # may be None == auto
 
         if overrides:
             raise TypeError(
@@ -295,7 +299,7 @@ class Granular(Medium):
             raise ValueError(f"output_mode must be one of {_VALID_OUTPUT_MODES}.")
         if temperature <= 0:
             raise ValueError("temperature must be > 0.")
-        if sigma <= 0:
+        if sigma is not None and sigma <= 0:
             raise ValueError("sigma must be > 0.")
 
         field_data = self._resolve_field(forcing)
@@ -313,6 +317,19 @@ class Granular(Medium):
             # Cymatics sand model: density concentrates on zero-crossings.
             # Bypasses the Boltzmann formulation — `affinity`, `temperature`,
             # and `field_kind` are ignored on this branch.
+            if sigma is None:
+                # Auto-σ: scale inversely with the upstream chord's peak
+                # wavenumber so stripe width tracks the local wavelength.
+                # Falls back to 0.05 if no int_modes metadata is present.
+                modes_meta = (field_data.parameters or {}).get("int_modes")
+                if modes_meta:
+                    from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+                        _auto_sigma_for_modes,
+                    )
+                    sigma = _auto_sigma_for_modes(modes_meta)
+                else:
+                    sigma = 0.05
+            sigma = float(sigma)
             valid = np.isfinite(field)
             density = np.zeros_like(field, dtype=np.float64)
             density[valid] = np.exp(
