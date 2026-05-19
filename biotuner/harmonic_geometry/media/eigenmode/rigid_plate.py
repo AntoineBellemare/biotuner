@@ -259,6 +259,325 @@ def chladni_field_rectangular(
     )
 
 
+# ───────────────────────────── cymatics-style square-plate fields ──────────
+#
+# A second family of rectangular-plate fields, motivated by the iconic
+# Chladni sand-on-square-plate experiment. Where `chladni_field_rectangular`
+# above sums one symmetric ``cos(mπX/Lx) · cos(nπY/Ly)`` term per mode pair,
+# the routines here sum one term per **pair (or triple) of chord ratios**
+# using antisymmetric (or symmetric) products of cosines on a *square*
+# plate. The chord ratios are used directly as integer wavenumbers
+# (extracted losslessly via :func:`chord_to_int_modes` — LCM of the
+# Fraction denominators), so no rounding is needed.
+#
+# Compared to the per-ratio scheme the cymatics scheme typically produces
+# the much more recognisable "petal-cross / lattice" patterns. The
+# resulting field can additionally be:
+#
+#   - D4-symmetrised (element-wise ``max`` or ``sum`` over the 8-element
+#     dihedral orbit), which reinforces the crystalline lattice look;
+#   - mapped to a "sand density" via the Gaussian-of-zero-crossing
+#     transform :func:`chladni_nodal_density` (``exp(-w²/σ²)``), which
+#     concentrates intensity on the nodal lines — the locations where
+#     sand actually accumulates in the physical experiment.
+
+
+def chord_to_int_modes(
+    ratios: Iterable[RatioLike],
+) -> List[int]:
+    """Lossless integer-mode extraction from a chord's ratios.
+
+    Multiplies the chord's :class:`fractions.Fraction` representation
+    through by the least common multiple of the denominators. This maps a
+    chord like ``[1, 5/4, 3/2]`` to ``[4, 5, 6]`` and ``[10/9, 5/4, 3/2]``
+    to ``[40, 45, 54]`` — no rounding, no information loss.
+
+    Parameters
+    ----------
+    ratios : iterable of ratio-like
+        Fractions, ints, floats, or ``(numer, denom)`` tuples. Floats are
+        first promoted to a :class:`Fraction` via ``Fraction(float).
+        limit_denominator(1024)`` so finite floats are handled gracefully.
+
+    Returns
+    -------
+    list of int
+        Smallest non-negative integer representation of the chord.
+    """
+    from functools import reduce
+    fracs: List[Fraction] = []
+    for r in ratios:
+        if isinstance(r, Fraction):
+            fracs.append(r)
+        elif isinstance(r, tuple) and len(r) == 2:
+            fracs.append(Fraction(int(r[0]), int(r[1])))
+        elif isinstance(r, int):
+            fracs.append(Fraction(r, 1))
+        else:
+            fracs.append(Fraction(float(r)).limit_denominator(1024))
+    if not fracs:
+        return []
+    lcm_denom = reduce(lambda a, b: a * b // math.gcd(a, b),
+                       (f.denominator for f in fracs), 1)
+    return [int(f * lcm_denom) for f in fracs]
+
+
+def _d4_symmetrize(field: np.ndarray, mode: str = "max") -> np.ndarray:
+    """Apply the 8-element dihedral group (D4) to a square 2-D field.
+
+    ``mode='max'`` returns the element-wise maximum over the 8-orbit —
+    a non-linear symmetriser that preserves bright features and gives a
+    crystalline lattice look (used by the original cymatics demo).
+    ``mode='sum'`` returns the orbit average — a linear smoother that
+    enforces strict D4 symmetry without amplifying any one orientation.
+    """
+    if field.shape[0] != field.shape[1]:
+        raise ValueError(
+            "_d4_symmetrize expects a square field; "
+            f"got shape {field.shape}. Use Lx == Ly."
+        )
+    orbit = [np.rot90(field, k) for k in range(4)] + [
+        np.rot90(field.T, k) for k in range(4)
+    ]
+    if mode == "max":
+        return np.maximum.reduce(orbit)
+    if mode == "sum":
+        return np.add.reduce(orbit) / 8.0
+    raise ValueError(f"_d4_symmetrize mode must be 'max' or 'sum'; got {mode!r}.")
+
+
+def chladni_field_pairwise(
+    int_modes: Sequence[float],
+    *,
+    antisymmetric: bool = True,
+    amps: Optional[Sequence[float]] = None,
+    phases: Optional[Sequence[float]] = None,
+    Lx: float = 1.0,
+    Ly: float = 1.0,
+    resolution: int = 400,
+    symmetry: str = "none",
+) -> GeometryData:
+    """Pairwise cosine-product field on a (square) plate.
+
+    For every distinct pair ``(m, n)`` drawn from ``int_modes``, sums
+    either the **antisymmetric** mode
+    ``cos(mπX/Lx)·cos(nπY/Ly) - cos(nπX/Lx)·cos(mπY/Ly)``
+    (the classic Chladni square-plate mode) or the **symmetric** mode
+    ``cos(mπX/Lx)·cos(nπY/Ly) + cos(nπX/Lx)·cos(mπY/Ly)``. The pair
+    weights default to uniform; provide ``amps``/``phases`` to override.
+
+    Parameters
+    ----------
+    int_modes : sequence of int
+        Integer wavenumbers — typically obtained via
+        :func:`chord_to_int_modes`.
+    antisymmetric : bool, default True
+        Use the antisymmetric pair mode (the iconic Chladni form). Set
+        ``False`` to use the symmetric pair mode.
+    amps, phases : optional sequences
+        One value per pair (i.e. ``C(len(int_modes), 2)`` values). Defaults
+        to uniform amplitude and zero phase.
+    Lx, Ly : float, default 1.0
+        Plate side lengths. The classical Chladni square plate has
+        ``Lx == Ly``; the formulae work for any aspect ratio.
+    resolution : int, default 400
+    symmetry : {'none', 'd4_max', 'd4_sum'}, default 'none'
+        Optional D4 symmetrisation (requires ``Lx == Ly``).
+
+    Returns
+    -------
+    GeometryData
+        ``geom_type='field_2d'``, ``metadata.kind='chladni_field_pairwise'``,
+        ``metadata.scheme='pairwise_antisymmetric'`` or
+        ``'pairwise_symmetric'``.
+    """
+    if Lx <= 0 or Ly <= 0:
+        raise ValueError("Lx and Ly must be > 0.")
+    if resolution < 4:
+        raise ValueError(f"resolution must be >= 4, got {resolution!r}.")
+    if len(int_modes) < 2:
+        raise ValueError(
+            "chladni_field_pairwise needs at least 2 integer modes; "
+            f"got {list(int_modes)!r}."
+        )
+
+    # NOTE: pair components are kept as the caller's numeric type — float
+    # values are valid mid-animation interpolations between integer chord
+    # keyframes (they just don't produce crisp standing-wave eigenmodes).
+    pairs: List[Tuple[float, float]] = [
+        (float(int_modes[i]), float(int_modes[j]))
+        for i in range(len(int_modes))
+        for j in range(i + 1, len(int_modes))
+    ]
+    a, p = _resolve_amps_phases(len(pairs), amps, phases)
+
+    x = np.linspace(0.0, Lx, resolution)
+    y = np.linspace(0.0, Ly, resolution)
+    X, Y = np.meshgrid(x, y, indexing="xy")
+    pi_X_Lx = np.pi * X / Lx
+    pi_Y_Ly = np.pi * Y / Ly
+
+    field = np.zeros_like(X)
+    sign = -1.0 if antisymmetric else 1.0
+    for (m, n), Ai, phi in zip(pairs, a, p):
+        c1 = np.cos(m * pi_X_Lx) * np.cos(n * pi_Y_Ly)
+        c2 = np.cos(n * pi_X_Lx) * np.cos(m * pi_Y_Ly)
+        field += Ai * (c1 + sign * c2) * np.cos(phi)
+
+    if symmetry != "none":
+        sym_mode = "max" if symmetry == "d4_max" else "sum"
+        field = _d4_symmetrize(field, mode=sym_mode)
+
+    scheme = "pairwise_antisymmetric" if antisymmetric else "pairwise_symmetric"
+    return GeometryData(
+        geom_type="field_2d",
+        coordinates=field,
+        field_grid=(X, Y),
+        parameters={
+            "int_modes": list(int_modes),
+            "pairs": list(pairs),
+            "amps": a.tolist(),
+            "phases": p.tolist(),
+            "Lx": float(Lx),
+            "Ly": float(Ly),
+            "resolution": int(resolution),
+            "symmetry": symmetry,
+            "antisymmetric": bool(antisymmetric),
+        },
+        metadata={
+            "kind": "chladni_field_pairwise",
+            "plate": "rectangular",
+            "scheme": scheme,
+            "n_pairs": len(pairs),
+        },
+    )
+
+
+def chladni_field_triple_antisymmetric(
+    int_modes: Sequence[float],
+    *,
+    amps: Optional[Sequence[float]] = None,
+    phases: Optional[Sequence[float]] = None,
+    Lx: float = 1.0,
+    Ly: float = 1.0,
+    resolution: int = 400,
+    symmetry: str = "none",
+) -> GeometryData:
+    """Triple-antisymmetric field for chords of three or more ratios.
+
+    For every distinct triple ``(a, b, c)`` in ``int_modes``, sums the
+    cyclic chain of antisymmetric pair-modes
+    ``M(a,b) + M(b,c) + M(c,a)``,
+    where ``M(p, q) = cos(pπX/Lx)cos(qπY/Ly) - cos(qπX/Lx)cos(pπY/Ly)``.
+    This emphasises triadic interactions: a triadic chord contributes
+    one rich, three-fold-flavoured mode rather than the three independent
+    pair-modes that the pairwise scheme would otherwise emit.
+
+    For chords of fewer than 3 ratios this raises :class:`ValueError`.
+    """
+    if len(int_modes) < 3:
+        raise ValueError(
+            "chladni_field_triple_antisymmetric needs at least 3 modes; "
+            f"got {list(int_modes)!r}."
+        )
+    triples = [
+        (float(int_modes[i]), float(int_modes[j]), float(int_modes[k]))
+        for i in range(len(int_modes))
+        for j in range(i + 1, len(int_modes))
+        for k in range(j + 1, len(int_modes))
+    ]
+    a, p = _resolve_amps_phases(len(triples), amps, phases)
+
+    x = np.linspace(0.0, Lx, resolution)
+    y = np.linspace(0.0, Ly, resolution)
+    X, Y = np.meshgrid(x, y, indexing="xy")
+    pi_X_Lx = np.pi * X / Lx
+    pi_Y_Ly = np.pi * Y / Ly
+
+    def _antisym(p_, q_):
+        return (np.cos(p_ * pi_X_Lx) * np.cos(q_ * pi_Y_Ly)
+                - np.cos(q_ * pi_X_Lx) * np.cos(p_ * pi_Y_Ly))
+
+    field = np.zeros_like(X)
+    for (a_m, b_m, c_m), Ai, phi in zip(triples, a, p):
+        contribution = _antisym(a_m, b_m) + _antisym(b_m, c_m) + _antisym(c_m, a_m)
+        field += Ai * contribution * np.cos(phi)
+
+    if symmetry != "none":
+        sym_mode = "max" if symmetry == "d4_max" else "sum"
+        field = _d4_symmetrize(field, mode=sym_mode)
+
+    return GeometryData(
+        geom_type="field_2d",
+        coordinates=field,
+        field_grid=(X, Y),
+        parameters={
+            "int_modes": list(int_modes),
+            "triples": list(triples),
+            "amps": a.tolist(),
+            "phases": p.tolist(),
+            "Lx": float(Lx),
+            "Ly": float(Ly),
+            "resolution": int(resolution),
+            "symmetry": symmetry,
+        },
+        metadata={
+            "kind": "chladni_field_triple_antisymmetric",
+            "plate": "rectangular",
+            "scheme": "triple_antisymmetric",
+            "n_triples": len(triples),
+        },
+    )
+
+
+def chladni_nodal_density(
+    field_geom: GeometryData,
+    *,
+    sigma: float = 0.05,
+    mode: str = "nodal",
+) -> GeometryData:
+    """Map a signed amplitude field to a "sand" density.
+
+    ``mode='nodal'`` returns ``exp(-w² / σ²)`` — the Gaussian-of-zero-
+    crossing transform, concentrating intensity on the nodal lines where
+    sand collects in the physical Chladni experiment.
+    ``mode='antinodal'`` returns ``1 - exp(-w² / σ²)`` — concentrates on
+    antinodes (peaks and valleys), a complementary aesthetic.
+
+    Parameters
+    ----------
+    field_geom : GeometryData
+        Must have ``geom_type='field_2d'`` (or ``field_3d``). The
+        ``coordinates`` array is the signed amplitude ``w``.
+    sigma : float, default 0.05
+        Stripe half-width relative to the amplitude scale. Smaller →
+        razor-thin nodal stripes; larger → wider, softer stripes.
+    mode : {'nodal', 'antinodal'}, default 'nodal'
+    """
+    if field_geom.geom_type not in ("field_2d", "field_3d"):
+        raise ValueError(
+            f"chladni_nodal_density expects a field_2d or field_3d "
+            f"GeometryData; got geom_type={field_geom.geom_type!r}."
+        )
+    if sigma <= 0:
+        raise ValueError(f"sigma must be > 0, got {sigma!r}.")
+    if mode not in ("nodal", "antinodal"):
+        raise ValueError(f"mode must be 'nodal' or 'antinodal'; got {mode!r}.")
+    w = np.asarray(field_geom.coordinates, dtype=float)
+    nodal = np.exp(-(w * w) / (sigma * sigma))
+    density = nodal if mode == "nodal" else (1.0 - nodal)
+    md = dict(field_geom.metadata or {})
+    md["kind"] = f"{md.get('kind','field')}_{mode}_density"
+    md["nodal_sigma"] = float(sigma)
+    return GeometryData(
+        geom_type=field_geom.geom_type,
+        coordinates=density,
+        field_grid=field_geom.field_grid,
+        parameters=dict(field_geom.parameters or {}),
+        metadata=md,
+    )
+
+
 # ================================================================== circular
 
 
@@ -893,14 +1212,24 @@ def chladni_from_input(
 # ================================================================ Medium API
 
 
+_MODE_SCHEMES = (
+    "per_ratio",
+    "pairwise_antisymmetric",
+    "pairwise_symmetric",
+    "triple_antisymmetric",
+)
+_SYMMETRIES = ("none", "d4_max", "d4_sum")
+_OUTPUTS = ("field", "nodal_density", "antinodal_density")
+
+
 class RigidPlate(_Medium):
     """Eigenmode-family medium: chord projected onto a clamped/free-edge plate.
 
-    Wraps :func:`chladni_from_input` in the pipeline contract defined by
+    Wraps :func:`chladni_from_input` (and the cymatics-style pairwise /
+    triple builders) in the pipeline contract defined by
     :class:`biotuner.harmonic_geometry.media.base.Medium`. Constructor
-    arguments configure the domain, mode-mapping strategy, and any
-    domain-specific knobs; per-call overrides are forwarded to the
-    underlying ``chladni_field_*`` builder.
+    arguments configure the domain, the chord→mode scheme, optional D4
+    symmetrisation, and an optional nodal-density output transform.
 
     Parameters
     ----------
@@ -908,10 +1237,41 @@ class RigidPlate(_Medium):
         One of :class:`Rectangular`, :class:`Circular`,
         :class:`PolygonDomain`, :class:`Box3D`. Defaults to
         ``Rectangular(1.0, 1.0)``.
-    mode_strategy : str, default='stern_brocot'
-        Forwarded to :func:`ratios_to_modes`.
-    max_mode : int, default=20
-        Forwarded to :func:`ratios_to_modes`.
+    mode_scheme : {'per_ratio', 'pairwise_antisymmetric',
+        'pairwise_symmetric', 'triple_antisymmetric'}, default 'per_ratio'
+
+        - ``'per_ratio'`` (default, classical): one symmetric
+          ``cos·cos`` mode per ratio, mapped via Stern-Brocot. Works on
+          all supported domains.
+        - ``'pairwise_antisymmetric'``: one antisymmetric pair-mode per
+          ratio pair (``cos(m)cos(n) - cos(n)cos(m)``) — the iconic
+          square-plate Chladni form. Rectangular only.
+        - ``'pairwise_symmetric'``: one symmetric pair-mode per ratio
+          pair. Rectangular only.
+        - ``'triple_antisymmetric'``: one cyclic antisymmetric mode per
+          ratio triple. Requires ≥3 ratios. Rectangular only.
+
+        For all non-``per_ratio`` schemes, chord ratios are converted to
+        small integers losslessly via :func:`chord_to_int_modes` (LCM of
+        denominators).
+    mode_strategy : str, default 'stern_brocot'
+        Only honoured when ``mode_scheme='per_ratio'``. Forwarded to
+        :func:`ratios_to_modes`.
+    max_mode : int, default 20
+        Only honoured when ``mode_scheme='per_ratio'``. Forwarded to
+        :func:`ratios_to_modes`.
+    symmetry : {'none', 'd4_max', 'd4_sum'}, default 'none'
+        Optional D4 symmetrisation (max-orbit or average over rotations
+        and reflections). Only available on the pairwise / triple
+        schemes on a square ``Rectangular`` domain.
+    output : {'field', 'nodal_density', 'antinodal_density'}, default 'field'
+        ``'field'`` returns the signed amplitude. ``'nodal_density'``
+        applies the Gaussian-of-zero-crossing transform
+        ``exp(-w² / σ²)`` — concentrating intensity on the nodal lines
+        where sand collects in a Chladni experiment.
+        ``'antinodal_density'`` returns the complement ``1 - exp(-w²/σ²)``.
+    sigma : float, default 0.05
+        Stripe half-width for ``output != 'field'``.
     resolution : int, optional
         Grid resolution. Defaults to the domain-appropriate value
         (256 for 2-D, 48 for 3-D).
@@ -923,8 +1283,12 @@ class RigidPlate(_Medium):
         self,
         *,
         domain: Optional[Any] = None,
+        mode_scheme: str = "per_ratio",
         mode_strategy: str = "stern_brocot",
         max_mode: int = 20,
+        symmetry: str = "none",
+        output: str = "field",
+        sigma: float = 0.05,
         resolution: Optional[int] = None,
     ) -> None:
         # Lazy import to keep base / domain types optional from this module.
@@ -947,9 +1311,42 @@ class RigidPlate(_Medium):
                 f"{type(domain).__name__} is not a supported RigidPlate domain. "
                 "Use Rectangular, Circular, PolygonDomain, or Box3D."
             )
+        if mode_scheme not in _MODE_SCHEMES:
+            raise ValueError(
+                f"mode_scheme must be one of {_MODE_SCHEMES}; got {mode_scheme!r}."
+            )
+        if symmetry not in _SYMMETRIES:
+            raise ValueError(
+                f"symmetry must be one of {_SYMMETRIES}; got {symmetry!r}."
+            )
+        if output not in _OUTPUTS:
+            raise ValueError(
+                f"output must be one of {_OUTPUTS}; got {output!r}."
+            )
+        if sigma <= 0:
+            raise ValueError(f"sigma must be > 0; got {sigma!r}.")
+
+        # Sanity-check incompatible combinations early so the failure mode is
+        # a clear constructor error rather than a confusing respond-time one.
+        if mode_scheme != "per_ratio" and not isinstance(domain, Rectangular):
+            raise ValueError(
+                f"mode_scheme={mode_scheme!r} is only defined on a "
+                f"Rectangular domain; got {type(domain).__name__}."
+            )
+        if symmetry in ("d4_max", "d4_sum"):
+            if not isinstance(domain, Rectangular) or domain.Lx != domain.Ly:
+                raise ValueError(
+                    f"symmetry={symmetry!r} requires a square Rectangular "
+                    "domain (Lx == Ly)."
+                )
+
         self.domain = domain
+        self.mode_scheme = mode_scheme
         self.mode_strategy = mode_strategy
         self.max_mode = int(max_mode)
+        self.symmetry = symmetry
+        self.output = output
+        self.sigma = float(sigma)
         self.resolution = resolution
 
     def respond(
@@ -1015,12 +1412,58 @@ class RigidPlate(_Medium):
 
         plate_kwargs.update(overrides)
 
-        return chladni_from_input(
-            forcing,
-            plate=plate,
-            plate_kwargs=plate_kwargs,
-            mode_strategy=self.mode_strategy,
-            max_mode=self.max_mode,
+        # Branch on mode_scheme. ``per_ratio`` is the original behaviour;
+        # the cymatics schemes are square-plate only and use the integer-
+        # ratio chord representation.
+        if self.mode_scheme == "per_ratio":
+            geom = chladni_from_input(
+                forcing,
+                plate=plate,
+                plate_kwargs=plate_kwargs,
+                mode_strategy=self.mode_strategy,
+                max_mode=self.max_mode,
+            )
+        else:
+            # Rectangular-only — guarded in __init__.
+            int_modes = chord_to_int_modes(forcing.to_ratios())
+            # For pair/triple schemes, the chord's structure is encoded in
+            # *which* pairs/triples are summed — not in per-pair amplitudes.
+            # We default to uniform amps/phases; callers can override per-call
+            # via plate_kwargs.
+            pw_kwargs = {
+                "amps": plate_kwargs.pop("amps", None),
+                "phases": plate_kwargs.pop("phases", None),
+                "Lx": plate_kwargs.get("Lx", 1.0),
+                "Ly": plate_kwargs.get("Ly", 1.0),
+                "resolution": plate_kwargs.get("resolution", 400),
+                "symmetry": self.symmetry,
+            }
+            if self.mode_scheme == "pairwise_antisymmetric":
+                geom = chladni_field_pairwise(
+                    int_modes, antisymmetric=True, **pw_kwargs
+                )
+            elif self.mode_scheme == "pairwise_symmetric":
+                geom = chladni_field_pairwise(
+                    int_modes, antisymmetric=False, **pw_kwargs
+                )
+            elif self.mode_scheme == "triple_antisymmetric":
+                if len(int_modes) < 3:
+                    raise ValueError(
+                        "mode_scheme='triple_antisymmetric' needs a chord "
+                        f"with at least 3 ratios; got {len(int_modes)}."
+                    )
+                geom = chladni_field_triple_antisymmetric(
+                    int_modes, **pw_kwargs
+                )
+            else:  # pragma: no cover — guarded by __init__
+                raise ValueError(self.mode_scheme)
+
+        if self.output == "field":
+            return geom
+        return chladni_nodal_density(
+            geom,
+            sigma=self.sigma,
+            mode="nodal" if self.output == "nodal_density" else "antinodal",
         )
 
     def default_source(self) -> None:
@@ -1030,7 +1473,13 @@ class RigidPlate(_Medium):
         return self.respond(forcing, **overrides)
 
     def __repr__(self) -> str:
-        return (
-            f"RigidPlate(domain={self.domain!r}, "
-            f"mode_strategy={self.mode_strategy!r}, max_mode={self.max_mode})"
-        )
+        bits = [f"domain={self.domain!r}", f"mode_scheme={self.mode_scheme!r}"]
+        if self.mode_scheme == "per_ratio":
+            bits.append(f"mode_strategy={self.mode_strategy!r}")
+            bits.append(f"max_mode={self.max_mode}")
+        else:
+            bits.append(f"symmetry={self.symmetry!r}")
+        if self.output != "field":
+            bits.append(f"output={self.output!r}")
+            bits.append(f"sigma={self.sigma}")
+        return f"RigidPlate({', '.join(bits)})"

@@ -66,3 +66,10 @@ Harmonic geometry — media (chord-driven response operators)
    harmonic_geometry_media/03_parametric_and_transport
    harmonic_geometry_media/04_morphogenetic
 
+Harmonic geometry — Chladni cymatics (sand, D4 symmetry, animation)
+===================================================================
+.. toctree::
+   :maxdepth: 2
+
+   chladni_cymatics/01_chladni_cymatics_tour
+

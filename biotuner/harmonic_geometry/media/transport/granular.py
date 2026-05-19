@@ -175,6 +175,18 @@ class Granular(Medium):
         Number of sampled particles when ``output_mode='particles'``.
     seed : int, optional
         RNG seed for particle sampling. Ignored in density mode.
+    nodal_emphasis : bool, default=False
+        If ``True``, build the sand density via the Gaussian-of-zero-
+        crossing transform ``exp(-w² / σ²)`` applied directly to the
+        input field amplitude. This is the cymatics / Chladni sand
+        model: density concentrates on the nodal lines (zero-crossings).
+        Bypasses the standard Boltzmann formulation
+        (``affinity``/``temperature``/``field_kind``) — those are
+        ignored when ``nodal_emphasis=True``.
+    sigma : float, default=0.05
+        Stripe half-width for the nodal-emphasis transform (relative to
+        the input amplitude scale). Smaller → razor-thin sand stripes;
+        larger → wider, softer stripes.
 
     Notes
     -----
@@ -197,6 +209,8 @@ class Granular(Medium):
         output_mode: str = "density",
         n_particles: int = 4000,
         seed: Optional[int] = None,
+        nodal_emphasis: bool = False,
+        sigma: float = 0.05,
     ) -> None:
         if field_kind not in _VALID_FIELD_KINDS:
             raise ValueError(
@@ -216,12 +230,16 @@ class Granular(Medium):
             raise ValueError(
                 f"n_particles must be >= 1; got {n_particles!r}."
             )
+        if sigma <= 0:
+            raise ValueError(f"sigma must be > 0; got {sigma!r}.")
         self.affinity = float(affinity)
         self.temperature = float(temperature)
         self.field_kind = field_kind
         self.output_mode = output_mode
         self.n_particles = int(n_particles)
         self.seed = seed
+        self.nodal_emphasis = bool(nodal_emphasis)
+        self.sigma = float(sigma)
 
     # ----------------------------------------------------------- contract
 
@@ -259,12 +277,17 @@ class Granular(Medium):
         output_mode = overrides.pop("output_mode", self.output_mode)
         n_particles = int(overrides.pop("n_particles", self.n_particles))
         seed = overrides.pop("seed", self.seed)
+        nodal_emphasis = bool(
+            overrides.pop("nodal_emphasis", self.nodal_emphasis)
+        )
+        sigma = float(overrides.pop("sigma", self.sigma))
 
         if overrides:
             raise TypeError(
                 f"Unexpected override keys: {sorted(overrides)}. "
                 "Granular.respond accepts overrides for affinity, "
-                "temperature, field_kind, output_mode, n_particles, seed."
+                "temperature, field_kind, output_mode, n_particles, "
+                "seed, nodal_emphasis, sigma."
             )
         if field_kind not in _VALID_FIELD_KINDS:
             raise ValueError(f"field_kind must be one of {_VALID_FIELD_KINDS}.")
@@ -272,6 +295,8 @@ class Granular(Medium):
             raise ValueError(f"output_mode must be one of {_VALID_OUTPUT_MODES}.")
         if temperature <= 0:
             raise ValueError("temperature must be > 0.")
+        if sigma <= 0:
+            raise ValueError("sigma must be > 0.")
 
         field_data = self._resolve_field(forcing)
         if field_data.geom_type != "field_2d":
@@ -284,18 +309,28 @@ class Granular(Medium):
         field = np.asarray(field_data.coordinates, dtype=np.float64)
         field_grid = field_data.field_grid
 
-        V_unsigned, valid = _potential_from_field(
-            field, field_grid, field_kind
-        )
-        # Apply signed affinity: V = affinity * V_unsigned ∈ [-|aff|, +|aff|].
-        V = affinity * V_unsigned
+        if nodal_emphasis:
+            # Cymatics sand model: density concentrates on zero-crossings.
+            # Bypasses the Boltzmann formulation — `affinity`, `temperature`,
+            # and `field_kind` are ignored on this branch.
+            valid = np.isfinite(field)
+            density = np.zeros_like(field, dtype=np.float64)
+            density[valid] = np.exp(
+                -(field[valid] * field[valid]) / (sigma * sigma)
+            )
+        else:
+            V_unsigned, valid = _potential_from_field(
+                field, field_grid, field_kind
+            )
+            # Apply signed affinity: V = affinity * V_unsigned ∈ [-|aff|, +|aff|].
+            V = affinity * V_unsigned
 
-        # Boltzmann distribution. Subtract V.min() for numerical stability;
-        # this is just a normalization constant.
-        V_safe = np.where(valid, V, 0.0)
-        V_shift = V_safe - V_safe[valid].min()
-        density = np.zeros_like(field, dtype=np.float64)
-        density[valid] = np.exp(-V_shift[valid] / temperature)
+            # Boltzmann distribution. Subtract V.min() for numerical stability;
+            # this is just a normalization constant.
+            V_safe = np.where(valid, V, 0.0)
+            V_shift = V_safe - V_safe[valid].min()
+            density = np.zeros_like(field, dtype=np.float64)
+            density[valid] = np.exp(-V_shift[valid] / temperature)
 
         # Normalize density so the valid region sums to 1 (interpretable
         # as a probability density on the grid).
@@ -309,6 +344,8 @@ class Granular(Medium):
             "temperature": temperature,
             "field_kind": field_kind,
             "output_mode": output_mode,
+            "nodal_emphasis": nodal_emphasis,
+            "sigma": sigma,
         }
         metadata = {
             "kind": "granular_density"

@@ -915,6 +915,164 @@ def gallery(geometries: Sequence[GeometryData],
     return fig, axes
 
 
+def animate_chord_sequence(
+    chords: Sequence[Sequence[float]],
+    builder: Callable[[Sequence[float]], GeometryData],
+    *,
+    frames_per_segment: int = 48,
+    fps: int = 24,
+    interp: str = "cosine",
+    loop: bool = True,
+    figsize: Tuple[float, float] = (7.0, 7.0),
+    facecolor: str = "black",
+    point_color: str = "white",
+    point_size: float = 0.5,
+    point_alpha: float = 0.5,
+    cmap: str = "magma",
+    save_path: Optional[Any] = None,
+    dpi: int = 120,
+):
+    """Animate a sequence of chords through a user-supplied geometry builder.
+
+    Cosine-eased (or linear) component-wise interpolation between adjacent
+    chords drives ``builder(interpolated_chord) -> GeometryData`` on every
+    frame; the artist (a scatter for ``point_cloud_2d`` or an image for
+    ``field_2d``) is then refreshed in place.
+
+    Parameters
+    ----------
+    chords : sequence of sequences of float
+        Chord keyframes — each element is a list of (possibly real-valued)
+        wavenumbers / ratios. Mid-segment frames receive interpolated
+        floats; the builder must accept those (the cymatics
+        :func:`chladni_field_pairwise` / :func:`chladni_field_triple_antisymmetric`
+        do).
+    builder : callable
+        ``builder(chord) -> GeometryData`` where ``geom_type`` is
+        ``point_cloud_2d`` or ``field_2d``. The geometry type is read off
+        the first frame and the artist is set up accordingly.
+    frames_per_segment : int, default 48
+        Frames per chord→chord transition.
+    fps : int, default 24
+    interp : {'cosine', 'linear'}, default 'cosine'
+        Easing on the per-segment interpolation fraction.
+    loop : bool, default True
+        If True the sequence wraps back to ``chords[0]`` after ``chords[-1]``.
+        If False the last segment animates to ``chords[-1]`` and stops.
+    figsize, facecolor, point_color, point_size, point_alpha, cmap
+        Styling. Defaults match the iconic black-plate / white-sand look.
+    save_path : str or Path, optional
+        If given, also writes the MP4 to disk (requires ffmpeg).
+    dpi : int, default 120
+        DPI for the saved MP4.
+
+    Returns
+    -------
+    matplotlib.animation.FuncAnimation
+    """
+    import matplotlib.animation as _anim
+    import matplotlib.pyplot as _plt
+
+    if interp not in ("cosine", "linear"):
+        raise ValueError(f"interp must be 'cosine' or 'linear'; got {interp!r}.")
+    if not chords:
+        raise ValueError("chords must be non-empty.")
+
+    n = len(chords)
+    arrays = [np.array(c, dtype=float) for c in chords]
+    if len(set(len(c) for c in arrays)) > 1:
+        raise ValueError(
+            "all chords must have the same length for interpolation; got "
+            f"lengths {[len(c) for c in arrays]}."
+        )
+    n_segments = n if loop else n - 1
+    if n_segments < 1:
+        raise ValueError(
+            "loop=False with a single chord has no segments to animate."
+        )
+    n_total = n_segments * frames_per_segment
+
+    def _interp_chord(t: float) -> np.ndarray:
+        if loop:
+            t = t % n
+            i = int(t)
+            f = t - i
+            a = arrays[i]
+            b = arrays[(i + 1) % n]
+        else:
+            t = min(t, n - 1 - 1e-9)
+            i = int(t)
+            f = t - i
+            a = arrays[i]
+            b = arrays[i + 1]
+        if interp == "cosine":
+            f = 0.5 * (1.0 - np.cos(np.pi * f))
+        return (1.0 - f) * a + f * b
+
+    # Build first frame to determine geom_type and set up axes / artist.
+    g0 = builder(_interp_chord(0.0))
+    fig, ax = _plt.subplots(figsize=figsize, facecolor=facecolor)
+    ax.set_facecolor(facecolor)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    if g0.geom_type == "point_cloud_2d":
+        coords = np.asarray(g0.coordinates)
+        artist = ax.scatter(
+            coords[:, 0], coords[:, 1],
+            s=point_size, c=point_color, alpha=point_alpha, linewidths=0,
+        )
+        if g0.field_grid is not None:
+            X = g0.field_grid[0]; Y = g0.field_grid[1]
+            ax.set_xlim(float(X.min()), float(X.max()))
+            ax.set_ylim(float(Y.min()), float(Y.max()))
+        else:
+            ax.set_xlim(coords[:, 0].min(), coords[:, 0].max())
+            ax.set_ylim(coords[:, 1].min(), coords[:, 1].max())
+
+        def update(frame: int):
+            t = frame / frames_per_segment
+            g = builder(_interp_chord(t))
+            artist.set_offsets(np.asarray(g.coordinates))
+            return (artist,)
+
+    elif g0.geom_type == "field_2d":
+        field = np.asarray(g0.coordinates)
+        if g0.field_grid is not None:
+            X = g0.field_grid[0]; Y = g0.field_grid[1]
+            extent = (float(X.min()), float(X.max()),
+                      float(Y.min()), float(Y.max()))
+        else:
+            extent = (0.0, 1.0, 0.0, 1.0)
+        # Use a fixed range to avoid flicker as chords morph.
+        artist = ax.imshow(
+            np.nan_to_num(field), extent=extent, origin="lower",
+            cmap=cmap, aspect="equal",
+        )
+
+        def update(frame: int):
+            t = frame / frames_per_segment
+            g = builder(_interp_chord(t))
+            artist.set_data(np.nan_to_num(np.asarray(g.coordinates)))
+            return (artist,)
+    else:
+        raise NotImplementedError(
+            f"animate_chord_sequence: geom_type={g0.geom_type!r} not yet "
+            "supported (use 'point_cloud_2d' or 'field_2d')."
+        )
+
+    fig.tight_layout(pad=0)
+    anim = _anim.FuncAnimation(
+        fig, update, frames=n_total, blit=True, interval=1000.0 / fps,
+    )
+    if save_path is not None:
+        anim.save(
+            str(save_path), fps=fps, dpi=dpi,
+            savefig_kwargs={"facecolor": facecolor},
+        )
+    return anim
+
+
 def sweep_strip(geometries: Sequence[GeometryData],
                 labels: Optional[Sequence[str]] = None,
                 fig_width: float = _DEFAULT_FIG_WIDTH,
