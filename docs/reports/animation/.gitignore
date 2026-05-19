@@ -1,0 +1,9 @@
+node_modules/
+out/
+.remotion/
+*.log
+
+# Pre-rendered soundtrack output of render_audio.py — kept local, not
+# committed. Regenerate locally:
+#   python docs/reports/animation/render_audio.py
+public/audio/
