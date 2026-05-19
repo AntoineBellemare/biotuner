@@ -1026,6 +1026,110 @@ def draw_chladni_painted(
     return art
 
 
+def draw_chladni_sand(
+    geom: GeometryData,
+    ax,
+    *,
+    n_particles: int = 180_000,
+    point_size: float = 0.45,
+    point_color: str = "white",
+    point_alpha: float = 0.5,
+    bg_color: str = "black",
+    sigma: Optional[float] = None,
+    seed: int = 0,
+) -> Any:
+    """Render a cymatics field as classic white-sand-on-black-plate scatter.
+
+    Pairs naturally with the painted imshow renderer for the
+    canonical photographic Chladni look — pure white grains on black,
+    matching the original cymatics-demo aesthetic.
+
+    The function accepts either a signed amplitude field (which is
+    auto-converted to a density via ``chladni_nodal_density`` with auto-σ)
+    or a pre-computed density (e.g. from ``Granular(output_mode="density",
+    nodal_emphasis=True)``). It then density-weighted-samples
+    ``n_particles`` (x, y) positions and renders them as a scatter on a
+    black-faced axis.
+
+    Parameters
+    ----------
+    geom : GeometryData
+        A ``field_2d``. Signed amplitude or density both accepted.
+    ax : matplotlib axis
+    n_particles : int, default 180_000
+        Number of grains. Scales linearly with the visual density of
+        the plate. Higher = more "filled-in" curves.
+    point_size : float, default 0.45
+        Marker size in points² (matplotlib ``s=`` argument). Small
+        values (0.3–0.7) give the classic dust-grain look.
+    point_color : str, default 'white'
+    point_alpha : float, default 0.5
+    bg_color : str, default 'black'
+    sigma : float, optional
+        Nodal-stripe σ. ``None`` (default) auto-derives from the field's
+        ``int_modes`` metadata via :func:`_auto_sigma_for_modes`.
+    seed : int, default 0
+        RNG seed for the particle sampling.
+    """
+    field = np.asarray(geom.coordinates, dtype=np.float64)
+    if field.ndim != 2:
+        raise ValueError(
+            f"draw_chladni_sand needs a 2-D field; got shape {field.shape}."
+        )
+    # If signed amplitude, convert through nodal density with auto-σ.
+    if float(np.nanmin(field)) < -1e-12:
+        from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+            _auto_sigma_for_modes,
+            chladni_nodal_density,
+        )
+        if sigma is None:
+            modes_meta = (geom.parameters or {}).get("int_modes")
+            sigma = (_auto_sigma_for_modes(modes_meta)
+                     if modes_meta else 0.05)
+        density_geom = chladni_nodal_density(geom, sigma=sigma)
+        density = np.asarray(density_geom.coordinates, dtype=np.float64)
+        field_grid = density_geom.field_grid
+    else:
+        density = field
+        field_grid = geom.field_grid
+    if field_grid is None:
+        ny, nx = density.shape
+        xs = np.linspace(0.0, 1.0, nx)
+        ys = np.linspace(0.0, 1.0, ny)
+        X, Y = np.meshgrid(xs, ys)
+    else:
+        X, Y = field_grid[0], field_grid[1]
+
+    # Inverse-CDF sample density-weighted positions.
+    valid = np.isfinite(density)
+    p = np.where(valid, density, 0.0)
+    total = p.sum()
+    if total <= 0:
+        raise ValueError("Density has no positive mass; nothing to sample.")
+    flat = (p / total).ravel()
+
+    H, W = density.shape
+    dx = float(X[0, 1] - X[0, 0]) if W > 1 else 1.0
+    dy = float(Y[1, 0] - Y[0, 0]) if H > 1 else 1.0
+
+    rng = np.random.default_rng(seed)
+    idx = rng.choice(flat.size, size=int(n_particles), p=flat)
+    rows, cols = idx // W, idx % W
+    jx = rng.uniform(-0.5, 0.5, size=int(n_particles)) * dx
+    jy = rng.uniform(-0.5, 0.5, size=int(n_particles)) * dy
+    px = X[rows, cols] + jx
+    py = Y[rows, cols] + jy
+
+    ax.set_facecolor(bg_color)
+    art = ax.scatter(px, py, s=point_size, c=point_color, alpha=point_alpha,
+                     linewidths=0)
+    ax.set_aspect("equal")
+    ax.set_xlim(float(X.min()), float(X.max()))
+    ax.set_ylim(float(Y.min()), float(Y.max()))
+    ax.set_xticks([]); ax.set_yticks([])
+    return art
+
+
 def animate_chord_sequence(
     chords: Sequence[Sequence[float]],
     builder: Callable[[Sequence[float]], GeometryData],

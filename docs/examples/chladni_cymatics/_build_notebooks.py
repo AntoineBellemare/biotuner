@@ -426,6 +426,48 @@ fig.suptitle(
 )
 fig.tight_layout(pad=0.6);
 """),
+    ("md", """### Grayscale variant — classic Chladni look without particles
+
+The same painted renderer with ``cmap="gray"`` (and a slightly stronger
+gamma boost) reproduces the canonical white-on-black Chladni aesthetic
+without sampling individual particles. Smooth, anti-aliased, scales to
+any chord."""),
+    ("code", """fig, axes = plt.subplots(2, 4, figsize=(18, 9.5), facecolor="black")
+for ax, (name, chord) in zip(axes.flat, GAMUT):
+    field = chladni_field_pairwise(
+        chord, antisymmetric=True, symmetry="d4_max",
+        resolution=_auto_resolution_for_modes(chord),
+    )
+    plotting.draw_chladni_painted(field, ax, cmap="gray", gamma=0.55)
+    ax.set_title(name, color="white", fontsize=11)
+fig.suptitle("Painted Chladni — grayscale (classic black-and-white aesthetic)",
+             color="white", fontsize=13, y=0.995)
+fig.tight_layout(pad=0.6);
+"""),
+    ("md", """### True sand-grain particles — `draw_chladni_sand`
+
+For the canonical *photographic* Chladni look — actual white grains
+density-sampled and scattered on a black plate — use
+``plotting.draw_chladni_sand``. It accepts a signed amplitude field
+(auto-converts to a density with auto-σ from int_modes), inverse-CDF
+samples ``n_particles`` positions, and renders them as a black-faced
+scatter. Pairs cleanly with ``Granular(output_mode="particles",
+nodal_emphasis=True)`` for pipeline composition, or stand-alone here
+for one-shot rendering.
+"""),
+    ("code", """fig, axes = plt.subplots(2, 4, figsize=(18, 9.5), facecolor="black")
+for ax, (name, chord) in zip(axes.flat, GAMUT):
+    field = chladni_field_pairwise(
+        chord, antisymmetric=True, symmetry="d4_max",
+        resolution=_auto_resolution_for_modes(chord),
+    )
+    plotting.draw_chladni_sand(field, ax, n_particles=180_000,
+                                point_size=0.45, point_alpha=0.5)
+    ax.set_title(name, color="white", fontsize=11)
+fig.suptitle("Sand-grain particles — white on black, the classic Chladni look",
+             color="white", fontsize=13, y=0.995)
+fig.tight_layout(pad=0.6);
+"""),
     ("md", """### `envelope` mode — last-resort smoothing for blown-up chords
 
 When the chord's `Fraction` form has high LCM (e.g. 12-TET Dim7 →
@@ -533,7 +575,9 @@ print("rendered:", os.path.getsize("renders/chladni_morph_demo.mp4"), "bytes")
 | smooth D4 averaging | `symmetry="d4_sum"` instead of `"d4_max"` |
 | cap high-LCM chords | pass `max_mode=12` (or any cap) to the pairwise / triple builders |
 | chord-morph MP4 | `plotting.animate_chord_sequence([chord1, chord2, ...], builder, save_path=...)` |
-| painted aesthetic, auto-σ | `plotting.draw_chladni_painted(field, ax, style="nodal")` |
+| painted aesthetic (afmhot), auto-σ | `plotting.draw_chladni_painted(field, ax, cmap="afmhot")` |
+| classic grayscale aesthetic | `plotting.draw_chladni_painted(field, ax, cmap="gray", gamma=0.55)` |
+| photographic sand-grain look | `plotting.draw_chladni_sand(field, ax, n_particles=180_000)` |
 | painted aesthetic for blown-up chords | `plotting.draw_chladni_painted(field, ax, style="envelope")` |
 """),
 ]
