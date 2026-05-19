@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload, Check } from 'lucide-react'
 
-export default function FileUpload({ onFileUpload, loading, fileInfo }) {
+export default function FileUpload({ onFileUpload, loading, fileInfo, embedded = false }) {
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       onFileUpload(acceptedFiles[0])
@@ -20,13 +20,19 @@ export default function FileUpload({ onFileUpload, loading, fileInfo }) {
     disabled: loading,
   })
 
+  const Wrapper = embedded ? 'div' : 'div'
+  const wrapperClass = embedded
+    ? ''
+    : 'bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6 lg:p-8'
+
   return (
-    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6 lg:p-8">
-      <h2 className="text-xs font-semibold mb-4 text-biotuner-light/60 uppercase tracking-wider flex items-center gap-2">
-        <Upload className="w-4 h-4" />
-        Upload Data Source
-      </h2>
-      
+    <Wrapper className={wrapperClass}>
+      {!embedded && (
+        <h2 className="text-xs font-semibold mb-4 text-biotuner-light/60 uppercase tracking-wider flex items-center gap-2">
+          <Upload className="w-4 h-4" />
+          Upload Data Source
+        </h2>
+      )}
       <div
         {...getRootProps()}
         className={`
@@ -86,6 +92,6 @@ export default function FileUpload({ onFileUpload, loading, fileInfo }) {
           </div>
         </div>
       )}
-    </div>
+    </Wrapper>
   )
 }

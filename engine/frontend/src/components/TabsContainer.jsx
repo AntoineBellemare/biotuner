@@ -2,12 +2,14 @@ import { useState } from 'react'
 import TuningTab from './tabs/TuningTab'
 import ChordsTab from './tabs/ChordsTab'
 import BiocolorsTab from './tabs/BiocolorsTab'
+import GuitarTuningTab from './tabs/GuitarTuningTab'
 
-export default function TabsContainer({ sessionId, analysisResult, analysisConfig, fileInfo }) {
+export default function TabsContainer({ sessionId, analysisResult, analysisConfig, fileInfo, onSaveTuning }) {
   const [activeTab, setActiveTab] = useState('tuning')
 
   const tabs = [
     { id: 'tuning', label: 'Tuning', icon: '🎼' },
+    { id: 'guitar', label: 'Guitar', icon: '🎸' },
     { id: 'chords', label: 'Chords', icon: '🎹' },
     { id: 'biocolors', label: 'Biocolors', icon: '🎨' },
   ]
@@ -46,6 +48,12 @@ export default function TabsContainer({ sessionId, analysisResult, analysisConfi
             sessionId={sessionId}
             analysisResult={analysisResult}
             fileInfo={fileInfo}
+          />
+        )}
+        {activeTab === 'guitar' && (
+          <GuitarTuningTab
+            analysisResult={analysisResult}
+            onSaveToLibrary={onSaveTuning}
           />
         )}
         {activeTab === 'chords' && (

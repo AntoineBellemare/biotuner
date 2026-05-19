@@ -1,6 +1,6 @@
-import { Menu } from 'lucide-react'
+import { Menu, Bookmark } from 'lucide-react'
 
-export default function Header({ onMenuToggle }) {
+export default function Header({ onMenuToggle, onLibraryToggle }) {
   return (
     <header className="border-b border-biotuner-dark-600 bg-biotuner-dark-900/50 backdrop-blur-xl">
       <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -43,6 +43,16 @@ export default function Header({ onMenuToggle }) {
               </div>
             </a>
             
+            {onLibraryToggle && (
+              <button
+                onClick={onLibraryToggle}
+                aria-label="Open library"
+                className="p-2 sm:p-2.5 rounded-lg bg-biotuner-dark-800 hover:bg-biotuner-dark-700 border border-biotuner-dark-600 hover:border-biotuner-primary/50 transition-colors"
+              >
+                <Bookmark className="w-5 h-5 text-biotuner-primary" />
+              </button>
+            )}
+
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-biotuner-accent rounded-full animate-pulse"></div>
               <span className="text-xs sm:text-sm text-biotuner-light/60 hidden xs:inline">Connected</span>

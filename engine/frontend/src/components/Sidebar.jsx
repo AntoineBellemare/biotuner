@@ -1,6 +1,16 @@
 import { Settings, Sliders, Info, X } from 'lucide-react'
+import { presetLabel } from '../services/presets'
 
-export default function Sidebar({ config, onConfigChange, fileInfo, onClose }) {
+export default function Sidebar({
+  config,
+  onConfigChange,
+  fileInfo,
+  onClose,
+  presetMode = 'auto',
+  onPresetModeChange,
+  activePresetKey,
+  onResetPreset,
+}) {
   const peakMethods = [
     { value: 'harmonic_recurrence', label: 'Harmonic Recurrence' },
     { value: 'cepstrum', label: 'Cepstrum' },
@@ -34,6 +44,32 @@ export default function Sidebar({ config, onConfigChange, fileInfo, onClose }) {
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        {/* Preset Selector */}
+        {onPresetModeChange && (
+          <div className="space-y-2">
+            <h3 className="text-xs font-bold text-biotuner-primary/80 uppercase tracking-widest border-b border-biotuner-dark-600 pb-2">
+              Preset
+            </h3>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 text-sm text-biotuner-light/80">
+                {presetMode === 'custom' ? 'Custom (manual)' : presetLabel(activePresetKey)}
+              </div>
+              {presetMode === 'custom' && onResetPreset && (
+                <button
+                  onClick={onResetPreset}
+                  className="text-xs px-2 py-1 rounded-md bg-biotuner-dark-800 border border-biotuner-dark-600 hover:border-biotuner-primary/50 text-biotuner-primary"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-biotuner-light/40">
+              Defaults update with your modality + source. Tweaking any value
+              switches you to Custom.
+            </p>
+          </div>
+        )}
+
         {/* Peak Extraction Section */}
         <div className="space-y-4">
           <h3 className="text-xs font-bold text-biotuner-primary/80 uppercase tracking-widest border-b border-biotuner-dark-600 pb-2">

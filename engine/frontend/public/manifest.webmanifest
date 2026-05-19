@@ -1,0 +1,16 @@
+{
+  "name": "Biotuner Engine",
+  "short_name": "Biotuner",
+  "description": "Harmonic analysis of time series — record, derive a tuning, save your harmonic portrait.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0a",
+  "theme_color": "#06b6d4",
+  "icons": [
+    { "src": "/kairos-logo.webp", "sizes": "192x192", "type": "image/webp", "purpose": "any" },
+    { "src": "/kairos-logo.webp", "sizes": "512x512", "type": "image/webp", "purpose": "any" },
+    { "src": "/kairos-logo.webp", "sizes": "192x192", "type": "image/webp", "purpose": "maskable" }
+  ]
+}

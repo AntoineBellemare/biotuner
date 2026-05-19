@@ -5,7 +5,11 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Default to same-origin so the Vite dev proxy (and any HTTPS tunnel in front
+// of it) can forward `/api/*` and `/ws/*` to the backend. Override with
+// VITE_API_URL only when the frontend is served from a different origin than
+// the backend (e.g. Cloudflare Pages → Railway in production).
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 class BiotunerAPI {
   constructor() {
@@ -135,6 +139,21 @@ class BiotunerAPI {
   }
 
   // ============================================================================
+  // Tuning Export
+  // ============================================================================
+
+  async exportTuning(format, tuning, description = 'Biotuner-derived tuning', filename = 'biotuner_tuning') {
+    const response = await this.client.post(`/api/export-tuning/${format}`, {
+      tuning,
+      description,
+      filename,
+    }, {
+      responseType: 'blob',
+    });
+    return response.data;
+  }
+
+  // ============================================================================
   // Session Management
   // ============================================================================
 
@@ -153,8 +172,14 @@ class BiotunerAPI {
   // ============================================================================
 
   connectWebSocket(sessionId, callbacks = {}) {
-    const wsUrl = `${API_BASE_URL.replace('http', 'ws')}/ws/${sessionId}`;
-    
+    let wsUrl;
+    if (API_BASE_URL) {
+      wsUrl = `${API_BASE_URL.replace(/^http/, 'ws')}/ws/${sessionId}`;
+    } else {
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsUrl = `${proto}//${window.location.host}/ws/${sessionId}`;
+    }
+
     this.ws = new WebSocket(wsUrl);
     this.wsCallbacks = callbacks;
 
