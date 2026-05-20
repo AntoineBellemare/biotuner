@@ -338,6 +338,17 @@ class Granular(Medium):
             density[valid] = np.exp(
                 -(field[valid] * field[valid]) / (sigma * sigma)
             )
+            # Apply D4 symmetrisation at the density stage if the upstream
+            # field recorded a symmetry request — matches the classical
+            # cymatics demos (union of nodal sets across orbit, not field-
+            # level intersection).
+            symmetry = (field_data.parameters or {}).get("symmetry", "none")
+            if symmetry not in (None, "none") and density.shape[0] == density.shape[1]:
+                from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+                    _d4_symmetrize,
+                )
+                sym_mode = "max" if symmetry == "d4_max" else "sum"
+                density = _d4_symmetrize(density, mode=sym_mode)
         else:
             V_unsigned, valid = _potential_from_field(
                 field, field_grid, field_kind

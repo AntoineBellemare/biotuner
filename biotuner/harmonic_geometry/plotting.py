@@ -1030,10 +1030,10 @@ def draw_chladni_sand(
     geom: GeometryData,
     ax,
     *,
-    n_particles: int = 180_000,
-    point_size: float = 0.45,
+    n_particles: int = 400_000,
+    point_size: float = 0.4,
     point_color: str = "white",
-    point_alpha: float = 0.5,
+    point_alpha: float = 0.4,
     bg_color: str = "black",
     sigma: Optional[float] = None,
     seed: int = 0,
@@ -1056,14 +1056,18 @@ def draw_chladni_sand(
     geom : GeometryData
         A ``field_2d``. Signed amplitude or density both accepted.
     ax : matplotlib axis
-    n_particles : int, default 180_000
+    n_particles : int, default 400_000
         Number of grains. Scales linearly with the visual density of
-        the plate. Higher = more "filled-in" curves.
-    point_size : float, default 0.45
+        the plate. Higher = more "filled-in" curves. Bumped from the
+        original ~150 k demo value because D4 max-symmetrisation
+        applied to the density (the cymatics-correct location) unions
+        the nodal sets over the orbit and expands the bright area,
+        thinning out the per-pixel density at the original count.
+    point_size : float, default 0.4
         Marker size in points² (matplotlib ``s=`` argument). Small
         values (0.3–0.7) give the classic dust-grain look.
     point_color : str, default 'white'
-    point_alpha : float, default 0.5
+    point_alpha : float, default 0.4
     bg_color : str, default 'black'
     sigma : float, optional
         Nodal-stripe σ. ``None`` (default) auto-derives from the field's

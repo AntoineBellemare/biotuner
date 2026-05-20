@@ -541,10 +541,21 @@ def chladni_field_pairwise(
         c2 = np.cos(n * pi_X_Lx) * np.cos(m * pi_Y_Ly)
         field += Ai * (c1 + sign * c2) * np.cos(phi)
 
-    if symmetry != "none":
-        sym_mode = "max" if symmetry == "d4_max" else "sum"
-        field = _d4_symmetrize(field, mode=sym_mode)
-
+    # NOTE: D4 symmetrisation is intentionally NOT applied to the signed
+    # field here. ``max`` over an orbit of signed values would *intersect*
+    # the nodal sets (only points near zero under every rotation survive)
+    # — the resulting nodal density loses most of its detail.
+    #
+    # The standard cymatics demos (e.g. the reference ``chladni_anim.py``)
+    # apply D4 ``max`` to the *density* exp(-w²/σ²) instead, which
+    # *unions* the nodal sets across rotations — preserving the rich
+    # lattice of curves. ``chladni_nodal_density`` reads the recorded
+    # ``symmetry`` from this field's parameters and applies it at the
+    # density stage.
+    #
+    # Callers who want a literally D4-symmetric *signed field* (e.g. for
+    # a square-plate physics simulation) can still apply
+    # ``_d4_symmetrize(field)`` themselves.
     scheme = "pairwise_antisymmetric" if antisymmetric else "pairwise_symmetric"
     return GeometryData(
         geom_type="field_2d",
@@ -625,10 +636,8 @@ def chladni_field_triple_antisymmetric(
         contribution = _antisym(a_m, b_m) + _antisym(b_m, c_m) + _antisym(c_m, a_m)
         field += Ai * contribution * np.cos(phi)
 
-    if symmetry != "none":
-        sym_mode = "max" if symmetry == "d4_max" else "sum"
-        field = _d4_symmetrize(field, mode=sym_mode)
-
+    # D4 symmetrisation is applied to the density downstream — see the
+    # corresponding note in chladni_field_pairwise.
     return GeometryData(
         geom_type="field_2d",
         coordinates=field,
@@ -636,6 +645,7 @@ def chladni_field_triple_antisymmetric(
         parameters={
             "int_modes": list(int_modes),
             "triples": list(triples),
+            "n_pairs": 3 * len(triples),  # cyclic sum has 3 pair-modes per triple
             "amps": a.tolist(),
             "phases": p.tolist(),
             "Lx": float(Lx),
@@ -688,8 +698,8 @@ def chladni_nodal_density(
         )
     if mode not in ("nodal", "antinodal"):
         raise ValueError(f"mode must be 'nodal' or 'antinodal'; got {mode!r}.")
+    params = field_geom.parameters or {}
     if sigma is None:
-        params = field_geom.parameters or {}
         modes_meta = params.get("int_modes")
         n_pairs = params.get("n_pairs")
         if modes_meta:
@@ -701,6 +711,19 @@ def chladni_nodal_density(
     w = np.asarray(field_geom.coordinates, dtype=float)
     nodal = np.exp(-(w * w) / (sigma * sigma))
     density = nodal if mode == "nodal" else (1.0 - nodal)
+
+    # Apply D4 symmetrisation at the *density* stage (union of nodal sets
+    # across the dihedral orbit) — matches the classical cymatics demos
+    # and produces the rich D4-symmetric lattice. See the long note in
+    # chladni_field_pairwise about why we do *not* apply it field-side.
+    symmetry = params.get("symmetry", "none")
+    if symmetry not in (None, "none"):
+        sym_mode = "max" if symmetry == "d4_max" else "sum"
+        # Square requirement: skip cleanly if non-square; the symmetry
+        # was nominally requested upstream but the field shape can't
+        # support it. Don't fail here.
+        if density.ndim == 2 and density.shape[0] == density.shape[1]:
+            density = _d4_symmetrize(density, mode=sym_mode)
     md = dict(field_geom.metadata or {})
     md["kind"] = f"{md.get('kind','field')}_{mode}_density"
     md["nodal_sigma"] = float(sigma)
