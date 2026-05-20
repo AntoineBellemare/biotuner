@@ -1287,8 +1287,22 @@ def animate_chord_sequence(
         fig, update, frames=n_total, blit=True, interval=1000.0 / fps,
     )
     if save_path is not None:
+        # matplotlib's default FFMpegWriter uses libx264 at CRF 23, which
+        # blurs fine sub-pixel detail like the cymatics sand grains and
+        # reads as graininess on playback. Explicitly request CRF 18
+        # (visually lossless) with a slow preset for a crisper render.
+        writer = _anim.FFMpegWriter(
+            fps=fps,
+            codec="libx264",
+            extra_args=[
+                "-crf", "18",
+                "-pix_fmt", "yuv420p",
+                "-preset", "slow",
+                "-movflags", "+faststart",
+            ],
+        )
         anim.save(
-            str(save_path), fps=fps, dpi=dpi,
+            str(save_path), writer=writer, dpi=dpi,
             savefig_kwargs={"facecolor": facecolor},
         )
     return anim
