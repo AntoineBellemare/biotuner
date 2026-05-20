@@ -55,6 +55,7 @@ Harmonic geometry
    harmonic_geometry/04_fractal_and_generative
    harmonic_geometry/05_three_dimensional
    harmonic_geometry/06_metrics_and_transitions
+   harmonic_geometry/07_chladni_cymatics
 
 Harmonic geometry — media (chord-driven response operators)
 ===========================================================
@@ -65,11 +66,4 @@ Harmonic geometry — media (chord-driven response operators)
    harmonic_geometry_media/02_eigenmode_and_wave_field
    harmonic_geometry_media/03_parametric_and_transport
    harmonic_geometry_media/04_morphogenetic
-
-Harmonic geometry — Chladni cymatics (sand, D4 symmetry, animation)
-===================================================================
-.. toctree::
-   :maxdepth: 2
-
-   chladni_cymatics/01_chladni_cymatics_tour
 
