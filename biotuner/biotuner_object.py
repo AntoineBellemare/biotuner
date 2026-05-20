@@ -29,6 +29,7 @@ from biotuner.peaks_extraction import (
     pac_frequencies,
     endogenous_intermodulations,
     polycoherence,
+    sms_partials,
 )
 
 from biotuner.biotuner_utils import (
@@ -469,6 +470,7 @@ class compute_biotuner(object):
             "bicoherence",
             "PAC",
             "EIMC",
+            "SMS",
         ]
         if peaks_function not in peaks_functions:
             raise ValueError("peaks_function must be one of {}".format(peaks_functions))
@@ -2986,6 +2988,23 @@ class compute_biotuner(object):
             amps_temp_ = list(np.flip(amps_temp_))
             peaks_temp = [x for _, x in sorted(zip(amps_temp_, peaks_temp))][::-1][0:n_peaks]
             amps_temp = sorted(amps_temp_)[::-1][0:n_peaks]
+        if peaks_function == "SMS":
+            # Sinusoidal modeling: track partials through STFT frames.
+            # n_fft scales with sf so the time/frequency tradeoff stays sane
+            # across audio (sf=44.1k) and EEG (sf=256) inputs.
+            n_fft = int(2 ** np.ceil(np.log2(max(256, sf / 4))))
+            hop = max(64, n_fft // 4)
+            peaks_temp, amps_temp, partials = sms_partials(
+                self.data,
+                sf,
+                n_fft=n_fft,
+                hop=hop,
+                max_partials=n_peaks,
+                min_freq=max(min_freq, 1.0),
+                max_freq=max_freq,
+            )
+            # Expose full trajectories for downstream time-aware consumers.
+            self.partials = partials
         # print(peaks_temp)
         peaks_temp = [0 + precision if x == 0 else x for x in peaks_temp]
         peaks = np.array(peaks_temp)

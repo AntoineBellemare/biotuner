@@ -694,6 +694,269 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
     return peaks, amps
 
 
+# SINUSOIDAL MODELING (McAulay-Quatieri partial tracking)
+# =========================================================
+#
+# Tracks spectral peaks through time and stitches them into "partial
+# trajectories." Unlike time-averaged peak extractors (FOOOF, cepstrum,
+# harmonic_recurrence), this preserves the time dimension: each partial has
+# a frequency curve, an amplitude curve, and a stability score. Useful for
+# signals where peaks drift, fade, or coexist in transient layers (audio
+# timbres, EEG alpha drift, evoked responses).
+
+
+def _quadratic_peak_interp(magnitude_spectrum, peak_bin):
+    """Sub-bin frequency refinement via quadratic interpolation around a peak.
+
+    Given a magnitude spectrum and an integer bin index where a local max
+    sits, returns a fractional bin offset in (-0.5, 0.5) and the interpolated
+    log-magnitude at that offset (Smith & Serra 1987 quadratic estimator).
+    """
+    if peak_bin <= 0 or peak_bin >= len(magnitude_spectrum) - 1:
+        return 0.0, np.log(magnitude_spectrum[peak_bin] + 1e-30)
+    a = np.log(magnitude_spectrum[peak_bin - 1] + 1e-30)
+    b = np.log(magnitude_spectrum[peak_bin]     + 1e-30)
+    c = np.log(magnitude_spectrum[peak_bin + 1] + 1e-30)
+    denom = (a - 2.0 * b + c)
+    if abs(denom) < 1e-12:
+        return 0.0, b
+    offset = 0.5 * (a - c) / denom
+    interp_mag = b - 0.25 * (a - c) * offset
+    return float(offset), float(interp_mag)
+
+
+def sms_partials(
+    signal,
+    sf,
+    n_fft=2048,
+    hop=512,
+    window="hann",
+    max_partials=20,
+    min_amp_db=-60.0,
+    freq_tolerance_cents=50.0,
+    min_partial_duration=0.05,
+    max_gap_frames=2,
+    min_freq=20.0,
+    max_freq=None,
+):
+    """Sinusoidal modeling — track spectral peaks across STFT frames.
+
+    Inspired by McAulay-Quatieri (1986) and the SMS framework: each STFT
+    frame is peak-picked, then peaks are linked across frames into partial
+    trajectories using nearest-frequency matching within a cents tolerance.
+    Trajectories shorter than ``min_partial_duration`` are dropped; the rest
+    are ranked by a stability score (mean amplitude * duration / frequency
+    variance) and the top ``max_partials`` are returned.
+
+    Parameters
+    ----------
+    signal : array (numDataPoints,)
+        Single time series.
+    sf : float
+        Sampling frequency in Hz.
+    n_fft : int, default=2048
+        STFT window size. Frequency resolution is sf / n_fft.
+    hop : int, default=512
+        STFT hop size in samples (frame stride).
+    window : str, default='hann'
+        Window function name passed to ``scipy.signal.get_window``.
+    max_partials : int, default=20
+        Maximum number of partials to return (ranked by stability).
+    min_amp_db : float, default=-60.0
+        Per-frame peaks below this many dB relative to the frame max are
+        discarded before tracking.
+    freq_tolerance_cents : float, default=50.0
+        Peaks in successive frames are linked into the same trajectory if
+        within this cents distance of the trajectory's last frequency.
+    min_partial_duration : float, default=0.05
+        Trajectories shorter than this (in seconds) are discarded.
+    max_gap_frames : int, default=2
+        Maximum number of consecutive frames a trajectory can go unmatched
+        before it is closed. Up to that many gaps are linearly interpolated.
+    min_freq, max_freq : float
+        Frequency band to consider. ``max_freq=None`` defaults to Nyquist.
+
+    Returns
+    -------
+    peaks : list of float
+        Mean frequency (Hz) of each top-N partial, ranked by stability.
+    amps : list of float
+        Mean linear amplitude of each top-N partial.
+    partials : list of dict
+        Per-partial trajectory with keys ``freq`` (np.ndarray of Hz per
+        frame), ``amp`` (np.ndarray of linear amplitudes), ``start_frame``,
+        ``end_frame`` (inclusive), ``duration_sec``, ``stability``.
+
+    Examples
+    --------
+    >>> t = np.linspace(0, 2, 2 * 8000, endpoint=False)
+    >>> sig = np.sin(2 * np.pi * 440 * t) + 0.5 * np.sin(2 * np.pi * 880 * t)
+    >>> peaks, amps, parts = sms_partials(sig, sf=8000, n_fft=1024, hop=256)
+    >>> sorted(round(p) for p in peaks[:2])
+    [440, 880]
+    """
+    signal = np.asarray(signal, dtype=float)
+    if signal.ndim != 1:
+        raise ValueError("sms_partials expects a 1-D signal.")
+    if len(signal) < n_fft:
+        raise ValueError(
+            f"Signal too short: {len(signal)} samples < n_fft={n_fft}. "
+            "Try reducing n_fft or providing a longer signal."
+        )
+
+    if max_freq is None:
+        max_freq = sf / 2.0
+    if max_freq > sf / 2.0:
+        max_freq = sf / 2.0
+
+    win = scipy.signal.get_window(window, n_fft, fftbins=True)
+    # noverlap implied by hop: noverlap = n_fft - hop
+    freqs, times, Zxx = scipy.signal.stft(
+        signal,
+        fs=sf,
+        window=win,
+        nperseg=n_fft,
+        noverlap=n_fft - hop,
+        boundary=None,
+        padded=False,
+    )
+    magnitudes = np.abs(Zxx)              # (n_bins, n_frames)
+    n_bins, n_frames = magnitudes.shape
+
+    band_mask = (freqs >= min_freq) & (freqs <= max_freq)
+    bin_to_freq = freqs.copy()
+    bin_spacing = sf / n_fft
+
+    # Per-frame peak picking ------------------------------------------------
+    frame_peaks = []  # list of list of (freq_hz, amp_linear) per frame
+    for f in range(n_frames):
+        spec = magnitudes[:, f]
+        if spec.max() <= 0:
+            frame_peaks.append([])
+            continue
+        floor = spec.max() * (10.0 ** (min_amp_db / 20.0))
+        local, _ = scipy.signal.find_peaks(spec, height=floor)
+        local = [b for b in local if band_mask[b]]
+        peaks_this_frame = []
+        for b in local:
+            offset, log_mag = _quadratic_peak_interp(spec, b)
+            freq_hz = bin_to_freq[b] + offset * bin_spacing
+            if freq_hz < min_freq or freq_hz > max_freq:
+                continue
+            amp_linear = float(np.exp(log_mag))
+            peaks_this_frame.append((float(freq_hz), amp_linear))
+        peaks_this_frame.sort(key=lambda x: -x[1])  # strongest first
+        frame_peaks.append(peaks_this_frame)
+
+    # Partial tracking ------------------------------------------------------
+    # A trajectory is a dict with rolling lists; once closed it gets a final
+    # numpy-array form via _finalize_partial.
+    active = []        # currently-extending trajectories
+    closed = []        # trajectories that have ended
+
+    def _close(traj):
+        if traj["end_frame"] is None:
+            traj["end_frame"] = traj["start_frame"] + len(traj["freq"]) - 1
+        closed.append(traj)
+
+    for f, peaks_this_frame in enumerate(frame_peaks):
+        # Greedy 1-1 match: for each active trajectory, pick the closest
+        # unclaimed peak within tolerance.
+        unmatched_peaks = list(range(len(peaks_this_frame)))
+        ext_for_active = [None] * len(active)
+        for ai, traj in enumerate(active):
+            best_pi, best_dcents = None, freq_tolerance_cents
+            last_freq = traj["last_freq"]
+            for pi in unmatched_peaks:
+                pf, _ = peaks_this_frame[pi]
+                d = abs(1200.0 * np.log2(pf / last_freq)) if last_freq > 0 else np.inf
+                if d < best_dcents:
+                    best_dcents = d
+                    best_pi = pi
+            ext_for_active[ai] = best_pi
+            if best_pi is not None:
+                unmatched_peaks.remove(best_pi)
+
+        # Extend matched trajectories; bump gap counter on unmatched.
+        next_active = []
+        for ai, traj in enumerate(active):
+            pi = ext_for_active[ai]
+            if pi is not None:
+                pf, pa = peaks_this_frame[pi]
+                # If we had gaps, linearly interpolate freq/amp across them.
+                if traj["gap"] > 0:
+                    prev_f, prev_a = traj["last_freq"], traj["last_amp"]
+                    n_steps = traj["gap"] + 1
+                    for s in range(1, traj["gap"] + 1):
+                        alpha = s / n_steps
+                        traj["freq"].append(prev_f * (1 - alpha) + pf * alpha)
+                        traj["amp"].append(prev_a * (1 - alpha) + pa * alpha)
+                traj["freq"].append(pf)
+                traj["amp"].append(pa)
+                traj["last_freq"] = pf
+                traj["last_amp"] = pa
+                traj["gap"] = 0
+                next_active.append(traj)
+            else:
+                traj["gap"] += 1
+                if traj["gap"] > max_gap_frames:
+                    traj["end_frame"] = f - traj["gap"]
+                    _close(traj)
+                else:
+                    next_active.append(traj)
+        active = next_active
+
+        # New peaks that weren't matched to anyone start new trajectories.
+        for pi in unmatched_peaks:
+            pf, pa = peaks_this_frame[pi]
+            active.append({
+                "start_frame": f,
+                "end_frame":   None,
+                "freq":        [pf],
+                "amp":         [pa],
+                "last_freq":   pf,
+                "last_amp":    pa,
+                "gap":         0,
+            })
+
+    # Close anything still active at the end.
+    for traj in active:
+        traj["end_frame"] = traj["start_frame"] + len(traj["freq"]) - 1
+        closed.append(traj)
+
+    # Convert to finalized form, filter by duration, rank by stability ------
+    frame_period = hop / sf
+    finalized = []
+    for traj in closed:
+        freq_arr = np.asarray(traj["freq"], dtype=float)
+        amp_arr  = np.asarray(traj["amp"],  dtype=float)
+        duration = len(freq_arr) * frame_period
+        if duration < min_partial_duration:
+            continue
+        # Stability: mean amp * sqrt(duration) / (1 + freq cv).
+        mean_freq = float(np.mean(freq_arr))
+        mean_amp  = float(np.mean(amp_arr))
+        freq_cv   = float(np.std(freq_arr) / mean_freq) if mean_freq > 0 else 1.0
+        stability = mean_amp * np.sqrt(duration) / (1.0 + freq_cv)
+        finalized.append({
+            "freq":         freq_arr,
+            "amp":          amp_arr,
+            "start_frame":  traj["start_frame"],
+            "end_frame":    traj["end_frame"],
+            "duration_sec": float(duration),
+            "stability":    float(stability),
+            "mean_freq":    mean_freq,
+            "mean_amp":     mean_amp,
+        })
+
+    finalized.sort(key=lambda p: -p["stability"])
+    finalized = finalized[:max_partials]
+
+    peaks_out = [p["mean_freq"] for p in finalized]
+    amps_out  = [p["mean_amp"]  for p in finalized]
+    return peaks_out, amps_out, finalized
+
+
 def pac_frequencies(
     ts,
     sf,
