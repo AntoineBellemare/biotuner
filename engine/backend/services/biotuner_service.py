@@ -27,6 +27,7 @@ class BiotunerService:
             "harmonic_recurrence": "harmonic_recurrence",
             "EIMC": "EIMC",
             "FOOOF": "FOOOF",
+            "cepstrum": "cepstrum",
         }
     
     def analyze(

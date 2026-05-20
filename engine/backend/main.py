@@ -84,7 +84,7 @@ async def root():
 async def get_info():
     """Get API information and available methods"""
     return {
-        "peak_methods": ["EMD", "fixed", "harmonic_recurrence", "EIMC", "FOOOF"],
+        "peak_methods": ["EMD", "fixed", "harmonic_recurrence", "EIMC", "FOOOF", "cepstrum"],
         "supported_formats": ["wav", "mp3", "csv"],
         "max_file_size_mb": 50,
         "default_sampling_rate": 256
