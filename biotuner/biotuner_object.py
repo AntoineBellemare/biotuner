@@ -3039,6 +3039,25 @@ class compute_biotuner(object):
             )
             # Expose full trajectories for downstream time-aware consumers.
             self.partials = partials
+            # Downstream consumers (peaks_extension, plotting, peaks_to_amps)
+            # expect self.freqs and self.psd to exist. Compute a quick Welch
+            # PSD on the same signal so they're populated.
+            try:
+                _, _, self.freqs, self.psd = extract_welch_peaks(
+                    self.data, sf,
+                    precision=precision,
+                    max_freq=max_freq,
+                    min_freq=min_freq,
+                    nperseg=nperseg, noverlap=noverlap, nfft=nfft,
+                    smooth=smooth_fft,
+                    prominence=prominence, rel_height=rel_height,
+                    extended_returns=True, out_type="all",
+                )
+            except Exception:
+                # If Welch fails for any reason, set empty arrays so attribute
+                # access doesn't crash downstream consumers.
+                self.freqs = np.array([])
+                self.psd = np.array([])
         # print(peaks_temp)
         peaks_temp = [0 + precision if x == 0 else x for x in peaks_temp]
         peaks = np.array(peaks_temp)
