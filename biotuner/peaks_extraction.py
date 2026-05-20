@@ -204,6 +204,7 @@ def extract_welch_peaks(
     out_type="all",
     extended_returns=True,
     smooth=1,
+    precomputed_spectrum=None,
 ):
     """
     Extract frequency peaks using Welch's method
@@ -302,16 +303,26 @@ def extract_welch_peaks(
                     raise ValueError("Precision is larger than a band range")
     if max_freq is None:
         max_freq = sf / 2
-    if nperseg is None:
-        mult = 1 / precision
-        nfft = sf * mult
-        nperseg = nfft / smooth
-    # ensure nperseg is not larger than signal length
-    if nperseg > len(data):
-        nperseg = len(data)
-    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, average=average, noverlap=noverlap)
-    psd = 10.0 * np.log10(np.maximum(psd, 1e-12))
-    psd = np.real(psd)
+    if precomputed_spectrum is not None:
+        # Caller supplied (freqs, psd) — e.g. a multitaper PSD. Skip the
+        # internal Welch call and use it directly. Same dB conversion as the
+        # native path so downstream peak picking sees the expected scale.
+        freqs, psd = precomputed_spectrum
+        freqs = np.asarray(freqs, dtype=float)
+        psd = np.asarray(psd, dtype=float)
+        psd = 10.0 * np.log10(np.maximum(psd, 1e-12))
+        psd = np.real(psd)
+    else:
+        if nperseg is None:
+            mult = 1 / precision
+            nfft = sf * mult
+            nperseg = nfft / smooth
+        # ensure nperseg is not larger than signal length
+        if nperseg > len(data):
+            nperseg = len(data)
+        freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, average=average, noverlap=noverlap)
+        psd = 10.0 * np.log10(np.maximum(psd, 1e-12))
+        psd = np.real(psd)
     if out_type == "all":
         if find_peaks_method == "maxima":
             indexes, _ = scipy.signal.find_peaks(
@@ -372,6 +383,7 @@ def compute_FOOOF(
     n_peaks=5,
     extended_returns=False,
     graph=False,
+    precomputed_spectrum=None,
 ):
     """
     FOOOF model the power spectrum as a combination of
@@ -434,11 +446,16 @@ def compute_FOOOF(
     and aperiodic components. Nature Neuroscience, 23, 1655-1665. DOI: 10.1038/s41593-020-00744-x
     """
 
-    if nperseg is None:
-        mult = 1 / precision
-        nfft = sf * mult
-        nperseg = int(nfft / smooth)  # Match extract_welch_peaks calculation
-    freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
+    if precomputed_spectrum is not None:
+        freqs, psd = precomputed_spectrum
+        freqs = np.asarray(freqs, dtype=float)
+        psd = np.asarray(psd, dtype=float)
+    else:
+        if nperseg is None:
+            mult = 1 / precision
+            nfft = sf * mult
+            nperseg = int(nfft / smooth)  # Match extract_welch_peaks calculation
+        freqs, psd = scipy.signal.welch(data, sf, nfft=nfft, nperseg=nperseg, noverlap=noverlap)
     # Keep PSD linear - FOOOF does log conversion internally
     fm = FOOOF(peak_width_limits=[precision * 2, 3], max_n_peaks=50, min_peak_height=0.2)
     freq_range = [(sf / len(data)) * 2, max_freq]
@@ -692,6 +709,98 @@ def cepstral_peaks(cepstrum, quefrency_vector, max_time, min_time):
     peaks = list(peaks)
     peaks = [1 / p for p in peaks]
     return peaks, amps
+
+
+# MULTITAPER POWER SPECTRAL DENSITY
+# =====================================
+#
+# Multitaper PSD averages spectra from K orthogonal DPSS tapers (Slepian
+# sequences). Lower variance than a single-taper FFT or Welch with overlap
+# at the cost of slightly more bias. Standard in neuroscience for short or
+# noisy signals; useful in biotuner anywhere a spectrum feeds a peak picker.
+
+
+def compute_multitaper_psd(data, sf, bandwidth=4.0, n_tapers=None,
+                            f_min=0.0, f_max=None, adaptive=False):
+    """Multitaper power spectral density.
+
+    Parameters
+    ----------
+    data : array (numDataPoints,)
+        Single time series.
+    sf : float
+        Sampling frequency in Hz.
+    bandwidth : float, default=4.0
+        Time-bandwidth product (NW). Larger NW → smoother PSD, less variance,
+        more bias. NW=4 is a common default for EEG.
+    n_tapers : int or None, default=None
+        Number of tapers. If None, uses 2*NW - 1 (the conventional choice;
+        keeps only well-concentrated DPSS sequences).
+    f_min, f_max : float
+        Frequency band to return. ``f_max=None`` defaults to Nyquist.
+    adaptive : bool, default=False
+        If True, weights the per-taper spectra by their concentration ratio
+        (Thomson's adaptive estimator). False uses uniform 1/K averaging.
+
+    Returns
+    -------
+    freqs : array
+        Frequency bins in Hz, in [f_min, f_max].
+    psd : array
+        Power spectral density per bin (V^2 / Hz if input is in V).
+
+    Notes
+    -----
+    Implementation uses ``scipy.signal.windows.dpss`` directly (no nitime or
+    MNE dependency). The output shape is identical to ``scipy.signal.welch``
+    so downstream peak pickers that expect (freqs, psd) tuples work
+    unchanged.
+
+    Examples
+    --------
+    >>> t = np.linspace(0, 4, 4 * 1000, endpoint=False)
+    >>> sig = np.sin(2 * np.pi * 10 * t) + 0.3 * np.sin(2 * np.pi * 27 * t)
+    >>> freqs, psd = compute_multitaper_psd(sig, sf=1000, f_max=60)
+    >>> int(freqs[np.argmax(psd)])
+    10
+    """
+    data = np.asarray(data, dtype=float)
+    if data.ndim != 1:
+        raise ValueError("compute_multitaper_psd expects a 1-D signal.")
+    n = len(data)
+    if n < 4:
+        raise ValueError("Signal too short for multitaper PSD.")
+
+    if f_max is None:
+        f_max = sf / 2.0
+    f_max = min(f_max, sf / 2.0)
+
+    NW = float(bandwidth)
+    K = n_tapers if n_tapers is not None else max(1, int(2 * NW - 1))
+
+    tapers, ratios = scipy.signal.windows.dpss(n, NW, Kmax=K, return_ratios=True)
+
+    # Detrend (remove mean) to avoid a giant DC bin dominating.
+    centered = data - data.mean()
+
+    n_fft = next_fast_len(n)
+    freqs = np.fft.rfftfreq(n_fft, d=1.0 / sf)
+    band_mask = (freqs >= f_min) & (freqs <= f_max)
+
+    psd_sum = np.zeros(len(freqs), dtype=float)
+    weight_sum = 0.0
+    for k in range(K):
+        tapered = centered * tapers[k]
+        spec = np.fft.rfft(tapered, n=n_fft)
+        psd_k = (np.abs(spec) ** 2) / sf
+        # One-sided PSD: double everything except DC and Nyquist.
+        psd_k[1:-1] *= 2.0
+        w = ratios[k] if adaptive else 1.0
+        psd_sum += w * psd_k
+        weight_sum += w
+
+    psd = psd_sum / weight_sum
+    return freqs[band_mask], psd[band_mask]
 
 
 # SINUSOIDAL MODELING (McAulay-Quatieri partial tracking)

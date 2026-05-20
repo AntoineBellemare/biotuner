@@ -30,6 +30,7 @@ from biotuner.peaks_extraction import (
     endogenous_intermodulations,
     polycoherence,
     sms_partials,
+    compute_multitaper_psd,
 )
 
 from biotuner.biotuner_utils import (
@@ -251,6 +252,7 @@ class compute_biotuner(object):
         ratios_inc=True,
         ratios_inc_fit=False,
         scale_cons_limit=0.1,
+        spectrum_method="fft",
     ):
         self.pygame_lib = None
         # Initializing data
@@ -281,6 +283,10 @@ class compute_biotuner(object):
         self.ratios_harms = ratios_harms
         self.ratios_inc = ratios_inc
         self.ratios_inc_fit = ratios_inc_fit
+        # Spectrum estimator for peak extractors that consume a PSD
+        # ('fft' = Welch, 'multitaper' = DPSS-tapered PSD). Default 'fft'
+        # preserves existing behavior; 'multitaper' is opt-in.
+        self.spectrum_method = spectrum_method
 
     def peaks_extraction(
         self,
@@ -313,6 +319,7 @@ class compute_biotuner(object):
         verbose=False,
         keep_first_IMF=False,
         identify_labels=False,
+        spectrum_method=None,
     ):
         """
         The peaks_extraction method is central to the use of the Biotuner.
@@ -478,9 +485,17 @@ class compute_biotuner(object):
         self.octave = octave
         self.nIMFs = nIMFs
         self.compute_sub_ratios = compute_sub_ratios
+        # If the caller didn't override spectrum_method, fall back to the
+        # value set on the object (default 'fft'). This keeps existing
+        # call sites unchanged.
+        effective_spectrum_method = (
+            spectrum_method if spectrum_method is not None
+            else getattr(self, "spectrum_method", "fft")
+        )
         peaks, amps = self.compute_peaks_ts(
             data,
             peaks_function=peaks_function,
+            spectrum_method=effective_spectrum_method,
             FREQ_BANDS=FREQ_BANDS,
             precision=precision,
             sf=sf,
@@ -2480,6 +2495,7 @@ class compute_biotuner(object):
         min_IMs=2,
         smooth_fft=1,
         keep_first_IMF=False,
+        spectrum_method="fft",
     ):
         """
         Extract peak frequencies. This method is called by the
@@ -2660,6 +2676,11 @@ class compute_biotuner(object):
                     method=peaks_function,
                 )
         if peaks_function == "FOOOF":
+            mt_spec = None
+            if spectrum_method == "multitaper":
+                mt_spec = compute_multitaper_psd(
+                    data, sf, f_min=1.0 / max(precision, 1e-6), f_max=max_freq,
+                )
             peaks_temp, amps_temp, self.freqs, self.psd = compute_FOOOF(
                 data,
                 sf,
@@ -2669,6 +2690,7 @@ class compute_biotuner(object):
                 n_peaks=n_peaks,
                 extended_returns=True,
                 graph=graph,
+                precomputed_spectrum=mt_spec,
             )
             # Convert PSD to dB for consistency with other methods
             self.psd = 10.0 * np.log10(np.maximum(self.psd, 1e-12))
@@ -2854,6 +2876,11 @@ class compute_biotuner(object):
             amps_temp = sorted(amps_temp)[::-1][0:n_peaks]"""
             amps_temp = "NaN"
         if peaks_function == "harmonic_recurrence":
+            mt_spec = None
+            if spectrum_method == "multitaper":
+                mt_spec = compute_multitaper_psd(
+                    data, sf, f_min=min_freq, f_max=max_harm_freq or (sf / 2),
+                )
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
                 sf,
@@ -2868,6 +2895,7 @@ class compute_biotuner(object):
                 smooth=smooth_fft,
                 prominence=prominence,
                 rel_height=rel_height,
+                precomputed_spectrum=mt_spec,
             )
 
             (
@@ -2905,6 +2933,11 @@ class compute_biotuner(object):
                 print("No peaks were detected. Consider increasing precision or number of harmonics")
 
         if peaks_function == "EIMC":
+            mt_spec = None
+            if spectrum_method == "multitaper":
+                mt_spec = compute_multitaper_psd(
+                    data, sf, f_min=min_freq, f_max=max_harm_freq or (sf / 2),
+                )
             p, a, self.freqs, self.psd = extract_welch_peaks(
                 data,
                 sf,
@@ -2919,6 +2952,7 @@ class compute_biotuner(object):
                 smooth=smooth_fft,
                 prominence=prominence,
                 rel_height=rel_height,
+                precomputed_spectrum=mt_spec,
             )
             IMC, self.EIMC_all, n = endogenous_intermodulations(p, a, order=EIMC_order, min_IMs=min_IMs)
             IMC_freq = pairs_most_frequent(self.EIMC_all["peaks"], n_peaks)
