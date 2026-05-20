@@ -13,12 +13,17 @@ export default function Sidebar({
 }) {
   const peakMethods = [
     { value: 'harmonic_recurrence', label: 'Harmonic Recurrence' },
-    { value: 'cepstrum', label: 'Cepstrum' },
-    { value: 'EIMC', label: 'EIMC (Intermodulation)' },
-    { value: 'EMD', label: 'EMD' },
-    { value: 'fixed', label: 'EEG Bands' },
-    { value: 'FOOOF', label: 'FOOOF' },
+    { value: 'cepstrum',            label: 'Cepstrum' },
+    { value: 'EIMC',                label: 'EIMC (Intermodulation)' },
+    { value: 'EMD',                 label: 'EMD' },
+    { value: 'fixed',               label: 'EEG Bands' },
+    { value: 'FOOOF',               label: 'FOOOF' },
+    { value: 'SMS',                 label: 'SMS (sinusoidal modeling)' },
   ]
+
+  // spectrum_method only affects extractors that consume a PSD.
+  const SPECTRUM_AWARE_METHODS = new Set(['FOOOF', 'harmonic_recurrence', 'EIMC'])
+  const showSpectrumPicker = SPECTRUM_AWARE_METHODS.has(config.method)
 
   const precisionOptions = [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]
 
@@ -141,6 +146,27 @@ export default function Sidebar({
               className="w-full bg-biotuner-dark-800 text-biotuner-light border border-biotuner-dark-600 rounded-lg p-3 focus:ring-2 focus:ring-biotuner-primary focus:border-biotuner-primary transition-all"
             />
           </div>
+
+          {/* Spectrum estimator — only shown for PSD-consuming methods */}
+          {showSpectrumPicker && (
+            <div>
+              <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
+                Spectrum estimator
+              </label>
+              <select
+                value={config.spectrum_method || 'fft'}
+                onChange={(e) => onConfigChange({ ...config, spectrum_method: e.target.value })}
+                className="w-full bg-biotuner-dark-800 text-biotuner-light border border-biotuner-dark-600 rounded-lg p-3 focus:ring-2 focus:ring-biotuner-primary focus:border-biotuner-primary transition-all"
+              >
+                <option value="fft">FFT (Welch)</option>
+                <option value="multitaper">Multitaper (DPSS)</option>
+              </select>
+              <p className="text-[10px] text-biotuner-light/40 mt-1 leading-snug">
+                Multitaper averages K DPSS-tapered spectra — lower variance on
+                short or noisy signals (esp. EEG / HRV).
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Tuning Analysis Section */}

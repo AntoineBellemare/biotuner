@@ -19,6 +19,10 @@ class AnalysisConfig(BaseModel):
     n_harm: int = Field(default=10, ge=1, le=256)
     start_time: Optional[float] = None
     end_time: Optional[float] = None
+    spectrum_method: str = Field(
+        default="fft",
+        description="Spectrum estimator for spectrum-based peak methods ('fft' or 'multitaper')",
+    )
 
 
 class AnalysisResult(BaseModel):

@@ -28,6 +28,7 @@ class BiotunerService:
             "EIMC": "EIMC",
             "FOOOF": "FOOOF",
             "cepstrum": "cepstrum",
+            "SMS": "SMS",
         }
     
     def analyze(
@@ -41,6 +42,7 @@ class BiotunerService:
         tuning_method: str = "peaks_ratios",
         max_denominator: int = 100,
         n_harm: int = 10,
+        spectrum_method: str = "fft",
     ) -> Dict[str, Any]:
         """
         Perform biotuner harmonic analysis
@@ -73,6 +75,7 @@ class BiotunerService:
                 sf=sf,
                 peaks_function=bt_method,
                 precision=precision,
+                spectrum_method=spectrum_method,
             )
             
             # Compute for the data - n_peaks goes here

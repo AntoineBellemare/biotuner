@@ -84,7 +84,11 @@ async def root():
 async def get_info():
     """Get API information and available methods"""
     return {
-        "peak_methods": ["EMD", "fixed", "harmonic_recurrence", "EIMC", "FOOOF", "cepstrum"],
+        "peak_methods": [
+            "EMD", "fixed", "harmonic_recurrence", "EIMC", "FOOOF",
+            "cepstrum", "SMS",
+        ],
+        "spectrum_methods": ["fft", "multitaper"],
         "supported_formats": ["wav", "mp3", "csv"],
         "max_file_size_mb": 50,
         "default_sampling_rate": 256
@@ -294,7 +298,8 @@ async def analyze_biotuner(config: AnalysisConfig):
             max_freq=config.max_freq,
             tuning_method=config.tuning_method,
             max_denominator=config.max_denominator,
-            n_harm=config.n_harm
+            n_harm=config.n_harm,
+            spectrum_method=config.spectrum_method,
         )
         
         # Store results in session

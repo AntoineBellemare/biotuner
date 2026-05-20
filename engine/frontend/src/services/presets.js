@@ -42,6 +42,7 @@ export const ANALYSIS_DEFAULTS = {
   tuning_method: 'peaks_ratios',
   max_denominator: 100,
   n_harm: 10,
+  spectrum_method: 'fft',
 }
 
 export function presetKey(modality, source) {
