@@ -348,18 +348,28 @@ def _d4_symmetrize(field: np.ndarray, mode: str = "max") -> np.ndarray:
 
 def _auto_sigma_for_modes(
     modes: Sequence[float], *, base: float = 0.5,
-    lo: float = 0.005, hi: float = 0.12,
+    lo: float = 0.005, hi: float = 0.18,
+    n_pairs: Optional[int] = None,
 ) -> float:
     """Compute a "visually consistent" σ for the nodal-density transform.
 
-    σ scales inversely with the chord's peak wavenumber so the stripe width
-    stays a roughly constant fraction of the local wave period. ``base=0.5``
-    yields σ ≈ 0.05 at peak WN = 10 and σ ≈ 0.008 at peak WN = 60.
+    σ scales inversely with the chord's peak wavenumber so the stripe
+    width stays a roughly constant fraction of the local wave period
+    (``base=0.5`` yields σ ≈ 0.05 at peak WN = 10 and σ ≈ 0.008 at peak
+    WN = 60).
+
+    When ``n_pairs`` is given, σ also scales **up** with √(n_pairs / 3) —
+    summing many pair-modes makes the simultaneous zero-set restrictive
+    (it becomes points rather than curves), so a wider σ is needed to
+    keep adjacent "dot-clusters" connected. A 3-ratio chord (3 pairs) is
+    the reference; a 4-ratio chord (6 pairs) gets σ scaled by √2; a
+    5-ratio chord (10 pairs) by √(10/3) ≈ 1.83.
     """
     if not modes:
         return base
     peak = max(abs(float(m)) for m in modes) or 1.0
-    return max(lo, min(hi, base / peak))
+    pair_factor = 1.0 if not n_pairs else max(1.0, (n_pairs / 3.0) ** 0.5)
+    return max(lo, min(hi, base * pair_factor / peak))
 
 
 def _auto_resolution_for_modes(
@@ -404,6 +414,7 @@ def chladni_field_pairwise(
     resolution: int = 400,
     symmetry: str = "none",
     max_mode: Optional[float] = None,
+    pair_subset: Any = "auto",
 ) -> GeometryData:
     """Pairwise cosine-product field on a (square) plate.
 
@@ -431,6 +442,24 @@ def chladni_field_pairwise(
     resolution : int, default 400
     symmetry : {'none', 'd4_max', 'd4_sum'}, default 'none'
         Optional D4 symmetrisation (requires ``Lx == Ly``).
+    pair_subset : str or list, default 'auto'
+        Which subset of ratio pairs to include in the sum. For an
+        ``n``-ratio chord:
+
+        - ``'auto'`` (default): ``'all'`` for ``n <= 3``, ``'root'`` for
+          ``n >= 4``. Gives bold continuous nodal curves at every chord
+          size — the default that "just looks right".
+        - ``'all'``: all ``C(n, 2)`` pairs. Produces bold curves for
+          3-ratio chords (matches the classical cymatics demos exactly);
+          for 4+ ratio chords the sum's zero-set becomes a restrictive
+          *set of points* and the rendering goes dotty.
+        - ``'adjacent'``: only consecutive pairs
+          ``(modes[i], modes[i+1])`` for ``i = 0..n-2`` — ``n-1`` pairs.
+          Bold curves at any chord size.
+        - ``'root'``: only pairs involving the first ratio:
+          ``(modes[0], modes[i])`` for ``i = 1..n-1`` — ``n-1`` pairs.
+          Bold curves; emphasises the root.
+        - explicit ``list`` of ``(m, n)`` tuples: full control.
 
     Returns
     -------
@@ -456,11 +485,47 @@ def chladni_field_pairwise(
     # NOTE: pair components are kept as the caller's numeric type — float
     # values are valid mid-animation interpolations between integer chord
     # keyframes (they just don't produce crisp standing-wave eigenmodes).
-    pairs: List[Tuple[float, float]] = [
-        (float(int_modes[i]), float(int_modes[j]))
-        for i in range(len(int_modes))
-        for j in range(i + 1, len(int_modes))
-    ]
+    if isinstance(pair_subset, str):
+        if pair_subset == "auto":
+            # Heuristic: 3-ratio chords look best with all 3 pairs (matches
+            # the classical cymatics demos); 4+ ratio chords need a thinner
+            # set to keep nodal lines continuous.
+            pair_subset = "all" if len(int_modes) <= 3 else "root"
+        if pair_subset == "all":
+            pairs = [
+                (float(int_modes[i]), float(int_modes[j]))
+                for i in range(len(int_modes))
+                for j in range(i + 1, len(int_modes))
+            ]
+        elif pair_subset == "adjacent":
+            pairs = [
+                (float(int_modes[i]), float(int_modes[i + 1]))
+                for i in range(len(int_modes) - 1)
+            ]
+        elif pair_subset == "root":
+            pairs = [
+                (float(int_modes[0]), float(int_modes[i]))
+                for i in range(1, len(int_modes))
+            ]
+        else:
+            raise ValueError(
+                f"pair_subset must be 'auto', 'all', 'adjacent', 'root', "
+                f"or a list of (m, n) tuples; got {pair_subset!r}."
+            )
+    else:
+        # Explicit pair list
+        try:
+            pairs = [(float(m), float(n)) for m, n in pair_subset]
+        except Exception as exc:
+            raise ValueError(
+                f"pair_subset must be 'all', 'adjacent', 'root', or a list "
+                f"of (m, n) tuples; got {pair_subset!r}: {exc}"
+            ) from exc
+    if not pairs:
+        raise ValueError(
+            "chladni_field_pairwise: pair subset is empty. "
+            f"int_modes={int_modes}, pair_subset={pair_subset!r}."
+        )
     a, p = _resolve_amps_phases(len(pairs), amps, phases)
 
     x = np.linspace(0.0, Lx, resolution)
@@ -488,6 +553,9 @@ def chladni_field_pairwise(
         parameters={
             "int_modes": list(int_modes),
             "pairs": list(pairs),
+            "n_pairs": len(pairs),
+            "pair_subset": (pair_subset if isinstance(pair_subset, str)
+                            else "explicit"),
             "amps": a.tolist(),
             "phases": p.tolist(),
             "Lx": float(Lx),
@@ -621,9 +689,11 @@ def chladni_nodal_density(
     if mode not in ("nodal", "antinodal"):
         raise ValueError(f"mode must be 'nodal' or 'antinodal'; got {mode!r}.")
     if sigma is None:
-        modes_meta = (field_geom.parameters or {}).get("int_modes")
+        params = field_geom.parameters or {}
+        modes_meta = params.get("int_modes")
+        n_pairs = params.get("n_pairs")
         if modes_meta:
-            sigma = _auto_sigma_for_modes(modes_meta)
+            sigma = _auto_sigma_for_modes(modes_meta, n_pairs=n_pairs)
         else:
             sigma = 0.05
     if sigma <= 0:

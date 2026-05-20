@@ -1083,8 +1083,10 @@ def draw_chladni_sand(
             chladni_nodal_density,
         )
         if sigma is None:
-            modes_meta = (geom.parameters or {}).get("int_modes")
-            sigma = (_auto_sigma_for_modes(modes_meta)
+            params = geom.parameters or {}
+            modes_meta = params.get("int_modes")
+            n_pairs = params.get("n_pairs")
+            sigma = (_auto_sigma_for_modes(modes_meta, n_pairs=n_pairs)
                      if modes_meta else 0.05)
         density_geom = chladni_nodal_density(geom, sigma=sigma)
         density = np.asarray(density_geom.coordinates, dtype=np.float64)

@@ -319,14 +319,17 @@ class Granular(Medium):
             # and `field_kind` are ignored on this branch.
             if sigma is None:
                 # Auto-σ: scale inversely with the upstream chord's peak
-                # wavenumber so stripe width tracks the local wavelength.
-                # Falls back to 0.05 if no int_modes metadata is present.
-                modes_meta = (field_data.parameters or {}).get("int_modes")
+                # wavenumber and up with the number of summed pair-modes
+                # (so 4+ ratio chords with many pairs get wider stripes
+                # to keep the zero-set bands connected).
+                params = field_data.parameters or {}
+                modes_meta = params.get("int_modes")
+                n_pairs = params.get("n_pairs")
                 if modes_meta:
                     from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
                         _auto_sigma_for_modes,
                     )
-                    sigma = _auto_sigma_for_modes(modes_meta)
+                    sigma = _auto_sigma_for_modes(modes_meta, n_pairs=n_pairs)
                 else:
                     sigma = 0.05
             sigma = float(sigma)

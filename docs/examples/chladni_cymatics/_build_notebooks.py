@@ -371,6 +371,74 @@ plotting.gallery(
     fig_width=10.0,
 );
 """),
+    ("md", """## 6b. `pair_subset` — keeping curves bold at any chord size
+
+For a chord with ``n`` ratios, ``chladni_field_pairwise`` sums one
+antisymmetric mode per ratio pair. The mathematics behave qualitatively
+differently as ``n`` grows:
+
+- ``n = 3`` (3 pairs): the sum's zero-set is a **curve** — the iconic
+  Chladni form. This is what your favourite cymatics demos show.
+- ``n = 4`` (6 pairs): the sum's zero-set becomes a much more restricted
+  **set of isolated points** — the renderings goes "dotty / speckled".
+  It's not a rendering bug; the field genuinely has near-zero amplitude
+  only at scattered intersections, not along curves.
+
+The ``pair_subset`` parameter exposes a fix: rather than summing all
+``C(n, 2)`` pairs, sum a subset of ``n - 1`` pairs — keeping the field
+qualitatively *like a 3-ratio chord* (continuous curves) regardless of
+chord size:
+
+- ``pair_subset="auto"`` (the default): ``'all'`` for ``n ≤ 3``,
+  ``'root'`` for ``n ≥ 4``. Bold curves at every chord size.
+- ``pair_subset="all"``: classical sum, all pairs. Use when you want
+  the literal mathematical fingerprint (will dot for ``n ≥ 4``).
+- ``pair_subset="adjacent"``: only consecutive pairs.
+- ``pair_subset="root"``: pairs involving the first (root) ratio.
+- A literal ``list`` of ``(m, n)`` tuples for full control.
+"""),
+    ("code", """from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+    _auto_resolution_for_modes,
+)
+
+fig, axes = plt.subplots(2, 4, figsize=(18, 9.5), facecolor="black")
+
+# Top row: pair_subset="all" — the canonical sum. 3-ratio chords look
+# beautiful; 4-ratio chords dot.
+# Bottom row: pair_subset="auto" — fixes 4-ratio chords automatically.
+gallery_chords = [
+    ("Major [4,5,6]",        [4, 5, 6]),
+    ("[3,4,7] (demo ref)",   [3, 4, 7]),
+    ("Dom7 [4,5,6,7]",       [4, 5, 6, 7]),
+    ("11-limit\\n[9,11,13,17]", [9, 11, 13, 17]),
+]
+for ax, (name, chord) in zip(axes[0], gallery_chords):
+    field = chladni_field_pairwise(
+        chord, antisymmetric=True, symmetry="d4_max",
+        resolution=_auto_resolution_for_modes(chord),
+        pair_subset="all",
+    )
+    plotting.draw_chladni_sand(field, ax, n_particles=160_000,
+                                point_size=0.5, point_alpha=0.5)
+    n = field.parameters.get("n_pairs")
+    ax.set_title(f"{name}\\npair_subset='all' ({n} pairs)",
+                  color="white", fontsize=10)
+for ax, (name, chord) in zip(axes[1], gallery_chords):
+    field = chladni_field_pairwise(
+        chord, antisymmetric=True, symmetry="d4_max",
+        resolution=_auto_resolution_for_modes(chord),
+        # default pair_subset='auto'
+    )
+    plotting.draw_chladni_sand(field, ax, n_particles=160_000,
+                                point_size=0.5, point_alpha=0.5)
+    actual = field.parameters.get("pair_subset")
+    n = field.parameters.get("n_pairs")
+    ax.set_title(f"{name}\\npair_subset='auto' → '{actual}' ({n} pairs)",
+                  color="white", fontsize=10)
+fig.suptitle("pair_subset — top: literal 'all', dotty for 4-ratio chords.   bottom: 'auto', bold curves everywhere.",
+             color="white", y=0.995, fontsize=13)
+fig.tight_layout(pad=0.6);
+"""),
     ("md", """## 7. Painted rendering — robust for higher wavenumbers
 
 The classical sand-particle rendering reads as "individual grains" when
@@ -574,6 +642,8 @@ print("rendered:", os.path.getsize("renders/chladni_morph_demo.mp4"), "bytes")
 | triadic mode flavour | `chladni_field_triple_antisymmetric(chord_int, symmetry="d4_max")` (≥3 ratios) |
 | smooth D4 averaging | `symmetry="d4_sum"` instead of `"d4_max"` |
 | cap high-LCM chords | pass `max_mode=12` (or any cap) to the pairwise / triple builders |
+| bold curves for 4+ ratio chords | `pair_subset="auto"` (default) — uses `'all'` for n ≤ 3, `'root'` for n ≥ 4 |
+| force literal mathematical sum | `pair_subset="all"` (dotty for 4+ ratio chords by design) |
 | chord-morph MP4 | `plotting.animate_chord_sequence([chord1, chord2, ...], builder, save_path=...)` |
 | painted aesthetic (afmhot), auto-σ | `plotting.draw_chladni_painted(field, ax, cmap="afmhot")` |
 | classic grayscale aesthetic | `plotting.draw_chladni_painted(field, ax, cmap="gray", gamma=0.55)` |
