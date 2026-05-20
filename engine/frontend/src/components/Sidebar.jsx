@@ -1,5 +1,6 @@
 import { Settings, Sliders, Info, X } from 'lucide-react'
 import { presetLabel } from '../services/presets'
+import HelpHint from './HelpHint'
 
 export default function Sidebar({
   config,
@@ -85,6 +86,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Method
+              <HelpHint
+                text="How peaks are detected. Harmonic Recurrence picks peaks with a matching harmonic series (great for tonal signals). FOOOF separates 1/f noise from peaks (great for EEG). EMD decomposes into modes (good for non-stationary signals). Cepstrum finds the fundamental of a pitched sound. SMS tracks partials through time (best for evolving timbres)."
+                example="EMD for forest soundscapes, FOOOF for EEG."
+              />
             </label>
             <select
               value={config.method}
@@ -103,6 +108,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Precision (Hz)
+              <HelpHint
+                text="Width of one frequency bin. Smaller = finer resolution (you can tell apart close peaks) but requires longer recordings and more compute. Larger = smoother, less sensitive to noise."
+                example="0.1 Hz for EEG/heart, 1–5 Hz for audio."
+              />
             </label>
             <select
               value={config.precision}
@@ -121,6 +130,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Number of Peaks
+              <HelpHint
+                text="How many of the strongest peaks to keep. More peaks = richer tuning but more noise. Fewer peaks = cleaner but you may miss harmonic structure."
+                example="5 is a sensible default; bells and bowls often want 7–10."
+              />
             </label>
             <input
               type="number"
@@ -136,6 +149,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Max Frequency (Hz)
+              <HelpHint
+                text="Upper bound for peak search. Anything above this is ignored. Keep it just above where you expect your top peak — too high wastes resolution on empty spectrum, too low cuts off real peaks."
+                example="50 Hz for EEG, 5 Hz for heart, 8000 Hz for audio."
+              />
             </label>
             <input
               type="number"
@@ -152,6 +169,10 @@ export default function Sidebar({
             <div>
               <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
                 Spectrum estimator
+                <HelpHint
+                  text="How the power spectrum is computed before peaks are picked. FFT (Welch) is the standard. Multitaper averages several DPSS-tapered spectra — lower variance, good for short or noisy recordings (neuroscience uses it by default)."
+                  example="FFT for clean audio, Multitaper for EEG and short bursts."
+                />
               </label>
               <select
                 value={config.spectrum_method || 'fft'}
@@ -179,6 +200,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Tuning Method
+              <HelpHint
+                text="How peak frequencies are turned into a tuning. Peaks Ratios uses the ratios between the strongest peaks directly. Harmonic Fit replaces peaks with the nearest simple harmonic ratio. Dissonance Curve picks ratios at the local minima of a dissonance curve over the spectrum."
+                example="Peaks Ratios for natural audio, Dissonance Curve for chord-friendly scales."
+              />
             </label>
             <select
               value={config.tuning_method || 'peaks_ratios'}
@@ -195,6 +220,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Max Denominator
+              <HelpHint
+                text="Upper bound for the denominator when approximating each peak ratio as a simple fraction. Lower = simpler, more 'consonant' ratios (3/2, 5/4). Higher = more accurate to the exact peak frequencies."
+                example="50 for 'just intonation' feel, 1000 for high fidelity."
+              />
             </label>
             <input
               type="number"
@@ -210,6 +239,10 @@ export default function Sidebar({
           <div>
             <label className="block text-xs font-medium mb-2 text-biotuner-light/60 uppercase tracking-wider">
               Number of Harmonics
+              <HelpHint
+                text="How many integer harmonics each peak is expanded to when computing harmonic-fit tunings. More harmonics = richer search but slower; not used by the Peaks Ratios method."
+                example="10 is the default; bump up if your signal has a long harmonic series."
+              />
             </label>
             <input
               type="number"
