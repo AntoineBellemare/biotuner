@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Tone from 'tone'
-import { Play, Download, Save, Music, Volume2, Mic, MicOff, Lock } from 'lucide-react'
+import { Play, Download, Save, Music, Volume2, Mic, MicOff, Lock, Sparkles } from 'lucide-react'
 import { exportTuning as exportTuningLocal } from '../../services/tuningExport'
 import { startPitchDetection } from '../../services/audio/pitchDetector'
+import apiClient from '../../services/api'
 
 // ---------------------------------------------------------------------------
 // Instruments
@@ -157,7 +158,13 @@ function buildMapping({ tuning, fundamental, instrument, harmonicsDepth, intermo
 // Component
 // ---------------------------------------------------------------------------
 
-export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
+export default function GuitarTuningTab({
+  sessionId,
+  analysisResult,
+  onSaveToLibrary,
+  reducedTuning,
+  onReducedTuningChange,
+}) {
   const [instrument, setInstrument] = useState('guitar')
   const audioFundamental = useMemo(
     () => deriveAudioFundamental(analysisResult),
@@ -166,6 +173,10 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
   const [fundamental, setFundamental] = useState(audioFundamental || 82.41)
   const [harmonicsDepth, setHarmonicsDepth] = useState(3)
   const [intermod, setIntermod] = useState(false)
+  // 'full' = use analysisResult.tuning, 'reduced' = use reducedTuning.reduced_tuning
+  const [tuningSource, setTuningSource] = useState('full')
+  const [reduceNSteps, setReduceNSteps] = useState(12)
+  const [reducing, setReducing] = useState(false)
   const synthRef = useRef(null)
 
   // --- Live tuner state ---
@@ -231,12 +242,41 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
     }
   }, [])
 
-  const tuning = analysisResult?.tuning || []
+  const fullTuning = analysisResult?.tuning || []
+  const reducedRatios = reducedTuning?.reduced_tuning || null
+
+  // When a reduction lands and the user is still on 'full', auto-switch them
+  // to 'reduced' — that's almost always what they want. They can flip back.
+  useEffect(() => {
+    if (reducedRatios && reducedRatios.length && tuningSource === 'full') {
+      setTuningSource('reduced')
+    }
+    // Intentionally only fire when a *new* reduction appears.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reducedRatios?.length])
+
+  const tuning = tuningSource === 'reduced' && reducedRatios?.length
+    ? reducedRatios
+    : fullTuning
 
   const { strings, inst, candidateCount } = useMemo(
     () => buildMapping({ tuning, fundamental, instrument, harmonicsDepth, intermod }),
     [tuning, fundamental, instrument, harmonicsDepth, intermod]
   )
+
+  async function handleReduceInline() {
+    if (!sessionId) return
+    setReducing(true)
+    try {
+      const r = await apiClient.reduceTuning(sessionId, reduceNSteps, 2.0)
+      onReducedTuningChange?.(r)
+      setTuningSource('reduced')
+    } catch (err) {
+      console.error('Inline reduction failed:', err)
+    } finally {
+      setReducing(false)
+    }
+  }
 
   // Derive which string the tuner is reading + the cents offset.
   const tunerReading = useMemo(() => {
@@ -473,6 +513,93 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
         Add harmonics and/or intermodulation to grow the candidate pool
         ({candidateCount} pitches available).
       </p>
+
+      {/* Source tuning: full vs reduced (consonance-maximised) */}
+      <div className="bg-biotuner-dark-800/50 border border-biotuner-dark-600 rounded-lg p-4">
+        <div className="flex items-start sm:items-center gap-3 flex-col sm:flex-row">
+          <div className="flex-shrink-0">
+            <div className="text-xs font-medium text-biotuner-light/60 uppercase tracking-wider mb-1">
+              Source tuning
+            </div>
+            <div className="text-xs text-biotuner-light/40">
+              Mapping draws candidates from this set of ratios.
+            </div>
+          </div>
+          <div className="flex gap-1 p-1 rounded-lg bg-biotuner-dark-900 border border-biotuner-dark-600 sm:ml-auto">
+            <button
+              onClick={() => setTuningSource('full')}
+              aria-pressed={tuningSource === 'full'}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all min-h-[36px]
+                ${tuningSource === 'full'
+                  ? 'bg-biotuner-primary text-biotuner-dark-900'
+                  : 'text-biotuner-light/70 hover:text-biotuner-light'}`}
+            >
+              Full ({fullTuning.length})
+            </button>
+            <button
+              onClick={() => setTuningSource('reduced')}
+              disabled={!reducedRatios?.length}
+              aria-pressed={tuningSource === 'reduced'}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all min-h-[36px] disabled:opacity-40 disabled:cursor-not-allowed
+                ${tuningSource === 'reduced'
+                  ? 'bg-biotuner-primary text-biotuner-dark-900'
+                  : 'text-biotuner-light/70 hover:text-biotuner-light'}`}
+            >
+              Reduced{reducedRatios?.length ? ` (${reducedRatios.length})` : ''}
+            </button>
+          </div>
+        </div>
+
+        {/* Inline reduce control */}
+        {!reducedRatios?.length && sessionId && (
+          <div className="flex items-center gap-2 flex-wrap mt-3 pt-3 border-t border-biotuner-dark-600">
+            <span className="text-xs text-biotuner-light/60">
+              Reduce to most consonant subset:
+            </span>
+            <input
+              type="number"
+              min="3"
+              max="32"
+              value={reduceNSteps}
+              onChange={(e) => setReduceNSteps(parseInt(e.target.value, 10) || 12)}
+              className="w-16 bg-biotuner-dark-900 text-biotuner-light border border-biotuner-dark-600 rounded p-1.5 text-sm"
+            />
+            <span className="text-xs text-biotuner-light/40">steps</span>
+            <button
+              onClick={handleReduceInline}
+              disabled={reducing}
+              className="ml-auto sm:ml-0 min-h-[36px] flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-biotuner-accent/15 border border-biotuner-accent/40 text-biotuner-accent text-sm disabled:opacity-50"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              {reducing ? 'Reducing…' : 'Reduce'}
+            </button>
+          </div>
+        )}
+
+        {/* Show consonance gain when reduction is loaded */}
+        {reducedRatios?.length > 0 && reducedTuning?.original_consonance != null && (
+          <div className="mt-3 pt-3 border-t border-biotuner-dark-600 text-xs text-biotuner-light/60 flex items-center gap-3 flex-wrap">
+            <span>
+              Original consonance{' '}
+              <span className="font-mono text-biotuner-light/80">
+                {reducedTuning.original_consonance.toFixed(2)}
+              </span>
+            </span>
+            <span>→</span>
+            <span>
+              Reduced{' '}
+              <span className="font-mono text-emerald-300">
+                {reducedTuning.reduced_consonance?.toFixed(2)}
+              </span>
+            </span>
+            {reducedTuning.reduced_consonance && reducedTuning.original_consonance > 0 && (
+              <span className="ml-auto sm:ml-0 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300">
+                {((reducedTuning.reduced_consonance / reducedTuning.original_consonance - 1) * 100).toFixed(1)}%
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Live tuner error */}
       {tunerError && !tunerActive && (

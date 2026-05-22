@@ -4,7 +4,15 @@ import ChordsTab from './tabs/ChordsTab'
 import BiocolorsTab from './tabs/BiocolorsTab'
 import GuitarTuningTab from './tabs/GuitarTuningTab'
 
-export default function TabsContainer({ sessionId, analysisResult, analysisConfig, fileInfo, onSaveTuning }) {
+export default function TabsContainer({
+  sessionId,
+  analysisResult,
+  analysisConfig,
+  fileInfo,
+  onSaveTuning,
+  reducedTuning,
+  onReducedTuningChange,
+}) {
   const [activeTab, setActiveTab] = useState('tuning')
 
   const tabs = [
@@ -48,12 +56,17 @@ export default function TabsContainer({ sessionId, analysisResult, analysisConfi
             sessionId={sessionId}
             analysisResult={analysisResult}
             fileInfo={fileInfo}
+            reducedTuning={reducedTuning}
+            onReducedTuningChange={onReducedTuningChange}
           />
         )}
         {activeTab === 'guitar' && (
           <GuitarTuningTab
+            sessionId={sessionId}
             analysisResult={analysisResult}
             onSaveToLibrary={onSaveTuning}
+            reducedTuning={reducedTuning}
+            onReducedTuningChange={onReducedTuningChange}
           />
         )}
         {activeTab === 'chords' && (

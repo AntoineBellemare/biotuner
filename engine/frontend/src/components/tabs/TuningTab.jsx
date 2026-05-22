@@ -147,8 +147,18 @@ function ConsonanceGauge({ consonance }) {
   )
 }
 
-export default function TuningTab({ sessionId, analysisResult, fileInfo }) {
-  const [reducedTuning, setReducedTuning] = useState(null)
+export default function TuningTab({
+  sessionId,
+  analysisResult,
+  fileInfo,
+  reducedTuning: reducedTuningProp,
+  onReducedTuningChange,
+}) {
+  // Prefer the lifted state when provided so other tabs (Guitar) see the
+  // reduction. Fall back to local state if rendered outside the App tree.
+  const [reducedTuningLocal, setReducedTuningLocal] = useState(null)
+  const reducedTuning = reducedTuningProp !== undefined ? reducedTuningProp : reducedTuningLocal
+  const setReducedTuning = onReducedTuningChange || setReducedTuningLocal
   const [nSteps, setNSteps] = useState(12)
   const [loading, setLoading] = useState(false)
   const [playingTuning, setPlayingTuning] = useState(false)

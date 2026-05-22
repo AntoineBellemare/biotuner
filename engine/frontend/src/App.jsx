@@ -40,6 +40,10 @@ function App() {
   })
 
   const [analysisResult, setAnalysisResult] = useState(null)
+  // Reduced (consonance-maximised) tuning. Lifted to App state so it persists
+  // across tabs — when the user reduces in the Tuning tab, the Guitar tab can
+  // opt to use the reduced set instead of the full one.
+  const [reducedTuning, setReducedTuning] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [cropSettings, setCropSettings] = useState({ start_time: null, end_time: null })
@@ -143,6 +147,8 @@ function App() {
         ...cropSettings,
       })
       setAnalysisResult(result)
+      // A new analysis invalidates the previous reduction.
+      setReducedTuning(null)
       setLoading(false)
     } catch (error) {
       console.error('Analysis error:', error)
@@ -411,6 +417,8 @@ function App() {
                     analysisConfig={analysisConfig}
                     fileInfo={fileInfo}
                     onSaveTuning={handleSaveTuning}
+                    reducedTuning={reducedTuning}
+                    onReducedTuningChange={setReducedTuning}
                   />
                 </div>
               </div>
