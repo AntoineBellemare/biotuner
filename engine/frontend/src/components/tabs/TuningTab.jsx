@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { Download, Play, Volume2 } from 'lucide-react'
+import * as Tone from 'tone'
 import apiClient from '../../services/api'
 import ConsonanceMatrix from '../ConsonanceMatrix'
 
@@ -166,6 +167,11 @@ export default function TuningTab({
   const [playingRandomChords, setPlayingRandomChords] = useState(false)
   const [audioRef, setAudioRef] = useState(null)
   const [intervalCatalog, setIntervalCatalog] = useState([])
+  // Ratios currently sounding — used to highlight matching rows in the
+  // tuning table while Play Scale or Play Chords runs.
+  const [activeRatios, setActiveRatios] = useState([])
+  const synthRef = useRef(null)
+  const playbackTimeoutsRef = useRef([])
 
   // Load interval catalog on mount
   useEffect(() => {
@@ -193,6 +199,40 @@ export default function TuningTab({
     cents: Math.log2(ratio) * 1200,
   })) || []
 
+  // -------------------------------------------------------------------------
+  // Frontend chord/scale playback (Tone.js) — gives us per-note timing so
+  // we can highlight the matching rows in the tuning table as they sound.
+  // -------------------------------------------------------------------------
+
+  async function ensureSynth() {
+    await Tone.start()
+    if (!synthRef.current) {
+      synthRef.current = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.05, decay: 0.2, sustain: 0.5, release: 0.6 },
+        volume: -8,
+      }).toDestination()
+    }
+    return synthRef.current
+  }
+
+  function clearPlaybackTimers() {
+    for (const t of playbackTimeoutsRef.current) clearTimeout(t)
+    playbackTimeoutsRef.current = []
+  }
+
+  // Clean up audio + timers on unmount
+  useEffect(() => {
+    return () => {
+      clearPlaybackTimers()
+      if (synthRef.current) {
+        try { synthRef.current.releaseAll() } catch { /* ignore */ }
+        try { synthRef.current.dispose() } catch { /* ignore */ }
+        synthRef.current = null
+      }
+    }
+  }, [])
+
   // Handle tuning reduction
   const handleReduceTuning = async () => {
     try {
@@ -206,62 +246,100 @@ export default function TuningTab({
     }
   }
 
-  // Play tuning
+  // Play tuning — scale, one note at a time, highlights each row as it sounds.
   const handlePlayTuning = async (tuning, isReduced = false) => {
     try {
+      if (!tuning?.length) return
+      clearPlaybackTimers()
+      const synth = await ensureSynth()
+      const baseFreq = 220
+      const noteDuration = 0.45  // seconds per note
+      const gap = 0.05
+
       if (isReduced) setPlayingReduced(true)
       else setPlayingTuning(true)
-      
-      const blob = await apiClient.playTuning(sessionId, tuning, 120, 0.5)
-      const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
-      
-      audio.onended = () => {
+      setActiveRatios([])
+
+      const startAudio = Tone.now() + 0.05
+      tuning.forEach((ratio, i) => {
+        const at = startAudio + i * (noteDuration + gap)
+        synth.triggerAttackRelease(baseFreq * ratio, noteDuration, at)
+        const visualOffsetMs = i * (noteDuration + gap) * 1000
+        playbackTimeoutsRef.current.push(
+          setTimeout(() => setActiveRatios([ratio]), visualOffsetMs),
+        )
+      })
+
+      const totalMs = tuning.length * (noteDuration + gap) * 1000
+      playbackTimeoutsRef.current.push(setTimeout(() => {
+        setActiveRatios([])
         if (isReduced) setPlayingReduced(false)
         else setPlayingTuning(false)
-        URL.revokeObjectURL(url)
-      }
-      
-      await audio.play()
+      }, totalMs + 100))
     } catch (error) {
       console.error('Play error:', error)
+      setActiveRatios([])
       if (isReduced) setPlayingReduced(false)
       else setPlayingTuning(false)
     }
   }
 
-  // Play random chords
+  // Play random chords — N chords of 3–4 notes each, highlights all rows
+  // belonging to the currently-sounding chord.
   const handlePlayRandomChords = async () => {
     try {
-      setPlayingRandomChords(true)
       const tuning = reducedTuning?.reduced_tuning || analysisResult.tuning
-      const blob = await apiClient.getChordAudio(sessionId, tuning, 8, 220, 1.5)
-      const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
-      setAudioRef(audio)
-      
-      audio.onended = () => {
-        setPlayingRandomChords(false)
-        setAudioRef(null)
-        URL.revokeObjectURL(url)
+      if (!tuning?.length) return
+      clearPlaybackTimers()
+      const synth = await ensureSynth()
+
+      const baseFreq = 220
+      const chordDuration = 1.5
+      const numChords = 8
+      const chords = []
+      for (let i = 0; i < numChords; i++) {
+        const size = Math.min(tuning.length, 3 + Math.floor(Math.random() * 2))
+        const picked = new Set()
+        while (picked.size < size) {
+          picked.add(Math.floor(Math.random() * tuning.length))
+        }
+        chords.push([...picked].sort((a, b) => a - b).map((idx) => tuning[idx]))
       }
-      
-      await audio.play()
+
+      setPlayingRandomChords(true)
+      setActiveRatios([])
+      const startAudio = Tone.now() + 0.05
+      chords.forEach((ratios, i) => {
+        const freqs = ratios.map((r) => baseFreq * r)
+        const at = startAudio + i * chordDuration
+        synth.triggerAttackRelease(freqs, chordDuration - 0.15, at)
+        playbackTimeoutsRef.current.push(
+          setTimeout(() => setActiveRatios(ratios), i * chordDuration * 1000),
+        )
+      })
+
+      const totalMs = numChords * chordDuration * 1000
+      playbackTimeoutsRef.current.push(setTimeout(() => {
+        setActiveRatios([])
+        setPlayingRandomChords(false)
+      }, totalMs + 100))
     } catch (error) {
       console.error('Play random chords error:', error)
       setPlayingRandomChords(false)
-      setAudioRef(null)
+      setActiveRatios([])
     }
   }
 
-  // Stop random chords
+  // Stop everything currently sounding (also covers the scale playback)
   const handleStopRandomChords = () => {
-    if (audioRef) {
-      audioRef.pause()
-      audioRef.currentTime = 0
-      setAudioRef(null)
+    clearPlaybackTimers()
+    if (synthRef.current) {
+      try { synthRef.current.releaseAll() } catch { /* ignore */ }
     }
+    setActiveRatios([])
     setPlayingRandomChords(false)
+    setPlayingTuning(false)
+    setPlayingReduced(false)
   }
 
   // Download SCL file
@@ -414,18 +492,26 @@ export default function TuningTab({
               {analysisResult.tuning?.map((ratio, idx) => {
                 const fraction = decimalToFraction(ratio, analysisResult.max_denominator || 100)
                 const intervalName = findIntervalName(ratio, intervalCatalog, 0.01)
-                
+
                 // Check if this ratio is in the reduced tuning
                 const isReduced = reducedTuning?.reduced_tuning?.some(
                   r => Math.abs(r - ratio) < 0.0001
                 )
-                
+                // Highlight while this ratio is currently being played
+                const isActive = activeRatios.some(
+                  r => Math.abs(r - ratio) < 0.0001
+                )
+
                 return (
-                  <tr 
-                    key={idx} 
-                    className={`border-b border-biotuner-dark-700 hover:bg-biotuner-dark-800 transition-colors ${
-                      isReduced ? 'bg-biotuner-primary/20 border-biotuner-primary/50' : ''
-                    }`}
+                  <tr
+                    key={idx}
+                    className={`border-b border-biotuner-dark-700 transition-all duration-150
+                      ${isActive
+                        ? 'bg-biotuner-accent/30 ring-1 ring-biotuner-accent/70 shadow-[inset_0_0_12px_rgba(16,185,129,0.25)]'
+                        : isReduced
+                          ? 'bg-biotuner-primary/20 border-biotuner-primary/50 hover:bg-biotuner-dark-800'
+                          : 'hover:bg-biotuner-dark-800'}
+                    `}
                   >
                     <td className={`py-2 px-4 font-bold ${isReduced ? 'text-biotuner-pink' : 'text-biotuner-accent'}`}>
                       {idx}
