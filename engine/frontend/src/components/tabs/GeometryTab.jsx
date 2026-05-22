@@ -57,11 +57,21 @@ function useDebounced(value, delay = 250) {
 
 export default function GeometryTab({ analysisResult }) {
   const [type, setType] = useState('lissajous')
-  const [paramsByType, setParamsByType] = useState(() =>
-    Object.fromEntries(
-      Object.values(GEOMETRY_TYPES).map((g) => [g.key, { ...g.defaultParams }])
-    )
-  )
+  // Seed each geometry's params with its defaults *merged with* the analysis
+  // mapping, so the user sees a pattern derived from their signal as soon as
+  // they land here rather than the abstract defaults.
+  const [paramsByType, setParamsByType] = useState(() => {
+    const ratios = analysisResult?.tuning || []
+    const out = {}
+    for (const g of Object.values(GEOMETRY_TYPES)) {
+      const base = { ...g.defaultParams }
+      if (g.engine !== 'python' && typeof g.fromRatios === 'function' && ratios.length) {
+        Object.assign(base, g.fromRatios(ratios) || {})
+      }
+      out[g.key] = base
+    }
+    return out
+  })
   const [animate, setAnimate] = useState(true)
   const [color, setColor] = useState('#06b6d4')
   const [palette, setPalette] = useState('mono')  // 'mono' | 'accent'
@@ -132,6 +142,27 @@ export default function GeometryTab({ analysisResult }) {
   // Apply derived tuning to current geometry's params
   // -------------------------------------------------------------------------
   const ratios = analysisResult?.tuning || []
+  const ratiosKeyForJs = useMemo(() => ratios.join(','), [ratios])
+
+  // Auto-snap every JS geometry to the new analysis whenever the ratios
+  // change. This keeps the analysis "live": pick a pattern, see it derived
+  // from your signal; switch tabs and come back, still derived. The user
+  // can override any individual slider afterwards.
+  useEffect(() => {
+    if (!ratios.length) return
+    setParamsByType((prev) => {
+      const next = { ...prev }
+      for (const g of Object.values(GEOMETRY_TYPES)) {
+        if (g.engine === 'python') continue
+        if (typeof g.fromRatios !== 'function') continue
+        const updates = g.fromRatios(ratios) || {}
+        if (Object.keys(updates).length === 0) continue
+        next[g.key] = { ...prev[g.key], ...updates }
+      }
+      return next
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ratiosKeyForJs])
 
   const applyFromAnalysis = () => {
     // Python-engine geometries already consume the tuning automatically

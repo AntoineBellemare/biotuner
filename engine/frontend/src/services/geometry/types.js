@@ -16,6 +16,39 @@
 
 import { findFraction, gcd } from './utils'
 
+// Pick the first ratio that's at least `minCents` from the unison; falls back
+// to ratios[0] * 1.5 (or 1.5) if nothing qualifies. Used by every JS-engine
+// fromRatios so a tuning whose ratios are all clustered near 1.0 doesn't
+// collapse to the trivial 1/1 fraction.
+function firstMeaningfulRatio(ratios, minCents = 30) {
+  if (!ratios?.length) return 1.5
+  for (const r of ratios) {
+    if (!Number.isFinite(r) || r <= 0) continue
+    if (Math.abs(1200 * Math.log2(r)) >= minCents) return r
+  }
+  return (ratios[0] || 1) * 1.5
+}
+
+// Pick the first N ratios that are at least `minCents` apart from the unison
+// and from each other. Pads with 1.5× the last value if fewer than N exist.
+function meaningfulRatios(ratios, n, minCents = 30) {
+  const out = []
+  if (ratios?.length) {
+    for (const r of ratios) {
+      if (!Number.isFinite(r) || r <= 0) continue
+      const isFar =
+        Math.abs(1200 * Math.log2(r)) >= minCents &&
+        out.every((p) => Math.abs(1200 * Math.log2(r / p)) >= minCents)
+      if (isFar) out.push(r)
+      if (out.length >= n) break
+    }
+  }
+  while (out.length < n) {
+    out.push(out.length ? out[out.length - 1] * 1.5 : 1.5)
+  }
+  return out
+}
+
 // ---------------------------------------------------------------------------
 // Lissajous — two perpendicular sinusoids, the canonical harmonic curve.
 // ---------------------------------------------------------------------------
@@ -42,8 +75,7 @@ const lissajous = {
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
   fromRatios(ratios) {
-    if (!ratios?.length) return {}
-    const r = (ratios[1] || (ratios[0] * 3 / 2)) / (ratios[0] || 1)
+    const r = firstMeaningfulRatio(ratios)
     const { n, d } = findFraction(r, 12)
     return { a: n, b: d }
   },
@@ -105,13 +137,14 @@ const harmonograph = {
     { key: 'lineWidth', label: 'Line width', type: 'slider', min: 0.3, max: 3, step: 0.05 },
   ],
   fromRatios(ratios) {
-    if (!ratios?.length) return {}
-    const base = ratios[0] || 1
+    // Pick four distinct meaningful ratios, scale into 2–8 range for an
+    // attractive pendulum interference pattern.
+    const picked = meaningfulRatios(ratios, 4, 30)
     return {
-      f1: +(((ratios[0] || 1) / base) * 3).toFixed(2),
-      f2: +(((ratios[1] || 1.5) / base) * 3).toFixed(2),
-      f3: +(((ratios[2] || ratios[0] || 1.25) / base) * 3).toFixed(2),
-      f4: +(((ratios[3] || ratios[1] || 1.66) / base) * 3).toFixed(2),
+      f1: +(picked[0] * 2).toFixed(2),
+      f2: +(picked[1] * 2).toFixed(2),
+      f3: +(picked[2] * 2).toFixed(2),
+      f4: +(picked[3] * 2).toFixed(2),
     }
   },
   render(params, t) {
@@ -152,8 +185,7 @@ const rose = {
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4, step: 0.1 },
   ],
   fromRatios(ratios) {
-    if (!ratios?.length) return {}
-    const r = (ratios[1] || (ratios[0] * 3 / 2)) / (ratios[0] || 1)
+    const r = firstMeaningfulRatio(ratios)
     const { n, d } = findFraction(r, 16)
     return { n, d }
   },
@@ -193,8 +225,7 @@ const spirograph = {
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.3, max: 3,  step: 0.05 },
   ],
   fromRatios(ratios) {
-    if (!ratios?.length) return {}
-    const r = (ratios[1] || (ratios[0] * 3 / 2)) / (ratios[0] || 1)
+    const r = firstMeaningfulRatio(ratios)
     const f = findFraction(r, 12)
     return { R: f.n * 3, r: f.d * 3, offset: Math.max(1, f.d * 2) }
   },
@@ -246,8 +277,7 @@ const chladni = {
     { key: 'resolution', label: 'Resolution',  type: 'slider', min: 64,  max: 512, step: 32 },
   ],
   fromRatios(ratios) {
-    if (!ratios?.length) return {}
-    const r = (ratios[1] || (ratios[0] * 3 / 2)) / (ratios[0] || 1)
+    const r = firstMeaningfulRatio(ratios)
     const f = findFraction(r, 10)
     return { m: f.n, n: f.d }
   },
