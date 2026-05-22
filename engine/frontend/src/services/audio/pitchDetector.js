@@ -21,7 +21,7 @@ const MAX_HZ = 5000
 export async function startPitchDetection({
   onPitch,
   minClarity = MIN_CLARITY,
-  smoothingFactor = 0.55,   // 0 = no smoothing, 1 = freeze (don't use 1).
+  smoothingFactor = 0.25,   // 0 = no smoothing, 1 = freeze (don't use 1).
 } = {}) {
   if (!navigator.mediaDevices?.getUserMedia) {
     throw new Error('Microphone access not available in this browser.')

@@ -669,14 +669,16 @@ function TunerStrip({ reading, detectedHz, string, locked, inTuneFlash, onUnlock
           </div>
         ))}
 
-        {/* Needle */}
+        {/* Needle — no CSS transition on `left`; smoothing is done in JS so a
+            transition here would only add visible lag on top of it. */}
         {hasReading && (
           <div
-            className="absolute top-1/2 -translate-y-1/2"
+            className="absolute top-1/2"
             style={{
               left: `${needlePct}%`,
               transform: 'translate(-50%, -50%)',
-              transition: 'left 80ms ease-out, background-color 200ms',
+              transition: 'background-color 200ms',
+              willChange: 'left',
             }}
           >
             <div className={`w-1.5 h-14 rounded-full ${needleColor}`} />
