@@ -112,6 +112,15 @@ class TuningExportRequest(BaseModel):
     filename: str = Field(default="biotuner_tuning")
 
 
+class HarmonicGeometryRequest(BaseModel):
+    """Request for biotuner.harmonic_geometry style dispatch."""
+    style: str
+    params: Optional[Dict[str, Any]] = None
+    tuning: Optional[List[float]] = None
+    peaks: Optional[List[float]] = None
+    base_freq: float = Field(default=1.0, gt=0)
+
+
 class SessionState(BaseModel):
     """Session state storage"""
     session_id: str

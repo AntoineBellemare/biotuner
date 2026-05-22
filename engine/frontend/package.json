@@ -25,6 +25,7 @@
     "react-dropzone": "^14.2.3",
     "recharts": "^2.15.4",
     "tailwind-merge": "^2.1.0",
+    "three": "^0.184.0",
     "tone": "^14.7.77",
     "vexflow": "^5.0.0",
     "wavesurfer.js": "^7.5.0"

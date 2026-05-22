@@ -20,6 +20,7 @@ from services.audio_service import AudioService
 from services.chord_service import ChordService
 from services.color_service import ColorService
 from services.tuning_export_service import export as export_tuning_data
+from services import harmonic_geometry_service
 from models.schemas import (
     AnalysisConfig,
     AnalysisResult,
@@ -33,6 +34,7 @@ from models.schemas import (
     MusicXMLRequest,
     PaletteExportRequest,
     TuningExportRequest,
+    HarmonicGeometryRequest,
 )
 
 # Initialize FastAPI app
@@ -610,6 +612,32 @@ async def export_tuning(fmt: str, request: TuningExportRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Harmonic Geometry
+# ============================================================================
+
+@app.post("/api/harmonic-geometry")
+async def compute_harmonic_geometry(request: HarmonicGeometryRequest):
+    """Compute a harmonic-geometry pattern via biotuner.harmonic_geometry."""
+    try:
+        return harmonic_geometry_service.compute(
+            style=request.style,
+            params=request.params,
+            tuning=request.tuning,
+            peaks=request.peaks,
+            base_freq=request.base_freq,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Geometry error: {e}")
+
+
+@app.get("/api/harmonic-geometry/styles")
+async def list_geometry_styles():
+    return {"styles": harmonic_geometry_service.list_styles()}
 
 
 # ============================================================================

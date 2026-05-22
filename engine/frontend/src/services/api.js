@@ -154,6 +154,21 @@ class BiotunerAPI {
   }
 
   // ============================================================================
+  // Harmonic Geometry (biotuner.harmonic_geometry dispatch)
+  // ============================================================================
+
+  async computeHarmonicGeometry({ style, params, tuning, peaks, baseFreq }) {
+    const response = await this.client.post('/api/harmonic-geometry', {
+      style,
+      params,
+      tuning,
+      peaks,
+      base_freq: baseFreq ?? 1.0,
+    })
+    return response.data
+  }
+
+  // ============================================================================
   // Session Management
   // ============================================================================
 

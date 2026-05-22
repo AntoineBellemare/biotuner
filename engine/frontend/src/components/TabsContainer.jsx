@@ -3,6 +3,7 @@ import TuningTab from './tabs/TuningTab'
 import ChordsTab from './tabs/ChordsTab'
 import BiocolorsTab from './tabs/BiocolorsTab'
 import GuitarTuningTab from './tabs/GuitarTuningTab'
+import GeometryTab from './tabs/GeometryTab'
 
 export default function TabsContainer({
   sessionId,
@@ -16,10 +17,11 @@ export default function TabsContainer({
   const [activeTab, setActiveTab] = useState('tuning')
 
   const tabs = [
-    { id: 'tuning', label: 'Tuning', icon: '🎼' },
-    { id: 'guitar', label: 'Guitar', icon: '🎸' },
-    { id: 'chords', label: 'Chords', icon: '🎹' },
+    { id: 'tuning',    label: 'Tuning',    icon: '🎼' },
+    { id: 'guitar',    label: 'Guitar',    icon: '🎸' },
+    { id: 'chords',    label: 'Chords',    icon: '🎹' },
     { id: 'biocolors', label: 'Biocolors', icon: '🎨' },
+    { id: 'geometry',  label: 'Geometry',  icon: '◬' },
   ]
 
   return (
@@ -82,6 +84,11 @@ export default function TabsContainer({
             sessionId={sessionId}
             analysisResult={analysisResult}
             fileInfo={fileInfo}
+          />
+        )}
+        {activeTab === 'geometry' && (
+          <GeometryTab
+            analysisResult={analysisResult}
           />
         )}
       </div>
