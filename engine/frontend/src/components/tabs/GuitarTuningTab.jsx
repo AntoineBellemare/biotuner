@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Tone from 'tone'
-import { Play, Download, Save, Music, Volume2 } from 'lucide-react'
+import { Play, Download, Save, Music, Volume2, Mic, MicOff, Lock } from 'lucide-react'
 import { exportTuning as exportTuningLocal } from '../../services/tuningExport'
+import { startPitchDetection } from '../../services/audio/pitchDetector'
 
 // ---------------------------------------------------------------------------
 // Instruments
@@ -50,6 +51,30 @@ const HARMONICS_OPTIONS = [
 function centsBetween(c, s) {
   if (!c || !s) return 0
   return 1200 * Math.log2(c / s)
+}
+
+// Cents distance from a detected frequency to the nearest octave of a target.
+// Used by the live tuner so playing a string at the wrong octave still snaps
+// to the right string (positive or negative cents from the closest octave).
+function octaveTolerantCents(detectedHz, targetHz) {
+  if (!detectedHz || !targetHz) return null
+  const k = Math.round(Math.log2(detectedHz / targetHz))
+  return 1200 * Math.log2(detectedHz / (targetHz * Math.pow(2, k)))
+}
+
+// Auto-pick the string whose nearest octave is closest in cents to the
+// detected pitch. Returns { index, cents } or null.
+function findClosestString(detectedHz, strings) {
+  if (!detectedHz || !strings?.length) return null
+  let best = null
+  for (let i = 0; i < strings.length; i++) {
+    const c = octaveTolerantCents(detectedHz, strings[i].target)
+    if (c == null) continue
+    if (best == null || Math.abs(c) < Math.abs(best.cents)) {
+      best = { index: i, cents: c }
+    }
+  }
+  return best
 }
 
 function colorForCents(absCents) {
@@ -143,11 +168,68 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
   const [intermod, setIntermod] = useState(false)
   const synthRef = useRef(null)
 
+  // --- Live tuner state ---
+  const [tunerActive, setTunerActive] = useState(false)
+  const [tunerError, setTunerError] = useState(null)
+  const [detectedHz, setDetectedHz] = useState(null)
+  const [lockedIdx, setLockedIdx] = useState(null)  // null = auto-detect
+  const [inTuneFlash, setInTuneFlash] = useState(false)
+  const tunerHandleRef = useRef(null)
+  const inTuneSinceRef = useRef(null)
+  const lastHapticAtRef = useRef(0)
+
   // Whenever a new analysis comes in, snap the fundamental to its strongest
   // peak. The user can still override with chips or the manual input.
   useEffect(() => {
     if (audioFundamental) setFundamental(audioFundamental)
   }, [audioFundamental])
+
+  // Lifecycle: start/stop pitch detection when the tuner toggle flips.
+  useEffect(() => {
+    if (!tunerActive) {
+      const h = tunerHandleRef.current
+      tunerHandleRef.current = null
+      if (h) h.stop().catch(() => {})
+      setDetectedHz(null)
+      inTuneSinceRef.current = null
+      return
+    }
+    let cancelled = false
+    setTunerError(null)
+    startPitchDetection({
+      onPitch: ({ frequency }) => {
+        if (cancelled) return
+        setDetectedHz(frequency)
+      },
+    })
+      .then((handle) => {
+        if (cancelled) {
+          handle.stop().catch(() => {})
+        } else {
+          tunerHandleRef.current = handle
+        }
+      })
+      .catch((err) => {
+        console.error('Pitch detection failed:', err)
+        let msg = err?.message || 'Could not start the live tuner.'
+        if (err?.name === 'NotAllowedError') {
+          msg = 'Microphone permission was denied.'
+        }
+        setTunerError(msg)
+        setTunerActive(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [tunerActive])
+
+  // Always release mic on unmount.
+  useEffect(() => () => {
+    if (tunerHandleRef.current) {
+      tunerHandleRef.current.stop().catch(() => {})
+      tunerHandleRef.current = null
+    }
+  }, [])
 
   const tuning = analysisResult?.tuning || []
 
@@ -155,6 +237,49 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
     () => buildMapping({ tuning, fundamental, instrument, harmonicsDepth, intermod }),
     [tuning, fundamental, instrument, harmonicsDepth, intermod]
   )
+
+  // Derive which string the tuner is reading + the cents offset.
+  const tunerReading = useMemo(() => {
+    if (!detectedHz || !strings.length) {
+      return { stringIdx: null, cents: null }
+    }
+    if (lockedIdx != null && strings[lockedIdx]) {
+      return {
+        stringIdx: lockedIdx,
+        cents: octaveTolerantCents(detectedHz, strings[lockedIdx].target),
+      }
+    }
+    const closest = findClosestString(detectedHz, strings)
+    return { stringIdx: closest?.index ?? null, cents: closest?.cents ?? null }
+  }, [detectedHz, strings, lockedIdx])
+
+  // In-tune logic: |cents| ≤ 5 for ≥ 500 ms triggers the flash + haptic.
+  useEffect(() => {
+    const c = tunerReading.cents
+    if (c == null) {
+      inTuneSinceRef.current = null
+      setInTuneFlash(false)
+      return
+    }
+    if (Math.abs(c) <= 5) {
+      if (inTuneSinceRef.current == null) {
+        inTuneSinceRef.current = performance.now()
+      } else if (performance.now() - inTuneSinceRef.current >= 500) {
+        const now = performance.now()
+        if (now - lastHapticAtRef.current > 1200) {
+          lastHapticAtRef.current = now
+          if (typeof navigator.vibrate === 'function') {
+            try { navigator.vibrate(40) } catch { /* ignore */ }
+          }
+          setInTuneFlash(true)
+          setTimeout(() => setInTuneFlash(false), 600)
+        }
+      }
+    } else {
+      inTuneSinceRef.current = null
+      setInTuneFlash(false)
+    }
+  }, [tunerReading.cents])
 
   async function ensureSynth() {
     await Tone.start()
@@ -320,6 +445,27 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
         >
           <Play className="w-4 h-4" /> Play all
         </button>
+
+        <button
+          onClick={() => {
+            if (tunerActive) {
+              setTunerActive(false)
+            } else {
+              setLockedIdx(null)
+              setTunerActive(true)
+            }
+          }}
+          aria-pressed={tunerActive}
+          className={`
+            min-h-[48px] flex items-center gap-2 px-4 py-2 rounded-lg font-medium border
+            ${tunerActive
+              ? 'bg-red-500/20 border-red-400/50 text-red-200'
+              : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/80 hover:border-biotuner-primary/50'}
+          `}
+        >
+          {tunerActive ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          {tunerActive ? 'Stop tuner' : 'Live tuner'}
+        </button>
       </div>
 
       <p className="text-xs text-biotuner-light/40 -mt-2">
@@ -328,19 +474,56 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
         ({candidateCount} pitches available).
       </p>
 
+      {/* Live tuner error */}
+      {tunerError && !tunerActive && (
+        <div className="bg-red-900/20 border border-red-500/40 rounded-lg p-3 text-sm text-red-300">
+          {tunerError}
+        </div>
+      )}
+
+      {/* Live tuner strip */}
+      {tunerActive && (
+        <TunerStrip
+          reading={tunerReading}
+          detectedHz={detectedHz}
+          string={tunerReading.stringIdx != null ? strings[tunerReading.stringIdx] : null}
+          locked={lockedIdx != null}
+          inTuneFlash={inTuneFlash}
+          onUnlock={() => setLockedIdx(null)}
+        />
+      )}
+
       {/* String cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {strings.map((s) => {
           const cents = s.cents_offset
           const abs = Math.abs(cents)
           const color = colorForCents(abs)
+          const isActiveString = tunerActive && tunerReading.stringIdx === s.index
+          const isLocked = tunerActive && lockedIdx === s.index
           return (
             <div
               key={s.index}
-              className="bg-biotuner-dark-800/70 border border-biotuner-dark-600 rounded-lg p-4 flex flex-col gap-2"
+              onClick={() => {
+                if (!tunerActive) return
+                setLockedIdx((cur) => (cur === s.index ? null : s.index))
+              }}
+              role={tunerActive ? 'button' : undefined}
+              className={`
+                bg-biotuner-dark-800/70 border rounded-lg p-4 flex flex-col gap-2 transition-all
+                ${isLocked
+                  ? 'border-biotuner-accent/80 bg-biotuner-accent/10'
+                  : isActiveString
+                    ? 'border-biotuner-primary/80'
+                    : 'border-biotuner-dark-600'}
+                ${tunerActive ? 'cursor-pointer hover:border-biotuner-primary/50' : ''}
+              `}
             >
               <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-biotuner-light">{s.name}</span>
+                <span className="text-lg font-bold text-biotuner-light flex items-center gap-1.5">
+                  {s.name}
+                  {isLocked && <Lock className="w-3.5 h-3.5 text-biotuner-accent" />}
+                </span>
                 <span className="text-xs text-biotuner-light/40 font-mono">
                   std {s.standard.toFixed(2)} Hz
                 </span>
@@ -360,7 +543,7 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
                 </span>
               </div>
               <button
-                onClick={() => playFreq(s.target)}
+                onClick={(e) => { e.stopPropagation(); playFreq(s.target) }}
                 className="mt-1 min-h-[44px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-biotuner-dark-900 border border-biotuner-dark-600 hover:border-biotuner-primary/50 text-sm text-biotuner-light/80"
               >
                 <Volume2 className="w-4 h-4" /> Play reference
@@ -404,6 +587,138 @@ export default function GuitarTuningTab({ analysisResult, onSaveToLibrary }) {
           </button>
         )}
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// TunerStrip — needle meter at the top of the Guitar tab while the live
+// tuner is active. Renders a -50..+50 ¢ scale, a colored needle, the active
+// string + target frequency, and a green flash when the user is in tune.
+// ---------------------------------------------------------------------------
+
+function TunerStrip({ reading, detectedHz, string, locked, inTuneFlash, onUnlock }) {
+  const cents = reading?.cents
+  const hasReading = cents != null && string != null
+
+  // Map cents → [0, 100] %, clamped to the visible ±50¢ window.
+  const needlePct = hasReading
+    ? Math.max(0, Math.min(100, 50 + cents))
+    : 50
+
+  const absCents = hasReading ? Math.abs(cents) : Infinity
+  const needleColor =
+    absCents <= 5  ? 'bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.6)]' :
+    absCents <= 20 ? 'bg-emerald-300' :
+    absCents <= 50 ? 'bg-yellow-300' :
+                     'bg-red-400'
+
+  const directionHint =
+    !hasReading           ? null :
+    absCents <= 5         ? null :
+    cents < 0             ? 'tune ↑ up' :
+                            'tune ↓ down'
+
+  return (
+    <div
+      className={`
+        rounded-xl border-2 p-4 sm:p-5 transition-colors duration-300
+        ${inTuneFlash
+          ? 'border-emerald-400 bg-emerald-500/15'
+          : 'border-biotuner-primary/40 bg-biotuner-dark-900/80'}
+      `}
+    >
+      {/* Top row: detected note + locked indicator */}
+      <div className="flex items-center justify-between mb-3 gap-3">
+        <div className="flex items-baseline gap-3">
+          <div className="text-3xl sm:text-4xl font-bold text-biotuner-light tabular-nums">
+            {string ? string.name : '—'}
+          </div>
+          <div className="text-xs sm:text-sm text-biotuner-light/60">
+            target {string ? `${string.target.toFixed(2)} Hz` : ''}
+            {locked && (
+              <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-biotuner-accent/20 text-biotuner-accent uppercase tracking-wider text-[10px]">
+                <Lock className="w-3 h-3" /> locked
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="text-right font-mono text-sm text-biotuner-light/80">
+          {detectedHz ? `${detectedHz.toFixed(2)} Hz` : 'listening…'}
+        </div>
+      </div>
+
+      {/* Needle meter */}
+      <div className="relative h-20 select-none">
+        {/* Center axis (target line) */}
+        <div className="absolute inset-x-0 top-1/2 h-px bg-biotuner-light/15" />
+
+        {/* Tick marks at -50, -25, 0, +25, +50 */}
+        {[-50, -25, 0, 25, 50].map((t) => (
+          <div
+            key={t}
+            className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center"
+            style={{ left: `${50 + t}%`, transform: 'translateX(-50%)' }}
+          >
+            <div className={t === 0
+              ? 'w-px h-10 bg-biotuner-primary'
+              : 'w-px h-5 bg-biotuner-light/30'} />
+            <div className="text-[10px] text-biotuner-light/40 mt-1 font-mono">
+              {t === 0 ? '0¢' : `${t > 0 ? '+' : ''}${t}`}
+            </div>
+          </div>
+        ))}
+
+        {/* Needle */}
+        {hasReading && (
+          <div
+            className="absolute top-1/2 -translate-y-1/2"
+            style={{
+              left: `${needlePct}%`,
+              transform: 'translate(-50%, -50%)',
+              transition: 'left 80ms ease-out, background-color 200ms',
+            }}
+          >
+            <div className={`w-1.5 h-14 rounded-full ${needleColor}`} />
+          </div>
+        )}
+      </div>
+
+      {/* Bottom row: cents readout + direction hint + unlock */}
+      <div className="flex items-center justify-between gap-3 mt-2 min-h-[24px]">
+        <div className={`font-mono text-sm ${
+          inTuneFlash ? 'text-emerald-300 font-bold' :
+          !hasReading ? 'text-biotuner-light/30' :
+          absCents <= 5 ? 'text-emerald-300' :
+          absCents <= 20 ? 'text-emerald-200' :
+          absCents <= 50 ? 'text-yellow-200' :
+                           'text-red-300'
+        }`}>
+          {hasReading
+            ? `${cents >= 0 ? '+' : ''}${cents.toFixed(1)} ¢`
+            : '—'}
+          {inTuneFlash && '  ✓ in tune'}
+        </div>
+        <div className="flex items-center gap-2">
+          {directionHint && (
+            <span className="text-xs text-biotuner-light/50">{directionHint}</span>
+          )}
+          {locked && (
+            <button
+              onClick={onUnlock}
+              className="min-h-[32px] px-3 rounded-md text-xs bg-biotuner-dark-800 border border-biotuner-dark-600 hover:border-biotuner-primary/50 text-biotuner-light/80"
+            >
+              Unlock
+            </button>
+          )}
+        </div>
+      </div>
+
+      {!locked && (
+        <p className="text-[11px] text-biotuner-light/40 mt-2">
+          Auto-detecting closest string. Tap a string card to lock it.
+        </p>
+      )}
     </div>
   )
 }
