@@ -122,6 +122,10 @@ export default function GeometryTab({ analysisResult }) {
   const [pythonError, setPythonError] = useState(null)
   const [autoRotate, setAutoRotate] = useState(true)
   const [wireframe, setWireframe] = useState(false)
+  // Request-id ref for the Python compute effect: rapid re-fires (slider
+  // drags) bump this counter, and only the most-recently-fired request's
+  // result is applied. Lives outside the effect so it survives re-runs.
+  const requestIdRef = useRef(0)
   // Strip frontend-only flags from the request.
   const requestParams = useMemo(() => {
     if (!params) return {}
@@ -831,8 +835,8 @@ export default function GeometryTab({ analysisResult }) {
                       <input
                         type="range"
                         min={5}
-                        max={120}
-                        step={1}
+                        max={900}
+                        step={5}
                         value={morphPeriod}
                         onChange={(e) => setMorphPeriod(parseInt(e.target.value, 10))}
                         className="w-full accent-biotuner-accent cursor-pointer"

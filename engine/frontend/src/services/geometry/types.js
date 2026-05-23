@@ -675,10 +675,10 @@ const chladni = {
     symmetry: 'd4_max',
     max_denom: 6,
     n_modes: 3,
-    resolution: 320,
-    sigma: 0,
+    resolution: 512,
+    sigma: 0.085,            // user-preferred default; 0 toggles auto
     line_sharpness: 1.0,
-    animation: 'none',        // 'none' | 'phase' | 'breathe' | 'rotate'
+    animation: 'none',
     anim_speed: 0.3,
   },
   paramSchema: [
@@ -705,7 +705,7 @@ const chladni = {
       format: (v) => `×${Number(v).toFixed(2)}` },
     { key: 'sigma',      label: 'σ override (0 = auto)', type: 'slider', min: 0, max: 0.2, step: 0.001,
       format: (v) => v <= 0 ? 'auto' : v.toFixed(3), advanced: true },
-    { key: 'resolution', label: 'Resolution',          type: 'slider', min: 128, max: 512, step: 32, advanced: true },
+    { key: 'resolution', label: 'Resolution',          type: 'slider', min: 128, max: 1024, step: 64, advanced: true },
   ],
   // Derive a small-integer mode set from the chosen analysis ratios.
   // Note: this geometry expects the analysis ratios to be passed inside
@@ -802,6 +802,11 @@ const chladni = {
     }
 
     // D4 symmetrisation (4 rotations × 2 reflections = 8 transforms).
+    // Sum mode uses |v| not signed v — antisymmetric fields would
+    // otherwise cancel between reflection pairs (one transform flips
+    // the sign of antisymmetric data) and saturate the renderer to all
+    // white. Abs-sum layers the nodal-line sets cleanly across all 8
+    // transforms.
     if (symmetry === 'd4_max' || symmetry === 'd4_sum') {
       const orig = new Float32Array(data)
       const useMax = symmetry === 'd4_max'
@@ -819,7 +824,8 @@ const chladni = {
           const v7 = orig[x  * N + y]                       // flip anti-diagonal
           data[y * N + x] = useMax
             ? Math.max(v0, v1, v2, v3, v4, v5, v6, v7)
-            : (v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7) / 8
+            : (Math.abs(v0) + Math.abs(v1) + Math.abs(v2) + Math.abs(v3) +
+               Math.abs(v4) + Math.abs(v5) + Math.abs(v6) + Math.abs(v7)) / 8
         }
       }
     }
