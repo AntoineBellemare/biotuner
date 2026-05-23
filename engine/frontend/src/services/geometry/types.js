@@ -522,14 +522,14 @@ const harmonic_knot = {
   renderer: '3d',
   label: 'Harmonic knot',
   description:
-    'Torus knot T(p, q) where the dominant ratio sets the winding numbers. ' +
-    '3/2 → trefoil knot; 5/4 → cinquefoil. Pick which derived ratio drives ' +
-    'the knot via the "Dominant" slot — every binding gives a different T(p, q).',
-  // Single slot — picks WHICH derived ratio is sent to biotuner as the
-  // input. With only one ratio in the HarmonicInput, biotuner's "pick
-  // simplest" lands deterministically on that ratio → unambiguous T(p, q).
+    'Torus knot T(p, q). Use "Knot preset" for the classic shapes ' +
+    '(trefoil, cinquefoil, …) or set it to "From data" to drive winding ' +
+    'numbers off the chosen derived ratio.',
+  // The KNOT_PRESETS map (in GeometryTab) lets the user one-click a
+  // recognisable T(p, q); "data" defers to the Dominant slot binding.
   slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
+    knot_preset: 'data',     // 'data' | 'T_2_1' | 'T_3_2' | 'T_5_3' | 'T_5_4' | 'T_7_4'
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -537,6 +537,16 @@ const harmonic_knot = {
     minor_radius: 0.7,
   },
   paramSchema: [
+    { key: 'knot_preset', label: 'Knot preset', type: 'select',
+      options: [
+        { value: 'data',  label: 'From data (dominant slot)' },
+        { value: 'T_2_1', label: 'T(2, 1) — Hopf link' },
+        { value: 'T_3_2', label: 'T(3, 2) — Trefoil' },
+        { value: 'T_5_3', label: 'T(5, 3)' },
+        { value: 'T_5_4', label: 'T(5, 4) — Cinquefoil' },
+        { value: 'T_7_4', label: 'T(7, 4)' },
+        { value: 'T_8_3', label: 'T(8, 3)' },
+      ] },
     { key: 'tube_radius',  label: 'Tube radius',    type: 'slider', min: 0.01, max: 0.3,  step: 0.005 },
     { key: 'major_radius', label: 'Major radius',   type: 'slider', min: 0.5,  max: 4,    step: 0.05 },
     { key: 'minor_radius', label: 'Minor radius',   type: 'slider', min: 0.1,  max: 2,    step: 0.05 },
@@ -582,6 +592,7 @@ const harmonic_point_cloud = {
   defaultParams: {
     n_points: 3000,
     surface: 'sphere',
+    ratio_scale: 1,
   },
   paramSchema: [
     { key: 'n_points', label: 'Points', type: 'slider', min: 400, max: 8000, step: 100 },
@@ -593,6 +604,12 @@ const harmonic_point_cloud = {
         { value: 'hyperbolic', label: 'Hyperbolic' },
         { value: 'mos',        label: 'Möbius strip' },
       ] },
+    // ratio_scale is a frontend-only param. GeometryTab multiplies every
+    // tuning ratio by it before sending, spreading microtonal ratios
+    // (which all cluster near 1) into a wider range that biotuner's
+    // density field can actually distinguish.
+    { key: 'ratio_scale', label: 'Ratio scale', type: 'slider', min: 1, max: 20, step: 0.5,
+      format: (v) => `×${Number(v).toFixed(1)}` },
   ],
 }
 
@@ -870,9 +887,10 @@ export const GEOMETRY_TYPES = {
   subharmonic_tree,
 }
 
-// Display order
+// Display order. L-system removed per user request — insufficient
+// per-tuning variability to justify keeping it in the lineup.
 export const GEOMETRY_ORDER = [
   'lissajous', 'harmonograph', 'rose', 'spirograph',
-  'chladni', 'harmonic_knot', 'lsystem_3d',
+  'chladni', 'harmonic_knot',
   'harmonic_point_cloud', 'subharmonic_tree',
 ]

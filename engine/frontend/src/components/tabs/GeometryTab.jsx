@@ -28,9 +28,15 @@ function paramId(geomKey, paramKey) {
   return `${geomKey}::${paramKey}`
 }
 
-function randomizeParams(geom) {
-  const out = { ...geom.defaultParams }
+function randomizeParams(geom, current = {}) {
+  // Keep derived params (those tied to slot bindings — a, b for Lissajous,
+  // m, n for Chladni, etc.) and advanced params (hidden by default) so
+  // Randomize only re-rolls the controls the user can actually see and
+  // expects to vary. Resolution / per-pendulum decays / mode counts stay
+  // at their current values.
+  const out = { ...current }
   for (const p of geom.paramSchema) {
+    if (p.derived || p.advanced) continue
     if (p.type === 'slider' || p.type === 'int') {
       const range = p.max - p.min
       let v = p.min + Math.random() * range
@@ -115,20 +121,22 @@ export default function GeometryTab({ analysisResult }) {
   const [pythonError, setPythonError] = useState(null)
   const [autoRotate, setAutoRotate] = useState(true)
   const [wireframe, setWireframe] = useState(false)
-  // Strip frontend-only flags (use_override) from the request and gate
-  // p/q on it. Memoised so the debounced compute doesn't re-fire on the
-  // same effective payload.
+  // Strip frontend-only flags from the request.
   const requestParams = useMemo(() => {
     if (!params) return {}
     const out = { ...params }
-    if (out.use_override === false) {
-      delete out.p
-      delete out.q
-    }
     delete out.use_override
+    delete out.knot_preset
+    delete out.ratio_scale          // applied to tuning, not a backend param
     return out
   }, [params])
-  const debouncedParams = useDebounced(requestParams, 250)
+  // No debouncing — the previous useDebounced(250) caused a 250 ms window
+  // where the effect fired with stale params from the previous geometry,
+  // and on first-visit to a Python tab the user often saw nothing because
+  // the stale request was discarded by the cancel guard. Instead we use a
+  // request-id ref so rapid param changes still coalesce — only the
+  // most-recently-fired request's result is applied.
+  const requestParamsKey = useMemo(() => JSON.stringify(requestParams), [requestParams])
   // Tuning the backend actually receives for the active Python geometry:
   // 1) chip selection filters the raw analysis ratios → "the ratios I want
   //    biotuner to consider";
@@ -156,6 +164,19 @@ export default function GeometryTab({ analysisResult }) {
     // selected ratios — so e.g. harmonic_knot sees exactly one ratio and
     // biotuner's "pick simplest" lands unambiguously on it. This makes
     // slot bindings the actual control surface for T(p, q) variation.
+    // Knot presets short-circuit everything: send a single synthetic ratio
+    // so biotuner makes exactly T(p, q). 'data' falls through to the slot
+    // picker so the geometry stays tuning-driven.
+    if (type === 'harmonic_knot') {
+      const preset = params?.knot_preset || 'data'
+      const KNOT_PRESET_RATIOS = {
+        T_2_1: 2 / 1, T_3_2: 3 / 2, T_5_3: 5 / 3,
+        T_5_4: 5 / 4, T_7_4: 7 / 4, T_8_3: 8 / 3,
+      }
+      if (preset !== 'data' && KNOT_PRESET_RATIOS[preset]) {
+        return [KNOT_PRESET_RATIOS[preset]]
+      }
+    }
     const g = GEOMETRY_TYPES[type]
     if (g?.engine === 'python' && g.slots?.length > 0) {
       const b = bindingsByType[type] || {}
@@ -175,43 +196,53 @@ export default function GeometryTab({ analysisResult }) {
       }
       if (picked.length) return picked
     }
+    // Point cloud: apply user-controlled ratio_scale to spread microtonal
+    // ratios across a wider range. Biotuner's harmonic_point_cloud's
+    // density field reads these as frequencies; ratios that cluster near
+    // 1 produce visually-identical patterns no matter which subset is
+    // sent.  Multiplying by ratio_scale (× 1–20) changes that.
+    if (type === 'harmonic_point_cloud') {
+      const scale = Math.max(0.1, Number(params?.ratio_scale ?? 1))
+      if (scale !== 1) return expanded.map((r) => r * scale)
+    }
     return expanded
-  }, [analysisResult, selectedRatiosByType, sourceModeByType, type, bindingsByType])
+  }, [analysisResult, selectedRatiosByType, sourceModeByType, type, bindingsByType, params])
   const ratiosKey = useMemo(() => selectedRatios.join(','), [selectedRatios])
 
-  // Trigger backend compute when a Python style is active and its
-  // (debounced) params change. The same effect also fires when the user
-  // switches tuning (e.g. after a new analysis).
+  // Trigger backend compute when a Python style is active. Fires
+  // immediately on style change, ratio change, or param change — no
+  // debouncing so the first visit to a Python tab renders without a
+  // hidden 250 ms window. Request-id ref guards against rapid re-fires.
   useEffect(() => {
     if (!isPython) {
       setPythonError(null)
+      setPythonGeom(null)        // wipe prior python geometry on switch to JS
       return
     }
-    let cancelled = false
+    const reqId = ++requestIdRef.current
     setPythonLoading(true)
     apiClient
       .computeHarmonicGeometry({
         style: geom.style,
-        params: debouncedParams,
+        params: requestParams,
         tuning: selectedRatios.length ? selectedRatios : null,
         peaks: analysisResult?.peaks || null,
       })
       .then((data) => {
-        if (cancelled) return
+        if (reqId !== requestIdRef.current) return
         setPythonGeom(data)
         setPythonError(null)
       })
       .catch((err) => {
-        if (cancelled) return
+        if (reqId !== requestIdRef.current) return
         setPythonError(err?.response?.data?.detail || err?.message || 'Geometry compute failed')
         setPythonGeom(null)
       })
       .finally(() => {
-        if (!cancelled) setPythonLoading(false)
+        if (reqId === requestIdRef.current) setPythonLoading(false)
       })
-    return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPython, geom.style, debouncedParams, ratiosKey])
+  }, [isPython, geom.style, requestParamsKey, ratiosKey])
 
   const setParam = (key, value) => {
     setParamsByType((prev) => ({
@@ -341,7 +372,10 @@ export default function GeometryTab({ analysisResult }) {
   }
 
   const randomize = () => {
-    setParamsByType((prev) => ({ ...prev, [type]: randomizeParams(geom) }))
+    setParamsByType((prev) => ({
+      ...prev,
+      [type]: randomizeParams(geom, prev[type] || geom.defaultParams),
+    }))
     tStartRef.current = performance.now()
   }
 
