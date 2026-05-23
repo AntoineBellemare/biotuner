@@ -315,7 +315,9 @@ export default function GeometryTab({ analysisResult }) {
       if (!canvas) return
       const ctx = canvas.getContext('2d')
       const t = (animate || morph) ? (performance.now() - tStartRef.current) / 1000 : 0
-      const effective = morphParams(params, t)
+      // Chladni's render needs the analysis ratios to compute its integer
+      // mode set; merge them into the params just for the render call.
+      const effective = { ...morphParams(params, t), ratios: derivedRatios.length ? derivedRatios : ratios }
       const out = geom.render(effective, t)
       lastOutputRef.current = out
 

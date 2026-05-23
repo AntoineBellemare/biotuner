@@ -623,46 +623,138 @@ const recursive_polyhedron = {
   ],
 }
 
-// Python-engine Chladni driven by biotuner's chladni_field_pairwise. Supports
-// antisymmetric/symmetric pair-mode toggle and D4 symmetrisation — the
-// crystalline patterns from the user's reference image.
+// JS-engine Chladni — pairwise cosine-product field on a square plate,
+// matching biotuner.harmonic_geometry.media.eigenmode.rigid_plate.
+// chladni_field_pairwise (no network round-trip; tweakable in real time).
+//
+// chord_to_int_modes equivalent: each ratio is rounded to its nearest p/q
+// with denominator ≤ max_denom, then multiplied through by the LCM of
+// the resulting denominators to get small integer "modes".
 const chladni = {
   key: 'chladni',
-  engine: 'python',
-  style: 'chladni',
-  renderer: 'field2d',
+  engine: 'js',
   label: 'Chladni',
   description:
-    'Pairwise cosine-product field on a square plate. Antisymmetric mode ' +
-    'gives the classical Chladni sand pattern (cos(mπx)·cos(nπy) − cos(nπx)·' +
-    'cos(mπy)); symmetric uses + instead. D4 symmetrisation reflects the ' +
-    'field through its rotational symmetries to produce richer crystalline ' +
-    'nodal patterns.',
+    'Pairwise cosine-product field on a square plate. Each ratio is ' +
+    'mapped to an integer mode; for every distinct pair (m, n), the ' +
+    'antisymmetric mode cos(mπx)·cos(nπy)−cos(nπx)·cos(mπy) (or symmetric +) ' +
+    'is summed. D4 symmetrisation produces the crystalline blooms shown in ' +
+    "the biotuner docs.",
   defaultParams: {
     antisymmetric: true,
     symmetry: 'd4_max',
-    resolution: 400,
-    max_mode: 20,
-    pair_subset: 'auto',
+    max_denom: 6,
+    n_modes: 3,
+    resolution: 256,
+    contrast: 1.5,
   },
   paramSchema: [
-    { key: 'antisymmetric', label: 'Antisymmetric', type: 'bool' },
+    { key: 'antisymmetric', label: 'Antisymmetric (− vs +)', type: 'bool' },
     { key: 'symmetry', label: 'Symmetry', type: 'select',
       options: [
         { value: 'none',   label: 'None (single tile)' },
         { value: 'd4_max', label: 'D4 (max blend)' },
         { value: 'd4_sum', label: 'D4 (sum blend)' },
       ] },
-    { key: 'pair_subset', label: 'Pair subset', type: 'select',
-      options: [
-        { value: 'auto',     label: 'Auto (n≤3 all / n≥4 root)' },
-        { value: 'all',      label: 'All pairs' },
-        { value: 'adjacent', label: 'Adjacent only' },
-        { value: 'root',     label: 'Root pairs' },
-      ] },
-    { key: 'max_mode',   label: 'Max mode',   type: 'int',    min: 4,    max: 40,  step: 1, advanced: true },
-    { key: 'resolution', label: 'Resolution', type: 'slider', min: 128, max: 800, step: 16, advanced: true },
+    { key: 'max_denom',  label: 'Simplify (max denom)', type: 'int', min: 2, max: 24, step: 1,
+      format: (v) => `≤ ${v}` },
+    { key: 'n_modes',    label: 'Number of modes',     type: 'int', min: 2, max: 6, step: 1 },
+    { key: 'contrast',   label: 'Contrast',            type: 'slider', min: 0.3, max: 5,    step: 0.05 },
+    { key: 'resolution', label: 'Resolution',          type: 'slider', min: 128, max: 512, step: 32, advanced: true },
   ],
+  // Derive a small-integer mode set from the chosen analysis ratios.
+  // Note: this geometry expects the analysis ratios to be passed inside
+  // params.ratios (set by GeometryTab before calling render).
+  render(params, t) {
+    const {
+      antisymmetric = true, symmetry = 'd4_max',
+      max_denom = 6, n_modes = 3, resolution = 256,
+      ratios = [1, 5/4, 3/2],
+    } = params
+
+    // 1) Round each ratio to nearest p/q with denom ≤ max_denom.
+    // 2) Compute LCM of the denominators.
+    // 3) Multiply each ratio's p/q by LCM/d to get integer modes.
+    const fractions = []
+    for (const r of ratios) {
+      if (!Number.isFinite(r) || r <= 0) continue
+      const { n, d } = findFraction(r, Math.max(2, Math.min(24, max_denom)))
+      fractions.push({ n, d })
+    }
+    if (!fractions.length) fractions.push({ n: 1, d: 1 }, { n: 5, d: 4 }, { n: 3, d: 2 })
+
+    const lcmAll = fractions.reduce((acc, f) => lcm(acc, f.d), 1)
+    let modes = fractions.map((f) => Math.round(f.n * lcmAll / f.d))
+    // Reduce by gcd of all modes — keeps integers small and the field crisp.
+    const g = modes.reduce((acc, m) => gcd(acc, m), modes[0] || 1)
+    modes = modes.map((m) => Math.max(1, Math.round(m / g)))
+    // De-duplicate and cap to n_modes.
+    modes = Array.from(new Set(modes)).slice(0, Math.max(2, Math.min(6, n_modes)))
+    while (modes.length < 2) modes.push((modes[modes.length - 1] || 2) + 1)
+
+    const N = Math.max(64, Math.min(512, resolution))
+    const data = new Float32Array(N * N)
+
+    // Precompute cos(m π x / (N-1)) for each mode and each axis.
+    const cosCache = new Array(modes.length)
+    for (let mi = 0; mi < modes.length; mi++) {
+      const m = modes[mi]
+      const arr = new Float32Array(N)
+      for (let i = 0; i < N; i++) arr[i] = Math.cos(m * Math.PI * i / (N - 1))
+      cosCache[mi] = arr
+    }
+
+    // Pairwise sum
+    for (let i = 0; i < modes.length; i++) {
+      const cxi = cosCache[i]
+      const cyi = cosCache[i]
+      for (let j = i + 1; j < modes.length; j++) {
+        const cxj = cosCache[j]
+        const cyj = cosCache[j]
+        for (let y = 0; y < N; y++) {
+          const cyi_y = cyi[y]
+          const cyj_y = cyj[y]
+          const off = y * N
+          for (let x = 0; x < N; x++) {
+            const a = cxi[x] * cyj_y
+            const b = cxj[x] * cyi_y
+            data[off + x] += antisymmetric ? (a - b) : (a + b)
+          }
+        }
+      }
+    }
+
+    // D4 symmetrisation (4 rotations × 2 reflections = 8 transforms).
+    if (symmetry === 'd4_max' || symmetry === 'd4_sum') {
+      const orig = new Float32Array(data)
+      const useMax = symmetry === 'd4_max'
+      for (let y = 0; y < N; y++) {
+        const yi = N - 1 - y
+        for (let x = 0; x < N; x++) {
+          const xi = N - 1 - x
+          const v0 = orig[y  * N + x]                       // identity
+          const v1 = orig[x  * N + yi]                      // rotate 90
+          const v2 = orig[yi * N + xi]                      // rotate 180
+          const v3 = orig[xi * N + y]                       // rotate 270
+          const v4 = orig[y  * N + xi]                      // flip horizontal
+          const v5 = orig[xi * N + yi]                      // flip diagonal
+          const v6 = orig[yi * N + x]                       // flip vertical
+          const v7 = orig[x  * N + y]                       // flip anti-diagonal
+          data[y * N + x] = useMax
+            ? Math.max(v0, v1, v2, v3, v4, v5, v6, v7)
+            : (v0 + v1 + v2 + v3 + v4 + v5 + v6 + v7) / 8
+        }
+      }
+    }
+
+    return { kind: 'field', data, width: N, height: N, modes }
+  },
+}
+
+// Small GCD/LCM helpers used by Chladni mode derivation.
+function lcm(a, b) {
+  if (!a || !b) return Math.max(a, b) || 1
+  return Math.abs(a * b) / gcd(a, b)
 }
 
 const subharmonic_tree = {
