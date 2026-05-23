@@ -252,7 +252,12 @@ export default function GeometryTab({ analysisResult }) {
         style: geom.style,
         params: requestParams,
         tuning: selectedRatios.length ? selectedRatios : null,
-        peaks: analysisResult?.peaks || null,
+        // Important: never send peaks alongside a curated tuning. The
+        // backend's _build_input prefers peaks over tuning, which would
+        // ignore knot presets, slot bindings, ratio_scale, max_denom —
+        // all the controls we expose. Sending tuning only forces biotuner
+        // to use exactly what the user picked.
+        peaks: null,
       })
       .then((data) => {
         if (reqId !== requestIdRef.current) return
@@ -415,6 +420,48 @@ export default function GeometryTab({ analysisResult }) {
       next[slot.key] = Math.floor(Math.random() * derivedRatios.length)
     }
     setBindingsByType((prev) => ({ ...prev, [type]: next }))
+  }
+
+  // For harmonic_knot: live readout of the resulting T(p, q) — and a
+  // "Find simplest" helper that scans every (slot, max_denom ≤ current)
+  // combo and picks the one with lowest p+q (excluding degenerate 1/1).
+  const knotInfo = useMemo(() => {
+    if (type !== 'harmonic_knot') return null
+    const preset = params?.knot_preset || 'data'
+    if (preset !== 'data') {
+      const KNOT_PRESET_RATIOS = {
+        T_2_1: [2, 1], T_3_2: [3, 2], T_5_3: [5, 3],
+        T_5_4: [5, 4], T_7_4: [7, 4], T_8_3: [8, 3],
+      }
+      const pair = KNOT_PRESET_RATIOS[preset]
+      return pair ? { p: pair[0], q: pair[1], slot: null } : null
+    }
+    if (!derivedRatios.length) return null
+    const b = bindingsByType[type] || {}
+    const idx = Math.max(0, Math.min(derivedRatios.length - 1, b.dominant ?? 0))
+    const md = Math.max(2, Math.min(128, params?.max_denom ?? 4))
+    const { n, d } = findFraction(derivedRatios[idx] || 1.5, md)
+    return { p: n, q: d, slot: idx }
+  }, [type, params, derivedRatios, bindingsByType])
+
+  const pickSimplestKnot = () => {
+    if (!derivedRatios.length) return
+    const md = Math.max(2, Math.min(128, params?.max_denom ?? 4))
+    let best = null
+    for (let i = 0; i < derivedRatios.length; i++) {
+      const { n, d } = findFraction(derivedRatios[i] || 1.5, md)
+      if (n === d) continue                     // skip degenerate
+      const score = n + d
+      if (!best || score < best.score) {
+        best = { idx: i, n, d, score }
+      }
+    }
+    if (best) {
+      setBindingsByType((prev) => ({
+        ...prev,
+        [type]: { ...(prev[type] || {}), dominant: best.idx },
+      }))
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -810,6 +857,27 @@ export default function GeometryTab({ analysisResult }) {
                 </div>
               )}
 
+              {/* Harmonic knot: live T(p,q) readout + Find-simplest helper */}
+              {type === 'harmonic_knot' && knotInfo && (
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <div className="text-xs text-biotuner-light/80">
+                    →{' '}
+                    <span className="font-mono text-biotuner-accent font-bold">
+                      T({knotInfo.p}, {knotInfo.q})
+                    </span>
+                  </div>
+                  {(params?.knot_preset || 'data') === 'data' && derivedRatios.length > 1 && (
+                    <button
+                      onClick={pickSimplestKnot}
+                      title="Auto-pick the slot whose ratio rounds to the simplest p/q"
+                      className="min-h-[28px] px-2 py-0.5 rounded text-[11px] bg-biotuner-accent/15 border border-biotuner-accent/40 text-biotuner-accent hover:bg-biotuner-accent/25"
+                    >
+                      Find simplest
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Auto-morph toggle + speed */}
               {sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 1 && (
                 <div className="mt-1 space-y-1.5">
@@ -834,9 +902,9 @@ export default function GeometryTab({ analysisResult }) {
                       </div>
                       <input
                         type="range"
-                        min={5}
+                        min={1}
                         max={900}
-                        step={5}
+                        step={1}
                         value={morphPeriod}
                         onChange={(e) => setMorphPeriod(parseInt(e.target.value, 10))}
                         className="w-full accent-biotuner-accent cursor-pointer"

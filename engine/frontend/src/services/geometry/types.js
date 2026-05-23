@@ -530,7 +530,10 @@ const harmonic_knot = {
   slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
     knot_preset: 'data',
-    max_denom: 12,
+    // Default 4 → tight rounding so the dominant ratio falls on simple
+    // fractions (3/2, 5/4, 4/3, …) and produces recognisable knot shapes
+    // out of the box. The user can dial up to 128 for dense T(p, q).
+    max_denom: 4,
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -599,7 +602,11 @@ const harmonic_point_cloud = {
   defaultParams: {
     n_points: 3000,
     surface: 'sphere',
-    ratio_scale: 1,
+    // ratio_scale × 6 spreads typical microtonal ratios (1–2) into the
+    // 6–12 range where biotuner's density field actually produces
+    // visible spatial variation. With the bug fix that stops sending
+    // peaks alongside, this slider now genuinely controls the pattern.
+    ratio_scale: 6,
   },
   paramSchema: [
     { key: 'n_points', label: 'Points', type: 'slider', min: 400, max: 8000, step: 100 },
