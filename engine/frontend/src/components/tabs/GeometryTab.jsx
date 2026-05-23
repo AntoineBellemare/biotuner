@@ -13,6 +13,7 @@ import {
   canvasToPngDataUrl,
   downloadFile,
   rotateHue,
+  findFraction,
 } from '../../services/geometry/utils'
 import apiClient from '../../services/api'
 
@@ -178,6 +179,17 @@ export default function GeometryTab({ analysisResult }) {
       }
     }
     const g = GEOMETRY_TYPES[type]
+    // Harmonic knot: dominant slot + max_denom rounding. The slot picks
+    // WHICH derived ratio to use; max_denom rounds it to the nearest p/q
+    // with denom ≤ that value, and biotuner makes exactly T(p, q).
+    if (type === 'harmonic_knot') {
+      const b = bindingsByType[type] || {}
+      const idx = Math.max(0, Math.min(expanded.length - 1, b.dominant ?? 0))
+      const r = expanded[idx] || 1.5
+      const md = Math.max(2, Math.min(128, params?.max_denom ?? 12))
+      const { n, d } = findFraction(r, md)
+      return [n / d]
+    }
     if (g?.engine === 'python' && g.slots?.length > 0) {
       const b = bindingsByType[type] || {}
       const picked = []
@@ -196,14 +208,24 @@ export default function GeometryTab({ analysisResult }) {
       }
       if (picked.length) return picked
     }
-    // Point cloud: apply user-controlled ratio_scale to spread microtonal
-    // ratios across a wider range. Biotuner's harmonic_point_cloud's
-    // density field reads these as frequencies; ratios that cluster near
-    // 1 produce visually-identical patterns no matter which subset is
-    // sent.  Multiplying by ratio_scale (× 1–20) changes that.
+    // Point cloud: ratio_scale multiplier spreads microtonal ratios across
+    // a wider band so biotuner's density field can distinguish them.
     if (type === 'harmonic_point_cloud') {
       const scale = Math.max(0.1, Number(params?.ratio_scale ?? 1))
       if (scale !== 1) return expanded.map((r) => r * scale)
+    }
+    // subharmonic_tree / recursive_polyhedron: optionally round each
+    // ratio to nearest p/q. When max_denom > 0, microtonal ratios that
+    // cluster near 1 collapse to distinct simple fractions (varying with
+    // the denom cap) which biotuner can then react to.
+    if (type === 'subharmonic_tree' || type === 'recursive_polyhedron') {
+      const md = params?.max_denom ?? 0
+      if (md > 0) {
+        return expanded.map((r) => {
+          const { n, d } = findFraction(r, md)
+          return n / d
+        })
+      }
     }
     return expanded
   }, [analysisResult, selectedRatiosByType, sourceModeByType, type, bindingsByType, params])

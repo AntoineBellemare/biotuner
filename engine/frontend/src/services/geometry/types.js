@@ -529,7 +529,8 @@ const harmonic_knot = {
   // recognisable T(p, q); "data" defers to the Dominant slot binding.
   slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
-    knot_preset: 'data',     // 'data' | 'T_2_1' | 'T_3_2' | 'T_5_3' | 'T_5_4' | 'T_7_4'
+    knot_preset: 'data',
+    max_denom: 12,
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -539,7 +540,7 @@ const harmonic_knot = {
   paramSchema: [
     { key: 'knot_preset', label: 'Knot preset', type: 'select',
       options: [
-        { value: 'data',  label: 'From data (dominant slot)' },
+        { value: 'data',  label: 'From data (dominant + max denom)' },
         { value: 'T_2_1', label: 'T(2, 1) — Hopf link' },
         { value: 'T_3_2', label: 'T(3, 2) — Trefoil' },
         { value: 'T_5_3', label: 'T(5, 3)' },
@@ -547,6 +548,12 @@ const harmonic_knot = {
         { value: 'T_7_4', label: 'T(7, 4)' },
         { value: 'T_8_3', label: 'T(8, 3)' },
       ] },
+    // Used only when knot_preset === 'data'. The dominant slot's ratio is
+    // rounded to the nearest p/q with denominator ≤ max_denom and that
+    // exact fraction is sent to biotuner → T(p, q). The user can dial
+    // through 7/6 → 9/8 → 17/15 → 53/47 by raising max_denom.
+    { key: 'max_denom',   label: 'Max denom (p/q)',type: 'int',    min: 2,    max: 128, step: 1,
+      format: (v) => `≤ ${v}` },
     { key: 'tube_radius',  label: 'Tube radius',    type: 'slider', min: 0.01, max: 0.3,  step: 0.005 },
     { key: 'major_radius', label: 'Major radius',   type: 'slider', min: 0.5,  max: 4,    step: 0.05 },
     { key: 'minor_radius', label: 'Minor radius',   type: 'slider', min: 0.1,  max: 2,    step: 0.05 },
@@ -629,6 +636,7 @@ const recursive_polyhedron = {
     solid: 'icosahedron',
     per_face_bump: true,
     apex_twist: true,
+    max_denom: 0,
   },
   paramSchema: [
     { key: 'depth', label: 'Depth', type: 'int', min: 0, max: 4, step: 1 },
@@ -640,6 +648,8 @@ const recursive_polyhedron = {
       ] },
     { key: 'per_face_bump', label: 'Per-face bump', type: 'bool' },
     { key: 'apex_twist',    label: 'Apex twist',    type: 'bool' },
+    { key: 'max_denom',     label: 'Round to p/q (≤ denom)', type: 'int', min: 0, max: 128, step: 1,
+      format: (v) => v === 0 ? 'off' : `≤ ${v}` },
   ],
 }
 
@@ -856,6 +866,7 @@ const subharmonic_tree = {
     n_harmonics: 5,
     min_freq: 0.1,
     layout: 'polar',
+    max_denom: 0,        // 0 = send ratios as-is; >0 = round each to p/q
   },
   paramSchema: [
     { key: 'depth',       label: 'Depth',          type: 'int',    min: 1,     max: 6,    step: 1 },
@@ -866,6 +877,10 @@ const subharmonic_tree = {
         { value: 'polar', label: 'Radial (chord wheel)' },
         { value: 'depth', label: 'Horizontal levels' },
       ] },
+    // Frontend-only — rounds each ratio to its nearest p/q with the
+    // chosen max denominator before sending. 0 = off (no rounding).
+    { key: 'max_denom',   label: 'Round to p/q (≤ denom)', type: 'int', min: 0, max: 128, step: 1,
+      format: (v) => v === 0 ? 'off' : `≤ ${v}` },
   ],
 }
 
