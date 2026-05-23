@@ -70,7 +70,26 @@ from fractions import Fraction
 from typing import List, Optional, Sequence, Tuple
 
 import numpy as np
-from scipy.special import sph_harm
+
+# scipy.special.sph_harm was deprecated in scipy 1.13 and removed in 1.15
+# (replaced by sph_harm_y with a different argument order). Shim so this
+# module works on both old and new scipy.
+try:
+    from scipy.special import sph_harm  # scipy <1.15
+except ImportError:                     # scipy ≥1.15
+    from scipy.special import sph_harm_y as _sph_harm_y
+
+    def sph_harm(m, n, theta_arg, phi_arg):
+        """Backward-compatible wrapper for scipy.special.sph_harm.
+
+        Old signature:  sph_harm(m, n, theta=azimuth, phi=polar)
+        New signature:  sph_harm_y(n, m, theta=polar, phi=azimuth)
+
+        We translate so existing call sites keep working: argument names
+        in callers were ``phi`` for azimuth and ``theta`` for polar, which
+        matches the original scipy convention.
+        """
+        return _sph_harm_y(n, m, phi_arg, theta_arg)
 
 from biotuner.harmonic_geometry.geometry_data import GeometryData
 from biotuner.harmonic_geometry.inputs import HarmonicInput
