@@ -221,15 +221,91 @@ export default function TuningTab({
     playbackTimeoutsRef.current = []
   }
 
+  // Dispose the active synth — necessary to cancel chords that were
+  // scheduled into the future via triggerAttackRelease(..., at). Tone's
+  // releaseAll() only releases currently-sounding notes; future-scheduled
+  // attacks keep firing until disposal.
+  function killSynth() {
+    if (!synthRef.current) return
+    try { synthRef.current.releaseAll() } catch { /* ignore */ }
+    try { synthRef.current.disconnect() } catch { /* ignore */ }
+    try { synthRef.current.dispose() } catch { /* ignore */ }
+    synthRef.current = null
+  }
+
+  // -------------------------------------------------------------------------
+  // Consonance ranking — Tenney height of pairwise ratios. Lower = simpler
+  // integer fraction = more consonant. We negate for "higher = better".
+  // -------------------------------------------------------------------------
+  function findFractionLocal(value, maxDenom = 16) {
+    let best = { n: 1, d: 1, err: Infinity }
+    for (let d = 1; d <= maxDenom; d++) {
+      for (let n = 1; n <= maxDenom; n++) {
+        if (gcd(n, d) !== 1) continue
+        const err = Math.abs(value - n / d)
+        if (err < best.err) best = { n, d, err }
+      }
+    }
+    return best
+  }
+
+  function gcd(a, b) {
+    a = Math.abs(Math.round(a)); b = Math.abs(Math.round(b))
+    while (b) { [a, b] = [b, a % b] }
+    return a || 1
+  }
+
+  function chordConsonance(ratios) {
+    if (ratios.length < 2) return 0
+    let totalLog = 0
+    let pairs = 0
+    for (let i = 0; i < ratios.length; i++) {
+      for (let j = i + 1; j < ratios.length; j++) {
+        const r = ratios[j] / ratios[i]
+        const { n, d } = findFractionLocal(r, 16)
+        totalLog += Math.log2(Math.max(1, n * d))
+        pairs++
+      }
+    }
+    return -totalLog / Math.max(1, pairs)
+  }
+
+  function pickTopConsonantChords(tuning, chordSize, topN, maxRatios = 14) {
+    if (!tuning?.length) return []
+    const pool = tuning.slice(0, Math.min(tuning.length, maxRatios))
+    const k = Math.min(chordSize, pool.length)
+    const results = []
+    const idxs = []
+    const recurse = (start) => {
+      if (idxs.length === k) {
+        const ratios = idxs.map((i) => pool[i])
+        results.push({ ratios, score: chordConsonance(ratios) })
+        return
+      }
+      for (let i = start; i <= pool.length - (k - idxs.length); i++) {
+        idxs.push(i); recurse(i + 1); idxs.pop()
+      }
+    }
+    recurse(0)
+    results.sort((a, b) => b.score - a.score)
+    // De-duplicate near-identical chords (same first 2 ratios)
+    const seen = new Set()
+    const out = []
+    for (const r of results) {
+      const sig = r.ratios.map((x) => Math.round(x * 100)).join(',')
+      if (seen.has(sig)) continue
+      seen.add(sig)
+      out.push(r)
+      if (out.length >= topN) break
+    }
+    return out
+  }
+
   // Clean up audio + timers on unmount
   useEffect(() => {
     return () => {
       clearPlaybackTimers()
-      if (synthRef.current) {
-        try { synthRef.current.releaseAll() } catch { /* ignore */ }
-        try { synthRef.current.dispose() } catch { /* ignore */ }
-        synthRef.current = null
-      }
+      killSynth()
     }
   }, [])
 
@@ -284,27 +360,53 @@ export default function TuningTab({
     }
   }
 
-  // Play random chords — N chords of 3–4 notes each, highlights all rows
-  // belonging to the currently-sounding chord.
-  const handlePlayRandomChords = async () => {
+  // Build a chord sequence — random subsets, or the top-N most consonant.
+  function buildChordSequence(tuning, numChords, mode) {
+    const chords = []
+    if (mode === 'consonant') {
+      // Mix 3-note and 4-note consonant chords, then loop if we need more.
+      const trios = pickTopConsonantChords(tuning, 3, Math.ceil(numChords / 2))
+      const quads = pickTopConsonantChords(tuning, 4, Math.floor(numChords / 2))
+      const interleaved = []
+      for (let i = 0; i < Math.max(trios.length, quads.length); i++) {
+        if (trios[i]) interleaved.push(trios[i].ratios)
+        if (quads[i]) interleaved.push(quads[i].ratios)
+      }
+      // Pad / repeat if we don't have enough.
+      let i = 0
+      while (chords.length < numChords && interleaved.length) {
+        chords.push(interleaved[i % interleaved.length])
+        i++
+      }
+      if (!chords.length) chords.push(tuning.slice(0, 3))
+    } else {
+      // Random subsets
+      for (let i = 0; i < numChords; i++) {
+        const size = Math.min(tuning.length, 3 + Math.floor(Math.random() * 2))
+        const picked = new Set()
+        while (picked.size < size) picked.add(Math.floor(Math.random() * tuning.length))
+        chords.push([...picked].sort((a, b) => a - b).map((idx) => tuning[idx]))
+      }
+    }
+    return chords
+  }
+
+  // Play N chords of 3–4 notes each, highlights all rows belonging to the
+  // currently-sounding chord. mode = 'random' | 'consonant'.
+  const handlePlayChords = async (mode = 'random') => {
     try {
       const tuning = reducedTuning?.reduced_tuning || analysisResult.tuning
       if (!tuning?.length) return
+      // Always start clean: dispose any prior synth so previously-scheduled
+      // future chords are killed.
       clearPlaybackTimers()
+      killSynth()
       const synth = await ensureSynth()
 
       const baseFreq = 220
       const chordDuration = 1.5
       const numChords = 8
-      const chords = []
-      for (let i = 0; i < numChords; i++) {
-        const size = Math.min(tuning.length, 3 + Math.floor(Math.random() * 2))
-        const picked = new Set()
-        while (picked.size < size) {
-          picked.add(Math.floor(Math.random() * tuning.length))
-        }
-        chords.push([...picked].sort((a, b) => a - b).map((idx) => tuning[idx]))
-      }
+      const chords = buildChordSequence(tuning, numChords, mode)
 
       setPlayingRandomChords(true)
       setActiveRatios([])
@@ -324,18 +426,21 @@ export default function TuningTab({
         setPlayingRandomChords(false)
       }, totalMs + 100))
     } catch (error) {
-      console.error('Play random chords error:', error)
+      console.error('Play chords error:', error)
       setPlayingRandomChords(false)
       setActiveRatios([])
     }
   }
 
-  // Stop everything currently sounding (also covers the scale playback)
+  // Backwards-compat alias used by existing buttons
+  const handlePlayRandomChords = () => handlePlayChords('random')
+  const handlePlayConsonantChords = () => handlePlayChords('consonant')
+
+  // Stop everything currently sounding (also covers the scale playback).
+  // Disposes the synth so future-scheduled chords are cancelled.
   const handleStopRandomChords = () => {
     clearPlaybackTimers()
-    if (synthRef.current) {
-      try { synthRef.current.releaseAll() } catch { /* ignore */ }
-    }
+    killSynth()
     setActiveRatios([])
     setPlayingRandomChords(false)
     setPlayingTuning(false)
@@ -459,13 +564,24 @@ export default function TuningTab({
                 {playingTuning ? 'Playing...' : 'Play Scale'}
               </button>
               {!playingRandomChords ? (
-                <button
-                  onClick={handlePlayRandomChords}
-                  className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm"
-                >
-                  <Play className="w-4 h-4" />
-                  <span className="hidden sm:inline">Play </span>Chords
-                </button>
+                <>
+                  <button
+                    onClick={handlePlayRandomChords}
+                    className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm"
+                    title="Play 8 random 3–4-note chords from the tuning"
+                  >
+                    <Play className="w-4 h-4" />
+                    <span className="hidden sm:inline">Random </span>Chords
+                  </button>
+                  <button
+                    onClick={handlePlayConsonantChords}
+                    className="bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-emerald-800 flex items-center gap-2 text-sm"
+                    title="Play the most consonant chords found in the tuning (Tenney-height ranked)"
+                  >
+                    <Play className="w-4 h-4" />
+                    <span className="hidden sm:inline">Consonant </span>Chords
+                  </button>
+                </>
               ) : (
                 <button
                   onClick={handleStopRandomChords}
