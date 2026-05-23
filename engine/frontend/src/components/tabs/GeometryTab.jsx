@@ -78,8 +78,9 @@ export default function GeometryTab({ analysisResult }) {
   const [color, setColor] = useState('#06b6d4')
   const [palette, setPalette] = useState('mono')  // 'mono' | 'accent'
   const [showAdvanced, setShowAdvanced] = useState(false)
-  // Gradient on / off + derived end color (auto from start via 90° hue spin)
-  const [gradient, setGradient] = useState(false)
+  // Color mode: solid / gradient (2-color blend) / rainbow (full hue cycle)
+  const [colorMode, setColorMode] = useState('solid')
+  const gradient = colorMode !== 'solid'
   const colorEnd = useMemo(() => rotateHue(color, 90), [color])
   // Source mode per geometry — controls how the JS-engine geometries
   // derive their frequency-defining params from the analysis tuning.
@@ -220,13 +221,22 @@ export default function GeometryTab({ analysisResult }) {
       const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
       const idxA = Math.floor(phase)
       const idxB = (idxA + 1) % N
-      // Cosine-ease the fractional interpolation so values glide between
-      // ratios instead of stepping abruptly.
-      const linear = phase - idxA
-      const fract = 0.5 - 0.5 * Math.cos(linear * Math.PI)
-      let val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
-      if (slot.scale) val *= slot.scale
-      if (slot.transform) val = slot.transform(val)
+      let val
+      if (slot.transform) {
+        // Integer-quantised slot (Chladni m, n etc.): hold each value for
+        // the whole step instead of interpolating, otherwise the rounded
+        // integer "snaps" mid-step and the pattern looks jumpy. The cycle
+        // now feels like a discrete tour rather than a stuttering blur.
+        val = derivedRatios[idxA]
+        if (slot.scale) val *= slot.scale
+        val = slot.transform(val)
+      } else {
+        // Continuous slot — cosine-ease for smooth glide.
+        const linear = phase - idxA
+        const fract = 0.5 - 0.5 * Math.cos(linear * Math.PI)
+        val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
+        if (slot.scale) val *= slot.scale
+      }
       next[slot.key] = val
     }
     return next
@@ -301,11 +311,11 @@ export default function GeometryTab({ analysisResult }) {
         lineWidth: (params.lineWidth || 1.5) * (canvas.width / 600),
         color,
         colorEnd,
-        colorMode: gradient ? 'gradient' : 'solid',
+        colorMode,
         background: '#0a0a0a',
         contrast: params.contrast,
         palette,
-        glow: !gradient,
+        glow: colorMode === 'solid',
       }
       if (out.kind === 'path') drawPath(ctx, out.points, opts)
       else if (out.kind === 'field') drawField(ctx, out, opts)
@@ -314,7 +324,7 @@ export default function GeometryTab({ analysisResult }) {
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }
-  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, gradient, palette])
+  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, colorMode, palette])
 
   // -------------------------------------------------------------------------
   // Exports
@@ -421,6 +431,7 @@ export default function GeometryTab({ analysisResult }) {
                     color={color}
                     colorEnd={colorEnd}
                     gradient={gradient}
+                    colorMode={colorMode}
                     background="#0a0a0a"
                     autoRotate={autoRotate}
                     wireframe={wireframe}
@@ -439,6 +450,7 @@ export default function GeometryTab({ analysisResult }) {
                     color={color}
                     colorEnd={colorEnd}
                     gradient={gradient}
+                    colorMode={colorMode}
                     background="#0a0a0a"
                   />
                 ) : (
@@ -724,23 +736,38 @@ export default function GeometryTab({ analysisResult }) {
               className="w-10 h-9 rounded border border-biotuner-dark-600 bg-transparent cursor-pointer"
             />
             {geom.key !== 'chladni' && (
-              <button
-                onClick={() => setGradient((g) => !g)}
-                aria-pressed={gradient}
-                title={gradient ? 'Gradient on (rotate hue 90°)' : 'Solid color'}
-                className={`min-h-[34px] px-2 py-1 rounded-md text-xs font-medium border
-                  ${gradient
-                    ? 'bg-biotuner-primary/15 border-biotuner-primary/50 text-biotuner-primary'
-                    : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70'}`}
-              >
-                {gradient ? 'Gradient' : 'Solid'}
-              </button>
+              <div className="flex gap-0.5 p-0.5 rounded-md bg-biotuner-dark-800 border border-biotuner-dark-600">
+                {[
+                  { v: 'solid',    label: 'Solid' },
+                  { v: 'gradient', label: 'Gradient' },
+                  { v: 'rainbow',  label: 'Rainbow' },
+                ].map((opt) => (
+                  <button
+                    key={opt.v}
+                    onClick={() => setColorMode(opt.v)}
+                    aria-pressed={colorMode === opt.v}
+                    className={`min-h-[28px] px-2 py-0.5 rounded text-[11px] font-medium transition-colors
+                      ${colorMode === opt.v
+                        ? 'bg-biotuner-primary text-biotuner-dark-900'
+                        : 'text-biotuner-light/70 hover:text-biotuner-light'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             )}
-            {gradient && geom.key !== 'chladni' && (
+            {colorMode === 'gradient' && geom.key !== 'chladni' && (
               <div
                 className="w-8 h-8 rounded border border-biotuner-dark-600"
                 style={{ background: `linear-gradient(90deg, ${color}, ${colorEnd})` }}
                 title={`Auto end: ${colorEnd}`}
+              />
+            )}
+            {colorMode === 'rainbow' && geom.key !== 'chladni' && (
+              <div
+                className="w-8 h-8 rounded border border-biotuner-dark-600"
+                style={{ background: 'linear-gradient(90deg, #ff5e5e, #ffd955, #5eff8c, #5ed7ff, #8c5eff, #ff5ed7, #ff5e5e)' }}
+                title="Hue cycle"
               />
             )}
             {geom.key === 'chladni' && (

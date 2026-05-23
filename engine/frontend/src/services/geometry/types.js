@@ -29,6 +29,38 @@ function firstMeaningfulRatio(ratios, minCents = 30) {
   return (ratios[0] || 1) * 1.5
 }
 
+// Small-integer ratio pairs used as fallbacks when a tight tuning
+// collapses every pairwise ratio to ~1:1. Picked from binding indices so
+// every slot choice produces a distinct pattern.
+const NICE_PAIRS = [
+  [1, 2], [2, 3], [3, 4], [3, 5], [4, 5], [5, 6],
+  [2, 5], [3, 7], [4, 7], [5, 7], [2, 7], [5, 8],
+]
+
+export function nicePairFor(ia, ib) {
+  const i = (ia * 13 + ib * 5) % NICE_PAIRS.length
+  return NICE_PAIRS[((i % NICE_PAIRS.length) + NICE_PAIRS.length) % NICE_PAIRS.length]
+}
+
+/**
+ * Picks the integer fraction n/d from `ratio_b / ratio_a` capped at a
+ * small denominator. Falls back to `nicePairFor` when the fraction
+ * collapses to ~1:1 or to a dense near-square ratio.
+ */
+export function smallIntFractionForPair(derived, ia, ib, maxDenom = 6) {
+  const ra = derived[ia] || 1
+  const rb = derived[ib] || 1.5
+  let k = rb / ra
+  if (k < 1) k = 1 / k
+  let { n, d } = findFraction(k, maxDenom)
+  if (n === d || (n + d > 9 && Math.abs(n - d) <= 1)) {
+    const [pn, pd] = nicePairFor(ia, ib)
+    n = pn
+    d = pd
+  }
+  return { n, d }
+}
+
 // Pick the first N ratios that are at least `minCents` apart from the unison
 // and from each other. Pads with 1.5× the last value if fewer than N exist.
 function meaningfulRatios(ratios, n, minCents = 30) {
@@ -88,20 +120,7 @@ const lissajous = {
     if (!derived?.length) return {}
     const ia = Math.min(derived.length - 1, bindings.a ?? 0)
     const ib = Math.min(derived.length - 1, bindings.b ?? 1)
-    const ra = derived[ia] || 1
-    const rb = derived[ib] || 1.5
-    // Express the *ratio between* the two bindings as a small integer
-    // fraction. This guarantees a recognisable Lissajous shape (3:2, 5:4,
-    // 7:5, …) regardless of how close the underlying analysis ratios are.
-    let k = rb / ra
-    if (k < 1) k = 1 / k                // keep a ≤ b for nicer-looking ratios
-    let { n, d } = findFraction(k, 12)
-    if (n === d) {                       // ratio collapsed to 1/1 — fall back
-      // Use the binding indices for variety
-      n = Math.max(2, (ia + 2) % 12 + 1)
-      d = Math.max(1, (ib + 1) % 12 + 1)
-      if (n === d) n = (n % 12) + 1
-    }
+    const { n, d } = smallIntFractionForPair(derived, ia, ib, 6)
     return { a: n, b: d }
   },
   render(params, t) {
@@ -260,20 +279,7 @@ const rose = {
     if (!derived?.length) return {}
     const ia = Math.min(derived.length - 1, bindings.n ?? 0)
     const ib = Math.min(derived.length - 1, bindings.d ?? 1)
-    const ra = derived[ia] || 1
-    const rb = derived[ib] || 1.5
-    // Rose curve r = cos(k θ); k = n/d sets the petal structure. Pick the
-    // ratio between the two slots, expressed as a small integer fraction
-    // for crisp closed roses.
-    let k = rb / ra
-    if (k < 1) k = 1 / k
-    let { n, d } = findFraction(k, 12)
-    if (n === d) {
-      n = (ia + 3) % 11 + 1
-      d = (ib + 2) % 11 + 1
-      if (n === d) n = (n % 11) + 1
-    }
-    return { n, d }
+    return smallIntFractionForPair(derived, ia, ib, 7)
   },
   render(params, t) {
     const { n, d, cycles } = params
@@ -334,20 +340,11 @@ const spirograph = {
     if (!derived?.length) return {}
     const iR = Math.min(derived.length - 1, bindings.R ?? 1)
     const ir = Math.min(derived.length - 1, bindings.r ?? 0)
-    const ra = derived[ir] || 1.0
-    const rb = derived[iR] || (ra * 1.5)
-    // R:r ratio drives the rose count. Use integer fraction so spirograph
-    // closes into recognisable petal shapes.
-    let k = Math.max(ra, rb) / Math.min(ra, rb)
-    let { n, d } = findFraction(k, 12)
-    if (n === d) {
-      n = ((iR + 3) % 11) + 2
-      d = ((ir + 2) % 11) + 1
-      if (n === d) d = (d % 11) + 1
-    }
+    const { n, d } = smallIntFractionForPair(derived, iR, ir, 7)
+    // Scale so the rose has plenty of room — bigger R means more petals.
     return {
-      R: n * 2,                              // outer radius
-      r: d * 2,                              // inner radius
+      R: Math.max(n, d) * 2,
+      r: Math.min(n, d) * 2,
     }
   },
   render(params, t) {
@@ -388,14 +385,22 @@ const chladni = {
     'Nodal pattern from two-mode (m, n) interference on a rectangular ' +
     'plate. Bright lines mark where vibration is zero — where sand would ' +
     'collect on a real Chladni plate.',
-  defaultParams: { m: 5, n: 3, resolution: 256, contrast: 1.6, mix: Math.PI / 2 },
+  defaultParams: {
+    m: 5, n: 3, resolution: 256, contrast: 1.6, mix: Math.PI / 2,
+    complexity: 0,        // 0 = vanilla 2-mode; >0 mixes higher-order terms
+    rotation: 0,          // radians, rotates the (x,y) field
+  },
   paramSchema: [
     { key: 'm',          label: 'Mode m',      type: 'int',    min: 1,  max: 14, step: 1, derived: true },
     { key: 'n',          label: 'Mode n',      type: 'int',    min: 1,  max: 14, step: 1, derived: true },
     { key: 'mix',        label: 'Mix angle',   type: 'slider', min: 0,  max: Math.PI * 2, step: 0.01,
       format: (v) => `${(v / Math.PI).toFixed(2)}π` },
+    { key: 'complexity', label: 'Complexity',  type: 'slider', min: 0,  max: 1, step: 0.01,
+      format: (v) => (v * 100).toFixed(0) + '%' },
+    { key: 'rotation',   label: 'Rotation',    type: 'slider', min: 0,  max: Math.PI / 2, step: 0.01,
+      format: (v) => `${((v / Math.PI) * 180).toFixed(0)}°` },
     { key: 'contrast',   label: 'Contrast',    type: 'slider', min: 0.4, max: 6, step: 0.05 },
-    { key: 'resolution', label: 'Resolution',  type: 'slider', min: 64,  max: 512, step: 32 },
+    { key: 'resolution', label: 'Resolution',  type: 'slider', min: 64,  max: 512, step: 32, advanced: true },
   ],
   fromRatios(ratios) {
     const r = firstMeaningfulRatio(ratios)
@@ -412,37 +417,46 @@ const chladni = {
     if (!derived?.length) return {}
     const im = Math.min(derived.length - 1, bindings.m ?? 0)
     const inn = Math.min(derived.length - 1, bindings.n ?? 1)
-    const ra = derived[im] || 1
-    const rb = derived[inn] || 1.5
-    // Get small integers from the ratio between bindings.
-    let k = rb / ra
-    if (k < 1) k = 1 / k
-    let { n, d } = findFraction(k, 12)
-    if (n === d) {
-      // Fall back to index-based modes so different bindings always
-      // produce visibly different Chladni patterns.
-      n = ((im + 2) % 11) + 2
-      d = ((inn + 3) % 11) + 2
-      if (n === d) d = (d % 11) + 2
-    }
+    const { n, d } = smallIntFractionForPair(derived, im, inn, 7)
     return { m: n, n: d }
   },
   render(params, t) {
-    const { m, n, mix, resolution } = params
+    const {
+      m, n, mix, resolution,
+      complexity = 0, rotation = 0,
+    } = params
     const size = Math.max(32, Math.min(512, resolution))
     const data = new Float32Array(size * size)
     const phase = (mix || 0) + (t || 0) * 0.4
     const cosPhase = Math.cos(phase)
+    // Higher-order companion modes — when complexity > 0 the field gains
+    // sin((m+n) π x) sin(|m-n| π y) terms, breaking the regular tile grid.
+    const p = Math.abs(m + n)
+    const q = Math.max(1, Math.abs(m - n))
+    const w = complexity
+    const cosR = Math.cos(rotation)
+    const sinR = Math.sin(rotation)
     for (let y = 0; y < size; y++) {
-      const ny = y / (size - 1)
-      const sin_m_y = Math.sin(m * Math.PI * ny)
-      const sin_n_y = Math.sin(n * Math.PI * ny)
+      const vy = y / (size - 1) - 0.5
       for (let x = 0; x < size; x++) {
-        const nx = x / (size - 1)
-        const sin_m_x = Math.sin(m * Math.PI * nx)
-        const sin_n_x = Math.sin(n * Math.PI * nx)
-        data[y * size + x] =
-          sin_m_x * sin_n_y + cosPhase * sin_n_x * sin_m_y
+        const vx = x / (size - 1) - 0.5
+        // Rotate the sample point so axis-aligned tile patterns become
+        // diagonal / diamond / circular at intermediate rotations.
+        const ux = (vx * cosR - vy * sinR) + 0.5
+        const uy = (vx * sinR + vy * cosR) + 0.5
+        const sin_m_x = Math.sin(m * Math.PI * ux)
+        const sin_n_x = Math.sin(n * Math.PI * ux)
+        const sin_m_y = Math.sin(m * Math.PI * uy)
+        const sin_n_y = Math.sin(n * Math.PI * uy)
+        let v = sin_m_x * sin_n_y + cosPhase * sin_n_x * sin_m_y
+        if (w > 0) {
+          const sin_p_x = Math.sin(p * Math.PI * ux)
+          const sin_q_y = Math.sin(q * Math.PI * uy)
+          const sin_q_x = Math.sin(q * Math.PI * ux)
+          const sin_p_y = Math.sin(p * Math.PI * uy)
+          v = (1 - w) * v + w * (sin_p_x * sin_q_y - sin_q_x * sin_p_y)
+        }
+        data[y * size + x] = v
       }
     }
     return { kind: 'field', data, width: size, height: size }
@@ -507,11 +521,17 @@ const lsystem_3d = {
     'dominant ratio (360° / (p + q)). Depth controls how many rewrite ' +
     'passes are applied before drawing.',
   defaultParams: {
+    p: 3,
+    q: 2,
     depth: 3,
     step_length: 1.0,
     axiom: 'F',
   },
   paramSchema: [
+    // Branch angle = 360 / (p + q). Drive the L-system's structure
+    // directly instead of being at the mercy of biotuner's internal pick.
+    { key: 'p',           label: 'p',           type: 'int',    min: 2,    max: 12,  step: 1 },
+    { key: 'q',           label: 'q',           type: 'int',    min: 1,    max: 12,  step: 1 },
     { key: 'depth',       label: 'Depth',       type: 'int',    min: 1,    max: 5,   step: 1 },
     { key: 'step_length', label: 'Step length', type: 'slider', min: 0.1,  max: 3,   step: 0.05 },
   ],

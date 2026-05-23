@@ -49,7 +49,7 @@ export function drawPath(ctx, points, opts = {}) {
     lineWidth = 1.5,
     color = '#06b6d4',
     colorEnd = null,            // when set + colorMode==='gradient', interpolate
-    colorMode = 'solid',        // 'solid' | 'gradient'
+    colorMode = 'solid',        // 'solid' | 'gradient' | 'rainbow'
     background = '#0a0a0a',
     glow = true,
   } = opts
@@ -67,7 +67,7 @@ export function drawPath(ctx, points, opts = {}) {
   ctx.lineWidth = lineWidth
 
   // Solid path: single beginPath/stroke is far cheaper.
-  if (colorMode !== 'gradient' || !colorEnd) {
+  if (colorMode === 'solid' || (colorMode === 'gradient' && !colorEnd)) {
     ctx.beginPath()
     for (let i = 0; i < points.length; i++) {
       const p = points[i]
@@ -87,16 +87,23 @@ export function drawPath(ctx, points, opts = {}) {
     return
   }
 
-  // Gradient mode: draw segment-by-segment with interpolated colors. Skip
-  // glow (shadowBlur per-segment kills perf).
-  const cStart = hexToRgb(color)
-  const cFinal = hexToRgb(colorEnd)
+  // Gradient / rainbow: draw segment-by-segment with interpolated colors.
+  // Skip glow (shadowBlur per-segment kills perf).
+  const isRainbow = colorMode === 'rainbow'
+  const baseHsl = isRainbow ? hexToHsl(color) : null
+  const cStart = !isRainbow ? hexToRgb(color) : null
+  const cFinal = !isRainbow ? hexToRgb(colorEnd) : null
   for (let i = 1; i < points.length; i++) {
     const a = points[i - 1]
     const b = points[i]
     if (!Number.isFinite(a.x) || !Number.isFinite(b.x)) continue
     const tFrac = i / (points.length - 1)
-    ctx.strokeStyle = rgbToCss(lerpRgb(cStart, cFinal, tFrac))
+    if (isRainbow) {
+      const h = (baseHsl.h + tFrac * 360) % 360
+      ctx.strokeStyle = `hsl(${h}, ${Math.round(baseHsl.s * 100)}%, ${Math.round(baseHsl.l * 100)}%)`
+    } else {
+      ctx.strokeStyle = rgbToCss(lerpRgb(cStart, cFinal, tFrac))
+    }
     ctx.beginPath()
     ctx.moveTo(cx + a.x * scale, cy + a.y * scale)
     ctx.lineTo(cx + b.x * scale, cy + b.y * scale)
@@ -121,6 +128,28 @@ export function rgbToCss([r, g, b]) {
 
 export function lerpRgb(a, b, t) {
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+}
+
+/** Convert a hex color to HSL with h in [0, 360], s, l in [0, 1]. */
+export function hexToHsl(hex) {
+  const [r, g, b] = hexToRgb(hex)
+  const rn = r / 255, gn = g / 255, bn = b / 255
+  const max = Math.max(rn, gn, bn)
+  const min = Math.min(rn, gn, bn)
+  const l = (max + min) / 2
+  let h, s
+  if (max === min) { h = 0; s = 0 }
+  else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case rn: h = ((gn - bn) / d + (gn < bn ? 6 : 0)); break
+      case gn: h = ((bn - rn) / d + 2); break
+      default: h = ((rn - gn) / d + 4); break
+    }
+    h *= 60
+  }
+  return { h, s, l }
 }
 
 /**

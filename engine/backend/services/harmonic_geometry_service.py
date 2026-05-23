@@ -130,9 +130,10 @@ _STYLES = {
     },
     "lsystem_3d": {
         "fn": lsystem_3d,
-        "allowed": {"depth", "step_length", "axiom"},
-        "coerce": {"depth": int, "step_length": float, "axiom": str},
-        "clamp": {"depth": (1, 5), "step_length": (0.05, 5.0)},
+        # p, q forward to the override path — branch angle = 360 / (p + q).
+        "allowed": {"depth", "step_length", "axiom", "p", "q"},
+        "coerce": {"depth": int, "step_length": float, "axiom": str, "p": int, "q": int},
+        "clamp": {"depth": (1, 5), "step_length": (0.05, 5.0), "p": (2, 24), "q": (1, 24)},
     },
     "harmonic_point_cloud": {
         "fn": harmonic_point_cloud,
@@ -205,13 +206,15 @@ def compute(
     spec = _STYLES[style]
     kwargs = _sanitize(params, spec)
 
-    # Special case: harmonic_knot accepts explicit (p, q) overrides that
-    # are *not* part of biotuner's signature. Strip them, build a single-
-    # ratio input so biotuner's internal "dominant ratio" pick lands on
-    # exactly p/q, and force the requested torus knot T(p, q).
+    # Special case: harmonic_knot and lsystem_3d accept explicit (p, q)
+    # overrides that are *not* part of biotuner's signature. Strip them,
+    # build a single-ratio input so biotuner's internal "dominant ratio"
+    # pick lands on exactly p/q. Lets the user dial the knot's T(p, q) /
+    # the L-system's branch angle directly, instead of being at the mercy
+    # of whichever ratio happens to be the strongest in a tight tuning.
     p_override = kwargs.pop("p", None)
     q_override = kwargs.pop("q", None)
-    if style == "harmonic_knot" and p_override and q_override and q_override > 0:
+    if style in ("harmonic_knot", "lsystem_3d") and p_override and q_override and q_override > 0:
         h_input = HarmonicInput.from_ratios(ratios=[float(p_override) / float(q_override)])
     else:
         h_input = _build_input(tuning, peaks, base_freq=base_freq)

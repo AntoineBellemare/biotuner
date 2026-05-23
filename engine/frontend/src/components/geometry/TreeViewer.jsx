@@ -7,13 +7,14 @@
  */
 
 import { useEffect, useRef } from 'react'
-import { hexToRgb, rgbToCss, lerpRgb } from '../../services/geometry/utils'
+import { hexToRgb, rgbToCss, lerpRgb, hexToHsl } from '../../services/geometry/utils'
 
 export default function TreeViewer({
   geometry,
   color = '#06b6d4',
   colorEnd = null,
   gradient = false,
+  colorMode = null,         // 'solid' | 'gradient' | 'rainbow'
   background = '#0a0a0a',
   nodeSize = 3,
   edgeWidth = 1,
@@ -45,7 +46,7 @@ export default function TreeViewer({
   useEffect(() => {
     draw()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geometry, color, colorEnd, gradient, background, nodeSize, edgeWidth])
+  }, [geometry, color, colorEnd, gradient, colorMode, background, nodeSize, edgeWidth])
 
   function draw() {
     const canvas = canvasRef.current
@@ -111,10 +112,12 @@ export default function TreeViewer({
       }
     }
 
-    // Precompute per-vertex t (radial distance 0..1) for gradient coloring
+    // Precompute per-vertex t (radial distance 0..1) for non-solid coloring.
+    const mode = colorMode || (gradient ? 'gradient' : 'solid')
     const cStart = hexToRgb(color)
     const cFinal = colorEnd ? hexToRgb(colorEnd) : null
-    const useGradient = gradient && cFinal
+    const baseHsl = (mode === 'rainbow') ? hexToHsl(color) : null
+    const useColors = mode !== 'solid' && (mode === 'rainbow' || cFinal)
     let maxR = 0
     for (const c of coords) {
       const r = Math.hypot(c[0] ?? 0, c[1] ?? 0)
@@ -122,17 +125,21 @@ export default function TreeViewer({
     }
     maxR = maxR || 1
     const vertexColor = (idx) => {
-      if (!useGradient) return color
+      if (!useColors) return color
       const c = coords[idx]
-      const r = Math.hypot(c[0] ?? 0, c[1] ?? 0) / maxR
-      return rgbToCss(lerpRgb(cStart, cFinal, r))
+      const t = Math.hypot(c[0] ?? 0, c[1] ?? 0) / maxR
+      if (mode === 'rainbow') {
+        const h = (baseHsl.h + t * 360) % 360
+        return `hsl(${h.toFixed(0)}, ${Math.round(baseHsl.s * 100)}%, ${Math.round(baseHsl.l * 100)}%)`
+      }
+      return rgbToCss(lerpRgb(cStart, cFinal, t))
     }
 
     // Edges
     ctx.globalAlpha = 0.55
     ctx.lineCap = 'round'
     ctx.lineWidth = edgeWidth * Math.max(1, W / 800)
-    if (!useGradient) {
+    if (!useColors) {
       ctx.shadowColor = color
       ctx.shadowBlur = edgeWidth * 3
     }
@@ -142,8 +149,7 @@ export default function TreeViewer({
       if (!pa || !pb) continue
       const ca = toCanvas(pa)
       const cb = toCanvas(pb)
-      // Average the two endpoint colors for the edge
-      if (useGradient) {
+      if (useColors) {
         const colA = vertexColor(a)
         const colB = vertexColor(b)
         const grad = ctx.createLinearGradient(ca.x, ca.y, cb.x, cb.y)

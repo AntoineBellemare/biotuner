@@ -14,6 +14,7 @@ export default function ThreeViewer({
   color = '#06b6d4',
   colorEnd = null,    // when set + gradient, interpolate per-vertex
   gradient = false,
+  colorMode = null,   // 'solid' | 'gradient' | 'rainbow' (overrides `gradient`)
   background = '#0a0a0a',
   pointSize = 0.03,
   wireframe = false,
@@ -134,8 +135,9 @@ export default function ThreeViewer({
       stateRef.current.currentObject = null
     }
 
+    const effectiveMode = colorMode || (gradient ? 'gradient' : 'solid')
     const obj = buildObject(THREE, geometry, {
-      color, colorEnd, gradient, pointSize, wireframe,
+      color, colorEnd, colorMode: effectiveMode, pointSize, wireframe,
     })
     if (!obj) return
 
@@ -155,7 +157,7 @@ export default function ThreeViewer({
 
     scene.add(obj)
     stateRef.current.currentObject = obj
-  }, [geometry, color, colorEnd, gradient, pointSize, wireframe])
+  }, [geometry, color, colorEnd, gradient, colorMode, pointSize, wireframe])
 
   // ---- Reflect autoRotate / background changes ----
   useEffect(() => {
@@ -195,12 +197,15 @@ function buildObject(THREE, geometry, opts) {
 
   const colorStart = new THREE.Color(opts.color)
   const colorFinal = opts.colorEnd ? new THREE.Color(opts.colorEnd) : null
-  const useGradient = opts.gradient && colorFinal
+  const mode = opts.colorMode || 'solid'
+  const isGradient = mode === 'gradient' && colorFinal
+  const isRainbow = mode === 'rainbow'
+  const useVertexColors = isGradient || isRainbow
 
-  // ---- Build vertex color buffer when gradient is on. We interpolate by
-  // height (Y) for surfaces & points, by vertex order for lines/trees. ----
+  // ---- Build vertex color buffer. Gradient interpolates by height (Y).
+  // Rainbow cycles the base color's hue across a full 360° span. ----
   let vertexColors = null
-  if (useGradient) {
+  if (useVertexColors) {
     vertexColors = new Float32Array(coordinates.length * 3)
     let yMin = Infinity, yMax = -Infinity
     for (const c of coordinates) {
@@ -209,11 +214,17 @@ function buildObject(THREE, geometry, opts) {
       if (y > yMax) yMax = y
     }
     const yRange = (yMax - yMin) || 1
+    const baseHsl = { h: 0, s: 1, l: 0.6 }
+    if (isRainbow) colorStart.getHSL(baseHsl)
     const tmp = new THREE.Color()
     for (let i = 0; i < coordinates.length; i++) {
       const c = coordinates[i]
-      const yT = ((c[1] ?? 0) - yMin) / yRange  // 0..1 by height
-      tmp.copy(colorStart).lerp(colorFinal, yT)
+      const yT = ((c[1] ?? 0) - yMin) / yRange
+      if (isRainbow) {
+        tmp.setHSL((baseHsl.h + yT) % 1, baseHsl.s, Math.min(0.6, Math.max(0.4, baseHsl.l)))
+      } else {
+        tmp.copy(colorStart).lerp(colorFinal, yT)
+      }
       vertexColors[i * 3]     = tmp.r
       vertexColors[i * 3 + 1] = tmp.g
       vertexColors[i * 3 + 2] = tmp.b
@@ -280,8 +291,20 @@ function buildObject(THREE, geometry, opts) {
   // ---- graph / tree / curve_3d / lsystem: line segments ----
   if (edges?.length) {
     const positions = new Float32Array(edges.length * 2 * 3)
-    const edgeColors = useGradient ? new Float32Array(edges.length * 2 * 3) : null
-    const tmp = useGradient ? new THREE.Color() : null
+    const edgeColors = useVertexColors ? new Float32Array(edges.length * 2 * 3) : null
+    const tmp = useVertexColors ? new THREE.Color() : null
+    const baseHsl = { h: 0, s: 1, l: 0.6 }
+    if (isRainbow) colorStart.getHSL(baseHsl)
+    const colorAt = (idx) => {
+      if (isRainbow) {
+        const t = idx / Math.max(1, coordinates.length - 1)
+        tmp.setHSL((baseHsl.h + t) % 1, baseHsl.s, Math.min(0.6, Math.max(0.4, baseHsl.l)))
+      } else if (isGradient) {
+        const t = idx / Math.max(1, coordinates.length - 1)
+        tmp.copy(colorStart).lerp(colorFinal, t)
+      }
+      return tmp
+    }
     for (let i = 0; i < edges.length; i++) {
       const [aIdx, bIdx] = edges[i]
       const pa = coordinates[aIdx] || [0, 0, 0]
@@ -292,17 +315,15 @@ function buildObject(THREE, geometry, opts) {
       positions[i * 6 + 3] = pb[0] ?? 0
       positions[i * 6 + 4] = pb[1] ?? 0
       positions[i * 6 + 5] = pb[2] ?? 0
-      if (useGradient) {
-        const tA = aIdx / Math.max(1, coordinates.length - 1)
-        const tB = bIdx / Math.max(1, coordinates.length - 1)
-        tmp.copy(colorStart).lerp(colorFinal, tA)
-        edgeColors[i * 6]     = tmp.r
-        edgeColors[i * 6 + 1] = tmp.g
-        edgeColors[i * 6 + 2] = tmp.b
-        tmp.copy(colorStart).lerp(colorFinal, tB)
-        edgeColors[i * 6 + 3] = tmp.r
-        edgeColors[i * 6 + 4] = tmp.g
-        edgeColors[i * 6 + 5] = tmp.b
+      if (useVertexColors) {
+        const cA = colorAt(aIdx)
+        edgeColors[i * 6]     = cA.r
+        edgeColors[i * 6 + 1] = cA.g
+        edgeColors[i * 6 + 2] = cA.b
+        const cB = colorAt(bIdx)
+        edgeColors[i * 6 + 3] = cB.r
+        edgeColors[i * 6 + 4] = cB.g
+        edgeColors[i * 6 + 5] = cB.b
       }
     }
     const buf = new THREE.BufferGeometry()
