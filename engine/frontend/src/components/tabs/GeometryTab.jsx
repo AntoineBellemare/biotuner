@@ -89,7 +89,16 @@ export default function GeometryTab({ analysisResult }) {
   // Color mode: solid / gradient (2-color blend) / rainbow (full hue cycle)
   const [colorMode, setColorMode] = useState('solid')
   const gradient = colorMode !== 'solid'
-  const colorEnd = useMemo(() => rotateHue(color, 90), [color])
+  // Fixed warm→cool palette for the gradient mode — burnt orange → deep
+  // turquoise. The color picker only controls solid mode (and the starting
+  // hue for rainbow); gradient gets a curated pair that always looks good.
+  const GRADIENT_START = '#d2691e'   // burnt orange (chocolate)
+  const GRADIENT_END   = '#008b8b'   // deep turquoise (dark cyan)
+  const effectiveColor = colorMode === 'gradient' ? GRADIENT_START : color
+  const colorEnd = useMemo(
+    () => colorMode === 'gradient' ? GRADIENT_END : rotateHue(color, 90),
+    [color, colorMode]
+  )
   // Source mode per geometry — controls how the JS-engine geometries
   // derive their frequency-defining params from the analysis tuning.
   const [sourceModeByType, setSourceModeByType] = useState(() =>
@@ -529,7 +538,7 @@ export default function GeometryTab({ analysisResult }) {
         width: canvas.width,
         height: canvas.height,
         lineWidth: (params.lineWidth || 1.5) * (canvas.width / 600),
-        color,
+        color: effectiveColor,
         colorEnd,
         colorMode,
         background: '#0a0a0a',
@@ -568,7 +577,7 @@ export default function GeometryTab({ analysisResult }) {
       const svg = pointsToSvg(out.points, {
         width: 1024, height: 1024,
         lineWidth: params.lineWidth || 1.5,
-        color,
+        color: effectiveColor,
         background: '#0a0a0a',
       })
       downloadFile(svg, filename, 'image/svg+xml')
@@ -706,7 +715,7 @@ export default function GeometryTab({ analysisResult }) {
                 {pythonGeom ? (
                   <ThreeViewer
                     geometry={pythonGeom}
-                    color={color}
+                    color={effectiveColor}
                     colorEnd={colorEnd}
                     gradient={gradient}
                     colorMode={colorMode}
@@ -725,7 +734,7 @@ export default function GeometryTab({ analysisResult }) {
                 {pythonGeom ? (
                   <TreeViewer
                     geometry={pythonGeom}
-                    color={color}
+                    color={effectiveColor}
                     colorEnd={colorEnd}
                     gradient={gradient}
                     colorMode={colorMode}
@@ -742,7 +751,7 @@ export default function GeometryTab({ analysisResult }) {
                 {pythonGeom ? (
                   <FieldViewer
                     geometry={pythonGeom}
-                    color={color}
+                    color={effectiveColor}
                     colorEnd={colorEnd}
                     gradient={gradient}
                     colorMode={colorMode}
@@ -1108,8 +1117,8 @@ export default function GeometryTab({ analysisResult }) {
             {colorMode === 'gradient' && geom.key !== 'chladni' && (
               <div
                 className="w-8 h-8 rounded border border-biotuner-dark-600"
-                style={{ background: `linear-gradient(90deg, ${color}, ${colorEnd})` }}
-                title={`Auto end: ${colorEnd}`}
+                style={{ background: `linear-gradient(90deg, ${effectiveColor}, ${colorEnd})` }}
+                title={`${effectiveColor} → ${colorEnd}`}
               />
             )}
             {colorMode === 'rainbow' && geom.key !== 'chladni' && (
