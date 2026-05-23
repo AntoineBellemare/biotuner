@@ -53,15 +53,32 @@ def _build_input(
 
 
 def _to_list(arr) -> Any:
-    """Recursively convert numpy arrays to nested lists for JSON output."""
+    """Recursively convert numpy values into JSON-serialisable equivalents.
+
+    Handles: ndarray, lists/tuples, dicts, numpy scalars, Fractions, sets.
+    Anything else (str, int, float, bool, None) passes through unchanged.
+    Importantly we walk *inside* dicts so the parameters/metadata fields
+    of GeometryData don't smuggle ndarrays through.
+    """
     if arr is None:
         return None
     if isinstance(arr, np.ndarray):
         return arr.tolist()
+    if isinstance(arr, (np.floating, np.integer, np.bool_)):
+        return arr.item()
+    if isinstance(arr, dict):
+        return {str(k): _to_list(v) for k, v in arr.items()}
     if isinstance(arr, (list, tuple)):
         return [_to_list(a) for a in arr]
-    if isinstance(arr, (np.floating, np.integer)):
-        return arr.item()
+    if isinstance(arr, set):
+        return [_to_list(a) for a in sorted(arr, key=str)]
+    # Fraction / sympy.Rational / anything with float() — coerce safely.
+    try:
+        import fractions
+        if isinstance(arr, fractions.Fraction):
+            return float(arr)
+    except Exception:
+        pass
     return arr
 
 

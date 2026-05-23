@@ -75,6 +75,7 @@ export default function GeometryTab({ analysisResult }) {
   const [animate, setAnimate] = useState(true)
   const [color, setColor] = useState('#06b6d4')
   const [palette, setPalette] = useState('mono')  // 'mono' | 'accent'
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
@@ -501,17 +502,41 @@ export default function GeometryTab({ analysisResult }) {
             )}
           </div>
 
-          {/* Sliders for each schema entry */}
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-            {geom.paramSchema.map((p) => (
-              <ParamControl
-                key={paramId(geom.key, p.key)}
-                schema={p}
-                value={params[p.key]}
-                onChange={(v) => setParam(p.key, v)}
-              />
-            ))}
-          </div>
+          {/* Sliders for each schema entry — basic first, advanced behind a toggle */}
+          {(() => {
+            const basic = geom.paramSchema.filter((p) => !p.advanced)
+            const advanced = geom.paramSchema.filter((p) => p.advanced)
+            return (
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                {basic.map((p) => (
+                  <ParamControl
+                    key={paramId(geom.key, p.key)}
+                    schema={p}
+                    value={params[p.key]}
+                    onChange={(v) => setParam(p.key, v)}
+                  />
+                ))}
+                {advanced.length > 0 && (
+                  <>
+                    <button
+                      onClick={() => setShowAdvanced((s) => !s)}
+                      className="w-full text-left text-[10px] uppercase tracking-wider text-biotuner-light/40 hover:text-biotuner-light/70 border-t border-biotuner-dark-600 pt-3 mt-1"
+                    >
+                      {showAdvanced ? '▼' : '▶'} Advanced ({advanced.length})
+                    </button>
+                    {showAdvanced && advanced.map((p) => (
+                      <ParamControl
+                        key={paramId(geom.key, p.key)}
+                        schema={p}
+                        value={params[p.key]}
+                        onChange={(v) => setParam(p.key, v)}
+                      />
+                    ))}
+                  </>
+                )}
+              </div>
+            )
+          })()}
         </div>
       </div>
     </div>
