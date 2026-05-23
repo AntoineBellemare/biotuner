@@ -517,8 +517,12 @@ const harmonic_knot = {
   label: 'Harmonic knot',
   description:
     'Torus knot T(p, q) where the dominant ratio sets the winding numbers. ' +
-    '3/2 → trefoil knot; 5/4 → cinquefoil. Rendered as a tube — rotate by ' +
-    'drag, zoom by scroll.',
+    '3/2 → trefoil knot; 5/4 → cinquefoil. Pick which derived ratio drives ' +
+    'the knot via the "Dominant" slot — every binding gives a different T(p, q).',
+  // Single slot — picks WHICH derived ratio is sent to biotuner as the
+  // input. With only one ratio in the HarmonicInput, biotuner's "pick
+  // simplest" lands deterministically on that ratio → unambiguous T(p, q).
+  slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
     n_points: 500,
     tube_radius: 0.08,
@@ -542,9 +546,11 @@ const lsystem_3d = {
   renderer: '3d',
   label: 'L-system 3D',
   description:
-    '3D turtle-graphics L-system whose branching angle is derived from the ' +
-    'dominant ratio (360° / (p + q)). Depth controls how many rewrite ' +
-    'passes are applied before drawing.',
+    '3D turtle-graphics L-system whose branching angle = 360° / (p + q) is ' +
+    'derived from the chosen "Dominant" ratio. Every binding choice picks a ' +
+    'different angle → a different branching geometry.',
+  // Same "single dominant ratio" approach as harmonic_knot.
+  slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
     depth: 3,
     step_length: 1.0,

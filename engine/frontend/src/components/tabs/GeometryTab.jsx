@@ -139,17 +139,44 @@ export default function GeometryTab({ analysisResult }) {
   const selectedRatios = useMemo(() => {
     const tuning = analysisResult?.tuning || []
     if (!tuning.length) return []
+    // 1) chip filter — which raw analysis ratios participate
     const sel = selectedRatiosByType[type]
     let filtered = tuning
     if (sel && sel.length === tuning.length) {
       filtered = tuning.filter((_, i) => sel[i])
     }
     if (!filtered.length) filtered = tuning
+    // 2) source-mode expansion — direct / harmonics / subharmonics / IM
     const mode = sourceModeByType[type] || 'direct'
-    if (mode === 'manual' || mode === 'direct') return filtered
-    const expanded = deriveFromMode(filtered, mode)
-    return expanded?.length ? expanded : filtered
-  }, [analysisResult, selectedRatiosByType, sourceModeByType, type])
+    let expanded = (mode === 'manual' || mode === 'direct')
+      ? filtered
+      : (deriveFromMode(filtered, mode) || filtered)
+    if (!expanded?.length) expanded = filtered
+    // 3) For Python geoms with slot bindings, narrow further to JUST the
+    // selected ratios — so e.g. harmonic_knot sees exactly one ratio and
+    // biotuner's "pick simplest" lands unambiguously on it. This makes
+    // slot bindings the actual control surface for T(p, q) variation.
+    const g = GEOMETRY_TYPES[type]
+    if (g?.engine === 'python' && g.slots?.length > 0) {
+      const b = bindingsByType[type] || {}
+      const picked = []
+      const seen = new Set()
+      for (const slot of g.slots) {
+        const idx = Math.max(
+          0,
+          Math.min(expanded.length - 1, b[slot.key] ?? 0)
+        )
+        const r = expanded[idx]
+        const key = r?.toFixed(6)
+        if (r != null && !seen.has(key)) {
+          seen.add(key)
+          picked.push(r)
+        }
+      }
+      if (picked.length) return picked
+    }
+    return expanded
+  }, [analysisResult, selectedRatiosByType, sourceModeByType, type, bindingsByType])
   const ratiosKey = useMemo(() => selectedRatios.join(','), [selectedRatios])
 
   // Trigger backend compute when a Python style is active and its
@@ -205,10 +232,23 @@ export default function GeometryTab({ analysisResult }) {
   const sourceMode = sourceModeByType[type] || 'direct'
   const bindings = bindingsByType[type] || {}
   const bindingsKey = JSON.stringify(bindings)
-  const derivedRatios = useMemo(
-    () => (sourceMode === 'manual' ? [] : deriveFromMode(ratios, sourceMode)),
-    [ratiosKeyForJs, sourceMode]
-  )
+  // What appears in the slot-picker dropdown — exactly the post-pipeline
+  // list of ratios after chip filter + source-mode expansion. Keeps the
+  // UI honest: what you see is what the backend gets (further narrowed
+  // by slot bindings for Python geoms with slots).
+  const derivedRatios = useMemo(() => {
+    if (sourceMode === 'manual') return []
+    if (!ratios.length) return []
+    const sel = selectedRatiosByType[type]
+    let filtered = ratios
+    if (sel && sel.length === ratios.length) {
+      filtered = ratios.filter((_, i) => sel[i])
+    }
+    if (!filtered.length) filtered = ratios
+    if (sourceMode === 'direct') return filtered
+    return deriveFromMode(filtered, sourceMode) || filtered
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ratiosKeyForJs, sourceMode, selectedRatiosByType, type])
 
   useEffect(() => {
     if (!ratios.length) return
@@ -664,8 +704,8 @@ export default function GeometryTab({ analysisResult }) {
                     const cur = bindings[slot.key] ?? slotIdx
                     return (
                       <div key={slot.key} className="flex items-center gap-2">
-                        <span className="text-xs text-biotuner-light/70 w-12 font-mono">
-                          {slot.key}
+                        <span className="text-xs text-biotuner-light/70 w-16 font-mono">
+                          {slot.label || slot.key}
                         </span>
                         <select
                           value={cur}
