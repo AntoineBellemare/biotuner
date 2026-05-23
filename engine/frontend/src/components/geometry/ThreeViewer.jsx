@@ -23,6 +23,11 @@ export default function ThreeViewer({
   const mountRef = useRef(null)
   const stateRef = useRef({})   // holds three.js instances across renders
   const [status, setStatus] = useState('loading')
+  // Flipped to true once the async Three.js import + scene setup is done.
+  // Used as a dep on the geometry-build effect so it refires when Three
+  // becomes ready — otherwise a geometry that arrives BEFORE Three is
+  // loaded would never render until some other prop changed.
+  const [threeReady, setThreeReady] = useState(false)
 
   // ---- Mount / unmount: build the scene once ----
   useEffect(() => {
@@ -46,7 +51,11 @@ export default function ThreeViewer({
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000)
         camera.position.set(0, 0, 4)
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+        // preserveDrawingBuffer is required for GIF/PNG capture via
+        // canvas.toDataURL(). Small perf cost but worth it for export.
+        const renderer = new THREE.WebGLRenderer({
+          antialias: true, alpha: false, preserveDrawingBuffer: true,
+        })
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
         renderer.setSize(width, height, false)
         // Make the WebGL canvas fill its container exactly. setSize(..., false)
@@ -97,6 +106,7 @@ export default function ThreeViewer({
           currentObject: null,
         }
         setStatus('ready')
+        setThreeReady(true)
 
         cleanup = () => {
           if (rafId) cancelAnimationFrame(rafId)
@@ -157,7 +167,7 @@ export default function ThreeViewer({
 
     scene.add(obj)
     stateRef.current.currentObject = obj
-  }, [geometry, color, colorEnd, gradient, colorMode, pointSize, wireframe])
+  }, [threeReady, geometry, color, colorEnd, gradient, colorMode, pointSize, wireframe])
 
   // ---- Reflect autoRotate / background changes ----
   useEffect(() => {

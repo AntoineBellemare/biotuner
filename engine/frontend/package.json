@@ -17,6 +17,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "axios": "^1.6.0",
     "clsx": "^2.0.0",
+    "gif.js": "^0.2.0",
     "idb-keyval": "^6.2.2",
     "lucide-react": "^0.294.0",
     "pitchy": "^4.1.0",

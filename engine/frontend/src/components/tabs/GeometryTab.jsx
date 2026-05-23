@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Play, Pause, Sparkles, Download, RotateCcw, Shuffle, Image as ImageIcon, Cpu, Loader2, Lock } from 'lucide-react'
+import { Play, Pause, Sparkles, Download, RotateCcw, Shuffle, Image as ImageIcon, Cpu, Loader2, Lock, Film } from 'lucide-react'
 import {
   GEOMETRY_TYPES,
   GEOMETRY_ORDER,
@@ -353,9 +353,28 @@ export default function GeometryTab({ analysisResult }) {
   // -------------------------------------------------------------------------
   function morphParams(baseParams, t) {
     if (!morph || sourceMode === 'manual' || isPython) return baseParams
+    if (geom.noMorph) return baseParams
     if (!geom.slots?.length || !derivedRatios.length) return baseParams
     const N = derivedRatios.length
-    const cycleSec = Math.max(2, morphPeriod || 30)
+    const cycleSec = Math.max(1, morphPeriod || 30)
+    // Step-style: cycle each slot's binding INDEX through the derived list.
+    // For geometries whose render expects integer-fraction params (Lissajous,
+    // Rose, Spirograph, Chladni), we then route those bindings through
+    // fromDerivedRatios so the rendered params are valid small-integer
+    // fractions — direct decimal interpolation gives params near 1 that
+    // visually collapse to nothing.
+    const morphedBindings = {}
+    for (let i = 0; i < geom.slots.length; i++) {
+      const slot = geom.slots[i]
+      const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
+      morphedBindings[slot.key] = Math.floor(phase)
+    }
+    if (typeof geom.fromDerivedRatios === 'function') {
+      const updates = geom.fromDerivedRatios(derivedRatios, morphedBindings, baseParams) || {}
+      return { ...baseParams, ...updates }
+    }
+    // Fallback for slots without a fromDerivedRatios — straight value
+    // interpolation, integer-quantised slots hold each value full-step.
     const next = { ...baseParams }
     for (let i = 0; i < geom.slots.length; i++) {
       const slot = geom.slots[i]
@@ -364,15 +383,10 @@ export default function GeometryTab({ analysisResult }) {
       const idxB = (idxA + 1) % N
       let val
       if (slot.transform) {
-        // Integer-quantised slot (Chladni m, n etc.): hold each value for
-        // the whole step instead of interpolating, otherwise the rounded
-        // integer "snaps" mid-step and the pattern looks jumpy. The cycle
-        // now feels like a discrete tour rather than a stuttering blur.
         val = derivedRatios[idxA]
         if (slot.scale) val *= slot.scale
         val = slot.transform(val)
       } else {
-        // Continuous slot — cosine-ease for smooth glide.
         const linear = phase - idxA
         const fract = 0.5 - 0.5 * Math.cos(linear * Math.PI)
         val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
@@ -562,6 +576,64 @@ export default function GeometryTab({ analysisResult }) {
       const svg = fieldCanvasToSvg(canvasRef.current, { background: '#0a0a0a' })
       downloadFile(svg, filename, 'image/svg+xml')
     }
+  }
+
+  // ----- GIF recording -----
+  // Captures frames from whichever canvas is currently visible (JS 2D or
+  // the WebGL/TreeViewer canvas inside containerRef) over a few seconds
+  // and encodes them via gif.js in a worker. Visible only when something
+  // is actually moving — recording a static frame would just be a PNG.
+  const [gifRecording, setGifRecording] = useState(false)
+  const [gifProgress, setGifProgress] = useState(0)
+  const recordGif = async () => {
+    if (gifRecording) return
+    const canvas = isPython
+      ? containerRef.current?.querySelector('canvas')
+      : canvasRef.current
+    if (!canvas) return
+
+    // Lazy-load gif.js + its worker only when the user actually clicks.
+    const { default: GIF } = await import('gif.js')
+    const workerScript = (await import('gif.js/dist/gif.worker.js?url')).default
+
+    setGifRecording(true)
+    setGifProgress(0)
+    const fps = 15
+    const seconds = 4
+    const frameDelayMs = 1000 / fps
+    const totalFrames = fps * seconds
+
+    // Snapshot intrinsic resolution so the GIF matches what's on screen.
+    const w = canvas.width
+    const h = canvas.height
+    const gif = new GIF({
+      workers: 2,
+      workerScript,
+      quality: 10,
+      width: w,
+      height: h,
+      background: '#0a0a0a',
+    })
+
+    // Capture loop — use ImageBitmap to grab the canvas frame fast.
+    for (let i = 0; i < totalFrames; i++) {
+      try {
+        const bmp = await createImageBitmap(canvas)
+        gif.addFrame(bmp, { delay: frameDelayMs, copy: true })
+        setGifProgress(Math.round((i / totalFrames) * 50))     // first 50%
+      } catch (err) {
+        console.warn('GIF capture frame failed:', err)
+      }
+      await new Promise((r) => setTimeout(r, frameDelayMs))
+    }
+
+    gif.on('progress', (p) => setGifProgress(50 + Math.round(p * 50)))
+    gif.on('finished', (blob) => {
+      downloadFile(blob, `harmonic_${geom.key}.gif`, 'image/gif')
+      setGifRecording(false)
+      setGifProgress(0)
+    })
+    gif.render()
   }
 
   const exportPng = () => {
@@ -789,6 +861,20 @@ export default function GeometryTab({ analysisResult }) {
             >
               <ImageIcon className="w-4 h-4" /> PNG
             </button>
+            {/* GIF recording — only when something is actually moving */}
+            {(animate || morph ||
+              (params.animation && params.animation !== 'none') ||
+              (isPython && autoRotate)) && (
+              <button
+                onClick={recordGif}
+                disabled={gifRecording}
+                title="Capture ~4 seconds of animation and encode as GIF"
+                className="min-h-[40px] flex items-center gap-2 px-3 py-2 rounded-lg bg-biotuner-accent/10 border border-biotuner-accent/40 text-biotuner-accent text-sm hover:bg-biotuner-accent/20 disabled:opacity-60"
+              >
+                <Film className="w-4 h-4" />
+                {gifRecording ? `GIF ${gifProgress}%` : 'Record GIF'}
+              </button>
+            )}
           </div>
         </div>
 
@@ -878,8 +964,9 @@ export default function GeometryTab({ analysisResult }) {
                 </div>
               )}
 
-              {/* Auto-morph toggle + speed */}
-              {sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 1 && (
+              {/* Auto-morph toggle + speed (hidden for geoms that don't
+                  interpolate cleanly between binding choices). */}
+              {!geom.noMorph && sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 1 && (
                 <div className="mt-1 space-y-1.5">
                   <button
                     onClick={() => {
@@ -918,9 +1005,10 @@ export default function GeometryTab({ analysisResult }) {
 
           {/* Ratio selection (Python geometries) — toggleable chips so the
               user picks WHICH analysis ratios go into the backend call.
-              Now applied to all Python geoms including point_cloud: combined
-              with the source-mode picker above this gives genuine variation. */}
-          {isPython && ratios.length > 0 && (
+              Hidden for harmonic_knot because the Dominant dropdown already
+              picks from the same pool — chip selection would only filter
+              what shows up in that dropdown, which is redundant. */}
+          {isPython && ratios.length > 0 && type !== 'harmonic_knot' && (
             <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">

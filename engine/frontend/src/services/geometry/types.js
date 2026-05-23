@@ -210,6 +210,10 @@ const harmonograph = {
     { key: 'f3', scale: 2 },
     { key: 'f4', scale: 2 },
   ],
+  // Harmonograph re-traces the whole curve on each frame; even a smooth
+  // freq interpolation produces visibly jumpy renders. Disable morph for
+  // this one.
+  noMorph: true,
   fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
     // Spread four derived ratios across the X/Y pendulum quartet, with a
@@ -530,10 +534,11 @@ const harmonic_knot = {
   slots: [{ key: 'dominant', label: 'Dominant' }],
   defaultParams: {
     knot_preset: 'data',
-    // Default 4 → tight rounding so the dominant ratio falls on simple
-    // fractions (3/2, 5/4, 4/3, …) and produces recognisable knot shapes
-    // out of the box. The user can dial up to 128 for dense T(p, q).
-    max_denom: 4,
+    // Default 12 → enough denominator headroom that typical microtonal
+    // ratios round to genuine p/q (e.g. 1.118 → 9/8 → T(9, 8)) instead of
+    // collapsing to a degenerate T(1, 1) circle. Dial down to 4 for the
+    // simplest knots, up to 128 for dense T(p, q).
+    max_denom: 12,
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -877,14 +882,15 @@ const subharmonic_tree = {
   defaultParams: {
     depth: 4,
     n_harmonics: 5,
-    min_freq: 0.1,
+    min_freq: 0.05,
     layout: 'polar',
     max_denom: 0,        // 0 = send ratios as-is; >0 = round each to p/q
   },
   paramSchema: [
     { key: 'depth',       label: 'Depth',          type: 'int',    min: 1,     max: 6,    step: 1 },
     { key: 'n_harmonics', label: 'Subharmonics',   type: 'int',    min: 2,     max: 9,    step: 1 },
-    { key: 'min_freq',    label: 'Min freq (Hz)',  type: 'slider', min: 0.01,  max: 50,   step: 0.01 },
+    { key: 'min_freq',    label: 'Min freq (Hz)',  type: 'slider', min: 0.001, max: 1, step: 0.001,
+      format: (v) => v < 0.01 ? v.toFixed(3) : v.toFixed(2) },
     { key: 'layout',      label: 'Layout',         type: 'select',
       options: [
         { value: 'polar', label: 'Radial (chord wheel)' },
