@@ -12,6 +12,8 @@ import { useEffect, useRef, useState } from 'react'
 export default function ThreeViewer({
   geometry,           // GeometryData JSON from /api/harmonic-geometry
   color = '#06b6d4',
+  colorEnd = null,    // when set + gradient, interpolate per-vertex
+  gradient = false,
   background = '#0a0a0a',
   pointSize = 0.03,
   wireframe = false,
@@ -46,6 +48,12 @@ export default function ThreeViewer({
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
         renderer.setSize(width, height, false)
+        // Make the WebGL canvas fill its container exactly. setSize(..., false)
+        // skips touching the canvas CSS, so the default inline display would
+        // otherwise leave the canvas mis-sized / off-center on mobile.
+        renderer.domElement.style.display = 'block'
+        renderer.domElement.style.width = '100%'
+        renderer.domElement.style.height = '100%'
         mount.appendChild(renderer.domElement)
 
         const controls = new OrbitControls(camera, renderer.domElement)
@@ -126,7 +134,9 @@ export default function ThreeViewer({
       stateRef.current.currentObject = null
     }
 
-    const obj = buildObject(THREE, geometry, { color, pointSize, wireframe })
+    const obj = buildObject(THREE, geometry, {
+      color, colorEnd, gradient, pointSize, wireframe,
+    })
     if (!obj) return
 
     // Fit camera to the geometry
@@ -145,7 +155,7 @@ export default function ThreeViewer({
 
     scene.add(obj)
     stateRef.current.currentObject = obj
-  }, [geometry, color, pointSize, wireframe])
+  }, [geometry, color, colorEnd, gradient, pointSize, wireframe])
 
   // ---- Reflect autoRotate / background changes ----
   useEffect(() => {
@@ -181,19 +191,49 @@ export default function ThreeViewer({
 
 function buildObject(THREE, geometry, opts) {
   const { coordinates, faces, edges, geom_type } = geometry
-  const color = new THREE.Color(opts.color)
-
   if (!coordinates?.length) return null
 
-  // mesh_3d: triangulated surface
-  if (geom_type === 'mesh_3d' && faces?.length) {
-    const positions = new Float32Array(coordinates.length * 3)
+  const colorStart = new THREE.Color(opts.color)
+  const colorFinal = opts.colorEnd ? new THREE.Color(opts.colorEnd) : null
+  const useGradient = opts.gradient && colorFinal
+
+  // ---- Build vertex color buffer when gradient is on. We interpolate by
+  // height (Y) for surfaces & points, by vertex order for lines/trees. ----
+  let vertexColors = null
+  if (useGradient) {
+    vertexColors = new Float32Array(coordinates.length * 3)
+    let yMin = Infinity, yMax = -Infinity
+    for (const c of coordinates) {
+      const y = c[1] ?? 0
+      if (y < yMin) yMin = y
+      if (y > yMax) yMax = y
+    }
+    const yRange = (yMax - yMin) || 1
+    const tmp = new THREE.Color()
     for (let i = 0; i < coordinates.length; i++) {
       const c = coordinates[i]
-      positions[i * 3]     = c[0] ?? 0
-      positions[i * 3 + 1] = c[1] ?? 0
-      positions[i * 3 + 2] = c[2] ?? 0
+      const yT = ((c[1] ?? 0) - yMin) / yRange  // 0..1 by height
+      tmp.copy(colorStart).lerp(colorFinal, yT)
+      vertexColors[i * 3]     = tmp.r
+      vertexColors[i * 3 + 1] = tmp.g
+      vertexColors[i * 3 + 2] = tmp.b
     }
+  }
+
+  const positionsFor = (count, lookup) => {
+    const arr = new Float32Array(count * 3)
+    for (let i = 0; i < count; i++) {
+      const c = lookup(i)
+      arr[i * 3]     = c?.[0] ?? 0
+      arr[i * 3 + 1] = c?.[1] ?? 0
+      arr[i * 3 + 2] = c?.[2] ?? 0
+    }
+    return arr
+  }
+
+  // ---- mesh_3d: triangulated surface ----
+  if (geom_type === 'mesh_3d' && faces?.length) {
+    const positions = positionsFor(coordinates.length, (i) => coordinates[i])
     const indices = new Uint32Array(faces.length * 3)
     for (let i = 0; i < faces.length; i++) {
       const f = faces[i]
@@ -203,11 +243,13 @@ function buildObject(THREE, geometry, opts) {
     }
     const buf = new THREE.BufferGeometry()
     buf.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    if (vertexColors) buf.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3))
     buf.setIndex(new THREE.BufferAttribute(indices, 1))
     buf.computeVertexNormals()
 
     const material = new THREE.MeshStandardMaterial({
-      color,
+      color: vertexColors ? 0xffffff : colorStart,
+      vertexColors: !!vertexColors,
       wireframe: opts.wireframe,
       flatShading: false,
       metalness: 0.05,
@@ -217,19 +259,16 @@ function buildObject(THREE, geometry, opts) {
     return new THREE.Mesh(buf, material)
   }
 
-  // point_cloud_3d: Points
-  if (geom_type === 'point_cloud_3d' || (!faces?.length && !edges?.length && Array.isArray(coordinates[0]))) {
-    const positions = new Float32Array(coordinates.length * 3)
-    for (let i = 0; i < coordinates.length; i++) {
-      const c = coordinates[i]
-      positions[i * 3]     = c[0] ?? 0
-      positions[i * 3 + 1] = c[1] ?? 0
-      positions[i * 3 + 2] = c[2] ?? 0
-    }
+  // ---- point_cloud_3d ----
+  if (geom_type === 'point_cloud_3d' ||
+      (!faces?.length && !edges?.length && Array.isArray(coordinates[0]))) {
+    const positions = positionsFor(coordinates.length, (i) => coordinates[i])
     const buf = new THREE.BufferGeometry()
     buf.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    if (vertexColors) buf.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3))
     const material = new THREE.PointsMaterial({
-      color,
+      color: vertexColors ? 0xffffff : colorStart,
+      vertexColors: !!vertexColors,
       size: opts.pointSize,
       sizeAttenuation: true,
       transparent: true,
@@ -238,37 +277,55 @@ function buildObject(THREE, geometry, opts) {
     return new THREE.Points(buf, material)
   }
 
-  // graph / tree / curve_3d / lsystem: line segments
+  // ---- graph / tree / curve_3d / lsystem: line segments ----
   if (edges?.length) {
     const positions = new Float32Array(edges.length * 2 * 3)
+    const edgeColors = useGradient ? new Float32Array(edges.length * 2 * 3) : null
+    const tmp = useGradient ? new THREE.Color() : null
     for (let i = 0; i < edges.length; i++) {
-      const [a, b] = edges[i]
-      const pa = coordinates[a] || [0, 0, 0]
-      const pb = coordinates[b] || [0, 0, 0]
+      const [aIdx, bIdx] = edges[i]
+      const pa = coordinates[aIdx] || [0, 0, 0]
+      const pb = coordinates[bIdx] || [0, 0, 0]
       positions[i * 6]     = pa[0] ?? 0
       positions[i * 6 + 1] = pa[1] ?? 0
       positions[i * 6 + 2] = pa[2] ?? 0
       positions[i * 6 + 3] = pb[0] ?? 0
       positions[i * 6 + 4] = pb[1] ?? 0
       positions[i * 6 + 5] = pb[2] ?? 0
+      if (useGradient) {
+        const tA = aIdx / Math.max(1, coordinates.length - 1)
+        const tB = bIdx / Math.max(1, coordinates.length - 1)
+        tmp.copy(colorStart).lerp(colorFinal, tA)
+        edgeColors[i * 6]     = tmp.r
+        edgeColors[i * 6 + 1] = tmp.g
+        edgeColors[i * 6 + 2] = tmp.b
+        tmp.copy(colorStart).lerp(colorFinal, tB)
+        edgeColors[i * 6 + 3] = tmp.r
+        edgeColors[i * 6 + 4] = tmp.g
+        edgeColors[i * 6 + 5] = tmp.b
+      }
     }
     const buf = new THREE.BufferGeometry()
     buf.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    const material = new THREE.LineBasicMaterial({ color, linewidth: 1 })
+    if (edgeColors) buf.setAttribute('color', new THREE.BufferAttribute(edgeColors, 3))
+    const material = new THREE.LineBasicMaterial({
+      color: edgeColors ? 0xffffff : colorStart,
+      vertexColors: !!edgeColors,
+      linewidth: 1,
+    })
     return new THREE.LineSegments(buf, material)
   }
 
-  // Fallback to a point cloud rendering
-  const positions = new Float32Array(coordinates.length * 3)
-  for (let i = 0; i < coordinates.length; i++) {
-    const c = coordinates[i]
-    positions[i * 3]     = c[0] ?? 0
-    positions[i * 3 + 1] = c[1] ?? 0
-    positions[i * 3 + 2] = c[2] ?? 0
-  }
+  // Fallback: points
+  const positions = positionsFor(coordinates.length, (i) => coordinates[i])
   const buf = new THREE.BufferGeometry()
   buf.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  return new THREE.Points(buf, new THREE.PointsMaterial({ color, size: opts.pointSize }))
+  if (vertexColors) buf.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3))
+  return new THREE.Points(buf, new THREE.PointsMaterial({
+    color: vertexColors ? 0xffffff : colorStart,
+    vertexColors: !!vertexColors,
+    size: opts.pointSize,
+  }))
 }
 
 function disposeObject(obj) {

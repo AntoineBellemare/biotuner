@@ -7,10 +7,13 @@
  */
 
 import { useEffect, useRef } from 'react'
+import { hexToRgb, rgbToCss, lerpRgb } from '../../services/geometry/utils'
 
 export default function TreeViewer({
   geometry,
   color = '#06b6d4',
+  colorEnd = null,
+  gradient = false,
   background = '#0a0a0a',
   nodeSize = 3,
   edgeWidth = 1,
@@ -42,7 +45,7 @@ export default function TreeViewer({
   useEffect(() => {
     draw()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geometry, color, background, nodeSize, edgeWidth])
+  }, [geometry, color, colorEnd, gradient, background, nodeSize, edgeWidth])
 
   function draw() {
     const canvas = canvasRef.current
@@ -108,19 +111,48 @@ export default function TreeViewer({
       }
     }
 
+    // Precompute per-vertex t (radial distance 0..1) for gradient coloring
+    const cStart = hexToRgb(color)
+    const cFinal = colorEnd ? hexToRgb(colorEnd) : null
+    const useGradient = gradient && cFinal
+    let maxR = 0
+    for (const c of coords) {
+      const r = Math.hypot(c[0] ?? 0, c[1] ?? 0)
+      if (r > maxR) maxR = r
+    }
+    maxR = maxR || 1
+    const vertexColor = (idx) => {
+      if (!useGradient) return color
+      const c = coords[idx]
+      const r = Math.hypot(c[0] ?? 0, c[1] ?? 0) / maxR
+      return rgbToCss(lerpRgb(cStart, cFinal, r))
+    }
+
     // Edges
-    ctx.strokeStyle = color
     ctx.globalAlpha = 0.55
     ctx.lineCap = 'round'
     ctx.lineWidth = edgeWidth * Math.max(1, W / 800)
-    ctx.shadowColor = color
-    ctx.shadowBlur = edgeWidth * 3
+    if (!useGradient) {
+      ctx.shadowColor = color
+      ctx.shadowBlur = edgeWidth * 3
+    }
     for (const [a, b] of edges) {
       const pa = coords[a]
       const pb = coords[b]
       if (!pa || !pb) continue
       const ca = toCanvas(pa)
       const cb = toCanvas(pb)
+      // Average the two endpoint colors for the edge
+      if (useGradient) {
+        const colA = vertexColor(a)
+        const colB = vertexColor(b)
+        const grad = ctx.createLinearGradient(ca.x, ca.y, cb.x, cb.y)
+        grad.addColorStop(0, colA)
+        grad.addColorStop(1, colB)
+        ctx.strokeStyle = grad
+      } else {
+        ctx.strokeStyle = color
+      }
       ctx.beginPath()
       ctx.moveTo(ca.x, ca.y)
       ctx.lineTo(cb.x, cb.y)
@@ -141,10 +173,10 @@ export default function TreeViewer({
       const norm = w != null
         ? Math.max(0, (w - wMin) / (wMax - wMin || 1))
         : 1
-      const r = nodeSize * (0.6 + norm * 1.4) * Math.max(1, W / 800)
+      const r = nodeSize * (0.6 + norm * 1.6) * Math.max(1, W / 800)
       ctx.beginPath()
       ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
-      ctx.fillStyle = color
+      ctx.fillStyle = vertexColor(i)
       ctx.fill()
     }
   }

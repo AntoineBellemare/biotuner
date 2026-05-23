@@ -81,11 +81,20 @@ const lissajous = {
     const { n, d } = findFraction(r, 12)
     return { a: n, b: d }
   },
-  fromDerivedRatios(derived) {
+  // `slots` declares which params are derived-from-tuning. The tab UI
+  // shows per-slot index pickers; "morph" cycles each slot through the
+  // derived list over time.
+  slots: [
+    { key: 'a' },
+    { key: 'b' },
+  ],
+  fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
+    const ia = Math.min(derived.length - 1, bindings.a ?? 0)
+    const ib = Math.min(derived.length - 1, bindings.b ?? 1)
     return {
-      a: +(derived[0] || 1).toFixed(3),
-      b: +(derived[1] || derived[0] * 1.5 || 1.5).toFixed(3),
+      a: +(derived[ia] || 1).toFixed(3),
+      b: +(derived[ib] || derived[ia] * 1.5 || 1.5).toFixed(3),
     }
   },
   render(params, t) {
@@ -160,16 +169,25 @@ const harmonograph = {
       f4: +(picked[3] * 2).toFixed(2),
     }
   },
-  fromDerivedRatios(derived) {
+  slots: [
+    { key: 'f1', scale: 2 },
+    { key: 'f2', scale: 2 },
+    { key: 'f3', scale: 2 },
+    { key: 'f4', scale: 2 },
+  ],
+  fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
     // Spread four derived ratios across the X/Y pendulum quartet, with a
     // 2× scaling so the visible frequency content lands in the 1–10 range.
-    const pad = (i, fallback) => +((derived[i] ?? fallback) * 2).toFixed(2)
+    const pad = (key, defIdx, fallback) => {
+      const i = Math.min(derived.length - 1, bindings[key] ?? defIdx)
+      return +((derived[i] ?? fallback) * 2).toFixed(2)
+    }
     return {
-      f1: pad(0, 1.0),
-      f2: pad(1, 1.5),
-      f3: pad(2, 1.25),
-      f4: pad(3, 1.66),
+      f1: pad('f1', 0, 1.0),
+      f2: pad('f2', 1, 1.5),
+      f3: pad('f3', 2, 1.25),
+      f4: pad('f4', 3, 1.66),
     }
   },
   render(params, t) {
@@ -217,11 +235,17 @@ const rose = {
     const { n, d } = findFraction(r, 16)
     return { n, d }
   },
-  fromDerivedRatios(derived) {
+  slots: [
+    { key: 'n' },
+    { key: 'd' },
+  ],
+  fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
+    const inn = Math.min(derived.length - 1, bindings.n ?? 0)
+    const idd = Math.min(derived.length - 1, bindings.d ?? 1)
     return {
-      n: +(derived[0] || 1).toFixed(3),
-      d: +(derived[1] || 1).toFixed(3),
+      n: +(derived[inn] || 1).toFixed(3),
+      d: +(derived[idd] || 1).toFixed(3),
     }
   },
   render(params, t) {
@@ -275,11 +299,16 @@ const spirograph = {
     const f = findFraction(r, 12)
     return { R: f.n * 3, r: f.d * 3, offset: Math.max(1, f.d * 2) }
   },
-  fromDerivedRatios(derived) {
+  slots: [
+    { key: 'R', scale: 4 },
+    { key: 'r', scale: 3 },
+  ],
+  fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
-    // Pick two distinct ratios; scale into a usable spirograph range.
-    const r1 = derived[0] || 1.0
-    const r2 = derived[1] || (r1 * 1.5)
+    const iR = Math.min(derived.length - 1, bindings.R ?? 1)
+    const ir = Math.min(derived.length - 1, bindings.r ?? 0)
+    const r1 = derived[ir] || 1.0
+    const r2 = derived[iR] || (r1 * 1.5)
     return {
       R: +(r2 * 4).toFixed(2),
       r: +(r1 * 3).toFixed(2),
@@ -337,11 +366,17 @@ const chladni = {
     const f = findFraction(r, 10)
     return { m: f.n, n: f.d }
   },
-  fromDerivedRatios(derived) {
+  slots: [
+    // Chladni modes are integers; the transform quantises the time-morphed
+    // decimal into a valid mode index.
+    { key: 'm', transform: (v) => Math.max(1, Math.min(14, Math.round(v * 4))) },
+    { key: 'n', transform: (v) => Math.max(1, Math.min(14, Math.round(v * 4))) },
+  ],
+  fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
-    // Modes are integers (standing-wave indices). Map decimal ratios to the
-    // nearest integer fraction so we always get a valid Chladni pattern.
-    const r = (derived[1] || (derived[0] * 1.5)) / (derived[0] || 1)
+    const im = Math.min(derived.length - 1, bindings.m ?? 1)
+    const inn = Math.min(derived.length - 1, bindings.n ?? 0)
+    const r = (derived[im] || (derived[0] * 1.5)) / (derived[inn] || 1)
     const f = findFraction(r, 12)
     return { m: f.n, n: f.d }
   },
@@ -502,7 +537,7 @@ const subharmonic_tree = {
     depth: 4,
     n_harmonics: 5,
     min_freq: 0.1,
-    layout: 'depth',
+    layout: 'polar',
   },
   paramSchema: [
     { key: 'depth',       label: 'Depth',          type: 'int',    min: 1,     max: 6,    step: 1 },
@@ -510,8 +545,8 @@ const subharmonic_tree = {
     { key: 'min_freq',    label: 'Min freq (Hz)',  type: 'slider', min: 0.01,  max: 50,   step: 0.01 },
     { key: 'layout',      label: 'Layout',         type: 'select',
       options: [
-        { value: 'depth', label: 'Depth (radial)' },
-        { value: 'polar', label: 'Polar (angle = freq)' },
+        { value: 'polar', label: 'Radial (chord wheel)' },
+        { value: 'depth', label: 'Horizontal levels' },
       ] },
   ],
 }

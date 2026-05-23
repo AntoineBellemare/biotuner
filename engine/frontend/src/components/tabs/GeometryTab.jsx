@@ -86,6 +86,15 @@ export default function GeometryTab({ analysisResult }) {
   const [sourceModeByType, setSourceModeByType] = useState(() =>
     Object.fromEntries(GEOMETRY_ORDER.map((k) => [k, 'direct']))
   )
+  // Per-geometry, which indices of the analysis tuning to keep when sending
+  // to the backend (Python geoms). Default = all. Mirrors selected ratios
+  // shown as chips. A small "selectAllVersion" bumps when the user clicks
+  // "All" so we force-resync after a new analysis lands.
+  const [selectedRatiosByType, setSelectedRatiosByType] = useState({})
+  // Per-slot ratio bindings for JS geometries: bindingsByType[geom][slotKey] = derivedIndex
+  const [bindingsByType, setBindingsByType] = useState({})
+  // Auto-morph for JS bindings — cycles each slot through the derived list.
+  const [morph, setMorph] = useState(false)
 
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
@@ -103,10 +112,17 @@ export default function GeometryTab({ analysisResult }) {
   const [autoRotate, setAutoRotate] = useState(true)
   const [wireframe, setWireframe] = useState(false)
   const debouncedParams = useDebounced(params, 250)
-  const ratiosKey = useMemo(
-    () => (analysisResult?.tuning || []).join(','),
-    [analysisResult]
-  )
+  // Filtered tuning for the active Python geometry, based on the user's
+  // ratio-chip selection. Falls back to "all" if no selection has been
+  // made for this geometry yet.
+  const selectedRatios = useMemo(() => {
+    const tuning = analysisResult?.tuning || []
+    if (!tuning.length) return []
+    const sel = selectedRatiosByType[type]
+    if (!sel || sel.length !== tuning.length) return tuning
+    return tuning.filter((_, i) => sel[i])
+  }, [analysisResult, selectedRatiosByType, type])
+  const ratiosKey = useMemo(() => selectedRatios.join(','), [selectedRatios])
 
   // Trigger backend compute when a Python style is active and its
   // (debounced) params change. The same effect also fires when the user
@@ -122,7 +138,7 @@ export default function GeometryTab({ analysisResult }) {
       .computeHarmonicGeometry({
         style: geom.style,
         params: debouncedParams,
-        tuning: analysisResult?.tuning || null,
+        tuning: selectedRatios.length ? selectedRatios : null,
         peaks: analysisResult?.peaks || null,
       })
       .then((data) => {
@@ -155,10 +171,17 @@ export default function GeometryTab({ analysisResult }) {
   const ratios = analysisResult?.tuning || []
   const ratiosKeyForJs = useMemo(() => ratios.join(','), [ratios])
 
-  // Re-derive every JS geometry's params from the (ratios, sourceMode) pair.
-  // Fires when the analysis tuning changes OR the source mode changes for
-  // the current geometry, so the "data drives the freqs" promise holds.
+  // Re-derive every JS geometry's params from the (ratios, sourceMode,
+  // bindings) triple. Fires on analysis-tuning changes, source-mode flips,
+  // or per-slot binding changes.
   const sourceMode = sourceModeByType[type] || 'direct'
+  const bindings = bindingsByType[type] || {}
+  const bindingsKey = JSON.stringify(bindings)
+  const derivedRatios = useMemo(
+    () => (sourceMode === 'manual' ? [] : deriveFromMode(ratios, sourceMode)),
+    [ratiosKeyForJs, sourceMode]
+  )
+
   useEffect(() => {
     if (!ratios.length) return
     setParamsByType((prev) => {
@@ -168,8 +191,9 @@ export default function GeometryTab({ analysisResult }) {
         const mode = sourceModeByType[g.key] || 'direct'
         if (mode === 'manual') continue
         const derived = deriveFromMode(ratios, mode)
+        const b = bindingsByType[g.key] || {}
         const updates = (typeof g.fromDerivedRatios === 'function'
-          ? g.fromDerivedRatios(derived)
+          ? g.fromDerivedRatios(derived, b)
           : (typeof g.fromRatios === 'function' ? g.fromRatios(ratios) : {})) || {}
         if (Object.keys(updates).length === 0) continue
         next[g.key] = { ...prev[g.key], ...updates }
@@ -177,7 +201,31 @@ export default function GeometryTab({ analysisResult }) {
       return next
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ratiosKeyForJs, sourceMode])
+  }, [ratiosKeyForJs, sourceMode, bindingsKey])
+
+  // -------------------------------------------------------------------------
+  // Auto-morph: time-modulate each derived slot through the derived list.
+  // Returns the morphed-overlay params for the JS render loop to consume.
+  // -------------------------------------------------------------------------
+  function morphParams(baseParams, t) {
+    if (!morph || sourceMode === 'manual' || isPython) return baseParams
+    if (!geom.slots?.length || !derivedRatios.length) return baseParams
+    const N = derivedRatios.length
+    const cycleSec = 6  // seconds per full sweep
+    const next = { ...baseParams }
+    for (let i = 0; i < geom.slots.length; i++) {
+      const slot = geom.slots[i]
+      const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
+      const idxA = Math.floor(phase)
+      const idxB = (idxA + 1) % N
+      const fract = phase - idxA
+      let val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
+      if (slot.scale) val *= slot.scale
+      if (slot.transform) val = slot.transform(val)
+      next[slot.key] = val
+    }
+    return next
+  }
 
   const applyFromAnalysis = () => {
     // Python-engine geometries already consume the tuning automatically
@@ -237,8 +285,9 @@ export default function GeometryTab({ analysisResult }) {
       const canvas = canvasRef.current
       if (!canvas) return
       const ctx = canvas.getContext('2d')
-      const t = animate ? (performance.now() - tStartRef.current) / 1000 : 0
-      const out = geom.render(params, t)
+      const t = (animate || morph) ? (performance.now() - tStartRef.current) / 1000 : 0
+      const effective = morphParams(params, t)
+      const out = geom.render(effective, t)
       lastOutputRef.current = out
 
       const opts = {
@@ -256,11 +305,11 @@ export default function GeometryTab({ analysisResult }) {
       if (out.kind === 'path') drawPath(ctx, out.points, opts)
       else if (out.kind === 'field') drawField(ctx, out, opts)
 
-      if (animate) rafId = requestAnimationFrame(draw)
+      if (animate || morph) rafId = requestAnimationFrame(draw)
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }
-  }, [isPython, geom, params, animate, color, colorEnd, gradient, palette])
+  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, gradient, palette])
 
   // -------------------------------------------------------------------------
   // Exports
@@ -365,6 +414,8 @@ export default function GeometryTab({ analysisResult }) {
                   <ThreeViewer
                     geometry={pythonGeom}
                     color={color}
+                    colorEnd={colorEnd}
+                    gradient={gradient}
                     background="#0a0a0a"
                     autoRotate={autoRotate}
                     wireframe={wireframe}
@@ -381,6 +432,8 @@ export default function GeometryTab({ analysisResult }) {
                   <TreeViewer
                     geometry={pythonGeom}
                     color={color}
+                    colorEnd={colorEnd}
+                    gradient={gradient}
                     background="#0a0a0a"
                   />
                 ) : (
@@ -491,11 +544,10 @@ export default function GeometryTab({ analysisResult }) {
 
         {/* Parameter panel */}
         <div className="lg:w-80 lg:flex-shrink-0 bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4 space-y-3">
-          {/* Source mode — only for JS geometries (Python ones always use
-              the tuning automatically via the backend request). */}
+          {/* Ratio source (JS geometries only) */}
           {!isPython && ratios.length > 0 && (
-            <div className="pb-2 border-b border-biotuner-dark-600">
-              <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest mb-2">
+            <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
+              <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">
                 Ratio source
               </label>
               <select
@@ -509,8 +561,125 @@ export default function GeometryTab({ analysisResult }) {
                   <option key={k} value={k}>{SOURCE_MODES[k].label}</option>
                 ))}
               </select>
-              <p className="text-[10px] text-biotuner-light/40 mt-1.5 leading-snug">
+              <p className="text-[10px] text-biotuner-light/40 leading-snug">
                 {SOURCE_MODES[sourceMode].description}
+              </p>
+
+              {/* Per-slot index picker — choose which derived ratio feeds each
+                  geometry slot. Hidden in manual mode and during morph. */}
+              {sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 0 && !morph && (
+                <div className="space-y-1.5 pt-1">
+                  <div className="text-[10px] uppercase tracking-wider text-biotuner-light/40">
+                    Slot bindings ({derivedRatios.length} ratios available)
+                  </div>
+                  {geom.slots.map((slot, slotIdx) => {
+                    const cur = bindings[slot.key] ?? slotIdx
+                    return (
+                      <div key={slot.key} className="flex items-center gap-2">
+                        <span className="text-xs text-biotuner-light/70 w-12 font-mono">
+                          {slot.key}
+                        </span>
+                        <select
+                          value={cur}
+                          onChange={(e) => {
+                            const idx = parseInt(e.target.value, 10)
+                            setBindingsByType((prev) => ({
+                              ...prev,
+                              [type]: { ...(prev[type] || {}), [slot.key]: idx },
+                            }))
+                          }}
+                          className="flex-1 bg-biotuner-dark-800 text-biotuner-light/90 border border-biotuner-dark-600 rounded-md p-1 text-xs"
+                        >
+                          {derivedRatios.map((r, i) => (
+                            <option key={i} value={i}>
+                              #{i + 1} → {r.toFixed(3)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Auto-morph toggle */}
+              {sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 1 && (
+                <button
+                  onClick={() => {
+                    setMorph((m) => !m)
+                    if (!morph) tStartRef.current = performance.now()
+                  }}
+                  aria-pressed={morph}
+                  className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium border transition-all mt-1
+                    ${morph
+                      ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
+                      : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}`}
+                >
+                  {morph ? '⟳ Morphing ratios…' : '⟳ Auto-morph through ratios'}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Ratio selection (Python geometries) — toggleable chips so the
+              user picks WHICH analysis ratios go into the backend call. */}
+          {isPython && ratios.length > 0 && (
+            <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">
+                  Ratios used ({(selectedRatiosByType[type] || ratios.map(() => true)).filter(Boolean).length}/{ratios.length})
+                </label>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setSelectedRatiosByType((prev) => ({
+                      ...prev, [type]: ratios.map(() => true),
+                    }))}
+                    className="text-[10px] uppercase tracking-wider text-biotuner-light/60 hover:text-biotuner-primary"
+                  >
+                    All
+                  </button>
+                  <span className="text-biotuner-light/30">·</span>
+                  <button
+                    onClick={() => setSelectedRatiosByType((prev) => ({
+                      ...prev, [type]: ratios.map((_, i) => i === 0),
+                    }))}
+                    className="text-[10px] uppercase tracking-wider text-biotuner-light/60 hover:text-biotuner-primary"
+                  >
+                    First only
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {ratios.map((r, i) => {
+                  const sel = (selectedRatiosByType[type] || ratios.map(() => true))[i] !== false
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setSelectedRatiosByType((prev) => {
+                          const cur = prev[type] || ratios.map(() => true)
+                          const next = [...cur]
+                          next[i] = !next[i]
+                          // Always keep at least one selected
+                          if (!next.some(Boolean)) next[i] = true
+                          return { ...prev, [type]: next }
+                        })
+                      }}
+                      className={`px-2 py-1 rounded-md text-[11px] font-mono border transition-all
+                        ${sel
+                          ? 'bg-biotuner-accent/20 border-biotuner-accent/50 text-biotuner-accent'
+                          : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/40 line-through'}`}
+                      title={`Ratio #${i + 1}: ${r.toFixed(4)}`}
+                    >
+                      #{i + 1}: {r.toFixed(3)}
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-[10px] text-biotuner-light/40 leading-snug">
+                Toggle which analysis ratios go into the backend. Try
+                disabling all but two — the dominant ratio pair often gives
+                the cleanest knots and L-systems.
               </p>
             </div>
           )}
