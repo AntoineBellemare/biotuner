@@ -129,16 +129,27 @@ export default function GeometryTab({ analysisResult }) {
     return out
   }, [params])
   const debouncedParams = useDebounced(requestParams, 250)
-  // Filtered tuning for the active Python geometry, based on the user's
-  // ratio-chip selection. Falls back to "all" if no selection has been
-  // made for this geometry yet.
+  // Tuning the backend actually receives for the active Python geometry:
+  // 1) chip selection filters the raw analysis ratios → "the ratios I want
+  //    biotuner to consider";
+  // 2) source mode (direct / harmonics / subharmonics / intermod) then
+  //    expands those into the set of values actually sent. Lets the user
+  //    explore variations of the same underlying tuning without forcing
+  //    explicit p/q overrides on the backend.
   const selectedRatios = useMemo(() => {
     const tuning = analysisResult?.tuning || []
     if (!tuning.length) return []
     const sel = selectedRatiosByType[type]
-    if (!sel || sel.length !== tuning.length) return tuning
-    return tuning.filter((_, i) => sel[i])
-  }, [analysisResult, selectedRatiosByType, type])
+    let filtered = tuning
+    if (sel && sel.length === tuning.length) {
+      filtered = tuning.filter((_, i) => sel[i])
+    }
+    if (!filtered.length) filtered = tuning
+    const mode = sourceModeByType[type] || 'direct'
+    if (mode === 'manual' || mode === 'direct') return filtered
+    const expanded = deriveFromMode(filtered, mode)
+    return expanded?.length ? expanded : filtered
+  }, [analysisResult, selectedRatiosByType, sourceModeByType, type])
   const ratiosKey = useMemo(() => selectedRatios.join(','), [selectedRatios])
 
   // Trigger backend compute when a Python style is active and its
@@ -594,22 +605,27 @@ export default function GeometryTab({ analysisResult }) {
 
         {/* Parameter panel */}
         <div className="lg:w-80 lg:flex-shrink-0 bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4 space-y-3">
-          {/* Ratio source (JS geometries only) */}
-          {!isPython && ratios.length > 0 && (
+          {/* Ratio source — JS geoms apply this to derive their params,
+              Python geoms apply it before sending ratios to the backend.
+              Manual mode is only meaningful for JS (Python always uses
+              the analysis tuning). */}
+          {ratios.length > 0 && (
             <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
               <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">
                 Ratio source
               </label>
               <select
-                value={sourceMode}
+                value={sourceMode === 'manual' && isPython ? 'direct' : sourceMode}
                 onChange={(e) =>
                   setSourceModeByType((prev) => ({ ...prev, [type]: e.target.value }))
                 }
                 className="w-full bg-biotuner-dark-800 text-biotuner-light/90 border border-biotuner-dark-600 rounded-md p-2 text-sm"
               >
-                {SOURCE_MODE_ORDER.map((k) => (
-                  <option key={k} value={k}>{SOURCE_MODES[k].label}</option>
-                ))}
+                {SOURCE_MODE_ORDER
+                  .filter((k) => !(isPython && k === 'manual'))
+                  .map((k) => (
+                    <option key={k} value={k}>{SOURCE_MODES[k].label}</option>
+                  ))}
               </select>
               <p className="text-[10px] text-biotuner-light/40 leading-snug">
                 {SOURCE_MODES[sourceMode].description}

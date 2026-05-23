@@ -285,12 +285,11 @@ const rose = {
     'Polar curve r = cos(k θ) where k = n/d is set by the chosen ratio. ' +
     'Even k gives 2k petals, odd k gives k petals, rational k gives ' +
     'self-intersecting flower-like patterns.',
-  defaultParams: { n: 1.125, d: 1, cycles: 8, lineWidth: 1.6 },
+  defaultParams: { n: 5, d: 4, cycles: 8, complexity: 1, lineWidth: 1.6 },
   paramSchema: [
-    { key: 'n',         label: 'Numerator',   type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
-      format: (v) => Number(v).toFixed(3) },
-    { key: 'd',         label: 'Denominator', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
-      format: (v) => Number(v).toFixed(3) },
+    { key: 'n',         label: 'Numerator',   type: 'slider', min: 1,   max: 24, step: 1, derived: true },
+    { key: 'd',         label: 'Denominator', type: 'slider', min: 1,   max: 24, step: 1, derived: true },
+    { key: 'complexity',label: 'Complexity ×', type: 'slider', min: 1,  max: 8,  step: 1 },
     { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 1,   max: 32, step: 1 },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
@@ -307,14 +306,18 @@ const rose = {
     if (!derived?.length) return {}
     const ia = Math.min(derived.length - 1, bindings.n ?? 0)
     const ib = Math.min(derived.length - 1, bindings.d ?? 1)
-    return smallIntFractionForPair(derived, ia, ib, 7)
+    // Higher maxDenom = more variety in petal counts.
+    return smallIntFractionForPair(derived, ia, ib, 12)
   },
   render(params, t) {
-    const { n, d, cycles } = params
+    const { n, d, cycles, complexity = 1 } = params
     if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0) {
       return { kind: 'path', points: [] }
     }
-    const k = n / d
+    // Complexity multiplies the numerator → more petals while keeping the
+    // base "shape" tied to the derived n/d. complexity=1 reproduces the
+    // simplest closed rose; 5 gives dense interlocked petals.
+    const k = (n * Math.max(1, complexity)) / d
     // For integer n/d in lowest terms, the curve closes after d revolutions.
     // For decimal k it never closes — we sweep a user-controlled number of
     // cycles (default 8) which fills the rose densely enough to look complete.
@@ -346,13 +349,15 @@ const spirograph = {
     'Hypotrochoid: the path traced by a point inside a small circle (radius ' +
     'r) rolling inside a large one (radius R). The R:r ratio sets the rose; ' +
     'the offset d sets how "deep" the petals reach.',
-  defaultParams: { R: 7, r: 3, offset: 4, lineWidth: 1.2 },
+  defaultParams: { R: 21, r: 12, offset: 7, scale: 3, lineWidth: 1.2 },
   paramSchema: [
-    { key: 'R',         label: 'Outer R',     type: 'slider', min: 0.5, max: 30, step: 0.05, derived: true,
-      format: (v) => Number(v).toFixed(2) },
-    { key: 'r',         label: 'Inner r',     type: 'slider', min: 0.2, max: 20, step: 0.05, derived: true,
-      format: (v) => Number(v).toFixed(2) },
-    { key: 'offset',    label: 'Pen offset',  type: 'slider', min: 0.5, max: 20, step: 0.1 },
+    { key: 'R',         label: 'Outer R',     type: 'slider', min: 0.5, max: 60, step: 0.5, derived: true,
+      format: (v) => Number(v).toFixed(1) },
+    { key: 'r',         label: 'Inner r',     type: 'slider', min: 0.2, max: 40, step: 0.5, derived: true,
+      format: (v) => Number(v).toFixed(1) },
+    { key: 'offset',    label: 'Pen offset',  type: 'slider', min: 0.5, max: 30, step: 0.1 },
+    { key: 'scale',     label: 'Pattern scale', type: 'slider', min: 1, max: 8, step: 0.5,
+      format: (v) => `×${Number(v).toFixed(1)}` },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.3, max: 3,  step: 0.05 },
   ],
   fromRatios(ratios) {
@@ -368,15 +373,16 @@ const spirograph = {
     if (!derived?.length) return {}
     const iR = Math.min(derived.length - 1, bindings.R ?? 1)
     const ir = Math.min(derived.length - 1, bindings.r ?? 0)
-    const { n, d } = smallIntFractionForPair(derived, iR, ir, 7)
-    // Scale so the rose has plenty of room — bigger R means more petals.
+    const { n, d } = smallIntFractionForPair(derived, iR, ir, 11)
     return {
-      R: Math.max(n, d) * 2,
-      r: Math.min(n, d) * 2,
+      R: Math.max(n, d),
+      r: Math.min(n, d),
     }
   },
   render(params, t) {
-    const { R, r, offset } = params
+    const { offset, scale = 1 } = params
+    const R = (params.R || 1) * scale
+    const r = (params.r || 1) * scale
     if (r <= 0 || R <= r) {
       return { kind: 'path', points: [] }
     }
@@ -517,9 +523,6 @@ const harmonic_knot = {
     '3/2 → trefoil knot; 5/4 → cinquefoil. Rendered as a tube — rotate by ' +
     'drag, zoom by scroll.',
   defaultParams: {
-    use_override: true,    // when false, biotuner picks p/q from the tuning
-    p: 3,
-    q: 2,
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -527,9 +530,6 @@ const harmonic_knot = {
     minor_radius: 0.7,
   },
   paramSchema: [
-    { key: 'use_override', label: 'Use explicit p/q', type: 'bool' },
-    { key: 'p',            label: 'p (winding)',    type: 'int',    min: 2,    max: 12,   step: 1 },
-    { key: 'q',            label: 'q (winding)',    type: 'int',    min: 1,    max: 12,   step: 1 },
     { key: 'tube_radius',  label: 'Tube radius',    type: 'slider', min: 0.01, max: 0.3,  step: 0.005 },
     { key: 'major_radius', label: 'Major radius',   type: 'slider', min: 0.5,  max: 4,    step: 0.05 },
     { key: 'minor_radius', label: 'Minor radius',   type: 'slider', min: 0.1,  max: 2,    step: 0.05 },
@@ -549,17 +549,11 @@ const lsystem_3d = {
     'dominant ratio (360° / (p + q)). Depth controls how many rewrite ' +
     'passes are applied before drawing.',
   defaultParams: {
-    use_override: true,    // when false, biotuner picks angle from the tuning
-    p: 3,
-    q: 2,
     depth: 3,
     step_length: 1.0,
     axiom: 'F',
   },
   paramSchema: [
-    { key: 'use_override', label: 'Use explicit p/q', type: 'bool' },
-    { key: 'p',            label: 'p',           type: 'int',    min: 2,    max: 12,  step: 1 },
-    { key: 'q',            label: 'q',           type: 'int',    min: 1,    max: 12,  step: 1 },
     { key: 'depth',       label: 'Depth',       type: 'int',    min: 1,    max: 5,   step: 1 },
     { key: 'step_length', label: 'Step length', type: 'slider', min: 0.1,  max: 3,   step: 0.05 },
   ],
