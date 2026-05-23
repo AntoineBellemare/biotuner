@@ -209,7 +209,7 @@ export function drawField(ctx, field, opts = {}) {
     palette = 'mono',
     accentColor = [6, 182, 212],  // biotuner-primary
   } = opts
-  const { data, width, height } = field
+  const { data, width, height, sigma } = field
 
   // Offscreen at field resolution; we'll upscale onto the canvas.
   const off = document.createElement('canvas')
@@ -218,11 +218,21 @@ export function drawField(ctx, field, opts = {}) {
   const offCtx = off.getContext('2d')
   const img = offCtx.createImageData(width, height)
 
-  // Pre-multiplied palette: emphasize nodal lines (|v| ≈ 0).
+  // Find peak |v| for normalisation so contrast is consistent across modes.
+  let maxAbs = 0
   for (let i = 0; i < data.length; i++) {
-    const v = data[i] * contrast
-    // Gaussian "ridge" centered on zero — classic Chladni sand look.
-    const intensity = Math.exp(-v * v * 4)
+    const a = Math.abs(data[i])
+    if (a > maxAbs) maxAbs = a
+  }
+  maxAbs = maxAbs || 1
+  // σ controls nodal-line width. Use the biotuner formula when supplied;
+  // otherwise fall back to a fixed-width Gaussian (legacy behaviour).
+  // exp(-w²/σ²) where w = data[i] / maxAbs. Smaller σ = thinner sharper lines.
+  const useSigma = Number.isFinite(sigma) && sigma > 0
+  const sigSq = useSigma ? (sigma * sigma) : (1 / (4 * Math.max(0.1, contrast)))
+  for (let i = 0; i < data.length; i++) {
+    const w = data[i] / maxAbs
+    const intensity = Math.exp(-(w * w) / sigSq)
     const c = Math.round(intensity * 255)
     let r, g, b
     if (palette === 'accent') {

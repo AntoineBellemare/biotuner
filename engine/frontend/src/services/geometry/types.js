@@ -314,18 +314,12 @@ const rose = {
     if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0) {
       return { kind: 'path', points: [] }
     }
-    // Complexity multiplies the numerator → more petals while keeping the
-    // base "shape" tied to the derived n/d. complexity=1 reproduces the
-    // simplest closed rose; 5 gives dense interlocked petals.
     const k = (n * Math.max(1, complexity)) / d
-    // For integer n/d in lowest terms, the curve closes after d revolutions.
-    // For decimal k it never closes — we sweep a user-controlled number of
-    // cycles (default 8) which fills the rose densely enough to look complete.
-    const isInteger =
-      Math.abs(n - Math.round(n)) < 1e-3 && Math.abs(d - Math.round(d)) < 1e-3
-    const periods = isInteger
-      ? Math.round(d) / gcd(Math.round(n), Math.round(d))
-      : (cycles || 8)
+    // Always honour the user's cycles slider. Integer n/d would mathematically
+    // close after d/gcd revolutions, but tracing extra cycles lays the same
+    // curve back on itself — visually identical, and the slider stays
+    // responsive when the user drags it.
+    const periods = Math.max(1, cycles || 1)
     const N = Math.min(8000, Math.max(1500, periods * 400))
     const phase = (t || 0) * 0.4
     const points = new Array(N + 1)
@@ -349,13 +343,14 @@ const spirograph = {
     'Hypotrochoid: the path traced by a point inside a small circle (radius ' +
     'r) rolling inside a large one (radius R). The R:r ratio sets the rose; ' +
     'the offset d sets how "deep" the petals reach.',
-  defaultParams: { R: 21, r: 12, offset: 7, scale: 3, lineWidth: 1.2 },
+  defaultParams: { R: 21, r: 12, offset: 7, scale: 3, complexity: 1, lineWidth: 1.2 },
   paramSchema: [
     { key: 'R',         label: 'Outer R',     type: 'slider', min: 0.5, max: 60, step: 0.5, derived: true,
       format: (v) => Number(v).toFixed(1) },
     { key: 'r',         label: 'Inner r',     type: 'slider', min: 0.2, max: 40, step: 0.5, derived: true,
       format: (v) => Number(v).toFixed(1) },
     { key: 'offset',    label: 'Pen offset',  type: 'slider', min: 0.5, max: 30, step: 0.1 },
+    { key: 'complexity',label: 'Complexity ×R', type: 'slider', min: 1, max: 8, step: 1 },
     { key: 'scale',     label: 'Pattern scale', type: 'slider', min: 1, max: 8, step: 0.5,
       format: (v) => `×${Number(v).toFixed(1)}` },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.3, max: 3,  step: 0.05 },
@@ -380,8 +375,10 @@ const spirograph = {
     }
   },
   render(params, t) {
-    const { offset, scale = 1 } = params
-    const R = (params.R || 1) * scale
+    const { offset, scale = 1, complexity = 1 } = params
+    // Complexity multiplies the OUTER radius — increases (R-r)/r which is
+    // the petal-density factor — without losing the data-driven R:r ratio.
+    const R = (params.R || 1) * scale * Math.max(1, complexity)
     const r = (params.r || 1) * scale
     if (r <= 0 || R <= r) {
       return { kind: 'path', points: [] }
@@ -639,8 +636,9 @@ const chladni = {
     symmetry: 'd4_max',
     max_denom: 6,
     n_modes: 3,
-    resolution: 256,
-    contrast: 1.5,
+    resolution: 320,
+    sigma: 0,             // 0 = auto (biotuner formula), >0 = manual override
+    line_sharpness: 1.0,  // multiplies auto-sigma; <1 thinner lines, >1 wider
   },
   paramSchema: [
     { key: 'antisymmetric', label: 'Antisymmetric (− vs +)', type: 'bool' },
@@ -653,7 +651,10 @@ const chladni = {
     { key: 'max_denom',  label: 'Simplify (max denom)', type: 'int', min: 2, max: 24, step: 1,
       format: (v) => `≤ ${v}` },
     { key: 'n_modes',    label: 'Number of modes',     type: 'int', min: 2, max: 6, step: 1 },
-    { key: 'contrast',   label: 'Contrast',            type: 'slider', min: 0.3, max: 5,    step: 0.05 },
+    { key: 'line_sharpness', label: 'Line sharpness',  type: 'slider', min: 0.3, max: 3, step: 0.05,
+      format: (v) => `×${Number(v).toFixed(2)}` },
+    { key: 'sigma',      label: 'σ override (0 = auto)', type: 'slider', min: 0, max: 0.2, step: 0.001,
+      format: (v) => v <= 0 ? 'auto' : v.toFixed(3), advanced: true },
     { key: 'resolution', label: 'Resolution',          type: 'slider', min: 128, max: 512, step: 32, advanced: true },
   ],
   // Derive a small-integer mode set from the chosen analysis ratios.
@@ -662,7 +663,8 @@ const chladni = {
   render(params, t) {
     const {
       antisymmetric = true, symmetry = 'd4_max',
-      max_denom = 6, n_modes = 3, resolution = 256,
+      max_denom = 6, n_modes = 3, resolution = 320,
+      sigma: sigmaOverride = 0, line_sharpness = 1.0,
       ratios = [1, 5/4, 3/2],
     } = params
 
@@ -741,7 +743,19 @@ const chladni = {
       }
     }
 
-    return { kind: 'field', data, width: N, height: N, modes }
+    // Auto-sigma per biotuner.harmonic_geometry: σ = base / peak_mode,
+    // scaled up by √(n_pairs/3) so high-pair-count chords don't collapse
+    // to dotty zero-set patterns. Without this, high-mode fields render
+    // as fuzz instead of intertwined nodal lines.
+    const peakMode = Math.max(...modes.map((m) => Math.abs(m)), 1)
+    const nPairs = (modes.length * (modes.length - 1)) / 2
+    const pairFactor = nPairs <= 3 ? 1 : Math.sqrt(nPairs / 3)
+    const autoSigma = Math.max(0.005, Math.min(0.18, 0.5 * pairFactor / peakMode))
+    const sigma = (sigmaOverride > 0)
+      ? sigmaOverride
+      : autoSigma * (line_sharpness || 1)
+
+    return { kind: 'field', data, width: N, height: N, modes, sigma }
   },
 }
 

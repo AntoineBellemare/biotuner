@@ -291,6 +291,18 @@ export default function GeometryTab({ analysisResult }) {
     tStartRef.current = performance.now()
   }
 
+  // "Shuffle ratios" — keep the visual params, only re-roll slot bindings.
+  // Lets the user explore which ratios drive a working pattern without
+  // losing tuned phase / line width / scale settings.
+  const shuffleRatios = () => {
+    if (!derivedRatios.length || !geom.slots?.length) return
+    const next = {}
+    for (const slot of geom.slots) {
+      next[slot.key] = Math.floor(Math.random() * derivedRatios.length)
+    }
+    setBindingsByType((prev) => ({ ...prev, [type]: next }))
+  }
+
   // -------------------------------------------------------------------------
   // Canvas sizing (responsive + DPR-aware) — only for JS engine
   // -------------------------------------------------------------------------
@@ -574,10 +586,20 @@ export default function GeometryTab({ analysisResult }) {
 
             <button
               onClick={randomize}
+              title="Randomize all visual params (keeps ratio bindings)"
               className="min-h-[40px] flex items-center gap-2 px-3 py-2 rounded-lg bg-biotuner-dark-800 border border-biotuner-dark-600 text-biotuner-light/80 text-sm hover:border-biotuner-primary/50"
             >
               <Shuffle className="w-4 h-4" /> Randomize
             </button>
+            {!isPython && geom.slots?.length > 0 && derivedRatios.length > 1 && (
+              <button
+                onClick={shuffleRatios}
+                title="Re-roll only the ratio slot bindings — keep everything else"
+                className="min-h-[40px] flex items-center gap-2 px-3 py-2 rounded-lg bg-biotuner-accent/10 border border-biotuner-accent/40 text-biotuner-accent text-sm hover:bg-biotuner-accent/20"
+              >
+                <Shuffle className="w-4 h-4" /> Shuffle ratios
+              </button>
+            )}
 
             <button
               onClick={resetParams}
@@ -708,11 +730,9 @@ export default function GeometryTab({ analysisResult }) {
 
           {/* Ratio selection (Python geometries) — toggleable chips so the
               user picks WHICH analysis ratios go into the backend call.
-              Hidden for point_cloud (no visible effect) and when the geom
-              has use_override active (selection ignored). */}
-          {isPython && ratios.length > 0
-             && geom.key !== 'harmonic_point_cloud'
-             && !(params?.use_override) && (
+              Now applied to all Python geoms including point_cloud: combined
+              with the source-mode picker above this gives genuine variation. */}
+          {isPython && ratios.length > 0 && (
             <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">
