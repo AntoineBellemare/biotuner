@@ -27,6 +27,10 @@ from biotuner.harmonic_geometry import (
     recursive_polyhedron,
 )
 from biotuner.harmonic_geometry.fractal import subharmonic_tree
+from biotuner.harmonic_geometry.media.eigenmode.rigid_plate import (
+    chladni_field_pairwise,
+    chord_to_int_modes,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -167,6 +171,24 @@ _STYLES = {
             "min_freq": (0.001, 1000.0),
         },
     },
+    # Chladni is special-cased: takes int_modes (not HarmonicInput) and
+    # supports D4 symmetrisation, antisymmetric/symmetric mode, pair-subset
+    # selection. Dispatched via a small wrapper below.
+    "chladni": {
+        "fn": None,  # handled inline in compute()
+        "allowed": {"antisymmetric", "symmetry", "resolution", "max_mode", "pair_subset"},
+        "coerce": {
+            "antisymmetric": bool,
+            "symmetry": str,
+            "resolution": int,
+            "max_mode": int,
+            "pair_subset": str,
+        },
+        "clamp": {
+            "resolution": (128, 800),
+            "max_mode": (4, 40),
+        },
+    },
 }
 
 
@@ -218,6 +240,19 @@ def compute(
         h_input = HarmonicInput.from_ratios(ratios=[float(p_override) / float(q_override)])
     else:
         h_input = _build_input(tuning, peaks, base_freq=base_freq)
+
+    # Chladni runs through chladni_field_pairwise (not via HarmonicInput).
+    # It expects integer mode wavenumbers; chord_to_int_modes converts the
+    # tuning ratios into a lossless small-integer set.
+    if style == "chladni":
+        ratios = h_input.to_ratios()
+        if not ratios:
+            ratios = [1.0, 1.5]
+        int_modes = chord_to_int_modes(ratios)
+        if len(int_modes) < 2:
+            int_modes = list(int_modes) + [int_modes[0] + 1] if int_modes else [3, 4]
+        geom = chladni_field_pairwise(int_modes, **kwargs)
+        return _serialize_geometry(geom)
 
     geom = spec["fn"](h_input, **kwargs)
     return _serialize_geometry(geom)

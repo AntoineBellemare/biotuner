@@ -18,6 +18,7 @@ import apiClient from '../../services/api'
 
 const ThreeViewer = lazy(() => import('../geometry/ThreeViewer'))
 const TreeViewer = lazy(() => import('../geometry/TreeViewer'))
+const FieldViewer = lazy(() => import('../geometry/FieldViewer'))
 
 const CANVAS_DPR_CAP = 2
 
@@ -114,7 +115,20 @@ export default function GeometryTab({ analysisResult }) {
   const [pythonError, setPythonError] = useState(null)
   const [autoRotate, setAutoRotate] = useState(true)
   const [wireframe, setWireframe] = useState(false)
-  const debouncedParams = useDebounced(params, 250)
+  // Strip frontend-only flags (use_override) from the request and gate
+  // p/q on it. Memoised so the debounced compute doesn't re-fire on the
+  // same effective payload.
+  const requestParams = useMemo(() => {
+    if (!params) return {}
+    const out = { ...params }
+    if (out.use_override === false) {
+      delete out.p
+      delete out.q
+    }
+    delete out.use_override
+    return out
+  }, [params])
+  const debouncedParams = useDebounced(requestParams, 250)
   // Filtered tuning for the active Python geometry, based on the user's
   // ratio-chip selection. Falls back to "all" if no selection has been
   // made for this geometry yet.
@@ -458,6 +472,23 @@ export default function GeometryTab({ analysisResult }) {
                 )}
               </Suspense>
             )}
+            {/* Python engine, 2D field renderer (Chladni) */}
+            {isPython && geom.renderer === 'field2d' && (
+              <Suspense fallback={<ViewerFallback message="Loading…" />}>
+                {pythonGeom ? (
+                  <FieldViewer
+                    geometry={pythonGeom}
+                    color={color}
+                    colorEnd={colorEnd}
+                    gradient={gradient}
+                    colorMode={colorMode}
+                    background="#0a0a0a"
+                  />
+                ) : (
+                  <ViewerFallback message={pythonError || (pythonLoading ? 'Computing geometry…' : '—')} error={!!pythonError} />
+                )}
+              </Suspense>
+            )}
             {/* Loading overlay during recompute */}
             {isPython && pythonLoading && pythonGeom && (
               <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-biotuner-dark-900/80 border border-biotuner-primary/30 text-xs text-biotuner-primary">
@@ -658,8 +689,12 @@ export default function GeometryTab({ analysisResult }) {
           )}
 
           {/* Ratio selection (Python geometries) — toggleable chips so the
-              user picks WHICH analysis ratios go into the backend call. */}
-          {isPython && ratios.length > 0 && (
+              user picks WHICH analysis ratios go into the backend call.
+              Hidden for point_cloud (no visible effect) and when the geom
+              has use_override active (selection ignored). */}
+          {isPython && ratios.length > 0
+             && geom.key !== 'harmonic_point_cloud'
+             && !(params?.use_override) && (
             <div className="pb-3 border-b border-biotuner-dark-600 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">

@@ -155,8 +155,14 @@ const harmonograph = {
     damping: 0.002,        // global damping override — 0 disables override
     duration: 90,
     lineWidth: 0.7,
+    n_components: 4,       // 2 / 3 / 4 — how many of the derived ratios to use
+    max_denom: 6,          // round each freq to nearest p/q with denom ≤ this
   },
   paramSchema: [
+    { key: 'n_components', label: 'Pendulums', type: 'int',    min: 2,   max: 4,    step: 1,
+      format: (v) => v === 2 ? '2 (simple)' : v === 3 ? '3 (rich)' : '4 (full)' },
+    { key: 'max_denom',    label: 'Simplify (max denom)', type: 'int', min: 0, max: 24, step: 1,
+      format: (v) => v <= 0 ? 'off (raw decimals)' : `≤ ${v}` },
     { key: 'damping',   label: 'Damping',    type: 'slider', min: 0,   max: 0.02, step: 0.0001,
       format: (v) => v < 0.0001 ? 'off (per-pendulum)' : v.toFixed(4) },
     { key: 'duration',  label: 'Duration',   type: 'slider', min: 20,  max: 300, step: 5,
@@ -210,7 +216,7 @@ const harmonograph = {
     // 2× scaling so the visible frequency content lands in the 1–10 range.
     const pad = (key, defIdx, fallback) => {
       const i = Math.min(derived.length - 1, bindings[key] ?? defIdx)
-      return +((derived[i] ?? fallback) * 2).toFixed(2)
+      return +((derived[i] ?? fallback) * 2).toFixed(3)
     }
     return {
       f1: pad('f1', 0, 1.0),
@@ -219,8 +225,24 @@ const harmonograph = {
       f4: pad('f4', 3, 1.66),
     }
   },
+  // Snap a decimal frequency to the nearest p/q with denom ≤ maxDenom.
+  // Exported so the renderer + UI use the same rounding.
+  snap(f, maxDenom) {
+    if (!maxDenom || maxDenom <= 0) return { f, n: null, d: null }
+    const { n, d } = findFraction(f, Math.min(24, maxDenom))
+    return { f: n / d, n, d }
+  },
   render(params, t) {
-    const { f1, f2, f3, f4, p1, p2, p3, p4, d1, d2, d3, d4, duration, damping } = params
+    const { p1, p2, p3, p4, d1, d2, d3, d4, duration, damping, n_components = 4, max_denom = 0 } = params
+    let { f1, f2, f3, f4 } = params
+    // Optionally simplify each frequency to a small p/q ratio. Helps tame
+    // messy patterns and produces musically-meaningful curves.
+    const snap = (f) => {
+      if (!max_denom || max_denom <= 0) return f
+      const { n, d } = findFraction(f, Math.min(24, max_denom))
+      return n / d
+    }
+    f1 = snap(f1); f2 = snap(f2); f3 = snap(f3); f4 = snap(f4)
     // Use the global damping when set (> tiny epsilon); otherwise the
     // per-pendulum decays in the Advanced panel.
     const useGlobal = damping != null && damping > 1e-5
@@ -228,18 +250,24 @@ const harmonograph = {
     const dx2 = useGlobal ? damping : d2
     const dy1 = useGlobal ? damping : d3
     const dy2 = useGlobal ? damping : d4
+    const nc = Math.max(2, Math.min(4, Math.round(n_components || 4)))
     const N = 6000
     const dt = duration / N
     const phaseDrift = (t || 0) * 0.1
     const points = new Array(N + 1)
     for (let i = 0; i <= N; i++) {
       const tt = i * dt
-      const x =
-        Math.exp(-dx1 * tt) * Math.sin(f1 * tt + p1 + phaseDrift) +
-        Math.exp(-dx2 * tt) * Math.sin(f2 * tt + p2)
-      const y =
-        Math.exp(-dy1 * tt) * Math.sin(f3 * tt + p3) +
-        Math.exp(-dy2 * tt) * Math.sin(f4 * tt + p4 - phaseDrift)
+      // n_components = 2 → use just the first X (f1) and first Y (f3) pendulum
+      // n_components = 3 → add f2 (X pair), keep single Y pendulum
+      // n_components = 4 → full quartet
+      let x = Math.exp(-dx1 * tt) * Math.sin(f1 * tt + p1 + phaseDrift)
+      if (nc >= 3) {
+        x += Math.exp(-dx2 * tt) * Math.sin(f2 * tt + p2)
+      }
+      let y = Math.exp(-dy1 * tt) * Math.sin(f3 * tt + p3)
+      if (nc >= 4) {
+        y += Math.exp(-dy2 * tt) * Math.sin(f4 * tt + p4 - phaseDrift)
+      }
       points[i] = { x: x / 2, y: y / 2 }
     }
     return { kind: 'path', points }
@@ -378,13 +406,13 @@ const spirograph = {
 //   ψ(x, y) = sin(m π x) sin(n π y) + sin(n π x) sin(m π y) cos(φ)
 // ---------------------------------------------------------------------------
 
-const chladni = {
-  key: 'chladni',
-  label: 'Chladni',
-  description:
-    'Nodal pattern from two-mode (m, n) interference on a rectangular ' +
-    'plate. Bright lines mark where vibration is zero — where sand would ' +
-    'collect on a real Chladni plate.',
+// Original JS-engine Chladni — kept here under a different key so the
+// registry can still reference its render fn if needed. The user-facing
+// Chladni now routes to the backend (see chladni_python below).
+const chladniJs = {
+  key: 'chladni_js',
+  label: 'Chladni (legacy)',
+  description: 'Legacy in-browser Chladni renderer.',
   defaultParams: {
     m: 5, n: 3, resolution: 256, contrast: 1.6, mix: Math.PI / 2,
     complexity: 0,        // 0 = vanilla 2-mode; >0 mixes higher-order terms
@@ -489,6 +517,7 @@ const harmonic_knot = {
     '3/2 → trefoil knot; 5/4 → cinquefoil. Rendered as a tube — rotate by ' +
     'drag, zoom by scroll.',
   defaultParams: {
+    use_override: true,    // when false, biotuner picks p/q from the tuning
     p: 3,
     q: 2,
     n_points: 500,
@@ -498,8 +527,7 @@ const harmonic_knot = {
     minor_radius: 0.7,
   },
   paramSchema: [
-    // p, q override the dominant ratio so you can dial any T(p, q) knot.
-    // p=q=0 disables the override; biotuner picks from the tuning.
+    { key: 'use_override', label: 'Use explicit p/q', type: 'bool' },
     { key: 'p',            label: 'p (winding)',    type: 'int',    min: 2,    max: 12,   step: 1 },
     { key: 'q',            label: 'q (winding)',    type: 'int',    min: 1,    max: 12,   step: 1 },
     { key: 'tube_radius',  label: 'Tube radius',    type: 'slider', min: 0.01, max: 0.3,  step: 0.005 },
@@ -521,6 +549,7 @@ const lsystem_3d = {
     'dominant ratio (360° / (p + q)). Depth controls how many rewrite ' +
     'passes are applied before drawing.',
   defaultParams: {
+    use_override: true,    // when false, biotuner picks angle from the tuning
     p: 3,
     q: 2,
     depth: 3,
@@ -528,10 +557,9 @@ const lsystem_3d = {
     axiom: 'F',
   },
   paramSchema: [
-    // Branch angle = 360 / (p + q). Drive the L-system's structure
-    // directly instead of being at the mercy of biotuner's internal pick.
-    { key: 'p',           label: 'p',           type: 'int',    min: 2,    max: 12,  step: 1 },
-    { key: 'q',           label: 'q',           type: 'int',    min: 1,    max: 12,  step: 1 },
+    { key: 'use_override', label: 'Use explicit p/q', type: 'bool' },
+    { key: 'p',            label: 'p',           type: 'int',    min: 2,    max: 12,  step: 1 },
+    { key: 'q',            label: 'q',           type: 'int',    min: 1,    max: 12,  step: 1 },
     { key: 'depth',       label: 'Depth',       type: 'int',    min: 1,    max: 5,   step: 1 },
     { key: 'step_length', label: 'Step length', type: 'slider', min: 0.1,  max: 3,   step: 0.05 },
   ],
@@ -595,6 +623,48 @@ const recursive_polyhedron = {
   ],
 }
 
+// Python-engine Chladni driven by biotuner's chladni_field_pairwise. Supports
+// antisymmetric/symmetric pair-mode toggle and D4 symmetrisation — the
+// crystalline patterns from the user's reference image.
+const chladni = {
+  key: 'chladni',
+  engine: 'python',
+  style: 'chladni',
+  renderer: 'field2d',
+  label: 'Chladni',
+  description:
+    'Pairwise cosine-product field on a square plate. Antisymmetric mode ' +
+    'gives the classical Chladni sand pattern (cos(mπx)·cos(nπy) − cos(nπx)·' +
+    'cos(mπy)); symmetric uses + instead. D4 symmetrisation reflects the ' +
+    'field through its rotational symmetries to produce richer crystalline ' +
+    'nodal patterns.',
+  defaultParams: {
+    antisymmetric: true,
+    symmetry: 'd4_max',
+    resolution: 400,
+    max_mode: 20,
+    pair_subset: 'auto',
+  },
+  paramSchema: [
+    { key: 'antisymmetric', label: 'Antisymmetric', type: 'bool' },
+    { key: 'symmetry', label: 'Symmetry', type: 'select',
+      options: [
+        { value: 'none',   label: 'None (single tile)' },
+        { value: 'd4_max', label: 'D4 (max blend)' },
+        { value: 'd4_sum', label: 'D4 (sum blend)' },
+      ] },
+    { key: 'pair_subset', label: 'Pair subset', type: 'select',
+      options: [
+        { value: 'auto',     label: 'Auto (n≤3 all / n≥4 root)' },
+        { value: 'all',      label: 'All pairs' },
+        { value: 'adjacent', label: 'Adjacent only' },
+        { value: 'root',     label: 'Root pairs' },
+      ] },
+    { key: 'max_mode',   label: 'Max mode',   type: 'int',    min: 4,    max: 40,  step: 1, advanced: true },
+    { key: 'resolution', label: 'Resolution', type: 'slider', min: 128, max: 800, step: 16, advanced: true },
+  ],
+}
+
 const subharmonic_tree = {
   key: 'subharmonic_tree',
   engine: 'python',
@@ -634,18 +704,17 @@ export const GEOMETRY_TYPES = {
   harmonograph,
   rose,
   spirograph,
-  chladni,
   // biotuner-driven Python implementations
+  chladni,
   harmonic_knot,
   lsystem_3d,
   harmonic_point_cloud,
-  recursive_polyhedron,
   subharmonic_tree,
 }
 
-// Display order: JS first (instant), then Python (compute-once).
+// Display order
 export const GEOMETRY_ORDER = [
-  'lissajous', 'harmonograph', 'rose', 'spirograph', 'chladni',
-  'harmonic_knot', 'lsystem_3d', 'harmonic_point_cloud',
-  'recursive_polyhedron', 'subharmonic_tree',
+  'lissajous', 'harmonograph', 'rose', 'spirograph',
+  'chladni', 'harmonic_knot', 'lsystem_3d',
+  'harmonic_point_cloud', 'subharmonic_tree',
 ]
