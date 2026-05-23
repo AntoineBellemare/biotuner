@@ -250,10 +250,15 @@ export default function GeometryTab({ analysisResult }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratiosKeyForJs, sourceMode, selectedRatiosByType, type])
 
+  // Track derivation-relevant params (currently only Rose's max_denom)
+  // so the auto-derive refires when the user changes them.
+  const activeMaxDenom = paramsByType[type]?.max_denom ?? null
+
   useEffect(() => {
     if (!ratios.length) return
     setParamsByType((prev) => {
       const next = { ...prev }
+      let changed = false
       for (const g of Object.values(GEOMETRY_TYPES)) {
         if (g.engine === 'python') continue
         const mode = sourceModeByType[g.key] || 'direct'
@@ -261,15 +266,24 @@ export default function GeometryTab({ analysisResult }) {
         const derived = deriveFromMode(ratios, mode)
         const b = bindingsByType[g.key] || {}
         const updates = (typeof g.fromDerivedRatios === 'function'
-          ? g.fromDerivedRatios(derived, b)
+          ? g.fromDerivedRatios(derived, b, prev[g.key] || {})
           : (typeof g.fromRatios === 'function' ? g.fromRatios(ratios) : {})) || {}
         if (Object.keys(updates).length === 0) continue
+        // No-op guard: skip if every updated key already matches prev — avoids
+        // the auto-derive ↔ setState loop when max_denom (a derivation input)
+        // is also tracked as a dep.
+        let differs = false
+        for (const k of Object.keys(updates)) {
+          if (prev[g.key]?.[k] !== updates[k]) { differs = true; break }
+        }
+        if (!differs) continue
         next[g.key] = { ...prev[g.key], ...updates }
+        changed = true
       }
-      return next
+      return changed ? next : prev
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ratiosKeyForJs, sourceMode, bindingsKey])
+  }, [ratiosKeyForJs, sourceMode, bindingsKey, activeMaxDenom])
 
   // -------------------------------------------------------------------------
   // Auto-morph: time-modulate each derived slot through the derived list.
@@ -377,7 +391,13 @@ export default function GeometryTab({ analysisResult }) {
       const canvas = canvasRef.current
       if (!canvas) return
       const ctx = canvas.getContext('2d')
-      const t = (animate || morph) ? (performance.now() - tStartRef.current) / 1000 : 0
+      // Geometry-specific animation (e.g. Chladni phase/rotate/breathe)
+      // needs a continuously-advancing t even when the global Animate
+      // toggle is off.
+      const hasGeomAnim = params.animation && params.animation !== 'none'
+      const t = (animate || morph || hasGeomAnim)
+        ? (performance.now() - tStartRef.current) / 1000
+        : 0
       // Chladni's render needs the analysis ratios to compute its integer
       // mode set; merge them into the params just for the render call.
       const effective = { ...morphParams(params, t), ratios: derivedRatios.length ? derivedRatios : ratios }
@@ -399,7 +419,7 @@ export default function GeometryTab({ analysisResult }) {
       if (out.kind === 'path') drawPath(ctx, out.points, opts)
       else if (out.kind === 'field') drawField(ctx, out, opts)
 
-      if (animate || morph) rafId = requestAnimationFrame(draw)
+      if (animate || morph || hasGeomAnim) rafId = requestAnimationFrame(draw)
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }

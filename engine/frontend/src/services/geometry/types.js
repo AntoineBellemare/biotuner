@@ -285,12 +285,15 @@ const rose = {
     'Polar curve r = cos(k θ) where k = n/d is set by the chosen ratio. ' +
     'Even k gives 2k petals, odd k gives k petals, rational k gives ' +
     'self-intersecting flower-like patterns.',
-  defaultParams: { n: 5, d: 4, cycles: 8, complexity: 1, lineWidth: 1.6 },
+  defaultParams: { n: 5, d: 4, cycles: 8, complexity: 1, max_denom: 12, d_mult: 1, lineWidth: 1.6 },
   paramSchema: [
-    { key: 'n',         label: 'Numerator',   type: 'slider', min: 1,   max: 24, step: 1, derived: true },
-    { key: 'd',         label: 'Denominator', type: 'slider', min: 1,   max: 24, step: 1, derived: true },
-    { key: 'complexity',label: 'Complexity ×', type: 'slider', min: 1,  max: 8,  step: 1 },
-    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 1,   max: 32, step: 1 },
+    { key: 'n',         label: 'Numerator',   type: 'slider', min: 1,   max: 48, step: 1, derived: true },
+    { key: 'd',         label: 'Denominator', type: 'slider', min: 1,   max: 48, step: 1, derived: true },
+    { key: 'complexity',label: 'Complexity ×n', type: 'slider', min: 1, max: 12, step: 1 },
+    { key: 'd_mult',    label: 'Denom ×',     type: 'slider', min: 1,   max: 12, step: 1 },
+    { key: 'max_denom', label: 'Rounding (max denom)', type: 'int', min: 3, max: 24, step: 1,
+      format: (v) => `≤ ${v}` },
+    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 1,   max: 48, step: 1 },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
   fromRatios(ratios) {
@@ -302,19 +305,22 @@ const rose = {
     { key: 'n' },
     { key: 'd' },
   ],
-  fromDerivedRatios(derived, bindings = {}) {
+  fromDerivedRatios(derived, bindings = {}, params = {}) {
     if (!derived?.length) return {}
     const ia = Math.min(derived.length - 1, bindings.n ?? 0)
     const ib = Math.min(derived.length - 1, bindings.d ?? 1)
-    // Higher maxDenom = more variety in petal counts.
-    return smallIntFractionForPair(derived, ia, ib, 12)
+    const md = Math.max(3, Math.min(24, params.max_denom ?? 12))
+    return smallIntFractionForPair(derived, ia, ib, md)
   },
   render(params, t) {
-    const { n, d, cycles, complexity = 1 } = params
+    const { n, d, cycles, complexity = 1, d_mult = 1 } = params
     if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0) {
       return { kind: 'path', points: [] }
     }
-    const k = (n * Math.max(1, complexity)) / d
+    // Two independent multipliers: complexity multiplies n (adds petals),
+    // d_mult multiplies d (rotates the petal symmetry / fractures it into
+    // sub-petals). Together they unlock a much wider design space.
+    const k = (n * Math.max(1, complexity)) / (d * Math.max(1, d_mult))
     // Always honour the user's cycles slider. Integer n/d would mathematically
     // close after d/gcd revolutions, but tracing extra cycles lays the same
     // curve back on itself — visually identical, and the slider stays
@@ -643,8 +649,10 @@ const chladni = {
     max_denom: 6,
     n_modes: 3,
     resolution: 320,
-    sigma: 0,             // 0 = auto (biotuner formula), >0 = manual override
-    line_sharpness: 1.0,  // multiplies auto-sigma; <1 thinner lines, >1 wider
+    sigma: 0,
+    line_sharpness: 1.0,
+    animation: 'none',        // 'none' | 'phase' | 'breathe' | 'rotate'
+    anim_speed: 0.3,
   },
   paramSchema: [
     { key: 'antisymmetric', label: 'Antisymmetric (− vs +)', type: 'bool' },
@@ -659,6 +667,15 @@ const chladni = {
     { key: 'n_modes',    label: 'Number of modes',     type: 'int', min: 2, max: 6, step: 1 },
     { key: 'line_sharpness', label: 'Line sharpness',  type: 'slider', min: 0.3, max: 3, step: 0.05,
       format: (v) => `×${Number(v).toFixed(2)}` },
+    { key: 'animation', label: 'Animation', type: 'select',
+      options: [
+        { value: 'none',    label: 'Static' },
+        { value: 'phase',   label: 'Phase pulse (mix oscillates)' },
+        { value: 'breathe', label: 'Breathe (sigma pulses)' },
+        { value: 'rotate',  label: 'Rotate (slow spin)' },
+      ] },
+    { key: 'anim_speed', label: 'Animation speed',     type: 'slider', min: 0.05, max: 2, step: 0.05,
+      format: (v) => `×${Number(v).toFixed(2)}` },
     { key: 'sigma',      label: 'σ override (0 = auto)', type: 'slider', min: 0, max: 0.2, step: 0.001,
       format: (v) => v <= 0 ? 'auto' : v.toFixed(3), advanced: true },
     { key: 'resolution', label: 'Resolution',          type: 'slider', min: 128, max: 512, step: 32, advanced: true },
@@ -671,8 +688,15 @@ const chladni = {
       antisymmetric = true, symmetry = 'd4_max',
       max_denom = 6, n_modes = 3, resolution = 320,
       sigma: sigmaOverride = 0, line_sharpness = 1.0,
+      animation = 'none', anim_speed = 0.3,
       ratios = [1, 5/4, 3/2],
     } = params
+    const animT = (animation === 'none' || !t) ? 0 : (t * anim_speed)
+    // Phase animation: smoothly cycle the antisymmetric ↔ symmetric mix
+    // by interpolating the second term's sign via cos(animT).
+    const mixSign = animation === 'phase'
+      ? Math.cos(animT * Math.PI)         // -1 (antisym) ↔ +1 (sym)
+      : (antisymmetric ? -1 : +1)
 
     // 1) Round each ratio to nearest p/q with denom ≤ max_denom.
     // 2) Compute LCM of the denominators.
@@ -706,7 +730,8 @@ const chladni = {
       cosCache[mi] = arr
     }
 
-    // Pairwise sum
+    // Pairwise sum. `mixSign` selects the antisymmetric (−) / symmetric (+)
+    // form, or smoothly interpolates between them when animation === 'phase'.
     for (let i = 0; i < modes.length; i++) {
       const cxi = cosCache[i]
       const cyi = cosCache[i]
@@ -720,8 +745,31 @@ const chladni = {
           for (let x = 0; x < N; x++) {
             const a = cxi[x] * cyj_y
             const b = cxj[x] * cyi_y
-            data[off + x] += antisymmetric ? (a - b) : (a + b)
+            data[off + x] += a + mixSign * b
           }
+        }
+      }
+    }
+
+    // Rotation animation: re-sample the computed field at rotated (x, y)
+    // coords. Cheap (nearest-neighbour, post-pairwise-sum) and gives the
+    // characteristic "slow spin" without changing the modal structure.
+    if (animation === 'rotate' && animT) {
+      const theta = animT * Math.PI * 0.5  // slow spin
+      const cosT = Math.cos(theta)
+      const sinT = Math.sin(theta)
+      const cx = (N - 1) / 2
+      const cy = cx
+      const orig = new Float32Array(data)
+      for (let y = 0; y < N; y++) {
+        const dy = y - cy
+        for (let x = 0; x < N; x++) {
+          const dx = x - cx
+          const sx = Math.round(cx + dx * cosT - dy * sinT)
+          const sy = Math.round(cy + dx * sinT + dy * cosT)
+          data[y * N + x] = (sx >= 0 && sx < N && sy >= 0 && sy < N)
+            ? orig[sy * N + sx]
+            : 0
         }
       }
     }
@@ -757,9 +805,13 @@ const chladni = {
     const nPairs = (modes.length * (modes.length - 1)) / 2
     const pairFactor = nPairs <= 3 ? 1 : Math.sqrt(nPairs / 3)
     const autoSigma = Math.max(0.005, Math.min(0.18, 0.5 * pairFactor / peakMode))
+    // Breathe: pulse the line width by ±50 % via a slow cosine envelope.
+    const breatheMul = animation === 'breathe' && animT
+      ? 1 + 0.5 * Math.cos(animT * Math.PI)
+      : 1
     const sigma = (sigmaOverride > 0)
-      ? sigmaOverride
-      : autoSigma * (line_sharpness || 1)
+      ? sigmaOverride * breatheMul
+      : autoSigma * (line_sharpness || 1) * breatheMul
 
     return { kind: 'field', data, width: N, height: N, modes, sigma }
   },
