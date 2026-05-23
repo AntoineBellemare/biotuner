@@ -67,13 +67,12 @@ const lissajous = {
     lineWidth: 1.5,
   },
   paramSchema: [
-    { key: 'a',         label: 'Frequency a', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
-      format: (v) => Number(v).toFixed(3) },
-    { key: 'b',         label: 'Frequency b', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
-      format: (v) => Number(v).toFixed(3) },
+    // a, b are integer winding numbers — what makes Lissajous patterns close.
+    { key: 'a',         label: 'Frequency a', type: 'int',    min: 1,   max: 24, step: 1, derived: true },
+    { key: 'b',         label: 'Frequency b', type: 'int',    min: 1,   max: 24, step: 1, derived: true },
     { key: 'delta',     label: 'Phase δ',     type: 'slider', min: 0,   max: Math.PI * 2, step: 0.01,
       format: (v) => `${(v / Math.PI).toFixed(2)}π` },
-    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 0.5, max: 16, step: 0.1 },
+    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 0.5, max: 8,  step: 0.1 },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
   fromRatios(ratios) {
@@ -81,9 +80,6 @@ const lissajous = {
     const { n, d } = findFraction(r, 12)
     return { a: n, b: d }
   },
-  // `slots` declares which params are derived-from-tuning. The tab UI
-  // shows per-slot index pickers; "morph" cycles each slot through the
-  // derived list over time.
   slots: [
     { key: 'a' },
     { key: 'b' },
@@ -92,10 +88,21 @@ const lissajous = {
     if (!derived?.length) return {}
     const ia = Math.min(derived.length - 1, bindings.a ?? 0)
     const ib = Math.min(derived.length - 1, bindings.b ?? 1)
-    return {
-      a: +(derived[ia] || 1).toFixed(3),
-      b: +(derived[ib] || derived[ia] * 1.5 || 1.5).toFixed(3),
+    const ra = derived[ia] || 1
+    const rb = derived[ib] || 1.5
+    // Express the *ratio between* the two bindings as a small integer
+    // fraction. This guarantees a recognisable Lissajous shape (3:2, 5:4,
+    // 7:5, …) regardless of how close the underlying analysis ratios are.
+    let k = rb / ra
+    if (k < 1) k = 1 / k                // keep a ≤ b for nicer-looking ratios
+    let { n, d } = findFraction(k, 12)
+    if (n === d) {                       // ratio collapsed to 1/1 — fall back
+      // Use the binding indices for variety
+      n = Math.max(2, (ia + 2) % 12 + 1)
+      d = Math.max(1, (ib + 1) % 12 + 1)
+      if (n === d) n = (n % 12) + 1
     }
+    return { a: n, b: d }
   },
   render(params, t) {
     const { a, b, delta, cycles } = params
@@ -126,10 +133,13 @@ const harmonograph = {
     f1: 2,    f2: 3,    f3: 2,    f4: 5,
     p1: 0,    p2: 1.5,  p3: 0.5,  p4: 2.4,
     d1: 0.002, d2: 0.0015, d3: 0.001, d4: 0.0025,
+    damping: 0.002,        // global damping override — 0 disables override
     duration: 90,
     lineWidth: 0.7,
   },
   paramSchema: [
+    { key: 'damping',   label: 'Damping',    type: 'slider', min: 0,   max: 0.02, step: 0.0001,
+      format: (v) => v < 0.0001 ? 'off (per-pendulum)' : v.toFixed(4) },
     { key: 'duration',  label: 'Duration',   type: 'slider', min: 20,  max: 300, step: 5,
       format: (v) => `${v}s` },
     { key: 'lineWidth', label: 'Line width', type: 'slider', min: 0.3, max: 3,   step: 0.05 },
@@ -191,7 +201,14 @@ const harmonograph = {
     }
   },
   render(params, t) {
-    const { f1, f2, f3, f4, p1, p2, p3, p4, d1, d2, d3, d4, duration } = params
+    const { f1, f2, f3, f4, p1, p2, p3, p4, d1, d2, d3, d4, duration, damping } = params
+    // Use the global damping when set (> tiny epsilon); otherwise the
+    // per-pendulum decays in the Advanced panel.
+    const useGlobal = damping != null && damping > 1e-5
+    const dx1 = useGlobal ? damping : d1
+    const dx2 = useGlobal ? damping : d2
+    const dy1 = useGlobal ? damping : d3
+    const dy2 = useGlobal ? damping : d4
     const N = 6000
     const dt = duration / N
     const phaseDrift = (t || 0) * 0.1
@@ -199,11 +216,11 @@ const harmonograph = {
     for (let i = 0; i <= N; i++) {
       const tt = i * dt
       const x =
-        Math.exp(-d1 * tt) * Math.sin(f1 * tt + p1 + phaseDrift) +
-        Math.exp(-d2 * tt) * Math.sin(f2 * tt + p2)
+        Math.exp(-dx1 * tt) * Math.sin(f1 * tt + p1 + phaseDrift) +
+        Math.exp(-dx2 * tt) * Math.sin(f2 * tt + p2)
       const y =
-        Math.exp(-d3 * tt) * Math.sin(f3 * tt + p3) +
-        Math.exp(-d4 * tt) * Math.sin(f4 * tt + p4 - phaseDrift)
+        Math.exp(-dy1 * tt) * Math.sin(f3 * tt + p3) +
+        Math.exp(-dy2 * tt) * Math.sin(f4 * tt + p4 - phaseDrift)
       points[i] = { x: x / 2, y: y / 2 }
     }
     return { kind: 'path', points }
@@ -241,12 +258,22 @@ const rose = {
   ],
   fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
-    const inn = Math.min(derived.length - 1, bindings.n ?? 0)
-    const idd = Math.min(derived.length - 1, bindings.d ?? 1)
-    return {
-      n: +(derived[inn] || 1).toFixed(3),
-      d: +(derived[idd] || 1).toFixed(3),
+    const ia = Math.min(derived.length - 1, bindings.n ?? 0)
+    const ib = Math.min(derived.length - 1, bindings.d ?? 1)
+    const ra = derived[ia] || 1
+    const rb = derived[ib] || 1.5
+    // Rose curve r = cos(k θ); k = n/d sets the petal structure. Pick the
+    // ratio between the two slots, expressed as a small integer fraction
+    // for crisp closed roses.
+    let k = rb / ra
+    if (k < 1) k = 1 / k
+    let { n, d } = findFraction(k, 12)
+    if (n === d) {
+      n = (ia + 3) % 11 + 1
+      d = (ib + 2) % 11 + 1
+      if (n === d) n = (n % 11) + 1
     }
+    return { n, d }
   },
   render(params, t) {
     const { n, d, cycles } = params
@@ -300,18 +327,27 @@ const spirograph = {
     return { R: f.n * 3, r: f.d * 3, offset: Math.max(1, f.d * 2) }
   },
   slots: [
-    { key: 'R', scale: 4 },
-    { key: 'r', scale: 3 },
+    { key: 'R' },
+    { key: 'r' },
   ],
   fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
     const iR = Math.min(derived.length - 1, bindings.R ?? 1)
     const ir = Math.min(derived.length - 1, bindings.r ?? 0)
-    const r1 = derived[ir] || 1.0
-    const r2 = derived[iR] || (r1 * 1.5)
+    const ra = derived[ir] || 1.0
+    const rb = derived[iR] || (ra * 1.5)
+    // R:r ratio drives the rose count. Use integer fraction so spirograph
+    // closes into recognisable petal shapes.
+    let k = Math.max(ra, rb) / Math.min(ra, rb)
+    let { n, d } = findFraction(k, 12)
+    if (n === d) {
+      n = ((iR + 3) % 11) + 2
+      d = ((ir + 2) % 11) + 1
+      if (n === d) d = (d % 11) + 1
+    }
     return {
-      R: +(r2 * 4).toFixed(2),
-      r: +(r1 * 3).toFixed(2),
+      R: n * 2,                              // outer radius
+      r: d * 2,                              // inner radius
     }
   },
   render(params, t) {
@@ -367,18 +403,29 @@ const chladni = {
     return { m: f.n, n: f.d }
   },
   slots: [
-    // Chladni modes are integers; the transform quantises the time-morphed
-    // decimal into a valid mode index.
-    { key: 'm', transform: (v) => Math.max(1, Math.min(14, Math.round(v * 4))) },
-    { key: 'n', transform: (v) => Math.max(1, Math.min(14, Math.round(v * 4))) },
+    // Chladni modes are integers (standing-wave indices). The transform
+    // maps a time-morphed decimal value into a valid mode integer.
+    { key: 'm', transform: (v) => Math.max(2, Math.min(14, Math.round(v * 4))) },
+    { key: 'n', transform: (v) => Math.max(2, Math.min(14, Math.round(v * 4))) },
   ],
   fromDerivedRatios(derived, bindings = {}) {
     if (!derived?.length) return {}
-    const im = Math.min(derived.length - 1, bindings.m ?? 1)
-    const inn = Math.min(derived.length - 1, bindings.n ?? 0)
-    const r = (derived[im] || (derived[0] * 1.5)) / (derived[inn] || 1)
-    const f = findFraction(r, 12)
-    return { m: f.n, n: f.d }
+    const im = Math.min(derived.length - 1, bindings.m ?? 0)
+    const inn = Math.min(derived.length - 1, bindings.n ?? 1)
+    const ra = derived[im] || 1
+    const rb = derived[inn] || 1.5
+    // Get small integers from the ratio between bindings.
+    let k = rb / ra
+    if (k < 1) k = 1 / k
+    let { n, d } = findFraction(k, 12)
+    if (n === d) {
+      // Fall back to index-based modes so different bindings always
+      // produce visibly different Chladni patterns.
+      n = ((im + 2) % 11) + 2
+      d = ((inn + 3) % 11) + 2
+      if (n === d) d = (d % 11) + 2
+    }
+    return { m: n, n: d }
   },
   render(params, t) {
     const { m, n, mix, resolution } = params
@@ -428,6 +475,8 @@ const harmonic_knot = {
     '3/2 → trefoil knot; 5/4 → cinquefoil. Rendered as a tube — rotate by ' +
     'drag, zoom by scroll.',
   defaultParams: {
+    p: 3,
+    q: 2,
     n_points: 500,
     tube_radius: 0.08,
     n_sides: 12,
@@ -435,6 +484,10 @@ const harmonic_knot = {
     minor_radius: 0.7,
   },
   paramSchema: [
+    // p, q override the dominant ratio so you can dial any T(p, q) knot.
+    // p=q=0 disables the override; biotuner picks from the tuning.
+    { key: 'p',            label: 'p (winding)',    type: 'int',    min: 2,    max: 12,   step: 1 },
+    { key: 'q',            label: 'q (winding)',    type: 'int',    min: 1,    max: 12,   step: 1 },
     { key: 'tube_radius',  label: 'Tube radius',    type: 'slider', min: 0.01, max: 0.3,  step: 0.005 },
     { key: 'major_radius', label: 'Major radius',   type: 'slider', min: 0.5,  max: 4,    step: 0.05 },
     { key: 'minor_radius', label: 'Minor radius',   type: 'slider', min: 0.1,  max: 2,    step: 0.05 },

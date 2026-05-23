@@ -105,13 +105,18 @@ def _serialize_geometry(geom) -> Dict[str, Any]:
 _STYLES = {
     "harmonic_knot": {
         "fn": harmonic_knot,
-        "allowed": {"n_points", "tube_radius", "n_sides", "major_radius", "minor_radius"},
+        # `p` and `q` are an *override* (not part of biotuner's signature).
+        # We intercept them in dispatch to force T(p, q) regardless of the
+        # analysis tuning — the user can pick the knot they want.
+        "allowed": {"n_points", "tube_radius", "n_sides", "major_radius", "minor_radius", "p", "q"},
         "coerce": {
             "n_points":     int,
             "tube_radius":  float,
             "n_sides":      int,
             "major_radius": float,
             "minor_radius": float,
+            "p":            int,
+            "q":            int,
         },
         "clamp": {
             "n_points":     (50, 4000),
@@ -119,6 +124,8 @@ _STYLES = {
             "n_sides":      (4, 64),
             "major_radius": (0.5, 5.0),
             "minor_radius": (0.05, 3.0),
+            "p":            (2, 24),
+            "q":            (1, 24),
         },
     },
     "lsystem_3d": {
@@ -197,7 +204,18 @@ def compute(
         )
     spec = _STYLES[style]
     kwargs = _sanitize(params, spec)
-    h_input = _build_input(tuning, peaks, base_freq=base_freq)
+
+    # Special case: harmonic_knot accepts explicit (p, q) overrides that
+    # are *not* part of biotuner's signature. Strip them, build a single-
+    # ratio input so biotuner's internal "dominant ratio" pick lands on
+    # exactly p/q, and force the requested torus knot T(p, q).
+    p_override = kwargs.pop("p", None)
+    q_override = kwargs.pop("q", None)
+    if style == "harmonic_knot" and p_override and q_override and q_override > 0:
+        h_input = HarmonicInput.from_ratios(ratios=[float(p_override) / float(q_override)])
+    else:
+        h_input = _build_input(tuning, peaks, base_freq=base_freq)
+
     geom = spec["fn"](h_input, **kwargs)
     return _serialize_geometry(geom)
 

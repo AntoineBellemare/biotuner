@@ -95,6 +95,8 @@ export default function GeometryTab({ analysisResult }) {
   const [bindingsByType, setBindingsByType] = useState({})
   // Auto-morph for JS bindings — cycles each slot through the derived list.
   const [morph, setMorph] = useState(false)
+  // Seconds per full sweep through the derived list. Bigger = slower.
+  const [morphPeriod, setMorphPeriod] = useState(30)
 
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
@@ -211,14 +213,17 @@ export default function GeometryTab({ analysisResult }) {
     if (!morph || sourceMode === 'manual' || isPython) return baseParams
     if (!geom.slots?.length || !derivedRatios.length) return baseParams
     const N = derivedRatios.length
-    const cycleSec = 6  // seconds per full sweep
+    const cycleSec = Math.max(2, morphPeriod || 30)
     const next = { ...baseParams }
     for (let i = 0; i < geom.slots.length; i++) {
       const slot = geom.slots[i]
       const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
       const idxA = Math.floor(phase)
       const idxB = (idxA + 1) % N
-      const fract = phase - idxA
+      // Cosine-ease the fractional interpolation so values glide between
+      // ratios instead of stepping abruptly.
+      const linear = phase - idxA
+      const fract = 0.5 - 0.5 * Math.cos(linear * Math.PI)
       let val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
       if (slot.scale) val *= slot.scale
       if (slot.transform) val = slot.transform(val)
@@ -602,21 +607,40 @@ export default function GeometryTab({ analysisResult }) {
                 </div>
               )}
 
-              {/* Auto-morph toggle */}
+              {/* Auto-morph toggle + speed */}
               {sourceMode !== 'manual' && geom.slots?.length > 0 && derivedRatios.length > 1 && (
-                <button
-                  onClick={() => {
-                    setMorph((m) => !m)
-                    if (!morph) tStartRef.current = performance.now()
-                  }}
-                  aria-pressed={morph}
-                  className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium border transition-all mt-1
-                    ${morph
-                      ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
-                      : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}`}
-                >
-                  {morph ? '⟳ Morphing ratios…' : '⟳ Auto-morph through ratios'}
-                </button>
+                <div className="mt-1 space-y-1.5">
+                  <button
+                    onClick={() => {
+                      setMorph((m) => !m)
+                      if (!morph) tStartRef.current = performance.now()
+                    }}
+                    aria-pressed={morph}
+                    className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium border transition-all
+                      ${morph
+                        ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
+                        : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}`}
+                  >
+                    {morph ? '⟳ Morphing ratios…' : '⟳ Auto-morph through ratios'}
+                  </button>
+                  {morph && (
+                    <div>
+                      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider">
+                        <span className="text-biotuner-light/50">Morph speed</span>
+                        <span className="text-biotuner-accent/80 font-mono">{morphPeriod}s / cycle</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={5}
+                        max={120}
+                        step={1}
+                        value={morphPeriod}
+                        onChange={(e) => setMorphPeriod(parseInt(e.target.value, 10))}
+                        className="w-full accent-biotuner-accent cursor-pointer"
+                      />
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}
