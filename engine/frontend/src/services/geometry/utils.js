@@ -48,6 +48,8 @@ export function drawPath(ctx, points, opts = {}) {
     width, height,
     lineWidth = 1.5,
     color = '#06b6d4',
+    colorEnd = null,            // when set + colorMode==='gradient', interpolate
+    colorMode = 'solid',        // 'solid' | 'gradient'
     background = '#0a0a0a',
     glow = true,
   } = opts
@@ -60,25 +62,108 @@ export function drawPath(ctx, points, opts = {}) {
   const cy = height / 2
   const scale = Math.min(width, height) * 0.46
 
-  ctx.beginPath()
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i]
-    if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue
-    const sx = cx + p.x * scale
-    const sy = cy + p.y * scale
-    if (i === 0) ctx.moveTo(sx, sy)
-    else ctx.lineTo(sx, sy)
-  }
   ctx.lineJoin = 'round'
   ctx.lineCap = 'round'
-  if (glow) {
-    ctx.shadowColor = color
-    ctx.shadowBlur = lineWidth * 4
-  }
-  ctx.strokeStyle = color
   ctx.lineWidth = lineWidth
-  ctx.stroke()
-  ctx.shadowBlur = 0
+
+  // Solid path: single beginPath/stroke is far cheaper.
+  if (colorMode !== 'gradient' || !colorEnd) {
+    ctx.beginPath()
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i]
+      if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) continue
+      const sx = cx + p.x * scale
+      const sy = cy + p.y * scale
+      if (i === 0) ctx.moveTo(sx, sy)
+      else ctx.lineTo(sx, sy)
+    }
+    if (glow) {
+      ctx.shadowColor = color
+      ctx.shadowBlur = lineWidth * 4
+    }
+    ctx.strokeStyle = color
+    ctx.stroke()
+    ctx.shadowBlur = 0
+    return
+  }
+
+  // Gradient mode: draw segment-by-segment with interpolated colors. Skip
+  // glow (shadowBlur per-segment kills perf).
+  const cStart = hexToRgb(color)
+  const cFinal = hexToRgb(colorEnd)
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1]
+    const b = points[i]
+    if (!Number.isFinite(a.x) || !Number.isFinite(b.x)) continue
+    const tFrac = i / (points.length - 1)
+    ctx.strokeStyle = rgbToCss(lerpRgb(cStart, cFinal, tFrac))
+    ctx.beginPath()
+    ctx.moveTo(cx + a.x * scale, cy + a.y * scale)
+    ctx.lineTo(cx + b.x * scale, cy + b.y * scale)
+    ctx.stroke()
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Color helpers
+// ---------------------------------------------------------------------------
+
+export function hexToRgb(hex) {
+  let h = (hex || '#000000').replace('#', '')
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('')
+  const n = parseInt(h, 16)
+  return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]
+}
+
+export function rgbToCss([r, g, b]) {
+  return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`
+}
+
+export function lerpRgb(a, b, t) {
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+}
+
+/**
+ * Default gradient companion: rotate the starting color's hue by 90°
+ * for a complementary-ish end color.
+ */
+export function rotateHue(hex, degrees = 90) {
+  const [r, g, b] = hexToRgb(hex)
+  // RGB → HSL
+  const rn = r / 255, gn = g / 255, bn = b / 255
+  const max = Math.max(rn, gn, bn)
+  const min = Math.min(rn, gn, bn)
+  const l = (max + min) / 2
+  let h, s
+  if (max === min) {
+    h = 0; s = 0
+  } else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case rn: h = ((gn - bn) / d + (gn < bn ? 6 : 0)); break
+      case gn: h = ((bn - rn) / d + 2); break
+      default: h = ((rn - gn) / d + 4); break
+    }
+    h /= 6
+  }
+  h = (h + degrees / 360) % 1
+  // HSL → RGB
+  const hue2rgb = (p, q, t) => {
+    if (t < 0) t += 1
+    if (t > 1) t -= 1
+    if (t < 1 / 6) return p + (q - p) * 6 * t
+    if (t < 1 / 2) return q
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+    return p
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+  const p = 2 * l - q
+  const rOut = hue2rgb(p, q, h + 1 / 3)
+  const gOut = hue2rgb(p, q, h)
+  const bOut = hue2rgb(p, q, h - 1 / 3)
+  const toHex = (v) => Math.round(v * 255).toString(16).padStart(2, '0')
+  return `#${toHex(rOut)}${toHex(gOut)}${toHex(bOut)}`
 }
 
 /**

@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Play, Pause, Sparkles, Download, RotateCcw, Shuffle, Image as ImageIcon, Cpu, Loader2 } from 'lucide-react'
+import { Play, Pause, Sparkles, Download, RotateCcw, Shuffle, Image as ImageIcon, Cpu, Loader2, Lock } from 'lucide-react'
 import {
   GEOMETRY_TYPES,
   GEOMETRY_ORDER,
 } from '../../services/geometry/types'
+import { SOURCE_MODES, SOURCE_MODE_ORDER, deriveFromMode } from '../../services/geometry/sources'
 import {
   drawPath,
   drawField,
@@ -11,6 +12,7 @@ import {
   fieldCanvasToSvg,
   canvasToPngDataUrl,
   downloadFile,
+  rotateHue,
 } from '../../services/geometry/utils'
 import apiClient from '../../services/api'
 
@@ -76,6 +78,14 @@ export default function GeometryTab({ analysisResult }) {
   const [color, setColor] = useState('#06b6d4')
   const [palette, setPalette] = useState('mono')  // 'mono' | 'accent'
   const [showAdvanced, setShowAdvanced] = useState(false)
+  // Gradient on / off + derived end color (auto from start via 90° hue spin)
+  const [gradient, setGradient] = useState(false)
+  const colorEnd = useMemo(() => rotateHue(color, 90), [color])
+  // Source mode per geometry — controls how the JS-engine geometries
+  // derive their frequency-defining params from the analysis tuning.
+  const [sourceModeByType, setSourceModeByType] = useState(() =>
+    Object.fromEntries(GEOMETRY_ORDER.map((k) => [k, 'direct']))
+  )
 
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
@@ -145,25 +155,29 @@ export default function GeometryTab({ analysisResult }) {
   const ratios = analysisResult?.tuning || []
   const ratiosKeyForJs = useMemo(() => ratios.join(','), [ratios])
 
-  // Auto-snap every JS geometry to the new analysis whenever the ratios
-  // change. This keeps the analysis "live": pick a pattern, see it derived
-  // from your signal; switch tabs and come back, still derived. The user
-  // can override any individual slider afterwards.
+  // Re-derive every JS geometry's params from the (ratios, sourceMode) pair.
+  // Fires when the analysis tuning changes OR the source mode changes for
+  // the current geometry, so the "data drives the freqs" promise holds.
+  const sourceMode = sourceModeByType[type] || 'direct'
   useEffect(() => {
     if (!ratios.length) return
     setParamsByType((prev) => {
       const next = { ...prev }
       for (const g of Object.values(GEOMETRY_TYPES)) {
         if (g.engine === 'python') continue
-        if (typeof g.fromRatios !== 'function') continue
-        const updates = g.fromRatios(ratios) || {}
+        const mode = sourceModeByType[g.key] || 'direct'
+        if (mode === 'manual') continue
+        const derived = deriveFromMode(ratios, mode)
+        const updates = (typeof g.fromDerivedRatios === 'function'
+          ? g.fromDerivedRatios(derived)
+          : (typeof g.fromRatios === 'function' ? g.fromRatios(ratios) : {})) || {}
         if (Object.keys(updates).length === 0) continue
         next[g.key] = { ...prev[g.key], ...updates }
       }
       return next
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ratiosKeyForJs])
+  }, [ratiosKeyForJs, sourceMode])
 
   const applyFromAnalysis = () => {
     // Python-engine geometries already consume the tuning automatically
@@ -232,10 +246,12 @@ export default function GeometryTab({ analysisResult }) {
         height: canvas.height,
         lineWidth: (params.lineWidth || 1.5) * (canvas.width / 600),
         color,
+        colorEnd,
+        colorMode: gradient ? 'gradient' : 'solid',
         background: '#0a0a0a',
         contrast: params.contrast,
         palette,
-        glow: true,
+        glow: !gradient,
       }
       if (out.kind === 'path') drawPath(ctx, out.points, opts)
       else if (out.kind === 'field') drawField(ctx, out, opts)
@@ -244,7 +260,7 @@ export default function GeometryTab({ analysisResult }) {
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }
-  }, [isPython, geom, params, animate, color, palette])
+  }, [isPython, geom, params, animate, color, colorEnd, gradient, palette])
 
   // -------------------------------------------------------------------------
   // Exports
@@ -475,12 +491,36 @@ export default function GeometryTab({ analysisResult }) {
 
         {/* Parameter panel */}
         <div className="lg:w-80 lg:flex-shrink-0 bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4 space-y-3">
+          {/* Source mode — only for JS geometries (Python ones always use
+              the tuning automatically via the backend request). */}
+          {!isPython && ratios.length > 0 && (
+            <div className="pb-2 border-b border-biotuner-dark-600">
+              <label className="block text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest mb-2">
+                Ratio source
+              </label>
+              <select
+                value={sourceMode}
+                onChange={(e) =>
+                  setSourceModeByType((prev) => ({ ...prev, [type]: e.target.value }))
+                }
+                className="w-full bg-biotuner-dark-800 text-biotuner-light/90 border border-biotuner-dark-600 rounded-md p-2 text-sm"
+              >
+                {SOURCE_MODE_ORDER.map((k) => (
+                  <option key={k} value={k}>{SOURCE_MODES[k].label}</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-biotuner-light/40 mt-1.5 leading-snug">
+                {SOURCE_MODES[sourceMode].description}
+              </p>
+            </div>
+          )}
+
           <h3 className="text-xs font-bold text-biotuner-primary/80 uppercase tracking-widest border-b border-biotuner-dark-600 pb-2">
             Parameters
           </h3>
 
-          {/* Color + palette */}
-          <div className="flex items-center gap-3">
+          {/* Color + gradient + palette */}
+          <div className="flex items-center gap-2 flex-wrap">
             <label className="text-xs text-biotuner-light/60 uppercase tracking-wider">
               Color
             </label>
@@ -490,6 +530,26 @@ export default function GeometryTab({ analysisResult }) {
               onChange={(e) => setColor(e.target.value)}
               className="w-10 h-9 rounded border border-biotuner-dark-600 bg-transparent cursor-pointer"
             />
+            {geom.key !== 'chladni' && (
+              <button
+                onClick={() => setGradient((g) => !g)}
+                aria-pressed={gradient}
+                title={gradient ? 'Gradient on (rotate hue 90°)' : 'Solid color'}
+                className={`min-h-[34px] px-2 py-1 rounded-md text-xs font-medium border
+                  ${gradient
+                    ? 'bg-biotuner-primary/15 border-biotuner-primary/50 text-biotuner-primary'
+                    : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70'}`}
+              >
+                {gradient ? 'Gradient' : 'Solid'}
+              </button>
+            )}
+            {gradient && geom.key !== 'chladni' && (
+              <div
+                className="w-8 h-8 rounded border border-biotuner-dark-600"
+                style={{ background: `linear-gradient(90deg, ${color}, ${colorEnd})` }}
+                title={`Auto end: ${colorEnd}`}
+              />
+            )}
             {geom.key === 'chladni' && (
               <select
                 value={palette}
@@ -502,20 +562,25 @@ export default function GeometryTab({ analysisResult }) {
             )}
           </div>
 
-          {/* Sliders for each schema entry — basic first, advanced behind a toggle */}
+          {/* Sliders — basic first, advanced behind a disclosure. Derived
+              params are locked (read-only) when the source mode is not
+              'manual', because the analysis owns those values. */}
           {(() => {
+            const lockedDerived = !isPython && sourceMode !== 'manual'
             const basic = geom.paramSchema.filter((p) => !p.advanced)
             const advanced = geom.paramSchema.filter((p) => p.advanced)
+            const renderRow = (p) => (
+              <ParamControl
+                key={paramId(geom.key, p.key)}
+                schema={p}
+                value={params[p.key]}
+                onChange={(v) => setParam(p.key, v)}
+                locked={lockedDerived && p.derived}
+              />
+            )
             return (
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-                {basic.map((p) => (
-                  <ParamControl
-                    key={paramId(geom.key, p.key)}
-                    schema={p}
-                    value={params[p.key]}
-                    onChange={(v) => setParam(p.key, v)}
-                  />
-                ))}
+                {basic.map(renderRow)}
                 {advanced.length > 0 && (
                   <>
                     <button
@@ -524,14 +589,7 @@ export default function GeometryTab({ analysisResult }) {
                     >
                       {showAdvanced ? '▼' : '▶'} Advanced ({advanced.length})
                     </button>
-                    {showAdvanced && advanced.map((p) => (
-                      <ParamControl
-                        key={paramId(geom.key, p.key)}
-                        schema={p}
-                        value={params[p.key]}
-                        onChange={(v) => setParam(p.key, v)}
-                      />
-                    ))}
+                    {showAdvanced && advanced.map(renderRow)}
                   </>
                 )}
               </div>
@@ -545,7 +603,7 @@ export default function GeometryTab({ analysisResult }) {
 
 // =============================================================================
 
-function ParamControl({ schema, value, onChange }) {
+function ParamControl({ schema, value, onChange, locked = false }) {
   const { key, label, type, min, max, step, format, options } = schema
   const display = format
     ? format(value)
@@ -553,16 +611,26 @@ function ParamControl({ schema, value, onChange }) {
       ? (typeof value === 'number' ? +value.toFixed(step < 1 ? 3 : 0) : value)
       : ''
   return (
-    <div>
+    <div className={locked ? 'opacity-70' : ''}>
       <div className="flex items-baseline justify-between mb-1">
         <label
           htmlFor={key}
-          className="text-xs font-medium text-biotuner-light/60 uppercase tracking-wider"
+          className="text-xs font-medium text-biotuner-light/60 uppercase tracking-wider flex items-center gap-1"
         >
           {label}
+          {locked && (
+            <span
+              title="Derived from analysis ratios. Switch source to ‘Manual’ to edit."
+              className="text-biotuner-accent/80"
+            >
+              <Lock className="w-3 h-3" />
+            </span>
+          )}
         </label>
         {display !== '' && (
-          <span className="text-xs font-mono text-biotuner-primary/90 tabular-nums">
+          <span className={`text-xs font-mono tabular-nums ${
+            locked ? 'text-biotuner-accent/80' : 'text-biotuner-primary/90'
+          }`}>
             {display}
           </span>
         )}
@@ -575,12 +643,14 @@ function ParamControl({ schema, value, onChange }) {
           max={max}
           step={step}
           value={value}
+          disabled={locked}
           onChange={(e) => {
+            if (locked) return
             let v = parseFloat(e.target.value)
             if (type === 'int') v = Math.round(v)
             onChange(v)
           }}
-          className="w-full accent-biotuner-primary cursor-pointer"
+          className={`w-full accent-biotuner-primary ${locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
         />
       )}
       {type === 'select' && (

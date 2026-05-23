@@ -67,17 +67,26 @@ const lissajous = {
     lineWidth: 1.5,
   },
   paramSchema: [
-    { key: 'a',         label: 'Frequency a', type: 'int',    min: 1,   max: 24, step: 1 },
-    { key: 'b',         label: 'Frequency b', type: 'int',    min: 1,   max: 24, step: 1 },
+    { key: 'a',         label: 'Frequency a', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(3) },
+    { key: 'b',         label: 'Frequency b', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(3) },
     { key: 'delta',     label: 'Phase δ',     type: 'slider', min: 0,   max: Math.PI * 2, step: 0.01,
       format: (v) => `${(v / Math.PI).toFixed(2)}π` },
-    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 0.5, max: 8,  step: 0.1 },
+    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 0.5, max: 16, step: 0.1 },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
   fromRatios(ratios) {
     const r = firstMeaningfulRatio(ratios)
     const { n, d } = findFraction(r, 12)
     return { a: n, b: d }
+  },
+  fromDerivedRatios(derived) {
+    if (!derived?.length) return {}
+    return {
+      a: +(derived[0] || 1).toFixed(3),
+      b: +(derived[1] || derived[0] * 1.5 || 1.5).toFixed(3),
+    }
   },
   render(params, t) {
     const { a, b, delta, cycles } = params
@@ -115,11 +124,16 @@ const harmonograph = {
     { key: 'duration',  label: 'Duration',   type: 'slider', min: 20,  max: 300, step: 5,
       format: (v) => `${v}s` },
     { key: 'lineWidth', label: 'Line width', type: 'slider', min: 0.3, max: 3,   step: 0.05 },
-    // Advanced: per-pendulum frequencies, phases, decays. Hidden by default.
-    { key: 'f1', label: 'X freq 1', type: 'slider', min: 0.5, max: 20, step: 0.05, advanced: true },
-    { key: 'f2', label: 'X freq 2', type: 'slider', min: 0.5, max: 20, step: 0.05, advanced: true },
-    { key: 'f3', label: 'Y freq 1', type: 'slider', min: 0.5, max: 20, step: 0.05, advanced: true },
-    { key: 'f4', label: 'Y freq 2', type: 'slider', min: 0.5, max: 20, step: 0.05, advanced: true },
+    // Per-pendulum frequencies are derived from analysis. Shown as read-only
+    // in derived modes; editable when source = manual.
+    { key: 'f1', label: 'X freq 1', type: 'slider', min: 0.1, max: 30, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(2) },
+    { key: 'f2', label: 'X freq 2', type: 'slider', min: 0.1, max: 30, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(2) },
+    { key: 'f3', label: 'Y freq 1', type: 'slider', min: 0.1, max: 30, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(2) },
+    { key: 'f4', label: 'Y freq 2', type: 'slider', min: 0.1, max: 30, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(2) },
     { key: 'p1', label: 'X phase 1', type: 'slider', min: 0, max: Math.PI * 2, step: 0.01,
       format: (v) => `${(v / Math.PI).toFixed(2)}π`, advanced: true },
     { key: 'p2', label: 'X phase 2', type: 'slider', min: 0, max: Math.PI * 2, step: 0.01,
@@ -138,14 +152,24 @@ const harmonograph = {
       format: (v) => v.toFixed(4), advanced: true },
   ],
   fromRatios(ratios) {
-    // Pick four distinct meaningful ratios, scale into 2–8 range for an
-    // attractive pendulum interference pattern.
     const picked = meaningfulRatios(ratios, 4, 30)
     return {
       f1: +(picked[0] * 2).toFixed(2),
       f2: +(picked[1] * 2).toFixed(2),
       f3: +(picked[2] * 2).toFixed(2),
       f4: +(picked[3] * 2).toFixed(2),
+    }
+  },
+  fromDerivedRatios(derived) {
+    if (!derived?.length) return {}
+    // Spread four derived ratios across the X/Y pendulum quartet, with a
+    // 2× scaling so the visible frequency content lands in the 1–10 range.
+    const pad = (i, fallback) => +((derived[i] ?? fallback) * 2).toFixed(2)
+    return {
+      f1: pad(0, 1.0),
+      f2: pad(1, 1.5),
+      f3: pad(2, 1.25),
+      f4: pad(3, 1.66),
     }
   },
   render(params, t) {
@@ -179,23 +203,42 @@ const rose = {
     'Polar curve r = cos(k θ) where k = n/d is set by the chosen ratio. ' +
     'Even k gives 2k petals, odd k gives k petals, rational k gives ' +
     'self-intersecting flower-like patterns.',
-  defaultParams: { n: 5, d: 2, cycles: null, lineWidth: 1.6 },
+  defaultParams: { n: 1.125, d: 1, cycles: 8, lineWidth: 1.6 },
   paramSchema: [
-    { key: 'n',         label: 'Numerator',   type: 'int',    min: 1, max: 24, step: 1 },
-    { key: 'd',         label: 'Denominator', type: 'int',    min: 1, max: 24, step: 1 },
-    { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4, step: 0.1 },
+    { key: 'n',         label: 'Numerator',   type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(3) },
+    { key: 'd',         label: 'Denominator', type: 'slider', min: 0.1, max: 24, step: 0.01, derived: true,
+      format: (v) => Number(v).toFixed(3) },
+    { key: 'cycles',    label: 'Cycles',      type: 'slider', min: 1,   max: 32, step: 1 },
+    { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.4, max: 4,  step: 0.1 },
   ],
   fromRatios(ratios) {
     const r = firstMeaningfulRatio(ratios)
     const { n, d } = findFraction(r, 16)
     return { n, d }
   },
+  fromDerivedRatios(derived) {
+    if (!derived?.length) return {}
+    return {
+      n: +(derived[0] || 1).toFixed(3),
+      d: +(derived[1] || 1).toFixed(3),
+    }
+  },
   render(params, t) {
-    const { n, d } = params
+    const { n, d, cycles } = params
+    if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0) {
+      return { kind: 'path', points: [] }
+    }
     const k = n / d
-    // Closes after `d` full revolutions when n/d is in lowest terms.
-    const periods = d / gcd(n, d)
-    const N = 3000
+    // For integer n/d in lowest terms, the curve closes after d revolutions.
+    // For decimal k it never closes — we sweep a user-controlled number of
+    // cycles (default 8) which fills the rose densely enough to look complete.
+    const isInteger =
+      Math.abs(n - Math.round(n)) < 1e-3 && Math.abs(d - Math.round(d)) < 1e-3
+    const periods = isInteger
+      ? Math.round(d) / gcd(Math.round(n), Math.round(d))
+      : (cycles || 8)
+    const N = Math.min(8000, Math.max(1500, periods * 400))
     const phase = (t || 0) * 0.4
     const points = new Array(N + 1)
     for (let i = 0; i <= N; i++) {
@@ -220,8 +263,10 @@ const spirograph = {
     'the offset d sets how "deep" the petals reach.',
   defaultParams: { R: 7, r: 3, offset: 4, lineWidth: 1.2 },
   paramSchema: [
-    { key: 'R',         label: 'Outer R',     type: 'slider', min: 2,   max: 30, step: 0.1 },
-    { key: 'r',         label: 'Inner r',     type: 'slider', min: 1,   max: 20, step: 0.1 },
+    { key: 'R',         label: 'Outer R',     type: 'slider', min: 0.5, max: 30, step: 0.05, derived: true,
+      format: (v) => Number(v).toFixed(2) },
+    { key: 'r',         label: 'Inner r',     type: 'slider', min: 0.2, max: 20, step: 0.05, derived: true,
+      format: (v) => Number(v).toFixed(2) },
     { key: 'offset',    label: 'Pen offset',  type: 'slider', min: 0.5, max: 20, step: 0.1 },
     { key: 'lineWidth', label: 'Line width',  type: 'slider', min: 0.3, max: 3,  step: 0.05 },
   ],
@@ -229,6 +274,16 @@ const spirograph = {
     const r = firstMeaningfulRatio(ratios)
     const f = findFraction(r, 12)
     return { R: f.n * 3, r: f.d * 3, offset: Math.max(1, f.d * 2) }
+  },
+  fromDerivedRatios(derived) {
+    if (!derived?.length) return {}
+    // Pick two distinct ratios; scale into a usable spirograph range.
+    const r1 = derived[0] || 1.0
+    const r2 = derived[1] || (r1 * 1.5)
+    return {
+      R: +(r2 * 4).toFixed(2),
+      r: +(r1 * 3).toFixed(2),
+    }
   },
   render(params, t) {
     const { R, r, offset } = params
@@ -270,8 +325,8 @@ const chladni = {
     'collect on a real Chladni plate.',
   defaultParams: { m: 5, n: 3, resolution: 256, contrast: 1.6, mix: Math.PI / 2 },
   paramSchema: [
-    { key: 'm',          label: 'Mode m',      type: 'int',    min: 1,  max: 14, step: 1 },
-    { key: 'n',          label: 'Mode n',      type: 'int',    min: 1,  max: 14, step: 1 },
+    { key: 'm',          label: 'Mode m',      type: 'int',    min: 1,  max: 14, step: 1, derived: true },
+    { key: 'n',          label: 'Mode n',      type: 'int',    min: 1,  max: 14, step: 1, derived: true },
     { key: 'mix',        label: 'Mix angle',   type: 'slider', min: 0,  max: Math.PI * 2, step: 0.01,
       format: (v) => `${(v / Math.PI).toFixed(2)}π` },
     { key: 'contrast',   label: 'Contrast',    type: 'slider', min: 0.4, max: 6, step: 0.05 },
@@ -280,6 +335,14 @@ const chladni = {
   fromRatios(ratios) {
     const r = firstMeaningfulRatio(ratios)
     const f = findFraction(r, 10)
+    return { m: f.n, n: f.d }
+  },
+  fromDerivedRatios(derived) {
+    if (!derived?.length) return {}
+    // Modes are integers (standing-wave indices). Map decimal ratios to the
+    // nearest integer fraction so we always get a valid Chladni pattern.
+    const r = (derived[1] || (derived[0] * 1.5)) / (derived[0] || 1)
+    const f = findFraction(r, 12)
     return { m: f.n, n: f.d }
   },
   render(params, t) {

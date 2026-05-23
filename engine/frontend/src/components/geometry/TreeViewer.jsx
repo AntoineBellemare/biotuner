@@ -57,6 +57,8 @@ export default function TreeViewer({
     const coords = geometry.coordinates
     const edges = geometry.edges || []
     const weights = geometry.weights || null
+    const params = geometry.parameters || {}
+    const meta = geometry.metadata || {}
 
     // Auto-fit to bounding box. Use first two dimensions; for higher-D coords
     // we project onto x/y.
@@ -71,13 +73,40 @@ export default function TreeViewer({
     }
     const dx = (xMax - xMin) || 1
     const dy = (yMax - yMin) || 1
-    const margin = 0.06 * Math.min(W, H)
+    const margin = 0.08 * Math.min(W, H)
     const sx = (W - 2 * margin) / dx
     const sy = (H - 2 * margin) / dy
     const s = Math.min(sx, sy)
     const ox = (W - s * dx) / 2 - s * xMin
     const oy = (H - s * dy) / 2 - s * yMin
     const toCanvas = (c) => ({ x: ox + s * (c[0] ?? 0), y: oy + s * (c[1] ?? 0) })
+
+    // Concentric guide circles for radial/polar layouts. We detect a
+    // "centered" tree by checking whether coords cluster around the origin
+    // (root at center) or whether parameters.layout is 'depth' or 'polar'.
+    const isRadial =
+      params.layout === 'depth' || params.layout === 'polar' ||
+      (Math.abs(xMin + xMax) < 0.3 * dx && Math.abs(yMin + yMax) < 0.3 * dy)
+    if (isRadial) {
+      // Use depth metadata if available; otherwise infer rings from the
+      // max radius in the data, with up to 6 evenly spaced rings.
+      const center = toCanvas([0, 0])
+      let maxR = 0
+      for (const c of coords) {
+        const r = Math.hypot(c[0] ?? 0, c[1] ?? 0)
+        if (r > maxR) maxR = r
+      }
+      const maxRpx = s * maxR
+      const nRings = Math.min(6, Math.max(2, Math.round(params.depth || 4)))
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)'
+      ctx.lineWidth = 1 * Math.max(1, W / 800)
+      for (let i = 1; i <= nRings; i++) {
+        const r = (i / nRings) * maxRpx
+        ctx.beginPath()
+        ctx.arc(center.x, center.y, r, 0, Math.PI * 2)
+        ctx.stroke()
+      }
+    }
 
     // Edges
     ctx.strokeStyle = color
