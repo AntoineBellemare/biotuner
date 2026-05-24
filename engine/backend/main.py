@@ -657,7 +657,7 @@ async def compute_timbre(request: TimbreComputeRequest):
     and its own client-side Web Audio additive synth preview.
     """
     try:
-        return timbre_service.compute_timbre(request.dict(exclude_none=False))
+        return timbre_service.compute_timbre(request.model_dump(exclude_none=False))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -679,7 +679,7 @@ async def export_timbre(format: str, request: TimbreComputeRequest):
         tmpdir = tempfile.mkdtemp(prefix=f"timbre_{format}_")
         result = timbre_service.export_to_format(
             format=format,
-            req=request.dict(exclude_none=False),
+            req=request.model_dump(exclude_none=False),
             out_dir=tmpdir,
         )
 

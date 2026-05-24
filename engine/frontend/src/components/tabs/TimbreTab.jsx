@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 
 import SpectrumViz from '../timbre/SpectrumViz'
+import WaveformViz from '../timbre/WaveformViz'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
   buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob,
@@ -40,18 +41,21 @@ const MATCHING_METHODS = [
 ]
 
 // Scale variants — the canonical SCALE_KEYS vocabulary, plus an empty
-// option that uses the default "first available" behaviour.
+// option that uses the default "first available" behaviour. Maps from
+// the dropdown value to (a) the label shown to the user and (b) the
+// analysisResult key we look at to decide whether this scale is even
+// available — keeps the dropdown honest.
 const SCALE_PRIORITY_OPTIONS = [
-  { value: '',                          label: 'Default (best available)' },
-  { value: 'peaks_ratios_cons',         label: 'Consonance-filtered peaks' },
-  { value: 'peaks_ratios',              label: 'Raw peak ratios' },
-  { value: 'extended_peaks_ratios_cons',label: 'Extended cons. ratios' },
-  { value: 'extended_peaks_ratios',     label: 'Extended raw ratios' },
-  { value: 'diss_scale',                label: 'Dissonance-curve minima' },
-  { value: 'HE',                        label: 'Harmonic-entropy minima' },
-  { value: 'euler_fokker',              label: 'Euler-Fokker' },
-  { value: 'harm_tuning',               label: 'Harmonic tuning' },
-  { value: 'harm_fit',                  label: 'Harmonic-fit tuning' },
+  { value: '',                          label: 'Default (best available)', key: null },
+  { value: 'peaks_ratios_cons',         label: 'Consonance-filtered peaks', key: 'peaks_ratios_cons' },
+  { value: 'peaks_ratios',              label: 'Raw peak ratios',          key: 'peaks_ratios' },
+  { value: 'extended_peaks_ratios_cons',label: 'Extended cons. ratios',    key: 'extended_peaks_ratios_cons' },
+  { value: 'extended_peaks_ratios',     label: 'Extended raw ratios',      key: 'extended_peaks_ratios' },
+  { value: 'diss_scale',                label: 'Dissonance-curve minima',  key: 'diss_scale' },
+  { value: 'HE',                        label: 'Harmonic-entropy minima',  key: 'HE_scale' },
+  { value: 'euler_fokker',              label: 'Euler-Fokker',             key: 'euler_fokker' },
+  { value: 'harm_tuning',               label: 'Harmonic tuning',          key: 'harm_tuning_scale' },
+  { value: 'harm_fit',                  label: 'Harmonic-fit tuning',      key: 'harm_fit_tuning_scale' },
 ]
 
 // Single-click export targets. Each one is one call to /api/timbre/export.
@@ -118,6 +122,23 @@ export default function TimbreTab({ analysisResult }) {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisResult, designKey])
+
+  // --------- Available scales (what the analysis actually produced) ----
+  // The dropdown shows every option in the vocabulary, but marks the
+  // ones the current analysis didn't compute as disabled with a clear
+  // "(not computed)" suffix. Prevents the silent "I picked X but the
+  // partials didn't change" confusion when the chosen scale falls
+  // through to the default behaviour.
+  const scaleAvailability = useMemo(() => {
+    if (!analysisResult) return {}
+    const m = {}
+    for (const opt of SCALE_PRIORITY_OPTIONS) {
+      if (!opt.key) { m[opt.value] = true; continue }
+      const v = analysisResult[opt.key]
+      m[opt.value] = Array.isArray(v) && v.length > 0
+    }
+    return m
+  }, [analysisResult])
 
   // --------- Default preview freq from the analysis ----------------------
   const defaultPreviewFreq = useMemo(() => {
@@ -338,9 +359,25 @@ export default function TimbreTab({ analysisResult }) {
               soloIndex={soloIdx}
               modulationStrength={modStrength}
               onPartialClick={handlePartialClick}
-              height={300}
+              height={260}
             />
           </div>
+          {/* Time-domain waveform — same data as the spectrum but as a
+              wave. This is the shape exported wavetables store; seeing
+              it makes the "what does my voice actually sound like"
+              question concrete before pressing Preview. */}
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-biotuner-light/40">
+            <span>Waveform (1 cycle of fundamental)</span>
+            <span>{nPartials > 0 ? `${nPartials} partials sum` : ''}</span>
+          </div>
+          <WaveformViz
+            timbre={timbre}
+            animated={animated && nMods > 0}
+            modulationStrength={modStrength}
+            mutedIndices={mutedIdx}
+            soloIndex={soloIdx}
+            height={130}
+          />
 
           {/* Spectrum toolbar */}
           <div className="flex flex-wrap items-center gap-2">
@@ -472,10 +509,23 @@ export default function TimbreTab({ analysisResult }) {
                 onChange={(e) => setScalePriority(e.target.value)}
                 className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded-md p-2 text-sm"
               >
-                {SCALE_PRIORITY_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
+                {SCALE_PRIORITY_OPTIONS.map((o) => {
+                  const available = scaleAvailability[o.value]
+                  return (
+                    <option key={o.value} value={o.value} disabled={!available}>
+                      {o.label}{available ? '' : ' — not computed'}
+                    </option>
+                  )
+                })}
               </select>
+              {matchingMethod === 'harmonic_input' && scalePriority === 'peaks_ratios' && (
+                <p className="text-[10px] text-biotuner-light/40 mt-1 leading-snug">
+                  Note: with the direct matching method, "Raw peak ratios" produces the
+                  same partials as the default — they're mathematically equivalent
+                  (base_freq × peaks_ratios = peaks). Pick a non-trivial scale or change
+                  the matching method to see different partials.
+                </p>
+              )}
             </div>
           </div>
 
