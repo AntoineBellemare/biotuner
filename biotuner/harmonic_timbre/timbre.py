@@ -194,6 +194,284 @@ class Timbre:
         return self.amplitudes * (peak / m)
 
     # ------------------------------------------------------------------
+    # HarmonicInput → Timbre adapter
+    # ------------------------------------------------------------------
+    @classmethod
+    def from_harmonic_input(cls, hi: Any, **overrides) -> "Timbre":
+        """Build a :class:`Timbre` from a :class:`HarmonicInput` descriptor.
+
+        Direct mapping — Phase-1 fields only:
+
+        ============================  ============================
+        ``HarmonicInput`` field        ``Timbre`` field
+        ============================  ============================
+        ``peaks`` (or ``ratios``)      ``partials_hz``
+        ``amplitudes`` (or uniform)    ``amplitudes``
+        ``phases``                     ``phases``
+        ``linewidths``                 ``decay_times`` (1/π·lw), ``bandwidths``
+        ``aperiodic_exponent``         ``spectral_tilt``
+        ``spectral_flatness``          ``noise_floor``
+        ``ratios``                     ``matched_tuning``
+        ``base_freq``                  ``base_freq``
+        ``ratios_source``              ``metadata['scale_source']``
+        ============================  ============================
+
+        Phase-3 fields (``am_modulators``, ``fm_modulators``, IMF layers,
+        etc.) are NOT populated by this method — those need biotuner-
+        only data and live on :meth:`Timbre.from_biotuner` via
+        ``attach_*`` augmentation. Use this method when you only have a
+        ``HarmonicInput`` (e.g. loaded from a saved analysis) and want
+        a complete, playable Phase-1 timbre.
+
+        Any keyword argument in ``overrides`` replaces the corresponding
+        field after the HI-derived defaults are computed — same shape
+        as the :class:`Timbre` constructor, useful for tweaking just
+        one or two fields without losing the HI mapping for the rest.
+        """
+        # Resolve partials. Prefer hi.peaks when present (absolute Hz);
+        # else reconstruct from base_freq * ratios via the public accessor.
+        partials = np.asarray(hi.to_peaks(), dtype=np.float64)
+        n = partials.shape[0]
+        if n == 0:
+            raise ValueError("HarmonicInput has no components; cannot build Timbre.")
+
+        # Amplitudes: prefer hi.amplitudes when supplied, else uniform.
+        if hi.amplitudes is not None:
+            amps = np.asarray(hi.amplitudes, dtype=np.float64)
+        else:
+            amps = np.full(n, 1.0 / n, dtype=np.float64)
+
+        # Phases: forward when present.
+        phases = (
+            np.asarray(hi.phases, dtype=np.float64)
+            if hi.phases is not None
+            else None
+        )
+
+        # Linewidths → (decay_times, bandwidths). decay = 1 / (π · lw),
+        # clipped to a finite ceiling for zero/negative linewidths.
+        decay_times = None
+        bandwidths = None
+        if hi.linewidths is not None:
+            lw_arr = np.asarray(hi.linewidths, dtype=np.float64)
+            safe = np.where(np.isfinite(lw_arr) & (lw_arr > 0), lw_arr, np.nan)
+            decay = 1.0 / (np.pi * safe)
+            decay = np.where(np.isfinite(decay), decay, 1e6)
+            decay_times = decay
+            bandwidths = lw_arr
+
+        # Scalars: forward straight through.
+        spectral_tilt = hi.aperiodic_exponent
+        noise_floor = hi.spectral_flatness
+
+        # matched_tuning records the ratio set; for HI-derived timbres we
+        # always carry hi.to_ratios() (works whether ratios or peaks were
+        # the canonical input).
+        matched_tuning = [float(r) for r in hi.to_ratios()]
+
+        # Metadata: propagate scale provenance + a few useful HI hints
+        # without leaking the full HarmonicInput.
+        meta: dict = {
+            "scale_source": hi.ratios_source,
+            "from_harmonic_input": True,
+        }
+        if hi.metadata:
+            # Don't overwrite scale_source if HI metadata had its own
+            # "source" key (legacy compute_biotuner provenance).
+            for k, v in hi.metadata.items():
+                meta.setdefault(k, v)
+
+        defaults = dict(
+            partials_hz=partials,
+            amplitudes=amps,
+            phases=phases,
+            decay_times=decay_times,
+            bandwidths=bandwidths,
+            spectral_tilt=spectral_tilt,
+            noise_floor=noise_floor,
+            base_freq=float(hi.base_freq),
+            matched_tuning=matched_tuning,
+            matching_method="harmonic_input",
+            metadata=meta,
+        )
+        # User overrides take precedence.
+        defaults.update(overrides)
+        timbre = cls(**defaults)
+        timbre.validate()
+        return timbre
+
+    # ------------------------------------------------------------------
+    # Phase-3 attach helpers: layer bt-only dynamic features onto an
+    # already-built Timbre. Each returns a NEW Timbre (immutable-style)
+    # whose ``am_modulators`` / ``fm_modulators`` list has been extended
+    # with the bt-derived routing. Use after ``from_harmonic_input`` to
+    # add modulation that HarmonicInput deliberately doesn't carry.
+    #
+    # Each method is a no-op (returns ``self``) when the relevant bt
+    # attribute is missing or empty — safe to chain unconditionally:
+    #
+    #     timbre = (
+    #         Timbre.from_harmonic_input(hi)
+    #               .attach_modulators_from_pac(bt)
+    #               .attach_modulators_from_cfc(bt)
+    #               .attach_intermodulation_modulators(bt)
+    #     )
+    # ------------------------------------------------------------------
+
+    def attach_modulators_from_pac(
+        self,
+        bt: Any,
+        *,
+        coupling_threshold: float = 0.0,
+        max_modulators: int = 16,
+    ) -> "Timbre":
+        """Append PAC-derived AM modulators to ``am_modulators``.
+
+        Reads ``bt.pac_freqs`` / ``bt.pac_coupling``; for each pair, the
+        partial nearest the high-frequency component becomes an AM
+        carrier modulated at the low-frequency component's rate.
+        Coupling strength sets AM depth (clipped to ``[0, 1]``).
+
+        Returns a new :class:`Timbre`. Returns ``self`` unchanged when
+        ``bt`` has no PAC data.
+
+        Parameters
+        ----------
+        coupling_threshold : float, default=0.0
+            Skip PAC pairs whose coupling falls below this.
+        max_modulators : int, default=16
+            Cap on appended modulators (strongest-coupling first).
+        """
+        from biotuner.harmonic_timbre.biotuner_mapping import (
+            map_pac_to_am_modulators,
+        )
+        new_mods = map_pac_to_am_modulators(
+            bt,
+            partials_hz=self.partials_hz,
+            coupling_threshold=coupling_threshold,
+            max_modulators=max_modulators,
+        )
+        if not new_mods:
+            return self
+        return self.with_partials(
+            am_modulators=list(self.am_modulators) + list(new_mods),
+        )
+
+    def attach_modulators_from_cfc(
+        self,
+        bt: Any,
+        *,
+        coupling_threshold: float = 0.0,
+        max_modulators: int = 16,
+        deviation_scale: float = 1.0,
+    ) -> "Timbre":
+        """Append CFC-derived FM modulators to ``fm_modulators``.
+
+        Reads ``bt.cfc_freqs`` / ``bt.cfc_coupling`` (falls back to
+        ``pac_freqs`` / ``pac_coupling`` when CFC is absent — many
+        pipelines only populate PAC). Each pair becomes an FM modulator
+        on the partial nearest the high-frequency component, modulated
+        at the low-frequency component's rate with deviation scaled by
+        coupling strength.
+
+        Returns a new :class:`Timbre`. Returns ``self`` unchanged when
+        ``bt`` has no CFC/PAC data.
+
+        Parameters
+        ----------
+        coupling_threshold : float, default=0.0
+        max_modulators : int, default=16
+        deviation_scale : float, default=1.0
+            ``1.0`` → audible strong FM; ``0.1`` → subtle vibrato.
+        """
+        from biotuner.harmonic_timbre.biotuner_mapping import (
+            map_cfc_to_fm_modulators,
+        )
+        new_mods = map_cfc_to_fm_modulators(
+            bt,
+            partials_hz=self.partials_hz,
+            coupling_threshold=coupling_threshold,
+            max_modulators=max_modulators,
+            deviation_scale=deviation_scale,
+        )
+        if not new_mods:
+            return self
+        return self.with_partials(
+            fm_modulators=list(self.fm_modulators) + list(new_mods),
+        )
+
+    def attach_intermodulation_modulators(
+        self,
+        bt: Any,
+        *,
+        mode: str = "AM",
+        max_modulators: int = 16,
+    ) -> "Timbre":
+        """Append intermodulation-derived modulators (AM or FM).
+
+        Reads ``bt.endogenous_intermodulations`` — pairs of
+        ``(f1, f2)`` frequencies whose sidebands at ``f1 ± f2`` are
+        present in the original signal. AM mode recreates those
+        sidebands; FM mode reinterprets the pair as carrier +
+        modulating frequency.
+
+        Returns a new :class:`Timbre`. Returns ``self`` unchanged when
+        no intermodulation data is present.
+
+        Parameters
+        ----------
+        mode : {'AM', 'FM'}, default='AM'
+            Literal sideband interpretation ('AM') or carrier+mod
+            interpretation ('FM').
+        max_modulators : int, default=16
+        """
+        if mode not in ("AM", "FM"):
+            raise ValueError(f"mode must be 'AM' or 'FM', got {mode!r}")
+        from biotuner.harmonic_timbre.biotuner_mapping import (
+            map_intermod_to_modulators,
+        )
+        new_mods = map_intermod_to_modulators(
+            bt,
+            partials_hz=self.partials_hz,
+            mode=mode,
+            max_modulators=max_modulators,
+        )
+        if not new_mods:
+            return self
+        bucket = "am_modulators" if mode == "AM" else "fm_modulators"
+        existing = getattr(self, bucket)
+        return self.with_partials(**{bucket: list(existing) + list(new_mods)})
+
+    # ------------------------------------------------------------------
+    # Compose every Phase-3 augmentation in one call
+    # ------------------------------------------------------------------
+    def attach_all_from_biotuner(
+        self,
+        bt: Any,
+        *,
+        pac: bool = True,
+        cfc: bool = True,
+        intermod: bool = True,
+        intermod_mode: str = "AM",
+    ) -> "Timbre":
+        """Apply every available Phase-3 augmentation from ``bt`` in one call.
+
+        Useful as the final step of ``Timbre.from_biotuner``-style flows:
+        chain HarmonicInput-derived Phase-1 fields with the bt-only
+        modulator attachments. Each individual augmentation is a no-op
+        when the corresponding bt data is absent, so this is safe to
+        call on any bt.
+        """
+        out = self
+        if pac:
+            out = out.attach_modulators_from_pac(bt)
+        if cfc:
+            out = out.attach_modulators_from_cfc(bt)
+        if intermod:
+            out = out.attach_intermodulation_modulators(bt, mode=intermod_mode)
+        return out
+
+    # ------------------------------------------------------------------
     # Functional update (immutable-style)
     # ------------------------------------------------------------------
     def with_partials(self, **changes) -> "Timbre":

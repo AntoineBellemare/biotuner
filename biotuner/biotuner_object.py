@@ -3323,6 +3323,40 @@ class compute_biotuner(object):
             print(vars(self))
         return
 
+    # ------------------------------------------------------------------
+    # Cross-module export
+    # ------------------------------------------------------------------
+    def to_harmonic_input(
+        self,
+        *,
+        scale_priority=None,
+        equave=2.0,
+        include_alternates=True,
+        include_spectrum=True,
+        include_fooof=True,
+    ):
+        """Return a :class:`~biotuner.harmonic_input.HarmonicInput` view.
+
+        Thin convenience wrapper around
+        :meth:`HarmonicInput.from_biotuner`; lets downstream code write
+        ``bt.to_harmonic_input(scale_priority=["HE", "peaks_ratios"])``
+        instead of importing the dataclass explicitly. All keyword
+        arguments are forwarded verbatim. The lazy import keeps
+        :mod:`biotuner.harmonic_geometry` from being pulled in at module
+        load time.
+        """
+        # Lazy import — avoids forcing harmonic_geometry to load just because
+        # someone constructed a compute_biotuner without ever calling this.
+        from biotuner.harmonic_input import HarmonicInput
+        return HarmonicInput.from_biotuner(
+            self,
+            equave=equave,
+            scale_priority=scale_priority,
+            include_alternates=include_alternates,
+            include_spectrum=include_spectrum,
+            include_fooof=include_fooof,
+        )
+
 
 def fit_biotuner(ts, bt_dict):
     """
