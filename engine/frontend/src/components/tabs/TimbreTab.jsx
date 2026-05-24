@@ -21,7 +21,7 @@ import WaveformViz from '../timbre/WaveformViz'
 import WavetableStudio from '../timbre/WavetableStudio'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
-  buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob,
+  buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob, deriveScales,
 } from '../../services/timbre/api'
 
 // ---------------------------------------------------------------------------
@@ -42,21 +42,22 @@ const MATCHING_METHODS = [
 ]
 
 // Scale variants — the canonical SCALE_KEYS vocabulary, plus an empty
-// option that uses the default "first available" behaviour. Maps from
-// the dropdown value to (a) the label shown to the user and (b) the
-// analysisResult key we look at to decide whether this scale is even
-// available — keeps the dropdown honest.
+// "default" option. The dropdown shows everything but disables (and
+// labels " — not computed") any scale that the current analysis didn't
+// actually produce. Availability is determined by deriveScales() in
+// services/timbre/api.js, which maps the analyze endpoint's chosen
+// ``tuning`` to the right SCALE_KEYS slot based on tuning_method.
 const SCALE_PRIORITY_OPTIONS = [
-  { value: '',                          label: 'Default (best available)', key: null },
-  { value: 'peaks_ratios_cons',         label: 'Consonance-filtered peaks', key: 'peaks_ratios_cons' },
-  { value: 'peaks_ratios',              label: 'Raw peak ratios',          key: 'peaks_ratios' },
-  { value: 'extended_peaks_ratios_cons',label: 'Extended cons. ratios',    key: 'extended_peaks_ratios_cons' },
-  { value: 'extended_peaks_ratios',     label: 'Extended raw ratios',      key: 'extended_peaks_ratios' },
-  { value: 'diss_scale',                label: 'Dissonance-curve minima',  key: 'diss_scale' },
-  { value: 'HE',                        label: 'Harmonic-entropy minima',  key: 'HE_scale' },
-  { value: 'euler_fokker',              label: 'Euler-Fokker',             key: 'euler_fokker' },
-  { value: 'harm_tuning',               label: 'Harmonic tuning',          key: 'harm_tuning_scale' },
-  { value: 'harm_fit',                  label: 'Harmonic-fit tuning',      key: 'harm_fit_tuning_scale' },
+  { value: '',                          label: 'Default (best available)' },
+  { value: 'peaks_ratios_cons',         label: 'Consonance-filtered peaks' },
+  { value: 'peaks_ratios',              label: 'Raw peak ratios' },
+  { value: 'extended_peaks_ratios_cons',label: 'Extended cons. ratios' },
+  { value: 'extended_peaks_ratios',     label: 'Extended raw ratios' },
+  { value: 'diss_scale',                label: 'Dissonance-curve minima' },
+  { value: 'HE',                        label: 'Harmonic-entropy minima' },
+  { value: 'euler_fokker',              label: 'Euler-Fokker' },
+  { value: 'harm_tuning',               label: 'Harmonic tuning' },
+  { value: 'harm_fit',                  label: 'Harmonic-fit tuning' },
 ]
 
 // Single-click export targets. Each one is one call to /api/timbre/export.
@@ -125,21 +126,25 @@ export default function TimbreTab({ analysisResult }) {
   }, [analysisResult, designKey])
 
   // --------- Available scales (what the analysis actually produced) ----
-  // The dropdown shows every option in the vocabulary, but marks the
-  // ones the current analysis didn't compute as disabled with a clear
-  // "(not computed)" suffix. Prevents the silent "I picked X but the
-  // partials didn't change" confusion when the chosen scale falls
-  // through to the default behaviour.
+  // Use the canonical deriveScales() so the dropdown and the request
+  // builder both see the same truth. The analyze endpoint stuffs the
+  // user's chosen tuning into a single ``tuning`` field labelled by
+  // ``tuning_method`` — deriveScales unpacks that back into the
+  // SCALE_KEYS vocabulary so e.g. choosing 'diss_curve' at analysis
+  // time lights up the 'Dissonance-curve minima' dropdown option here.
+  const availableScales = useMemo(
+    () => deriveScales(analysisResult),
+    [analysisResult],
+  )
   const scaleAvailability = useMemo(() => {
-    if (!analysisResult) return {}
-    const m = {}
+    const m = { '': true }  // default always available
     for (const opt of SCALE_PRIORITY_OPTIONS) {
-      if (!opt.key) { m[opt.value] = true; continue }
-      const v = analysisResult[opt.key]
+      if (!opt.value) continue
+      const v = availableScales[opt.value]
       m[opt.value] = Array.isArray(v) && v.length > 0
     }
     return m
-  }, [analysisResult])
+  }, [availableScales])
 
   // --------- Default preview freq from the analysis ----------------------
   const defaultPreviewFreq = useMemo(() => {
