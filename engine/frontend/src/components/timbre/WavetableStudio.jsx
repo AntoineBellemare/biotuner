@@ -106,73 +106,168 @@ function MainWaveCanvas({ samples, height = 200, animated = false, rate = 4 }) {
 }
 
 // ============================================================================
-// Strip of frame thumbnails (low-DPR, compact, click to jump)
+// StackedFramesView — Ableton-style isometric wavetable stack.
+//
+// All frames rendered as polylines in a single canvas, each one offset
+// in (x, y) so they recede into the distance. Drawn back-to-front (so
+// the front frame visually overlaps the back ones). Color picks up a
+// violet → cyan gradient from back to front; the current frame is
+// emphasised with a thicker stroke and a cyan accent dot at frame 0.
+//
+// Click anywhere on the canvas → jump to the nearest frame's "anchor
+// point" along the depth axis. Drag (mousemove with button held) →
+// continuous scrub. The whole thing is a click-target so the user
+// can grab any visible frame.
 // ============================================================================
-function FrameStrip({ frames, currentIdx, onJump, height = 56 }) {
+function StackedFramesView({ frames, currentIdx, onJump, height = 240 }) {
+  const canvasRef = useRef(null)
   const wrapRef = useRef(null)
-  const [frameWidth, setFrameWidth] = useState(40)
+  // Layout constants — tuned to look like Ableton's Wavetable view.
+  // The depth axis runs up-and-right from the bottom-left corner.
+  const DEPTH_X_FRAC = 0.32   // fraction of width devoted to depth offset
+  const DEPTH_Y_FRAC = 0.55   // fraction of height devoted to depth offset
+  const AMP_FRAC     = 0.28   // fraction of height for each frame's amplitude
+  const draggingRef = useRef(false)
+
   useEffect(() => {
-    if (!wrapRef.current) return
-    const compute = () => {
-      const w = wrapRef.current.clientWidth
-      // Aim for ~10–24 thumbnails visible; size each one to fit cleanly.
-      // Scrollable horizontally if there are more than fit.
-      const desired = Math.max(28, Math.min(64, Math.floor((w - 8) / frames.length) - 4))
-      setFrameWidth(desired)
+    if (!canvasRef.current || !wrapRef.current) return
+    const draw = () => {
+      const c = canvasRef.current
+      if (!c) return
+      const cssW = wrapRef.current.clientWidth
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      c.style.width  = `${cssW}px`
+      c.style.height = `${height}px`
+      c.width  = Math.round(cssW * dpr)
+      c.height = Math.round(height * dpr)
+      const ctx = c.getContext('2d')
+      const W = c.width
+      const H = c.height
+      ctx.clearRect(0, 0, W, H)
+
+      const N = frames.length
+      if (N === 0) return
+
+      // Available footprint for the wave + depth offset.
+      const padX = 10 * dpr
+      const padY = 10 * dpr
+      const usableW = W - 2 * padX
+      const usableH = H - 2 * padY
+      const depthX = usableW * DEPTH_X_FRAC
+      const depthY = usableH * DEPTH_Y_FRAC
+      const stepX = N > 1 ? depthX / (N - 1) : 0
+      const stepY = N > 1 ? depthY / (N - 1) : 0
+      const waveW = usableW - depthX
+      const ampH  = usableH * AMP_FRAC
+
+      // Subtle depth-axis line so the perspective reads even when the
+      // wavetable is mostly silent.
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)'
+      ctx.lineWidth = 1 * dpr
+      ctx.beginPath()
+      ctx.moveTo(padX, H - padY)
+      ctx.lineTo(padX + depthX, H - padY - depthY)
+      ctx.stroke()
+
+      // Draw frames back-to-front so the front frame visually wins
+      // overlapping pixels. "Back" = highest index here.
+      for (let i = N - 1; i >= 0; i--) {
+        const samples = frames[i]
+        if (!samples || samples.length === 0) continue
+        const ox = padX + i * stepX
+        const oy = padY + (depthY - i * stepY) + (usableH - depthY) / 2
+        const isCurrent = i === currentIdx
+        // Color: hue interpolates violet (back) → cyan (front) with the
+        // current frame snapped to a saturated cyan accent regardless of
+        // position. Alpha rises toward the front so depth reads naturally.
+        const t = N > 1 ? (1 - i / (N - 1)) : 1
+        const hue = 280 - 100 * t   // 280 (violet) → 180 (cyan)
+        const alpha = 0.18 + 0.55 * t
+        if (isCurrent) {
+          ctx.strokeStyle = '#06b6d4'
+          ctx.lineWidth = 2.2 * dpr
+          ctx.shadowColor = 'rgba(6, 182, 212, 0.7)'
+          ctx.shadowBlur = 8 * dpr
+        } else {
+          ctx.strokeStyle = `hsla(${hue}, 70%, 62%, ${alpha})`
+          ctx.lineWidth = 1.2 * dpr
+          ctx.shadowBlur = 0
+        }
+        ctx.beginPath()
+        const S = samples.length
+        for (let s = 0; s < S; s++) {
+          const sampleX = (s / (S - 1)) * waveW
+          const sampleY = -samples[s] * (ampH / 2)
+          const sx = ox + sampleX
+          const sy = oy + sampleY
+          if (s === 0) ctx.moveTo(sx, sy)
+          else ctx.lineTo(sx, sy)
+        }
+        ctx.stroke()
+      }
+      ctx.shadowBlur = 0
+
+      // Frame index labels at the two extremes — helps users orient
+      // themselves to the depth axis when the wavetable is dense.
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'
+      ctx.font = `${10 * dpr}px ui-monospace, monospace`
+      ctx.textAlign = 'left'
+      ctx.fillText('1', padX - 2 * dpr, H - padY + 12 * dpr)
+      ctx.fillText(`${N}`, padX + depthX, padY + depthY / 2 - 4 * dpr)
     }
-    compute()
-    const ro = new ResizeObserver(compute)
+    draw()
+    const ro = new ResizeObserver(draw)
     ro.observe(wrapRef.current)
     return () => ro.disconnect()
-  }, [frames])
+  }, [frames, currentIdx, height])
+
+  // Click / drag → jump to nearest frame.
+  // Compute the inverse mapping: given pointer (px, py) inside canvas,
+  // find the frame whose anchor (ox, oy) is closest.
+  const handlePoint = (e) => {
+    const c = canvasRef.current
+    if (!c) return
+    const rect = c.getBoundingClientRect()
+    const dpr = c.width / rect.width
+    const px = (e.clientX - rect.left) * dpr
+    const py = (e.clientY - rect.top) * dpr
+    const W = c.width
+    const H = c.height
+    const N = frames.length
+    if (N === 0) return
+    const padX = 10 * dpr
+    const padY = 10 * dpr
+    const usableW = W - 2 * padX
+    const usableH = H - 2 * padY
+    const depthX = usableW * DEPTH_X_FRAC
+    const depthY = usableH * DEPTH_Y_FRAC
+    const stepX = N > 1 ? depthX / (N - 1) : 0
+    const stepY = N > 1 ? depthY / (N - 1) : 0
+    let best = 0
+    let bestD = Infinity
+    for (let i = 0; i < N; i++) {
+      const ox = padX + i * stepX + (usableW - depthX) * 0.5   // anchor = mid of wave
+      const oy = padY + (depthY - i * stepY) + (usableH - depthY) / 2
+      const d = (px - ox) * (px - ox) + (py - oy) * (py - oy)
+      if (d < bestD) { bestD = d; best = i }
+    }
+    onJump(best)
+  }
+  const onDown = (e) => { draggingRef.current = true;  handlePoint(e) }
+  const onMove = (e) => { if (draggingRef.current) handlePoint(e) }
+  const onUp   = ()   => { draggingRef.current = false }
 
   return (
-    <div ref={wrapRef} className="w-full overflow-x-auto">
-      <div className="flex gap-1 pb-1" style={{ minWidth: 'min-content' }}>
-        {frames.map((samples, i) => (
-          <FrameThumb
-            key={i}
-            samples={samples}
-            isCurrent={i === currentIdx}
-            width={frameWidth}
-            height={height}
-            onClick={() => onJump(i)}
-            idx={i}
-          />
-        ))}
-      </div>
+    <div ref={wrapRef} className="w-full bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600">
+      <canvas
+        ref={canvasRef}
+        className="block w-full cursor-crosshair"
+        onMouseDown={onDown}
+        onMouseMove={onMove}
+        onMouseUp={onUp}
+        onMouseLeave={onUp}
+      />
     </div>
-  )
-}
-
-function FrameThumb({ samples, isCurrent, width, height, onClick, idx }) {
-  const ref = useRef(null)
-  useEffect(() => {
-    if (!ref.current) return
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    ref.current.width  = Math.round(width * dpr)
-    ref.current.height = Math.round(height * dpr)
-    ref.current.style.width  = `${width}px`
-    ref.current.style.height = `${height}px`
-    const ctx = ref.current.getContext('2d')
-    drawWave(ctx, samples, ref.current.width, ref.current.height, {
-      color: isCurrent ? '#a78bfa' : 'rgba(167,139,250,0.4)',
-      lineWidth: (isCurrent ? 1.5 : 1) * dpr,
-      showAxis: false,
-      padTop: 2 * dpr, padBot: 2 * dpr,
-    })
-  }, [samples, isCurrent, width, height])
-  return (
-    <button
-      onClick={onClick}
-      title={`Frame ${idx + 1}`}
-      className={`flex-shrink-0 rounded border transition-colors
-        ${isCurrent
-          ? 'border-biotuner-primary bg-biotuner-primary/10'
-          : 'border-biotuner-dark-600 bg-biotuner-dark-900 hover:border-biotuner-accent/50'}`}
-    >
-      <canvas ref={ref} className="block" />
-    </button>
   )
 }
 
@@ -369,13 +464,28 @@ export default function WavetableStudio({ requestPayload }) {
         </div>
       )}
 
-      {/* Frame strip */}
+      {/* Stacked frames view — Ableton-style isometric stack. Renders
+          every frame as a polyline in one canvas, offset so they recede
+          into depth. The current frame is highlighted in cyan with a
+          glow; back frames fade through a violet→cyan gradient. Click
+          or drag on the canvas to jump to a frame. */}
       {wavetable && wavetable.frames.length > 1 && (
-        <FrameStrip
-          frames={wavetable.frames}
-          currentIdx={currentIdx}
-          onJump={(i) => { setAnimPlaying(false); setCurrentIdx(i) }}
-        />
+        <div>
+          <div className="flex items-baseline justify-between mb-1.5">
+            <span className="text-[10px] uppercase tracking-wider text-biotuner-light/40">
+              Wavetable stack (click or drag to scrub)
+            </span>
+            <span className="text-[10px] font-mono text-biotuner-light/40">
+              frame 1 → frame {wavetable.frames.length}
+            </span>
+          </div>
+          <StackedFramesView
+            frames={wavetable.frames}
+            currentIdx={currentIdx}
+            onJump={(i) => { setAnimPlaying(false); setCurrentIdx(i) }}
+            height={220}
+          />
+        </div>
       )}
     </div>
   )
