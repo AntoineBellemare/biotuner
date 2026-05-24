@@ -61,6 +61,20 @@ export default function KeyboardTab({ analysisResult }) {
   // String IDs so on-screen keys, computer-shortcut keys and MIDI notes
   // can all share one "is pressed" Set.
   const [activeIds, setActiveIds] = useState(() => new Set())
+  // Per-voice envelope, live-editable. Voice change snaps these back to
+  // the picked voice's preset; further user tweaks override on top.
+  const [attack,  setAttack]  = useState(VOICES.triangle.env.attack)
+  const [decay,   setDecay]   = useState(VOICES.triangle.env.decay)
+  const [sustain, setSustain] = useState(VOICES.triangle.env.sustain)
+  const [release, setRelease] = useState(VOICES.triangle.env.release)
+  // Master volume in Tone's dB scale. -8 dB matches the polyphonic
+  // chord-tab synth so cross-tab volume stays roughly consistent.
+  const [volume,  setVolume]  = useState(-8)
+  // Sustain pedal — when on, keyup / mouseup / touchend silently queue
+  // the release; the actual triggerRelease fires when sustain goes off.
+  // Hold spacebar to engage temporarily, or click the toggle to latch.
+  const [sustainOn, setSustainOn] = useState(false)
+  const pendingReleasesRef = useRef(new Set())   // freqs queued for release
   // WebMIDI state.
   const [midiInputs, setMidiInputs] = useState([])
   const [midiInputId, setMidiInputId] = useState('')
@@ -73,6 +87,11 @@ export default function KeyboardTab({ analysisResult }) {
   // The voice that the currently-built synth uses; lets us lazy-rebuild
   // only when the user actually changes it.
   const builtVoiceRef = useRef(null)
+  // Mirror sustainOn in a ref so releaseKey reads the current value even
+  // when called from a stale closure (the keyboard / MIDI listeners
+  // don't re-bind on every state change).
+  const sustainOnRef = useRef(false)
+  useEffect(() => { sustainOnRef.current = sustainOn }, [sustainOn])
 
   // Sync defaultBase when a new analysis result arrives.
   useEffect(() => {
@@ -115,8 +134,8 @@ export default function KeyboardTab({ analysisResult }) {
     const v = VOICES[voice] || VOICES.triangle
     synthRef.current = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: v.type },
-      envelope: v.env,
-      volume: -8,
+      envelope: { attack, decay, sustain, release },
+      volume,
     }).toDestination()
     builtVoiceRef.current = voice
     return synthRef.current
@@ -135,12 +154,50 @@ export default function KeyboardTab({ analysisResult }) {
     setActiveIds(new Set())
   }
 
-  // Voice change → drop the current synth so the next note builds fresh.
+  // Voice change → snap the ADSR sliders back to the new voice's preset
+  // AND drop the current synth so the next note rebuilds with the right
+  // oscillator type (PolySynth's `oscillator.type` is set at construction
+  // and can't be hot-swapped via .set()).
   useEffect(() => {
+    const v = VOICES[voice] || VOICES.triangle
+    setAttack(v.env.attack)
+    setDecay(v.env.decay)
+    setSustain(v.env.sustain)
+    setRelease(v.env.release)
     if (synthRef.current && builtVoiceRef.current !== voice) {
       killSynth()
     }
   }, [voice])
+
+  // Live ADSR + volume tweak — pushed into the running PolySynth via
+  // .set() so the user can drag sliders and hear it on the next note
+  // without losing the currently-held ones.
+  useEffect(() => {
+    if (!synthRef.current) return
+    try {
+      synthRef.current.set({
+        envelope: { attack, decay, sustain, release },
+        volume,
+      })
+    } catch { /* ignore */ }
+  }, [attack, decay, sustain, release, volume])
+
+  // Sustain pedal up → flush any pending releases (notes the user
+  // already lifted while the pedal was down).
+  useEffect(() => {
+    if (sustainOn) return
+    if (!pendingReleasesRef.current.size) return
+    const synth = synthRef.current
+    pendingReleasesRef.current.forEach((freq) => {
+      if (synth) {
+        try { synth.triggerRelease(freq) } catch { /* ignore */ }
+      }
+    })
+    pendingReleasesRef.current.clear()
+    // Clear the visual highlight for keys we held only via the pedal.
+    // Anything still physically held will re-attack on the next event.
+    setActiveIds(new Set())
+  }, [sustainOn])
 
   // Unmount: tear everything down so background notes don't bleed
   // when the user switches tabs or leaves the page.
@@ -154,9 +211,21 @@ export default function KeyboardTab({ analysisResult }) {
   }, [])
 
   // ----- Press / release ------------------------------------------------
+  //
+  // Both functions are defined fresh on every render (they close over
+  // current state). The keyboard listener useEffect below also re-binds
+  // them whenever they could be stale; we DON'T guard on activeIds.has
+  // here because (a) the event filters already prevent repeated attacks
+  // via `e.repeat`, and (b) any guard that reads activeIds would
+  // short-circuit on stale captured state and prevent legitimate
+  // releases — the original cause of the "computer keyboard notes
+  // hang forever" bug.
   const pressKey = async (key) => {
-    if (activeIds.has(key.id)) return
     const synth = await ensureSynth()
+    // Re-pressing a key that's still in the pending-release queue
+    // (sustain on, then re-attack): clear it so the release doesn't
+    // fire when the pedal lifts.
+    pendingReleasesRef.current.delete(key.freq)
     try { synth.triggerAttack(key.freq) } catch (err) { console.warn(err) }
     setActiveIds((prev) => {
       const next = new Set(prev)
@@ -166,7 +235,13 @@ export default function KeyboardTab({ analysisResult }) {
   }
 
   const releaseKey = (key) => {
-    if (!activeIds.has(key.id)) return
+    // Sustain pedal: queue the release; don't actually drop the note.
+    // The visual highlight follows the pedal, not the physical key, so
+    // it stays lit while sustaining (intuitive piano behaviour).
+    if (sustainOnRef.current) {
+      pendingReleasesRef.current.add(key.freq)
+      return
+    }
     if (synthRef.current) {
       try { synthRef.current.triggerRelease(key.freq) } catch { /* ignore */ }
     }
@@ -193,8 +268,17 @@ export default function KeyboardTab({ analysisResult }) {
     }
 
     const onDown = (e) => {
-      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
       if (isTypingTarget(e.target)) return
+      // Spacebar → engage sustain pedal while held.
+      if (e.code === 'Space') {
+        if (!e.repeat) {
+          e.preventDefault()
+          setSustainOn(true)
+        }
+        return
+      }
+      if (e.repeat) return
       const ch = e.key.toLowerCase()
       if (ch === 'z') { setBaseOctaveShift((s) => Math.max(-3, s - 1)); return }
       if (ch === 'x') { setBaseOctaveShift((s) => Math.min(3, s + 1)); return }
@@ -206,6 +290,11 @@ export default function KeyboardTab({ analysisResult }) {
     }
     const onUp = (e) => {
       if (isTypingTarget(e.target)) return
+      if (e.code === 'Space') {
+        e.preventDefault()
+        setSustainOn(false)
+        return
+      }
       const ch = e.key.toLowerCase()
       const key = byChar.get(ch)
       if (key) {
@@ -488,6 +577,119 @@ export default function KeyboardTab({ analysisResult }) {
         </p>
       </div>
 
+      {/* Envelope + volume + sustain controls.
+          Live-update the running synth via .set(); changes take effect
+          on the next note. ADSR ranges chosen to span "pluck" → "pad":
+          attack up to 2 s gives slow rises; release up to 5 s gives
+          long pad tails. The "All notes off" panic button is a hard
+          synth-dispose for the rare case where a stuck note slips
+          through (e.g. a touch event lost on iOS scroll). */}
+      <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-3 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <span className="text-sm font-medium text-biotuner-accent">Envelope &amp; sustain</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSustainOn((s) => !s)}
+              aria-pressed={sustainOn}
+              title="Hold notes after key release (also: hold Space)"
+              className={`min-h-[32px] text-xs px-3 py-1.5 rounded border transition-colors
+                ${sustainOn
+                  ? 'bg-biotuner-primary/25 border-biotuner-primary text-biotuner-primary'
+                  : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-primary/50'}`}
+            >
+              {sustainOn ? '⌁ Sustain on' : '⌁ Sustain off'}
+            </button>
+            <button
+              onClick={() => {
+                if (synthRef.current) {
+                  try { synthRef.current.releaseAll() } catch { /* ignore */ }
+                }
+                pendingReleasesRef.current.clear()
+                midiActiveFreqsRef.current.clear()
+                setActiveIds(new Set())
+              }}
+              title="Force-release every note (panic button for stuck notes)"
+              className="min-h-[32px] text-xs px-3 py-1.5 rounded bg-red-500/10 border border-red-500/40 text-red-300 hover:bg-red-500/20"
+            >
+              ✕ All notes off
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+          {/* Attack */}
+          <div>
+            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+              <span className="text-biotuner-light/50">Attack</span>
+              <span className="text-biotuner-primary/80 font-mono">{attack.toFixed(2)}s</span>
+            </div>
+            <input
+              type="range"
+              min={0.001} max={2} step={0.001}
+              value={attack}
+              onChange={(e) => setAttack(parseFloat(e.target.value))}
+              className="w-full accent-biotuner-primary"
+            />
+          </div>
+          {/* Decay */}
+          <div>
+            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+              <span className="text-biotuner-light/50">Decay</span>
+              <span className="text-biotuner-primary/80 font-mono">{decay.toFixed(2)}s</span>
+            </div>
+            <input
+              type="range"
+              min={0.01} max={2} step={0.01}
+              value={decay}
+              onChange={(e) => setDecay(parseFloat(e.target.value))}
+              className="w-full accent-biotuner-primary"
+            />
+          </div>
+          {/* Sustain level */}
+          <div>
+            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+              <span className="text-biotuner-light/50">Sustain</span>
+              <span className="text-biotuner-primary/80 font-mono">{(sustain * 100).toFixed(0)}%</span>
+            </div>
+            <input
+              type="range"
+              min={0} max={1} step={0.01}
+              value={sustain}
+              onChange={(e) => setSustain(parseFloat(e.target.value))}
+              className="w-full accent-biotuner-primary"
+            />
+          </div>
+          {/* Release */}
+          <div>
+            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+              <span className="text-biotuner-light/50">Release</span>
+              <span className="text-biotuner-primary/80 font-mono">{release.toFixed(2)}s</span>
+            </div>
+            <input
+              type="range"
+              min={0.05} max={5} step={0.05}
+              value={release}
+              onChange={(e) => setRelease(parseFloat(e.target.value))}
+              className="w-full accent-biotuner-primary"
+            />
+          </div>
+          {/* Volume — Tone uses dB; -60 ≈ silence, 0 = unity */}
+          <div className="col-span-2 sm:col-span-1">
+            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+              <span className="text-biotuner-light/50">Volume</span>
+              <span className="text-biotuner-accent/80 font-mono">{volume}dB</span>
+            </div>
+            <input
+              type="range"
+              min={-40} max={0} step={1}
+              value={volume}
+              onChange={(e) => setVolume(parseInt(e.target.value, 10))}
+              className="w-full accent-biotuner-accent"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* The keys */}
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex gap-1 min-w-fit pb-2">
@@ -551,7 +753,8 @@ export default function KeyboardTab({ analysisResult }) {
         </span>
         <kbd className="font-mono">a s d f g h j k l ; '</kbd> play notes ·
         <kbd className="font-mono ml-2">q w e r t y …</kbd> second octave ·
-        <kbd className="font-mono ml-2">z</kbd>/<kbd className="font-mono">x</kbd> octave shift
+        <kbd className="font-mono ml-2">z</kbd>/<kbd className="font-mono">x</kbd> octave shift ·
+        <kbd className="font-mono ml-2">Space</kbd> sustain pedal
       </div>
     </div>
   )
