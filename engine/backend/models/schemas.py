@@ -121,6 +121,46 @@ class HarmonicGeometryRequest(BaseModel):
     base_freq: float = Field(default=1.0, gt=0)
 
 
+class TimbreComputeRequest(BaseModel):
+    """Build a Timbre from an analysis snapshot + user design choices.
+
+    ``peaks`` is required; everything else is optional Tier-A spectral
+    context (mirrors the HarmonicInput schema). The frontend sends
+    whatever the analysis produced; the backend assembles HI + Timbre.
+
+    Modulator source data (PAC/CFC/intermod) is opt-in — when present,
+    the corresponding modulators get attached to the Timbre and shown
+    in the routing-matrix viz. ``enabled_modulators`` is a mod-id →
+    bool dict that lets the user toggle individual modulators on/off
+    without re-extracting from the analysis.
+    """
+    # Required spectral content
+    peaks: List[float]
+    amps: Optional[List[float]] = None
+    phases: Optional[List[float]] = None
+    linewidths: Optional[List[float]] = None
+    # Scalar spectral metadata
+    aperiodic_exponent: Optional[float] = None
+    spectral_flatness: Optional[float] = None
+    # Scale variants, keyed by SCALE_KEYS vocabulary
+    scales: Optional[Dict[str, List[float]]] = None
+    # Modulator sources
+    pac_freqs: Optional[List[List[float]]] = None      # [[low, high], ...]
+    pac_coupling: Optional[List[float]] = None
+    cfc_freqs: Optional[List[List[float]]] = None
+    cfc_coupling: Optional[List[float]] = None
+    intermodulations: Optional[List[List[float]]] = None  # [[f1, f2], ...]
+    # User design choices
+    scale_priority: Optional[List[str]] = None
+    matching_method: str = "harmonic_input"
+    voicing: Optional[Dict[str, Any]] = None
+    # Per-modulator toggle state, keyed by stable mod_id from the response
+    enabled_modulators: Optional[Dict[str, bool]] = None
+    # Per-format export config (only consumed by /api/timbre/export). Free-
+    # form because each exporter has its own parameter set.
+    export_config: Optional[Dict[str, Any]] = None
+
+
 class SessionState(BaseModel):
     """Session state storage"""
     session_id: str

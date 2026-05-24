@@ -21,6 +21,7 @@ from services.chord_service import ChordService
 from services.color_service import ColorService
 from services.tuning_export_service import export as export_tuning_data
 from services import harmonic_geometry_service
+from services import timbre_service
 from models.schemas import (
     AnalysisConfig,
     AnalysisResult,
@@ -35,6 +36,7 @@ from models.schemas import (
     PaletteExportRequest,
     TuningExportRequest,
     HarmonicGeometryRequest,
+    TimbreComputeRequest,
 )
 
 # Initialize FastAPI app
@@ -638,6 +640,93 @@ async def compute_harmonic_geometry(request: HarmonicGeometryRequest):
 @app.get("/api/harmonic-geometry/styles")
 async def list_geometry_styles():
     return {"styles": harmonic_geometry_service.list_styles()}
+
+
+# ============================================================================
+# Harmonic Timbre
+# ============================================================================
+
+@app.post("/api/timbre/compute")
+async def compute_timbre(request: TimbreComputeRequest):
+    """Construct a Timbre from an analysis snapshot + user design choices.
+
+    Returns the timbre's core spectral data (partials, amplitudes,
+    phases, decay times, etc.) plus the modulator routings extracted
+    from any PAC/CFC/intermod source data supplied. The frontend uses
+    the response to drive the spectrum viz, the routing-matrix viz,
+    and its own client-side Web Audio additive synth preview.
+    """
+    try:
+        return timbre_service.compute_timbre(request.dict(exclude_none=False))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Timbre error: {e}")
+
+
+@app.post("/api/timbre/export/{format}")
+async def export_timbre(format: str, request: TimbreComputeRequest):
+    """Render the timbre to a file in the requested format.
+
+    Supported formats: ``vital``, ``sfz``, ``surge``, ``wavetable``,
+    ``csound``, ``supercollider``, ``tuning``, ``wav``. Each exporter
+    writes to a tempdir and the primary file is streamed back; the
+    bundle exporters that produce multiple files get zipped before
+    being returned.
+    """
+    import shutil
+    try:
+        tmpdir = tempfile.mkdtemp(prefix=f"timbre_{format}_")
+        result = timbre_service.export_to_format(
+            format=format,
+            req=request.dict(exclude_none=False),
+            out_dir=tmpdir,
+        )
+
+        # Pick a sensible "primary" file from the exporter result. Some
+        # exporters (SFZ, Surge, Tuning) write multiple files; in that
+        # case we zip the whole tmpdir. Single-file exporters stream the
+        # file directly.
+        primary_path = None
+        if isinstance(result, dict):
+            for key in ("vital", "preset", "wavetable", "csound",
+                        "supercollider", "scd", "wav", "out", "primary"):
+                if key in result and isinstance(result[key], str):
+                    primary_path = result[key]
+                    break
+
+        # Multi-file exporters → zip the whole output dir
+        if primary_path is None or any(
+            isinstance(v, str) and v.endswith((".sfz", ".scl", ".kbm", "README.md"))
+            for v in (result.values() if isinstance(result, dict) else [])
+        ):
+            # If multiple files exist, zip them
+            files_in_dir = [p for p in Path(tmpdir).rglob("*") if p.is_file()]
+            if len(files_in_dir) > 1:
+                zip_path = tmpdir + f"/timbre_{format}.zip"
+                shutil.make_archive(zip_path.replace(".zip", ""), "zip", tmpdir)
+                return FileResponse(
+                    zip_path,
+                    media_type="application/zip",
+                    filename=f"timbre_{format}.zip",
+                )
+            if len(files_in_dir) == 1:
+                primary_path = str(files_in_dir[0])
+
+        if primary_path is None or not os.path.exists(primary_path):
+            raise HTTPException(
+                status_code=500,
+                detail=f"Export produced no readable file: {result}",
+            )
+
+        return FileResponse(
+            primary_path,
+            filename=os.path.basename(primary_path),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Timbre export error: {e}")
 
 
 # ============================================================================

@@ -5,6 +5,7 @@ import BiocolorsTab from './tabs/BiocolorsTab'
 import GuitarTuningTab from './tabs/GuitarTuningTab'
 import GeometryTab from './tabs/GeometryTab'
 import KeyboardTab from './tabs/KeyboardTab'
+import TimbreTab from './tabs/TimbreTab'
 
 export default function TabsContainer({
   sessionId,
@@ -21,6 +22,7 @@ export default function TabsContainer({
     { id: 'tuning',    label: 'Tuning',    icon: '🎼' },
     { id: 'keyboard',  label: 'Keyboard',  icon: '⌨' },
     { id: 'guitar',    label: 'Guitar',    icon: '🎸' },
+    { id: 'timbre',    label: 'Timbre',    icon: '🌊' },
     { id: 'chords',    label: 'Chords',    icon: '🎹' },
     { id: 'biocolors', label: 'Biocolors', icon: '🎨' },
     { id: 'geometry',  label: 'Geometry',  icon: '◬' },
@@ -75,6 +77,9 @@ export default function TabsContainer({
             reducedTuning={reducedTuning}
             onReducedTuningChange={onReducedTuningChange}
           />
+        )}
+        {activeTab === 'timbre' && (
+          <TimbreTab analysisResult={analysisResult} />
         )}
         {activeTab === 'chords' && (
           <ChordsTab
