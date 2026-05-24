@@ -394,20 +394,14 @@ export default function GeometryTab({ analysisResult }) {
     const cycleSec = Math.max(0.2, morphPeriod || 30)
     const nSlots = geom.slots.length
 
-    // Per-slot phase + step-and-hold ease.
+    // Per-slot continuous phase + cosine ease across the FULL step.
     //
-    // We used cosine ease (0.5 − 0.5·cos), but that spread the transition
-    // across the whole interval — so the curve spent most of its time in
-    // the chaotic in-between space where Lissajous a/b is non-integer
-    // and the rendered curve doesn't close. The user perceived this as
-    // "flashes" or a curve that never looks like anything.
-    //
-    // Step-and-hold gives DWELL at the integer-fraction shape for the
-    // first and last DWELL_FRAC of each step, with a smooth easeInOut
-    // through the middle. With DWELL_FRAC = 0.35 the user sees the
-    // clean integer-fraction shape for 70 % of each phase step and a
-    // brief, smooth morph between them.
-    const DWELL_FRAC = 0.35
+    // Tried step-and-hold (long dwell + brief transition) to cut down on
+    // non-integer-fraction intermediates, but it felt jerky — the curve
+    // "stopped at each ratio then leapt to the next". Pure cosine ease
+    // keeps the motion continuously fluid; the Spirograph swap-guard
+    // and the bilinear log-blend already prevent the worst flashes from
+    // degenerate intermediate params.
     const i0 = new Array(nSlots)
     const i1 = new Array(nSlots)
     const fracs = new Array(nSlots)
@@ -417,16 +411,7 @@ export default function GeometryTab({ analysisResult }) {
       i0[s] = lo
       i1[s] = (lo + 1) % N
       const linear = phase - lo
-      let f
-      if (linear < DWELL_FRAC) {
-        f = 0                            // sitting on the lo corner
-      } else if (linear > 1 - DWELL_FRAC) {
-        f = 1                            // sitting on the hi corner
-      } else {
-        const x = (linear - DWELL_FRAC) / (1 - 2 * DWELL_FRAC)
-        f = 0.5 - 0.5 * Math.cos(x * Math.PI)  // smooth easeInOut
-      }
-      fracs[s] = f
+      fracs[s] = 0.5 - 0.5 * Math.cos(linear * Math.PI)
     }
 
     if (typeof geom.fromDerivedRatios === 'function') {
