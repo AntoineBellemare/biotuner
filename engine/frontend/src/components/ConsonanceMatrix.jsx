@@ -133,9 +133,8 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
         <svg
           viewBox={viewBox}
           width="100%"
-          height="auto"
           preserveAspectRatio="xMidYMid meet"
-          style={{ maxWidth: `${size * cellSize + padding + 15}px`, display: 'block', margin: '0 auto' }}
+          style={{ maxWidth: `${size * cellSize + padding + 15}px`, display: 'block', margin: '0 auto', height: 'auto' }}
         >
           {/* Y-axis labels */}
           {Array.from({ length: size }).map((_, i) => (

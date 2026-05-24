@@ -698,6 +698,10 @@ export default function GeometryTab({ analysisResult }) {
       ? containerRef.current?.querySelector('canvas')
       : canvasRef.current
     if (!canvas) return
+    if (!canvas.width || !canvas.height) {
+      console.warn('GIF: source canvas has zero size, aborting')
+      return
+    }
 
     // Lazy-load gif.js + its worker only when the user actually clicks.
     const { default: GIF } = await import('gif.js')
@@ -706,8 +710,35 @@ export default function GeometryTab({ analysisResult }) {
     const fps = 15
     const frameDelayMs = 1000 / fps
     const maxFrames = 900                             // 60 s safety cap
-    const w = canvas.width
-    const h = canvas.height
+
+    // Cap recording resolution to keep gif.js encoder + memory manageable.
+    // Three.js canvases on hi-DPI screens come in at 1500+ px wide which
+    // makes the encoder choke and the resulting GIF balloon to 30+ MB.
+    const MAX_GIF_DIM = 720
+    const srcW = canvas.width
+    const srcH = canvas.height
+    const scale = Math.min(1, MAX_GIF_DIM / Math.max(srcW, srcH))
+    const w = Math.max(1, Math.round(srcW * scale))
+    const h = Math.max(1, Math.round(srcH * scale))
+
+    // Offscreen 2D canvas — every frame is drawImage'd into it before
+    // being handed to gif.js. Two reasons this is the right pipeline:
+    //   1) gif.js's addFrame() internally calls ctx.getImageData() on
+    //      a 2D context. The Three.js WebGL canvas has no 2D context,
+    //      so passing it directly throws — which is what was producing
+    //      the "Invalid image" errors the user saw on every frame.
+    //   2) createImageBitmap(webglCanvas) is flaky across browsers even
+    //      with preserveDrawingBuffer. drawImage() is the universally
+    //      reliable WebGL→2D copy.
+    const offscreen = document.createElement('canvas')
+    offscreen.width = w
+    offscreen.height = h
+    const offCtx = offscreen.getContext('2d')
+    if (!offCtx) {
+      console.warn('GIF: failed to get 2D context for offscreen canvas')
+      return
+    }
+
     const gif = new GIF({
       workers: 2,
       workerScript,
@@ -736,8 +767,11 @@ export default function GeometryTab({ analysisResult }) {
     let count = 0
     while (!stopped && count < maxFrames) {
       try {
-        const bmp = await createImageBitmap(canvas)
-        gif.addFrame(bmp, { delay: frameDelayMs, copy: true })
+        // drawImage handles both 2D and WebGL source canvases and copes
+        // with the live framebuffer of a Three.js renderer (which has
+        // preserveDrawingBuffer:true).
+        offCtx.drawImage(canvas, 0, 0, w, h)
+        gif.addFrame(offscreen, { delay: frameDelayMs, copy: true })
         count++
         setGifFrames(count)
       } catch (err) {
