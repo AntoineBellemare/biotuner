@@ -281,8 +281,12 @@ export default function BiocolorsTab({ sessionId, analysisResult }) {
           {/* Color Details Table */}
           <div>
             <h3 className="text-lg sm:text-xl font-bold mb-4">📊 Color Details</h3>
+            {/* min-w removed: the table already has overflow-x-auto for desktop;
+                on mobile, dropping the hard 600 px floor lets columns compress
+                with the text-xs sizing below so users can read all six columns
+                without horizontal scroll. */}
             <div className="bg-gray-800 rounded-lg overflow-x-auto">
-              <table className="w-full min-w-[600px]">
+              <table className="w-full text-xs sm:text-sm">
                 <thead className="bg-biotuner-purple/30">
                   <tr>
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-sm">Color</th>

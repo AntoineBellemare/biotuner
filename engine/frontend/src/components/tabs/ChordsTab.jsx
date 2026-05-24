@@ -65,21 +65,31 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
         try {
           // Initialize Verovio toolkit with WASM
           const vrvToolkit = new window.verovio.toolkit()
-          
+
+          // Responsive page width — clamp Verovio's render to the actual
+          // container width (× a DPI multiplier since Verovio's unit is
+          // not 1:1 pixels). The fixed 1400 used to spill horizontally
+          // off mobile screens, forcing pinch-zoom to see anything.
+          const container = document.getElementById('score-container')
+          const containerWidth = container?.clientWidth || 800
+          // Verovio uses ~7 units per pixel when scale=40, so multiply
+          // back to get a width that fills (but doesn't exceed) the
+          // container at the current scale.
+          const pageWidth = Math.max(400, Math.round(containerWidth * 7))
+
           // Set rendering options
           const options = {
             pageHeight: 2000,
-            pageWidth: 1400,
+            pageWidth,
             scale: 40,
-            adjustPageHeight: true
+            adjustPageHeight: true,
           }
           
           // Load data and render
           vrvToolkit.setOptions(options)
           vrvToolkit.loadData(xmlText)
           const svg = vrvToolkit.renderToSVG(1, {})
-          
-          const container = document.getElementById('score-container')
+
           if (container) {
             container.innerHTML = svg
           }
@@ -553,7 +563,7 @@ export default function ChordsTab({ sessionId, analysisResult, analysisConfig, f
             })()}
             
             <div className="bg-gray-800 p-3 sm:p-4 rounded-lg">
-              <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
+              <ResponsiveContainer width="100%" height={160} className="!h-[160px] sm:!h-[250px]">
                 <BarChart 
                   data={chords.segment_durations.map((dur, idx) => ({
                     segment: idx + 1,

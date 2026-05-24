@@ -114,23 +114,35 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
   if (!consonanceData) return null
 
   const { matrix, size } = consonanceData
+  // Fixed intrinsic coordinate system. The SVG uses viewBox so it scales
+  // to whatever container width it lands in — on mobile (≈320 px) the
+  // 12×12 grid shrinks to fit instead of overflowing into a horizontal
+  // scroller. Cell text scales proportionally and stays readable down to
+  // ~320 px container width.
   const cellSize = 60
+  const padding = 65
+  const viewBox = `0 0 ${size * cellSize + padding + 15} ${size * cellSize + padding + 15}`
 
   return (
-    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-4 sm:p-6">
+    <div className="bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600 p-3 sm:p-6">
       <h3 className="text-sm font-semibold text-biotuner-light/60 uppercase tracking-wider mb-4">
         Consonance Matrix
       </h3>
-      
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="min-w-fit">
-          <svg width={size * cellSize + 80} height={size * cellSize + 80}>
+
+      <div className="w-full">
+        <svg
+          viewBox={viewBox}
+          width="100%"
+          height="auto"
+          preserveAspectRatio="xMidYMid meet"
+          style={{ maxWidth: `${size * cellSize + padding + 15}px`, display: 'block', margin: '0 auto' }}
+        >
           {/* Y-axis labels */}
           {Array.from({ length: size }).map((_, i) => (
             <text
               key={`y-${i}`}
               x={50}
-              y={i * cellSize + cellSize / 2 + 65}
+              y={i * cellSize + cellSize / 2 + padding}
               textAnchor="end"
               dominantBaseline="middle"
               className="text-sm fill-biotuner-light/60"
@@ -143,7 +155,7 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
           {Array.from({ length: size }).map((_, i) => (
             <text
               key={`x-${i}`}
-              x={i * cellSize + cellSize / 2 + 65}
+              x={i * cellSize + cellSize / 2 + padding}
               y={45}
               textAnchor="middle"
               className="text-sm fill-biotuner-light/60"
@@ -153,11 +165,11 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
           ))}
 
           {/* Matrix cells */}
-          <g transform="translate(65, 65)">
+          <g transform={`translate(${padding}, ${padding})`}>
             {matrix.map((cell, idx) => {
               // Use magma colormap based on consonance
               const color = magmaColor(cell.consonance)
-              
+
               return (
                 <g key={idx}>
                   <rect
@@ -174,7 +186,7 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
                       {'\n'}Consonance: {(cell.consonance * 100).toFixed(1)}%
                     </title>
                   </rect>
-                  
+
                   {/* Show fraction ratio in cells */}
                   <text
                     x={cell.x * cellSize + cellSize / 2}
@@ -191,7 +203,6 @@ export default function ConsonanceMatrix({ tuning, maxDenominator = 100 }) {
             })}
           </g>
         </svg>
-        </div>
       </div>
 
       <div className="mt-4 sm:mt-6 space-y-2">

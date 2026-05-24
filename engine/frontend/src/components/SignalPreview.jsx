@@ -116,7 +116,7 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
           </div>
         )}
         
-        <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
+        <ResponsiveContainer width="100%" height={160} className="!h-[160px] sm:!h-[250px]">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#252525" />
             <XAxis 

@@ -394,7 +394,20 @@ export default function GeometryTab({ analysisResult }) {
     const cycleSec = Math.max(0.2, morphPeriod || 30)
     const nSlots = geom.slots.length
 
-    // Per-slot continuous phase + cosine-eased fraction.
+    // Per-slot phase + step-and-hold ease.
+    //
+    // We used cosine ease (0.5 − 0.5·cos), but that spread the transition
+    // across the whole interval — so the curve spent most of its time in
+    // the chaotic in-between space where Lissajous a/b is non-integer
+    // and the rendered curve doesn't close. The user perceived this as
+    // "flashes" or a curve that never looks like anything.
+    //
+    // Step-and-hold gives DWELL at the integer-fraction shape for the
+    // first and last DWELL_FRAC of each step, with a smooth easeInOut
+    // through the middle. With DWELL_FRAC = 0.35 the user sees the
+    // clean integer-fraction shape for 70 % of each phase step and a
+    // brief, smooth morph between them.
+    const DWELL_FRAC = 0.35
     const i0 = new Array(nSlots)
     const i1 = new Array(nSlots)
     const fracs = new Array(nSlots)
@@ -404,7 +417,16 @@ export default function GeometryTab({ analysisResult }) {
       i0[s] = lo
       i1[s] = (lo + 1) % N
       const linear = phase - lo
-      fracs[s] = 0.5 - 0.5 * Math.cos(linear * Math.PI)  // ease-in-out
+      let f
+      if (linear < DWELL_FRAC) {
+        f = 0                            // sitting on the lo corner
+      } else if (linear > 1 - DWELL_FRAC) {
+        f = 1                            // sitting on the hi corner
+      } else {
+        const x = (linear - DWELL_FRAC) / (1 - 2 * DWELL_FRAC)
+        f = 0.5 - 0.5 * Math.cos(x * Math.PI)  // smooth easeInOut
+      }
+      fracs[s] = f
     }
 
     if (typeof geom.fromDerivedRatios === 'function') {
@@ -630,7 +652,10 @@ export default function GeometryTab({ analysisResult }) {
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }
-  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, colorMode, palette, animSpeed])
+    // morphPeriod is intentionally listed: the rAF loop closes over
+    // morphParams (which uses morphPeriod), so without it the slider would
+    // change state but the running loop would keep using the previous value.
+  }, [isPython, geom, params, animate, morph, morphPeriod, derivedRatios, color, colorEnd, colorMode, palette, animSpeed])
 
   // -------------------------------------------------------------------------
   // Exports

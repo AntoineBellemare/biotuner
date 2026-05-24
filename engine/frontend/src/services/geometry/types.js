@@ -388,11 +388,19 @@ const spirograph = {
     const { offset, scale = 1, complexity = 1 } = params
     // Complexity multiplies the OUTER radius — increases (R-r)/r which is
     // the petal-density factor — without losing the data-driven R:r ratio.
-    const R = (params.R || 1) * scale * Math.max(1, complexity)
-    const r = (params.r || 1) * scale
-    if (r <= 0 || R <= r) {
+    let R = (params.R || 1) * scale * Math.max(1, complexity)
+    let r = (params.r || 1) * scale
+    if (r <= 0 && R <= 0) {
       return { kind: 'path', points: [] }
     }
+    // Morph-blend can briefly put R close to r (or even r > R) when the
+    // bilinear log-blend transitions between corners whose integer
+    // fractions happen to be similar. Returning an empty path on those
+    // frames produces a visible black flash. Swap when r > R, and
+    // enforce a minimum r/R gap so the curve doesn't collapse to a
+    // tiny circle either.
+    if (r > R) { const tmp = R; R = r; r = tmp }
+    if (r > R * 0.95) r = R * 0.95
     const ratio = (R - r) / r
     // Pattern closes after lcm(R, r)/R revolutions; approximate with the
     // integer denominator of R/r in reduced form.

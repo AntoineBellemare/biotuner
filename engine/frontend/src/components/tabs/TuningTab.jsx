@@ -595,13 +595,16 @@ export default function TuningTab({
           </div>
         
         <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <table className="w-full text-sm min-w-[400px]">
+          {/* min-w removed: the responsive `text-xs sm:text-sm` + the
+              `px-1 sm:px-4` cell padding below let all four columns fit
+              on a 360 px viewport without horizontal scroll. */}
+          <table className="w-full text-xs sm:text-sm">
             <thead>
               <tr className="border-b border-biotuner-dark-600">
-                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">#</th>
-                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Ratio</th>
-                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Cents</th>
-                <th className="py-2 px-2 sm:px-4 text-left text-biotuner-light/60">Interval Name</th>
+                <th className="py-2 px-1.5 sm:px-4 text-left text-biotuner-light/60">#</th>
+                <th className="py-2 px-1.5 sm:px-4 text-left text-biotuner-light/60">Ratio</th>
+                <th className="py-2 px-1.5 sm:px-4 text-left text-biotuner-light/60">Cents</th>
+                <th className="py-2 px-1.5 sm:px-4 text-left text-biotuner-light/60">Interval</th>
               </tr>
             </thead>
             <tbody>
@@ -629,16 +632,16 @@ export default function TuningTab({
                           : 'hover:bg-biotuner-dark-800'}
                     `}
                   >
-                    <td className={`py-2 px-4 font-bold ${isReduced ? 'text-biotuner-pink' : 'text-biotuner-accent'}`}>
+                    <td className={`py-2 px-1.5 sm:px-4 font-bold ${isReduced ? 'text-biotuner-pink' : 'text-biotuner-accent'}`}>
                       {idx}
                     </td>
-                    <td className={`py-2 px-4 font-mono ${isReduced ? 'text-biotuner-pink font-bold' : 'text-biotuner-primary'}`}>
+                    <td className={`py-2 px-1.5 sm:px-4 font-mono ${isReduced ? 'text-biotuner-pink font-bold' : 'text-biotuner-primary'}`}>
                       {fraction}
                     </td>
-                    <td className={`py-2 px-4 font-mono ${isReduced ? 'text-biotuner-pink' : 'text-biotuner-secondary'}`}>
+                    <td className={`py-2 px-1.5 sm:px-4 font-mono ${isReduced ? 'text-biotuner-pink' : 'text-biotuner-secondary'}`}>
                       {(Math.log2(ratio) * 1200).toFixed(1)}¢
                     </td>
-                    <td className={`py-2 px-4 italic ${isReduced ? 'text-biotuner-pink/90' : 'text-biotuner-light/80'}`}>
+                    <td className={`py-2 px-1.5 sm:px-4 italic truncate max-w-[120px] sm:max-w-none ${isReduced ? 'text-biotuner-pink/90' : 'text-biotuner-light/80'}`}>
                       {intervalName || '-'}
                     </td>
                   </tr>
