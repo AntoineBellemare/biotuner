@@ -159,6 +159,12 @@ class TimbreComputeRequest(BaseModel):
     # Per-format export config (only consumed by /api/timbre/export). Free-
     # form because each exporter has its own parameter set.
     export_config: Optional[Dict[str, Any]] = None
+    # Partial-spectrum enrichment knobs. Shape:
+    #   {"intermod": {"enabled": true, "depth": 0.5, "integer_ratio_only": true},
+    #    "harmonic_stack": {"enabled": true, "n": 4, "rolloff": 0.9}}
+    # Each block is independently opt-in and corresponds to a
+    # Timbre.with_* method call.
+    enrichment: Optional[Dict[str, Any]] = None
 
 
 class SessionState(BaseModel):

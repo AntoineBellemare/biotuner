@@ -15,21 +15,47 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 
-/** Closest small-integer fraction approximation, capped at maxDen. */
-function ratioFraction(ratio, maxDen = 24) {
-  if (!Number.isFinite(ratio) || ratio <= 0) return '—'
+/**
+ * Find the closest small-integer fraction p/q within ``maxDen``.
+ * Returns ``{n, d, err}`` so the caller can decide whether the fit is
+ * meaningful or if we should fall back to a different label format.
+ */
+function bestFraction(ratio, maxDen) {
+  if (!Number.isFinite(ratio) || ratio <= 0) return { n: 1, d: 1, err: Infinity }
   let bestN = 1, bestD = 1, bestErr = Infinity
   for (let d = 1; d <= maxDen; d++) {
     const n = Math.round(ratio * d)
     if (n <= 0) continue
-    const err = Math.abs(ratio - n / d)
-    if (err < bestErr) {
-      bestErr = err
-      bestN = n
-      bestD = d
-    }
+    const err = Math.abs(ratio - n / d) / Math.max(1, ratio)
+    if (err < bestErr) { bestErr = err; bestN = n; bestD = d }
   }
-  return `${bestN}/${bestD}`
+  return { n: bestN, d: bestD, err: bestErr }
+}
+
+/**
+ * Octave-reduced ratio label. Pulls the ratio into [1, 2) by dividing
+ * out powers of 2, finds a small-integer fraction within that range,
+ * and tacks on "·8va" annotations when the original ratio was outside.
+ * A 2 % relative-error cap keeps us from showing absurd fractions like
+ * 202/17 for non-rational data; over the cap we fall back to "≈ N¢".
+ */
+function ratioFraction(ratio, maxDen = 12) {
+  if (!Number.isFinite(ratio) || ratio <= 0) return '—'
+  let r = ratio
+  let octaveShift = 0
+  while (r >= 2) { r /= 2; octaveShift += 1 }
+  while (r < 1)  { r *= 2; octaveShift -= 1 }
+  const { n, d, err } = bestFraction(r, maxDen)
+  // Reject sloppy fits: prefer a cents readout when the closest
+  // small-integer fraction is more than 2 % off the actual value.
+  if (err > 0.02) {
+    const cents = Math.round(Math.log2(ratio) * 1200)
+    return `${cents >= 0 ? '+' : ''}${cents}¢`
+  }
+  const base = `${n}/${d}`
+  if (octaveShift === 0) return base
+  if (octaveShift > 0)   return `${base}·${octaveShift}va`
+  return `${base}÷${-octaveShift}`
 }
 
 function centsBetween(freq, baseFreq) {
@@ -73,19 +99,33 @@ export default function SpectrumViz({
   const N = partials.length
 
   // Frequency axis bounds: log scale so harmonic ratios are visually
-  // proportional. Pad min/max by an octave so bars don't crowd the edges.
+  // proportional. Tight fit around the actual partials — no fixed
+  // 20Hz–20kHz clamping. Biosignal-scale spectra (peaks ≪ 20 Hz)
+  // used to collapse to the left edge with the old clamping; now we
+  // honour whatever range the data actually occupies, with ~half an
+  // octave of breathing room on each side.
   const { fMin, fMax, fMinLog, fMaxLog } = useMemo(() => {
     if (!N) return { fMin: 20, fMax: 20000, fMinLog: Math.log2(20), fMaxLog: Math.log2(20000) }
     const fHi = Math.max(...partials)
     const fLo = Math.min(...partials)
-    const minHz = Math.max(20, fLo / 2)
-    const maxHz = Math.min(20000, fHi * 2)
-    return {
-      fMin: minHz,
-      fMax: maxHz,
-      fMinLog: Math.log2(minHz),
-      fMaxLog: Math.log2(maxHz),
+    // Pad outward by sqrt(2) (= half an octave). Ensures even a single
+    // partial gets centred in the view rather than slammed to one edge.
+    const minHz = Math.max(0.01, fLo / Math.SQRT2)
+    const maxHz = fHi * Math.SQRT2
+    // Guarantee at least 1.5 octaves of visible range when all partials
+    // are very close together, so the gridlines + labels stay readable.
+    const fMinLog = Math.log2(minHz)
+    const fMaxLog = Math.log2(maxHz)
+    if (fMaxLog - fMinLog < 1.5) {
+      const center = (fMinLog + fMaxLog) / 2
+      return {
+        fMin: Math.pow(2, center - 0.75),
+        fMax: Math.pow(2, center + 0.75),
+        fMinLog: center - 0.75,
+        fMaxLog: center + 0.75,
+      }
     }
+    return { fMin: minHz, fMax: maxHz, fMinLog, fMaxLog }
   }, [partials, N])
 
   const xForFreq = (f, w) => {
@@ -126,22 +166,32 @@ export default function SpectrumViz({
       const H = canvas.height
       ctx.clearRect(0, 0, W, H)
 
-      // Background grid + axis labels (octave ticks).
+      // Background grid + axis labels — adapt the tick density to the
+      // visible span. Very narrow spans (< 3 octaves) get half-octave
+      // ticks so biosignal-scale data has multiple labels visible.
       ctx.strokeStyle = 'rgba(255,255,255,0.06)'
       ctx.fillStyle   = 'rgba(255,255,255,0.35)'
       ctx.font = `${10 * dpr}px ui-monospace, monospace`
       ctx.textAlign = 'center'
-      const startOct = Math.ceil(fMinLog)
-      const endOct   = Math.floor(fMaxLog)
-      for (let oct = startOct; oct <= endOct; oct++) {
-        const f = Math.pow(2, oct)
+      const span = fMaxLog - fMinLog
+      const step = span < 3 ? 0.5 : 1.0
+      const startLog = Math.ceil(fMinLog / step) * step
+      const endLog   = Math.floor(fMaxLog / step) * step
+      for (let l = startLog; l <= endLog + 1e-9; l += step) {
+        const f = Math.pow(2, l)
         if (f < fMin || f > fMax) continue
         const x = xForFreq(f, W)
         ctx.beginPath()
         ctx.moveTo(x, 20 * dpr)
         ctx.lineTo(x, H - 30 * dpr)
         ctx.stroke()
-        ctx.fillText(f >= 1000 ? `${(f / 1000).toFixed(0)}k` : `${f.toFixed(0)}`, x, H - 12 * dpr)
+        // Label formatting: kHz / Hz / sub-Hz depending on magnitude.
+        let label
+        if (f >= 1000)      label = `${(f / 1000).toFixed(f >= 10000 ? 0 : 1)}k`
+        else if (f >= 100)  label = `${f.toFixed(0)}`
+        else if (f >= 10)   label = `${f.toFixed(1)}`
+        else                label = `${f.toFixed(2)}`
+        ctx.fillText(label, x, H - 12 * dpr)
       }
 
       if (!N) {

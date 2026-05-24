@@ -28,6 +28,7 @@ import numpy as np
 from biotuner.harmonic_input import HarmonicInput
 from biotuner.harmonic_timbre import Timbre
 from biotuner.harmonic_timbre.timbre import Modulator
+from biotuner.harmonic_timbre.matching import match_timbre, _METHOD_TO_FUNC
 
 
 # ---------------------------------------------------------------------------
@@ -134,20 +135,65 @@ def compute_timbre(req: Dict[str, Any]) -> Dict[str, Any]:
         include_alternates=True,
     )
 
-    # 2) Timbre — Phase-1 mapping from HarmonicInput. Voicing overrides
-    # (e.g., user-edited noise_floor / spectral_tilt sliders) get passed
-    # straight through.
+    # 2) Build the base Timbre. Two paths:
+    #    - 'harmonic_input' (default) — partials = peaks, direct.
+    #    - any biotuner matching method (consonance_weighted, sethares,
+    #      harmonic_entropy, hybrid, direct) — defers to match_timbre,
+    #      which derives partials from the chosen scale's ratios via the
+    #      method's specific algorithm. This is what the user clicks
+    #      "Consonance-weighted" or "Hybrid" in the Voice picker for.
+    matching_method = (req.get("matching_method") or "harmonic_input").lower()
     voicing = req.get("voicing") or {}
-    overrides: Dict[str, Any] = {}
+    voicing_overrides: Dict[str, Any] = {}
     for key in ("spectral_tilt", "noise_floor"):
         if key in voicing and voicing[key] is not None:
-            overrides[key] = voicing[key]
-    timbre = Timbre.from_harmonic_input(hi, **overrides)
+            voicing_overrides[key] = voicing[key]
+
+    if matching_method == "harmonic_input":
+        timbre = Timbre.from_harmonic_input(hi, **voicing_overrides)
+    elif matching_method in _METHOD_TO_FUNC:
+        timbre = match_timbre(
+            hi.to_ratios(),
+            method=matching_method,
+            base_freq=hi.base_freq,
+        )
+        # match_timbre builds its own Timbre — re-apply voicing
+        # overrides and the metadata so provenance survives.
+        if voicing_overrides:
+            timbre = timbre.with_partials(**voicing_overrides)
+        timbre.matched_tuning = [float(r) for r in hi.to_ratios()]
+        timbre.matching_method = matching_method
+        timbre.metadata = dict(timbre.metadata or {})
+        timbre.metadata.setdefault("scale_source", hi.ratios_source)
+    else:
+        raise ValueError(
+            f"Unknown matching method {matching_method!r}. "
+            f"Known: ['harmonic_input', " + ", ".join(repr(k) for k in _METHOD_TO_FUNC) + "]"
+        )
 
     # 3) Attach modulators. We always run the attach pass so the
     # frontend sees what's available; user-side disable happens in JS
     # at synth time (the `enabled` flag in the response controls it).
     timbre = timbre.attach_all_from_biotuner(pseudo_bt)
+
+    # 4) Optional partial-spectrum enrichment. These ADD partials
+    # (unlike modulators which wobble existing ones) — they're the
+    # "complexify my voice" knobs. Both routines are no-ops on bts
+    # without their respective source data.
+    enrich = req.get("enrichment") or {}
+    intermod_cfg = enrich.get("intermod")
+    if intermod_cfg and intermod_cfg.get("enabled"):
+        timbre = timbre.with_intermod_sidebands(
+            pseudo_bt,
+            depth=float(intermod_cfg.get("depth", 0.5)),
+            integer_ratio_only=bool(intermod_cfg.get("integer_ratio_only", True)),
+        )
+    stack_cfg = enrich.get("harmonic_stack")
+    if stack_cfg and stack_cfg.get("enabled"):
+        timbre = timbre.with_harmonic_stack(
+            n=int(stack_cfg.get("n", 4)),
+            rolloff=float(stack_cfg.get("rolloff", 0.9)),
+        )
 
     # 4) Determine which modulators are user-enabled. The request may
     # supply a {"pac_0": false, "cfc_2": true, ...} dict; default ON.
@@ -197,10 +243,12 @@ def compute_timbre(req: Dict[str, Any]) -> Dict[str, Any]:
 # downloads the resulting file via FileResponse.
 
 def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
-    """Reconstruct a Timbre (with attached modulators) from the request.
+    """Reconstruct a Timbre (with attached modulators + enrichment) from
+    the request.
 
     Same pipeline as compute_timbre but returns the Timbre object
-    itself for exporters to consume directly.
+    itself for exporters to consume directly. Kept in sync with
+    compute_timbre — when one changes, the other must too.
     """
     pseudo_bt = _build_pseudo_bt(req)
     if pseudo_bt.peaks.size == 0:
@@ -210,13 +258,41 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
         scale_priority=req.get("scale_priority"),
         include_alternates=True,
     )
+    matching_method = (req.get("matching_method") or "harmonic_input").lower()
     voicing = req.get("voicing") or {}
-    overrides: Dict[str, Any] = {}
+    voicing_overrides: Dict[str, Any] = {}
     for key in ("spectral_tilt", "noise_floor"):
         if key in voicing and voicing[key] is not None:
-            overrides[key] = voicing[key]
-    timbre = Timbre.from_harmonic_input(hi, **overrides)
+            voicing_overrides[key] = voicing[key]
+    if matching_method == "harmonic_input":
+        timbre = Timbre.from_harmonic_input(hi, **voicing_overrides)
+    elif matching_method in _METHOD_TO_FUNC:
+        timbre = match_timbre(
+            hi.to_ratios(),
+            method=matching_method,
+            base_freq=hi.base_freq,
+        )
+        if voicing_overrides:
+            timbre = timbre.with_partials(**voicing_overrides)
+        timbre.matched_tuning = [float(r) for r in hi.to_ratios()]
+        timbre.matching_method = matching_method
+    else:
+        raise ValueError(f"Unknown matching method {matching_method!r}")
     timbre = timbre.attach_all_from_biotuner(pseudo_bt)
+    enrich = req.get("enrichment") or {}
+    intermod_cfg = enrich.get("intermod")
+    if intermod_cfg and intermod_cfg.get("enabled"):
+        timbre = timbre.with_intermod_sidebands(
+            pseudo_bt,
+            depth=float(intermod_cfg.get("depth", 0.5)),
+            integer_ratio_only=bool(intermod_cfg.get("integer_ratio_only", True)),
+        )
+    stack_cfg = enrich.get("harmonic_stack")
+    if stack_cfg and stack_cfg.get("enabled"):
+        timbre = timbre.with_harmonic_stack(
+            n=int(stack_cfg.get("n", 4)),
+            rolloff=float(stack_cfg.get("rolloff", 0.9)),
+        )
     # Drop user-disabled modulators before export so what they hear is
     # what they get.
     enabled = req.get("enabled_modulators") or {}

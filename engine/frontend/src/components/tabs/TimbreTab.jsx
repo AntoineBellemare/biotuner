@@ -26,11 +26,17 @@ import {
 // Voice / matching presets
 // ---------------------------------------------------------------------------
 
+// Matching method options — these are the real biotuner methods
+// dispatched by harmonic_timbre.matching.match_timbre. 'harmonic_input'
+// is our HI adapter path (partials = peaks); the rest are biotuner's
+// own algorithms that derive partials from the chosen scale's ratios.
 const MATCHING_METHODS = [
   { value: 'harmonic_input',     label: 'Direct (partials = peaks)' },
   { value: 'consonance_weighted',label: 'Consonance-weighted' },
-  { value: 'inharmonic',         label: 'Inharmonic' },
-  { value: 'direct',             label: 'Direct (legacy)' },
+  { value: 'sethares',           label: 'Sethares (dissonance min)' },
+  { value: 'harmonic_entropy',   label: 'Harmonic entropy' },
+  { value: 'hybrid',             label: 'Hybrid (consonance + entropy)' },
+  { value: 'direct',             label: 'Direct (matching-method)' },
 ]
 
 // Scale variants — the canonical SCALE_KEYS vocabulary, plus an empty
@@ -75,6 +81,15 @@ export default function TimbreTab({ analysisResult }) {
   const [mutedIdx,  setMutedIdx]  = useState([])
   const [soloIdx,   setSoloIdx]   = useState(null)
   const [enabledMods, setEnabledMods] = useState({})  // mod_id -> bool
+  // Enrichment: opt-in partial-spectrum expansion. Intermod ADDS
+  // sidebands at f1±f2; harmonic stack ADDS 2f, 3f, ..., nf per partial.
+  // Both produce visible new bars in the spectrum, distinct from
+  // modulators which wobble existing bars.
+  const [intermodOn,     setIntermodOn]     = useState(false)
+  const [intermodDepth,  setIntermodDepth]  = useState(0.5)
+  const [stackOn,        setStackOn]        = useState(false)
+  const [stackN,         setStackN]         = useState(4)
+  const [stackRolloff,   setStackRolloff]   = useState(0.9)
   const [previewFreq, setPreviewFreq] = useState(null)  // Hz; null = derive
 
   const [timbre, setTimbre] = useState(null)
@@ -87,13 +102,19 @@ export default function TimbreTab({ analysisResult }) {
   const requestIdRef = useRef(0)
 
   // --------- Build the request payload (memoised) ------------------------
-  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}`
+  const enrichmentObj = useMemo(() => ({
+    intermod: { enabled: intermodOn, depth: intermodDepth },
+    harmonic_stack: { enabled: stackOn, n: stackN, rolloff: stackRolloff },
+  }), [intermodOn, intermodDepth, stackOn, stackN, stackRolloff])
+
+  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}|${JSON.stringify(enrichmentObj)}`
   const requestPayload = useMemo(() => {
     if (!analysisResult) return null
     return buildTimbreRequest(analysisResult, {
       matching_method: matchingMethod,
       scale_priority: scalePriority ? [scalePriority] : null,
       enabled_modulators: enabledMods,
+      enrichment: enrichmentObj,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisResult, designKey])
@@ -218,6 +239,11 @@ export default function TimbreTab({ analysisResult }) {
     setMutedIdx([])
     setSoloIdx(null)
     setEnabledMods({})
+    setIntermodOn(false)
+    setIntermodDepth(0.5)
+    setStackOn(false)
+    setStackN(4)
+    setStackRolloff(0.9)
   }
 
   // --------- Export -----------------------------------------------------
@@ -521,6 +547,108 @@ export default function TimbreTab({ analysisResult }) {
                   No modulators in this analysis. Enable PAC / CFC in the sidebar
                   to populate this slider.
                 </p>
+              )}
+            </div>
+          </div>
+
+          {/* Enrichment: ADD partials (unlike modulators which wobble
+              existing ones). Intermod adds f1±f2 sidebands for each
+              intermodulation pair; harmonic stack adds 2f, 3f, … per
+              partial. Together they turn a sparse biotuner output (a
+              handful of peaks) into a rich, mixable timbre. */}
+          <div className="bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4 space-y-3">
+            <h3 className="text-xs font-bold text-biotuner-accent/80 uppercase tracking-widest">
+              Enrich partials
+            </h3>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="flex items-center gap-2 text-xs text-biotuner-light/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={intermodOn}
+                    onChange={(e) => setIntermodOn(e.target.checked)}
+                    disabled={!(analysisResult?.endogenous_intermodulations?.length)}
+                    className="w-3.5 h-3.5 accent-biotuner-primary"
+                  />
+                  <span>Intermod sidebands</span>
+                </label>
+                <span className="text-[9px] text-biotuner-light/40 font-mono">
+                  +f₁±f₂
+                </span>
+              </div>
+              {!(analysisResult?.endogenous_intermodulations?.length) ? (
+                <p className="text-[10px] text-biotuner-light/30 pl-5">
+                  No intermod data in this analysis (enable in sidebar).
+                </p>
+              ) : intermodOn && (
+                <div className="pl-5">
+                  <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+                    <span className="text-biotuner-light/50">Depth</span>
+                    <span className="text-biotuner-primary/80 font-mono">
+                      {(intermodDepth * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0} max={1} step={0.01}
+                    value={intermodDepth}
+                    onChange={(e) => setIntermodDepth(parseFloat(e.target.value))}
+                    className="w-full accent-biotuner-primary"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="flex items-center gap-2 text-xs text-biotuner-light/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={stackOn}
+                    onChange={(e) => setStackOn(e.target.checked)}
+                    className="w-3.5 h-3.5 accent-biotuner-primary"
+                  />
+                  <span>Harmonic stack</span>
+                </label>
+                <span className="text-[9px] text-biotuner-light/40 font-mono">
+                  +2f, 3f, …
+                </span>
+              </div>
+              {stackOn && (
+                <div className="pl-5 space-y-2 mt-1">
+                  <div>
+                    <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+                      <span className="text-biotuner-light/50">Overtones</span>
+                      <span className="text-biotuner-primary/80 font-mono">{stackN}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1} max={8} step={1}
+                      value={stackN}
+                      onChange={(e) => setStackN(parseInt(e.target.value, 10))}
+                      className="w-full accent-biotuner-primary"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+                      <span className="text-biotuner-light/50">Rolloff</span>
+                      <span className="text-biotuner-primary/80 font-mono">
+                        {stackRolloff.toFixed(2)}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0.3} max={2.0} step={0.05}
+                      value={stackRolloff}
+                      onChange={(e) => setStackRolloff(parseFloat(e.target.value))}
+                      className="w-full accent-biotuner-primary"
+                    />
+                    <p className="text-[9px] text-biotuner-light/30 mt-0.5">
+                      0.7–1.2 sweet spot (warmer → duller)
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>

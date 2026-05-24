@@ -54,6 +54,7 @@ export function buildTimbreRequest(analysisResult, design = {}) {
     voicing:           design.voicing          || {},
     enabled_modulators: design.enabled_modulators || {},
     export_config:     design.export_config    || null,
+    enrichment:        design.enrichment        || null,
   }
   // Drop empty `scales` keys so the backend sees None for absent variants
   req.scales = Object.fromEntries(
