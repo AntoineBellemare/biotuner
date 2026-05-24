@@ -359,6 +359,15 @@ export default function GeometryTab({ analysisResult }) {
   // -------------------------------------------------------------------------
   // Auto-morph: time-modulate each derived slot through the derived list.
   // Returns the morphed-overlay params for the JS render loop to consume.
+  //
+  // Key trick: for geometries whose render expects "small integer" params
+  // (Lissajous a/b, Rose n/d, Spirograph R/r), we DON'T snap to the
+  // integer fraction at the current binding index — that would jump
+  // visibly every time Math.floor(phase) ticked over. Instead we call
+  // fromDerivedRatios at each of the 2^nSlots binding-corner configs and
+  // blend the resulting numeric outputs in log space, weighted by the
+  // per-slot cosine-eased fraction. Result: a continuous smooth morph
+  // between the integer-fraction "anchor" shapes.
   // -------------------------------------------------------------------------
   function morphParams(baseParams, t) {
     if (!morph || sourceMode === 'manual' || isPython) return baseParams
@@ -366,39 +375,82 @@ export default function GeometryTab({ analysisResult }) {
     if (!geom.slots?.length || !derivedRatios.length) return baseParams
     const N = derivedRatios.length
     const cycleSec = Math.max(1, morphPeriod || 30)
-    // Step-style: cycle each slot's binding INDEX through the derived list.
-    // For geometries whose render expects integer-fraction params (Lissajous,
-    // Rose, Spirograph, Chladni), we then route those bindings through
-    // fromDerivedRatios so the rendered params are valid small-integer
-    // fractions — direct decimal interpolation gives params near 1 that
-    // visually collapse to nothing.
-    const morphedBindings = {}
-    for (let i = 0; i < geom.slots.length; i++) {
-      const slot = geom.slots[i]
-      const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
-      morphedBindings[slot.key] = Math.floor(phase)
+    const nSlots = geom.slots.length
+
+    // Per-slot continuous phase + cosine-eased fraction.
+    const i0 = new Array(nSlots)
+    const i1 = new Array(nSlots)
+    const fracs = new Array(nSlots)
+    for (let s = 0; s < nSlots; s++) {
+      const phase = ((t / cycleSec) * N + s * (N / nSlots)) % N
+      const lo = Math.floor(phase)
+      i0[s] = lo
+      i1[s] = (lo + 1) % N
+      const linear = phase - lo
+      fracs[s] = 0.5 - 0.5 * Math.cos(linear * Math.PI)  // ease-in-out
     }
+
     if (typeof geom.fromDerivedRatios === 'function') {
-      const updates = geom.fromDerivedRatios(derivedRatios, morphedBindings, baseParams) || {}
+      // Bilinear (n-linear) blend across the 2^nSlots corner configurations.
+      // For each corner, call fromDerivedRatios and accumulate its numeric
+      // outputs weighted by ∏ frac_s (or 1-frac_s) per the corner bit.
+      const nCorners = 1 << nSlots
+      // acc[key] = { sumLog, sumW, discrete?, sign }
+      // - log-space lerp for positive numerics (preserves harmonic feel)
+      // - linear lerp for values that span zero / negatives
+      // - dominant-corner pick for non-numeric outputs
+      const acc = {}
+      for (let c = 0; c < nCorners; c++) {
+        const bindings = {}
+        let w = 1
+        for (let s = 0; s < nSlots; s++) {
+          const bit = (c >> s) & 1
+          bindings[geom.slots[s].key] = bit ? i1[s] : i0[s]
+          w *= bit ? fracs[s] : (1 - fracs[s])
+        }
+        if (w <= 1e-9) continue
+        const out = geom.fromDerivedRatios(derivedRatios, bindings, baseParams) || {}
+        for (const [k, v] of Object.entries(out)) {
+          if (typeof v !== 'number' || !Number.isFinite(v)) {
+            if (!acc[k] || w > (acc[k].domW || 0)) acc[k] = { discrete: v, domW: w }
+            continue
+          }
+          if (acc[k]?.discrete !== undefined) continue
+          if (!acc[k]) acc[k] = { sumLog: 0, sumLin: 0, sumW: 0, allPos: true }
+          if (v <= 0) acc[k].allPos = false
+          acc[k].sumLin += v * w
+          if (acc[k].allPos) acc[k].sumLog += Math.log(v) * w
+          acc[k].sumW += w
+        }
+      }
+      const updates = {}
+      for (const [k, v] of Object.entries(acc)) {
+        if (v.discrete !== undefined) updates[k] = v.discrete
+        else if (v.sumW > 0) {
+          updates[k] = v.allPos
+            ? Math.exp(v.sumLog / v.sumW)
+            : (v.sumLin / v.sumW)
+        }
+      }
       return { ...baseParams, ...updates }
     }
+
     // Fallback for slots without a fromDerivedRatios — straight value
     // interpolation, integer-quantised slots hold each value full-step.
     const next = { ...baseParams }
-    for (let i = 0; i < geom.slots.length; i++) {
-      const slot = geom.slots[i]
-      const phase = ((t / cycleSec) * N + i * (N / geom.slots.length)) % N
-      const idxA = Math.floor(phase)
-      const idxB = (idxA + 1) % N
+    for (let s = 0; s < nSlots; s++) {
+      const slot = geom.slots[s]
       let val
       if (slot.transform) {
-        val = derivedRatios[idxA]
+        val = derivedRatios[i0[s]]
         if (slot.scale) val *= slot.scale
         val = slot.transform(val)
       } else {
-        const linear = phase - idxA
-        const fract = 0.5 - 0.5 * Math.cos(linear * Math.PI)
-        val = derivedRatios[idxA] * (1 - fract) + derivedRatios[idxB] * fract
+        const ra = derivedRatios[i0[s]]
+        const rb = derivedRatios[i1[s]]
+        val = (ra > 0 && rb > 0)
+          ? Math.exp(Math.log(ra) * (1 - fracs[s]) + Math.log(rb) * fracs[s])
+          : ra * (1 - fracs[s]) + rb * fracs[s]
         if (slot.scale) val *= slot.scale
       }
       next[slot.key] = val
