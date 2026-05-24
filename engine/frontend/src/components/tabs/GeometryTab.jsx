@@ -114,12 +114,28 @@ export default function GeometryTab({ analysisResult }) {
   // Auto-morph for JS bindings — cycles each slot through the derived list.
   const [morph, setMorph] = useState(false)
   // Seconds per full sweep through the derived list. Bigger = slower.
+  // Log-scale slider (0–100) maps to MORPH_MIN_S … MORPH_MAX_S below.
   const [morphPeriod, setMorphPeriod] = useState(30)
+  // Global animation-speed multiplier — scales the time fed into BOTH
+  // morph blending AND the intrinsic per-frame motion inside every
+  // render fn (Lissajous's phase drift, Rose's rotation, Spirograph's
+  // drift, Chladni's animation, etc.). Default 1. 0.05× = slow-mo,
+  // 5× = fast-forward. Decouples "how busy the shape looks" from
+  // "how fast it's moving" so the user can crank cycles way up and
+  // still get a slow, contemplative animation.
+  const [animSpeed, setAnimSpeed] = useState(1)
 
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
   const lastOutputRef = useRef(null)  // for SVG export of the current frame
   const tStartRef = useRef(performance.now())
+  // Accumulated SCALED time — increments by (dt × animSpeed) each frame
+  // while something is animating. Using an accumulator (instead of
+  // multiplying t by animSpeed at sample time) keeps the rendered phase
+  // continuous when the speed slider moves: dt jumps by a factor but the
+  // total stays smooth.
+  const scaledTRef = useRef(0)
+  const lastFrameTimeRef = useRef(performance.now())
 
   const geom = GEOMETRY_TYPES[type]
   const params = paramsByType[type]
@@ -374,7 +390,8 @@ export default function GeometryTab({ analysisResult }) {
     if (geom.noMorph) return baseParams
     if (!geom.slots?.length || !derivedRatios.length) return baseParams
     const N = derivedRatios.length
-    const cycleSec = Math.max(1, morphPeriod || 30)
+    // Floor at 0.2 s so the fast end of the slider is genuinely fast.
+    const cycleSec = Math.max(0.2, morphPeriod || 30)
     const nSlots = geom.slots.length
 
     // Per-slot continuous phase + cosine-eased fraction.
@@ -483,6 +500,7 @@ export default function GeometryTab({ analysisResult }) {
       [type]: randomizeParams(geom, prev[type] || geom.defaultParams),
     }))
     tStartRef.current = performance.now()
+    scaledTRef.current = 0
   }
 
   // "Shuffle ratios" — keep the visual params, only re-roll slot bindings.
@@ -577,9 +595,16 @@ export default function GeometryTab({ analysisResult }) {
       // needs a continuously-advancing t even when the global Animate
       // toggle is off.
       const hasGeomAnim = params.animation && params.animation !== 'none'
-      const t = (animate || morph || hasGeomAnim)
-        ? (performance.now() - tStartRef.current) / 1000
-        : 0
+      // Accumulate scaled time so the animation-speed slider changes the
+      // rate of phase advance without causing a discontinuity. dt is
+      // capped at 100 ms so tab-switch resumes don't leap forward.
+      const now = performance.now()
+      const dt = Math.min(0.1, (now - lastFrameTimeRef.current) / 1000)
+      lastFrameTimeRef.current = now
+      if (animate || morph || hasGeomAnim) {
+        scaledTRef.current += dt * animSpeed
+      }
+      const t = scaledTRef.current
       // Chladni's render needs the analysis ratios to compute its integer
       // mode set; merge them into the params just for the render call.
       const effective = { ...morphParams(params, t), ratios: derivedRatios.length ? derivedRatios : ratios }
@@ -605,7 +630,7 @@ export default function GeometryTab({ analysisResult }) {
     }
     draw()
     return () => { if (rafId) cancelAnimationFrame(rafId) }
-  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, colorMode, palette])
+  }, [isPython, geom, params, animate, morph, derivedRatios, color, colorEnd, colorMode, palette, animSpeed])
 
   // -------------------------------------------------------------------------
   // Exports
@@ -639,15 +664,26 @@ export default function GeometryTab({ analysisResult }) {
     }
   }
 
-  // ----- GIF recording -----
-  // Captures frames from whichever canvas is currently visible (JS 2D or
-  // the WebGL/TreeViewer canvas inside containerRef) over a few seconds
-  // and encodes them via gif.js in a worker. Visible only when something
-  // is actually moving — recording a static frame would just be a PNG.
-  const [gifRecording, setGifRecording] = useState(false)
+  // ----- GIF recording (manual start / stop) -----
+  // Click "Record GIF" → starts capturing frames at 15 fps into a gif.js
+  // worker. The button switches to "Stop & encode (N frames)". On stop,
+  // the encoder runs and triggers a download when done. A 60 s safety cap
+  // (900 frames) stops runaway captures from eating memory.
+  //
+  // The old "auto-capture for 4 seconds then encode" flow registered the
+  // progress handler AFTER addFrame() ran, so the user saw progress jump
+  // 0 → 50 % during capture and then stick because the encode-phase
+  // progress events were attached too late on some builds of gif.js.
+  // Manual control sidesteps that and gives the user the agency they
+  // actually wanted ("start whenever the shape looks good, stop when
+  // you've got a full loop").
+  const [gifState, setGifState] = useState('idle')   // 'idle' | 'recording' | 'encoding'
+  const [gifFrames, setGifFrames] = useState(0)
   const [gifProgress, setGifProgress] = useState(0)
-  const recordGif = async () => {
-    if (gifRecording) return
+  const gifStopRef = useRef(null)                    // function set while recording
+
+  const startGif = async () => {
+    if (gifState !== 'idle') return
     const canvas = isPython
       ? containerRef.current?.querySelector('canvas')
       : canvasRef.current
@@ -657,14 +693,9 @@ export default function GeometryTab({ analysisResult }) {
     const { default: GIF } = await import('gif.js')
     const workerScript = (await import('gif.js/dist/gif.worker.js?url')).default
 
-    setGifRecording(true)
-    setGifProgress(0)
     const fps = 15
-    const seconds = 4
     const frameDelayMs = 1000 / fps
-    const totalFrames = fps * seconds
-
-    // Snapshot intrinsic resolution so the GIF matches what's on screen.
+    const maxFrames = 900                             // 60 s safety cap
     const w = canvas.width
     const h = canvas.height
     const gif = new GIF({
@@ -675,26 +706,48 @@ export default function GeometryTab({ analysisResult }) {
       height: h,
       background: '#0a0a0a',
     })
+    // Register lifecycle handlers BEFORE addFrame / render so we never
+    // miss a progress tick.
+    gif.on('progress', (p) => setGifProgress(Math.round(p * 100)))
+    gif.on('finished', (blob) => {
+      downloadFile(blob, `harmonic_${geom.key}.gif`, 'image/gif')
+      setGifState('idle')
+      setGifProgress(0)
+      setGifFrames(0)
+      gifStopRef.current = null
+    })
 
-    // Capture loop — use ImageBitmap to grab the canvas frame fast.
-    for (let i = 0; i < totalFrames; i++) {
+    let stopped = false
+    gifStopRef.current = () => { stopped = true }
+    setGifState('recording')
+    setGifFrames(0)
+    setGifProgress(0)
+
+    let count = 0
+    while (!stopped && count < maxFrames) {
       try {
         const bmp = await createImageBitmap(canvas)
         gif.addFrame(bmp, { delay: frameDelayMs, copy: true })
-        setGifProgress(Math.round((i / totalFrames) * 50))     // first 50%
+        count++
+        setGifFrames(count)
       } catch (err) {
         console.warn('GIF capture frame failed:', err)
       }
       await new Promise((r) => setTimeout(r, frameDelayMs))
     }
 
-    gif.on('progress', (p) => setGifProgress(50 + Math.round(p * 50)))
-    gif.on('finished', (blob) => {
-      downloadFile(blob, `harmonic_${geom.key}.gif`, 'image/gif')
-      setGifRecording(false)
-      setGifProgress(0)
-    })
+    if (count === 0) {
+      // Stopped before a single frame landed — nothing to encode.
+      setGifState('idle')
+      gifStopRef.current = null
+      return
+    }
+    setGifState('encoding')
     gif.render()
+  }
+
+  const stopGif = () => {
+    if (gifStopRef.current) gifStopRef.current()
   }
 
   const exportPng = () => {
@@ -829,7 +882,10 @@ export default function GeometryTab({ analysisResult }) {
               <button
                 onClick={() => {
                   setAnimate((a) => !a)
-                  if (!animate) tStartRef.current = performance.now()
+                  if (!animate) {
+                    tStartRef.current = performance.now()
+                    lastFrameTimeRef.current = performance.now()
+                  }
                 }}
                 aria-pressed={animate}
                 className={`
@@ -922,18 +978,34 @@ export default function GeometryTab({ analysisResult }) {
             >
               <ImageIcon className="w-4 h-4" /> PNG
             </button>
-            {/* GIF recording — only when something is actually moving */}
+            {/* GIF recording — three-state button:
+                  idle      → "Record GIF"  (click to start)
+                  recording → "Stop (Ns)"    (click to end & encode)
+                  encoding  → "Encoding N%"  (disabled until download) */}
             {(animate || morph ||
               (params.animation && params.animation !== 'none') ||
               (isPython && autoRotate)) && (
               <button
-                onClick={recordGif}
-                disabled={gifRecording}
-                title="Capture ~4 seconds of animation and encode as GIF"
-                className="min-h-[40px] flex items-center gap-2 px-3 py-2 rounded-lg bg-biotuner-accent/10 border border-biotuner-accent/40 text-biotuner-accent text-sm hover:bg-biotuner-accent/20 disabled:opacity-60"
+                onClick={gifState === 'recording' ? stopGif : startGif}
+                disabled={gifState === 'encoding'}
+                title={
+                  gifState === 'recording'
+                    ? 'Stop capture and encode the GIF'
+                    : gifState === 'encoding'
+                      ? 'Encoding — please wait'
+                      : 'Start capturing frames; click again to stop and encode'
+                }
+                className={`min-h-[40px] flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors disabled:opacity-60
+                  ${gifState === 'recording'
+                    ? 'bg-red-500/15 border-red-500/50 text-red-300 hover:bg-red-500/25 animate-pulse'
+                    : 'bg-biotuner-accent/10 border-biotuner-accent/40 text-biotuner-accent hover:bg-biotuner-accent/20'}`}
               >
                 <Film className="w-4 h-4" />
-                {gifRecording ? `GIF ${gifProgress}%` : 'Record GIF'}
+                {gifState === 'recording'
+                  ? `Stop (${(gifFrames / 15).toFixed(1)}s · ${gifFrames}f)`
+                  : gifState === 'encoding'
+                    ? `Encoding ${gifProgress}%`
+                    : 'Record GIF'}
               </button>
             )}
           </div>
@@ -1032,7 +1104,10 @@ export default function GeometryTab({ analysisResult }) {
                   <button
                     onClick={() => {
                       setMorph((m) => !m)
-                      if (!morph) tStartRef.current = performance.now()
+                      if (!morph) {
+                        tStartRef.current = performance.now()
+                        lastFrameTimeRef.current = performance.now()
+                      }
                     }}
                     aria-pressed={morph}
                     className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium border transition-all
@@ -1042,25 +1117,99 @@ export default function GeometryTab({ analysisResult }) {
                   >
                     {morph ? '⟳ Morphing ratios…' : '⟳ Auto-morph through ratios'}
                   </button>
-                  {morph && (
-                    <div>
-                      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider">
-                        <span className="text-biotuner-light/50">Morph speed</span>
-                        <span className="text-biotuner-accent/80 font-mono">{morphPeriod}s / cycle</span>
+                  {morph && (() => {
+                    // Log-scale morph slider: 0–1000 → MORPH_MIN_S … MORPH_MAX_S.
+                    // Linear sliders gave 800 of the 900 steps to the slow
+                    // half where the eye can't tell 60 s from 70 s; log gives
+                    // even visual resolution from "ratio per second" to
+                    // "ratio per several minutes".
+                    const MORPH_MIN_S = 0.5
+                    const MORPH_MAX_S = 600
+                    const logSpan = Math.log(MORPH_MAX_S / MORPH_MIN_S)
+                    const sliderVal = Math.round(
+                      (Math.log(Math.max(MORPH_MIN_S, morphPeriod) / MORPH_MIN_S) / logSpan) * 1000
+                    )
+                    const fmt = (s) =>
+                      s < 1 ? `${(s * 1000).toFixed(0)}ms`
+                      : s < 10 ? `${s.toFixed(1)}s`
+                      : s < 60 ? `${s.toFixed(0)}s`
+                      : `${Math.round(s / 60)}m ${Math.round(s % 60)}s`
+                    return (
+                      <div>
+                        <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider">
+                          <span className="text-biotuner-light/50">Morph speed</span>
+                          <span className="text-biotuner-accent/80 font-mono">{fmt(morphPeriod)} / cycle</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1000}
+                          step={1}
+                          value={sliderVal}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value, 10)
+                            const secs = MORPH_MIN_S * Math.exp((v / 1000) * logSpan)
+                            // Snap to one decimal under 10 s, integer above.
+                            setMorphPeriod(secs < 10 ? +secs.toFixed(2) : Math.round(secs))
+                          }}
+                          className="w-full accent-biotuner-accent cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[9px] text-biotuner-light/30 mt-0.5">
+                          <span>fast</span>
+                          <span>slow</span>
+                        </div>
                       </div>
-                      <input
-                        type="range"
-                        min={1}
-                        max={900}
-                        step={1}
-                        value={morphPeriod}
-                        onChange={(e) => setMorphPeriod(parseInt(e.target.value, 10))}
-                        className="w-full accent-biotuner-accent cursor-pointer"
-                      />
-                    </div>
-                  )}
+                    )
+                  })()}
                 </div>
               )}
+
+              {/* Global animation speed — scales the time fed to BOTH morph
+                  AND the per-frame motion inside every render fn (Lissajous's
+                  phase drift, Rose's rotation, etc.). Lets you crank the
+                  geometry "cycles" param way up and still keep a slow,
+                  contemplative pace. Visible when something is moving. */}
+              {(animate || morph || (params.animation && params.animation !== 'none')) && (() => {
+                const ANIM_MIN = 0.05
+                const ANIM_MAX = 5
+                const logSpan = Math.log(ANIM_MAX / ANIM_MIN)
+                const sliderVal = Math.round(
+                  (Math.log(Math.max(ANIM_MIN, animSpeed) / ANIM_MIN) / logSpan) * 1000
+                )
+                return (
+                  <div className="mt-2">
+                    <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider">
+                      <span className="text-biotuner-light/50">Animation speed</span>
+                      <span className="text-biotuner-accent/80 font-mono">
+                        {animSpeed < 1 ? animSpeed.toFixed(2) : animSpeed.toFixed(1)}×
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1000}
+                      step={1}
+                      value={sliderVal}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value, 10)
+                        const x = ANIM_MIN * Math.exp((v / 1000) * logSpan)
+                        setAnimSpeed(+x.toFixed(3))
+                      }}
+                      className="w-full accent-biotuner-accent cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[9px] text-biotuner-light/30 mt-0.5">
+                      <span>0.05×</span>
+                      <button
+                        onClick={() => setAnimSpeed(1)}
+                        className="hover:text-biotuner-accent/70 underline-offset-2 hover:underline"
+                      >
+                        1× reset
+                      </button>
+                      <span>5×</span>
+                    </div>
+                  </div>
+                )
+              })()}
             </div>
           )}
 
