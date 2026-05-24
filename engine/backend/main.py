@@ -664,6 +664,27 @@ async def compute_timbre(request: TimbreComputeRequest):
         raise HTTPException(status_code=500, detail=f"Timbre error: {e}")
 
 
+@app.post("/api/timbre/wavetable")
+async def compute_timbre_wavetable(request: TimbreComputeRequest):
+    """Compute a multi-frame wavetable from the current Timbre.
+
+    Returns the raw frame samples as JSON so the frontend can render
+    each frame as a waveform. Mirrors the export_wavetable evolution
+    modes (tilt / harmonic_buildup / amp_morph / phase_sweep /
+    intermod_buildup / harmonic_stack / formant_sweep) so what the
+    user sees on screen is identical to what the .wavetable export
+    would write.
+    """
+    try:
+        return timbre_service.compute_wavetable(
+            request.model_dump(exclude_none=False)
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Wavetable error: {e}")
+
+
 @app.post("/api/timbre/export/{format}")
 async def export_timbre(format: str, request: TimbreComputeRequest):
     """Render the timbre to a file in the requested format.

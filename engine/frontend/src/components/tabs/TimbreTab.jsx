@@ -18,6 +18,7 @@ import {
 
 import SpectrumViz from '../timbre/SpectrumViz'
 import WaveformViz from '../timbre/WaveformViz'
+import WavetableStudio from '../timbre/WavetableStudio'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
   buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob,
@@ -704,6 +705,12 @@ export default function TimbreTab({ analysisResult }) {
           </div>
         </div>
       </div>
+
+      {/* Wavetable Studio — sits between the spectrum/waveform and exports.
+          Lives in its own panel because it's a substantial subsystem
+          (8 evolution modes, scrubber, animator, frame-strip thumbnails);
+          burying it inside the spectrum row would crowd both views. */}
+      <WavetableStudio requestPayload={requestPayload} />
 
       {/* Export — bottom row, full width */}
       <div className="bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4">

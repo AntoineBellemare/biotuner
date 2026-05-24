@@ -152,13 +152,27 @@ def compute_timbre(req: Dict[str, Any]) -> Dict[str, Any]:
     if matching_method == "harmonic_input":
         timbre = Timbre.from_harmonic_input(hi, **voicing_overrides)
     elif matching_method in _METHOD_TO_FUNC:
-        timbre = match_timbre(
-            hi.to_ratios(),
-            method=matching_method,
-            base_freq=hi.base_freq,
-        )
-        # match_timbre builds its own Timbre — re-apply voicing
-        # overrides and the metadata so provenance survives.
+        try:
+            timbre = match_timbre(
+                hi.to_ratios(),
+                method=matching_method,
+                base_freq=hi.base_freq,
+            )
+        except ValueError as e:
+            # Some methods (notably 'hybrid' = consonance + entropy)
+            # require their component matchers to produce the same
+            # n_partials; certain ratio sets violate that. Fall back
+            # to consonance_weighted with a clear provenance note so
+            # the user sees what happened instead of a 500.
+            from biotuner.harmonic_timbre.matching import match_consonance_weighted
+            timbre = match_consonance_weighted(
+                hi.to_ratios(), base_freq=hi.base_freq,
+            )
+            timbre.metadata = dict(timbre.metadata or {})
+            timbre.metadata["matching_fallback"] = (
+                f"{matching_method} failed ({e}); used consonance_weighted"
+            )
+            matching_method = "consonance_weighted"
         if voicing_overrides:
             timbre = timbre.with_partials(**voicing_overrides)
         timbre.matched_tuning = [float(r) for r in hi.to_ratios()]
@@ -308,6 +322,125 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     am = _keep(timbre.am_modulators, "am")
     fm = _keep(timbre.fm_modulators, "fm")
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
+
+
+def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Build a multi-frame wavetable from the same Timbre pipeline as
+    /api/timbre/compute, returning the raw frame samples as JSON so
+    the frontend can render them as waveforms.
+
+    Mirrors the per-evolution-mode helpers in
+    biotuner.harmonic_timbre.exporters.to_wavetable so the rendered
+    .wav export (when the user clicks Download .wavetable) is the
+    exact same data the on-screen Wavetable Studio shows.
+
+    Request shape:
+      {
+        ...TimbreComputeRequest fields...,
+        'wavetable_config': {
+          'n_frames': 32,           # 1, 16, 32, 64, 128
+          'evolution': 'tilt',      # see _EVOLUTIONS
+          'table_size': 512,        # samples per frame — defaults 512
+          'tilt_range': [0, 2.5],
+          'phase_range': [0, 6.283],
+        }
+      }
+    """
+    from biotuner.harmonic_timbre.exporters.to_wavetable import (
+        _frame_with_tilt,
+        _frame_with_active_partials,
+        _frame_with_amp_morph,
+        _frame_with_phase_sweep,
+        _frame_with_intermod_sidebands,
+        _frame_with_harmonic_stack,
+        _frame_with_formant,
+    )
+    from biotuner.harmonic_timbre.synthesis import render_wavetable_cycle
+
+    timbre = _build_timbre_from_request(req)
+    pseudo_bt = _build_pseudo_bt(req)
+
+    cfg = req.get("wavetable_config") or {}
+    n_frames     = int(cfg.get("n_frames", 32))
+    evolution    = cfg.get("evolution", "tilt")
+    table_size   = int(cfg.get("table_size", 512))
+    tilt_range   = tuple(cfg.get("tilt_range",  [0.0, 2.5]))
+    phase_range  = tuple(cfg.get("phase_range", [0.0, 2.0 * np.pi]))
+    intermod_range = tuple(cfg.get("intermod_depth_range", [0.0, 0.6]))
+    stack_range  = tuple(cfg.get("harmonic_stack_range", [0, 4]))
+
+    n_frames = max(1, min(256, n_frames))
+    table_size = max(64, min(2048, table_size))
+
+    if n_frames == 1 or evolution == "none":
+        frames_np = [render_wavetable_cycle(timbre, table_size=table_size)]
+    elif evolution == "tilt":
+        tilts = np.linspace(tilt_range[0], tilt_range[1], n_frames)
+        frames_np = [_frame_with_tilt(timbre, float(t), table_size=table_size) for t in tilts]
+    elif evolution == "harmonic_buildup":
+        n = timbre.n_partials()
+        ks = np.linspace(1, n, n_frames).astype(int)
+        frames_np = [_frame_with_active_partials(timbre, int(k), table_size=table_size) for k in ks]
+    elif evolution == "amp_morph":
+        ts = np.linspace(0, 1, n_frames)
+        frames_np = [
+            _frame_with_amp_morph(timbre, float(t), seed=int(cfg.get("seed", 0)), table_size=table_size)
+            for t in ts
+        ]
+    elif evolution == "phase_sweep":
+        phs = np.linspace(phase_range[0], phase_range[1], n_frames)
+        frames_np = [_frame_with_phase_sweep(timbre, float(p), table_size=table_size) for p in phs]
+    elif evolution == "intermod_buildup":
+        depths = np.linspace(intermod_range[0], intermod_range[1], n_frames)
+        frames_np = [
+            _frame_with_intermod_sidebands(timbre, pseudo_bt, float(d), table_size=table_size)
+            for d in depths
+        ]
+    elif evolution == "harmonic_stack":
+        ns = np.linspace(stack_range[0], stack_range[1], n_frames).astype(int)
+        rolloff = float(cfg.get("harmonic_stack_rolloff", 0.9))
+        frames_np = [
+            _frame_with_harmonic_stack(timbre, int(n), rolloff=rolloff, table_size=table_size)
+            for n in ns
+        ]
+    elif evolution == "formant_sweep":
+        fr = tuple(cfg.get("formant_center_range", [1000.0, 3000.0]))
+        fw = float(cfg.get("formant_width_hz", 800.0))
+        fg = float(cfg.get("formant_gain_db", 4.0))
+        centers = np.linspace(fr[0], fr[1], n_frames)
+        frames_np = [
+            _frame_with_formant(timbre, float(c), fw, fg, table_size=table_size)
+            for c in centers
+        ]
+    else:
+        raise ValueError(f"Unknown wavetable evolution: {evolution!r}")
+
+    # Normalise each frame to [-1, 1] for consistent visualisation,
+    # then convert to list-of-lists for JSON. Keeps payload reasonable
+    # for typical settings: 32 frames × 512 samples × 4 bytes ≈ 64 KB.
+    frames_out = []
+    for f in frames_np:
+        arr = np.asarray(f, dtype=np.float32)
+        peak = float(np.max(np.abs(arr)) or 1.0)
+        frames_out.append([float(x / peak) for x in arr])
+
+    return {
+        "frames": frames_out,
+        "n_frames": len(frames_out),
+        "table_size": int(table_size),
+        "evolution": evolution,
+        # Tell the user what changed across frames (for tooltips).
+        "evolution_label": {
+            "tilt": "Spectral tilt 0 → 2.5",
+            "harmonic_buildup": "Partials fade in one by one",
+            "amp_morph": "Random → matched amplitudes",
+            "phase_sweep": "Partial phases rotate 0 → 2π",
+            "intermod_buildup": "Intermod sidebands fade in",
+            "harmonic_stack": "Overtone stack 2f → nf fades in",
+            "formant_sweep": "Formant center sweeps low → high",
+            "none": "Static (1 cycle)",
+        }.get(evolution, evolution),
+    }
 
 
 def export_to_format(format: str, req: Dict[str, Any], out_dir: str) -> Dict[str, Any]:

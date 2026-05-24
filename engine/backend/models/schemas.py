@@ -165,6 +165,9 @@ class TimbreComputeRequest(BaseModel):
     # Each block is independently opt-in and corresponds to a
     # Timbre.with_* method call.
     enrichment: Optional[Dict[str, Any]] = None
+    # Wavetable Studio config — only consumed by /api/timbre/wavetable.
+    # Shape: {"n_frames": 32, "evolution": "tilt", "table_size": 512, ...}
+    wavetable_config: Optional[Dict[str, Any]] = None
 
 
 class SessionState(BaseModel):
