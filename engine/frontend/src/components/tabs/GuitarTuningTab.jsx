@@ -406,28 +406,28 @@ export default function GuitarTuningTab({
             className="w-full bg-biotuner-dark-800 text-biotuner-light border border-biotuner-dark-600 rounded-lg p-3 min-h-[48px]"
           />
 
+          {/* Two reference sources, both single-shot.
+              "From data" picks the strongest-peak fundamental (already
+              octave-shifted into a guitar-friendly 55–440 Hz window by
+              deriveAudioFundamental). The earlier multi-octave picker
+              (÷4 … ×4) was misleading — string targets are matched in
+              absolute Hz, so shifting the reference by a power of two
+              produced the *exact same* assignment table. One button
+              keeps the choice meaningful. */}
           {audioFundamental && (
             <div className="mt-2">
               <div className="text-[10px] uppercase tracking-wider text-biotuner-light/40 mb-1">
-                From audio (strongest peak, octave-shifted)
+                From data
               </div>
-              <div className="flex gap-2 flex-wrap">
-                {[0.25, 0.5, 1, 2, 4].map((m) => {
-                  const f = audioFundamental * m
-                  return (
-                    <button
-                      key={m}
-                      onClick={() => setFundamental(f)}
-                      className={`min-h-[40px] px-3 rounded-md text-xs font-mono border transition-all
-                        ${Math.abs(fundamental - f) < 0.05
-                          ? 'bg-biotuner-primary text-biotuner-dark-900 border-biotuner-primary'
-                          : 'bg-biotuner-primary/10 text-biotuner-primary border-biotuner-primary/40 hover:border-biotuner-primary'}`}
-                    >
-                      {m === 1 ? '×1' : (m < 1 ? `÷${1/m}` : `×${m}`)} {f.toFixed(2)}
-                    </button>
-                  )
-                })}
-              </div>
+              <button
+                onClick={() => setFundamental(audioFundamental)}
+                className={`min-h-[40px] px-3 rounded-md text-xs font-mono border transition-all
+                  ${Math.abs(fundamental - audioFundamental) < 0.05
+                    ? 'bg-biotuner-primary text-biotuner-dark-900 border-biotuner-primary'
+                    : 'bg-biotuner-primary/10 text-biotuner-primary border-biotuner-primary/40 hover:border-biotuner-primary'}`}
+              >
+                {audioFundamental.toFixed(2)} Hz
+              </button>
             </div>
           )}
 
