@@ -27,6 +27,7 @@ const client = axios.create({
 // Evolution-mode picker. Each entry maps to one of the per-frame helpers
 // in biotuner.harmonic_timbre.exporters.to_wavetable.
 const EVOLUTION_OPTIONS = [
+  // Linear evolutions
   { value: 'tilt',             label: 'Spectral tilt sweep',     hint: 'Brightness ramp from dark to bright' },
   { value: 'harmonic_buildup', label: 'Harmonic buildup',        hint: 'Partials fade in one by one' },
   { value: 'amp_morph',        label: 'Amplitude morph',         hint: 'Random → matched amplitudes' },
@@ -34,6 +35,11 @@ const EVOLUTION_OPTIONS = [
   { value: 'intermod_buildup', label: 'Intermod buildup',        hint: 'f₁±f₂ sidebands fade in' },
   { value: 'harmonic_stack',   label: 'Harmonic stack buildup',  hint: 'Overtones 2f, 3f, … fade in' },
   { value: 'formant_sweep',    label: 'Formant sweep',           hint: 'Vowel-like ah → ee' },
+  // Nonlinear enrichments — Buchla folder + audio-rate FM. Both bake
+  // their character into the per-frame cycle so the exported wavetable
+  // carries it without needing the host synth to recreate.
+  { value: 'wavefolding',      label: 'Wavefolding (nonlinear)', hint: 'Buchla-style sin folder · adds odd harmonics' },
+  { value: 'fm_baked',         label: 'FM baked (nonlinear)',    hint: 'Audio-rate FM written into the cycle · bell character' },
 ]
 
 const FRAME_COUNT_OPTIONS = [8, 16, 32, 64, 128]

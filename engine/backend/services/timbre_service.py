@@ -419,6 +419,8 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
         _frame_with_intermod_sidebands,
         _frame_with_harmonic_stack,
         _frame_with_formant,
+        _frame_with_wavefolding,
+        _frame_with_fm_baked,
     )
     from biotuner.harmonic_timbre.synthesis import render_wavetable_cycle
 
@@ -481,6 +483,31 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             _frame_with_formant(timbre, float(c), fw, fg, table_size=table_size)
             for c in centers
         ]
+    elif evolution == "wavefolding":
+        # Buchla-style sin folder. fold_amount sweeps 0→4 across
+        # frames by default; cycle-mode rendering matches export.
+        fr = tuple(cfg.get("fold_range", [0.0, 4.0]))
+        drive = float(cfg.get("output_drive", 1.0))
+        folds = np.linspace(fr[0], fr[1], n_frames)
+        frames_np = [
+            _frame_with_wavefolding(timbre, float(f), table_size=table_size,
+                                    output_drive=drive)
+            for f in folds
+        ]
+    elif evolution == "fm_baked":
+        # FM written into the per-frame cycle. cm_ratio defaults to
+        # 2.0 (bell character); target_partial_idx defaults to 0
+        # (modulate the fundamental); set to -1 to modulate all
+        # partials for a denser sound.
+        fr = tuple(cfg.get("fm_index_range", [0.0, 3.0]))
+        cm = float(cfg.get("cm_ratio", 2.0))
+        target = int(cfg.get("target_partial_idx", 0))
+        indices = np.linspace(fr[0], fr[1], n_frames)
+        frames_np = [
+            _frame_with_fm_baked(timbre, float(b), table_size=table_size,
+                                 cm_ratio=cm, target_partial_idx=target)
+            for b in indices
+        ]
     else:
         raise ValueError(f"Unknown wavetable evolution: {evolution!r}")
 
@@ -507,6 +534,8 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             "intermod_buildup": "Intermod sidebands fade in",
             "harmonic_stack": "Overtone stack 2f → nf fades in",
             "formant_sweep": "Formant center sweeps low → high",
+            "wavefolding": "Sin-folder 0 → 4 (odd-harmonic enrichment)",
+            "fm_baked": "Audio-rate FM index 0 → 3 (Bessel sidebands)",
             "none": "Static (1 cycle)",
         }.get(evolution, evolution),
     }
