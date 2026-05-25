@@ -26,7 +26,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || ''
  * both the request builder AND the UI's "what scales are available"
  * dropdown agree on the same source of truth.
  */
-export function deriveScales(analysisResult) {
+export function deriveScales(analysisResult, extras = {}) {
   if (!analysisResult) return {}
   const r = analysisResult
   const out = {}
@@ -68,6 +68,14 @@ export function deriveScales(analysisResult) {
       out[hi_key] = r[bt_attr]
     }
   }
+  // Caller-supplied extras (e.g. extended ratios computed on demand
+  // via /api/timbre/extended-ratios) merge in last so they override.
+  // Keys must already match SCALE_KEYS.
+  for (const [hi_key, vals] of Object.entries(extras || {})) {
+    if (Array.isArray(vals) && vals.length > 0) {
+      out[hi_key] = vals
+    }
+  }
   return out
 }
 
@@ -91,9 +99,10 @@ export function buildTimbreRequest(analysisResult, design = {}) {
     aperiodic_exponent: r.aperiodic_exponent ?? null,
     spectral_flatness:  r.spectral_flatness  ?? r.spectral_entropy ?? null,
     // Scale variants — only the ones the analysis actually produced,
-    // derived in one place so the UI's availability dropdown and this
-    // request stay in sync.
-    scales: deriveScales(analysisResult),
+    // plus any extras (e.g. on-demand extended ratios) merged in by
+    // the caller. Derived in one place so the UI's availability
+    // dropdown and this request stay in sync.
+    scales: deriveScales(analysisResult, design.scale_extras || {}),
     // Modulator sources
     pac_freqs:        r.pac_freqs    || null,
     pac_coupling:     r.pac_coupling || null,
@@ -142,6 +151,19 @@ export async function exportTimbre(format, payload) {
   const match = /filename="?([^";]+)"?/i.exec(dispo)
   const filename = match?.[1] || `timbre.${format}`
   return { blob: res.data, filename }
+}
+
+/**
+ * POST /api/timbre/extended-ratios — run peaks_extension on the
+ * current peak list and return the extended ratios. The result is a
+ * dict { extended_peaks, extended_peaks_ratios, extended_peaks_ratios_cons }
+ * that the caller can stash and pass into the next buildTimbreRequest
+ * to unlock the "Extended raw ratios" / "Extended cons. ratios" scale
+ * options without re-running the whole analysis.
+ */
+export async function computeExtendedRatios(payload) {
+  const { data } = await client.post('/api/timbre/extended-ratios', payload)
+  return data
 }
 
 /** Trigger a browser download of an exported file. */

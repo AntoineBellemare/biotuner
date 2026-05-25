@@ -324,6 +324,71 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
 
 
+def compute_extended_ratios(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Run biotuner's peaks_extension over a peak list and return the
+    resulting extended ratios.
+
+    Useful when the original /api/analyze run didn't compute extension
+    (e.g. the user picked a tuning method that doesn't require it).
+    The Timbre tab calls this to populate the "Extended raw ratios" /
+    "Extended consonant ratios" scale options without forcing a
+    re-analysis of the whole signal.
+
+    Implementation note: peaks_extension internally calls peaks_to_amps,
+    which needs ``self.freqs`` and ``self.psd``. We don't have those
+    here (the request only carries peaks), so we plug in dummy zeros
+    of the right length. The amp computation degrades gracefully —
+    extended ratios only depend on extended_peaks, not their amps.
+    """
+    from biotuner.biotuner_object import compute_biotuner
+
+    peaks = req.get("peaks") or []
+    if len(peaks) < 2:
+        raise ValueError(
+            "compute_extended_ratios requires at least 2 peaks "
+            f"(got {len(peaks)})"
+        )
+    sf = float(req.get("sf") or 1000.0)
+    n_harm        = int(req.get("n_harm", 10))
+    method        = req.get("extension_method", "harmonic_fit")
+    cons_limit    = float(req.get("cons_limit", 0.05))
+    scale_cons    = float(req.get("scale_cons_limit", 0.1))
+
+    bt = compute_biotuner(sf=sf)
+    bt.peaks = list(peaks)
+    # Dummy spectrum so peaks_to_amps doesn't crash. The values don't
+    # matter for ratio extraction; biotuner uses them only to look up
+    # amplitudes at extended_peak frequencies, which we discard.
+    bt.freqs = np.linspace(0.1, sf / 2, 1024)
+    bt.psd = np.full(1024, 1e-12, dtype=np.float64)
+    try:
+        bt.peaks_extension(
+            method=method,
+            n_harm=n_harm,
+            cons_limit=cons_limit,
+            ratios_extension=True,
+            scale_cons_limit=scale_cons,
+            harm_function="mult",
+        )
+    except Exception as e:
+        raise ValueError(f"peaks_extension failed: {e}")
+
+    def _list(attr):
+        v = getattr(bt, attr, None)
+        if v is None:
+            return []
+        arr = np.asarray(v).ravel()
+        return [float(x) for x in arr if np.isfinite(x) and x > 0]
+
+    return {
+        "extended_peaks":             _list("extended_peaks"),
+        "extended_peaks_ratios":      _list("extended_peaks_ratios"),
+        "extended_peaks_ratios_cons": _list("extended_peaks_ratios_cons"),
+        "n_harm": n_harm,
+        "method": method,
+    }
+
+
 def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
     """Build a multi-frame wavetable from the same Timbre pipeline as
     /api/timbre/compute, returning the raw frame samples as JSON so
@@ -382,9 +447,13 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
         ks = np.linspace(1, n, n_frames).astype(int)
         frames_np = [_frame_with_active_partials(timbre, int(k), table_size=table_size) for k in ks]
     elif evolution == "amp_morph":
+        # NB: the helper takes a numpy.random.Generator, not a seed —
+        # construct one with the user's seed (or 0) so morphs are
+        # reproducible across re-runs.
+        rng = np.random.default_rng(int(cfg.get("seed", 0)))
         ts = np.linspace(0, 1, n_frames)
         frames_np = [
-            _frame_with_amp_morph(timbre, float(t), seed=int(cfg.get("seed", 0)), table_size=table_size)
+            _frame_with_amp_morph(timbre, float(t), table_size=table_size, rng=rng)
             for t in ts
         ]
     elif evolution == "phase_sweep":

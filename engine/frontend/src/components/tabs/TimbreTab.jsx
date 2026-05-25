@@ -22,6 +22,7 @@ import WavetableStudio from '../timbre/WavetableStudio'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
   buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob, deriveScales,
+  computeExtendedRatios,
 } from '../../services/timbre/api'
 
 // ---------------------------------------------------------------------------
@@ -97,6 +98,15 @@ export default function TimbreTab({ analysisResult }) {
   const [stackN,         setStackN]         = useState(4)
   const [stackRolloff,   setStackRolloff]   = useState(0.9)
   const [previewFreq, setPreviewFreq] = useState(null)  // Hz; null = derive
+  // Extras supplied to deriveScales by user actions (e.g. clicking
+  // "Compute extended ratios" populates extended_peaks_ratios here).
+  // Cleared when the analysis result changes since the values are
+  // tied to the analysis's specific peak list.
+  const [scaleExtras, setScaleExtras] = useState({})
+  const [computingExt, setComputingExt] = useState(false)
+  // Reset extras when the analysis itself changes, otherwise stale
+  // extended ratios from a previous signal would haunt the new one.
+  useEffect(() => { setScaleExtras({}) }, [analysisResult])
 
   const [timbre, setTimbre] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -113,7 +123,7 @@ export default function TimbreTab({ analysisResult }) {
     harmonic_stack: { enabled: stackOn, n: stackN, rolloff: stackRolloff },
   }), [intermodOn, intermodDepth, stackOn, stackN, stackRolloff])
 
-  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}|${JSON.stringify(enrichmentObj)}`
+  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}|${JSON.stringify(enrichmentObj)}|${JSON.stringify(Object.keys(scaleExtras))}`
   const requestPayload = useMemo(() => {
     if (!analysisResult) return null
     return buildTimbreRequest(analysisResult, {
@@ -121,6 +131,7 @@ export default function TimbreTab({ analysisResult }) {
       scale_priority: scalePriority ? [scalePriority] : null,
       enabled_modulators: enabledMods,
       enrichment: enrichmentObj,
+      scale_extras: scaleExtras,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisResult, designKey])
@@ -133,8 +144,8 @@ export default function TimbreTab({ analysisResult }) {
   // SCALE_KEYS vocabulary so e.g. choosing 'diss_curve' at analysis
   // time lights up the 'Dissonance-curve minima' dropdown option here.
   const availableScales = useMemo(
-    () => deriveScales(analysisResult),
-    [analysisResult],
+    () => deriveScales(analysisResult, scaleExtras),
+    [analysisResult, scaleExtras],
   )
   const scaleAvailability = useMemo(() => {
     const m = { '': true }  // default always available
@@ -271,6 +282,38 @@ export default function TimbreTab({ analysisResult }) {
     setStackOn(false)
     setStackN(4)
     setStackRolloff(0.9)
+  }
+
+  // --------- Compute extended ratios on demand --------------------------
+  // Fires biotuner.peaks_extension server-side and stashes the result in
+  // scaleExtras so the "Extended raw ratios" / "Extended cons. ratios"
+  // dropdown options light up immediately. The user can then pick one
+  // and the partials change to the extended set.
+  const handleComputeExtended = async () => {
+    if (!analysisResult?.peaks?.length) return
+    setComputingExt(true)
+    setError(null)
+    try {
+      const result = await computeExtendedRatios({
+        peaks: analysisResult.peaks,
+        n_harm: 10,
+        extension_method: 'harmonic_fit',
+        cons_limit: 0.05,
+        scale_cons_limit: 0.1,
+      })
+      const next = { ...scaleExtras }
+      if (result.extended_peaks_ratios?.length) {
+        next.extended_peaks_ratios = result.extended_peaks_ratios
+      }
+      if (result.extended_peaks_ratios_cons?.length) {
+        next.extended_peaks_ratios_cons = result.extended_peaks_ratios_cons
+      }
+      setScaleExtras(next)
+    } catch (e) {
+      setError(e.response?.data?.detail || e.message || 'Extension failed')
+    } finally {
+      setComputingExt(false)
+    }
   }
 
   // --------- Export -----------------------------------------------------
@@ -532,6 +575,26 @@ export default function TimbreTab({ analysisResult }) {
                   the matching method to see different partials.
                 </p>
               )}
+              {/* Compute extended ratios on demand. Lights up the
+                  "Extended raw / cons. ratios" dropdown options without
+                  requiring the user to re-run the whole analysis. */}
+              <button
+                onClick={handleComputeExtended}
+                disabled={computingExt || !analysisResult?.peaks?.length}
+                title="Run biotuner peaks_extension over the current peak list to add extended-ratio variants"
+                className={`mt-2 w-full min-h-[36px] flex items-center justify-center gap-2 px-3 rounded-md
+                  text-xs font-medium border transition-colors
+                  ${availableScales.extended_peaks_ratios?.length
+                    ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
+                    : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}
+                  disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {computingExt
+                  ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Computing…</>
+                  : (availableScales.extended_peaks_ratios?.length
+                    ? `✓ Extended ratios computed (${availableScales.extended_peaks_ratios.length} ratios)`
+                    : '↻ Compute extended ratios')}
+              </button>
             </div>
           </div>
 

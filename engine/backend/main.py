@@ -664,6 +664,24 @@ async def compute_timbre(request: TimbreComputeRequest):
         raise HTTPException(status_code=500, detail=f"Timbre error: {e}")
 
 
+@app.post("/api/timbre/extended-ratios")
+async def compute_timbre_extended_ratios(payload: Dict[str, Any]):
+    """Run biotuner's peaks_extension to add extended ratios on top
+    of an existing peak list.
+
+    Body shape: { peaks, sf?, n_harm?, extension_method?,
+                  cons_limit?, scale_cons_limit? }
+    Returns the extended peaks, their ratios, and the consonance-
+    filtered subset.
+    """
+    try:
+        return timbre_service.compute_extended_ratios(payload)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Extended ratios error: {e}")
+
+
 @app.post("/api/timbre/wavetable")
 async def compute_timbre_wavetable(request: TimbreComputeRequest):
     """Compute a multi-frame wavetable from the current Timbre.
