@@ -713,6 +713,32 @@ async def compute_timbre_extended_ratios(payload: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Extended ratios error: {e}")
 
 
+@app.post("/api/timbre/compute-scale/{scale_name}")
+async def compute_timbre_scale(scale_name: str, payload: Dict[str, Any]):
+    """Compute one of biotuner's derived scales on demand.
+
+    Mirrors /api/timbre/extended-ratios but exposes every scale-source
+    option so the Timbre tab can populate scales that the original
+    analyze pipeline didn't compute (the analyze endpoint only
+    produces ONE scale based on the chosen tuning_method).
+
+    Body: ``{ peaks: [...], sf: float, params: dict (optional) }``
+    Returns: ``{ scale_name, ratios: [...] }``.
+    """
+    try:
+        ratios = timbre_service.compute_scale_on_demand(
+            scale_name=scale_name,
+            peaks=list(payload.get("peaks") or []),
+            sf=float(payload.get("sf", 1000.0)),
+            params=payload.get("params") or {},
+        )
+        return {"scale_name": scale_name, "ratios": ratios}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Scale {scale_name} error: {e}")
+
+
 @app.post("/api/timbre/bands")
 async def compute_timbre_bands(payload: Dict[str, Any]):
     """Bandpass a session's signal into the given frequency ranges and

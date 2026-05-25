@@ -324,6 +324,159 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
 
 
+def compute_scale_on_demand(
+    scale_name: str,
+    peaks: List[float],
+    *,
+    sf: float = 1000.0,
+    params: Optional[Dict[str, Any]] = None,
+) -> List[float]:
+    """Compute one of biotuner's derived scales from a peak list.
+
+    Lets the Timbre tab populate any of the Scale-Source dropdown
+    options on demand, mirroring the existing
+    /api/timbre/extended-ratios pattern. Each branch constructs a
+    fresh compute_biotuner, sets bt.peaks, and calls the relevant
+    scale-construction method.
+
+    Scales requiring derived state (diss_curve / HE) chain through
+    peaks_extension first, since biotuner's scale extraction reads
+    from bt.extended_peaks.
+
+    Parameters
+    ----------
+    scale_name : str
+        One of: 'peaks_ratios_cons', 'extended_peaks_ratios',
+        'extended_peaks_ratios_cons', 'diss_scale', 'HE',
+        'euler_fokker', 'harm_tuning', 'harm_fit'.
+    peaks : list of float
+        Peak frequencies in Hz from the analysis.
+    sf : float
+        Sampling rate. Most scales don't use it, but compute_biotuner
+        requires it at construction.
+    params : dict, optional
+        Scale-specific overrides (cons_limit, n_harm, etc.).
+
+    Returns
+    -------
+    list of float
+        The computed scale ratios, with duplicates removed and sorted.
+    """
+    from biotuner.biotuner_object import compute_biotuner
+
+    if not peaks or len(peaks) < 2:
+        raise ValueError(
+            f"compute_scale_on_demand: need at least 2 peaks (got {len(peaks)})"
+        )
+    cfg = params or {}
+    bt = compute_biotuner(sf=float(sf))
+    bt.peaks = list(peaks)
+    # Dummy spectrum so internals that call peaks_to_amps don't crash.
+    bt.freqs = np.linspace(0.1, sf / 2, 1024)
+    bt.psd = np.full(1024, 1e-12, dtype=np.float64)
+    # Always compute the peaks_extension first — most derived scales
+    # depend on extended_peaks. Cheap; safe to skip-on-failure.
+    try:
+        bt.peaks_extension(
+            method=cfg.get("extension_method", "harmonic_fit"),
+            n_harm=int(cfg.get("n_harm", 10)),
+            cons_limit=float(cfg.get("cons_limit", 0.05)),
+            ratios_extension=True,
+            scale_cons_limit=float(cfg.get("scale_cons_limit", 0.1)),
+            harm_function="mult",
+        )
+    except Exception:
+        # Continue — some scales work without extension.
+        pass
+
+    def _drain(arr) -> List[float]:
+        a = np.asarray(arr, dtype=np.float64).ravel()
+        a = a[np.isfinite(a) & (a > 0)]
+        return sorted(set(float(x) for x in a))
+
+    name = scale_name.lower()
+    if name == "peaks_ratios_cons":
+        # Already computed by peaks_extension above when ratios_extension=True.
+        attr = getattr(bt, "extended_peaks_ratios_cons", None)
+        if attr is None or len(attr) == 0:
+            # Fall back: compute consonance filter over peaks_ratios.
+            from biotuner.metrics import dyad_similarity
+            ratios = sorted(set(
+                p1 / p2 for i, p1 in enumerate(peaks) for p2 in peaks[i + 1:]
+                if p2 > 0 and p1 / p2 > 1
+            ))
+            cons_thresh = float(cfg.get("scale_cons_limit", 0.1))
+            attr = [r for r in ratios if dyad_similarity(r) >= cons_thresh]
+        return _drain(attr)
+
+    if name == "extended_peaks_ratios":
+        return _drain(getattr(bt, "extended_peaks_ratios", []))
+    if name == "extended_peaks_ratios_cons":
+        return _drain(getattr(bt, "extended_peaks_ratios_cons", []))
+
+    if name == "diss_scale":
+        bt.compute_diss_curve(
+            plot=False,
+            input_type=cfg.get("input_type", "extended_peaks"),
+            euler_comp=False,
+            denom=int(cfg.get("max_denominator", 100)),
+            max_ratio=float(cfg.get("max_ratio", 2.0)),
+            n_tet_grid=int(cfg.get("n_tet_grid", 12)),
+        )
+        return _drain(getattr(bt, "diss_scale", []))
+
+    if name in ("he", "harmonic_entropy", "he_scale"):
+        bt.compute_harmonic_entropy(
+            input_type=cfg.get("input_type", "extended_peaks"),
+            res=float(cfg.get("res", 0.001)),
+            spread=float(cfg.get("spread", 0.01)),
+        )
+        return _drain(getattr(bt, "HE_scale", []))
+
+    if name == "euler_fokker":
+        scale = bt.euler_fokker_scale(
+            method=cfg.get("method", "peaks"),
+            octave=int(cfg.get("octave", 2)),
+        )
+        return _drain(scale)
+
+    if name in ("harm_tuning", "harmonic_tuning"):
+        # bt.harmonic_tuning requires a list of harmonic positions.
+        # When peaks were extracted via 'harmonic_recurrence' it auto-
+        # populates self.all_harmonics; here we bypass that pipeline,
+        # so derive a default list directly from the peaks: each
+        # peak's index relative to the fundamental, rounded.
+        list_harmonics = cfg.get("list_harmonics")
+        if not list_harmonics:
+            f0 = min(peaks)
+            list_harmonics = sorted(set(
+                max(1, int(round(p / f0))) for p in peaks if f0 > 0
+            ))
+            if not list_harmonics:
+                list_harmonics = [1, 2, 3, 4, 5]
+        scale = bt.harmonic_tuning(
+            list_harmonics=list_harmonics,
+            octave=int(cfg.get("octave", 2)),
+            min_ratio=float(cfg.get("min_ratio", 1.0)),
+            max_ratio=float(cfg.get("max_ratio", 2.0)),
+        )
+        return _drain(scale)
+
+    if name in ("harm_fit", "harm_fit_tuning", "harmonic_fit_tuning"):
+        scale = bt.harmonic_fit_tuning(
+            n_harm=int(cfg.get("n_harm", 128)),
+            bounds=float(cfg.get("bounds", 0.1)),
+            n_common_harms=int(cfg.get("n_common_harms", 2)),
+        )
+        return _drain(scale)
+
+    raise ValueError(
+        f"Unknown scale '{scale_name}'. Known: peaks_ratios_cons, "
+        "extended_peaks_ratios, extended_peaks_ratios_cons, diss_scale, "
+        "HE, euler_fokker, harm_tuning, harm_fit"
+    )
+
+
 def compute_band_timbres(
     signal: List[float],
     sf: float,

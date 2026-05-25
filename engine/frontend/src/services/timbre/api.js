@@ -166,6 +166,20 @@ export async function computeExtendedRatios(payload) {
   return data
 }
 
+/**
+ * POST /api/timbre/compute-scale/{name} — populate any of the
+ * Scale-Source dropdown options on demand. Backend builds a fresh
+ * compute_biotuner from the peaks, runs the relevant scale
+ * construction method, and returns the resulting ratios.
+ */
+export async function computeScale(scaleName, payload) {
+  const { data } = await client.post(
+    `/api/timbre/compute-scale/${scaleName}`,
+    payload,
+  )
+  return data
+}
+
 /** Trigger a browser download of an exported file. */
 export function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob)

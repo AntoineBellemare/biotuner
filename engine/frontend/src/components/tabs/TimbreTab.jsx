@@ -22,7 +22,7 @@ import WavetableStudio from '../timbre/WavetableStudio'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
   buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob, deriveScales,
-  computeExtendedRatios,
+  computeExtendedRatios, computeScale,
 } from '../../services/timbre/api'
 
 // ---------------------------------------------------------------------------
@@ -104,6 +104,9 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
   // tied to the analysis's specific peak list.
   const [scaleExtras, setScaleExtras] = useState({})
   const [computingExt, setComputingExt] = useState(false)
+  // Tracks the in-flight compute for a specific scale (the dropdown
+  // option's value, e.g. 'HE' / 'diss_scale'). Empty string when idle.
+  const [computingScale, setComputingScale] = useState('')
   // Reset extras when the analysis itself changes, otherwise stale
   // extended ratios from a previous signal would haunt the new one.
   useEffect(() => { setScaleExtras({}) }, [analysisResult])
@@ -282,6 +285,33 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
     setStackOn(false)
     setStackN(4)
     setStackRolloff(0.9)
+  }
+
+  // --------- Compute any scale on demand --------------------------------
+  // Fires the generic /api/timbre/compute-scale/{name} endpoint that
+  // populates whichever scale the user just picked from the dropdown.
+  // Result lands in scaleExtras, the dropdown availability re-evaluates,
+  // and the selection becomes valid without a re-analyze.
+  const handleComputeSelectedScale = async () => {
+    if (!analysisResult?.peaks?.length || !scalePriority) return
+    setComputingScale(scalePriority)
+    setError(null)
+    try {
+      const { ratios } = await computeScale(scalePriority, {
+        peaks: analysisResult.peaks,
+        sf: analysisResult.sampling_rate || 1000.0,
+        params: {},
+      })
+      if (ratios?.length) {
+        setScaleExtras((prev) => ({ ...prev, [scalePriority]: ratios }))
+      } else {
+        setError(`'${scalePriority}' produced no ratios — try a different peak set`)
+      }
+    } catch (e) {
+      setError(e.response?.data?.detail || e.message || `Failed to compute ${scalePriority}`)
+    } finally {
+      setComputingScale('')
+    }
   }
 
   // --------- Compute extended ratios on demand --------------------------
@@ -561,12 +591,37 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
                 {SCALE_PRIORITY_OPTIONS.map((o) => {
                   const available = scaleAvailability[o.value]
                   return (
-                    <option key={o.value} value={o.value} disabled={!available}>
-                      {o.label}{available ? '' : ' — not computed'}
+                    // No longer disabled — user can SELECT any option,
+                    // and if it's not yet computed, a "Compute now"
+                    // affordance appears below the dropdown.
+                    <option key={o.value} value={o.value}>
+                      {o.label}{available || !o.value ? '' : ' — not computed'}
                     </option>
                   )
                 })}
               </select>
+              {/* Compute-on-demand affordance — appears when the user
+                  picked a scale variant that isn't yet populated.
+                  One click calls /api/timbre/compute-scale/{name}, the
+                  result lands in scaleExtras, the dropdown's
+                  "not computed" suffix disappears, and the partials
+                  recompute. */}
+              {scalePriority && !scaleAvailability[scalePriority] && (
+                <button
+                  onClick={handleComputeSelectedScale}
+                  disabled={computingScale === scalePriority || !analysisResult?.peaks?.length}
+                  title="Run biotuner's scale construction for this option on the current peaks"
+                  className="mt-2 w-full min-h-[36px] flex items-center justify-center gap-2 px-3 rounded-md
+                    text-xs font-medium border transition-colors
+                    bg-biotuner-accent/10 border-biotuner-accent/40 text-biotuner-accent
+                    hover:bg-biotuner-accent/20
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {computingScale === scalePriority
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Computing {scalePriority}…</>
+                    : <>↻ Compute {scalePriority} now</>}
+                </button>
+              )}
               {matchingMethod === 'harmonic_input' && scalePriority === 'peaks_ratios' && (
                 <p className="text-[10px] text-biotuner-light/40 mt-1 leading-snug">
                   Note: with the direct matching method, "Raw peak ratios" produces the

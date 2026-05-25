@@ -350,6 +350,20 @@ export default function WavetableStudio({ requestPayload, sessionId, samplingRat
   const [computingImfs, setComputingImfs] = useState(false)
   const [imfMethod,  setImfMethod]        = useState('EMD')   // 'EMD' | 'EEMD' | 'CEEMDAN'
   const [imfCount,   setImfCount]         = useState(5)
+  // Index range — which of the cached IMFs actually feed the morph.
+  // Defaults to "all of them" but the user can trim the noisy top
+  // (first IMF often contains 60Hz hum or scanner noise) or the
+  // residual bottom (last IMFs are trend/DC).
+  const [imfRange,   setImfRange]         = useState([1, 99])
+  // Clamp the range whenever the cached count changes so it stays
+  // within bounds after re-computing with a different imfCount.
+  useEffect(() => {
+    if (imfTimbres.length === 0) return
+    setImfRange(([lo, hi]) => [
+      Math.max(1, Math.min(lo, imfTimbres.length)),
+      Math.max(1, Math.min(hi, imfTimbres.length)),
+    ])
+  }, [imfTimbres.length])
   const [blendMode,  setBlendMode]        = useState('linear_walk')
   const [gaussianSigma, setGaussianSigma] = useState(0.5)
 
@@ -391,7 +405,12 @@ export default function WavetableStudio({ requestPayload, sessionId, samplingRat
         // plus the blend params.
         ...(evolution === 'imf_morph' && imfTimbres.length
           ? {
-              timbre_sequence: imfTimbres,
+              // Slice to the user-selected IMF range. Indices are 1-based
+              // in the UI; convert here. Inclusive on both ends.
+              timbre_sequence: imfTimbres.slice(
+                Math.max(0, imfRange[0] - 1),
+                Math.min(imfTimbres.length, imfRange[1]),
+              ),
               blend_mode: blendMode,
               gaussian_sigma: gaussianSigma,
             }
@@ -435,7 +454,7 @@ export default function WavetableStudio({ requestPayload, sessionId, samplingRat
         setLoading(false)
       })
   }, [requestPayload, evolution, nFrames, compositeLayers,
-      imfTimbres, bandTimbres, blendMode, gaussianSigma])
+      imfTimbres, imfRange, bandTimbres, blendMode, gaussianSigma])
 
   // Animate the scrubber when playing — advances currentIdx at ``animRate``
   // frames per second, looping.
@@ -693,6 +712,78 @@ export default function WavetableStudio({ requestPayload, sessionId, samplingRat
                 ? `✓ ${imfTimbres.length} IMFs cached — re-compute`
                 : '↻ Compute IMFs from signal')}
           </button>
+
+          {/* IMF range selector — appears once IMFs are cached.
+              Lets the user trim noisy top IMFs (often 60Hz hum / scanner
+              artefacts) and / or low residual IMFs (DC / drift). Each
+              cached IMF shows its dominant frequency so the user can
+              pick which ones to keep based on the actual content. */}
+          {imfTimbres.length > 0 && (
+            <div className="space-y-1.5 mt-1">
+              <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-biotuner-light/50">
+                <span>Use IMFs</span>
+                <span className="font-mono text-biotuner-accent/70">
+                  #{imfRange[0]} → #{imfRange[1]} ({Math.max(0, imfRange[1] - imfRange[0] + 1)} of {imfTimbres.length})
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[9px] text-biotuner-light/40 mb-0.5">From IMF</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={imfTimbres.length}
+                    value={imfRange[0]}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(imfTimbres.length, parseInt(e.target.value, 10) || 1))
+                      setImfRange(([_, hi]) => [v, Math.max(v, hi)])
+                    }}
+                    className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[9px] text-biotuner-light/40 mb-0.5">To IMF</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={imfTimbres.length}
+                    value={imfRange[1]}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(imfTimbres.length, parseInt(e.target.value, 10) || imfTimbres.length))
+                      setImfRange(([lo, _]) => [Math.min(lo, v), v])
+                    }}
+                    className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs font-mono"
+                  />
+                </div>
+              </div>
+              {/* IMF mini-table — shows each cached IMF, its dominant
+                  frequency, and whether it's currently included in the
+                  morph (green dot) or excluded (gray dot). Clickable
+                  rows snap the range to "use only this IMF and the
+                  ones beyond it in the desired direction". */}
+              <div className="flex flex-wrap gap-1 pt-1">
+                {imfTimbres.map((t, i) => {
+                  const inRange = i + 1 >= imfRange[0] && i + 1 <= imfRange[1]
+                  const dominantHz = t.partials_hz?.[0] || 0
+                  const hzLabel = dominantHz >= 1000
+                    ? `${(dominantHz / 1000).toFixed(1)}k`
+                    : `${dominantHz.toFixed(dominantHz < 10 ? 2 : 1)}Hz`
+                  return (
+                    <span
+                      key={i}
+                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded border
+                        ${inRange
+                          ? 'bg-biotuner-accent/15 border-biotuner-accent/40 text-biotuner-accent'
+                          : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/35'}`}
+                      title={`IMF #${i + 1} — dominant freq ${dominantHz.toFixed(2)} Hz`}
+                    >
+                      #{i + 1}: {hzLabel}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+          )}
           {!sessionId && (
             <p className="text-[10px] text-biotuner-light/40 italic">
               Run an analysis first — IMF extraction needs the session's raw signal.
