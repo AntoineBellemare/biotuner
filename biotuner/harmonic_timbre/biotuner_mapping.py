@@ -710,8 +710,17 @@ def timbres_from_imfs(
     convention used by :func:`biotuner.peaks_extraction.EMD_eeg`.
 
     Empty IMFs (silent or constant) are dropped when ``drop_empty=True``.
+
+    **All returned Timbres share a single ``base_freq``** — the global
+    minimum partial across every IMF. This is essential for the
+    ``imf_morph`` wavetable evolution: each frame's rendered cycle then
+    reflects the IMF's *absolute* frequency content relative to the
+    others (high-freq IMFs render as busier cycles, low-freq IMFs as
+    slower ones), instead of every IMF normalising to itself and the
+    whole stack looking identical regardless of frequency band.
     """
-    out = []
+    # First pass: collect each IMF's peaks without committing to a Timbre.
+    raw = []
     for imf in imfs:
         arr = np.asarray(imf, dtype=np.float64)
         if arr.size < 4 or np.all(arr == arr[0]):
@@ -721,14 +730,20 @@ def timbres_from_imfs(
             min_freq=0.5, max_freq=sf / 2.0,
         )
         if freqs.size == 0:
-            if not drop_empty:
-                continue
             continue
+        raw.append((freqs, mags))
+    if not raw:
+        return []
+    # Shared base_freq = global minimum across all IMFs' partials.
+    shared_base = float(min(float(f.min()) for f, _ in raw))
+    shared_base = max(shared_base, 1e-3)  # guard against zero
+    out = []
+    for freqs, mags in raw:
         amps = mags / max(float(mags.max()), 1e-9)
         out.append(Timbre(
             partials_hz=freqs,
             amplitudes=amps,
-            base_freq=float(freqs.min()) if freqs.size else 1.0,
+            base_freq=shared_base,
         ))
     return out
 
@@ -751,6 +766,11 @@ def timbres_from_bands(
     Returns one Timbre per band, in the same order as the edges.
     Empty bands (no spectral energy in range) are dropped when
     ``drop_empty=True``.
+
+    **Shared ``base_freq`` across all returned Timbres** — the lowest
+    band's lower edge. Same reason as :func:`timbres_from_imfs`: makes
+    the ``band_morph`` wavetable frames visually distinct by absolute
+    frequency rather than each band normalising to itself.
     """
     from scipy.signal import butter, sosfiltfilt
     edges = list(band_edges)
@@ -759,6 +779,11 @@ def timbres_from_bands(
             "timbres_from_bands: band_edges must contain at least 2 values "
             "(low, high) — got %r" % (edges,)
         )
+    # Shared base_freq = the smallest valid band lower-edge. Keeps every
+    # band-Timbre on the same harmonic-index scale so high-freq bands
+    # render as denser wavetable cycles than low-freq bands.
+    valid_lows = [float(e) for e in edges[:-1] if float(e) > 0]
+    shared_base = max(min(valid_lows) if valid_lows else 1.0, 1e-3)
     out = []
     for i in range(len(edges) - 1):
         lo, hi = float(edges[i]), float(edges[i + 1])
@@ -778,6 +803,6 @@ def timbres_from_bands(
         out.append(Timbre(
             partials_hz=freqs,
             amplitudes=amps,
-            base_freq=float(freqs.min()) if freqs.size else 1.0,
+            base_freq=shared_base,
         ))
     return out

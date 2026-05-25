@@ -328,7 +328,16 @@ function StackedFramesView({ frames, currentIdx, onJump, height = 240 }) {
 // ============================================================================
 // WavetableStudio — orchestrates fetching, scrubbing, and playback
 // ============================================================================
-export default function WavetableStudio({ requestPayload, sessionId }) {
+export default function WavetableStudio({ requestPayload, sessionId, samplingRate }) {
+  // Format the session's sampling rate as a friendly chip — "44.1 kHz"
+  // for audio, "1 kHz" for EEG-ish, "256 Hz" for CSV defaults, etc.
+  // Surfaced in the IMF and band panels so the user can sanity-check
+  // that EMD / bandpass is operating on the rate they expect.
+  const sfChip = samplingRate
+    ? (samplingRate >= 1000
+        ? `${(samplingRate / 1000).toFixed(samplingRate >= 10000 ? 0 : 1)} kHz`
+        : `${Math.round(samplingRate)} Hz`)
+    : null
   const [evolution, setEvolution] = useState('tilt')
   const [nFrames, setNFrames]     = useState(32)
   // Composite layers state — only consumed when evolution === 'composite'.
@@ -593,8 +602,18 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
       {evolution === 'imf_morph' && (
         <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-2.5 space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
-              IMF morph
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
+                IMF morph
+              </span>
+              {sfChip && (
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded
+                                 bg-biotuner-dark-800 border border-biotuner-dark-600
+                                 text-biotuner-light/60"
+                      title="Session sample rate. EMD operates on the signal at this rate; the resulting IMFs span frequencies up to sf/2.">
+                  sf: {sfChip}
+                </span>
+              )}
             </div>
             <div className="text-[10px] text-biotuner-light/40">
               {imfTimbres.length
@@ -688,8 +707,18 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
       {evolution === 'band_morph' && (
         <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-2.5 space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
-              Band morph
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
+                Band morph
+              </span>
+              {sfChip && (
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded
+                                 bg-biotuner-dark-800 border border-biotuner-dark-600
+                                 text-biotuner-light/60"
+                      title="Session sample rate. Band edges above sf/2 are silently dropped.">
+                  sf: {sfChip}
+                </span>
+              )}
             </div>
             <div className="text-[10px] text-biotuner-light/40">
               {bandTimbres.length

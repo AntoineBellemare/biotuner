@@ -76,7 +76,7 @@ const EXPORT_TARGETS = [
 // Default ADSR — matches the Keyboard tab's triangle preset for consistency.
 const DEFAULT_ADSR = { attack: 0.03, decay: 0.15, sustain: 0.55, release: 0.4 }
 
-export default function TimbreTab({ analysisResult, sessionId }) {
+export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
   // --------- Local state -------------------------------------------------
   const [matchingMethod, setMatchingMethod] = useState('harmonic_input')
   const [scalePriority,  setScalePriority]  = useState('')
@@ -781,6 +781,7 @@ export default function TimbreTab({ analysisResult, sessionId }) {
       <WavetableStudio
         requestPayload={requestPayload}
         sessionId={sessionId}
+        samplingRate={fileInfo?.sampling_rate}
       />
 
       {/* Export — bottom row, full width */}
