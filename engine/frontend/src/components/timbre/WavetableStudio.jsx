@@ -65,6 +65,9 @@ const EVOLUTION_OPTIONS = [
   // Composite — multi-axis. Opens a layer-builder panel below the
   // dropdown when selected. Maxes out at 4 layers (UI choice).
   { value: 'composite',        label: 'Composite (multi-axis)',  hint: 'Chain 2–4 evolutions with per-layer curves' },
+  // Biosignal-structure evolutions — exploit aspects of the bt that
+  // synthetic sources can't access (FOOOF decomposition, IMFs, bands).
+  { value: 'noise_to_structure', label: 'Noise → structure (bio)', hint: '1/f^k noise crystallises into your harmonic identity' },
 ]
 
 const FRAME_COUNT_OPTIONS = [8, 16, 32, 64, 128]

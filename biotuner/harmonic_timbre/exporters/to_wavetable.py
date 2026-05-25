@@ -80,6 +80,9 @@ _EVOLUTIONS = (
     "wavefolding", "fm_baked",
     # Composite — combine 2+ of the above with per-axis weight curves.
     "composite",
+    # Biosignal-structure evolutions — exploit aspects of the bt that
+    # synthetic sources can't access.
+    "noise_to_structure",
 )
 
 
@@ -296,6 +299,82 @@ def _frame_with_fm_baked(
     # (the existing _normalize helper uses 0.99, not 1.0, to leave a
     # tiny bit of headroom for downstream DAW input gain). We replicate
     # the constant here to keep _frame_with_fm_baked self-contained.
+    peak = float(np.max(np.abs(out))) or 1.0
+    return (out * (0.99 / peak)).astype(np.float32, copy=False)
+
+
+# ---------------------------------------------------------------------------
+# Biosignal-structure evolutions — leverage what's UNIQUELY biosignal
+# (vs. synthetic) about the timbre's source data.
+# ---------------------------------------------------------------------------
+
+
+def _frame_with_noise_to_structure(
+    timbre: Timbre,
+    alpha: float,
+    *,
+    table_size: int,
+    exponent: float | None = None,
+    seed: int = 0,
+) -> np.ndarray:
+    """Cross-fade a 1/f^k noise cycle into the clean Timbre cycle.
+
+    The "brain noise → brain structure" mode. Mirrors the FOOOF
+    decomposition philosophy: the spectrum of a biosignal splits into
+    an aperiodic (1/f^k) component plus periodic peaks on top. This
+    mode makes that decomposition AUDIBLE by sweeping from "pure
+    aperiodic" → "pure periodic" across wavetable frames.
+
+    Frame 0 (alpha=0) is a single-period waveform whose magnitude
+    spectrum is ``bin^(-k/2)`` and whose phases are random. Because
+    the spectrum is defined on integer FFT bins, the resulting cycle
+    LOOPS cleanly when played as a wavetable — it's "loopable
+    coloured noise" rather than a random buffer slice.
+
+    Frame N (alpha=1) is the standard additive render of the Timbre.
+
+    Intermediates are linear blends in waveform domain.
+
+    Parameters
+    ----------
+    alpha : float in [0, 1]
+        0.0 = pure noise; 1.0 = pure structured timbre.
+    exponent : float, optional
+        Power-law slope (k) of the noise's PSD shape. When None, uses
+        ``timbre.spectral_tilt`` if set (that's the bt's measured
+        aperiodic_exponent), else defaults to 1.0 (pink noise). Larger
+        k = darker / brown-noise-ish; smaller = brighter / white-ish.
+    seed : int, default=0
+        Deterministic phase randomisation. Same seed → same noise
+        cycle, so the morph is reproducible across re-exports.
+    """
+    if exponent is None:
+        exponent = (
+            float(timbre.spectral_tilt) if timbre.spectral_tilt is not None else 1.0
+        )
+    alpha = float(np.clip(alpha, 0.0, 1.0))
+
+    # Loopable 1/f^k noise cycle: random phases per harmonic bin,
+    # magnitudes following bin^(-k/2). DC bin set to 0 to avoid
+    # offset; phases at bin 0 don't matter.
+    rng = np.random.default_rng(int(seed))
+    n_bins = table_size // 2 + 1
+    bins = np.arange(n_bins, dtype=np.float64)
+    safe_bins = np.where(bins == 0, 1.0, bins)
+    mags = safe_bins ** (-float(exponent) / 2.0)
+    mags[0] = 0.0
+    phases = rng.uniform(0.0, 2.0 * np.pi, n_bins)
+    spec = mags * np.exp(1j * phases)
+    noise_cycle = np.fft.irfft(spec, n=table_size)
+    npk = float(np.max(np.abs(noise_cycle))) or 1.0
+    noise_cycle = noise_cycle / npk
+
+    # Structured cycle from the timbre.
+    structured = render_wavetable_cycle(timbre, table_size=table_size)
+    spk = float(np.max(np.abs(structured))) or 1.0
+    structured = structured.astype(np.float64) / spk
+
+    out = (1.0 - alpha) * noise_cycle + alpha * structured
     peak = float(np.max(np.abs(out))) or 1.0
     return (out * (0.99 / peak)).astype(np.float32, copy=False)
 
@@ -563,6 +642,8 @@ def export_wavetable(
     fm_target_partial_idx: int = 0,
     # Composite evolution: list of layers (or dicts coerced to layers).
     composite_layers: Sequence[Any] | None = None,
+    # Noise-to-structure evolution:
+    noise_exponent: float | None = None,    # 1/f^k slope; None → use timbre.spectral_tilt or 1.0
 ) -> dict:
     """Write a single- or multi-frame wavetable WAV from a single Timbre.
 
@@ -705,6 +786,16 @@ def export_wavetable(
             for b in indices
         ]
         full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "noise_to_structure":
+        alphas = np.linspace(0.0, 1.0, n_frames)
+        frames = [
+            _frame_with_noise_to_structure(
+                timbre, float(a), table_size=table_size,
+                exponent=noise_exponent, seed=seed,
+            )
+            for a in alphas
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
     elif evolution == "composite":
         if not composite_layers:
             raise ValueError(
@@ -750,6 +841,7 @@ def export_wavetable(
             fm_cm_ratio=fm_cm_ratio,
             fm_target_partial_idx=fm_target_partial_idx,
             composite_layers=composite_layers,
+            noise_exponent=noise_exponent,
         ),
         "subtype": subtype,
         "samplerate": sr,
@@ -779,6 +871,7 @@ def _evolution_params(
     fm_cm_ratio=None,
     fm_target_partial_idx=None,
     composite_layers=None,
+    noise_exponent=None,
 ):
     if n_frames == 1:
         return {}
@@ -811,6 +904,13 @@ def _evolution_params(
             "cm_ratio":               float(fm_cm_ratio if fm_cm_ratio is not None else 2.0),
             "target_partial_idx":     int(fm_target_partial_idx
                                           if fm_target_partial_idx is not None else 0),
+        }
+    if evolution == "noise_to_structure":
+        return {
+            "noise_exponent": (
+                float(noise_exponent) if noise_exponent is not None else None
+            ),
+            "seed": int(seed),
         }
     if evolution == "composite":
         # Coerce any WavetableLayer dataclasses in the list to plain

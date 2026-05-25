@@ -421,6 +421,7 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
         _frame_with_formant,
         _frame_with_wavefolding,
         _frame_with_fm_baked,
+        _frame_with_noise_to_structure,
         _frame_composite,
         WavetableLayer,
     )
@@ -510,6 +511,21 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
                                  cm_ratio=cm, target_partial_idx=target)
             for b in indices
         ]
+    elif evolution == "noise_to_structure":
+        # FOOOF-style decomposition made audible: frame 0 = 1/f^k
+        # noise (using the timbre's spectral_tilt or override), frame
+        # N = clean structured render. Seed for reproducibility.
+        exponent = cfg.get("noise_exponent")
+        seed = int(cfg.get("seed", 0))
+        alphas = np.linspace(0.0, 1.0, n_frames)
+        frames_np = [
+            _frame_with_noise_to_structure(
+                timbre, float(a), table_size=table_size,
+                exponent=(float(exponent) if exponent is not None else None),
+                seed=seed,
+            )
+            for a in alphas
+        ]
     elif evolution == "composite":
         # Multi-axis composite. ``layers`` is a list of dicts coming
         # from the frontend; each dict describes one axis (evolution +
@@ -559,6 +575,7 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             "wavefolding": "Sin-folder 0 → 4 (odd-harmonic enrichment)",
             "fm_baked": "Audio-rate FM index 0 → 3 (Bessel sidebands)",
             "composite": "Multi-axis: chained layer evolutions",
+            "noise_to_structure": "Noise → structure: 1/f^k → clean Timbre",
             "none": "Static (1 cycle)",
         }.get(evolution, evolution),
     }
