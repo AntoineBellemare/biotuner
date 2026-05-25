@@ -73,6 +73,10 @@ _EVOLUTIONS = (
     "tilt", "harmonic_buildup", "amp_morph", "phase_sweep",
     # Spectral enrichment buildups (use Timbre transforms under the hood):
     "intermod_buildup", "harmonic_stack", "formant_sweep",
+    # Nonlinear enrichments — introduce new partials via maths the additive
+    # synth can't produce on its own. Bake the result into the per-frame
+    # cycle so it survives export to wavetable-target formats.
+    "wavefolding", "fm_baked",
 )
 
 
@@ -165,6 +169,134 @@ def _frame_with_formant(
     return render_wavetable_cycle(enriched, table_size=table_size)
 
 
+def _frame_with_wavefolding(
+    timbre: Timbre, fold_amount: float, *, table_size: int,
+    output_drive: float = 1.0,
+) -> np.ndarray:
+    """Apply sin-based wavefolding to the rendered cycle.
+
+    Mathematical model (Buchla / Make Noise style)::
+
+        y = sin( π · output_drive · base(t) · (1 + fold_amount) / 2 )
+
+    The ``/ 2`` is the bit that makes ``fold_amount = 0`` behave like
+    a near-identity transform: at fold=0 the argument range is
+    ``[-π/2, +π/2]`` over the cycle's ``[-1, +1]`` range, so sin
+    monotonically maps both endpoints to themselves and the curve
+    sits close to ``y = x`` with a mild saturating S-shape. Rising
+    fold_amount widens the argument range past ``±π/2`` and the wave
+    starts folding back on itself, adding primarily **odd-order
+    harmonics** with predictable amplitude rolloff.
+
+    This is the most musical of the cheap nonlinearities (vs tanh,
+    clipper, cubic) because the energy lands in well-defined harmonic
+    positions rather than smearing into broadband distortion.
+
+    Parameters
+    ----------
+    fold_amount : float
+        ``0.0`` → near-unfolded (mild S-curve saturation, very close
+        to the base cycle). ``~3.0`` → heavy fold with dense odd-
+        harmonic enrichment. Beyond ``~4.0`` the spectrum spills
+        above Nyquist; callers are expected to cap accordingly.
+    output_drive : float, default=1.0
+        Pre-fold gain. Stay in ``[0.7, 1.3]``; outside that range
+        the fold becomes either inaudible or alias-dominated.
+
+    Returns
+    -------
+    ndarray of float32, length ``table_size``
+        The folded cycle, peak-normalised to ±1.
+    """
+    base = render_wavetable_cycle(timbre, table_size=table_size)
+    pre  = base * float(output_drive)
+    folded = np.sin(np.pi * pre * (1.0 + float(fold_amount)) / 2.0)
+    peak = float(np.max(np.abs(folded))) or 1.0
+    return (folded / peak).astype(np.float32, copy=False)
+
+
+def _frame_with_fm_baked(
+    timbre: Timbre, fm_index: float, *, table_size: int,
+    cm_ratio: float = 2.0, target_partial_idx: int = 0,
+) -> np.ndarray:
+    """Render the cycle with audio-rate FM baked into the partial set.
+
+    Different from ``Timbre.fm_modulators``: those apply at synthesis
+    time (a separate LFO modulating the partial frequency). This bakes
+    FM **into the single-cycle wavetable** so an exported .vital /
+    .surge / .serum file carries the FM character without needing the
+    host synth to recreate the modulation.
+
+    Math: for each partial ``f`` at amplitude ``a`` selected by
+    ``target_partial_idx``, synthesise::
+
+        a · sin(2π · f · t + fm_index · sin(2π · (f · cm_ratio) · t))
+
+    Non-target partials render normally (additive sines). The result
+    is a single cycle of the fundamental whose spectrum contains the
+    FM Bessel sidebands ``f ± k·(f·cm_ratio)``.
+
+    Parameters
+    ----------
+    fm_index : float
+        FM modulation index β. ``0`` → identical to additive render;
+        ``≈ 1`` produces vibrato-rich sidebands; ``≈ 3`` produces full
+        FM-EP / bell character; ``> 5`` starts aliasing badly at
+        moderate table sizes.
+    cm_ratio : float, default=2.0
+        Carrier-to-modulator ratio. ``2.0`` = octave-mod = classic
+        bell character; integer ratios stay periodic and "musical";
+        non-integer ratios produce metallic / clangorous textures.
+    target_partial_idx : int, default=0
+        Index of the partial to FM. ``-1`` applies FM to every partial
+        (heavier sound, denser sidebands per partial).
+
+    Returns
+    -------
+    ndarray of float32, length ``table_size``
+        The FM-bearing cycle, peak-normalised to ±1.
+    """
+    timbre.validate()
+    if timbre.base_freq <= 0:
+        raise ValueError("_frame_with_fm_baked: timbre.base_freq must be > 0")
+    # Match render_wavetable_cycle's semantics: partials are interpreted
+    # as harmonic indices (partial_hz / base_freq) and the table holds
+    # one cycle of the fundamental sampled at table_size points.
+    partials = np.asarray(timbre.partials_hz, dtype=np.float64) / float(timbre.base_freq)
+    amps = np.asarray(timbre.amplitudes, dtype=np.float64)
+    phases = (
+        np.asarray(timbre.phases, dtype=np.float64)
+        if timbre.phases is not None
+        else np.zeros(partials.shape[0])
+    )
+    idx = np.arange(table_size, dtype=np.float64)
+    theta = 2.0 * np.pi * idx / float(table_size)   # one cycle of fundamental
+
+    fm_set = set(range(partials.size)) if target_partial_idx < 0 else {
+        int(target_partial_idx) % max(1, partials.size)
+    }
+    beta = float(fm_index)
+    out = np.zeros(table_size, dtype=np.float64)
+    for k in range(partials.size):
+        n = float(partials[k]); a = float(amps[k]); ph = float(phases[k])
+        if k in fm_set and beta > 0:
+            # Modulator at carrier × cm_ratio in the same normalised
+            # harmonic space — produces FM Bessel sidebands at
+            # n ± m·(n·cm_ratio) in the FFT.
+            n_mod = n * float(cm_ratio)
+            modulator = beta * np.sin(n_mod * theta)
+            out += a * np.sin(n * theta + ph + modulator)
+        else:
+            out += a * np.sin(n * theta + ph)
+
+    # Match render_wavetable_cycle's normalisation: scale so peak = 0.99
+    # (the existing _normalize helper uses 0.99, not 1.0, to leave a
+    # tiny bit of headroom for downstream DAW input gain). We replicate
+    # the constant here to keep _frame_with_fm_baked self-contained.
+    peak = float(np.max(np.abs(out))) or 1.0
+    return (out * (0.99 / peak)).astype(np.float32, copy=False)
+
+
 def _normalize_cycle(buf: np.ndarray, peak: float = 0.99) -> np.ndarray:
     m = float(np.max(np.abs(buf))) if buf.size else 0.0
     if m <= 0:
@@ -224,6 +356,11 @@ def export_wavetable(
     formant_center_range: tuple[float, float] = (1000.0, 3000.0),
     formant_width_hz: float = 800.0,
     formant_gain_db: float = 4.0,
+    # Nonlinear-enrichment evolutions:
+    fold_range: tuple[float, float] = (0.0, 4.0),
+    fm_index_range: tuple[float, float] = (0.0, 3.0),
+    fm_cm_ratio: float = 2.0,
+    fm_target_partial_idx: int = 0,
 ) -> dict:
     """Write a single- or multi-frame wavetable WAV from a single Timbre.
 
@@ -349,6 +486,23 @@ def export_wavetable(
             for c in centers
         ]
         full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "wavefolding":
+        folds = np.linspace(fold_range[0], fold_range[1], n_frames)
+        frames = [
+            _frame_with_wavefolding(timbre, float(f), table_size=table_size)
+            for f in folds
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "fm_baked":
+        indices = np.linspace(fm_index_range[0], fm_index_range[1], n_frames)
+        frames = [
+            _frame_with_fm_baked(
+                timbre, float(b), table_size=table_size,
+                cm_ratio=fm_cm_ratio, target_partial_idx=fm_target_partial_idx,
+            )
+            for b in indices
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
 
     sr = 48000
     _require_sf()
@@ -370,6 +524,10 @@ def export_wavetable(
             formant_center_range=formant_center_range,
             formant_width_hz=formant_width_hz,
             formant_gain_db=formant_gain_db,
+            fold_range=fold_range,
+            fm_index_range=fm_index_range,
+            fm_cm_ratio=fm_cm_ratio,
+            fm_target_partial_idx=fm_target_partial_idx,
         ),
         "subtype": subtype,
         "samplerate": sr,
@@ -394,6 +552,10 @@ def _evolution_params(
     formant_center_range=None,
     formant_width_hz=None,
     formant_gain_db=None,
+    fold_range=None,
+    fm_index_range=None,
+    fm_cm_ratio=None,
+    fm_target_partial_idx=None,
 ):
     if n_frames == 1:
         return {}
@@ -417,6 +579,15 @@ def _evolution_params(
             "formant_center_range": list(formant_center_range or (1000.0, 3000.0)),
             "width_hz": float(formant_width_hz if formant_width_hz is not None else 800.0),
             "gain_db": float(formant_gain_db if formant_gain_db is not None else 4.0),
+        }
+    if evolution == "wavefolding":
+        return {"fold_range": list(fold_range or (0.0, 4.0))}
+    if evolution == "fm_baked":
+        return {
+            "fm_index_range":         list(fm_index_range or (0.0, 3.0)),
+            "cm_ratio":               float(fm_cm_ratio if fm_cm_ratio is not None else 2.0),
+            "target_partial_idx":     int(fm_target_partial_idx
+                                          if fm_target_partial_idx is not None else 0),
         }
     return {}
 

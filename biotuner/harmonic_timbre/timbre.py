@@ -717,6 +717,93 @@ class Timbre:
         new_amps = amps * envelope
         return self.with_partials(amplitudes=new_amps)
 
+    def with_wavefolding(
+        self,
+        fold_amount: float = 0.7,
+        *,
+        output_drive: float = 1.0,
+        n_partials_keep: int | None = None,
+        max_bin: int = 512,
+    ) -> "Timbre":
+        """Bake wavefolding into the partial spectrum (additive equivalent).
+
+        Renders one cycle at the current partials, folds it with
+        ``sin(π · drive · x · (1 + fold))``, FFT-decomposes the result
+        back to a new partial set, and returns a Timbre whose partials
+        capture the resulting (predominantly odd-order) harmonic
+        enrichment.
+
+        Use this when you want the folded character as a static
+        addition to the timbre — distinct from the frame-evolution
+        ``wavefolding`` mode in
+        :mod:`biotuner.harmonic_timbre.exporters.to_wavetable`, which
+        sweeps ``fold_amount`` across wavetable frames at export time.
+
+        Parameters
+        ----------
+        fold_amount : float, default=0.7
+            ``0`` = no fold (returns self). ``~3`` = heavy enrichment.
+            Above ~4 the spectrum starts spilling above Nyquist.
+        output_drive : float, default=1.0
+            Pre-fold gain. Stay in ``[0.7, 1.3]``.
+        n_partials_keep : int, optional
+            Cap the resulting partial count to the top-N by amplitude.
+            If None, every bin past the noise floor is retained.
+        max_bin : int, default=512
+            Drop partials whose FFT bin exceeds this (band-limit).
+        """
+        if fold_amount <= 0:
+            return self
+        # Single-cycle render at a high enough resolution to keep the
+        # fold's high harmonics distinguishable.
+        TABLE = 4096
+        partials = np.asarray(self.partials_hz, dtype=np.float64)
+        amps = np.asarray(self.amplitudes, dtype=np.float64)
+        phases = _resolve_phases_or_zeros(self)
+        if partials.size == 0:
+            return self
+        f0 = float(np.min(partials))
+        if f0 <= 0:
+            return self
+        period = 1.0 / f0
+        t = np.linspace(0.0, period, TABLE, endpoint=False)
+        cycle = np.zeros(TABLE, dtype=np.float64)
+        for k in range(partials.size):
+            cycle += amps[k] * np.sin(2.0 * np.pi * partials[k] * t + phases[k])
+        peak = float(np.max(np.abs(cycle))) or 1.0
+        cycle /= peak
+        folded = np.sin(np.pi * cycle * float(output_drive) * (1.0 + float(fold_amount)))
+        # FFT decompose. Frequency bin k → f0 * k.
+        spec = np.fft.rfft(folded)
+        mag = np.abs(spec) / (TABLE / 2)
+        # Noise floor: drop bins below 0.5 % of peak magnitude.
+        thresh = 0.005 * float(mag.max() or 1.0)
+        keep_idx = np.where(mag > thresh)[0]
+        # Bin 0 is DC — drop it.
+        keep_idx = keep_idx[keep_idx > 0]
+        # Drop bins above the band-limit.
+        keep_idx = keep_idx[keep_idx <= int(max_bin)]
+        new_partials = (keep_idx * f0).astype(np.float64)
+        new_amps = mag[keep_idx]
+        # Phase from FFT (arctan2 of imag/real) — preserved for
+        # round-tripping fidelity. Renderers that ignore phase still get
+        # the magnitude spectrum right.
+        new_phases = np.angle(spec[keep_idx])
+        # Optional truncation: keep only the loudest n partials.
+        if n_partials_keep is not None and new_partials.size > n_partials_keep:
+            order = np.argsort(-new_amps)[:int(n_partials_keep)]
+            order.sort()
+            new_partials = new_partials[order]
+            new_amps = new_amps[order]
+            new_phases = new_phases[order]
+        if new_partials.size == 0:
+            return self
+        return self.with_partials(
+            partials_hz=new_partials,
+            amplitudes=new_amps,
+            phases=new_phases,
+        )
+
     def with_slight_detune(
         self,
         *,
