@@ -18,6 +18,28 @@ import { Loader2, Play, Pause } from 'lucide-react'
 
 import axios from 'axios'
 
+import CompositeBuilder from './CompositeBuilder'
+
+// Default layer stack when the user first picks "Composite" — a
+// recognisable starting point that demonstrates non-trivial multi-axis
+// behaviour without overwhelming them.
+const DEFAULT_COMPOSITE_LAYERS = [
+  {
+    evolution: 'harmonic_stack',
+    weight_curve: 'linear',
+    weight_min: 0,
+    weight_max: 4,
+    params: { rolloff: 0.9 },
+  },
+  {
+    evolution: 'wavefolding',
+    weight_curve: 'ease_in',
+    weight_min: 0.0,
+    weight_max: 2.5,
+    params: { output_drive: 1.0 },
+  },
+]
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || ''
 const client = axios.create({
   baseURL: API_BASE_URL,
@@ -40,6 +62,9 @@ const EVOLUTION_OPTIONS = [
   // carries it without needing the host synth to recreate.
   { value: 'wavefolding',      label: 'Wavefolding (nonlinear)', hint: 'Buchla-style sin folder · adds odd harmonics' },
   { value: 'fm_baked',         label: 'FM baked (nonlinear)',    hint: 'Audio-rate FM written into the cycle · bell character' },
+  // Composite — multi-axis. Opens a layer-builder panel below the
+  // dropdown when selected. Maxes out at 4 layers (UI choice).
+  { value: 'composite',        label: 'Composite (multi-axis)',  hint: 'Chain 2–4 evolutions with per-layer curves' },
 ]
 
 const FRAME_COUNT_OPTIONS = [8, 16, 32, 64, 128]
@@ -283,6 +308,10 @@ function StackedFramesView({ frames, currentIdx, onJump, height = 240 }) {
 export default function WavetableStudio({ requestPayload }) {
   const [evolution, setEvolution] = useState('tilt')
   const [nFrames, setNFrames]     = useState(32)
+  // Composite layers state — only consumed when evolution === 'composite'.
+  // Initialised to a sensible 2-layer stack so the user sees something
+  // working on first pick instead of an empty editor.
+  const [compositeLayers, setCompositeLayers] = useState(DEFAULT_COMPOSITE_LAYERS)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [animPlaying, setAnimPlaying] = useState(false)
   const [animRate, setAnimRate]   = useState(8)   // frames per second
@@ -305,6 +334,9 @@ export default function WavetableStudio({ requestPayload }) {
         n_frames: nFrames,
         evolution,
         table_size: 512,
+        // Forward layers only for composite mode; the backend errors
+        // if the list is empty when composite is selected.
+        ...(evolution === 'composite' ? { layers: compositeLayers } : {}),
       },
     }
     const id = ++requestIdRef.current
@@ -323,7 +355,7 @@ export default function WavetableStudio({ requestPayload }) {
         setError(e.response?.data?.detail || e.message || 'wavetable failed')
         setLoading(false)
       })
-  }, [requestPayload, evolution, nFrames])
+  }, [requestPayload, evolution, nFrames, compositeLayers])
 
   // Animate the scrubber when playing — advances currentIdx at ``animRate``
   // frames per second, looping.
@@ -401,6 +433,21 @@ export default function WavetableStudio({ requestPayload }) {
           </select>
         </div>
       </div>
+
+      {/* Composite layer builder — only visible when composite mode
+          is selected. Shown above the wave preview so the cause/effect
+          relationship is obvious (edit layers → preview updates). */}
+      {evolution === 'composite' && (
+        <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-2.5">
+          <div className="text-[10px] uppercase tracking-wider text-biotuner-accent/80 mb-2">
+            Layers
+          </div>
+          <CompositeBuilder
+            layers={compositeLayers}
+            onChange={setCompositeLayers}
+          />
+        </div>
+      )}
 
       {/* Errors */}
       {error && (

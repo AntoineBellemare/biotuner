@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import math
 import os
+from dataclasses import dataclass, field
 from typing import Any, Iterable, Sequence
 
 import numpy as np
@@ -77,6 +78,8 @@ _EVOLUTIONS = (
     # synth can't produce on its own. Bake the result into the per-frame
     # cycle so it survives export to wavetable-target formats.
     "wavefolding", "fm_baked",
+    # Composite — combine 2+ of the above with per-axis weight curves.
+    "composite",
 )
 
 
@@ -297,6 +300,203 @@ def _frame_with_fm_baked(
     return (out * (0.99 / peak)).astype(np.float32, copy=False)
 
 
+# ---------------------------------------------------------------------------
+# Composite evolution — chain multiple effects with per-axis weight curves
+# ---------------------------------------------------------------------------
+
+_COMPOSITE_WEIGHT_CURVES = ("linear", "ease_in", "ease_out", "sine", "constant")
+_COMPOSITE_ALLOWED = tuple(e for e in _EVOLUTIONS if e != "composite")
+
+
+@dataclass
+class WavetableLayer:
+    """One axis of a composite wavetable evolution.
+
+    A layer specifies (a) which single-axis evolution to apply, (b)
+    the weight range that evolution sweeps across the wavetable, and
+    (c) the curve shape the weight follows (linear, eased, etc.).
+    Composite mode evaluates every layer's weight at each frame and
+    applies the layers **in order** — spectral edits accumulate into
+    a running Timbre; waveform edits apply to the rendered cycle;
+    fm_baked terminates the spectral chain with a fresh FM-rendered
+    cycle. See :func:`_frame_composite` for the dispatch table.
+
+    Parameters
+    ----------
+    evolution : str
+        One of :data:`_COMPOSITE_ALLOWED`. ``"composite"`` itself is
+        not allowed (no recursion).
+    weight_curve : str, default="linear"
+        Shape of the weight as ``frame_idx`` goes 0 → N-1. Options:
+        ``"linear"``, ``"ease_in"`` (squared), ``"ease_out"`` (1−(1−t)²),
+        ``"sine"`` (smooth half-cycle), ``"constant"`` (always the
+        midpoint of the range).
+    weight_min, weight_max : float
+        Start and end of the swept range. Semantic meaning depends on
+        the evolution (tilt exponent, fold amount, formant Hz, etc.);
+        see the per-mode docstrings.
+    params : dict
+        Extra mode-specific knobs the swept weight doesn't cover —
+        e.g. ``{"width_hz": 800, "gain_db": 4}`` for formant_sweep,
+        ``{"output_drive": 1.0}`` for wavefolding, ``{"cm_ratio": 2.0,
+        "target_partial_idx": 0}`` for fm_baked.
+    """
+
+    evolution: str
+    weight_curve: str = "linear"
+    weight_min: float = 0.0
+    weight_max: float = 1.0
+    params: dict = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.evolution == "composite":
+            raise ValueError(
+                "WavetableLayer.evolution='composite' would recurse; "
+                f"pick one of {_COMPOSITE_ALLOWED}"
+            )
+        if self.evolution not in _COMPOSITE_ALLOWED:
+            raise ValueError(
+                f"WavetableLayer.evolution={self.evolution!r} not in "
+                f"{_COMPOSITE_ALLOWED}"
+            )
+        if self.weight_curve not in _COMPOSITE_WEIGHT_CURVES:
+            raise ValueError(
+                f"WavetableLayer.weight_curve={self.weight_curve!r} not in "
+                f"{_COMPOSITE_WEIGHT_CURVES}"
+            )
+
+    def weight_at(self, frame_idx: int, n_frames: int) -> float:
+        """Evaluate the layer's weight at the given frame index.
+
+        ``frame_idx`` ∈ [0, n_frames-1]. Returns a float in
+        ``[weight_min, weight_max]`` after curve shaping.
+        """
+        if n_frames <= 1:
+            t = 1.0
+        else:
+            t = float(frame_idx) / float(n_frames - 1)
+        if self.weight_curve == "constant":
+            t = 0.5
+        elif self.weight_curve == "ease_in":
+            t = t * t
+        elif self.weight_curve == "ease_out":
+            t = 1.0 - (1.0 - t) ** 2
+        elif self.weight_curve == "sine":
+            t = 0.5 - 0.5 * math.cos(math.pi * t)
+        # 'linear' → unchanged.
+        return float(self.weight_min) + t * float(self.weight_max - self.weight_min)
+
+
+def _frame_composite(
+    base_timbre: Timbre,
+    layers: Sequence[WavetableLayer],
+    frame_idx: int,
+    n_frames: int,
+    *,
+    table_size: int,
+    bt: Any = None,
+    seed: int = 0,
+) -> np.ndarray:
+    """Render one wavetable frame by applying multiple layers in order.
+
+    Three categories of layer:
+
+    * **Spectral** (tilt, harmonic_buildup, intermod_buildup,
+      harmonic_stack, formant_sweep, phase_sweep, amp_morph) — these
+      mutate a running Timbre; their changes accumulate.
+    * **Waveform** (wavefolding) — applied to the rendered cycle;
+      requires a render before they can run.
+    * **Terminal-render** (fm_baked) — replaces the rendered cycle
+      with a fresh FM-injected render from the current Timbre.
+
+    Layers run in the user-supplied order. The recommended pipeline is
+    ``[spectral enrichments] → [shape] → [nonlinear post]`` but the
+    order is not enforced — composing in different orders is the whole
+    point of having a composite mode.
+
+    Returns the rendered cycle as float32, length ``table_size``,
+    peak-normalised to 0.99 (matching the convention used by every
+    other helper in this module).
+    """
+    timbre = base_timbre
+    cycle: np.ndarray | None = None
+    rng = np.random.default_rng(int(seed))
+
+    for layer in layers:
+        w = layer.weight_at(frame_idx, n_frames)
+        ev = layer.evolution
+
+        if ev == "tilt":
+            timbre = timbre.with_partials(spectral_tilt=float(w))
+
+        elif ev == "harmonic_buildup":
+            n = max(1, min(timbre.n_partials(), int(round(w))))
+            mask = np.zeros(timbre.n_partials(), dtype=np.float64)
+            mask[:n] = 1.0
+            timbre = timbre.with_partials(
+                amplitudes=np.asarray(timbre.amplitudes, dtype=np.float64) * mask
+            )
+
+        elif ev == "intermod_buildup":
+            if bt is not None and float(w) > 0:
+                timbre = timbre.with_intermod_sidebands(bt, depth=float(w))
+
+        elif ev == "harmonic_stack":
+            n = max(0, int(round(w)))
+            if n > 0:
+                rolloff = float(layer.params.get("rolloff", 0.9))
+                timbre = timbre.with_harmonic_stack(n=n, rolloff=rolloff)
+
+        elif ev == "formant_sweep":
+            width = float(layer.params.get("width_hz", 800.0))
+            gain  = float(layer.params.get("gain_db", 4.0))
+            timbre = timbre.with_formant(
+                center_hz=float(w), width_hz=width, gain_db=gain,
+            )
+
+        elif ev == "phase_sweep":
+            n = timbre.n_partials()
+            new_phases = (np.arange(1, n + 1) * float(w)) % (2.0 * np.pi)
+            timbre = timbre.with_partials(phases=new_phases)
+
+        elif ev == "amp_morph":
+            alpha = float(w)
+            n = timbre.n_partials()
+            random_amps = rng.uniform(0.0, 1.0, n)
+            morphed = (1 - alpha) * random_amps + alpha * np.asarray(
+                timbre.amplitudes, dtype=np.float64
+            )
+            mx = float(np.max(np.abs(morphed))) or 1e-9
+            timbre = timbre.with_partials(amplitudes=morphed / mx)
+
+        elif ev == "wavefolding":
+            # Needs the rendered cycle. Force a render the first time
+            # we see a waveform layer.
+            if cycle is None:
+                cycle = render_wavetable_cycle(timbre, table_size=table_size)
+            drive = float(layer.params.get("output_drive", 1.0))
+            pre = cycle * drive
+            folded = np.sin(np.pi * pre * (1.0 + float(w)) / 2.0)
+            peak = float(np.max(np.abs(folded))) or 1.0
+            cycle = (folded * (0.99 / peak)).astype(np.float32, copy=False)
+
+        elif ev == "fm_baked":
+            cm = float(layer.params.get("cm_ratio", 2.0))
+            target = int(layer.params.get("target_partial_idx", 0))
+            cycle = _frame_with_fm_baked(
+                timbre, float(w), table_size=table_size,
+                cm_ratio=cm, target_partial_idx=target,
+            )
+
+        else:  # pragma: no cover — guarded by _COMPOSITE_ALLOWED check above
+            raise ValueError(f"Unknown composite layer evolution: {ev!r}")
+
+    # Final render if no waveform / terminal layer touched the cycle.
+    if cycle is None:
+        cycle = render_wavetable_cycle(timbre, table_size=table_size)
+    return cycle.astype(np.float32, copy=False)
+
+
 def _normalize_cycle(buf: np.ndarray, peak: float = 0.99) -> np.ndarray:
     m = float(np.max(np.abs(buf))) if buf.size else 0.0
     if m <= 0:
@@ -361,6 +561,8 @@ def export_wavetable(
     fm_index_range: tuple[float, float] = (0.0, 3.0),
     fm_cm_ratio: float = 2.0,
     fm_target_partial_idx: int = 0,
+    # Composite evolution: list of layers (or dicts coerced to layers).
+    composite_layers: Sequence[Any] | None = None,
 ) -> dict:
     """Write a single- or multi-frame wavetable WAV from a single Timbre.
 
@@ -503,6 +705,25 @@ def export_wavetable(
             for b in indices
         ]
         full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution == "composite":
+        if not composite_layers:
+            raise ValueError(
+                "evolution='composite' requires composite_layers= "
+                "(a non-empty list of WavetableLayer or dict configs)"
+            )
+        # Coerce dict entries to WavetableLayer for the helper.
+        layers = [
+            l if isinstance(l, WavetableLayer) else WavetableLayer(**l)
+            for l in composite_layers
+        ]
+        frames = [
+            _frame_composite(
+                timbre, layers, i, n_frames,
+                table_size=table_size, bt=bt, seed=seed,
+            )
+            for i in range(n_frames)
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
 
     sr = 48000
     _require_sf()
@@ -528,6 +749,7 @@ def export_wavetable(
             fm_index_range=fm_index_range,
             fm_cm_ratio=fm_cm_ratio,
             fm_target_partial_idx=fm_target_partial_idx,
+            composite_layers=composite_layers,
         ),
         "subtype": subtype,
         "samplerate": sr,
@@ -556,6 +778,7 @@ def _evolution_params(
     fm_index_range=None,
     fm_cm_ratio=None,
     fm_target_partial_idx=None,
+    composite_layers=None,
 ):
     if n_frames == 1:
         return {}
@@ -589,6 +812,22 @@ def _evolution_params(
             "target_partial_idx":     int(fm_target_partial_idx
                                           if fm_target_partial_idx is not None else 0),
         }
+    if evolution == "composite":
+        # Coerce any WavetableLayer dataclasses in the list to plain
+        # dicts so the manifest JSON can serialise them.
+        serialised = []
+        for l in (composite_layers or []):
+            if isinstance(l, WavetableLayer):
+                serialised.append({
+                    "evolution":    l.evolution,
+                    "weight_curve": l.weight_curve,
+                    "weight_min":   float(l.weight_min),
+                    "weight_max":   float(l.weight_max),
+                    "params":       dict(l.params),
+                })
+            else:
+                serialised.append(dict(l))
+        return {"composite_layers": serialised}
     return {}
 
 

@@ -421,6 +421,8 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
         _frame_with_formant,
         _frame_with_wavefolding,
         _frame_with_fm_baked,
+        _frame_composite,
+        WavetableLayer,
     )
     from biotuner.harmonic_timbre.synthesis import render_wavetable_cycle
 
@@ -508,6 +510,26 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
                                  cm_ratio=cm, target_partial_idx=target)
             for b in indices
         ]
+    elif evolution == "composite":
+        # Multi-axis composite. ``layers`` is a list of dicts coming
+        # from the frontend; each dict describes one axis (evolution +
+        # weight curve + range + params). Coerce to the WavetableLayer
+        # dataclass so the helper's validation runs.
+        raw_layers = cfg.get("layers") or []
+        if not raw_layers:
+            raise ValueError(
+                "evolution='composite' requires a non-empty 'layers' "
+                "list in wavetable_config"
+            )
+        layers = [WavetableLayer(**lc) for lc in raw_layers]
+        seed = int(cfg.get("seed", 0))
+        frames_np = [
+            _frame_composite(
+                timbre, layers, i, n_frames,
+                table_size=table_size, bt=pseudo_bt, seed=seed,
+            )
+            for i in range(n_frames)
+        ]
     else:
         raise ValueError(f"Unknown wavetable evolution: {evolution!r}")
 
@@ -536,6 +558,7 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             "formant_sweep": "Formant center sweeps low → high",
             "wavefolding": "Sin-folder 0 → 4 (odd-harmonic enrichment)",
             "fm_baked": "Audio-rate FM index 0 → 3 (Bessel sidebands)",
+            "composite": "Multi-axis: chained layer evolutions",
             "none": "Static (1 cycle)",
         }.get(evolution, evolution),
     }
