@@ -68,6 +68,15 @@ const EVOLUTION_OPTIONS = [
   // Biosignal-structure evolutions — exploit aspects of the bt that
   // synthetic sources can't access (FOOOF decomposition, IMFs, bands).
   { value: 'noise_to_structure', label: 'Noise → structure (bio)', hint: '1/f^k noise crystallises into your harmonic identity' },
+  { value: 'imf_morph',          label: 'IMF morph (bio)',         hint: 'Walk through EMD intrinsic mode functions — high-freq → low-freq spectral content' },
+]
+
+// Blend modes for imf_morph / band_morph — exposed in a small dropdown
+// next to the evolution picker when one of those modes is selected.
+const TIMBRE_MORPH_BLENDS = [
+  { value: 'linear_walk', label: 'Linear walk (smoothest)' },
+  { value: 'pure',        label: 'Pure (stepwise)' },
+  { value: 'gaussian',    label: 'Gaussian (multi-overlap)' },
 ]
 
 const FRAME_COUNT_OPTIONS = [8, 16, 32, 64, 128]
@@ -308,13 +317,23 @@ function StackedFramesView({ frames, currentIdx, onJump, height = 240 }) {
 // ============================================================================
 // WavetableStudio — orchestrates fetching, scrubbing, and playback
 // ============================================================================
-export default function WavetableStudio({ requestPayload }) {
+export default function WavetableStudio({ requestPayload, sessionId }) {
   const [evolution, setEvolution] = useState('tilt')
   const [nFrames, setNFrames]     = useState(32)
   // Composite layers state — only consumed when evolution === 'composite'.
   // Initialised to a sensible 2-layer stack so the user sees something
   // working on first pick instead of an empty editor.
   const [compositeLayers, setCompositeLayers] = useState(DEFAULT_COMPOSITE_LAYERS)
+  // IMF-morph state: cached IMF Timbres from the backend + blend mode.
+  // Resets when session changes (different signal = invalid cache).
+  const [imfTimbres, setImfTimbres]       = useState([])
+  const [computingImfs, setComputingImfs] = useState(false)
+  const [imfMethod,  setImfMethod]        = useState('EMD')   // 'EMD' | 'EEMD' | 'CEEMDAN'
+  const [imfCount,   setImfCount]         = useState(5)
+  const [blendMode,  setBlendMode]        = useState('linear_walk')
+  const [gaussianSigma, setGaussianSigma] = useState(0.5)
+
+  useEffect(() => { setImfTimbres([]) }, [sessionId])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [animPlaying, setAnimPlaying] = useState(false)
   const [animRate, setAnimRate]   = useState(8)   // frames per second
@@ -340,7 +359,23 @@ export default function WavetableStudio({ requestPayload }) {
         // Forward layers only for composite mode; the backend errors
         // if the list is empty when composite is selected.
         ...(evolution === 'composite' ? { layers: compositeLayers } : {}),
+        // For IMF / band morph, forward the cached Timbre sequence
+        // plus the blend params.
+        ...(evolution === 'imf_morph' && imfTimbres.length
+          ? {
+              timbre_sequence: imfTimbres,
+              blend_mode: blendMode,
+              gaussian_sigma: gaussianSigma,
+            }
+          : {}),
       },
+    }
+    // Don't fetch when imf_morph is selected but we haven't computed
+    // IMFs yet — backend would 400, the UI shows the compute button.
+    if (evolution === 'imf_morph' && imfTimbres.length === 0) {
+      setWavetable(null)
+      setLoading(false)
+      return
     }
     const id = ++requestIdRef.current
     setLoading(true)
@@ -358,7 +393,8 @@ export default function WavetableStudio({ requestPayload }) {
         setError(e.response?.data?.detail || e.message || 'wavetable failed')
         setLoading(false)
       })
-  }, [requestPayload, evolution, nFrames, compositeLayers])
+  }, [requestPayload, evolution, nFrames, compositeLayers,
+      imfTimbres, blendMode, gaussianSigma])
 
   // Animate the scrubber when playing — advances currentIdx at ``animRate``
   // frames per second, looping.
@@ -382,6 +418,29 @@ export default function WavetableStudio({ requestPayload }) {
       if (animRafRef.current) cancelAnimationFrame(animRafRef.current)
     }
   }, [animPlaying, wavetable, animRate])
+
+  // ----- IMF computation (server-side EMD on the session signal) ------
+  const handleComputeImfs = async () => {
+    if (!sessionId) {
+      setError('No active session — re-run the analysis first')
+      return
+    }
+    setComputingImfs(true)
+    setError(null)
+    try {
+      const res = await client.post('/api/timbre/imfs', {
+        session_id: sessionId,
+        n_imfs: imfCount,
+        n_peaks_per_imf: 4,
+        method: imfMethod,
+      })
+      setImfTimbres(res.data.imfs || [])
+    } catch (e) {
+      setError(e.response?.data?.detail || e.message || 'IMF extraction failed')
+    } finally {
+      setComputingImfs(false)
+    }
+  }
 
   const currentSamples = useMemo(() => {
     if (!wavetable) return null
@@ -449,6 +508,102 @@ export default function WavetableStudio({ requestPayload }) {
             layers={compositeLayers}
             onChange={setCompositeLayers}
           />
+        </div>
+      )}
+
+      {/* IMF-morph control panel — visible when imf_morph is selected.
+          Lets the user pick EMD method + IMF count, fire the compute,
+          and pick a blend mode for how the resulting Timbre sequence
+          mixes across frames. */}
+      {evolution === 'imf_morph' && (
+        <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-2.5 space-y-2">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
+              IMF morph
+            </div>
+            <div className="text-[10px] text-biotuner-light/40">
+              {imfTimbres.length
+                ? `${imfTimbres.length} IMFs cached · walk runs from high → low freq`
+                : 'Click compute to extract IMFs from your signal'}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div>
+              <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                EMD method
+              </label>
+              <select
+                value={imfMethod}
+                onChange={(e) => setImfMethod(e.target.value)}
+                className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs"
+              >
+                <option value="EMD">EMD (fast)</option>
+                <option value="EEMD">EEMD (noise-assisted)</option>
+                <option value="CEEMDAN">CEEMDAN (best)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                Max IMFs
+              </label>
+              <input
+                type="number"
+                min={2} max={10} step={1}
+                value={imfCount}
+                onChange={(e) => setImfCount(Math.max(2, Math.min(10, parseInt(e.target.value, 10) || 5)))}
+                className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                Blend
+              </label>
+              <select
+                value={blendMode}
+                onChange={(e) => setBlendMode(e.target.value)}
+                className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs"
+              >
+                {TIMBRE_MORPH_BLENDS.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
+                ))}
+              </select>
+            </div>
+            {blendMode === 'gaussian' && (
+              <div>
+                <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                  σ {gaussianSigma.toFixed(2)}
+                </label>
+                <input
+                  type="range"
+                  min={0.1} max={2.0} step={0.05}
+                  value={gaussianSigma}
+                  onChange={(e) => setGaussianSigma(parseFloat(e.target.value))}
+                  className="w-full accent-biotuner-accent"
+                />
+              </div>
+            )}
+          </div>
+          <button
+            onClick={handleComputeImfs}
+            disabled={computingImfs || !sessionId}
+            className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 rounded-md
+              text-xs font-medium border transition-colors
+              ${imfTimbres.length
+                ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
+                : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {computingImfs
+              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Decomposing signal…</>
+              : (imfTimbres.length
+                ? `✓ ${imfTimbres.length} IMFs cached — re-compute`
+                : '↻ Compute IMFs from signal')}
+          </button>
+          {!sessionId && (
+            <p className="text-[10px] text-biotuner-light/40 italic">
+              Run an analysis first — IMF extraction needs the session's raw signal.
+            </p>
+          )}
         </div>
       )}
 

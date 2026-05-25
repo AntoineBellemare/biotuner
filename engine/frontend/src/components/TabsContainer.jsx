@@ -79,7 +79,7 @@ export default function TabsContainer({
           />
         )}
         {activeTab === 'timbre' && (
-          <TimbreTab analysisResult={analysisResult} />
+          <TimbreTab analysisResult={analysisResult} sessionId={sessionId} />
         )}
         {activeTab === 'chords' && (
           <ChordsTab

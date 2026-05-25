@@ -83,6 +83,8 @@ _EVOLUTIONS = (
     # Biosignal-structure evolutions — exploit aspects of the bt that
     # synthetic sources can't access.
     "noise_to_structure",
+    # Walk through a sequence of Timbres (one per IMF / band / segment).
+    "imf_morph", "band_morph",
 )
 
 
@@ -379,6 +381,88 @@ def _frame_with_noise_to_structure(
     return (out * (0.99 / peak)).astype(np.float32, copy=False)
 
 
+def _frame_with_timbre_morph(
+    timbres: Sequence[Timbre],
+    frame_idx: int,
+    n_frames: int,
+    *,
+    table_size: int,
+    blend_mode: str = "linear_walk",
+    gaussian_sigma: float = 0.5,
+) -> np.ndarray:
+    """Morph through a sequence of Timbres across wavetable frames.
+
+    Generic engine shared by ``imf_morph`` (Timbres derived from EMD
+    intrinsic mode functions of the source signal) and ``band_morph``
+    (Timbres derived from bandpassed frequency slices of the source
+    signal). Both cases: the input Timbre sequence is typically
+    frequency-ordered, so walking frame 0 → frame N-1 corresponds to
+    walking from low-freq → high-freq spectral content (or whatever
+    ordering the caller chose).
+
+    Frame composition is a weighted sum in waveform domain — each
+    Timbre is rendered and the cycles are linearly combined with
+    per-frame weights determined by ``blend_mode``:
+
+    * ``"pure"`` — at each frame, exactly one Timbre contributes.
+      Frame i picks ``timbres[round(i/(N-1) * (K-1))]``. Produces
+      step-wise transitions (like Ableton's "switch" wavetable mode).
+    * ``"linear_walk"`` — two adjacent Timbres contribute per frame
+      with a linear crossfade. Smoothest motion; the default.
+    * ``"gaussian"`` — every Timbre contributes per frame with a
+      Gaussian weight centred at ``i/(N-1) * (K-1)``. Sigma controls
+      how many Timbres meaningfully overlap; small sigma ≈ linear_walk,
+      large sigma ≈ static average.
+
+    All Timbres should share the same ``base_freq`` so their renders
+    sit in the same period; callers building Timbres from a single
+    signal naturally satisfy this.
+    """
+    if not timbres:
+        raise ValueError("_frame_with_timbre_morph: timbres list is empty")
+    K = len(timbres)
+    if K == 1 or n_frames == 1:
+        return render_wavetable_cycle(timbres[0], table_size=table_size).astype(np.float32, copy=False)
+
+    # Position in the [0, K-1] Timbre-index space at this frame.
+    pos = float(frame_idx) / float(n_frames - 1) * (K - 1)
+
+    if blend_mode == "pure":
+        idx = int(round(pos))
+        idx = max(0, min(K - 1, idx))
+        return render_wavetable_cycle(
+            timbres[idx], table_size=table_size,
+        ).astype(np.float32, copy=False)
+
+    elif blend_mode == "linear_walk":
+        lo = int(math.floor(pos))
+        hi = min(K - 1, lo + 1)
+        frac = pos - lo
+        cycle_lo = render_wavetable_cycle(timbres[lo], table_size=table_size)
+        cycle_hi = render_wavetable_cycle(timbres[hi], table_size=table_size)
+        out = (1.0 - frac) * cycle_lo + frac * cycle_hi
+
+    elif blend_mode == "gaussian":
+        # Gaussian window over the Timbre index axis.
+        sigma = max(0.05, float(gaussian_sigma))
+        weights = np.exp(-0.5 * ((np.arange(K) - pos) / sigma) ** 2)
+        weights /= max(float(weights.sum()), 1e-9)
+        out = np.zeros(table_size, dtype=np.float64)
+        for i, w in enumerate(weights):
+            if w < 1e-4:
+                continue
+            out += float(w) * render_wavetable_cycle(timbres[i], table_size=table_size)
+
+    else:
+        raise ValueError(
+            f"_frame_with_timbre_morph: blend_mode={blend_mode!r} not in "
+            "('pure', 'linear_walk', 'gaussian')"
+        )
+
+    peak = float(np.max(np.abs(out))) or 1.0
+    return (out * (0.99 / peak)).astype(np.float32, copy=False)
+
+
 # ---------------------------------------------------------------------------
 # Composite evolution — chain multiple effects with per-axis weight curves
 # ---------------------------------------------------------------------------
@@ -644,6 +728,12 @@ def export_wavetable(
     composite_layers: Sequence[Any] | None = None,
     # Noise-to-structure evolution:
     noise_exponent: float | None = None,    # 1/f^k slope; None → use timbre.spectral_tilt or 1.0
+    # imf_morph / band_morph: sequence of Timbres (or dicts coerced
+    # to Timbres) to walk through. Use timbre_sequence_blend to pick
+    # how adjacent Timbres mix per frame.
+    timbre_sequence: Sequence[Timbre] | None = None,
+    timbre_sequence_blend: str = "linear_walk",
+    timbre_sequence_sigma: float = 0.5,
 ) -> dict:
     """Write a single- or multi-frame wavetable WAV from a single Timbre.
 
@@ -796,6 +886,25 @@ def export_wavetable(
             for a in alphas
         ]
         full = np.concatenate(frames).astype(np.float32, copy=False)
+    elif evolution in ("imf_morph", "band_morph"):
+        if not timbre_sequence:
+            raise ValueError(
+                f"evolution={evolution!r} requires timbre_sequence= "
+                "(a non-empty list of Timbres or Timbre-dict configs)"
+            )
+        # Coerce dict entries to Timbres so callers can pass either.
+        seq: list[Timbre] = []
+        for t in timbre_sequence:
+            seq.append(t if isinstance(t, Timbre) else Timbre(**t))
+        frames = [
+            _frame_with_timbre_morph(
+                seq, i, n_frames, table_size=table_size,
+                blend_mode=timbre_sequence_blend,
+                gaussian_sigma=timbre_sequence_sigma,
+            )
+            for i in range(n_frames)
+        ]
+        full = np.concatenate(frames).astype(np.float32, copy=False)
     elif evolution == "composite":
         if not composite_layers:
             raise ValueError(
@@ -842,6 +951,9 @@ def export_wavetable(
             fm_target_partial_idx=fm_target_partial_idx,
             composite_layers=composite_layers,
             noise_exponent=noise_exponent,
+            timbre_sequence=timbre_sequence,
+            timbre_sequence_blend=timbre_sequence_blend,
+            timbre_sequence_sigma=timbre_sequence_sigma,
         ),
         "subtype": subtype,
         "samplerate": sr,
@@ -872,6 +984,9 @@ def _evolution_params(
     fm_target_partial_idx=None,
     composite_layers=None,
     noise_exponent=None,
+    timbre_sequence=None,
+    timbre_sequence_blend=None,
+    timbre_sequence_sigma=None,
 ):
     if n_frames == 1:
         return {}
@@ -911,6 +1026,18 @@ def _evolution_params(
                 float(noise_exponent) if noise_exponent is not None else None
             ),
             "seed": int(seed),
+        }
+    if evolution in ("imf_morph", "band_morph"):
+        # Don't dump the full Timbre sequence into the manifest (it
+        # can be large); just record the sequence length + blend mode
+        # so the manifest stays compact. Callers that need the exact
+        # data can re-fetch from the source (IMFs from the signal,
+        # band-Timbres from band edges).
+        return {
+            "n_timbres": len(timbre_sequence) if timbre_sequence else 0,
+            "blend":     timbre_sequence_blend or "linear_walk",
+            "sigma":     (float(timbre_sequence_sigma)
+                          if timbre_sequence_sigma is not None else 0.5),
         }
     if evolution == "composite":
         # Coerce any WavetableLayer dataclasses in the list to plain

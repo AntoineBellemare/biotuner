@@ -682,6 +682,41 @@ async def compute_timbre_extended_ratios(payload: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Extended ratios error: {e}")
 
 
+@app.post("/api/timbre/imfs")
+async def compute_timbre_imfs(payload: Dict[str, Any]):
+    """Run EMD on a session's raw signal and return one Timbre per IMF.
+
+    Body shape::
+
+        {
+          "session_id":      "...",
+          "n_imfs":          5,            # optional, default 5
+          "n_peaks_per_imf": 4,            # optional, default 4
+          "method":          "EMD"         # 'EMD' | 'EEMD' | 'CEEMDAN'
+        }
+
+    Returns a list of Timbre dicts the frontend caches and passes back
+    into ``/api/timbre/wavetable`` (evolution='imf_morph') without
+    needing to re-run EMD per parameter change.
+    """
+    session_id = payload.get("session_id")
+    if not session_id or session_id not in sessions:
+        raise HTTPException(status_code=400, detail="Unknown or missing session_id")
+    session = sessions[session_id]
+    try:
+        return timbre_service.compute_imf_timbres(
+            signal=list(session.data),
+            sf=float(session.sampling_rate),
+            n_imfs=int(payload.get("n_imfs", 5)),
+            n_peaks_per_imf=int(payload.get("n_peaks_per_imf", 4)),
+            method=str(payload.get("method", "EMD")),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"IMF extraction error: {e}")
+
+
 @app.post("/api/timbre/wavetable")
 async def compute_timbre_wavetable(request: TimbreComputeRequest):
     """Compute a multi-frame wavetable from the current Timbre.

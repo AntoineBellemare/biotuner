@@ -651,3 +651,133 @@ def timbre_from_biotuner(
     timbre.matched_tuning = list(ratios)
     timbre.validate()
     return timbre
+
+
+# ---------------------------------------------------------------------------
+# Signal → Timbre-sequence adapters (feed _frame_with_timbre_morph)
+# ---------------------------------------------------------------------------
+#
+# Each function returns a list of Timbres whose spectral content
+# corresponds to a frequency slice of the input signal — either
+# data-driven (one Timbre per EMD intrinsic mode function) or
+# theory-driven (one Timbre per bandpassed Hz range). The lists feed
+# the ``imf_morph`` and ``band_morph`` wavetable evolutions in
+# ``to_wavetable``.
+
+def _peaks_from_spectrum(
+    signal: np.ndarray,
+    sf: float,
+    *,
+    n_peaks: int = 6,
+    min_freq: float = 0.5,
+    max_freq: float | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return up to ``n_peaks`` (freq, magnitude) pairs from a signal's
+    Welch spectrum, sorted by magnitude descending. Used by both the
+    IMF and band adapters below; consolidates the spectrum-to-peaks
+    logic so the two paths stay consistent.
+    """
+    from scipy.signal import welch, find_peaks
+    if max_freq is None:
+        max_freq = sf / 2.0
+    nperseg = min(len(signal), max(256, int(sf * 2)))
+    f, p = welch(signal, sf, nperseg=nperseg)
+    mask = (f >= float(min_freq)) & (f <= float(max_freq))
+    f = f[mask]; p = p[mask]
+    if f.size == 0 or p.size == 0 or float(p.max()) <= 0:
+        return np.array([]), np.array([])
+    peaks_idx, _ = find_peaks(p, height=float(p.max()) * 0.05)
+    if peaks_idx.size == 0:
+        peaks_idx = np.array([int(np.argmax(p))])
+    order = np.argsort(-p[peaks_idx])[:int(n_peaks)]
+    sel = peaks_idx[order]
+    return f[sel].astype(np.float64), p[sel].astype(np.float64)
+
+
+def timbres_from_imfs(
+    imfs,
+    sf: float,
+    *,
+    n_peaks_per_imf: int = 4,
+    drop_empty: bool = True,
+) -> list:
+    """Build one Timbre per EMD intrinsic mode function.
+
+    For each IMF, runs a Welch PSD + peak finder to extract up to
+    ``n_peaks_per_imf`` partial frequencies and amplitudes. Returns a
+    list ordered from highest-frequency IMF (typically index 0 in
+    EMD output) to lowest, matching the natural EMD ordering
+    convention used by :func:`biotuner.peaks_extraction.EMD_eeg`.
+
+    Empty IMFs (silent or constant) are dropped when ``drop_empty=True``.
+    """
+    out = []
+    for imf in imfs:
+        arr = np.asarray(imf, dtype=np.float64)
+        if arr.size < 4 or np.all(arr == arr[0]):
+            continue
+        freqs, mags = _peaks_from_spectrum(
+            arr, sf, n_peaks=n_peaks_per_imf,
+            min_freq=0.5, max_freq=sf / 2.0,
+        )
+        if freqs.size == 0:
+            if not drop_empty:
+                continue
+            continue
+        amps = mags / max(float(mags.max()), 1e-9)
+        out.append(Timbre(
+            partials_hz=freqs,
+            amplitudes=amps,
+            base_freq=float(freqs.min()) if freqs.size else 1.0,
+        ))
+    return out
+
+
+def timbres_from_bands(
+    signal,
+    sf: float,
+    band_edges,
+    *,
+    n_peaks_per_band: int = 4,
+    drop_empty: bool = True,
+) -> list:
+    """Build one Timbre per consecutive frequency band of the signal.
+
+    ``band_edges`` is a list of N+1 Hz values defining N bands:
+    edges ``[4, 8, 13, 30, 100]`` produces 4 bands (4-8, 8-13, 13-30,
+    30-100). The signal is bandpassed into each range and its peaks
+    extracted into a Timbre.
+
+    Returns one Timbre per band, in the same order as the edges.
+    Empty bands (no spectral energy in range) are dropped when
+    ``drop_empty=True``.
+    """
+    from scipy.signal import butter, sosfiltfilt
+    edges = list(band_edges)
+    if len(edges) < 2:
+        raise ValueError(
+            "timbres_from_bands: band_edges must contain at least 2 values "
+            "(low, high) — got %r" % (edges,)
+        )
+    out = []
+    for i in range(len(edges) - 1):
+        lo, hi = float(edges[i]), float(edges[i + 1])
+        if lo <= 0 or hi <= lo or hi >= sf / 2.0:
+            continue
+        sos = butter(4, [lo, hi], btype="bandpass", fs=sf, output="sos")
+        try:
+            band = sosfiltfilt(sos, signal)
+        except Exception:
+            continue
+        freqs, mags = _peaks_from_spectrum(
+            band, sf, n_peaks=n_peaks_per_band, min_freq=lo, max_freq=hi,
+        )
+        if freqs.size == 0:
+            continue
+        amps = mags / max(float(mags.max()), 1e-9)
+        out.append(Timbre(
+            partials_hz=freqs,
+            amplitudes=amps,
+            base_freq=float(freqs.min()) if freqs.size else 1.0,
+        ))
+    return out

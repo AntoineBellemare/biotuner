@@ -76,7 +76,7 @@ const EXPORT_TARGETS = [
 // Default ADSR — matches the Keyboard tab's triangle preset for consistency.
 const DEFAULT_ADSR = { attack: 0.03, decay: 0.15, sustain: 0.55, release: 0.4 }
 
-export default function TimbreTab({ analysisResult }) {
+export default function TimbreTab({ analysisResult, sessionId }) {
   // --------- Local state -------------------------------------------------
   const [matchingMethod, setMatchingMethod] = useState('harmonic_input')
   const [scalePriority,  setScalePriority]  = useState('')
@@ -778,7 +778,10 @@ export default function TimbreTab({ analysisResult }) {
           Lives in its own panel because it's a substantial subsystem
           (8 evolution modes, scrubber, animator, frame-strip thumbnails);
           burying it inside the spectrum row would crowd both views. */}
-      <WavetableStudio requestPayload={requestPayload} />
+      <WavetableStudio
+        requestPayload={requestPayload}
+        sessionId={sessionId}
+      />
 
       {/* Export — bottom row, full width */}
       <div className="bg-biotuner-dark-900/70 border border-biotuner-dark-600 rounded-xl p-4">

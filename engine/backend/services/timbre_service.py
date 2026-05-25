@@ -324,6 +324,54 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
 
 
+def compute_imf_timbres(
+    signal: List[float],
+    sf: float,
+    *,
+    n_imfs: int = 5,
+    n_peaks_per_imf: int = 4,
+    method: str = "EMD",
+) -> Dict[str, Any]:
+    """Decompose a signal into IMFs and return one Timbre per IMF.
+
+    Wraps biotuner's EMD + the new ``timbres_from_imfs`` adapter into
+    a JSON-friendly response shape. Each entry is a Timbre dict
+    (partials_hz, amplitudes, base_freq) that the wavetable endpoint
+    can feed straight back into the ``imf_morph`` evolution.
+    """
+    from biotuner.peaks_extraction import EMD_eeg
+    from biotuner.harmonic_timbre.biotuner_mapping import timbres_from_imfs
+
+    sig = np.asarray(signal, dtype=np.float64).ravel()
+    if sig.size < 100:
+        raise ValueError(
+            f"compute_imf_timbres: signal too short ({sig.size} samples); "
+            "need at least 100 to run EMD"
+        )
+    try:
+        imfs = EMD_eeg(sig, method=method, nIMFs=int(n_imfs), graph=False)
+    except Exception as e:
+        raise ValueError(f"EMD failed: {e}")
+    timbres = timbres_from_imfs(
+        list(imfs), sf=float(sf), n_peaks_per_imf=int(n_peaks_per_imf),
+    )
+    return {
+        "imfs": [_timbre_to_dict(t) for t in timbres],
+        "n_imfs_requested": int(n_imfs),
+        "n_imfs_kept":      len(timbres),
+        "method":           method,
+    }
+
+
+def _timbre_to_dict(timbre) -> Dict[str, Any]:
+    """Compact JSON form of a Timbre for transport between endpoints."""
+    return {
+        "partials_hz": _arr_or_none(timbre.partials_hz) or [],
+        "amplitudes":  _arr_or_none(timbre.amplitudes) or [],
+        "base_freq":   float(timbre.base_freq),
+    }
+
+
 def compute_extended_ratios(req: Dict[str, Any]) -> Dict[str, Any]:
     """Run biotuner's peaks_extension over a peak list and return the
     resulting extended ratios.
@@ -422,9 +470,11 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
         _frame_with_wavefolding,
         _frame_with_fm_baked,
         _frame_with_noise_to_structure,
+        _frame_with_timbre_morph,
         _frame_composite,
         WavetableLayer,
     )
+    from biotuner.harmonic_timbre.timbre import Timbre as _Timbre
     from biotuner.harmonic_timbre.synthesis import render_wavetable_cycle
 
     timbre = _build_timbre_from_request(req)
@@ -526,6 +576,35 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             )
             for a in alphas
         ]
+    elif evolution in ("imf_morph", "band_morph"):
+        # Walk through a sequence of Timbres. ``timbre_sequence`` is
+        # a list of dicts (partials_hz / amplitudes / base_freq) the
+        # frontend got from /api/timbre/imfs or /api/timbre/bands and
+        # cached locally — passing them in lets the wavetable endpoint
+        # avoid re-running EMD / bandpass on every parameter change.
+        raw_seq = cfg.get("timbre_sequence") or []
+        if not raw_seq:
+            raise ValueError(
+                f"evolution={evolution!r} requires 'timbre_sequence' in "
+                "wavetable_config (a non-empty list of Timbre dicts)"
+            )
+        seq = [
+            _Timbre(
+                partials_hz=np.asarray(t["partials_hz"], dtype=np.float64),
+                amplitudes=np.asarray(t["amplitudes"], dtype=np.float64),
+                base_freq=float(t.get("base_freq", 1.0)),
+            )
+            for t in raw_seq
+        ]
+        blend = cfg.get("blend_mode", "linear_walk")
+        sigma = float(cfg.get("gaussian_sigma", 0.5))
+        frames_np = [
+            _frame_with_timbre_morph(
+                seq, i, n_frames, table_size=table_size,
+                blend_mode=blend, gaussian_sigma=sigma,
+            )
+            for i in range(n_frames)
+        ]
     elif evolution == "composite":
         # Multi-axis composite. ``layers`` is a list of dicts coming
         # from the frontend; each dict describes one axis (evolution +
@@ -576,6 +655,8 @@ def compute_wavetable(req: Dict[str, Any]) -> Dict[str, Any]:
             "fm_baked": "Audio-rate FM index 0 → 3 (Bessel sidebands)",
             "composite": "Multi-axis: chained layer evolutions",
             "noise_to_structure": "Noise → structure: 1/f^k → clean Timbre",
+            "imf_morph":          "IMF morph: walk through EMD modes high → low",
+            "band_morph":         "Band morph: walk through frequency bands",
             "none": "Static (1 cycle)",
         }.get(evolution, evolution),
     }
