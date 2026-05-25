@@ -324,6 +324,56 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
 
 
+def compute_intermods_on_demand(
+    peaks: List[float],
+    amps: Optional[List[float]] = None,
+    *,
+    order: int = 3,
+    min_IMs: int = 2,
+    max_freq: float = 100.0,
+) -> List[List[float]]:
+    """Detect endogenous intermodulation pairs from a peak list.
+
+    Wraps biotuner.peaks_extraction.endogenous_intermodulations so the
+    Timbre tab can populate the "Intermod sidebands" enrichment toggle
+    on demand. The analyze endpoint doesn't compute this attribute by
+    default, so without this helper the checkbox would never enable.
+
+    Returns a list of ``[f1, f2]`` pairs whose pairwise IMs satisfied
+    the ``min_IMs`` threshold. Same shape that
+    ``Timbre.with_intermod_sidebands`` expects to read off the bt's
+    ``endogenous_intermodulations`` attribute.
+    """
+    from biotuner.peaks_extraction import endogenous_intermodulations
+
+    if not peaks or len(peaks) < 2:
+        return []
+    if amps is None or len(amps) != len(peaks):
+        # Uniform amps when missing or mismatched — biotuner's logic
+        # only uses them to populate the metadata dict; pair selection
+        # is purely frequency-driven.
+        amps = [1.0] * len(peaks)
+    try:
+        _eims, imcs_all, _n = endogenous_intermodulations(
+            list(peaks), list(amps),
+            order=int(order),
+            min_IMs=int(min_IMs),
+            max_freq=float(max_freq),
+        )
+    except Exception as e:
+        raise ValueError(f"intermod detection failed: {e}")
+    pairs = imcs_all.get("peaks") or []
+    out: List[List[float]] = []
+    for pair in pairs:
+        try:
+            f1, f2 = float(pair[0]), float(pair[1])
+            if f1 > 0 and f2 > 0:
+                out.append([f1, f2])
+        except (TypeError, ValueError, IndexError):
+            continue
+    return out
+
+
 def compute_scale_on_demand(
     scale_name: str,
     peaks: List[float],

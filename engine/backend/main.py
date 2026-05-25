@@ -713,6 +713,32 @@ async def compute_timbre_extended_ratios(payload: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Extended ratios error: {e}")
 
 
+@app.post("/api/timbre/intermods")
+async def compute_timbre_intermods(payload: Dict[str, Any]):
+    """Detect endogenous intermodulation pairs from a peak set.
+
+    The analyze endpoint doesn't compute this attribute, so the
+    Timbre tab's "Intermod sidebands" toggle starts disabled until
+    the user explicitly clicks the compute button.
+
+    Body: ``{ peaks: [...], amps: [...], order: 3, min_IMs: 2, max_freq: 100 }``
+    Returns: ``{ intermods: [[f1, f2], ...] }``.
+    """
+    try:
+        pairs = timbre_service.compute_intermods_on_demand(
+            peaks=list(payload.get("peaks") or []),
+            amps=list(payload.get("amps") or []) or None,
+            order=int(payload.get("order", 3)),
+            min_IMs=int(payload.get("min_IMs", 2)),
+            max_freq=float(payload.get("max_freq", 100.0)),
+        )
+        return {"intermods": pairs, "count": len(pairs)}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Intermod detection error: {e}")
+
+
 @app.post("/api/timbre/compute-scale/{scale_name}")
 async def compute_timbre_scale(scale_name: str, payload: Dict[str, Any]):
     """Compute one of biotuner's derived scales on demand.

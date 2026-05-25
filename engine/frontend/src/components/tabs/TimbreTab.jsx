@@ -22,7 +22,7 @@ import WavetableStudio from '../timbre/WavetableStudio'
 import { TimbreSynth } from '../../services/timbre/synth'
 import {
   buildTimbreRequest, computeTimbre, exportTimbre, downloadBlob, deriveScales,
-  computeExtendedRatios, computeScale,
+  computeExtendedRatios, computeScale, computeIntermods,
 } from '../../services/timbre/api'
 
 // ---------------------------------------------------------------------------
@@ -107,6 +107,12 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
   // Tracks the in-flight compute for a specific scale (the dropdown
   // option's value, e.g. 'HE' / 'diss_scale'). Empty string when idle.
   const [computingScale, setComputingScale] = useState('')
+  // Intermods cache — the analyze endpoint doesn't compute this by
+  // default. Empty list means "not yet detected"; the enrichment
+  // toggle's button calls /api/timbre/intermods to populate it.
+  const [intermodsCache, setIntermodsCache] = useState([])
+  const [computingIntermods, setComputingIntermods] = useState(false)
+  useEffect(() => { setIntermodsCache([]) }, [analysisResult])
   // Reset extras when the analysis itself changes, otherwise stale
   // extended ratios from a previous signal would haunt the new one.
   useEffect(() => { setScaleExtras({}) }, [analysisResult])
@@ -126,7 +132,7 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
     harmonic_stack: { enabled: stackOn, n: stackN, rolloff: stackRolloff },
   }), [intermodOn, intermodDepth, stackOn, stackN, stackRolloff])
 
-  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}|${JSON.stringify(enrichmentObj)}|${JSON.stringify(Object.keys(scaleExtras))}`
+  const designKey = `${matchingMethod}|${scalePriority}|${JSON.stringify(enabledMods)}|${JSON.stringify(enrichmentObj)}|${JSON.stringify(Object.keys(scaleExtras))}|${intermodsCache.length}`
   const requestPayload = useMemo(() => {
     if (!analysisResult) return null
     return buildTimbreRequest(analysisResult, {
@@ -135,6 +141,7 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
       enabled_modulators: enabledMods,
       enrichment: enrichmentObj,
       scale_extras: scaleExtras,
+      intermods_override: intermodsCache.length ? intermodsCache : null,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisResult, designKey])
@@ -311,6 +318,44 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
       setError(e.response?.data?.detail || e.message || `Failed to compute ${scalePriority}`)
     } finally {
       setComputingScale('')
+    }
+  }
+
+  // --------- Detect intermods on demand ---------------------------------
+  // The analyze endpoint doesn't populate endogenous_intermodulations,
+  // so the "Intermod sidebands" enrichment toggle starts disabled.
+  // One click here runs biotuner's detection on the current peak set
+  // and stashes the result; the toggle then becomes selectable AND
+  // subsequent /api/timbre/compute requests carry the intermods so
+  // the modulator-attach pass and with_intermod_sidebands enrichment
+  // both see them.
+  const handleComputeIntermods = async () => {
+    if (!analysisResult?.peaks?.length) return
+    setComputingIntermods(true)
+    setError(null)
+    try {
+      const { intermods } = await computeIntermods({
+        peaks: analysisResult.peaks,
+        amps: analysisResult.amps || analysisResult.powers || null,
+        order: 3,
+        min_IMs: 2,
+        // Cap at the analysis's max_freq, falling back to a generous
+        // ceiling so audio peak sets aren't truncated. Biotuner's
+        // default of 100 Hz is fine for biosignals but useless for
+        // audio.
+        max_freq: Math.max(
+          Number(analysisResult.max_freq) || 0,
+          Math.max(...(analysisResult.peaks || [100])) + 50,
+        ),
+      })
+      setIntermodsCache(intermods || [])
+      if (!intermods || intermods.length === 0) {
+        setError('No intermodulation pairs detected — try increasing the analysis max_freq or pick a richer signal')
+      }
+    } catch (e) {
+      setError(e.response?.data?.detail || e.message || 'Intermod detection failed')
+    } finally {
+      setComputingIntermods(false)
     }
   }
 
@@ -736,42 +781,89 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
             </h3>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="flex items-center gap-2 text-xs text-biotuner-light/80 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={intermodOn}
-                    onChange={(e) => setIntermodOn(e.target.checked)}
-                    disabled={!(analysisResult?.endogenous_intermodulations?.length)}
-                    className="w-3.5 h-3.5 accent-biotuner-primary"
-                  />
-                  <span>Intermod sidebands</span>
-                </label>
-                <span className="text-[9px] text-biotuner-light/40 font-mono">
-                  +f₁±f₂
-                </span>
-              </div>
-              {!(analysisResult?.endogenous_intermodulations?.length) ? (
-                <p className="text-[10px] text-biotuner-light/30 pl-5">
-                  No intermod data in this analysis (enable in sidebar).
-                </p>
-              ) : intermodOn && (
-                <div className="pl-5">
-                  <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
-                    <span className="text-biotuner-light/50">Depth</span>
-                    <span className="text-biotuner-primary/80 font-mono">
-                      {(intermodDepth * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0} max={1} step={0.01}
-                    value={intermodDepth}
-                    onChange={(e) => setIntermodDepth(parseFloat(e.target.value))}
-                    className="w-full accent-biotuner-primary"
-                  />
-                </div>
-              )}
+              {/* Intermod data can come from two places:
+                  1. analysisResult.endogenous_intermodulations (rare —
+                     only when the analyze step explicitly computed it)
+                  2. intermodsCache populated by the compute button
+                     below (the on-demand path).
+                  The toggle is enabled when EITHER source has pairs. */}
+              {(() => {
+                const intermodsAvailable =
+                  (intermodsCache.length > 0) ||
+                  (analysisResult?.endogenous_intermodulations?.length > 0)
+                const detectedCount =
+                  intermodsCache.length ||
+                  (analysisResult?.endogenous_intermodulations?.length || 0)
+                return (
+                  <>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="flex items-center gap-2 text-xs text-biotuner-light/80 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={intermodOn && intermodsAvailable}
+                          onChange={(e) => setIntermodOn(e.target.checked)}
+                          disabled={!intermodsAvailable}
+                          className="w-3.5 h-3.5 accent-biotuner-primary"
+                        />
+                        <span>Intermod sidebands</span>
+                      </label>
+                      <span className="text-[9px] text-biotuner-light/40 font-mono">
+                        +f₁±f₂
+                      </span>
+                    </div>
+                    {!intermodsAvailable ? (
+                      <div className="pl-5">
+                        <button
+                          onClick={handleComputeIntermods}
+                          disabled={computingIntermods || !analysisResult?.peaks?.length}
+                          className="min-h-[28px] w-full flex items-center justify-center gap-1.5 px-2 rounded
+                            text-[10px] font-medium border transition-colors
+                            bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70
+                            hover:border-biotuner-accent/50 hover:text-biotuner-accent
+                            disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Detect intermodulation pairs in your peak set on demand"
+                        >
+                          {computingIntermods
+                            ? <><Loader2 className="w-3 h-3 animate-spin" /> Detecting…</>
+                            : '↻ Detect intermods now'}
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="pl-5 text-[9px] text-biotuner-light/40 italic mb-1">
+                          {detectedCount} pair{detectedCount === 1 ? '' : 's'} detected
+                          {intermodsCache.length > 0 && (
+                            <button
+                              onClick={() => setIntermodsCache([])}
+                              className="ml-2 text-biotuner-light/30 hover:text-red-400"
+                              title="Clear detected intermods"
+                            >
+                              clear
+                            </button>
+                          )}
+                        </div>
+                        {intermodOn && (
+                          <div className="pl-5">
+                            <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider mb-0.5">
+                              <span className="text-biotuner-light/50">Depth</span>
+                              <span className="text-biotuner-primary/80 font-mono">
+                                {(intermodDepth * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                            <input
+                              type="range"
+                              min={0} max={1} step={0.01}
+                              value={intermodDepth}
+                              onChange={(e) => setIntermodDepth(parseFloat(e.target.value))}
+                              className="w-full accent-biotuner-primary"
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )
+              })()}
             </div>
 
             <div>

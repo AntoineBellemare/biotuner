@@ -108,7 +108,13 @@ export function buildTimbreRequest(analysisResult, design = {}) {
     pac_coupling:     r.pac_coupling || null,
     cfc_freqs:        r.cfc_freqs    || null,
     cfc_coupling:     r.cfc_coupling || null,
-    intermodulations: r.endogenous_intermodulations || null,
+    // Intermods: prefer the user's on-demand cache from
+    // /api/timbre/intermods; fall back to whatever the analysis
+    // result happened to include (rare — only set when analyze
+    // explicitly populated it).
+    intermodulations: (design.intermods_override && design.intermods_override.length)
+      ? design.intermods_override
+      : (r.endogenous_intermodulations || null),
     // Design choices
     scale_priority:    design.scale_priority   || null,
     matching_method:   design.matching_method  || 'harmonic_input',
@@ -177,6 +183,17 @@ export async function computeScale(scaleName, payload) {
     `/api/timbre/compute-scale/${scaleName}`,
     payload,
   )
+  return data
+}
+
+/**
+ * POST /api/timbre/intermods — detect endogenous intermodulation pairs
+ * from the analysis's peak set. The analyze endpoint doesn't run this
+ * by default, so the Timbre tab's enrichment toggle stays disabled
+ * until the user opts in here.
+ */
+export async function computeIntermods(payload) {
+  const { data } = await client.post('/api/timbre/intermods', payload)
   return data
 }
 
