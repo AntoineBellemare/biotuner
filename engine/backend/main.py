@@ -682,6 +682,40 @@ async def compute_timbre_extended_ratios(payload: Dict[str, Any]):
         raise HTTPException(status_code=500, detail=f"Extended ratios error: {e}")
 
 
+@app.post("/api/timbre/bands")
+async def compute_timbre_bands(payload: Dict[str, Any]):
+    """Bandpass a session's signal into the given frequency ranges and
+    return one Timbre per band.
+
+    Body shape::
+
+        {
+          "session_id":       "...",
+          "band_edges":       [4, 8, 13, 30, 100],
+          "n_peaks_per_band": 4         # optional, default 4
+        }
+
+    Returns ``{ bands: [Timbre-dict, ...], band_edges, n_bands_kept }``.
+    Used by the wavetable Studio's band_morph evolution.
+    """
+    session_id = payload.get("session_id")
+    if not session_id or session_id not in sessions:
+        raise HTTPException(status_code=400, detail="Unknown or missing session_id")
+    session = sessions[session_id]
+    band_edges = payload.get("band_edges") or []
+    try:
+        return timbre_service.compute_band_timbres(
+            signal=list(session.data),
+            sf=float(session.sampling_rate),
+            band_edges=[float(e) for e in band_edges],
+            n_peaks_per_band=int(payload.get("n_peaks_per_band", 4)),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Band extraction error: {e}")
+
+
 @app.post("/api/timbre/imfs")
 async def compute_timbre_imfs(payload: Dict[str, Any]):
     """Run EMD on a session's raw signal and return one Timbre per IMF.

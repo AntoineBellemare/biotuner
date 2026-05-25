@@ -69,6 +69,17 @@ const EVOLUTION_OPTIONS = [
   // synthetic sources can't access (FOOOF decomposition, IMFs, bands).
   { value: 'noise_to_structure', label: 'Noise → structure (bio)', hint: '1/f^k noise crystallises into your harmonic identity' },
   { value: 'imf_morph',          label: 'IMF morph (bio)',         hint: 'Walk through EMD intrinsic mode functions — high-freq → low-freq spectral content' },
+  { value: 'band_morph',         label: 'Band morph (bio)',        hint: 'Slice the spectrum into bands, build a Timbre per band, morph across them' },
+]
+
+// Band-edge presets — common slicing conventions for typical signal
+// types. Custom edges can be typed in directly.
+const BAND_PRESETS = [
+  { value: 'eeg',    label: 'EEG (δ θ α β γ)',   edges: [1, 4, 8, 13, 30, 100] },
+  { value: 'hrv',    label: 'HRV (VLF / LF / HF)', edges: [0.003, 0.04, 0.15, 0.5] },
+  { value: 'octave', label: 'Audible octaves',   edges: [40, 80, 160, 320, 640, 1280, 2560, 5120] },
+  { value: 'log4',   label: 'Log (4 bands)',     edges: [1, 10, 100, 1000, 10000] },
+  { value: 'custom', label: 'Custom (edit below)', edges: null },
 ]
 
 // Blend modes for imf_morph / band_morph — exposed in a small dropdown
@@ -334,6 +345,14 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
   const [gaussianSigma, setGaussianSigma] = useState(0.5)
 
   useEffect(() => { setImfTimbres([]) }, [sessionId])
+  // Band-morph state: cached band Timbres + the edges that produced
+  // them + the user's preset choice + a textual edges string for the
+  // "Custom" editor.
+  const [bandTimbres, setBandTimbres]     = useState([])
+  const [computingBands, setComputingBands] = useState(false)
+  const [bandPreset, setBandPreset]       = useState('eeg')
+  const [bandEdgesText, setBandEdgesText] = useState('1, 4, 8, 13, 30, 100')
+  useEffect(() => { setBandTimbres([]) }, [sessionId])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [animPlaying, setAnimPlaying] = useState(false)
   const [animRate, setAnimRate]   = useState(8)   // frames per second
@@ -368,11 +387,24 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
               gaussian_sigma: gaussianSigma,
             }
           : {}),
+        ...(evolution === 'band_morph' && bandTimbres.length
+          ? {
+              timbre_sequence: bandTimbres,
+              blend_mode: blendMode,
+              gaussian_sigma: gaussianSigma,
+            }
+          : {}),
       },
     }
-    // Don't fetch when imf_morph is selected but we haven't computed
-    // IMFs yet — backend would 400, the UI shows the compute button.
+    // Don't fetch when imf_morph / band_morph is selected but the
+    // sequence cache hasn't been populated — backend would 400; the
+    // UI shows the relevant compute button instead.
     if (evolution === 'imf_morph' && imfTimbres.length === 0) {
+      setWavetable(null)
+      setLoading(false)
+      return
+    }
+    if (evolution === 'band_morph' && bandTimbres.length === 0) {
       setWavetable(null)
       setLoading(false)
       return
@@ -394,7 +426,7 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
         setLoading(false)
       })
   }, [requestPayload, evolution, nFrames, compositeLayers,
-      imfTimbres, blendMode, gaussianSigma])
+      imfTimbres, bandTimbres, blendMode, gaussianSigma])
 
   // Animate the scrubber when playing — advances currentIdx at ``animRate``
   // frames per second, looping.
@@ -439,6 +471,49 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
       setError(e.response?.data?.detail || e.message || 'IMF extraction failed')
     } finally {
       setComputingImfs(false)
+    }
+  }
+
+  // ----- Band computation (server-side bandpass on the session) -------
+  const handleComputeBands = async () => {
+    if (!sessionId) {
+      setError('No active session — re-run the analysis first')
+      return
+    }
+    // Parse the edges-text input ("1, 4, 8, 13, 30, 100") into a list
+    // of positive floats, sorted ascending.
+    const edges = bandEdgesText
+      .split(/[,\s]+/)
+      .map((s) => parseFloat(s))
+      .filter((v) => Number.isFinite(v) && v > 0)
+      .sort((a, b) => a - b)
+    if (edges.length < 2) {
+      setError('Need at least 2 band edges (e.g. "8, 13")')
+      return
+    }
+    setComputingBands(true)
+    setError(null)
+    try {
+      const res = await client.post('/api/timbre/bands', {
+        session_id: sessionId,
+        band_edges: edges,
+        n_peaks_per_band: 4,
+      })
+      setBandTimbres(res.data.bands || [])
+    } catch (e) {
+      setError(e.response?.data?.detail || e.message || 'Band extraction failed')
+    } finally {
+      setComputingBands(false)
+    }
+  }
+
+  // Switching presets repopulates the edges-text editor (custom keeps
+  // whatever the user typed).
+  const handleBandPresetChange = (val) => {
+    setBandPreset(val)
+    const preset = BAND_PRESETS.find((p) => p.value === val)
+    if (preset?.edges) {
+      setBandEdgesText(preset.edges.join(', '))
     }
   }
 
@@ -602,6 +677,108 @@ export default function WavetableStudio({ requestPayload, sessionId }) {
           {!sessionId && (
             <p className="text-[10px] text-biotuner-light/40 italic">
               Run an analysis first — IMF extraction needs the session's raw signal.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Band-morph control panel — visible when band_morph is selected.
+          Lets the user pick a slicing preset (EEG, HRV, octaves, log)
+          or type custom Hz edges, fire the compute, and pick blend mode. */}
+      {evolution === 'band_morph' && (
+        <div className="bg-biotuner-dark-900/60 border border-biotuner-dark-600 rounded-lg p-2.5 space-y-2">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="text-[10px] uppercase tracking-wider text-biotuner-accent/80">
+              Band morph
+            </div>
+            <div className="text-[10px] text-biotuner-light/40">
+              {bandTimbres.length
+                ? `${bandTimbres.length} bands cached · walk runs low → high freq`
+                : 'Pick slicing + click compute to extract band Timbres'}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div>
+              <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                Preset
+              </label>
+              <select
+                value={bandPreset}
+                onChange={(e) => handleBandPresetChange(e.target.value)}
+                className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs"
+              >
+                {BAND_PRESETS.map((p) => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                Blend
+              </label>
+              <select
+                value={blendMode}
+                onChange={(e) => setBlendMode(e.target.value)}
+                className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs"
+              >
+                {TIMBRE_MORPH_BLENDS.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
+                ))}
+              </select>
+            </div>
+            {blendMode === 'gaussian' && (
+              <div>
+                <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+                  σ {gaussianSigma.toFixed(2)}
+                </label>
+                <input
+                  type="range"
+                  min={0.1} max={2.0} step={0.05}
+                  value={gaussianSigma}
+                  onChange={(e) => setGaussianSigma(parseFloat(e.target.value))}
+                  className="w-full accent-biotuner-accent"
+                />
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="block text-[9px] uppercase tracking-wider text-biotuner-light/50 mb-0.5">
+              Band edges (Hz, comma-separated)
+            </label>
+            <input
+              type="text"
+              value={bandEdgesText}
+              onChange={(e) => {
+                setBandEdgesText(e.target.value)
+                // Editing edges manually flips the preset to 'custom'.
+                if (bandPreset !== 'custom') setBandPreset('custom')
+              }}
+              placeholder="e.g. 1, 4, 8, 13, 30, 100"
+              className="w-full bg-biotuner-dark-800 border border-biotuner-dark-600 rounded p-1 text-xs font-mono"
+            />
+            <p className="text-[9px] text-biotuner-light/30 mt-0.5">
+              N values define N−1 bands. Sorted ascending automatically.
+            </p>
+          </div>
+          <button
+            onClick={handleComputeBands}
+            disabled={computingBands || !sessionId}
+            className={`w-full min-h-[36px] flex items-center justify-center gap-2 px-3 rounded-md
+              text-xs font-medium border transition-colors
+              ${bandTimbres.length
+                ? 'bg-biotuner-accent/15 border-biotuner-accent/50 text-biotuner-accent'
+                : 'bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70 hover:border-biotuner-accent/50'}
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {computingBands
+              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Filtering bands…</>
+              : (bandTimbres.length
+                ? `✓ ${bandTimbres.length} bands cached — re-compute`
+                : '↻ Compute bands from signal')}
+          </button>
+          {!sessionId && (
+            <p className="text-[10px] text-biotuner-light/40 italic">
+              Run an analysis first — band extraction needs the session's raw signal.
             </p>
           )}
         </div>

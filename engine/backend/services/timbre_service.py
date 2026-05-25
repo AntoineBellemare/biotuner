@@ -324,6 +324,48 @@ def _build_timbre_from_request(req: Dict[str, Any]) -> Timbre:
     return timbre.with_partials(am_modulators=am, fm_modulators=fm)
 
 
+def compute_band_timbres(
+    signal: List[float],
+    sf: float,
+    band_edges: List[float],
+    *,
+    n_peaks_per_band: int = 4,
+) -> Dict[str, Any]:
+    """Bandpass a signal into N consecutive frequency ranges and
+    return one Timbre per band (peaks extracted from each).
+
+    ``band_edges`` has length N+1 defining N bands — e.g.
+    ``[4, 8, 13, 30, 100]`` produces four bands (delta, theta, alpha,
+    beta-ish for an EEG signal).
+    """
+    from biotuner.harmonic_timbre.biotuner_mapping import timbres_from_bands
+
+    sig = np.asarray(signal, dtype=np.float64).ravel()
+    if sig.size < 100:
+        raise ValueError(
+            f"compute_band_timbres: signal too short ({sig.size} samples); "
+            "need at least 100"
+        )
+    if len(band_edges) < 2:
+        raise ValueError(
+            "compute_band_timbres: band_edges must contain at least 2 Hz "
+            "values (low, high)"
+        )
+    try:
+        timbres = timbres_from_bands(
+            sig, sf=float(sf), band_edges=list(band_edges),
+            n_peaks_per_band=int(n_peaks_per_band),
+        )
+    except Exception as e:
+        raise ValueError(f"band extraction failed: {e}")
+    return {
+        "bands":            [_timbre_to_dict(t) for t in timbres],
+        "n_bands_requested": len(band_edges) - 1,
+        "n_bands_kept":      len(timbres),
+        "band_edges":        [float(e) for e in band_edges],
+    }
+
+
 def compute_imf_timbres(
     signal: List[float],
     sf: float,
