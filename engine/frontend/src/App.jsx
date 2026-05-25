@@ -359,6 +359,13 @@ function App() {
                 fileInfo={fileInfo}
                 onCrop={handleCrop}
                 onColumnChange={handleColumnChange}
+                onSamplingRateChange={(newSr, newDur) => {
+                  setFileInfo((prev) => prev ? {
+                    ...prev,
+                    sampling_rate: newSr,
+                    duration: newDur,
+                  } : prev)
+                }}
               />
             )}
 

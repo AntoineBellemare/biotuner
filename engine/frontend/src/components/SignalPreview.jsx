@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Activity, Scissors, RefreshCw } from 'lucide-react'
 import apiClient from '../services/api'
 
-export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnChange }) {
+export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnChange, onSamplingRateChange }) {
   const [chartData, setChartData] = useState([])
   const [selectedColumn, setSelectedColumn] = useState(0)
   const [cropRange, setCropRange] = useState({ start: 0, end: 100 })
@@ -11,6 +11,38 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
   const [endInput, setEndInput] = useState('1.00')
   const [appliedCrop, setAppliedCrop] = useState(null) // Track applied crop for visual feedback
   const [fullChartData, setFullChartData] = useState([]) // Keep full data for reference
+  // Sampling-rate editor — preloaded from fileInfo on every upload, but
+  // editable so the user can correct misdetections (e.g. CSV without
+  // metadata that defaults to 256).
+  const [sfText, setSfText] = useState('')
+  const [sfSaving, setSfSaving] = useState(false)
+  const [sfError, setSfError] = useState(null)
+  useEffect(() => {
+    if (fileInfo?.sampling_rate != null) setSfText(String(fileInfo.sampling_rate))
+  }, [fileInfo?.sampling_rate, sessionId])
+
+  const handleSfApply = async () => {
+    const val = parseFloat(sfText)
+    if (!Number.isFinite(val) || val <= 0) {
+      setSfError('Must be a positive number')
+      return
+    }
+    setSfSaving(true)
+    setSfError(null)
+    try {
+      const res = await apiClient.client.post(
+        `/api/session/${sessionId}/sampling-rate`,
+        { sampling_rate: val },
+      )
+      if (onSamplingRateChange) {
+        onSamplingRateChange(res.data.sampling_rate, res.data.duration)
+      }
+    } catch (e) {
+      setSfError(e.response?.data?.detail || e.message || 'Failed to update')
+    } finally {
+      setSfSaving(false)
+    }
+  }
 
   useEffect(() => {
     if (fileInfo?.preview_data) {
@@ -88,6 +120,54 @@ export default function SignalPreview({ sessionId, fileInfo, onCrop, onColumnCha
                   <option key={idx} value={idx}>{col}</option>
                 ))}
               </select>
+            </div>
+          )}
+
+          {/* Sampling-rate editor. Pre-filled with the detected value;
+              user can override if the auto-detection got it wrong (e.g.
+              CSV without sf header or time column → defaults to 256). */}
+          {fileInfo?.sampling_rate != null && (
+            <div className="flex items-center gap-1.5">
+              <label
+                className="text-xs text-biotuner-light/60"
+                title={fileInfo.sampling_rate_info?.sf_source || ''}
+              >
+                Sample rate (Hz):
+              </label>
+              <input
+                type="number"
+                min={1}
+                step="any"
+                value={sfText}
+                onChange={(e) => setSfText(e.target.value)}
+                onBlur={() => {
+                  if (parseFloat(sfText) !== fileInfo.sampling_rate) handleSfApply()
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.currentTarget.blur()
+                  }
+                }}
+                disabled={sfSaving}
+                className="w-24 bg-biotuner-dark-800 text-biotuner-light border border-biotuner-dark-600 rounded px-2 py-1 text-sm font-mono"
+              />
+              {fileInfo.sampling_rate_info?.sf_source && (
+                <span
+                  className="text-[10px] text-biotuner-light/40 italic"
+                  title={
+                    fileInfo.sampling_rate_info.sf_default_used
+                      ? 'No sample-rate metadata found in the CSV — using fallback. Override if you know the actual rate.'
+                      : `Detected from: ${fileInfo.sampling_rate_info.sf_source}`
+                  }
+                >
+                  {fileInfo.sampling_rate_info.sf_default_used
+                    ? '(default — verify)'
+                    : `(from ${fileInfo.sampling_rate_info.sf_source})`}
+                </span>
+              )}
+              {sfError && (
+                <span className="text-[10px] text-red-400">{sfError}</span>
+              )}
             </div>
           )}
           

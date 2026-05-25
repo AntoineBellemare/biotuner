@@ -148,26 +148,23 @@ async def upload_file(
         
         # Process based on file type
         columns = None
+        sf_info = None
         if file_ext in ['wav', 'mp3']:
             data, sr = audio_service.load_audio(io.BytesIO(content), file_ext)
-        else:  # CSV
-            # Read CSV to get columns
-            import pandas as pd
-            df = pd.read_csv(io.BytesIO(content))
-            
-            # Filter to only numeric columns
-            numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
-            
-            if len(numeric_columns) == 0:
-                raise HTTPException(
-                    status_code=400,
-                    detail="No numeric columns found in CSV. Please ensure your file contains numeric data (not dates or text). Detected columns: " + ", ".join(df.columns.tolist())
-                )
-            
-            columns = numeric_columns
-            # Use first numeric column as default
-            data = df[numeric_columns[0]].values
-            sr = 256.0  # Default sampling rate for CSV
+            sf_info = {
+                "sf_source":       f"audio file native rate (librosa)",
+                "sf_default_used": False,
+                "time_column":     None,
+                "numeric_columns": [],
+                "sf_columns":      [],
+                "data_column":     None,
+            }
+        else:  # CSV — smart sf detection via audio_service.load_csv
+            try:
+                data, sr, sf_info = audio_service.load_csv(io.BytesIO(content))
+            except ValueError as e:
+                raise HTTPException(status_code=400, detail=str(e))
+            columns = sf_info.get("numeric_columns") or None
         
         # Create or update session
         if not session_id:
@@ -204,11 +201,45 @@ async def upload_file(
             "data_points": len(data),
             "file_type": file_ext,
             "columns": columns,
-            "preview_data": preview_data
+            "preview_data": preview_data,
+            # Provenance for the sampling rate so the UI can show
+            # "auto: time column 'ts'" or "default (no metadata found)"
+            # and let the user override when the heuristic misses.
+            "sampling_rate_info": sf_info,
         }
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/session/{session_id}/sampling-rate")
+async def override_sampling_rate(session_id: str, payload: Dict[str, Any]):
+    """Override a session's sampling rate.
+
+    When CSV upload's auto-detection misses (no sf header, no time
+    column, or unusual format), the user can specify the correct
+    rate manually here. Updates ``session.sampling_rate`` AND
+    ``session.duration`` so downstream endpoints (analyze, IMF,
+    bands, etc.) see the corrected value.
+
+    Body: ``{ "sampling_rate": <float> }``. Must be > 0.
+    """
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    try:
+        sr = float(payload.get("sampling_rate"))
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="sampling_rate must be a number")
+    if not (sr > 0):
+        raise HTTPException(status_code=400, detail="sampling_rate must be > 0")
+    session = sessions[session_id]
+    session.sampling_rate = sr
+    session.duration = len(session.data) / sr if sr > 0 else 0
+    return {
+        "session_id":    session_id,
+        "sampling_rate": sr,
+        "duration":      session.duration,
+    }
 
 
 @app.post("/api/select-column")
