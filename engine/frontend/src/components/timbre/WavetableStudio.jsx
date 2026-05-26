@@ -311,15 +311,46 @@ function StackedFramesView({ frames, currentIdx, onJump, height = 240 }) {
   const onMove = (e) => { if (draggingRef.current) handlePoint(e) }
   const onUp   = ()   => { draggingRef.current = false }
 
+  // Touch handlers — preventDefault on touchmove stops the page from
+  // scrolling while the user drags across the wavetable to scrub. Read
+  // touches[0] for the primary finger; multi-touch zooming is left to
+  // the browser since the parent layout doesn't need pinch handling.
+  const touchToEvent = (e) => {
+    const t = e.touches?.[0] || e.changedTouches?.[0]
+    if (!t) return null
+    return { clientX: t.clientX, clientY: t.clientY }
+  }
+  const onTouchStart = (e) => {
+    const pt = touchToEvent(e)
+    if (!pt) return
+    e.preventDefault()
+    draggingRef.current = true
+    handlePoint(pt)
+  }
+  const onTouchMove = (e) => {
+    if (!draggingRef.current) return
+    const pt = touchToEvent(e)
+    if (!pt) return
+    e.preventDefault()
+    handlePoint(pt)
+  }
+  const onTouchEnd = (e) => {
+    e.preventDefault()
+    draggingRef.current = false
+  }
+
   return (
     <div ref={wrapRef} className="w-full bg-biotuner-dark-900 rounded-lg border border-biotuner-dark-600">
       <canvas
         ref={canvasRef}
-        className="block w-full cursor-crosshair"
+        className="block w-full cursor-crosshair touch-none"
         onMouseDown={onDown}
         onMouseMove={onMove}
         onMouseUp={onUp}
         onMouseLeave={onUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       />
     </div>
   )

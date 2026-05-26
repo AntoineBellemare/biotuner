@@ -816,7 +816,7 @@ export default function TimbreTab({ analysisResult, sessionId, fileInfo }) {
                         <button
                           onClick={handleComputeIntermods}
                           disabled={computingIntermods || !analysisResult?.peaks?.length}
-                          className="min-h-[28px] w-full flex items-center justify-center gap-1.5 px-2 rounded
+                          className="min-h-[32px] w-full flex items-center justify-center gap-1.5 px-2 rounded
                             text-[10px] font-medium border transition-colors
                             bg-biotuner-dark-800 border-biotuner-dark-600 text-biotuner-light/70
                             hover:border-biotuner-accent/50 hover:text-biotuner-accent

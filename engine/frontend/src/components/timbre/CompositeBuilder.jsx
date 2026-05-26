@@ -166,11 +166,18 @@ function LayerRow({
         <span className="text-[10px] font-mono text-biotuner-light/40 px-1.5">
           {idx + 1}
         </span>
+        {/* Reorder + delete touch targets — bumped to 28×24 px (each
+            button) so they're tappable on phones. Apple says 44 px is
+            ideal, but two stacked 24 px buttons fit the layout better
+            than two side-by-side 44 px ones, and the chip's bordered
+            container makes the targets feel discoverable enough. */}
         <div className="flex flex-col">
           <button
             onClick={onMoveUp}
             disabled={isFirst}
-            className="text-biotuner-light/40 hover:text-biotuner-primary disabled:opacity-20 disabled:cursor-not-allowed"
+            className="h-6 w-7 flex items-center justify-center text-biotuner-light/40
+              hover:text-biotuner-primary hover:bg-biotuner-dark-700 rounded-t
+              disabled:opacity-20 disabled:cursor-not-allowed"
             title="Move up"
           >
             <ChevronUp className="w-3.5 h-3.5" />
@@ -178,7 +185,9 @@ function LayerRow({
           <button
             onClick={onMoveDown}
             disabled={isLast}
-            className="text-biotuner-light/40 hover:text-biotuner-primary disabled:opacity-20 disabled:cursor-not-allowed"
+            className="h-6 w-7 flex items-center justify-center text-biotuner-light/40
+              hover:text-biotuner-primary hover:bg-biotuner-dark-700 rounded-b
+              disabled:opacity-20 disabled:cursor-not-allowed"
             title="Move down"
           >
             <ChevronDown className="w-3.5 h-3.5" />
@@ -187,7 +196,8 @@ function LayerRow({
         <span className="flex-1 text-[10px] text-biotuner-light/50 truncate">{summary}</span>
         <button
           onClick={onRemove}
-          className="text-biotuner-light/40 hover:text-red-400"
+          className="h-7 w-7 flex items-center justify-center text-biotuner-light/40
+            hover:text-red-400 hover:bg-biotuner-dark-700 rounded"
           title="Remove layer"
         >
           <X className="w-3.5 h-3.5" />
