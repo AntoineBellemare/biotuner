@@ -1,0 +1,2 @@
+# Disk caches produced by the figure-generation scripts (regenerable, often large)
+_*_cache.npz
