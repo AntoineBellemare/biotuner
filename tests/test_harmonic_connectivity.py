@@ -250,13 +250,56 @@ def test_cross_resonance_connectivity_factor_flavor_dispatch(hc_long_three_chann
     assert np.all(np.isfinite(off_diag))
 
 
-@pytest.mark.parametrize("aggregate", ["max", "mean", "sum", "peak"])
+@pytest.mark.parametrize("aggregate", [
+    "max", "mean", "sum", "peak",
+    "peak_over_median", "spectral_concentration", "peak_z",
+])
 def test_cross_resonance_connectivity_aggregate(hc_long_three_channel, aggregate):
     """All aggregate options run without error."""
     M = hc_long_three_channel.compute_cross_resonance_connectivity(
         aggregate=aggregate, graph=False,
     )
     assert M.shape == (3, 3)
+
+
+def test_scalar_aggregate_discriminates_focal_vs_broadband():
+    """The normalized aggregates (peak_over_median, peak_z,
+    spectral_concentration) must discriminate a sharp focal peak from
+    broadband noise far better than max/mean/sum."""
+    from biotuner.harmonic_connectivity import _scalar_aggregate
+
+    class _FakeResult:
+        def __init__(self, freqs, peak_freqs):
+            self.freqs = freqs
+            self.peaks = {"R": peak_freqs}
+
+    freqs = np.linspace(2, 30, 57)
+    rng = np.random.default_rng(0)
+    # Spec A: sharp peak at 10 Hz over a tiny noise floor
+    spec_focal = 0.01 * rng.uniform(0, 1, size=57) + 1e-4
+    spec_focal[np.argmin(np.abs(freqs - 10))] = 1.0
+    res_focal = _FakeResult(freqs, np.array([10.0]))
+    # Spec B: broadband uniform around 0.5 (no peak)
+    spec_broad = 0.5 + 0.01 * rng.uniform(0, 1, size=57)
+    res_broad = _FakeResult(freqs, np.array([]))
+
+    # Each normalized aggregate must give focal/broad ratio > 10
+    for agg in ("peak_over_median", "spectral_concentration", "peak_z"):
+        s_focal = _scalar_aggregate(spec_focal, res_focal, "R", agg)
+        s_broad = _scalar_aggregate(spec_broad, res_broad, "R", agg)
+        ratio = s_focal / (abs(s_broad) + 1e-12)
+        assert ratio > 10.0, (
+            f"{agg} gives ratio {ratio:.2f}: focal={s_focal:.4f}, broad={s_broad:.4f}"
+        )
+
+
+def test_scalar_aggregate_default_is_peak_over_median(hc_long_three_channel):
+    """Sanity: calling without aggregate uses peak_over_median (the new default)."""
+    M_default = hc_long_three_channel.compute_cross_resonance_connectivity(graph=False)
+    M_explicit = hc_long_three_channel.compute_cross_resonance_connectivity(
+        aggregate="peak_over_median", graph=False,
+    )
+    np.testing.assert_array_equal(M_default, M_explicit, err_msg="default should be peak_over_median")
 
 
 def test_cross_resonance_connectivity_all_flavor_symmetric(hc_long_three_channel):

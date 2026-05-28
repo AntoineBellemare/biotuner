@@ -110,8 +110,10 @@ def _save(fig, name):
 
 
 def fig31_cross_resonance_matrix():
-    """6-channel cross-resonance connectivity using the new defaults."""
-    print("Fig 31: 6-channel cross-resonance connectivity ...")
+    """6-channel cross-resonance connectivity using the new defaults.
+    Includes a 7-panel aggregate sweep showing why peak_over_median is the
+    new default."""
+    print("Fig 31: 6-channel cross-resonance connectivity — aggregate sweep ...")
     sf = 500
     data = build_six_channel_dataset(sf=sf)
     hc = harmonic_connectivity(
@@ -124,24 +126,38 @@ def fig31_cross_resonance_matrix():
         harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
         phase_estimator="stft", coupling_metric="nm_wpli_complex",
         gaussian_smooth_sigma=1.0, combine="product",
-        # Inherits cross_pc_reducer='joint', cross_use_ratio_kernel=True defaults
         ratio_kernel="binary",
         ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True},
     )
 
-    H_mat = hc.compute_cross_resonance_connectivity(config=cfg, factor="H", flavor="all", aggregate="max", graph=False)
-    PC_mat = hc.compute_cross_resonance_connectivity(config=cfg, factor="PC", flavor="all", aggregate="max", graph=False)
-    R_mat = hc.compute_cross_resonance_connectivity(config=cfg, factor="R", flavor="all", aggregate="max", graph=False)
+    # All 7 aggregates, factor=R, flavor=all
+    AGGREGATES = ["max", "mean", "sum", "peak",
+                  "peak_over_median", "spectral_concentration", "peak_z"]
+    matrices = {}
+    for agg in AGGREGATES:
+        matrices[agg] = hc.compute_cross_resonance_connectivity(
+            config=cfg, factor="R", flavor="all", aggregate=agg, graph=False,
+        )
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    _annotate_matrix(axes[0], H_mat, "a) Cross H matrix (max H[all] per pair)", cmap="Blues")
-    _annotate_matrix(axes[1], PC_mat, "b) Cross PC matrix (max PC[all] per pair)", cmap="Purples")
-    _annotate_matrix(axes[2], R_mat, "c) Cross R matrix (max R[all] per pair)", cmap="Reds")
+    fig, axes = plt.subplots(2, 4, figsize=(17, 9))
+    flat_axes = axes.flatten()
+    titles_with_status = [
+        ("max", "naive — pink-noise biased", "Reds"),
+        ("mean", "naive — diluted", "Reds"),
+        ("sum", "naive — scales with bandwidth", "Reds"),
+        ("peak", "naive — at detected peak", "Reds"),
+        ("peak_over_median", "DEFAULT — normalized SNR", "plasma"),
+        ("spectral_concentration", "top-3 / total energy", "plasma"),
+        ("peak_z", "z-score above off-peak", "plasma"),
+    ]
+    for ax, (agg, sub, cmap) in zip(flat_axes, titles_with_status):
+        _annotate_matrix(ax, matrices[agg], f"{agg}\n({sub})", cmap=cmap, fmt=".2g")
+    flat_axes[-1].axis("off")  # leave last panel blank
 
-    fig.suptitle("Figure 31 — Cross-resonance connectivity on 6-channel synthetic data\n"
-                 "(refined defaults: joint PC reducer + n:m kernel; aggregate=max)",
-                 fontsize=12, fontweight="bold", y=1.005)
-    fig.tight_layout(rect=[0, 0, 1, 0.92])
+    fig.suptitle("Figure 31 — Cross-resonance R matrix on 6-channel data: all 7 aggregate options\n"
+                 "Top row = naive aggregates (pink-noise biased); bottom row = normalized aggregates (recommended)",
+                 fontsize=12, fontweight="bold", y=0.995)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
     _save(fig, "fig31_cross_resonance_matrix")
 
 

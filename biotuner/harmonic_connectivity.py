@@ -675,7 +675,7 @@ class harmonic_connectivity(object):
         config=None,
         factor="R",
         flavor="all",
-        aggregate="max",
+        aggregate="peak_over_median",
         graph=True,
         save=False,
         savename="_",
@@ -693,9 +693,26 @@ class harmonic_connectivity(object):
             Which factor's spectrum to reduce to a scalar.
         flavor : {'1to2', '2to1', 'all'}, default 'all'
             Which of the 3 reducer flavors to use.
-        aggregate : {'max', 'mean', 'sum', 'peak'}, default 'max'
+        aggregate : str, default ``'peak_over_median'``
             How to reduce the per-bin spectrum to a single number per electrode
-            pair. ``'peak'`` returns the value at the dominant peak frequency.
+            pair. The first 4 are simple aggregates; the last 3 are normalized
+            against the spectrum's noise floor and are more robust to
+            broadband-noise channels:
+
+              ``'max'`` — peak value. Caveat: rewards broadband-power channels
+                (e.g. pink noise) because the joint-probability reducer gives
+                large weighted sums everywhere the partner channel has power.
+              ``'mean'`` — average. Dilutes peaks; same broadband bias.
+              ``'sum'`` — total area. Scales with bandwidth.
+              ``'peak'`` — value at the prominence-detected peak frequency.
+                Mildly better but still inherits H's broadband bias.
+              ``'peak_over_median'`` — ``(max - median) / (max + median)``.
+                Normalized SNR-like measure; robust to broadband channels.
+                **DEFAULT.**
+              ``'spectral_concentration'`` — fraction of energy in the top-3
+                bins. Sharp peaks → high; diffuse spectra → low.
+              ``'peak_z'`` — ``(spec[peak_idx] - mean(off_peak)) /
+                std(off_peak)`` — how many SDs above the noise floor.
         graph : bool
             Heatmap if True.
         store_full_results : bool, default False
@@ -707,10 +724,22 @@ class harmonic_connectivity(object):
         -------
         matrix : ndarray (n_elec, n_elec)
             The scalar connectivity matrix.
+
+        Notes
+        -----
+        The default ``aggregate='peak_over_median'`` was chosen after validation
+        on a 6-channel synthetic dataset showed ``aggregate='max'`` consistently
+        ranks pink-noise channels highest (because broadband power maximizes
+        the joint-probability harmonic weighted sum at every bin). The
+        peak-over-median aggregate subtracts the noise floor and is robust to
+        this artifact while preserving sensitivity to focal coupling.
         """
         valid_factors = {"H", "PC", "R"}
         valid_flavors = {"1to2", "2to1", "all"}
-        valid_aggs = {"max", "mean", "sum", "peak"}
+        valid_aggs = {
+            "max", "mean", "sum", "peak",
+            "peak_over_median", "spectral_concentration", "peak_z",
+        }
         if factor not in valid_factors:
             raise ValueError(f"factor must be one of {valid_factors}, got {factor!r}")
         if flavor not in valid_flavors:
@@ -735,21 +764,7 @@ class harmonic_connectivity(object):
                 else:
                     spec = result.factors[factor][flavor]
                 # Reduce to scalar
-                if aggregate == "max":
-                    matrix[i, j] = float(np.max(spec))
-                elif aggregate == "mean":
-                    matrix[i, j] = float(np.mean(spec))
-                elif aggregate == "sum":
-                    matrix[i, j] = float(np.sum(spec))
-                elif aggregate == "peak":
-                    peak_key = factor
-                    peak_freqs = result.peaks.get(peak_key, np.array([]))
-                    if len(peak_freqs) == 0:
-                        matrix[i, j] = float(np.max(spec))
-                    else:
-                        # Value at the strongest detected peak
-                        idx = np.argmin(np.abs(result.freqs - peak_freqs[0]))
-                        matrix[i, j] = float(spec[idx])
+                matrix[i, j] = _scalar_aggregate(spec, result, factor, aggregate)
 
                 if store_full_results:
                     full_results.append((i, j, result))
@@ -1778,6 +1793,68 @@ def temporal_correlation_fdr(data):
     fdr_corrected_pvals = fdr_corrected_pvals.reshape((num_electrodes, num_electrodes))
 
     return connectivity_matrix, fdr_corrected_pvals
+
+
+def _scalar_aggregate(spec: np.ndarray, result, factor: str, aggregate: str) -> float:
+    """Reduce a per-frequency spectrum to a single scalar via the chosen
+    aggregate. See :meth:`harmonic_connectivity.compute_cross_resonance_connectivity`
+    for the documented options.
+
+    Module-level so it can be reused by the surrogate-z helper and is unit-testable.
+    """
+    spec = np.asarray(spec, dtype=np.float64)
+    if spec.size == 0:
+        return 0.0
+    if aggregate == "max":
+        return float(np.max(spec))
+    if aggregate == "mean":
+        return float(np.mean(spec))
+    if aggregate == "sum":
+        return float(np.sum(spec))
+    if aggregate == "peak":
+        peak_freqs = result.peaks.get(factor, np.array([]))
+        if len(peak_freqs) == 0:
+            return float(np.max(spec))
+        idx = int(np.argmin(np.abs(result.freqs - peak_freqs[0])))
+        return float(spec[idx])
+    if aggregate == "peak_over_median":
+        # Normalized SNR-like measure; robust to broadband-noise channels
+        mx = float(np.max(spec))
+        med = float(np.median(spec))
+        if mx + med < 1e-15:
+            return 0.0
+        return (mx - med) / (mx + med)
+    if aggregate == "spectral_concentration":
+        # Fraction of total energy in the top-3 bins; sharp peaks → high,
+        # diffuse spectra → low.
+        total = float(np.sum(spec))
+        if total < 1e-15:
+            return 0.0
+        k = min(3, spec.size)
+        top_k = np.sort(spec)[-k:]
+        return float(np.sum(top_k) / total)
+    if aggregate == "peak_z":
+        # z-score of the peak relative to the off-peak spectrum
+        peak_freqs = result.peaks.get(factor, np.array([]))
+        if len(peak_freqs) == 0:
+            peak_idx = int(np.argmax(spec))
+        else:
+            peak_idx = int(np.argmin(np.abs(result.freqs - peak_freqs[0])))
+        mask = np.ones(spec.size, dtype=bool)
+        # Exclude the peak bin AND its immediate neighbors (±1) from the
+        # "off-peak" distribution so the SD isn't inflated by the peak shoulder
+        lo = max(0, peak_idx - 1)
+        hi = min(spec.size, peak_idx + 2)
+        mask[lo:hi] = False
+        off = spec[mask]
+        if off.size < 2:
+            return 0.0
+        sd = float(np.std(off))
+        if sd < 1e-15:
+            return 0.0
+        return (float(spec[peak_idx]) - float(np.mean(off))) / sd
+    # Defensive — shouldn't reach (caller validates)
+    raise ValueError(f"unknown aggregate {aggregate!r}")
 
 
 # ===========================================================================
