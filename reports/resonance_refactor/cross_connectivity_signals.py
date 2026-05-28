@@ -130,9 +130,10 @@ def fig31_cross_resonance_matrix():
         ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True},
     )
 
-    # All 7 aggregates, factor=R, flavor=all
+    # 8 aggregates, factor=R, flavor=all
     AGGREGATES = ["max", "mean", "sum", "peak",
-                  "peak_over_median", "spectral_concentration", "peak_z"]
+                  "peak_over_median", "peak_to_median",
+                  "spectral_concentration", "peak_z"]
     matrices = {}
     for agg in AGGREGATES:
         matrices[agg] = hc.compute_cross_resonance_connectivity(
@@ -146,13 +147,13 @@ def fig31_cross_resonance_matrix():
         ("mean", "naive — diluted", "Reds"),
         ("sum", "naive — scales with bandwidth", "Reds"),
         ("peak", "naive — at detected peak", "Reds"),
-        ("peak_over_median", "DEFAULT — normalized SNR", "plasma"),
+        ("peak_over_median", "DEPRECATED — saturates at 1.0", "plasma"),
+        ("peak_to_median", "DEFAULT — log10(max / median)", "plasma"),
         ("spectral_concentration", "top-3 / total energy", "plasma"),
-        ("peak_z", "z-score above off-peak", "plasma"),
+        ("peak_z", "z above off-peak", "plasma"),
     ]
     for ax, (agg, sub, cmap) in zip(flat_axes, titles_with_status):
         _annotate_matrix(ax, matrices[agg], f"{agg}\n({sub})", cmap=cmap, fmt=".2g")
-    flat_axes[-1].axis("off")  # leave last panel blank
 
     fig.suptitle("Figure 31 — Cross-resonance R matrix on 6-channel data: all 7 aggregate options\n"
                  "Top row = naive aggregates (pink-noise biased); bottom row = normalized aggregates (recommended)",

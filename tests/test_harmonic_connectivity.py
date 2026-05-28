@@ -252,7 +252,7 @@ def test_cross_resonance_connectivity_factor_flavor_dispatch(hc_long_three_chann
 
 @pytest.mark.parametrize("aggregate", [
     "max", "mean", "sum", "peak",
-    "peak_over_median", "spectral_concentration", "peak_z",
+    "peak_to_median", "peak_over_median", "spectral_concentration", "peak_z",
 ])
 def test_cross_resonance_connectivity_aggregate(hc_long_three_channel, aggregate):
     """All aggregate options run without error."""
@@ -283,8 +283,8 @@ def test_scalar_aggregate_discriminates_focal_vs_broadband():
     spec_broad = 0.5 + 0.01 * rng.uniform(0, 1, size=57)
     res_broad = _FakeResult(freqs, np.array([]))
 
-    # Each normalized aggregate must give focal/broad ratio > 10
-    for agg in ("peak_over_median", "spectral_concentration", "peak_z"):
+    # Each non-saturating normalized aggregate must give focal/broad ratio > 10
+    for agg in ("peak_to_median", "spectral_concentration", "peak_z"):
         s_focal = _scalar_aggregate(spec_focal, res_focal, "R", agg)
         s_broad = _scalar_aggregate(spec_broad, res_broad, "R", agg)
         ratio = s_focal / (abs(s_broad) + 1e-12)
@@ -293,13 +293,85 @@ def test_scalar_aggregate_discriminates_focal_vs_broadband():
         )
 
 
-def test_scalar_aggregate_default_is_peak_over_median(hc_long_three_channel):
-    """Sanity: calling without aggregate uses peak_over_median (the new default)."""
+def test_peak_to_median_does_not_saturate():
+    """Regression: peak_to_median (log-scale) must NOT saturate at 1.0 for
+    sharp-peak spectra — that was the bug in the deprecated peak_over_median."""
+    from biotuner.harmonic_connectivity import _scalar_aggregate
+
+    class _FakeResult:
+        def __init__(self, freqs, peak_freqs):
+            self.freqs = freqs
+            self.peaks = {"R": peak_freqs}
+
+    freqs = np.linspace(2, 30, 57)
+    # Three spectra with different peak/median ratios
+    rng = np.random.default_rng(0)
+    base = 0.001 * rng.uniform(0, 1, size=57)
+    sharp_low = base.copy(); sharp_low[28] = 0.1   # peak/med ~ 100×
+    sharp_high = base.copy(); sharp_high[28] = 10.0  # peak/med ~ 10000×
+    res = _FakeResult(freqs, np.array([freqs[28]]))
+
+    pom_low = _scalar_aggregate(sharp_low, res, "R", "peak_over_median")
+    pom_high = _scalar_aggregate(sharp_high, res, "R", "peak_over_median")
+    # peak_over_median saturates: BOTH ≈ 1.0 — this is the bug
+    assert pom_low > 0.95 and pom_high > 0.95, "peak_over_median should saturate"
+
+    p2m_low = _scalar_aggregate(sharp_low, res, "R", "peak_to_median")
+    p2m_high = _scalar_aggregate(sharp_high, res, "R", "peak_to_median")
+    # peak_to_median (log scale) distinguishes them clearly
+    assert p2m_high > p2m_low + 1.0, (
+        f"peak_to_median should distinguish 100x from 10000x peaks: "
+        f"got low={p2m_low:.2f}, high={p2m_high:.2f}"
+    )
+
+
+def test_peak_z_unpenalized_by_secondary_peaks():
+    """peak_z must NOT penalize multi-peak spectra. The fix masks ALL detected
+    peaks (not just the dominant one) from the off-peak distribution."""
+    from biotuner.harmonic_connectivity import _scalar_aggregate
+
+    class _FakeResult:
+        def __init__(self, freqs, peak_freqs):
+            self.freqs = freqs
+            self.peaks = {"R": peak_freqs}
+
+    freqs = np.linspace(2, 30, 57)
+    rng = np.random.default_rng(0)
+    # Pick two indices and use their actual frequency values
+    idx_primary = 28
+    idx_secondary = 48
+    f_primary = float(freqs[idx_primary])
+    f_secondary = float(freqs[idx_secondary])
+
+    # Single-peak spectrum (sharp peak at f_primary)
+    single = 0.001 * rng.uniform(0, 1, size=57)
+    single[idx_primary] = 1.0
+    res_single = _FakeResult(freqs, np.array([f_primary]))
+    z_single = _scalar_aggregate(single, res_single, "R", "peak_z")
+
+    # Two-peak spectrum (primary at f_primary, secondary at f_secondary)
+    multi = 0.001 * rng.uniform(0, 1, size=57)
+    multi[idx_primary] = 1.0
+    multi[idx_secondary] = 0.5
+    res_multi = _FakeResult(freqs, np.array([f_primary, f_secondary]))
+    z_multi = _scalar_aggregate(multi, res_multi, "R", "peak_z")
+
+    # With proper masking, the secondary peak doesn't inflate off-peak std
+    # → z_multi should be comparable to z_single (within ~50% of each other),
+    # NOT massively suppressed as it was before the fix.
+    assert z_multi > z_single * 0.5, (
+        f"peak_z penalized multi-peak: single={z_single:.2f}, multi={z_multi:.2f}"
+    )
+
+
+def test_scalar_aggregate_default_is_peak_to_median(hc_long_three_channel):
+    """Sanity: calling without aggregate uses peak_to_median (chosen after
+    empirical comparison on the 6-channel dataset)."""
     M_default = hc_long_three_channel.compute_cross_resonance_connectivity(graph=False)
     M_explicit = hc_long_three_channel.compute_cross_resonance_connectivity(
-        aggregate="peak_over_median", graph=False,
+        aggregate="peak_to_median", graph=False,
     )
-    np.testing.assert_array_equal(M_default, M_explicit, err_msg="default should be peak_over_median")
+    np.testing.assert_array_equal(M_default, M_explicit, err_msg="default should be peak_to_median")
 
 
 def test_cross_resonance_connectivity_all_flavor_symmetric(hc_long_three_channel):

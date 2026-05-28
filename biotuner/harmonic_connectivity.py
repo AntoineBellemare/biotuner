@@ -675,7 +675,7 @@ class harmonic_connectivity(object):
         config=None,
         factor="R",
         flavor="all",
-        aggregate="peak_over_median",
+        aggregate="peak_to_median",
         graph=True,
         save=False,
         savename="_",
@@ -693,11 +693,12 @@ class harmonic_connectivity(object):
             Which factor's spectrum to reduce to a scalar.
         flavor : {'1to2', '2to1', 'all'}, default 'all'
             Which of the 3 reducer flavors to use.
-        aggregate : str, default ``'peak_over_median'``
+        aggregate : str, default ``'peak_to_median'``
             How to reduce the per-bin spectrum to a single number per electrode
-            pair. The first 4 are simple aggregates; the last 3 are normalized
-            against the spectrum's noise floor and are more robust to
-            broadband-noise channels:
+            pair. Simple aggregates inherit the joint-probability reducer's
+            broadband-power bias (any channel with broadband content ranks
+            high); normalized aggregates measure peak structure ABOVE the
+            spectrum's noise floor:
 
               ``'max'`` — peak value. Caveat: rewards broadband-power channels
                 (e.g. pink noise) because the joint-probability reducer gives
@@ -706,13 +707,19 @@ class harmonic_connectivity(object):
               ``'sum'`` — total area. Scales with bandwidth.
               ``'peak'`` — value at the prominence-detected peak frequency.
                 Mildly better but still inherits H's broadband bias.
+              ``'peak_to_median'`` — ``log10(max / median)``. Log-scale
+                peak-to-floor ratio; robust to broadband channels. **DEFAULT.**
               ``'peak_over_median'`` — ``(max - median) / (max + median)``.
-                Normalized SNR-like measure; robust to broadband channels.
-                **DEFAULT.**
+                DEPRECATED — saturates at 1.0 for any spectrum with a sharp
+                peak relative to its baseline; prefer ``peak_to_median``.
               ``'spectral_concentration'`` — fraction of energy in the top-3
                 bins. Sharp peaks → high; diffuse spectra → low.
-              ``'peak_z'`` — ``(spec[peak_idx] - mean(off_peak)) /
-                std(off_peak)`` — how many SDs above the noise floor.
+              ``'peak_z'`` — z-score of the dominant peak relative to the
+                off-peak distribution (all detected peaks masked out, so
+                multi-peak spectra are NOT penalized). Often inflates
+                multi-peak spectra; use ``peak_to_median`` for the cleanest
+                broadband-vs-focal discrimination.
+
         graph : bool
             Heatmap if True.
         store_full_results : bool, default False
@@ -727,18 +734,29 @@ class harmonic_connectivity(object):
 
         Notes
         -----
-        The default ``aggregate='peak_over_median'`` was chosen after validation
-        on a 6-channel synthetic dataset showed ``aggregate='max'`` consistently
-        ranks pink-noise channels highest (because broadband power maximizes
-        the joint-probability harmonic weighted sum at every bin). The
-        peak-over-median aggregate subtracts the noise floor and is robust to
-        this artifact while preserving sensitivity to focal coupling.
+        There is no single scalar aggregate of R(f) that cleanly separates
+        true phase-coupling from broadband-power overlap — H's joint p1·p2
+        reducer rewards any partner power overlap, so a focal signal paired
+        with broadband noise will produce sharp peaks in R(f) at the focal
+        channel's frequency. For paper-quality discrimination of true
+        cross-channel phase coupling vs broadband artifact, use
+        :meth:`compute_cross_resonance_connectivity_zscore` with
+        ``surrogate_kind='iaaft'`` — IAAFT surrogates preserve per-channel PSD
+        while destroying cross-channel phase, so a high z-score signals
+        genuine phase coupling above the broadband null.
+
+        The default ``aggregate='peak_to_median'`` was chosen empirically on
+        the 6-channel validation dataset as the cleanest scalar discriminator:
+        locked alpha pair > 1:2 harmonic pair > drifting alpha > pink-noise
+        pair, in the expected order. ``peak_z`` has a tendency to inflate
+        multi-peak spectra and is offered as an alternative.
         """
         valid_factors = {"H", "PC", "R"}
         valid_flavors = {"1to2", "2to1", "all"}
         valid_aggs = {
             "max", "mean", "sum", "peak",
-            "peak_over_median", "spectral_concentration", "peak_z",
+            "peak_to_median", "peak_over_median",
+            "spectral_concentration", "peak_z",
         }
         if factor not in valid_factors:
             raise ValueError(f"factor must be one of {valid_factors}, got {factor!r}")
@@ -1817,8 +1835,19 @@ def _scalar_aggregate(spec: np.ndarray, result, factor: str, aggregate: str) -> 
             return float(np.max(spec))
         idx = int(np.argmin(np.abs(result.freqs - peak_freqs[0])))
         return float(spec[idx])
+    if aggregate == "peak_to_median":
+        # Log-scale peak-to-median ratio. Robust to broadband-noise channels.
+        # Replaces the older 'peak_over_median' which saturated at 1.0 for any
+        # spectrum with a sharp peak (the bounded (max-med)/(max+med) formula
+        # hit its ceiling for essentially all real-world signals).
+        mx = float(np.max(spec))
+        med = float(max(np.median(spec), 1e-15))
+        if mx < 1e-15:
+            return 0.0
+        return float(np.log10(mx / med))
     if aggregate == "peak_over_median":
-        # Normalized SNR-like measure; robust to broadband-noise channels
+        # Deprecated — kept for backward compat. Saturates at 1.0 for sharp
+        # peaks; prefer 'peak_to_median' or 'peak_z'.
         mx = float(np.max(spec))
         med = float(np.median(spec))
         if mx + med < 1e-15:
@@ -1834,18 +1863,24 @@ def _scalar_aggregate(spec: np.ndarray, result, factor: str, aggregate: str) -> 
         top_k = np.sort(spec)[-k:]
         return float(np.sum(top_k) / total)
     if aggregate == "peak_z":
-        # z-score of the peak relative to the off-peak spectrum
-        peak_freqs = result.peaks.get(factor, np.array([]))
-        if len(peak_freqs) == 0:
+        # z-score of the dominant peak relative to the OFF-peak distribution.
+        # Crucially, ALL prominence-detected peaks (and their immediate
+        # neighbors) are masked from the off-peak distribution so that
+        # multi-peak spectra (e.g. a 1:2 harmonic pair with peaks at both
+        # 10 and 20 Hz) are not penalized — their secondary peak doesn't
+        # inflate the off-peak std.
+        peak_freqs = np.atleast_1d(result.peaks.get(factor, np.array([])))
+        if peak_freqs.size == 0:
             peak_idx = int(np.argmax(spec))
+            peak_idxs = [peak_idx]
         else:
-            peak_idx = int(np.argmin(np.abs(result.freqs - peak_freqs[0])))
+            peak_idxs = [int(np.argmin(np.abs(result.freqs - pf))) for pf in peak_freqs]
+            peak_idx = peak_idxs[0]
         mask = np.ones(spec.size, dtype=bool)
-        # Exclude the peak bin AND its immediate neighbors (±1) from the
-        # "off-peak" distribution so the SD isn't inflated by the peak shoulder
-        lo = max(0, peak_idx - 1)
-        hi = min(spec.size, peak_idx + 2)
-        mask[lo:hi] = False
+        for pidx in peak_idxs:
+            lo = max(0, pidx - 1)
+            hi = min(spec.size, pidx + 2)
+            mask[lo:hi] = False
         off = spec[mask]
         if off.size < 2:
             return 0.0
