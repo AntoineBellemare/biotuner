@@ -24,7 +24,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from biotuner.harmonic_spectrum import compute_global_harmonicity
+try:
+    from biotuner.harmonic_spectrum import compute_global_harmonicity
+except ImportError as exc:
+    raise RuntimeError(
+        "compute_global_harmonicity has been removed in the resonance-package "
+        "refactor. This baseline-generation script is a one-time tool to be "
+        "run on the PRE-REFACTOR commit (before commit 478ccce). To regenerate "
+        "snapshots from the current code, check out main first:\n"
+        "    git checkout main\n"
+        "    python tests/resonance/generate_baseline.py\n"
+        "    git checkout <your-branch>\n"
+    ) from exc
 
 SNAPSHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "snapshots")
 os.makedirs(SNAPSHOT_DIR, exist_ok=True)
