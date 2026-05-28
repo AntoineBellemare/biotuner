@@ -118,6 +118,82 @@ RTOL = 1e-3
 ATOL = 1e-5
 
 
+# ---------------------------------------------------------------------------
+# User-paper-specific call signature lock-in
+# ---------------------------------------------------------------------------
+#
+# A specific user reported using the following exact call signature in a
+# published paper analysis:
+#
+#   compute_global_harmonicity(
+#       trial_data, precision, fmin, fmax, fs=fs,
+#       noverlap=1, power_law_remove=True, n_peaks=n_peaks, plot=False,
+#       smoothness=smooth_fft, metric=metric, delta_lim=500,
+#       smoothness_harm=smooth_harm, n_harms=5, save=False,
+#       phase_mode=None, bandwidth_correction=False,
+#   )
+#
+# The cases below replicate that exact call across realistic parameter ranges
+# to lock in bit-exact reproduction for this specific paper workflow.
+USER_PAPER_CASES = [
+    # (precision, smooth_fft, smooth_harm, n_peaks)
+    (0.5, 1, 1, 5),
+    (0.1, 2, 2, 10),
+    (0.25, 1, 2, 5),
+    (1.0, 1, 1, 3),
+]
+
+
+@pytest.mark.parametrize("precision,smooth_fft,smooth_harm,n_peaks", USER_PAPER_CASES)
+@pytest.mark.parametrize("signal_name", list(SIGNALS.keys()))
+def test_user_paper_call_signature_matches(signal_name, precision, smooth_fft, smooth_harm, n_peaks):
+    """Lock-in bit-exact reproduction of the published-paper call signature.
+
+    Uses the exact kwargs combination reported in user paper workflow:
+    power_law_remove=True, delta_lim=500, n_harms=5, phase_mode=None (no-op),
+    bandwidth_correction=False, metric='harmsim'.
+    """
+    compute_global_harmonicity = _load_legacy()
+
+    sig = SIGNALS[signal_name](sf=BASELINE_CONFIG["fs"])
+    fs = BASELINE_CONFIG["fs"]
+
+    # Literal call signature from the paper
+    df, _ = compute_global_harmonicity(
+        sig, precision, fmin=2, fmax=30, fs=fs,
+        noverlap=1, power_law_remove=True, n_peaks=n_peaks, plot=False,
+        smoothness=smooth_fft, metric="harmsim", delta_lim=500,
+        smoothness_harm=smooth_harm, n_harms=5, save=False,
+        phase_mode=None, bandwidth_correction=False,
+    )
+    H_legacy = np.asarray(df["harmonicity"].iloc[0], dtype=np.float64)
+    PC_legacy = np.asarray(df["phase_coupling"].iloc[0], dtype=np.float64)
+    R_legacy = np.asarray(df["resonance"].iloc[0], dtype=np.float64)
+
+    # Equivalent ResonanceConfig
+    cfg = ResonanceConfig(
+        precision_hz=precision, fmin=2, fmax=30, noverlap=1,
+        smoothness=smooth_fft, n_peaks=n_peaks,
+        remove_aperiodic=True, psd_normalization="minmax_prob",
+        harmonic_kernel="harmsim",
+        harmonic_kernel_params={"n_harms": 5, "delta_lim": 500, "min_notes": 2},
+        ratio_kernel="binary",
+        ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True},
+        phase_estimator="stft", coupling_metric="nm_plv",
+        gaussian_smooth_sigma=smooth_harm, detrend=False,
+        rescale_factors_after_detrend=True, legacy_self_pair_subtract=True,
+        normalize=True, bandwidth_correction=False, combine="product",
+    )
+    result = compute_resonance(sig, sf=fs, config=cfg)
+
+    np.testing.assert_allclose(result.factors["H"], H_legacy, rtol=RTOL, atol=ATOL,
+                                err_msg=f"H mismatch: {signal_name} × paper(prec={precision},sm={smooth_fft},sh={smooth_harm})")
+    np.testing.assert_allclose(result.factors["PC"], PC_legacy, rtol=RTOL, atol=ATOL,
+                                err_msg=f"PC mismatch: {signal_name} × paper(prec={precision},sm={smooth_fft},sh={smooth_harm})")
+    np.testing.assert_allclose(result.resonance_spectrum, R_legacy, rtol=RTOL, atol=ATOL,
+                                err_msg=f"R mismatch: {signal_name} × paper(prec={precision},sm={smooth_fft},sh={smooth_harm})")
+
+
 @pytest.mark.parametrize("config_name,overrides", PARAM_CONFIGS)
 @pytest.mark.parametrize("signal_name", list(SIGNALS.keys()))
 def test_legacy_param_combination_matches(signal_name, config_name, overrides):
