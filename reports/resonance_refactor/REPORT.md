@@ -451,3 +451,106 @@ python reports/resonance_refactor/complex_signals.py
 ```
 
 Output: `figures/fig{6..15}.{png,pdf}`.
+
+---
+
+# Connectivity validation (Figs 16-20)
+
+Layer A of the connectivity refactor — peak-based phase coupling and resonance
+connectivity matrices dispatched via the resonance registry. Validated on a
+multi-channel synthetic dataset with known ground-truth coupling structure.
+
+```bash
+python reports/resonance_refactor/connectivity_signals.py
+```
+
+## Test dataset (Fig 16)
+
+![Figure 16](figures/fig16_connectivity_overview.png)
+
+Six channels with deliberate coupling structure:
+
+| Channel | Signal | Coupling to e1 |
+|---|---|---|
+| **e1** | 10 Hz alpha (clean reference) | — |
+| **e2** | 10 Hz + π/4 phase offset | **same freq + phase-locked** |
+| **e3** | 10 Hz + Wiener phase drift | same freq, NO stable lock |
+| **e4** | 20 Hz + π/8 phase offset | **1:2 harmonic, phase-locked** |
+| **e5** | 17 Hz independent | independent |
+| **e6** | 1/f pink noise | no peaks |
+
+Each channel includes ~25% pink-noise floor for realism.
+
+## Legacy peak-based H connectivity (Fig 17)
+
+![Figure 17](figures/fig17_harm_connectivity.png)
+
+`compute_harm_connectivity(metric='harmsim')` and `metric='euler'`. Note the
+diagonal-zero artifact on harmsim — a known legacy edge case where electrodes
+sharing a peak list produce no cross-peak ratios (mean of empty → NaN, converted
+to 0 in the display). The matrix correctly picks up that e1-e3 = 0.61 (same
+freq) and e1-e6 = 0.67 (FOOOF picks up spurious noise peaks consonant with
+10 Hz). The euler matrix shows gradus suavitatis (lower = more consonant).
+
+## Peak-based phase-coupling connectivity (Fig 18)
+
+![Figure 18](figures/fig18_pc_metrics_comparison.png)
+
+All 6 registered pairwise metrics applied to the same dataset:
+
+- **nm_plv** — strongest at e1-e2 (0.97, phase-locked alpha pair)
+- **nm_pli** — also detects e1-e2 (0.95) but is 0-lag-robust
+- **nm_wpli** — similar to PLI
+- **nm_rrci** — weaker because it discards the real part
+- **nm_plv_canonical** — matches nm_plv on these stationary signals (where the convention swap doesn't change the answer)
+- **nm_wpli_complex** — diagonal = **0.00** (volume-conduction safe!), e1-e2 = 0.99, e1-e4 = 0.99 (best cross-frequency detection of all six metrics)
+
+**Headline finding:** `nm_wpli_complex` has diagonal = 0 on every channel,
+confirming it's the only metric in the registry that's robust to common-reference
+artifacts. Its off-diagonal values match or exceed the others.
+
+## Peak-based resonance connectivity (Fig 19)
+
+![Figure 19](figures/fig19_resonance_combine_rules.png)
+
+`compute_peak_resonance_connectivity(harm_metric='harmsim', coupling_metric='nm_plv', combine=...)`
+under the 4 registered combine rules:
+
+- **product** — sharpens the resonant pairs; e3-e6 stands out as the highest because both H (FOOOF artifact peak) and PC (drifting phase) are nonzero.
+- **geomean** — softer than product; broader pattern visible.
+- **harmmean** — penalizes asymmetry between H and PC; **e1-e2 = 1.94 and e1-e4 = 2.0** clearly identify the truly resonant pairs (both H AND PC high).
+- **min** — bottleneck reading; very conservative.
+
+The harmmean panel is the cleanest discriminator: it requires BOTH harmonic
+similarity AND phase coupling to be high, which is exactly the resonance
+criterion.
+
+## Ground truth comparison (Fig 20)
+
+![Figure 20](figures/fig20_connectivity_ground_truth.png)
+
+Side-by-side comparison of:
+- **(a)** Ground-truth coupling structure (qualitative)
+- **(b)** harmsim H — picks up frequency-domain consonance regardless of phase structure
+- **(c)** nm_plv PC — picks up phase locking (e1-e2 = 0.97) regardless of harmonic structure
+- **(d)** R = H · PC — only the truly resonant connections survive (e1-e2, plus the spurious noise-peak FOOOF artifacts)
+
+The R panel demonstrates the core resonance criterion: **a connection is
+flagged as resonant only when both its frequency-domain harmonicity AND its
+phase-domain coherence are high.** This is the connectivity-level analog of
+the single-channel R(f) = H(f) · PC(f) framework.
+
+### Caveats / known artifacts
+
+- The **e6 (pink noise) row/col** picks up coupling because FOOOF detects
+  random peaks in 1/f noise and the connectivity loop pairs them with real
+  oscillators. This is a peak-extraction issue, not a connectivity-metric
+  issue — a more robust peak-detection step (e.g., surrogate-validated peaks)
+  would clean it up.
+- The **harmsim diagonal = 0** is the legacy NaN edge case mentioned above.
+- The **e1-e4 (1:2 harmonic) PC is moderate, not maximal** on nm_plv because
+  the legacy convention quirk applies (see Fig 7); `nm_plv_canonical` gives a
+  better answer on this specific pair.
+- The **e3 (drifting phase) connection to e1** shows low PC (0.05) despite
+  same frequency — confirming the framework correctly rejects amplitude-only
+  coupling without phase coherence.
