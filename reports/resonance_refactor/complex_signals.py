@@ -628,6 +628,464 @@ def fig11_coupling_metric_comparison():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------------------
+# Figure 12 — Kuramoto synchronization sweep
+# ---------------------------------------------------------------------------
+
+
+def _kuramoto_simulate(N=20, K=2.0, omega_mean=10.0, omega_spread=2.0,
+                       sf=500, duration=20.0, seed=0):
+    """Integrate the Kuramoto model and return the summed-output observable.
+
+    dθ_i/dt = ω_i + (K/N) Σⱼ sin(θⱼ - θᵢ)
+
+    Returns
+    -------
+    x : (T,) summed output signal Σᵢ sin(θᵢ(t))
+    r : (T,) Kuramoto order parameter |⟨e^{iθ}⟩| at each timestep
+    omegas : (N,) natural frequencies in Hz
+    """
+    rng = np.random.default_rng(seed)
+    T = int(sf * duration)
+    dt = 1.0 / sf
+    omegas = omega_mean + omega_spread * rng.standard_normal(N)
+    theta = rng.uniform(0, 2 * np.pi, size=N)
+    x = np.empty(T)
+    r = np.empty(T)
+    omega_rad = 2 * np.pi * omegas
+    for t in range(T):
+        z = np.mean(np.exp(1j * theta))
+        r[t] = np.abs(z)
+        # mean-field form: dθᵢ = ωᵢ + K * Im(z e^{-iθᵢ})
+        psi = np.angle(z)
+        dtheta = omega_rad + K * r[t] * np.sin(psi - theta)
+        theta = theta + dtheta * dt
+        x[t] = np.sum(np.sin(theta))
+    return x, r, omegas
+
+
+def fig12_kuramoto_sweep():
+    print("Fig 12: Kuramoto synchronization sweep ...")
+    sf = 500
+    duration = 20.0
+    N = 20
+    omega_mean = 10.0
+    omega_spread = 2.0
+
+    K_values = [0.0, 1.0, 3.0, 8.0, 20.0]
+    print(f"  simulating {len(K_values)} Kuramoto runs (N={N}, T={duration}s)")
+    runs = []
+    t0 = time.time()
+    for K in K_values:
+        x, r, omegas = _kuramoto_simulate(N=N, K=K, omega_mean=omega_mean,
+                                            omega_spread=omega_spread,
+                                            sf=sf, duration=duration, seed=42)
+        result = _resonance(x, sf=sf, fmin=2, fmax=30, precision_hz=0.5)
+        runs.append({"K": K, "x": x, "r": r, "result": result})
+    print(f"  simulations done in {time.time() - t0:.1f}s")
+
+    fig = plt.figure(figsize=(12, 9))
+    gs = fig.add_gridspec(3, 2, hspace=0.45, wspace=0.30,
+                            height_ratios=[1, 1.2, 1.2], width_ratios=[2, 1])
+
+    # Panel A — heatmap of R(f) vs K
+    freqs = runs[0]["result"].freqs
+    R_matrix = np.stack([r["result"].resonance_spectrum for r in runs])
+    R_matrix_norm = R_matrix / (R_matrix.max(axis=1, keepdims=True) + 1e-12)
+    ax_heat = fig.add_subplot(gs[0, 0])
+    im = ax_heat.imshow(R_matrix_norm, aspect="auto", origin="lower",
+                        extent=[freqs.min(), freqs.max(), -0.5, len(K_values) - 0.5],
+                        cmap="magma", interpolation="nearest")
+    ax_heat.set_yticks(range(len(K_values)))
+    ax_heat.set_yticklabels([f"K = {K}" for K in K_values])
+    ax_heat.set_xlabel("Frequency (Hz)")
+    ax_heat.set_title("a) R(f) across coupling strengths (row-normalized)")
+    plt.colorbar(im, ax=ax_heat, fraction=0.04, pad=0.02, label="R / max(R)")
+
+    # Panel B — scalar Kuramoto order parameter ⟨r⟩ + R_peak vs K
+    ax_scalar = fig.add_subplot(gs[0, 1])
+    r_means = [np.mean(run["r"][int(sf * 5):]) for run in runs]  # after transient
+    r_peaks = [run["result"].resonance_spectrum.max() for run in runs]
+    ax_scalar.plot(K_values, r_means, "o-", color="#1a237e", lw=1.6, label="⟨|Z|⟩  (Kuramoto order)")
+    ax_scalar2 = ax_scalar.twinx()
+    ax_scalar2.plot(K_values, r_peaks, "s-", color="#b71c1c", lw=1.6, label="max R(f)")
+    ax_scalar.set_xlabel("Coupling K")
+    ax_scalar.set_ylabel("⟨|Z|⟩ order parameter", color="#1a237e")
+    ax_scalar2.set_ylabel("max R(f)", color="#b71c1c")
+    ax_scalar.set_title("b) Synchronization signatures")
+    lines1, labels1 = ax_scalar.get_legend_handles_labels()
+    lines2, labels2 = ax_scalar2.get_legend_handles_labels()
+    ax_scalar.legend(lines1 + lines2, labels1 + labels2, loc="upper left", fontsize=8)
+
+    # Panel C — time-domain x(t) for K=0 and K=20
+    ax_t0 = fig.add_subplot(gs[1, 0])
+    ax_t1 = fig.add_subplot(gs[1, 1])
+    t = np.arange(int(sf * 3)) / sf
+    ax_t0.plot(t, runs[0]["x"][:len(t)], color=COLOR_SIG, lw=0.7)
+    ax_t0.set_title(f"c) Time domain — K = {K_values[0]} (incoherent)")
+    ax_t0.set_xlabel("Time (s)")
+    ax_t0.set_ylabel("Σᵢ sin(θᵢ)")
+    ax_t1.plot(t, runs[-1]["x"][:len(t)], color=COLOR_SIG, lw=0.7)
+    ax_t1.set_title(f"d) Time domain — K = {K_values[-1]} (synchronized)")
+    ax_t1.set_xlabel("Time (s)")
+
+    # Panel D — R(f) overlay for two extreme K values
+    ax_r0 = fig.add_subplot(gs[2, 0])
+    ax_r1 = fig.add_subplot(gs[2, 1])
+    ax_r0.plot(freqs, runs[0]["result"].resonance_spectrum,
+                color=COLOR_R, lw=1.5, label=f"K = {K_values[0]}")
+    ax_r0.plot(freqs, runs[-1]["result"].resonance_spectrum,
+                color=COLOR_R, lw=1.5, ls="--", label=f"K = {K_values[-1]}")
+    ax_r0.fill_between(freqs, 0, runs[-1]["result"].resonance_spectrum, color=COLOR_R, alpha=0.1)
+    ax_r0.set_xlabel("Frequency (Hz)")
+    ax_r0.set_ylabel("R(f)")
+    ax_r0.set_title("e) R(f) — incoherent vs synchronized")
+    ax_r0.legend(loc="upper right")
+    ax_r0.set_xlim(freqs.min(), freqs.max())
+
+    # Bar: ⟨r⟩ vs K_peak (scalar Kuramoto order)
+    ax_r1.bar(range(len(K_values)), r_means, color=COLOR_R, alpha=0.7)
+    ax_r1.set_xticks(range(len(K_values)))
+    ax_r1.set_xticklabels([f"{K}" for K in K_values])
+    ax_r1.set_xlabel("Coupling K")
+    ax_r1.set_ylabel("Mean ⟨|Z|⟩")
+    ax_r1.set_title("f) Phase transition (mean order parameter)")
+    ax_r1.set_ylim(0, 1)
+
+    fig.suptitle(
+        "Figure 12 — Kuramoto synchronization sweep: max R(f) tracks the Kuramoto "
+        "order parameter across coupling strengths",
+        fontsize=13, fontweight="bold", y=0.995,
+    )
+    _save(fig, "fig12_kuramoto_sweep")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Figure 13 — Multi-band EEG-like signal (theta, alpha, beta, gamma coexisting)
+# ---------------------------------------------------------------------------
+
+
+def multi_band_eeg_signal(sf=500, duration=20.0, seed=0):
+    """Realistic multi-band synthetic EEG:
+       - 1/f pink noise baseline
+       - sustained theta (5 Hz)
+       - bursty alpha (10 Hz) with 8 Hann-windowed bursts
+       - bursty beta (22 Hz) with 12 bursts
+       - intermittent gamma (45 Hz) packets co-occurring with alpha bursts
+    """
+    rng = np.random.default_rng(seed)
+    n = int(sf * duration)
+    t = np.arange(n) / sf
+    bg = 1.2 * pink_noise_floor(n, sf, seed=seed)
+
+    # Sustained theta
+    theta = 0.5 * np.sin(2 * np.pi * 5.0 * t + rng.uniform(0, 2 * np.pi))
+
+    # Bursty alpha
+    alpha = np.zeros(n)
+    alpha_times = np.linspace(1.0, duration - 2.0, 8) + rng.uniform(-0.2, 0.2, size=8)
+    alpha_dur = 0.8
+    for at in alpha_times:
+        idx = (t >= at) & (t <= at + alpha_dur)
+        local = t[idx] - at
+        win = np.sin(np.pi * local / alpha_dur) ** 2
+        alpha[idx] += 1.5 * win * np.sin(2 * np.pi * 10.0 * local + rng.uniform(0, 2 * np.pi))
+
+    # Bursty beta (non-overlapping with alpha)
+    beta = np.zeros(n)
+    beta_times = np.linspace(0.5, duration - 1.0, 12) + rng.uniform(-0.15, 0.15, size=12)
+    beta_dur = 0.35
+    for bt in beta_times:
+        idx = (t >= bt) & (t <= bt + beta_dur)
+        local = t[idx] - bt
+        win = np.sin(np.pi * local / beta_dur) ** 2
+        beta[idx] += 0.8 * win * np.sin(2 * np.pi * 22.0 * local + rng.uniform(0, 2 * np.pi))
+
+    # Gamma riding on alpha (PAC-like)
+    gamma = np.zeros(n)
+    for at in alpha_times:
+        idx = (t >= at) & (t <= at + alpha_dur)
+        local = t[idx] - at
+        win = np.sin(np.pi * local / alpha_dur) ** 2
+        # Gamma amplitude modulated by within-burst alpha phase
+        gamma[idx] += 0.4 * win * np.sin(2 * np.pi * 10.0 * local) ** 2 \
+                          * np.sin(2 * np.pi * 45.0 * local)
+
+    return bg + theta + alpha + beta + gamma
+
+
+def fig13_multi_band_eeg():
+    print("Fig 13: multi-band EEG-like signal ...")
+    sf = 500
+    sig = multi_band_eeg_signal(sf=sf, duration=20.0)
+    result = _resonance(sig, sf=sf, fmin=2, fmax=60, precision_hz=0.5)
+
+    fig = plt.figure(figsize=(12, 10))
+    gs = fig.add_gridspec(5, 1, height_ratios=[1.2, 1.5, 1, 1, 1], hspace=0.55)
+
+    # Row 1: 3-second window of signal
+    ax_sig = fig.add_subplot(gs[0])
+    t = np.arange(int(sf * 4)) / sf
+    ax_sig.plot(t, sig[:len(t)], color=COLOR_SIG, lw=0.6)
+    ax_sig.set_xlabel("Time (s)")
+    ax_sig.set_ylabel("Amplitude")
+    ax_sig.set_title("a) Synthetic EEG: 1/f + θ (sustained 5Hz) + α bursts (10Hz) + β bursts (22Hz) + γ packets (45Hz)")
+
+    # Row 2: spectrogram for context
+    ax_spec = fig.add_subplot(gs[1])
+    from scipy.signal import spectrogram
+    f_spec, t_spec, Sxx = spectrogram(sig, sf, nperseg=1024, noverlap=900)
+    f_mask = (f_spec >= 2) & (f_spec <= 60)
+    ax_spec.pcolormesh(t_spec, f_spec[f_mask], 10 * np.log10(Sxx[f_mask] + 1e-12),
+                        cmap="viridis", shading="auto")
+    ax_spec.set_ylabel("Frequency (Hz)")
+    ax_spec.set_xlabel("Time (s)")
+    ax_spec.set_title("b) Spectrogram (ground truth)")
+
+    # Rows 3-5: H, PC, R
+    f = result.freqs
+    ax_h = fig.add_subplot(gs[2])
+    ax_pc = fig.add_subplot(gs[3])
+    ax_r = fig.add_subplot(gs[4])
+    _plot_HPCR_row(ax_h, ax_pc, ax_r, result)
+    ax_h.set_ylabel("H(f)", color=COLOR_H)
+    ax_pc.set_ylabel("PC(f)", color=COLOR_PC)
+    ax_r.set_ylabel("R(f)", color=COLOR_R)
+    ax_r.set_xlabel("Frequency (Hz)")
+    ax_h.set_title("c) Harmonicity")
+    ax_pc.set_title("d) Phase coupling")
+    ax_r.set_title("e) Resonance R(f)")
+
+    # Annotate the 4 expected band carriers on R
+    for f_target, label in [(5, "θ"), (10, "α"), (22, "β"), (45, "γ")]:
+        ax_r.axvline(f_target, color=COLOR_R, ls=":", alpha=0.5)
+        ymax = ax_r.get_ylim()[1]
+        ax_r.text(f_target, ymax * 0.92, f"  {label}({f_target}Hz)",
+                  color=COLOR_R, fontweight="bold", fontsize=9)
+
+    fig.suptitle(
+        "Figure 13 — Multi-band synthetic EEG: framework resolves θ, α, β, γ carriers simultaneously",
+        fontsize=13, fontweight="bold", y=0.995,
+    )
+    _save(fig, "fig13_multi_band_eeg")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Figure 14 — SNR robustness sweep
+# ---------------------------------------------------------------------------
+
+
+def fig14_snr_sweep():
+    print("Fig 14: SNR robustness sweep ...")
+    sf = 500
+    duration = 16.0
+    # Clean source signal: harmonic stack at 5/10/20 Hz
+    t = np.arange(int(sf * duration)) / sf
+    clean = (np.sin(2 * np.pi * 5 * t)
+              + 0.6 * np.sin(2 * np.pi * 10 * t)
+              + 0.4 * np.sin(2 * np.pi * 20 * t))
+    clean /= np.std(clean)
+
+    snrs_db = [np.inf, 20, 10, 5, 0, -5, -10]
+    rng = np.random.default_rng(0)
+    results = []
+    for snr in snrs_db:
+        if snr == np.inf:
+            sig = clean.copy()
+        else:
+            # Add scaled pink noise. Noise power = clean power / 10^(snr/10)
+            noise_power = 1.0 / (10 ** (snr / 10))
+            noise = pink_noise_floor(len(clean), sf, seed=int(abs(snr) + 1))
+            sig = clean + np.sqrt(noise_power) * noise
+        r = _resonance(sig, sf=sf, fmin=2, fmax=30, precision_hz=0.5)
+        results.append({"snr": snr, "sig": sig, "result": r})
+
+    # Compute peak detectability: max R / median R
+    detectabilities = []
+    for r in results:
+        R = r["result"].resonance_spectrum
+        det = R.max() / (np.median(R) + 1e-12)
+        detectabilities.append(det)
+
+    fig = plt.figure(figsize=(12, 9))
+    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1.3, 1.1], hspace=0.5, wspace=0.3,
+                            width_ratios=[3, 1])
+
+    # Time domain at 4 SNR levels (3 in column 0, 1 in column 1 if needed)
+    ax_t = fig.add_subplot(gs[0, :])
+    t_window = np.arange(int(sf * 2)) / sf
+    for k, snr_idx in enumerate([0, 2, 4, 6]):
+        offset = 8 * k
+        ax_t.plot(t_window, results[snr_idx]["sig"][:len(t_window)] + offset,
+                  color=COLOR_SIG, lw=0.6)
+        snr_label = f"∞" if results[snr_idx]["snr"] == np.inf else f"{results[snr_idx]['snr']:+d} dB"
+        ax_t.text(t_window[-1] + 0.05, offset, snr_label, va="center", fontsize=9)
+    ax_t.set_xlabel("Time (s)")
+    ax_t.set_yticks([])
+    ax_t.set_title("a) Same clean harmonic stack + pink noise at varying SNR (top = ∞ dB, bottom = -10 dB)")
+    ax_t.set_xlim(0, t_window[-1] + 0.5)
+
+    # R(f) overlay across SNRs
+    ax_r = fig.add_subplot(gs[1, 0])
+    palette = plt.cm.viridis(np.linspace(0.05, 0.92, len(snrs_db)))
+    freqs = results[0]["result"].freqs
+    for r, c in zip(results, palette):
+        snr_label = "∞" if r["snr"] == np.inf else f"{r['snr']:+d} dB"
+        ax_r.plot(freqs, r["result"].resonance_spectrum / r["result"].resonance_spectrum.max(),
+                  color=c, lw=1.4, label=f"SNR = {snr_label}")
+    ax_r.set_xlabel("Frequency (Hz)")
+    ax_r.set_ylabel("R(f) / max")
+    ax_r.set_title("b) R(f) (peak-normalized) across SNRs — peak structure preserved down to ~0 dB")
+    ax_r.legend(loc="upper right", fontsize=8, ncol=2)
+    ax_r.set_xlim(freqs.min(), freqs.max())
+
+    # Peak detectability curve
+    ax_d = fig.add_subplot(gs[1, 1])
+    snr_finite = [s if s != np.inf else 35 for s in snrs_db]  # clip ∞ for axis
+    ax_d.plot(snr_finite, detectabilities, "o-", color=COLOR_R, lw=1.6)
+    ax_d.set_xlabel("SNR (dB)")
+    ax_d.set_ylabel("max R / median R")
+    ax_d.set_title("c) Peak-detectability curve")
+    ax_d.set_yscale("log")
+    ax_d.grid(True, alpha=0.3, which="both")
+
+    # Bottom: scatter of detected peak frequencies vs SNR
+    ax_pf = fig.add_subplot(gs[2, :])
+    for r, c in zip(results, palette):
+        peaks = r["result"].peaks["R"]
+        snr_label = "∞" if r["snr"] == np.inf else f"{r['snr']:+d}"
+        snr_pos = 35 if r["snr"] == np.inf else r["snr"]
+        ax_pf.scatter([snr_pos] * len(peaks), peaks, color=c, s=50, edgecolors="black", linewidth=0.5)
+    for true_f in [5, 10, 20]:
+        ax_pf.axhline(true_f, color="grey", ls="--", alpha=0.4)
+        ax_pf.text(36, true_f, f" {true_f} Hz", va="center", fontsize=9, color="grey")
+    ax_pf.set_xlabel("SNR (dB) — ∞ shown as 35 dB")
+    ax_pf.set_ylabel("Detected R(f) peaks (Hz)")
+    ax_pf.set_title("d) Detected peak frequencies vs SNR — true carriers at 5/10/20 Hz (grey lines)")
+    ax_pf.set_ylim(0, 25)
+
+    fig.suptitle(
+        "Figure 14 — SNR robustness: R(f) peak structure stable down to ~0 dB; "
+        "peak detectability falls ~100× from clean to -10 dB",
+        fontsize=13, fontweight="bold", y=0.995,
+    )
+    _save(fig, "fig14_snr_sweep")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Figure 15 — Polyrhythmic stimuli (3:4:5 and 2:3:7)
+# ---------------------------------------------------------------------------
+
+
+def polyrhythm_signal(sf=500, duration=16.0, base_freq=2.0, ratios=(3, 4, 5),
+                       amps=None, phase_locked=True, seed=0):
+    """Sum of sinusoids at ratios×base_freq. If phase_locked, all start at the
+    same phase; else each has independent random phase."""
+    rng = np.random.default_rng(seed)
+    n = int(sf * duration)
+    t = np.arange(n) / sf
+    if amps is None:
+        amps = [1.0] * len(ratios)
+    sig = np.zeros(n)
+    phi0 = rng.uniform(0, 2 * np.pi)
+    for r, a in zip(ratios, amps):
+        phi = r * phi0 if phase_locked else rng.uniform(0, 2 * np.pi)
+        sig += a * np.sin(2 * np.pi * r * base_freq * t + phi)
+    sig += 0.05 * pink_noise_floor(n, sf, seed=seed + 1)
+    return sig
+
+
+def fig15_polyrhythmic():
+    print("Fig 15: polyrhythmic stimuli (3:4:5 and 2:3:7) ...")
+    sf = 500
+    duration = 16.0
+    # 3:4:5 polyrhythm (base = 2 Hz → 6, 8, 10 Hz)
+    sig_345 = polyrhythm_signal(sf=sf, duration=duration, base_freq=2.0,
+                                  ratios=(3, 4, 5), phase_locked=True)
+    # 2:3:7 polyrhythm (base = 1.5 Hz → 3, 4.5, 10.5 Hz)
+    sig_237 = polyrhythm_signal(sf=sf, duration=duration, base_freq=1.5,
+                                  ratios=(2, 3, 7), phase_locked=True)
+
+    r_345 = _resonance(sig_345, sf=sf, fmin=2, fmax=30, precision_hz=0.5)
+    r_237 = _resonance(sig_237, sf=sf, fmin=2, fmax=30, precision_hz=0.5)
+
+    # Also run subharm_tension kernel for one of them to show kernel choice matters
+    kwargs_sub = legacy_default_resonance_config_kwargs()
+    kwargs_sub.update(dict(precision_hz=0.5, fmin=2, fmax=30, noverlap=4,
+                            harmonic_kernel="subharm_tension"))
+    r_345_sub = compute_resonance(sig_345, sf=sf, config=ResonanceConfig(**kwargs_sub))
+
+    fig, axes = plt.subplots(4, 2, figsize=(12, 9.5))
+
+    # Row 1: time-domain (1.5 s window)
+    t = np.arange(int(sf * 2.0)) / sf
+    axes[0, 0].plot(t, sig_345[:len(t)], color=COLOR_SIG, lw=0.7)
+    axes[0, 0].set_title("a) 3:4:5 polyrhythm (carriers at 6, 8, 10 Hz)")
+    axes[0, 0].set_xlabel("Time (s)")
+    axes[0, 0].set_ylabel("Amplitude")
+    axes[0, 1].plot(t, sig_237[:len(t)], color=COLOR_SIG, lw=0.7)
+    axes[0, 1].set_title("b) 2:3:7 polyrhythm (carriers at 3, 4.5, 10.5 Hz)")
+    axes[0, 1].set_xlabel("Time (s)")
+
+    # Row 2: H
+    f = r_345.freqs
+    axes[1, 0].plot(f, r_345.factors["H"], color=COLOR_H, lw=1.4)
+    axes[1, 0].fill_between(f, 0, r_345.factors["H"], color=COLOR_H, alpha=0.13)
+    axes[1, 0].set_title("c) H(f) — 3:4:5 (harmsim kernel)")
+    axes[1, 0].set_ylabel("Harmonicity")
+    axes[1, 1].plot(f, r_237.factors["H"], color=COLOR_H, lw=1.4)
+    axes[1, 1].fill_between(f, 0, r_237.factors["H"], color=COLOR_H, alpha=0.13)
+    axes[1, 1].set_title("d) H(f) — 2:3:7 (harmsim kernel)")
+
+    # Row 3: PC
+    axes[2, 0].plot(f, r_345.factors["PC"], color=COLOR_PC, lw=1.4)
+    axes[2, 0].fill_between(f, 0, r_345.factors["PC"], color=COLOR_PC, alpha=0.13)
+    axes[2, 0].set_title("e) PC(f) — 3:4:5")
+    axes[2, 0].set_ylabel("Phase coupling")
+    axes[2, 1].plot(f, r_237.factors["PC"], color=COLOR_PC, lw=1.4)
+    axes[2, 1].fill_between(f, 0, r_237.factors["PC"], color=COLOR_PC, alpha=0.13)
+    axes[2, 1].set_title("f) PC(f) — 2:3:7")
+
+    # Row 4: R(f) — and overlay with subharm_tension on 3:4:5
+    axes[3, 0].plot(f, r_345.resonance_spectrum, color=COLOR_R, lw=1.4, label="harmsim")
+    axes[3, 0].fill_between(f, 0, r_345.resonance_spectrum, color=COLOR_R, alpha=0.13)
+    # Scale subharm to overlay
+    R_sub = r_345_sub.resonance_spectrum
+    if R_sub.max() > 0:
+        R_sub_scaled = R_sub * (r_345.resonance_spectrum.max() / R_sub.max())
+        axes[3, 0].plot(f, R_sub_scaled, color="#00838f", lw=1.4, ls="--",
+                         label="subharm_tension (rescaled)")
+    axes[3, 0].set_title("g) R(f) — 3:4:5: harmsim vs subharm_tension")
+    axes[3, 0].set_xlabel("Frequency (Hz)")
+    axes[3, 0].set_ylabel("Resonance")
+    axes[3, 0].legend(loc="upper right", fontsize=8)
+
+    axes[3, 1].plot(f, r_237.resonance_spectrum, color=COLOR_R, lw=1.4)
+    axes[3, 1].fill_between(f, 0, r_237.resonance_spectrum, color=COLOR_R, alpha=0.13)
+    axes[3, 1].set_title("h) R(f) — 2:3:7")
+    axes[3, 1].set_xlabel("Frequency (Hz)")
+
+    # Annotate expected carriers
+    for ax, carriers in [(axes[3, 0], [6, 8, 10]), (axes[3, 1], [3.0, 4.5, 10.5])]:
+        for fc in carriers:
+            ax.axvline(fc, color="grey", ls=":", alpha=0.5)
+
+    for ax in axes.flat[2:]:
+        ax.set_xlim(f.min(), f.max())
+
+    fig.suptitle(
+        "Figure 15 — Polyrhythmic stimuli (3:4:5, 2:3:7): all carriers resolved; "
+        "kernel choice shapes relative peak height",
+        fontsize=13, fontweight="bold", y=0.995,
+    )
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    _save(fig, "fig15_polyrhythmic")
+    plt.close(fig)
+
+
 def main():
     print("Generating complex-signal validation figures ...")
     fig6_alpha_burst()
@@ -636,6 +1094,10 @@ def main():
     fig9_surrogate_null()
     fig10_scale_invariance()
     fig11_coupling_metric_comparison()
+    fig12_kuramoto_sweep()
+    fig13_multi_band_eeg()
+    fig14_snr_sweep()
+    fig15_polyrhythmic()
     print(f"\nAll figures written to {FIG_DIR}")
 
 

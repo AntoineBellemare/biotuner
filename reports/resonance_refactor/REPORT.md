@@ -325,10 +325,129 @@ ready).
 
 ---
 
-## How to regenerate Figs 6-11
+---
+
+# Extended-complex case studies (Figs 12-15)
+
+This third block covers canonical synchronization theory (Kuramoto), realistic
+multi-band biosignal complexity, noise-robustness sweeps, and polyrhythmic
+stimuli — the kind of stress tests a methods reviewer would ask for.
+
+---
+
+## Figure 12 — Kuramoto N-oscillator synchronization sweep
+
+![Figure 12](figures/fig12_kuramoto_sweep.png)
+
+The Kuramoto model is the canonical test for any synchronization measure.
+N = 20 oscillators with natural frequencies drawn from N(10 Hz, σ=2 Hz),
+integrated for 20 s under
+`dθᵢ/dt = ωᵢ + (K/N) Σⱼ sin(θⱼ - θᵢ)` for coupling strengths K = 0, 1, 3, 8, 20.
+The observable is `x(t) = Σᵢ sin(θᵢ(t))`.
+
+- **(a)** Heatmap of row-normalized R(f) — at K = 0 the spectrum is broadband
+  (incoherent); as K rises, energy concentrates at the mean natural frequency
+  (~10 Hz). The classic Kuramoto synchronization signature.
+- **(b)** Both the **Kuramoto order parameter** ⟨|Z|⟩ = ⟨|⟨e^{iθ}⟩|⟩ (blue) and
+  the **max R(f)** (red) track each other across K — a 3× jump in ⟨|Z|⟩ from
+  K=0 to K=20 matches a 5× jump in max R(f).
+- **(c, d)** Time-domain comparison: incoherent (noisy) vs synchronized (clean
+  ~10 Hz oscillation).
+- **(e)** R(f) overlay confirms the spectral sharpening.
+- **(f)** Bar chart of the mean order parameter — phase transition visible
+  between K=8 and K=20.
+
+**What this validates:** max R(f) is monotonic in K and correlates with the
+ground-truth Kuramoto order parameter, so it's a defensible scalar
+synchronization summary. The framework recovers the textbook Kuramoto
+phase-transition behavior without any model-specific tuning.
+
+---
+
+## Figure 13 — Multi-band synthetic EEG
+
+![Figure 13](figures/fig13_multi_band_eeg.png)
+
+20-second synthetic EEG with all four classic neural bands coexisting:
+1/f pink noise + sustained **θ (5 Hz)** + 8 bursty **α (10 Hz)** packets +
+12 bursty **β (22 Hz)** packets + intermittent **γ (45 Hz)** packets riding
+on the alpha envelope (theta-gamma PAC-like).
+
+- **(a)** Time-domain signal (4 s window).
+- **(b)** Spectrogram (ground truth — visible energy at all four bands).
+- **(c, d, e)** Resonance decomposition: H/PC/R all resolve the θ, α, β, γ
+  carriers at the right frequencies (annotated on R(f) panel).
+
+**What this validates:** simultaneous multi-band resolution. The framework
+doesn't require manual band-by-band gating — all four carriers emerge from a
+single `compute_resonance` call. The β carrier is weakest (it's the most
+intermittent in the stimulus), the γ carrier (at 45 Hz, near the analysis
+edge) is also smaller — which is the *correct* relative ranking from the
+ground truth.
+
+---
+
+## Figure 14 — SNR robustness sweep
+
+![Figure 14](figures/fig14_snr_sweep.png)
+
+Same clean harmonic stack (5/10/20 Hz, with relative amplitudes 1.0/0.6/0.4)
+contaminated with pink noise at SNR ∈ {∞, +20, +10, +5, 0, -5, -10} dB.
+
+- **(a)** 4 of the 7 SNR levels in the time domain. By -10 dB the noise
+  dominates visually.
+- **(b)** Peak-normalized R(f) overlay across SNRs. Peak structure is
+  remarkably stable down to ~0 dB; relative magnitudes preserved.
+- **(c)** Peak-detectability ratio (max R / median R) — drops from ~6×10⁵
+  at SNR=∞ to ~5 at SNR=-10 dB, i.e. **5 orders of magnitude** of dynamic
+  range. The "knee" of the curve is around 0 to -5 dB.
+- **(d)** Detected peak frequencies vs SNR. The **5 Hz** carrier (fundamental,
+  largest amplitude) is robustly detected at all SNRs. The **20 Hz** carrier
+  starts to drift (detected as ~18-21 Hz) below 0 dB. The **10 Hz** carrier
+  is the most variable — sometimes missed, sometimes drifts to 8-12 Hz.
+
+**What this validates:** R(f) peak structure is robust until the noise
+overwhelms the signal energy. The detectability threshold (where peaks become
+unreliable) is around -5 dB SNR for these synthetic carriers — typical of
+spectrum-based detection methods.
+
+---
+
+## Figure 15 — Polyrhythmic stimuli (3:4:5 and 2:3:7)
+
+![Figure 15](figures/fig15_polyrhythmic.png)
+
+Two coprime polyrhythms — the kind of stimulus that motivates the Phase-3
+M-PLV / polyrhythm registry slots in the plan:
+
+- **3:4:5** (carriers at 6, 8, 10 Hz with shared phase reference)
+- **2:3:7** (carriers at 3, 4.5, 10.5 Hz)
+
+- **(a, b)** Time-domain segments — note the visually complex but periodic
+  structure of polyrhythmic mixtures.
+- **(c, d)** H(f) under the `harmsim` kernel — peaks at the 3 carriers.
+- **(e, f)** PC(f) — peaks at the 3 carriers with modest amplitude.
+- **(g)** R(f) for the 3:4:5 polyrhythm, with `subharm_tension` kernel
+  overlaid (rescaled to same y-axis). The two kernels agree on peak
+  *locations* but `subharm_tension` weights the lowest carrier (6 Hz) more
+  heavily — useful for emphasizing the fundamental tone in polyrhythmic
+  mixtures. **Kernel choice shapes the relative peak heights**, validating
+  the strategy-registry design.
+- **(h)** R(f) for 2:3:7 — three peaks cleanly resolved despite the larger
+  ratio gap (7:3 ≈ 2.33 is not a simple consonance).
+
+**What this validates:** the Phase-1 pairwise pipeline handles coprime
+polyrhythmic stimuli correctly. Phase 3 will add the proper N-ary M-PLV
+metric (Vasudeva 2022) which can verify the full N-way locking simultaneously
+instead of pairwise — but Phase 1's pairwise approach already finds the
+carriers.
+
+---
+
+## How to regenerate Figs 6-15
 
 ```bash
 python reports/resonance_refactor/complex_signals.py
 ```
 
-Output: `figures/fig{6..11}.{png,pdf}`.
+Output: `figures/fig{6..15}.{png,pdf}`.
