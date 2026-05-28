@@ -44,11 +44,53 @@ def test_harmonic_fit():
     harm_fit, harmonics_pos, most_common_harmonics, matching_positions = harmonic_fit(
         peaks, n_harm=n_harmonics, bounds=bounds, function="mult"
     )
-    
+
     assert len(harm_fit) > 0, \
         "harmonic_fit returned no common harmonics"
     assert all(isinstance(h, float) for h in harm_fit), \
         "harmonic_fit returned non-float harmonics"
+
+
+def test_harmonic_fit_two_peak_input_returns_list():
+    """Regression: harm_fit on a 2-peak input must return a list (not a 0-d
+    numpy array). Previously ``np.array(harm_temp, dtype=object).squeeze()``
+    collapsed length-1 ``harm_temp`` to a 0-d array, breaking ``len(harm_fit)``
+    callers downstream (e.g., ``compute_harm_connectivity(metric='harm_fit')``).
+    """
+    harm_fit, _, _, _ = harmonic_fit(
+        [10.0, 20.0], n_harm=5, bounds=0.5, function="mult",
+    )
+    assert isinstance(harm_fit, list), (
+        f"Expected list, got {type(harm_fit).__name__}"
+    )
+    assert len(harm_fit) > 0, "Expected at least one common harmonic"
+    # 10 Hz and 20 Hz share harmonics at 20, 40, 60 (10*{2,4,6} = 20*{1,2,3})
+    assert all(isinstance(h, float) for h in harm_fit)
+
+
+def test_harmonic_fit_in_compute_harm_connectivity():
+    """Integration: compute_harm_connectivity(metric='harm_fit') must not
+    crash on small electrode datasets. This was broken by the 0-d-array
+    bug fixed alongside this test."""
+    import numpy as np
+    import matplotlib
+    matplotlib.use("Agg")
+    from biotuner.harmonic_connectivity import harmonic_connectivity
+
+    sf = 500
+    t = np.arange(int(sf * 4)) / sf
+    rng = np.random.default_rng(0)
+    e1 = np.sin(2 * np.pi * 10 * t) + 0.3 * rng.standard_normal(len(t))
+    e2 = np.sin(2 * np.pi * 20 * t) + 0.3 * rng.standard_normal(len(t))
+    data = np.array([e1, e2])
+
+    hc = harmonic_connectivity(
+        sf=sf, data=data, peaks_function="FOOOF",
+        precision=0.5, n_harm=5, min_freq=2, max_freq=30, n_peaks=3,
+    )
+    M = hc.compute_harm_connectivity(metric="harm_fit", graph=False)
+    assert M.shape == (2, 2)
+    assert np.all(np.isfinite(M)), "harm_fit matrix should contain finite counts"
 
 def test_multi_consonance():
     """

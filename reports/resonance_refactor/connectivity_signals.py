@@ -157,24 +157,75 @@ def fig16_overview(hc, data, sf):
     plt.close(fig)
 
 
-def fig17_harm_connectivity(hc):
-    """Legacy H connectivity (harmsim) vs harm_fit."""
-    print("Fig 17: harmonicity connectivity ...")
-    M_harmsim = hc.compute_harm_connectivity(metric="harmsim", graph=False)
-    M_euler = hc.compute_harm_connectivity(metric="euler", graph=False)
+def _harmsim_with_max_denom(hc, max_denom=16, FREQ_BANDS=None):
+    """Compute harmsim connectivity but round each ratio to a Fraction with
+    bounded denominator before applying dyad_similarity. This corrects the
+    legacy 10:20 → 1.998 → 999/500 behavior that arises when FOOOF peak
+    locations have sub-Hz noise. NOT a change to the core: this rounding is
+    applied LOCALLY in the analysis (per user request).
+    """
+    from fractions import Fraction
+    from biotuner.metrics import dyad_similarity
+    from biotuner.biotuner_utils import rebound_list
+    import itertools
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 5.5))
-    _annotate_matrix(axes[0], np.nan_to_num(M_harmsim), "a) harmsim — harmonic similarity H", cmap="viridis")
-    _annotate_matrix(axes[1], np.nan_to_num(M_euler), "b) euler — gradus suavitatis (lower = more consonant)", cmap="magma_r")
+    data = hc.data
+    n_elec = len(data)
+    M = np.zeros((n_elec, n_elec))
+    for i in range(n_elec):
+        for j in range(n_elec):
+            peaks1, peaks2 = hc._extract_peaks_for_pair(data[i], data[j], FREQ_BANDS=FREQ_BANDS)
+            if not peaks1 or not peaks2:
+                continue
+            pairs = list(itertools.product(peaks1, peaks2))
+            ratios = []
+            for p in pairs:
+                if p[0] > p[1]:
+                    ratios.append(p[0] / p[1])
+                elif p[1] > p[0]:
+                    ratios.append(p[1] / p[0])
+            if not ratios:
+                continue
+            ratios = rebound_list(ratios)
+            # Apply max_denom-bounded rounding to each ratio before dyad_similarity
+            sims = []
+            for r in ratios:
+                frac = Fraction(float(r)).limit_denominator(max_denom)
+                sims.append(dyad_similarity(frac.numerator / frac.denominator))
+            M[i, j] = float(np.mean(sims))
+    return M
+
+
+def fig17_harm_connectivity(hc):
+    """Legacy H connectivity (harmsim — default and with bounded max_denom)
+    vs harm_fit (now that the harm_fit bug is fixed)."""
+    print("Fig 17: harmonicity connectivity ...")
+    M_harmsim_default = hc.compute_harm_connectivity(metric="harmsim", graph=False)
+    print("  computing harmsim with max_denom=16 (analysis-local rounding)...")
+    M_harmsim_bounded = _harmsim_with_max_denom(hc, max_denom=16)
+    M_harm_fit = hc.compute_harm_connectivity(metric="harm_fit", graph=False)
+
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.5))
+    _annotate_matrix(axes[0], np.nan_to_num(M_harmsim_default),
+                      "a) harmsim — default (limit_denominator=1000)\n"
+                      "  legacy quirk: FOOOF sub-Hz peak offset → complex Fraction",
+                      cmap="viridis")
+    _annotate_matrix(axes[1], np.nan_to_num(M_harmsim_bounded),
+                      "b) harmsim — analysis-local max_denom=16\n"
+                      "  rounds ratios to simple fractions before dyad_similarity",
+                      cmap="viridis")
+    _annotate_matrix(axes[2], np.nan_to_num(M_harm_fit),
+                      "c) harm_fit — # shared harmonics (bug fixed)",
+                      cmap="magma")
 
     fig.suptitle("Figure 17 — Peak-based harmonic connectivity (legacy compute_harm_connectivity)",
                  fontsize=12, fontweight="bold", y=0.995)
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
     fig.savefig(FIG_DIR / "fig17_harm_connectivity.png")
     fig.savefig(FIG_DIR / "fig17_harm_connectivity.pdf")
     print(f"  wrote fig17_harm_connectivity.png + .pdf")
     plt.close(fig)
-    return M_harmsim
+    return M_harmsim_default
 
 
 def fig18_pc_metrics_comparison(hc):

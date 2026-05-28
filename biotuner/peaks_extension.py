@@ -243,15 +243,28 @@ def harmonic_fit(
     )
     harmonics_pos = sorted(set(harmonics_pos))
 
-    # Prepare harm_fit
-    harm_fit = np.array(harm_temp, dtype=object).squeeze()
+    # Prepare harm_fit. ``harm_temp`` is a list of per-pair lists of common
+    # harmonics. Flatten into a single list of harmonic frequencies, regardless
+    # of how many peak pairs were compared. The historical
+    # ``np.array(...).squeeze()`` collapsed length-1 ``harm_temp`` to a 0-d
+    # numpy array, which broke ``len(harm_fit)`` callers downstream.
+    try:
+        harm_fit = list(itertools.chain.from_iterable(harm_temp))
+    except TypeError:
+        # Defensive: if compareLists returned a non-iterable for some pair,
+        # fall back to the squeeze approach for that one element.
+        flat = []
+        for item in harm_temp:
+            try:
+                flat.extend(list(item))
+            except TypeError:
+                flat.append(item)
+        harm_fit = flat
 
     if len(peak_bands) > 2:
         try:
-            if isinstance(harm_fit, (list, np.ndarray)):
-                harm_fit = list(itertools.chain.from_iterable(harm_fit))
             harm_fit = [round(num, 3) for num in harm_fit]
-            harm_fit = list(dict.fromkeys(harm_fit))  # Remove duplicates
+            harm_fit = list(dict.fromkeys(harm_fit))  # Remove duplicates (preserve order)
             harm_fit = list(set(harm_fit))  # Final deduplication
         except TypeError:
             print("No common harmonics found, setting harm_fit to empty")
