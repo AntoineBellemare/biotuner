@@ -63,11 +63,19 @@ def kernel_subharm_tension(
     M = np.zeros((fi.size, fj.size), dtype=np.float64)
     for i, f1 in enumerate(fi):
         for j, f2 in enumerate(fj):
-            if f2 != 0:
-                _, _, subharm, _ = compute_subharmonic_tension(
-                    [f1, f2], n_harmonics=n_harms, delta_lim=delta_lim, min_notes=min_notes
-                )
-                M[i, j] = 1.0 - subharm[0]
+            if f2 == 0:
+                continue
+            _, _, subharm, _ = compute_subharmonic_tension(
+                [f1, f2], n_harmonics=n_harms, delta_lim=delta_lim, min_notes=min_notes
+            )
+            # subharm[0] is occasionally a sentinel string from
+            # compute_subharmonic_tension when no valid tension can be
+            # computed; treat as zero similarity (cell will be 1.0 since
+            # 1 - 0 = 1, matching the "no information" baseline).
+            try:
+                M[i, j] = 1.0 - float(subharm[0])
+            except (TypeError, ValueError):
+                M[i, j] = 0.0
     if diagonal is not None and fi.size == fj.size and np.array_equal(fi, fj):
         np.fill_diagonal(M, diagonal)
     return M
