@@ -1,11 +1,92 @@
-"""biotuner.harmonic_connectivity — cross-frequency / cross-channel coupling pipeline.
+"""biotuner.harmonic_connectivity — cross-channel coupling, cross-frequency, and connectivity matrices.
 
 Module type: Object
 
-Computes phase-amplitude coupling (PAC), cross-frequency coupling (CFC),
-endogenous intermodulation, and harmonicity matrices between biosignal
-channels or frequency bands.
+This module is the **cross-channel** counterpart to
+:mod:`biotuner.harmonic_spectrum` (single-signal H) and
+:mod:`biotuner.resonance` (single-signal R = H · PC). Everything that compares
+TWO-OR-MORE signals lives here.
+
+Quick start
+-----------
+
+**Peak-based** connectivity (between extracted peak lists, one scalar per
+electrode pair) — uses the legacy peak-extraction pipeline:
+
+::
+
+    from biotuner.harmonic_connectivity import harmonic_connectivity
+    hc = harmonic_connectivity(sf=1000, data=data_array, peaks_function="EMD",
+                                precision=0.5, min_freq=2, max_freq=30, n_peaks=5)
+    H_mat = hc.compute_harm_connectivity(metric="harmsim")       # legacy H
+    PC_mat = hc.compute_peak_phase_coupling_connectivity(coupling_metric="nm_plv")
+    R_mat = hc.compute_peak_resonance_connectivity(combine="product")
+
+**Spectrum-based** cross-channel resonance (per-frequency H/PC/R between two
+signals, with the same swappable kernels/metrics/combine rules as
+``biotuner.resonance``):
+
+::
+
+    from biotuner.harmonic_connectivity import compute_cross_resonance
+    from biotuner.resonance import ResonanceConfig
+
+    cross = compute_cross_resonance(sig1, sig2, sf=1000)
+    # cross.resonance_spectrum["1to2"]  — asymmetric (sig1 at i, sig2 at j)
+    # cross.resonance_spectrum["2to1"]  — transposed
+    # cross.resonance_spectrum["all"]   — symmetrized average
+    # cross.factors["H"][...], cross.factors["PC"][...]
+    # cross.summaries["H"/"PC"/"R"]     — complexity dict per spectrum
+
+**Connectivity matrices** (loop ``compute_cross_resonance`` over all electrode
+pairs):
+
+::
+
+    M = hc.compute_cross_resonance_connectivity(
+        factor="R", flavor="all", aggregate="peak_to_median",
+    )
+
+**Statistical inference** via surrogate-z-scoring (the principled way to
+separate true cross-channel phase coupling from broadband-power artifacts):
+
+::
+
+    obs, z, p = hc.compute_cross_resonance_connectivity_zscore(
+        surrogate_kind="iaaft", n_surrogates=200,
+    )
+
+Sister modules
+--------------
+- :mod:`biotuner.harmonic_spectrum` — single-signal H spectrum.
+- :mod:`biotuner.resonance` — single-signal H × PC = R pipeline, including the
+  registries this module dispatches against
+  (``PAIRWISE_COUPLING_METRICS``, ``HARMONIC_KERNELS``,
+  ``RATIO_KERNELS``, ``COMBINE_RULES``).
 """
+
+__all__ = [
+    # Class — peak-based connectivity + new spectrum-based methods
+    "harmonic_connectivity",
+    # Spectrum-based cross-channel orchestrator
+    "compute_cross_resonance",
+    "CrossResonanceResult",
+    # Legacy shim (delegates to compute_cross_resonance internally)
+    "compute_cross_spectrum_harmonicity",
+    # Standalone coupling utilities (kept for backward compat)
+    "wPLI_crossfreq",
+    "wPLI_multiband",
+    "cross_frequency_rrci",
+    "n_m_phase_locking",
+    "rhythmic_ratio_coupling_imaginary",
+    "compute_rhythmic_ratio",
+    "compute_mutual_information",
+    "MI_spectral",
+    # IMF utilities (different abstraction layer)
+    "HilbertHuang1D_nopeaks",
+    "EMD_time_resolved_harmonicity",
+    "temporal_correlation_fdr",
+]
 
 import numpy as np
 from biotuner.biotuner_object import compute_biotuner

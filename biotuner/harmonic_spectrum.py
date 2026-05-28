@@ -2,21 +2,54 @@
 
 Module type: Functions
 
-This module is the H-only entry point of biotuner's spectral resonance machinery.
-The full H × PC = R pipeline (formerly the legacy ``compute_global_harmonicity``)
-now lives in :mod:`biotuner.resonance`. See :func:`biotuner.resonance.compute_resonance`
-for the full strategy-registry-based pipeline with surrogate normalization, soft
-Arnold-tongue gating, additional harmonic kernels, and higher-order coupling.
+This module is the **H-only entry point** of biotuner's spectral resonance
+machinery. For per-frequency harmonicity H(f) on a single signal, this is the
+right module.
 
-Public entry points:
-    compute_harmonic_spectrum    — H(f) spectrum + rich complexity summary
-    harmonicity_matrices         — N×N similarity matrix (legacy helper)
-    compute_harmonic_power       — probability-weighted reduction of S to H(f)
-    find_spectral_peaks          — peak detector used across the resonance package
-    harmonic_entropy             — complexity DataFrame for H / PC / R together
-    get_harmonic_ratio           — best (n, m) within tolerance for a freq pair
-    count_theoretical_harmonic_partners — bandwidth-correction helper
+Quick start
+-----------
+::
+
+    from biotuner.harmonic_spectrum import compute_harmonic_spectrum
+
+    freqs, H, S, summary = compute_harmonic_spectrum(
+        signal, precision_hz=0.5, fmin=2, fmax=30, fs=1000,
+    )
+    # H        — per-frequency harmonicity spectrum  (n_freqs,)
+    # S        — N×N kernel similarity matrix
+    # summary  — dict of complexity metrics (flatness, entropy, higuchi, ...)
+
+Sister modules
+--------------
+- :mod:`biotuner.resonance` — full H × PC = R pipeline with surrogate
+  normalization, swappable kernels, and higher-order coupling extensions.
+  Use ``compute_resonance(signal, sf, config=...)`` when you want the full
+  per-frequency resonance spectrum, not just H(f).
+- :mod:`biotuner.harmonic_connectivity` — cross-channel analogs. Use
+  ``compute_cross_resonance(sig1, sig2, sf)`` for two signals,
+  ``harmonic_connectivity(...).compute_cross_resonance_connectivity(...)``
+  for N-channel matrices.
+
+Public API
+----------
+- :func:`compute_harmonic_spectrum`            — main entry point
+- :func:`harmonicity_matrices`                 — N×N similarity matrix (legacy helper)
+- :func:`compute_harmonic_power`               — probability-weighted reduction of S to H(f)
+- :func:`find_spectral_peaks`                  — peak detector (shared across the resonance package)
+- :func:`harmonic_entropy`                     — complexity DataFrame for H / PC / R together
+- :func:`get_harmonic_ratio`                   — best (n, m) within tolerance for a freq pair
+- :func:`count_theoretical_harmonic_partners`  — bandwidth-correction helper
 """
+
+__all__ = [
+    "compute_harmonic_spectrum",
+    "harmonicity_matrices",
+    "compute_harmonic_power",
+    "find_spectral_peaks",
+    "harmonic_entropy",
+    "get_harmonic_ratio",
+    "count_theoretical_harmonic_partners",
+]
 
 import numpy as np
 import pandas as pd

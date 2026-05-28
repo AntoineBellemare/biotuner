@@ -94,3 +94,50 @@ def register_surrogate_type(name: str, fn: Callable) -> None:
 
 def is_pairwise(metric_name: str) -> bool:
     return COUPLING_ARITY.get(metric_name, "").startswith("pairwise")
+
+
+def list_strategies(verbose: bool = True) -> Dict[str, Dict[str, Callable]]:
+    """Discover the strategies currently registered in the resonance package.
+
+    Returns a dict keyed by registry name (``'HARMONIC_KERNELS'``,
+    ``'PAIRWISE_COUPLING_METRICS'``, etc.). When ``verbose=True`` (the
+    default), also prints a friendly summary.
+
+    Use this as the first stop when starting a new analysis::
+
+        >>> from biotuner.resonance import list_strategies
+        >>> list_strategies()
+        HARMONIC_KERNELS (2)
+          - harmsim
+          - subharm_tension
+        RATIO_KERNELS (1)
+          - binary
+        ...
+
+    All names returned here are valid for the corresponding
+    :class:`ResonanceConfig` field (e.g. ``ResonanceConfig(harmonic_kernel=...)``).
+    """
+    registries = {
+        "HARMONIC_KERNELS": HARMONIC_KERNELS,
+        "RATIO_KERNELS": RATIO_KERNELS,
+        "PHASE_ESTIMATORS": PHASE_ESTIMATORS,
+        "PAIRWISE_COUPLING_METRICS": PAIRWISE_COUPLING_METRICS,
+        "HIGHER_ORDER_COUPLING_METHODS": HIGHER_ORDER_COUPLING_METHODS,
+        "PERSISTENCE_METHODS": PERSISTENCE_METHODS,
+        "COMBINE_RULES": COMBINE_RULES,
+        "SURROGATE_TYPES": SURROGATE_TYPES,
+    }
+    if verbose:
+        for reg_name, reg in registries.items():
+            names = sorted(reg)
+            print(f"{reg_name} ({len(names)})")
+            for n in names:
+                # For coupling metrics, also show the input-type tag
+                if reg_name == "PAIRWISE_COUPLING_METRICS" and n in COUPLING_INPUT_TYPE:
+                    print(f"  - {n}  [{COUPLING_INPUT_TYPE[n]}]")
+                else:
+                    print(f"  - {n}")
+            if not names:
+                print("  (none — see plan §5 for the Phase 2/3 additions)")
+            print()
+    return registries
