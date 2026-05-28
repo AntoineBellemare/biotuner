@@ -39,6 +39,12 @@ from biotuner.harmonic_spectrum import (
     find_spectral_peaks,
     harmonic_entropy,
 )
+from biotuner.resonance.registry import (
+    PAIRWISE_COUPLING_METRICS,
+    COUPLING_INPUT_TYPE,
+    RATIO_KERNELS,
+    COMBINE_RULES,
+)
 from biotuner.biotuner_utils import (
     safe_mean,
     safe_max,
@@ -267,6 +273,14 @@ class harmonic_connectivity(object):
                 ratios = rebound_list(ratios)
                 harm_conn_matrix.append(np.mean(ratios2harmsim(ratios)))
             if metric == "RRCi":
+                # Legacy path: mne FIR bandpass + Fraction.limit_denominator(max_denom_rrci)
+                # ratio detection + |Im(<exp(i*(n*φ_i - m*φ_j))>)| coupling.
+                # For a registry-based alternative with similar semantics, see
+                # :meth:`compute_peak_phase_coupling_connectivity(coupling_metric='nm_rrci')`,
+                # which uses butter bandpass + the resonance binary_nm_kernel
+                # (max_nm=3 by default). Numerical results differ slightly due
+                # to the different filter/ratio backends; this branch is kept
+                # for backward compatibility with existing analyses.
                 rrci_values = []
                 for peak1 in list1:
                     for peak2 in list2:
@@ -302,6 +316,13 @@ class harmonic_connectivity(object):
                 harm_conn_matrix.append(np.sum(harm_fit))
 
             if metric == "wPLI_crossfreq":
+                # Legacy path: butter bandpass (bandwidth=1) + 1:1 PLV-like
+                # |<exp(i(φ_i − φ_j))>| (despite the "wPLI" name, the legacy
+                # implementation does NOT use the imaginary-part weighting that
+                # defines wPLI in Vinck 2011). For the actual wPLI formula on
+                # complex STFT/analytic signals, use
+                # :meth:`compute_peak_phase_coupling_connectivity(coupling_metric='nm_wpli_complex')`.
+                # This branch is kept for backward compatibility.
                 wPLI_values = []
                 for peak1 in list1:
                     for peak2 in list2:
@@ -368,7 +389,273 @@ class harmonic_connectivity(object):
             plt.title(f"Harmonic connectivity matrix ({metric})")
             plt.show()
         self.conn_matrix = matrix
-        return matrix 
+        return matrix
+
+
+    # ------------------------------------------------------------------
+    # Peak-based connectivity via the biotuner.resonance registry
+    # ------------------------------------------------------------------
+
+    def _extract_peaks_for_pair(self, data1, data2, FREQ_BANDS=None):
+        """Extract peak lists for two signals using the class's peak settings.
+
+        Returns (peaks1, peaks2). Used by the peak-based connectivity methods
+        below to avoid duplicating the peak-extraction boilerplate.
+        """
+        if FREQ_BANDS is None:
+            FREQ_BANDS = [
+                [2, 3.55], [3.55, 7.15], [7.15, 14.3],
+                [14.3, 28.55], [28.55, 49.4],
+            ]
+        bt1 = compute_biotuner(
+            self.sf, peaks_function=self.peaks_function,
+            precision=self.precision, n_harm=self.n_harm,
+        )
+        bt1.peaks_extraction(
+            data1, min_freq=self.min_freq, max_freq=self.max_freq,
+            max_harm_freq=150, n_peaks=self.n_peaks,
+            noverlap=None, nperseg=None, nfft=None, smooth_fft=1,
+            FREQ_BANDS=FREQ_BANDS,
+        )
+        bt2 = compute_biotuner(
+            self.sf, peaks_function=self.peaks_function,
+            precision=self.precision, n_harm=self.n_harm,
+        )
+        bt2.peaks_extraction(
+            data2, min_freq=self.min_freq, max_freq=self.max_freq,
+            max_harm_freq=150, n_peaks=self.n_peaks,
+            noverlap=None, nperseg=None, nfft=None, smooth_fft=1,
+            FREQ_BANDS=FREQ_BANDS,
+        )
+        return list(bt1.peaks), list(bt2.peaks)
+
+    def _peak_pair_coupling(
+        self, data1, data2, peak1, peak2,
+        coupling_metric, coupling_metric_params,
+        ratio_kernel_fn, ratio_kernel_params, bandwidth,
+    ):
+        """Compute scalar pairwise coupling between two signals at given peak
+        frequencies. Bandpass-filters each signal in a `bandwidth`-Hz window
+        around its peak, Hilbert-transforms to get analytic signal, then
+        dispatches to the chosen pairwise metric.
+        """
+        # Resolve (n, m) for this peak pair via the ratio kernel
+        W, N_mat, M_mat = ratio_kernel_fn(
+            np.array([peak1]), np.array([peak2]), **ratio_kernel_params
+        )
+        if W[0, 0] <= 0:
+            return 0.0
+        n, m = int(N_mat[0, 0]), int(M_mat[0, 0])
+
+        # Bandpass + Hilbert at each peak
+        filtered1 = butter_bandpass_filter(
+            data1, peak1 - bandwidth / 2, peak1 + bandwidth / 2, self.sf,
+        )
+        filtered2 = butter_bandpass_filter(
+            data2, peak2 - bandwidth / 2, peak2 + bandwidth / 2, self.sf,
+        )
+        analytic1 = hilbert(zscore(filtered1))
+        analytic2 = hilbert(zscore(filtered2))
+
+        # Dispatch on input type — phase metrics take np.angle, analytic
+        # metrics take the complex signal directly
+        metric_fn = PAIRWISE_COUPLING_METRICS[coupling_metric]
+        input_type = COUPLING_INPUT_TYPE[coupling_metric]
+        if input_type == "phase":
+            arg1, arg2 = np.angle(analytic1), np.angle(analytic2)
+        else:  # 'analytic'
+            arg1, arg2 = analytic1, analytic2
+        value = metric_fn(arg1, arg2, n, m, **coupling_metric_params)
+        # Weight by ratio-kernel membership (binary: 1.0; soft kernels: <=1)
+        return float(W[0, 0]) * float(value)
+
+    def compute_peak_phase_coupling_connectivity(
+        self,
+        coupling_metric="nm_plv",
+        coupling_metric_params=None,
+        ratio_kernel="binary",
+        ratio_kernel_params=None,
+        bandwidth=1.0,
+        aggregate="mean",
+        FREQ_BANDS=None,
+        graph=True,
+        save=False,
+        savename="_",
+    ):
+        """Peak-based phase-coupling connectivity matrix.
+
+        For each electrode pair: extract peaks from both signals, for every
+        peak pair (f_i, f_j) determine the n:m harmonic ratio via the chosen
+        ratio kernel, bandpass-filter both signals at their peak frequencies,
+        Hilbert-transform to obtain analytic signals, and compute the chosen
+        pairwise coupling metric. Aggregate over peak pairs to a scalar.
+
+        Parameters
+        ----------
+        coupling_metric : str, default='nm_plv'
+            Name of any registered pairwise coupling metric. Options include:
+            ``'nm_plv'``, ``'nm_pli'``, ``'nm_wpli'``, ``'nm_rrci'``,
+            ``'nm_plv_canonical'``, ``'nm_wpli_complex'``. See
+            :mod:`biotuner.resonance.coupling` for definitions.
+        coupling_metric_params : dict, optional
+            Extra kwargs passed to the metric function.
+        ratio_kernel : str, default='binary'
+            Name of registered ratio kernel. ``'binary'`` is the legacy n:m gate.
+        ratio_kernel_params : dict, optional
+            Kwargs for the ratio kernel; defaults to
+            ``{'max_nm': 3, 'tolerance': 0.05, 'fallback_to_1_1': True}``.
+        bandwidth : float, default=1.0
+            Hz width of the bandpass filter applied around each peak.
+        aggregate : {'mean', 'max', 'sum'}, default='mean'
+            How to reduce the per-peak-pair scalars to one number per electrode pair.
+        FREQ_BANDS : list of [low, high], optional
+            Override the default frequency-band partition used by peak extraction.
+        graph : bool, default=True
+            If True, displays a heatmap of the result.
+        save, savename : passthrough to plotting.
+
+        Returns
+        -------
+        matrix : ndarray (n_elec, n_elec)
+            Pairwise scalar coupling values.
+        """
+        if coupling_metric not in PAIRWISE_COUPLING_METRICS:
+            raise ValueError(
+                f"Unknown coupling_metric {coupling_metric!r}. "
+                f"Available: {sorted(PAIRWISE_COUPLING_METRICS)}"
+            )
+        if ratio_kernel not in RATIO_KERNELS:
+            raise ValueError(
+                f"Unknown ratio_kernel {ratio_kernel!r}. "
+                f"Available: {sorted(RATIO_KERNELS)}"
+            )
+        if aggregate not in {"mean", "max", "sum"}:
+            raise ValueError(f"aggregate must be mean/max/sum, got {aggregate!r}")
+        if coupling_metric_params is None:
+            coupling_metric_params = {}
+        if ratio_kernel_params is None:
+            ratio_kernel_params = {"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True}
+
+        ratio_fn = RATIO_KERNELS[ratio_kernel]
+        agg_fn = {"mean": np.mean, "max": np.max, "sum": np.sum}[aggregate]
+
+        data = self.data
+        n_elec = len(data)
+        pairs = list(itertools.product(range(n_elec), range(n_elec)))
+        matrix = np.zeros((n_elec, n_elec), dtype=np.float64)
+
+        for (i, j) in pairs:
+            data1, data2 = data[i], data[j]
+            peaks1, peaks2 = self._extract_peaks_for_pair(data1, data2, FREQ_BANDS=FREQ_BANDS)
+            if not peaks1 or not peaks2:
+                continue
+            values = []
+            for p1 in peaks1:
+                for p2 in peaks2:
+                    values.append(self._peak_pair_coupling(
+                        data1, data2, p1, p2,
+                        coupling_metric, coupling_metric_params,
+                        ratio_fn, ratio_kernel_params, bandwidth,
+                    ))
+            matrix[i, j] = float(agg_fn(values)) if values else 0.0
+
+        if graph:
+            sbn.heatmap(matrix)
+            plt.title(f"Peak phase-coupling connectivity ({coupling_metric}, agg={aggregate})")
+            if save:
+                plt.savefig(f"peak_phase_coupling_{savename}.png")
+            plt.show()
+        self.peak_phase_coupling_matrix = matrix
+        return matrix
+
+    def compute_peak_resonance_connectivity(
+        self,
+        harm_metric="harmsim",
+        coupling_metric="nm_plv",
+        combine="product",
+        coupling_metric_params=None,
+        ratio_kernel="binary",
+        ratio_kernel_params=None,
+        bandwidth=1.0,
+        coupling_aggregate="mean",
+        delta_lim=20,
+        FREQ_BANDS=None,
+        graph=True,
+        save=False,
+        savename="_",
+    ):
+        """Peak-based resonance connectivity: H × PC per electrode pair.
+
+        Combines a peak-based harmonicity scalar (from :meth:`compute_harm_connectivity`)
+        and a peak-based phase-coupling scalar (from
+        :meth:`compute_peak_phase_coupling_connectivity`) via a registered
+        combine rule. Default ``combine='product'`` gives the standard H · PC
+        resonance, analogous to the per-frequency R(f) = H(f) · PC(f) in the
+        single-channel framework.
+
+        Parameters
+        ----------
+        harm_metric : str, default='harmsim'
+            Harmonic-similarity metric for the H scalar
+            (see :meth:`compute_harm_connectivity`).
+        coupling_metric : str, default='nm_plv'
+            Phase-coupling metric for the PC scalar
+            (see :meth:`compute_peak_phase_coupling_connectivity`).
+        combine : str, default='product'
+            Name in :data:`biotuner.resonance.registry.COMBINE_RULES`.
+            Options: ``'product'`` (legacy), ``'geomean'``, ``'harmmean'``,
+            ``'min'``, ``'weighted_log'``.
+
+        Other parameters are forwarded to the two underlying methods.
+
+        Returns
+        -------
+        matrix : ndarray (n_elec, n_elec)
+        """
+        if combine not in COMBINE_RULES:
+            raise ValueError(
+                f"Unknown combine rule {combine!r}. Available: {sorted(COMBINE_RULES)}"
+            )
+
+        # Reuse existing H scalar (turn off its own plot)
+        H_matrix = self.compute_harm_connectivity(
+            metric=harm_metric, delta_lim=delta_lim,
+            save=False, savename=savename, graph=False,
+            FREQ_BANDS=FREQ_BANDS,
+        )
+        # Many H metrics (e.g., harmsim) return values on a 0-100 scale;
+        # normalize to [0, 1] before combining so the product is meaningful
+        # against PC ∈ [0, 1]. NaN can arise from the legacy
+        # compute_harm_connectivity for self-pairs when peak-extraction yields
+        # too few peaks for any cross-peak ratio (mean of empty list).
+        # Replace NaN with 0 so the combine rule doesn't propagate it.
+        H_norm = np.asarray(H_matrix, dtype=np.float64)
+        H_norm = np.nan_to_num(H_norm, nan=0.0, posinf=0.0, neginf=0.0)
+        H_max = np.max(np.abs(H_norm))
+        if H_max > 0:
+            H_norm = H_norm / H_max
+
+        PC_matrix = self.compute_peak_phase_coupling_connectivity(
+            coupling_metric=coupling_metric,
+            coupling_metric_params=coupling_metric_params,
+            ratio_kernel=ratio_kernel,
+            ratio_kernel_params=ratio_kernel_params,
+            bandwidth=bandwidth, aggregate=coupling_aggregate,
+            FREQ_BANDS=FREQ_BANDS, graph=False,
+        )
+        PC_norm = np.asarray(PC_matrix, dtype=np.float64)
+
+        combine_fn = COMBINE_RULES[combine]
+        R_matrix = combine_fn([H_norm, PC_norm])
+
+        if graph:
+            sbn.heatmap(R_matrix)
+            plt.title(f"Peak resonance connectivity ({harm_metric} × {coupling_metric}, combine={combine})")
+            if save:
+                plt.savefig(f"peak_resonance_{savename}.png")
+            plt.show()
+        self.peak_resonance_matrix = R_matrix
+        return R_matrix
 
 
     def compute_IMF_correlation(self, nIMFs=5, freq_range=(1, 60), precision=0.5, delta_lim=50):

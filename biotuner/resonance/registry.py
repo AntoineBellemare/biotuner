@@ -23,6 +23,14 @@ PAIRWISE_COUPLING_METRICS: Dict[str, Callable] = {}
 HIGHER_ORDER_COUPLING_METHODS: Dict[str, Callable] = {}
 COUPLING_ARITY: Dict[str, str] = {}
 
+# Input-type tag per metric: 'phase' = takes (phase_i, phase_j, n, m) where
+# phase_* are real-valued instantaneous phase time series; 'analytic' = takes
+# (analytic_i, analytic_j, n, m) where analytic_* are complex-valued analytic
+# signals (e.g., from Hilbert transform or STFT) carrying both amplitude and
+# phase information. The orchestrator and peak-based connectivity wrapper use
+# this tag to decide whether to pass phase angles or full complex coefficients.
+COUPLING_INPUT_TYPE: Dict[str, str] = {}
+
 PERSISTENCE_METHODS: Dict[str, Callable] = {}
 COMBINE_RULES: Dict[str, Callable] = {}
 SURROGATE_TYPES: Dict[str, Callable] = {}
@@ -40,14 +48,18 @@ def register_phase_estimator(name: str, fn: Callable) -> None:
     PHASE_ESTIMATORS[name] = fn
 
 
-def register_coupling_metric(name: str, fn: Callable, arity: str) -> None:
-    """Register a coupling metric with its arity tag.
+def register_coupling_metric(name: str, fn: Callable, arity: str, input_type: str = "phase") -> None:
+    """Register a coupling metric with its arity tag and input-type tag.
 
     arity must be one of:
         'pairwise_symmetric', 'pairwise_asymmetric' (valid for coupling_metric)
         'triplet', 'nary', 'survey', 'state' (valid for higher_order_coupling)
+
+    input_type must be one of:
+        'phase'    — fn(phase_i, phase_j, n, m) on real-valued phase angles
+        'analytic' — fn(analytic_i, analytic_j, n, m) on complex analytic signals
     """
-    valid = {
+    valid_arity = {
         "pairwise_symmetric",
         "pairwise_asymmetric",
         "triplet",
@@ -55,9 +67,13 @@ def register_coupling_metric(name: str, fn: Callable, arity: str) -> None:
         "survey",
         "state",
     }
-    if arity not in valid:
-        raise ValueError(f"arity must be one of {valid}, got {arity!r}")
+    if arity not in valid_arity:
+        raise ValueError(f"arity must be one of {valid_arity}, got {arity!r}")
+    valid_input = {"phase", "analytic"}
+    if input_type not in valid_input:
+        raise ValueError(f"input_type must be one of {valid_input}, got {input_type!r}")
     COUPLING_ARITY[name] = arity
+    COUPLING_INPUT_TYPE[name] = input_type
     if arity.startswith("pairwise"):
         PAIRWISE_COUPLING_METRICS[name] = fn
     else:

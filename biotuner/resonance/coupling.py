@@ -91,6 +91,47 @@ def nm_rrci(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
     return float(np.abs(np.imag(mean_exp)))
 
 
+def nm_wpli_complex(
+    analytic_i: np.ndarray,
+    analytic_j: np.ndarray,
+    n: int = 1,
+    m: int = 1,
+) -> float:
+    """Amplitude-weighted n:m wPLI on complex analytic signals.
+
+    Computes::
+
+        |⟨Im(X * conj(Y))⟩| / ⟨|Im(X * conj(Y))|⟩
+
+    where ``X = |a_i| · exp(i·n·φ_i)``, ``Y = |a_j| · exp(i·m·φ_j)``, and the
+    analytic signals carry both amplitude and phase. For ``n = m = 1`` this is
+    simply ``|⟨Im(a_i · conj(a_j))⟩| / ⟨|Im(a_i · conj(a_j))|⟩``.
+
+    This matches the cross-spectrum formula used in legacy
+    ``compute_cross_spectrum_harmonicity``, where ``analytic_*`` are STFT
+    coefficients (``Zxx``) at the relevant frequency bins.
+
+    Differs from :func:`nm_wpli` in that the latter discards amplitude
+    information (uses only ``sin(Δφ)``), while this variant weights by the
+    instantaneous magnitudes ``|a_i| · |a_j|`` — more sensitive when joint
+    high-amplitude epochs carry the coupling signal.
+
+    Reference: Vinck et al. 2011 NeuroImage 55:1548 (wPLI); applied to STFT
+    cross-spectrum coefficients.
+    """
+    phase_i = np.angle(analytic_i)
+    phase_j = np.angle(analytic_j)
+    amp_i = np.abs(analytic_i)
+    amp_j = np.abs(analytic_j)
+    # n:m generalization of X · conj(Y): magnitude product × phase rotation
+    cross = amp_i * amp_j * np.exp(1j * (n * phase_i - m * phase_j))
+    im = np.imag(cross)
+    denom = np.mean(np.abs(im))
+    if denom < 1e-15:
+        return 0.0
+    return float(np.abs(np.mean(im)) / denom)
+
+
 def nm_plv_canonical(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
     """n:m PLV with the **Tass 1998** convention.
 
@@ -228,8 +269,9 @@ def reduce_matrix_to_spectrum(
     return (p ** alpha_self) * (M_off @ p_partner)
 
 
-register_coupling_metric("nm_plv", nm_plv, arity="pairwise_symmetric")
-register_coupling_metric("nm_pli", nm_pli, arity="pairwise_symmetric")
-register_coupling_metric("nm_wpli", nm_wpli, arity="pairwise_symmetric")
-register_coupling_metric("nm_rrci", nm_rrci, arity="pairwise_symmetric")
-register_coupling_metric("nm_plv_canonical", nm_plv_canonical, arity="pairwise_symmetric")
+register_coupling_metric("nm_plv", nm_plv, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_pli", nm_pli, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_wpli", nm_wpli, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_rrci", nm_rrci, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_plv_canonical", nm_plv_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_wpli_complex", nm_wpli_complex, arity="pairwise_symmetric", input_type="analytic")
