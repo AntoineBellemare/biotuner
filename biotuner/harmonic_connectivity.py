@@ -45,8 +45,14 @@ from biotuner.resonance.registry import (
     PAIRWISE_COUPLING_METRICS,
     COUPLING_INPUT_TYPE,
     RATIO_KERNELS,
+    HARMONIC_KERNELS,
     COMBINE_RULES,
 )
+from biotuner.resonance.orchestrator import ResonanceConfig
+from biotuner.metrics import spectrum_complexity
+from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
+from scipy.ndimage import gaussian_filter as _gaussian_filter
 from biotuner.biotuner_utils import (
     safe_mean,
     safe_max,
@@ -1589,6 +1595,248 @@ def temporal_correlation_fdr(data):
     return connectivity_matrix, fdr_corrected_pvals
 
 
+# ===========================================================================
+# Cross-channel resonance orchestrator (Layer B of the resonance refactor).
+# Lives in harmonic_connectivity (not in biotuner.resonance) because it
+# operates on TWO signals — connectivity territory by the architecture
+# decision documented in CONNECTIVITY_PROPOSAL.md. Reuses primitives
+# (kernels, coupling metrics, combine rules, complexity helper) from
+# biotuner.resonance via the registry.
+# ===========================================================================
+
+
+@dataclass
+class CrossResonanceResult:
+    """Output of :func:`compute_cross_resonance`. Mirrors
+    :class:`biotuner.resonance.ResonanceResult` but with three reducer flavors
+    per factor (asymmetric 1→2, asymmetric 2→1, symmetrized 'all'), reflecting
+    the directionality of cross-channel weighting:
+
+      ``'1to2'`` — H[i] = (p1[i] * Σⱼ p2[j] * S[i,j]) / (2T)  (signal1 at i, signal2 at j)
+      ``'2to1'`` — H[i] = (p2[i] * Σⱼ p1[j] * S[i,j]) / (2T)  (transposed)
+      ``'all'``  — H[i] = (H_1to2[i] + H_2to1[i]) / 2          (symmetrized)
+
+    where ``T = sum(psd1_clean) + sum(psd2_clean)`` (legacy normalization
+    preserved for bit-exact reproduction of compute_cross_spectrum_harmonicity).
+    """
+
+    freqs: np.ndarray
+    resonance_spectrum: Dict[str, np.ndarray] = field(default_factory=dict)  # {'1to2','2to1','all'}
+    factors: Dict[str, Dict[str, np.ndarray]] = field(default_factory=dict)  # {'H': {...}, 'PC': {...}}
+    summaries: Dict[str, Dict[str, Any]] = field(default_factory=dict)       # nested per spectrum
+    peaks: Dict[str, np.ndarray] = field(default_factory=dict)               # {'H','PC','R'} → freqs of 'all' flavor
+    config: Optional[ResonanceConfig] = None
+    intermediates: Optional[Dict[str, Any]] = None
+
+
+def _cross_reduce_3flavors(
+    matrix: np.ndarray,
+    psd1: np.ndarray,
+    psd2: np.ndarray,
+    *,
+    normalize: str = "joint_2T",
+):
+    """Reduce an N×N cross-channel matrix into three per-bin spectra.
+
+    Parameters
+    ----------
+    matrix : (N, N)
+        Either a harmonic-similarity matrix S[i,j] (symmetric in i,j) or a
+        cross-spectrum phase-coupling matrix Φ[i,j] (NOT symmetric — Φ[i,j]
+        uses Zxx1[i] x conj(Zxx2[j])).
+    psd1, psd2 : (N,)
+        Per-channel min-max-rescaled PSDs.
+    normalize : 'joint_2T' (legacy H normalization) | 'count' (legacy PC
+        no-phase-mode) | 'joint_2T_count' (legacy PC weighted phase-mode).
+
+    Returns
+    -------
+    v1, v2, v_all : (N,)
+    """
+    n = matrix.shape[0]
+    mask = ~np.eye(n, dtype=bool)
+    M_off = np.where(mask, matrix, 0.0)
+    M_off_T = np.where(mask, matrix.T, 0.0)
+
+    if normalize == "joint_2T":
+        # H-style normalization: divide by (2 * (sum(p1) + sum(p2)))
+        T = (np.sum(psd1) + np.sum(psd2)) * 2.0
+        # v1[i] = (psd1[i] / T) * Σ_{j!=i} M[i,j] * psd2[j]
+        v1 = (psd1 * (M_off @ psd2)) / T
+        v2 = (psd2 * (M_off @ psd1)) / T
+        # v_all = ((M[i,j] p1[i] p2[j]) + (M[j,i] p1[j] p2[i])) / 2 / T
+        # M[j,i] @ row i requires M_off_T column
+        v_all = (
+            (psd1 * (M_off @ psd2)) + (psd2 * (M_off_T @ psd1))
+        ) / (2.0 * T)
+    elif normalize == "count":
+        # PC-style unweighted: divide by count = n - 1 (off-diagonal entries)
+        count = n - 1
+        v1 = M_off.sum(axis=1) / count
+        v2 = M_off_T.sum(axis=1) / count
+        v_all = ((M_off + M_off_T) / 2.0).sum(axis=1) / count
+    elif normalize == "joint_2T_count":
+        # PC-style WEIGHTED: divide by (2 * T) like H, but with the cross
+        # matrix instead of S. (phase_mode='weighted' branch in legacy)
+        T = (np.sum(psd1) + np.sum(psd2)) * 2.0
+        v1 = (psd1 * (M_off @ psd2)) / T
+        v2 = (psd2 * (M_off @ psd1)) / T
+        v_all = (
+            (psd1 * (M_off @ psd2)) + (psd2 * (M_off_T @ psd1))
+        ) / (2.0 * T)
+    else:
+        raise ValueError(f"unknown normalize={normalize!r}")
+    return v1, v2, v_all
+
+
+def compute_cross_resonance(
+    signal1: np.ndarray,
+    signal2: np.ndarray,
+    sf: float,
+    config: Optional[ResonanceConfig] = None,
+) -> CrossResonanceResult:
+    """Cross-channel resonance spectrum H × PC = R between two signals.
+
+    The cross-channel analog of :func:`biotuner.resonance.compute_resonance`,
+    producing three reducer flavors per factor (1→2 asymmetric, 2→1 asymmetric,
+    symmetrized 'all') and a corresponding resonance spectrum for each. With
+    the default ``ResonanceConfig`` this reproduces the legacy
+    :func:`compute_cross_spectrum_harmonicity` numerics within ``atol=1e-5``
+    on the snapshot regression set.
+
+    Parameters
+    ----------
+    signal1, signal2 : 1-D arrays
+        Time-domain signals to compare.
+    sf : float
+        Sampling frequency (Hz).
+    config : :class:`ResonanceConfig`, optional
+        If None, the legacy-default config is used (matches the historical
+        ``compute_cross_spectrum_harmonicity`` behavior).
+
+    Returns
+    -------
+    :class:`CrossResonanceResult`
+    """
+    if config is None:
+        # Legacy-default config matching compute_cross_spectrum_harmonicity.
+        # NOTE: compute_cross_resonance always applies its own per-channel
+        # min-max rescale to [0, 1] internally (NO probability division),
+        # regardless of config.psd_normalization — that field is honored by
+        # the single-channel compute_resonance but ignored here, because the
+        # legacy cross-spectrum reducer uses a different total-power
+        # normalization scheme (see _cross_reduce_3flavors).
+        config = ResonanceConfig(
+            harmonic_kernel="harmsim",
+            harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
+            phase_estimator="stft",
+            coupling_metric="nm_wpli_complex",   # complex-coefficient wPLI on STFT
+            gaussian_smooth_sigma=1.0,
+            combine="product",
+            precision_hz=1.0,
+            fmin=1.0, fmax=30.0, noverlap=1,
+            smoothness=1.0,
+            n_peaks=5,
+            remove_aperiodic=False,              # legacy default for cross-spectrum
+        )
+
+    nperseg = int(sf / config.precision_hz)
+
+    # PSD per channel (same as single-channel pipeline)
+    freqs, psd1 = compute_frequency_and_psd(
+        signal1, config.precision_hz, smoothness=config.smoothness,
+        fs=sf, noverlap=config.noverlap, fmin=config.fmin, fmax=config.fmax,
+    )
+    _, psd2 = compute_frequency_and_psd(
+        signal2, config.precision_hz, smoothness=config.smoothness,
+        fs=sf, noverlap=config.noverlap, fmin=config.fmin, fmax=config.fmax,
+    )
+    psd1_clean = apply_power_law_remove(freqs, psd1, config.remove_aperiodic)
+    psd2_clean = apply_power_law_remove(freqs, psd2, config.remove_aperiodic)
+
+    # Min-max rescale each PSD to [0, 1] (legacy cross-spectrum behavior;
+    # the equivalent of psd_normalization='minmax_only' — no division by sum)
+    p1_min, p1_max = np.min(psd1_clean), np.max(psd1_clean)
+    psd1_clean = (psd1_clean - p1_min) / (p1_max - p1_min)
+    p2_min, p2_max = np.min(psd2_clean), np.max(psd2_clean)
+    psd2_clean = (psd2_clean - p2_min) / (p2_max - p2_min)
+
+    # STFT per channel — gives complex coefficients used by nm_wpli_complex
+    _, _, Zxx1 = stft(signal1, sf, nperseg=int(nperseg / config.smoothness), noverlap=config.noverlap)
+    _, _, Zxx2 = stft(signal2, sf, nperseg=int(nperseg / config.smoothness), noverlap=config.noverlap)
+
+    n_freqs = len(freqs)
+
+    # Harmonic similarity matrix S[i,j]
+    kernel_fn = HARMONIC_KERNELS[config.harmonic_kernel]
+    S = kernel_fn(freqs, freqs, **config.harmonic_kernel_params)
+    # Legacy applies S only when freqs[j] != 0; the kernel_harmsim_legacy
+    # already does this. Match the legacy "skip f=0" by zeroing those entries.
+    for j, f in enumerate(freqs):
+        if f == 0:
+            S[:, j] = 0.0
+
+    # Phase coupling matrix Φ[i,j] via nm_wpli_complex on STFT coefficients
+    metric_fn = PAIRWISE_COUPLING_METRICS[config.coupling_metric]
+    Phi = np.zeros((n_freqs, n_freqs), dtype=np.float64)
+    for i in range(n_freqs):
+        for j in range(n_freqs):
+            if freqs[j] != 0:
+                Phi[i, j] = metric_fn(Zxx1[i], Zxx2[j], 1, 1)
+
+    # Reduce to 3-flavor H and PC
+    H1, H2, H_all = _cross_reduce_3flavors(S, psd1_clean, psd2_clean, normalize="joint_2T")
+    pc_normalize = "joint_2T_count" if config.phase_estimator_params.get("phase_mode") == "weighted" else "count"
+    PC1, PC2, PC_all = _cross_reduce_3flavors(Phi, psd1_clean, psd2_clean, normalize=pc_normalize)
+
+    # Gaussian smoothing on each spectrum
+    sig = config.gaussian_smooth_sigma
+    if sig > 0:
+        H1 = _gaussian_filter(H1, sigma=sig)
+        H2 = _gaussian_filter(H2, sigma=sig)
+        H_all = _gaussian_filter(H_all, sigma=sig)
+        PC1 = _gaussian_filter(PC1, sigma=sig)
+        PC2 = _gaussian_filter(PC2, sigma=sig)
+        PC_all = _gaussian_filter(PC_all, sigma=sig)
+
+    # Combine to R per flavor
+    combine_fn = COMBINE_RULES[config.combine]
+    R1 = combine_fn([H1, PC1])
+    R2 = combine_fn([H2, PC2])
+    R_all = combine_fn([H_all, PC_all])
+
+    # Peaks on the 'all' flavor (matches legacy DataFrame columns)
+    H_peaks, _ = find_spectral_peaks(H_all, freqs, config.n_peaks, prominence_threshold=0.1)
+    PC_peaks, _ = find_spectral_peaks(PC_all, freqs, config.n_peaks, prominence_threshold=0.0001)
+    R_peaks, _ = find_spectral_peaks(R_all, freqs, config.n_peaks, prominence_threshold=0.01)
+
+    # Complexity per spectrum (uses 'all' flavor)
+    summaries = {
+        "H": spectrum_complexity(H_all, freqs, n_peaks=config.n_peaks, prominence_threshold=0.1),
+        "PC": spectrum_complexity(PC_all, freqs, n_peaks=config.n_peaks, prominence_threshold=0.0001),
+        "R": spectrum_complexity(R_all, freqs, n_peaks=config.n_peaks, prominence_threshold=0.01),
+    }
+
+    result = CrossResonanceResult(
+        freqs=freqs,
+        resonance_spectrum={"1to2": R1, "2to1": R2, "all": R_all},
+        factors={
+            "H": {"1to2": H1, "2to1": H2, "all": H_all},
+            "PC": {"1to2": PC1, "2to1": PC2, "all": PC_all},
+        },
+        summaries=summaries,
+        peaks={"H": H_peaks, "PC": PC_peaks, "R": R_peaks},
+        config=config,
+    )
+    if config.return_intermediates:
+        result.intermediates = {
+            "psd1_clean": psd1_clean, "psd2_clean": psd2_clean,
+            "harmonicity_matrix": S, "phase_coupling_matrix": Phi,
+            "Zxx1": Zxx1, "Zxx2": Zxx2,
+        }
+    return result
+
+
 def compute_cross_spectrum_harmonicity(
     signal1,
     signal2,
@@ -1659,125 +1907,50 @@ def compute_cross_spectrum_harmonicity(
         The DataFrame also contains columns for peak frequencies in the spectra and their harmonic similarities.
     """
     
-    nperseg = int(fs / precision_hz)
-
-    # Compute the power spectral density for both signals
-    freqs, psd1 = compute_frequency_and_psd(
-        signal1, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax
+    # Delegates to compute_cross_resonance (the new strategy-registry-based
+    # cross-channel orchestrator) and repackages the output as the historical
+    # DataFrame format. Bit-exact reproduction is asserted by
+    # tests/resonance/test_cross_snapshot_regression.py.
+    cfg = ResonanceConfig(
+        precision_hz=precision_hz,
+        fmin=fmin if fmin is not None else 1.0,
+        fmax=fmax if fmax is not None else 30.0,
+        noverlap=noverlap,
+        smoothness=smoothness,
+        n_peaks=n_peaks,
+        remove_aperiodic=power_law_remove,
+        harmonic_kernel=metric,
+        harmonic_kernel_params={"n_harms": n_harms, "delta_lim": delta_lim, "min_notes": min_notes},
+        phase_estimator="stft",
+        # phase_mode='weighted' switches the PC reducer to the joint_2T_count
+        # normalization (used by compute_cross_resonance via this kwarg)
+        phase_estimator_params={"phase_mode": phase_mode} if phase_mode else {},
+        coupling_metric="nm_wpli_complex",
+        gaussian_smooth_sigma=smoothness_harm,
+        combine="product",
     )
-    freqs, psd2 = compute_frequency_and_psd(
-        signal2, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax
+    result = compute_cross_resonance(signal1, signal2, sf=fs, config=cfg)
+
+    freqs = result.freqs
+    # Recompute PSDs once for plotting (compute_cross_resonance doesn't expose
+    # the raw PSDs in its public result; only the cleaned/rescaled versions
+    # via intermediates).
+    _, psd1 = compute_frequency_and_psd(
+        signal1, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax,
     )
-
-    psd1_clean = apply_power_law_remove(freqs, psd1, power_law_remove)
-    psd2_clean = apply_power_law_remove(freqs, psd2, power_law_remove)
-
-    psd1_min, psd1_max = np.min(psd1_clean), np.max(psd1_clean)
-    psd1_clean = (psd1_clean - psd1_min) / (psd1_max - psd1_min)
-
-    psd2_min, psd2_max = np.min(psd2_clean), np.max(psd2_clean)
-    psd2_clean = (psd2_clean - psd2_min) / (psd2_max - psd2_min)
-
-    _, _, Zxx1 = stft(signal1, fs, nperseg=int(nperseg / smoothness), noverlap=noverlap)
-    _, _, Zxx2 = stft(signal2, fs, nperseg=int(nperseg / smoothness), noverlap=noverlap)
-
-    dyad_similarities = np.zeros((len(freqs), len(freqs)))
-    phase_coupling_matrix = np.zeros((len(freqs), len(freqs)))
-
-    for i, f1 in enumerate(freqs):
-        for j, f2 in enumerate(freqs):
-            if f2 != 0:
-                if metric == "harmsim":
-                    dyad_similarities[i, j] = dyad_similarity(f1 / f2)
-                if metric == "subharm_tension":
-                    _, _, subharm, _ = compute_subharmonic_tension(
-                        [f1, f2], n_harmonics=n_harms, delta_lim=delta_lim, min_notes=2
-                    )
-                    dyad_similarities[i, j] = 1 - subharm[0]
-
-                # Compute the wPLI
-                cross_spectrum = Zxx1[i] * np.conj(Zxx2[j])
-                imaginary_cross_spectrum = np.imag(cross_spectrum)
-                # Add epsilon to the denominator
-                epsilon = 1e-10
-                phase_coupling_matrix[i, j] = np.abs(
-                    np.mean(imaginary_cross_spectrum)
-                ) / (np.mean(np.abs(imaginary_cross_spectrum)) + epsilon)
-
-    harmonicity_values1 = np.zeros(len(freqs))
-    harmonicity_values2 = np.zeros(len(freqs))
-    harmonicity_values_all = np.zeros(len(freqs))
-    phase_coupling_values1 = np.zeros(len(freqs))
-    phase_coupling_values2 = np.zeros(len(freqs))
-    phase_coupling_values_all = np.zeros(len(freqs))
-
-    total_power = np.sum(psd1_clean) + np.sum(psd2_clean)
-
-    for i in range(len(freqs)):
-        weighted_sum_harmonicity1 = 0
-        weighted_sum_harmonicity2 = 0
-        weighted_sum_harmonicity_all = 0
-        weighted_sum_phase_coupling1 = 0
-        weighted_sum_phase_coupling2 = 0
-        weighted_sum_phase_coupling_all = 0
-        count = 0
-        for j in range(len(freqs)):
-            if i != j:
-                count += 1
-                weighted_sum_harmonicity1 += dyad_similarities[i, j] * (
-                    psd1_clean[i] * psd2_clean[j]
-                )
-                weighted_sum_harmonicity2 += dyad_similarities[i, j] * (
-                    psd2_clean[i] * psd1_clean[j]
-                )
-                weighted_sum_harmonicity_all += (
-                    dyad_similarities[i, j] * (psd1_clean[i] * psd2_clean[j])
-                    + dyad_similarities[j, i] * (psd1_clean[j] * psd2_clean[i])
-                ) / 2
-                if phase_mode == "weighted":
-                    weighted_sum_phase_coupling1 += phase_coupling_matrix[i, j] * (
-                        psd1_clean[i] * psd2_clean[j]
-                    )
-                    weighted_sum_phase_coupling2 += phase_coupling_matrix[i, j] * (
-                        psd2_clean[i] * psd1_clean[j]
-                    )
-                    weighted_sum_phase_coupling_all += (
-                        phase_coupling_matrix[i, j] * (psd1_clean[i] * psd2_clean[j])
-                        + phase_coupling_matrix[j, i] * (psd1_clean[j] * psd2_clean[i])
-                    ) / 2
-                else:
-                    weighted_sum_phase_coupling1 += phase_coupling_matrix[i, j]
-                    weighted_sum_phase_coupling2 += phase_coupling_matrix[j, i]
-                    weighted_sum_phase_coupling_all += (
-                        phase_coupling_matrix[i, j] + phase_coupling_matrix[j, i]
-                    ) / 2
-        harmonicity_values1[i] = weighted_sum_harmonicity1 / (2 * total_power)
-        harmonicity_values2[i] = weighted_sum_harmonicity2 / (2 * total_power)
-        harmonicity_values_all[i] = weighted_sum_harmonicity_all / (2 * total_power)
-        phase_coupling_values1[i] = weighted_sum_phase_coupling1 / count
-        phase_coupling_values2[i] = weighted_sum_phase_coupling2 / count
-        phase_coupling_values_all[i] = weighted_sum_phase_coupling_all / count
-
-    harmonicity_values1 = gaussian_filter(harmonicity_values1, sigma=smoothness_harm)
-    harmonicity_values2 = gaussian_filter(harmonicity_values2, sigma=smoothness_harm)
-    harmonicity_values_all = gaussian_filter(
-        harmonicity_values_all, sigma=smoothness_harm
-    )
-    phase_coupling_values1 = gaussian_filter(
-        phase_coupling_values1, sigma=smoothness_harm
-    )
-    phase_coupling_values2 = gaussian_filter(
-        phase_coupling_values2, sigma=smoothness_harm
-    )
-    phase_coupling_values_all = gaussian_filter(
-        phase_coupling_values_all, sigma=smoothness_harm
+    _, psd2 = compute_frequency_and_psd(
+        signal2, precision_hz, smoothness, fs, noverlap, fmin=fmin, fmax=fmax,
     )
 
-    # Step 1: Calculate a combined metric for harmonicity and phase-coupling by multiplying normalized values
-    # (formerly compute_resonance_values; the resonance package's combine.product is equivalent)
-    normalized_combined_metric = harmonicity_values_all * phase_coupling_values_all
+    harmonicity_values1 = result.factors["H"]["1to2"]
+    harmonicity_values2 = result.factors["H"]["2to1"]
+    harmonicity_values_all = result.factors["H"]["all"]
+    phase_coupling_values1 = result.factors["PC"]["1to2"]
+    phase_coupling_values2 = result.factors["PC"]["2to1"]
+    phase_coupling_values_all = result.factors["PC"]["all"]
+    normalized_combined_metric = result.resonance_spectrum["all"]
 
-    # Find peaks in the spectra
+    # Find peaks in the spectra (legacy thresholds — same as compute_cross_resonance)
     harmonicity_peak_frequencies, harm_peak_idx = find_spectral_peaks(
         harmonicity_values_all, freqs, n_peaks, prominence_threshold=0.1
     )
@@ -1788,7 +1961,7 @@ def compute_cross_spectrum_harmonicity(
         normalized_combined_metric, freqs, n_peaks, prominence_threshold=0.01
     )
 
-    # Compute spectral flatness and entropy values
+    # Compute spectral flatness and entropy values (legacy DataFrame format)
     harmonic_complexity = harmonic_entropy(
         freqs,
         harmonicity_values_all,

@@ -96,6 +96,7 @@ def nm_wpli_complex(
     analytic_j: np.ndarray,
     n: int = 1,
     m: int = 1,
+    epsilon: float = 1e-10,
 ) -> float:
     """Amplitude-weighted n:m wPLI on complex analytic signals.
 
@@ -126,10 +127,10 @@ def nm_wpli_complex(
     # n:m generalization of X · conj(Y): magnitude product × phase rotation
     cross = amp_i * amp_j * np.exp(1j * (n * phase_i - m * phase_j))
     im = np.imag(cross)
-    denom = np.mean(np.abs(im))
-    if denom < 1e-15:
-        return 0.0
-    return float(np.abs(np.mean(im)) / denom)
+    # The ``+ epsilon`` in the denominator matches legacy
+    # compute_cross_spectrum_harmonicity (epsilon=1e-10) and prevents
+    # divide-by-zero for bins with negligible imaginary cross-spectrum.
+    return float(np.abs(np.mean(im)) / (np.mean(np.abs(im)) + epsilon))
 
 
 def nm_plv_canonical(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
