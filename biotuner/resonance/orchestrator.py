@@ -227,18 +227,12 @@ def compute_resonance(
     kernel_fn = HARMONIC_KERNELS[cfg.harmonic_kernel]
     S = kernel_fn(freqs_arr, freqs_arr, **cfg.harmonic_kernel_params)
 
-    # Step 6-7 — phase coupling matrix Φ[i,j] via the ratio kernel + pairwise PLV
+    # Step 6-7 — phase coupling matrix Φ[i,j] via the ratio kernel + pairwise metric
     ratio_fn = RATIO_KERNELS[cfg.ratio_kernel]
-    # NOTE: only nm_plv is wired for Phase 1; other pairwise metrics land in Phase 2/3
-    if cfg.coupling_metric == "nm_plv":
-        Phi = _coupling.build_nm_plv_matrix(
-            phase, freqs_arr, ratio_fn, cfg.ratio_kernel_params
-        )
-    else:
-        raise NotImplementedError(
-            f"coupling_metric={cfg.coupling_metric!r} not yet wired in the orchestrator. "
-            f"Phase 1 supports only 'nm_plv'; Phase 2 adds wpli_nm, rrci, modulation_index, gc_pac."
-        )
+    metric_fn = PAIRWISE_COUPLING_METRICS[cfg.coupling_metric]
+    Phi = _coupling.build_pairwise_coupling_matrix(
+        phase, freqs_arr, ratio_fn, cfg.ratio_kernel_params, metric_fn=metric_fn,
+    )
 
     # Step 9 — per-bin reduction
     PC_values = _coupling.reduce_matrix_to_spectrum(

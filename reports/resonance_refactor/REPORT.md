@@ -151,11 +151,184 @@ orchestrator changes required.
 
 ---
 
-## How to regenerate
+## How to regenerate Figs 1-5
 
 ```bash
 python reports/resonance_refactor/generate_report.py
 ```
 
-Output: `reports/resonance_refactor/figures/{fig1..5}.{png,pdf}` and
-`figures/fig5_summary_table.csv`.
+Output: `figures/{fig1..5}.{png,pdf}` and `figures/fig5_summary_table.csv`.
+
+---
+
+# Extended validation — complex signals (Figs 6-11)
+
+This second block tests the framework where its claims actually matter: realistic
+biosignals, phase structure discrimination, cross-frequency coupling, surrogate
+inference, and the **five pairwise coupling metrics** added in this PR (`nm_plv`,
+`nm_pli`, `nm_wpli`, `nm_rrci`, `nm_plv_canonical`).
+
+```bash
+python reports/resonance_refactor/complex_signals.py
+```
+
+---
+
+## Figure 6 — Realistic EEG epoch
+
+![Figure 6](figures/fig6_alpha_burst.png)
+
+8-second EEG-like signal: 1/f pink noise background with 6 alpha (10 Hz)
+Hann-windowed bursts. The framework extracts a clean 10 Hz peak in R(f) — H,
+PC, and R all converge on the alpha carrier. Validates that the pipeline
+handles bursty, non-stationary neural signals.
+
+---
+
+## Figure 7 — Phase-locking convention: legacy vs canonical
+
+![Figure 7](figures/fig7_phase_locked_vs_scrambled.png)
+
+**This figure documents a real finding.** Two signals share the same magnitude
+spectrum but differ in phase structure:
+- **Locked:** harmonic stack with fixed n:m phase relationships
+- **Decoupled:** independent Wiener phase drift on each partial
+
+Two configurations of the same orchestrator are compared:
+- **(c, e) Legacy `nm_plv`:** locked vs decoupled ratio = **0.67×** — the
+  legacy metric does *not* properly discriminate. The decoupled signal even
+  shows *higher* PC.
+- **(d, f) `nm_plv_canonical`:** locked vs decoupled ratio = **1.32×** — the
+  correctly-conventioned metric discriminates in the expected direction.
+
+**Why this happens:** the legacy `binary_nm_kernel` returns `(n, m)` such that
+`freq_j/freq_i ≈ m/n`, but `nm_plv` then computes `n·φᵢ − m·φⱼ` — yielding a
+phase difference that *rotates in time* for perfectly mode-locked harmonics
+instead of staying constant. The legacy PC factor measures STFT-phase-progression
+coherence, not true n:m phase locking (Tass 1998).
+
+The new metric `nm_plv_canonical` (registered with the same arity tag, dispatchable
+via `ResonanceConfig(coupling_metric='nm_plv_canonical')`) internally swaps
+`(n, m)` to recover the standard convention. It's correctly direction-discriminative
+on this stimulus.
+
+The bit-exact snapshot preserves the legacy behavior; users wanting standard
+n:m PLV semantics should use `nm_plv_canonical`.
+
+---
+
+## Figure 8 — Theta-gamma cross-frequency coupling (PAC)
+
+![Figure 8](figures/fig8_theta_gamma_pac.png)
+
+Theta (6 Hz) × gamma (40 Hz) phase-amplitude coupling stimulus
+(Tort 2010 style). H, PC, and R all resolve **both** the theta and gamma
+carriers cleanly. R(f) shows two well-separated peaks at θ=6 Hz and γ=40 Hz.
+This is the canonical PAC demonstration; the framework finds both carriers
+without requiring an explicit PAC metric.
+
+---
+
+## Figure 9 — Surrogate null normalization
+
+![Figure 9](figures/fig9_surrogate_null.png)
+
+100 phase-randomized surrogates of the alpha-burst signal (preserves PSD,
+destroys phase structure):
+- **(a)** Observed PC(f) clearly exceeds the surrogate 5–95% band at the alpha
+  carrier.
+- **(b)** Observed R(f) likewise.
+- **(c)** Z-scored R(f): the alpha bursts produce supra-threshold z > 2
+  bins, while the rest of the spectrum stays at the null mean.
+
+This validates the **statistical inference path** wired through `with_surrogate_null`
+in [`biotuner.resonance.nulls`](../../biotuner/resonance/nulls.py). For new
+analyses, users can opt into surrogate-normalized z-scores and p-values via
+`ResonanceConfig(null_model={...})`.
+
+---
+
+## Figure 10 — Scale invariance
+
+![Figure 10](figures/fig10_scale_invariance.png)
+
+Same signal multiplied by scale factors from 1e-6 to 1e+6 (12 orders of
+magnitude). Under the **legacy `psd_normalization='minmax_prob'`** mode, H(f)
+drifts at the extremes due to numerical precision loss in the min-max rescale.
+
+- Scale = 1.0:                  exact (0 drift)
+- Scale = 1e-3, 1e-6:           drift ≲ 1e-4 (acceptable)
+- **Scale = 1e6:                drift = 1.5** (the min-max normalization
+  collapses due to floating-point precision in the numerator/denominator)
+
+**This is exactly plan §8 anti-pattern #2** ("don't min-max rescale a PSD
+before forming probabilities"). The bit-exact snapshot preserves this legacy
+behavior; for new analyses, `psd_normalization='prob'` is scale-invariant by
+construction (it's just `PSD/sum(PSD)`).
+
+This figure justifies the future default flip to `'prob'` documented in the
+plan.
+
+---
+
+## Figure 11 — Pairwise coupling metric comparison
+
+![Figure 11](figures/fig11_coupling_metric_comparison.png)
+
+Four pairwise-symmetric metrics applied to three signal regimes (alpha bursts,
+phase-locked harmonic stack, theta-gamma PAC). Each row is a signal; each
+column shows PC(f) and R(f). The metrics emphasize different aspects of phase
+coherence:
+
+| Metric | Formula | 0-lag bias |
+|---|---|---|
+| `nm_plv` | `|⟨exp(iΔφ)⟩|` | Sensitive to 0-lag (incl. volume conduction) |
+| `nm_pli` | `|⟨sign(Im(exp(iΔφ)))⟩|` | **Zero** at 0-lag — robust to common reference |
+| `nm_wpli` | `|⟨|Im|·sign(Im)⟩| / ⟨|Im|⟩` | Zero at 0-lag, weighted by Im magnitude |
+| `nm_rrci` | `|Im(⟨exp(iΔφ)⟩)|` | Discards real part — isolates non-zero-lag |
+
+where `Δφ = n·φᵢ − m·φⱼ`.
+
+On these synthetic signals (no induced volume-conduction artifact), the four
+metrics agree on *where* the coupling exists. They differ in magnitude:
+PLV > wPLI > PLI > RRCi typically, reflecting how much each metric trusts
+the zero-lag component. On real M/EEG data with shared references, the
+difference would be larger and the PLI/wPLI variants are recommended (see
+Vinck et al. 2011).
+
+All metrics are registered in `PAIRWISE_COUPLING_METRICS`; user selects via
+`ResonanceConfig(coupling_metric=...)`.
+
+---
+
+# Findings summary
+
+| Aspect | Status |
+|---|---|
+| Bit-exact regression vs legacy snapshots | ✅ Pass on Windows; cross-platform tolerated within rtol=1e-3, atol=1e-5 |
+| H/PC/R decomposition on clean signals | ✅ Clean peaks, expected complexity ordering |
+| Strategy registry (kernels) | ✅ harmsim + subharm_tension swappable; Phase 2 slot reserved |
+| Strategy registry (combine rules) | ✅ 5 rules registered, behave as documented |
+| Strategy registry (pairwise coupling) | ✅ 5 metrics registered, all pass tests |
+| Realistic EEG-like signal (alpha bursts) | ✅ Alpha carrier emerges cleanly |
+| Cross-frequency coupling (theta-gamma) | ✅ Both carriers resolved |
+| Surrogate normalization | ✅ z(R) correctly identifies above-null bins |
+| Phase structure discrimination (legacy `nm_plv`) | ⚠ Limited — convention mismatch with Tass 1998 |
+| Phase structure discrimination (canonical) | ✅ `nm_plv_canonical` discriminates correctly |
+| Scale invariance under legacy `minmax_prob` | ⚠ Breaks at 1e6× scale (anti-pattern #2 confirmed) |
+| Scale invariance under `prob` (new default candidate) | ✅ Constant by construction |
+
+The ⚠ findings are **known anti-patterns from the plan**, now empirically
+documented. They motivate the Phase 2 default flip to `prob` normalization
+and the Hilbert-bandpass phase estimator (both planned, both registered slots
+ready).
+
+---
+
+## How to regenerate Figs 6-11
+
+```bash
+python reports/resonance_refactor/complex_signals.py
+```
+
+Output: `figures/fig{6..11}.{png,pdf}`.

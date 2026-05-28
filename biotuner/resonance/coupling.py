@@ -4,13 +4,35 @@ Pairwise coupling metrics (arity 2) build a ``Φ[i,j]`` matrix that feeds the
 per-bin phase-coupling spectrum. Higher-order metrics (arity 3, K, survey, state)
 go in plan Phase 3 and run on a separate code path.
 
-Phase 1 ships:
-    - ``nm_plv(phase_i, phase_j, n, m)``     scalar n:m PLV
-    - ``build_nm_plv_matrix(phase, freqs, ratio_kernel_fn, ...)``  full Φ matrix
-    - ``reduce_matrix_to_spectrum(M, p, ..., legacy_self_pair=True)``  Φ → PC(f)
+Phase 1 ships four pairwise-symmetric variants on the n:m complex-exponential
+mean, each emphasizing a different aspect of phase coherence:
 
-References:
-    n:m PLV: Tass et al. 1998 *PRL* 81:3291; Palva, Palva, Kaila 2005 *J Neurosci* 25:3962.
+    nm_plv  — |<exp(i*(n*φᵢ - m*φⱼ))>|
+              Classical phase-locking value. Maximum when phase difference is
+              constant across time. Sensitive to volume conduction (0-lag bias).
+              Ref: Tass et al. 1998 *PRL* 81:3291.
+
+    nm_pli  — |<sign(Im(exp(i*(n*φᵢ - m*φⱼ))))>|
+              Phase-Lag Index. Counts only the SIGN of the imaginary part;
+              zero when phases are exactly aligned or anti-aligned. Robust to
+              instantaneous (0-lag) common reference but discards magnitude
+              information.
+              Ref: Stam, Nolte, Daffertshofer 2007 *Hum Brain Mapp* 28:1178.
+
+    nm_wpli — |<|Im(X)| * sign(Im(X))>| / <|Im(X)|>
+              Weighted Phase-Lag Index. Same 0-lag robustness as PLI but weights
+              by magnitude of the imaginary part — less variance-biased and
+              more sensitive than PLI on noisy data.
+              Ref: Vinck et al. 2011 *NeuroImage* 55:1548.
+
+    nm_rrci — |Im(<exp(i*(n*φᵢ - m*φⱼ))>)|
+              Rhythmic Ratio Coupling, imaginary part. Like PLV but discards the
+              real part of the mean exponential, isolating non-zero-lag coupling.
+              Ref: Scheffer-Teixeira & Tort 2016 *eLife* 5:e20515.
+
+Higher-order metrics (bplv triplet, mplv N-ary, cf_plm survey, gpla state) land
+in Phase 3 and are NOT valid for ``ResonanceConfig.coupling_metric`` — see
+plan §4.4 (arity contract).
 """
 
 import numpy as np
@@ -18,29 +40,116 @@ import numpy as np
 from biotuner.resonance.registry import register_coupling_metric
 
 
+# ---------------------------------------------------------------------------
+# Scalar pairwise metrics on already-extracted phase time series
+# ---------------------------------------------------------------------------
+
+
 def nm_plv(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
-    """Scalar n:m phase-locking value: ``| <exp(i*(n*φᵢ - m*φⱼ))> |``."""
+    """n:m phase-locking value (Tass 1998): ``| <exp(i*(n*φᵢ - m*φⱼ))> |``."""
     phase_diff = n * phase_i - m * phase_j
     return float(np.abs(np.mean(np.exp(1j * phase_diff))))
 
 
-def build_nm_plv_matrix(
+def nm_pli(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
+    """n:m phase-lag index (Stam 2007): ``|<sign(Im(exp(i*(n*φᵢ - m*φⱼ))))>|``.
+
+    Volume-conduction robust: returns 0 for perfectly synchronous (0-lag) or
+    anti-synchronous (π-lag) phase differences. Counts only sign of Im, so
+    discards magnitude.
+    """
+    phase_diff = n * phase_i - m * phase_j
+    im = np.sin(phase_diff)  # imaginary part of exp(i*phase_diff)
+    return float(np.abs(np.mean(np.sign(im))))
+
+
+def nm_wpli(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
+    """n:m weighted phase-lag index (Vinck 2011):
+    ``|<|Im(X)| * sign(Im(X))>| / <|Im(X)|>`` where ``X = exp(i*(n*φᵢ - m*φⱼ))``.
+
+    Same 0-lag robustness as PLI but uses Im magnitude as weight, reducing
+    variance bias and improving noise sensitivity.
+    """
+    phase_diff = n * phase_i - m * phase_j
+    im = np.sin(phase_diff)
+    abs_im = np.abs(im)
+    denom = np.mean(abs_im)
+    if denom < 1e-15:
+        return 0.0
+    return float(np.abs(np.mean(im)) / denom)
+
+
+def nm_rrci(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
+    """n:m Rhythmic Ratio Coupling, imaginary (Scheffer-Teixeira & Tort 2016):
+    ``|Im(<exp(i*(n*φᵢ - m*φⱼ))>)|``.
+
+    Like PLV but discards the real part of the mean exponential, isolating
+    out-of-phase (non-zero-lag) coupling.
+    """
+    phase_diff = n * phase_i - m * phase_j
+    mean_exp = np.mean(np.exp(1j * phase_diff))
+    return float(np.abs(np.imag(mean_exp)))
+
+
+def nm_plv_canonical(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -> float:
+    """n:m PLV with the **Tass 1998** convention.
+
+    Note on convention
+    ------------------
+    The legacy biotuner ratio kernel (``get_harmonic_ratio`` / ``binary_nm_kernel``)
+    returns ``(n, m)`` such that ``freq_j / freq_i ≈ m / n``. The standard Tass et
+    al. 1998 convention is ``freq_j / freq_i = n / m``, with PLV defined as
+    ``|<exp(i(n*φᵢ - m*φⱼ))>|`` — so when ``n*f_i = m*f_j`` (a true n:m mode-lock),
+    the phase difference is constant in time and PLV = 1.
+
+    The legacy ``nm_plv`` applies ``n*φᵢ - m*φⱼ`` with the swapped ``(n, m)``,
+    which yields a non-stationary phase difference even for perfectly locked
+    harmonics — it measures STFT-phase-progression coherence rather than true
+    n:m phase locking. Bit-exact reproduction of the legacy snapshot preserves
+    this behavior.
+
+    This ``nm_plv_canonical`` variant internally swaps (n, m) to recover the
+    Tass convention, so it correctly returns 1.0 for perfectly locked harmonic
+    pairs. Use this for new analyses where standard n:m PLV semantics matter.
+    """
+    n_tass, m_tass = m, n  # swap to match Tass convention
+    phase_diff = n_tass * phase_i - m_tass * phase_j
+    return float(np.abs(np.mean(np.exp(1j * phase_diff))))
+
+
+# ---------------------------------------------------------------------------
+# Matrix builder — dispatches the pairwise metric over freq pairs
+# ---------------------------------------------------------------------------
+
+
+def build_pairwise_coupling_matrix(
     phase: np.ndarray,
     freqs: np.ndarray,
     ratio_kernel_fn,
     ratio_kernel_params: dict,
+    metric_fn=None,
 ) -> np.ndarray:
-    """Build the ``(n_freqs, n_freqs)`` symmetric n:m PLV matrix.
+    """Build the ``(n_freqs, n_freqs)`` symmetric coupling matrix.
 
-    For each upper-triangular pair (i, j), consults ``ratio_kernel_fn(freqs[i:i+1],
-    freqs[j:j+1], **ratio_kernel_params)`` to determine the best (n, m); when the
-    ratio kernel returns ``W=0``, the pair gets PLV=0. With the legacy binary kernel
-    and ``fallback_to_1_1=True``, every pair gets a value (n:m if matched, else 1:1).
+    For each upper-triangular pair (i, j), consults ``ratio_kernel_fn`` to
+    determine the best (n, m); when the ratio kernel returns ``W=0``, the pair
+    gets coupling=0. With the legacy binary kernel and ``fallback_to_1_1=True``,
+    every pair gets a value (n:m if matched, else 1:1).
+
+    Parameters
+    ----------
+    phase : (n_freqs, n_times) phase time series
+    freqs : (n_freqs,) frequency grid
+    ratio_kernel_fn : callable returning (W, N, M) arrays
+    ratio_kernel_params : dict passed to ratio_kernel_fn
+    metric_fn : scalar pairwise metric ``f(phase_i, phase_j, n, m) -> float``.
+        Default is :func:`nm_plv` for backward compatibility.
     """
+    if metric_fn is None:
+        metric_fn = nm_plv
     n_freqs = len(freqs)
     M = np.zeros((n_freqs, n_freqs), dtype=np.float64)
 
-    # Pre-compute (W, N, M) for all pairs at once
     W, N_mat, M_mat = ratio_kernel_fn(freqs, freqs, **ratio_kernel_params)
 
     for i in range(n_freqs):
@@ -48,13 +157,24 @@ def build_nm_plv_matrix(
             if W[i, j] <= 0:
                 continue
             n, m = int(N_mat[i, j]), int(M_mat[i, j])
-            plv = nm_plv(phase[i], phase[j], n, m)
-            # Weight by the ratio-kernel membership (binary kernel: W is 1.0; soft
-            # kernels: PLV is scaled by Arnold-tongue membership).
-            value = W[i, j] * plv
+            value = W[i, j] * metric_fn(phase[i], phase[j], n, m)
             M[i, j] = value
             M[j, i] = value
     return M
+
+
+# Backwards-compat alias — the orchestrator originally called this name
+def build_nm_plv_matrix(
+    phase: np.ndarray,
+    freqs: np.ndarray,
+    ratio_kernel_fn,
+    ratio_kernel_params: dict,
+) -> np.ndarray:
+    """Backwards-compat alias for :func:`build_pairwise_coupling_matrix` with
+    ``metric_fn=nm_plv``."""
+    return build_pairwise_coupling_matrix(
+        phase, freqs, ratio_kernel_fn, ratio_kernel_params, metric_fn=nm_plv,
+    )
 
 
 def reduce_matrix_to_spectrum(
@@ -109,3 +229,7 @@ def reduce_matrix_to_spectrum(
 
 
 register_coupling_metric("nm_plv", nm_plv, arity="pairwise_symmetric")
+register_coupling_metric("nm_pli", nm_pli, arity="pairwise_symmetric")
+register_coupling_metric("nm_wpli", nm_wpli, arity="pairwise_symmetric")
+register_coupling_metric("nm_rrci", nm_rrci, arity="pairwise_symmetric")
+register_coupling_metric("nm_plv_canonical", nm_plv_canonical, arity="pairwise_symmetric")

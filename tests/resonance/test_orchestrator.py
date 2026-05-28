@@ -125,6 +125,56 @@ def test_alternative_combine_rule_geomean():
     assert result.resonance_spectrum.shape == result.factors["H"].shape
 
 
+@pytest.mark.parametrize("metric", ["nm_plv", "nm_pli", "nm_wpli", "nm_rrci"])
+def test_all_pairwise_coupling_metrics_run(metric):
+    """Each registered pairwise coupling metric produces a finite per-bin spectrum."""
+    cfg_kwargs = legacy_default_resonance_config_kwargs()
+    cfg_kwargs["coupling_metric"] = metric
+    cfg = ResonanceConfig(**cfg_kwargs)
+    sf = 1000
+    sig = SIGNALS["harmonic_5_10_20_40"](sf=sf)
+    result = compute_resonance(sig, sf=sf, config=cfg)
+    assert np.all(np.isfinite(result.factors["PC"])), f"PC contains non-finite for {metric}"
+    assert np.all(np.isfinite(result.resonance_spectrum)), f"R non-finite for {metric}"
+
+
+def test_coupling_metrics_produce_different_outputs():
+    """The four pairwise metrics differ in how they aggregate complex coupling —
+    they should produce different PC spectra on the same input."""
+    sf = 1000
+    sig = SIGNALS["harmonic_5_10_20_40"](sf=sf)
+    pcs = {}
+    for metric in ["nm_plv", "nm_pli", "nm_wpli", "nm_rrci"]:
+        cfg_kwargs = legacy_default_resonance_config_kwargs()
+        cfg_kwargs["coupling_metric"] = metric
+        result = compute_resonance(sig, sf=sf, config=ResonanceConfig(**cfg_kwargs))
+        pcs[metric] = result.factors["PC"]
+    # No two metrics should produce identical outputs (within sane tolerance)
+    metric_names = list(pcs.keys())
+    for i in range(len(metric_names)):
+        for j in range(i + 1, len(metric_names)):
+            assert not np.allclose(pcs[metric_names[i]], pcs[metric_names[j]], atol=1e-8), \
+                f"{metric_names[i]} and {metric_names[j]} produced identical PC"
+
+
+def test_nm_pli_zero_for_perfect_synchrony():
+    """PLI is volume-conduction robust: zero for 0-lag synchrony."""
+    from biotuner.resonance.coupling import nm_pli
+    rng = np.random.default_rng(0)
+    # Two phase series that are perfectly aligned (0-lag): phi_j = phi_i
+    phi = rng.uniform(-np.pi, np.pi, size=5000)
+    # PLI of perfectly aligned phases: Im(exp(0)) = 0 everywhere → mean sign = 0
+    assert nm_pli(phi, phi, 1, 1) < 1e-10
+
+
+def test_nm_plv_high_for_perfect_synchrony():
+    """PLV is sensitive to 0-lag synchrony (returns 1.0 for identical phases)."""
+    from biotuner.resonance.coupling import nm_plv
+    rng = np.random.default_rng(0)
+    phi = rng.uniform(-np.pi, np.pi, size=5000)
+    assert nm_plv(phi, phi, 1, 1) > 0.999
+
+
 def test_return_intermediates_populates_field():
     cfg_kwargs = legacy_default_resonance_config_kwargs()
     cfg = ResonanceConfig(return_intermediates=True, **cfg_kwargs)
