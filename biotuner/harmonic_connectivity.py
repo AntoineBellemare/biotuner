@@ -1776,18 +1776,41 @@ def compute_cross_resonance(
         if f == 0:
             S[:, j] = 0.0
 
-    # Phase coupling matrix Φ[i,j] via nm_wpli_complex on STFT coefficients
+    # Phase coupling matrix Φ[i,j] via the chosen pairwise metric.
+    # Default: nm_wpli_complex with (n=1, m=1) — matches legacy cross-spectrum wPLI.
+    # Refinement B: if cross_use_ratio_kernel, dispatch through the ratio kernel
+    # (binary_nm or others) to determine (n, m) for each freq pair and compute
+    # true n:m phase coupling instead of always 1:1.
     metric_fn = PAIRWISE_COUPLING_METRICS[config.coupling_metric]
     Phi = np.zeros((n_freqs, n_freqs), dtype=np.float64)
-    for i in range(n_freqs):
-        for j in range(n_freqs):
-            if freqs[j] != 0:
-                Phi[i, j] = metric_fn(Zxx1[i], Zxx2[j], 1, 1)
+    if config.cross_use_ratio_kernel:
+        ratio_fn = RATIO_KERNELS[config.ratio_kernel]
+        W, N_mat, M_mat = ratio_fn(freqs, freqs, **config.ratio_kernel_params)
+        for i in range(n_freqs):
+            for j in range(n_freqs):
+                if freqs[j] != 0 and W[i, j] > 0:
+                    n, m = int(N_mat[i, j]), int(M_mat[i, j])
+                    Phi[i, j] = float(W[i, j]) * metric_fn(Zxx1[i], Zxx2[j], n, m)
+    else:
+        for i in range(n_freqs):
+            for j in range(n_freqs):
+                if freqs[j] != 0:
+                    Phi[i, j] = metric_fn(Zxx1[i], Zxx2[j], 1, 1)
 
-    # Reduce to 3-flavor H and PC
+    # Reduce to 3-flavor H and PC. H always uses joint-probability weighting
+    # (legacy behavior). PC reducer is configurable via config.cross_pc_reducer:
+    #   'count' (legacy default)  — uniform average over freq pairs
+    #   'joint' (Refinement A)     — joint p1[i]*p2[j] weighting (matches H)
+    #   'joint_2T_count' (legacy phase_mode='weighted')
     H1, H2, H_all = _cross_reduce_3flavors(S, psd1_clean, psd2_clean, normalize="joint_2T")
-    pc_normalize = "joint_2T_count" if config.phase_estimator_params.get("phase_mode") == "weighted" else "count"
-    PC1, PC2, PC_all = _cross_reduce_3flavors(Phi, psd1_clean, psd2_clean, normalize=pc_normalize)
+    pc_reducer = config.cross_pc_reducer
+    if config.phase_estimator_params.get("phase_mode") == "weighted":
+        pc_reducer = "joint_2T_count"
+    if pc_reducer == "joint":
+        # Match H's reducer for frequency-localized PC
+        PC1, PC2, PC_all = _cross_reduce_3flavors(Phi, psd1_clean, psd2_clean, normalize="joint_2T")
+    else:
+        PC1, PC2, PC_all = _cross_reduce_3flavors(Phi, psd1_clean, psd2_clean, normalize=pc_reducer)
 
     # Gaussian smoothing on each spectrum
     sig = config.gaussian_smooth_sigma

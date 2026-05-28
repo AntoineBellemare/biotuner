@@ -147,3 +147,93 @@ def test_cross_resonance_default_config_works():
     result = compute_cross_resonance(sig1, sig2, sf=1000)
     assert result.freqs.size > 0
     assert np.all(np.isfinite(result.resonance_spectrum["all"]))
+
+
+# ---------------------------------------------------------------------------
+# Layer B refinements A & B — opt-in config flags don't break legacy default
+# ---------------------------------------------------------------------------
+
+
+def test_refinement_A_joint_pc_reducer_changes_output():
+    """cross_pc_reducer='joint' produces different PC(f) from default 'count'."""
+    sig1 = SIGNALS["harmonic_5_10_20_40"](sf=1000)
+    sig2 = SIGNALS["pink_noise"](sf=1000)
+    cfg_legacy = ResonanceConfig(
+        precision_hz=0.5, fmin=2, fmax=30, noverlap=1, smoothness=1,
+        remove_aperiodic=False, harmonic_kernel="harmsim",
+        harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
+        phase_estimator="stft", coupling_metric="nm_wpli_complex",
+        gaussian_smooth_sigma=1.0, combine="product",
+        cross_pc_reducer="count",
+    )
+    cfg_joint = ResonanceConfig(
+        **{**cfg_legacy.__dict__, "cross_pc_reducer": "joint"}
+    )
+    r_legacy = compute_cross_resonance(sig1, sig2, sf=1000, config=cfg_legacy)
+    r_joint = compute_cross_resonance(sig1, sig2, sf=1000, config=cfg_joint)
+
+    # The joint reducer should produce a noticeably different PC spectrum
+    assert not np.allclose(
+        r_legacy.factors["PC"]["all"], r_joint.factors["PC"]["all"], atol=1e-6
+    )
+    # Both should be finite
+    assert np.all(np.isfinite(r_joint.factors["PC"]["all"]))
+    assert np.all(np.isfinite(r_joint.resonance_spectrum["all"]))
+
+
+def test_refinement_B_ratio_kernel_enables_nm_pc():
+    """cross_use_ratio_kernel=True dispatches the binary_nm kernel to determine
+    (n, m) per freq pair, producing a different Phi[i,j] matrix than the
+    default 1:1 cross-spectrum."""
+    sig1 = SIGNALS["harmonic_5_10_20_40"](sf=1000)
+    sig2 = SIGNALS["harmonic_5_10_20_40"](sf=1000)
+    cfg_11 = ResonanceConfig(
+        precision_hz=0.5, fmin=2, fmax=30, noverlap=1, smoothness=1,
+        remove_aperiodic=False, harmonic_kernel="harmsim",
+        harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
+        phase_estimator="stft", coupling_metric="nm_wpli_complex",
+        gaussian_smooth_sigma=1.0, combine="product",
+        cross_use_ratio_kernel=False,
+    )
+    cfg_nm = ResonanceConfig(
+        **{**cfg_11.__dict__, "cross_use_ratio_kernel": True}
+    )
+    r_11 = compute_cross_resonance(sig1, sig2, sf=1000, config=cfg_11)
+    r_nm = compute_cross_resonance(sig1, sig2, sf=1000, config=cfg_nm)
+    # n:m gating should produce a sparser, qualitatively different PC matrix
+    assert not np.allclose(
+        r_11.factors["PC"]["all"], r_nm.factors["PC"]["all"], atol=1e-6
+    )
+    assert np.all(np.isfinite(r_nm.factors["PC"]["all"]))
+
+
+def test_refinement_C_surrogate_generators():
+    """The 3 surrogate generators all preserve PSD or amplitude distribution
+    as documented."""
+    from biotuner.resonance.nulls import (
+        phase_randomize_surrogate, iaaft_surrogate, time_shuffle_surrogate,
+    )
+    rng_factory = lambda seed: np.random.default_rng(seed)
+    sig = SIGNALS["harmonic_5_10_20_40"](sf=1000)
+
+    # Phase randomization: PSD preserved exactly
+    s_pr = phase_randomize_surrogate(sig, rng_factory(0))
+    psd_orig = np.abs(np.fft.rfft(sig))
+    psd_pr = np.abs(np.fft.rfft(s_pr))
+    assert np.allclose(psd_orig, psd_pr, atol=1e-10), \
+        f"phase_randomize PSD drift {np.max(np.abs(psd_orig - psd_pr)):.2e}"
+
+    # IAAFT: amplitude distribution preserved exactly (rank-matched)
+    s_iaaft = iaaft_surrogate(sig, rng_factory(0), n_iter=50)
+    assert np.allclose(np.sort(sig), np.sort(s_iaaft), atol=1e-10), \
+        "IAAFT did not preserve amplitude distribution"
+
+    # Time shuffle: amplitude distribution preserved exactly (same samples)
+    s_ts = time_shuffle_surrogate(sig, rng_factory(0))
+    assert np.allclose(np.sort(sig), np.sort(s_ts), atol=1e-10), \
+        "time_shuffle did not preserve amplitude distribution"
+
+    # All produce different signals from the original
+    assert not np.allclose(sig, s_pr)
+    assert not np.allclose(sig, s_iaaft)
+    assert not np.allclose(sig, s_ts)

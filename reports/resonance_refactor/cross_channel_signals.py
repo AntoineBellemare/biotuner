@@ -760,6 +760,163 @@ def fig28_cross_surrogate_null():
     _save(fig, "fig28_cross_surrogate_null")
 
 
+# ---------------------------------------------------------------------------
+# Fig 29 — Refinements A, B, C side-by-side vs legacy default
+# ---------------------------------------------------------------------------
+
+
+def fig29_refinements_AB():
+    """Compare default cross_pc_reducer='count' (legacy) vs 'joint' (Refinement A),
+    and cross_use_ratio_kernel=False (legacy) vs True (Refinement B), on the
+    realistic multi-band EEG-pair from Fig 26."""
+    print("Fig 29: refinements A (joint PC) and B (n:m PC) ...")
+    sf = 500
+    sig1, sig2 = _multiband_eeg_pair(sf=sf, duration=20.0)
+
+    cfg_default = _default_cfg(precision_hz=0.5, fmin=2, fmax=60)
+    cfg_jointPC = _default_cfg(precision_hz=0.5, fmin=2, fmax=60,
+                                 cross_pc_reducer="joint")
+    cfg_nmPC = _default_cfg(precision_hz=0.5, fmin=2, fmax=60,
+                              cross_use_ratio_kernel=True,
+                              ratio_kernel="binary",
+                              ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True})
+    cfg_both = _default_cfg(precision_hz=0.5, fmin=2, fmax=60,
+                              cross_pc_reducer="joint",
+                              cross_use_ratio_kernel=True,
+                              ratio_kernel="binary",
+                              ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True})
+
+    r_default = compute_cross_resonance(sig1, sig2, sf=sf, config=cfg_default)
+    r_jointPC = compute_cross_resonance(sig1, sig2, sf=sf, config=cfg_jointPC)
+    r_nmPC = compute_cross_resonance(sig1, sig2, sf=sf, config=cfg_nmPC)
+    r_both = compute_cross_resonance(sig1, sig2, sf=sf, config=cfg_both)
+    f = r_default.freqs
+
+    fig, axes = plt.subplots(2, 4, figsize=(17, 8))
+    cases = [
+        (r_default, "a) DEFAULT\nPC='count', 1:1 cross-spec"),
+        (r_jointPC, "b) Refinement A\nPC='joint' (joint p1·p2)"),
+        (r_nmPC, "c) Refinement B\nn:m PC via binary_nm kernel"),
+        (r_both, "d) A + B combined"),
+    ]
+    bands = [(5, "θ"), (10, "α"), (22, "β"), (45, "γ")]
+
+    for col, (r, title) in enumerate(cases):
+        # PC row
+        axes[0, col].plot(f, r.factors["PC"]["all"], color=COLOR_PC, lw=1.4)
+        axes[0, col].fill_between(f, 0, r.factors["PC"]["all"], color=COLOR_PC, alpha=0.13)
+        axes[0, col].set_title(title, fontsize=9)
+        axes[0, col].set_xlim(f.min(), f.max())
+        for fc, lbl in bands:
+            axes[0, col].axvline(fc, color="grey", ls=":", alpha=0.4)
+        if col == 0:
+            axes[0, col].set_ylabel("PC[all](f)", color=COLOR_PC)
+
+        # R row
+        axes[1, col].plot(f, r.resonance_spectrum["all"], color=COLOR_R, lw=1.4)
+        axes[1, col].fill_between(f, 0, r.resonance_spectrum["all"], color=COLOR_R, alpha=0.13)
+        axes[1, col].set_xlabel("Frequency (Hz)")
+        axes[1, col].set_xlim(f.min(), f.max())
+        for fc, lbl in bands:
+            axes[1, col].axvline(fc, color="grey", ls=":", alpha=0.4)
+            ymax = axes[1, col].get_ylim()[1]
+            axes[1, col].text(fc, ymax * 0.93, lbl, ha="center", fontsize=9, color="grey")
+        if col == 0:
+            axes[1, col].set_ylabel("R[all](f)", color=COLOR_R)
+
+    fig.suptitle("Figure 29 — Cross-channel PC refinements on multi-band EEG-pair (ch1 = 1/f + θ + α + β,  ch2 = 1/f + α + β + γ)\n"
+                 "Joint-probability PC (b) frequency-localizes; n:m kernel (c) sharpens harmonic ratios; combined (d) does both",
+                 fontsize=11, fontweight="bold", y=0.995)
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    _save(fig, "fig29_refinements_AB")
+
+
+# ---------------------------------------------------------------------------
+# Fig 30 — Refinement C: 3 surrogate types compared
+# ---------------------------------------------------------------------------
+
+
+def fig30_refinement_C_surrogates():
+    """Compare the 3 surrogate generators (phase_randomize, iaaft, time_shuffle)
+    in terms of cross-R(f) null distribution width and z-score power on the
+    multi-band EEG-pair."""
+    print("Fig 30: refinement C (surrogate null comparison) ...")
+    from biotuner.resonance.nulls import (
+        phase_randomize_surrogate, iaaft_surrogate, time_shuffle_surrogate,
+    )
+
+    sf = 500
+    sig1, sig2 = _multiband_eeg_pair(sf=sf, duration=20.0)
+    # Use the JOINT PC reducer for this comparison since it discriminates better
+    cfg = _default_cfg(precision_hz=0.5, fmin=2, fmax=30, cross_pc_reducer="joint")
+    real = compute_cross_resonance(sig1, sig2, sf=sf, config=cfg)
+    n_freqs = real.freqs.size
+    f = real.freqs
+
+    SURR_GENS = {
+        "phase_randomize": phase_randomize_surrogate,
+        "iaaft": (lambda s, rng: iaaft_surrogate(s, rng, n_iter=80)),
+        "time_shuffle": time_shuffle_surrogate,
+    }
+    n_surr = 80
+    rng_master = np.random.default_rng(42)
+
+    null_R = {}
+    null_z = {}
+    for name, gen in SURR_GENS.items():
+        print(f"  {name}: running {n_surr} surrogates ...")
+        t0 = time.time()
+        surr_R = np.empty((n_surr, n_freqs))
+        for k in range(n_surr):
+            s1_s = gen(sig1, np.random.default_rng(rng_master.integers(0, 2**31)))
+            s2_s = gen(sig2, np.random.default_rng(rng_master.integers(0, 2**31)))
+            r = compute_cross_resonance(s1_s, s2_s, sf=sf, config=cfg)
+            surr_R[k] = r.resonance_spectrum["all"]
+        null_R[name] = surr_R
+        mu, sd = surr_R.mean(axis=0), surr_R.std(axis=0) + 1e-12
+        null_z[name] = (real.resonance_spectrum["all"] - mu) / sd
+        print(f"    done in {time.time()-t0:.1f}s")
+
+    fig, axes = plt.subplots(2, 3, figsize=(15, 7.5))
+    palette = {"phase_randomize": "#37474f", "iaaft": "#1565c0", "time_shuffle": "#c62828"}
+
+    for col, name in enumerate(SURR_GENS):
+        surr_R = null_R[name]
+        z_R = null_z[name]
+        p10, p90 = np.percentile(surr_R, [5, 95], axis=0)
+        mu = surr_R.mean(axis=0)
+        # Top row: observed R vs surrogate band
+        axes[0, col].fill_between(f, p10, p90, color="grey", alpha=0.4, label="5-95%")
+        axes[0, col].plot(f, mu, color="grey", lw=1.0, label="mean")
+        axes[0, col].plot(f, real.resonance_spectrum["all"], color=palette[name], lw=1.6, label="Observed R")
+        axes[0, col].set_title(f"{name}", fontsize=10, color=palette[name])
+        axes[0, col].legend(loc="upper right", fontsize=8)
+        axes[0, col].set_xlim(f.min(), f.max())
+        if col == 0:
+            axes[0, col].set_ylabel("Cross R(f)")
+
+        # Bottom row: z-scored R
+        axes[1, col].plot(f, z_R, color=palette[name], lw=1.5, label="z(R)")
+        axes[1, col].axhline(0, color="k", lw=0.4)
+        axes[1, col].axhline(2, color="k", lw=0.4, ls="--", label="z=±2")
+        axes[1, col].axhline(-2, color="k", lw=0.4, ls="--")
+        sig_mask = z_R > 2
+        if sig_mask.any():
+            axes[1, col].fill_between(f, 0, z_R, where=sig_mask, color=palette[name], alpha=0.18,
+                                       label=f"z>2 ({sig_mask.sum()} bins)")
+        axes[1, col].set_xlabel("Frequency (Hz)")
+        axes[1, col].legend(loc="upper right", fontsize=8)
+        axes[1, col].set_xlim(f.min(), f.max())
+        if col == 0:
+            axes[1, col].set_ylabel("z-score")
+
+    fig.suptitle("Figure 30 — Cross-channel surrogate-null comparison (multi-band EEG-pair, joint PC reducer)\n"
+                 "Tighter nulls (IAAFT, time_shuffle) produce stronger z-scores at shared α/β carriers",
+                 fontsize=11, fontweight="bold", y=0.995)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    _save(fig, "fig30_surrogate_null_comparison")
+
+
 def main():
     print("Generating cross-channel validation figures ...")
     fig21_signal_pair_regimes()
@@ -770,6 +927,8 @@ def main():
     fig26_multiband_eeg_pair()
     fig27_cross_snr_sweep()
     fig28_cross_surrogate_null()
+    fig29_refinements_AB()
+    fig30_refinement_C_surrogates()
     print(f"\nAll figures written to {FIG_DIR}")
 
 
