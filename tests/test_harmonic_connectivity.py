@@ -202,3 +202,126 @@ def test_peak_resonance_unknown_combine_raises(hc_three_channel):
         hc_three_channel.compute_peak_resonance_connectivity(
             combine="not_a_real_combine", graph=False,
         )
+
+
+# ---------------------------------------------------------------------------
+# 5. Layer C — compute_cross_resonance_connectivity (n_elec × n_elec matrix)
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def hc_long_three_channel():
+    """Longer-duration 3-channel dataset so STFT has enough windows for
+    cross-resonance to produce meaningful values."""
+    sf = 500
+    t = np.arange(int(sf * 10)) / sf
+    rng = np.random.default_rng(0)
+    e1 = np.sin(2 * np.pi * 10 * t) + 0.3 * rng.standard_normal(len(t))
+    e2 = np.sin(2 * np.pi * 10 * t + np.pi / 4) + 0.3 * rng.standard_normal(len(t))
+    e3 = np.sin(2 * np.pi * 17 * t) + 0.3 * rng.standard_normal(len(t))
+    data = np.array([e1, e2, e3])
+    from biotuner.harmonic_connectivity import harmonic_connectivity
+    return harmonic_connectivity(
+        sf=sf, data=data, peaks_function="FOOOF",
+        precision=0.5, n_harm=5, min_freq=2, max_freq=30, n_peaks=3,
+    )
+
+
+def test_cross_resonance_connectivity_matrix_shape(hc_long_three_channel):
+    """Returns an n_elec × n_elec matrix with NaN on diagonal."""
+    M = hc_long_three_channel.compute_cross_resonance_connectivity(graph=False)
+    assert M.shape == (3, 3)
+    # Diagonal is NaN (self-pair undefined)
+    assert np.all(np.isnan(np.diag(M)))
+    # Off-diagonal is finite
+    off_diag = M[~np.eye(3, dtype=bool)]
+    assert np.all(np.isfinite(off_diag))
+
+
+@pytest.mark.parametrize("factor", ["H", "PC", "R"])
+@pytest.mark.parametrize("flavor", ["1to2", "2to1", "all"])
+def test_cross_resonance_connectivity_factor_flavor_dispatch(hc_long_three_channel, factor, flavor):
+    """All combinations of factor × flavor produce valid matrices."""
+    M = hc_long_three_channel.compute_cross_resonance_connectivity(
+        factor=factor, flavor=flavor, graph=False,
+    )
+    assert M.shape == (3, 3)
+    off_diag = M[~np.eye(3, dtype=bool)]
+    assert np.all(np.isfinite(off_diag))
+
+
+@pytest.mark.parametrize("aggregate", ["max", "mean", "sum", "peak"])
+def test_cross_resonance_connectivity_aggregate(hc_long_three_channel, aggregate):
+    """All aggregate options run without error."""
+    M = hc_long_three_channel.compute_cross_resonance_connectivity(
+        aggregate=aggregate, graph=False,
+    )
+    assert M.shape == (3, 3)
+
+
+def test_cross_resonance_connectivity_all_flavor_symmetric(hc_long_three_channel):
+    """The 'all' flavor is the symmetrized average of 1to2 and 2to1, so the
+    resulting matrix should be APPROXIMATELY symmetric (off-diagonal).
+    Exact symmetry isn't guaranteed because compute_cross_resonance(A, B) and
+    compute_cross_resonance(B, A) run independent STFT decompositions on each
+    signal — small numerical differences (~1e-4) can accumulate through the
+    cross-spectrum imaginary-part averaging. The structural symmetry of the
+    averaged 'all' flavor is what we verify here."""
+    M = hc_long_three_channel.compute_cross_resonance_connectivity(
+        flavor="all", graph=False,
+    )
+    M_test = np.where(np.isnan(M), 0, M)
+    # Symmetric to within a few parts per thousand
+    np.testing.assert_allclose(M_test, M_test.T, rtol=1e-2, atol=1e-3,
+                                err_msg="'all' flavor matrix should be approximately symmetric")
+
+
+def test_cross_resonance_connectivity_unknown_factor_raises(hc_long_three_channel):
+    with pytest.raises(ValueError, match="factor must be"):
+        hc_long_three_channel.compute_cross_resonance_connectivity(
+            factor="not_real", graph=False,
+        )
+
+
+def test_cross_resonance_connectivity_unknown_flavor_raises(hc_long_three_channel):
+    with pytest.raises(ValueError, match="flavor must be"):
+        hc_long_three_channel.compute_cross_resonance_connectivity(
+            flavor="not_real", graph=False,
+        )
+
+
+def test_cross_resonance_connectivity_unknown_aggregate_raises(hc_long_three_channel):
+    with pytest.raises(ValueError, match="aggregate must be"):
+        hc_long_three_channel.compute_cross_resonance_connectivity(
+            aggregate="not_real", graph=False,
+        )
+
+
+def test_cross_resonance_connectivity_zscore_shapes(hc_long_three_channel):
+    """Z-score method returns (observed, z, p) all with same shape."""
+    observed, z_matrix, p_matrix = hc_long_three_channel.compute_cross_resonance_connectivity_zscore(
+        surrogate_kind="phase_randomize", n_surrogates=5, graph=False,
+    )
+    assert observed.shape == (3, 3)
+    assert z_matrix.shape == (3, 3)
+    assert p_matrix.shape == (3, 3)
+    # p-values in [0, 1] (excluding NaN diagonal)
+    p_off = p_matrix[~np.eye(3, dtype=bool)]
+    assert np.all(p_off >= 0)
+    assert np.all(p_off <= 1)
+
+
+@pytest.mark.parametrize("surr_kind", ["phase_randomize", "iaaft", "time_shuffle"])
+def test_cross_resonance_connectivity_zscore_all_surrogates(hc_long_three_channel, surr_kind):
+    """All 3 surrogate generators work with the z-score method."""
+    observed, z, p = hc_long_three_channel.compute_cross_resonance_connectivity_zscore(
+        surrogate_kind=surr_kind, n_surrogates=3, graph=False,
+    )
+    assert observed.shape == (3, 3)
+
+
+def test_cross_resonance_connectivity_zscore_unknown_surrogate_raises(hc_long_three_channel):
+    with pytest.raises(ValueError, match="surrogate_kind must be"):
+        hc_long_three_channel.compute_cross_resonance_connectivity_zscore(
+            surrogate_kind="not_a_real_generator", n_surrogates=3, graph=False,
+        )

@@ -666,6 +666,191 @@ class harmonic_connectivity(object):
         return R_matrix
 
 
+    # ------------------------------------------------------------------
+    # Layer C — spectrum-based cross-resonance connectivity matrix
+    # ------------------------------------------------------------------
+
+    def compute_cross_resonance_connectivity(
+        self,
+        config=None,
+        factor="R",
+        flavor="all",
+        aggregate="max",
+        graph=True,
+        save=False,
+        savename="_",
+        store_full_results=False,
+    ):
+        """Cross-resonance connectivity matrix: loop compute_cross_resonance
+        over every electrode pair and reduce each result to a scalar.
+
+        Parameters
+        ----------
+        config : ResonanceConfig, optional
+            Forwarded to :func:`compute_cross_resonance`. Defaults to the
+            refined cross-channel config (joint PC + n:m kernel).
+        factor : {'H', 'PC', 'R'}, default 'R'
+            Which factor's spectrum to reduce to a scalar.
+        flavor : {'1to2', '2to1', 'all'}, default 'all'
+            Which of the 3 reducer flavors to use.
+        aggregate : {'max', 'mean', 'sum', 'peak'}, default 'max'
+            How to reduce the per-bin spectrum to a single number per electrode
+            pair. ``'peak'`` returns the value at the dominant peak frequency.
+        graph : bool
+            Heatmap if True.
+        store_full_results : bool, default False
+            If True, also stores ``self.cross_resonance_results`` as a list of
+            (i, j, CrossResonanceResult) for downstream graph analysis. Costly
+            for large electrode counts (stores n_elec² ResonanceResults).
+
+        Returns
+        -------
+        matrix : ndarray (n_elec, n_elec)
+            The scalar connectivity matrix.
+        """
+        valid_factors = {"H", "PC", "R"}
+        valid_flavors = {"1to2", "2to1", "all"}
+        valid_aggs = {"max", "mean", "sum", "peak"}
+        if factor not in valid_factors:
+            raise ValueError(f"factor must be one of {valid_factors}, got {factor!r}")
+        if flavor not in valid_flavors:
+            raise ValueError(f"flavor must be one of {valid_flavors}, got {flavor!r}")
+        if aggregate not in valid_aggs:
+            raise ValueError(f"aggregate must be one of {valid_aggs}, got {aggregate!r}")
+
+        data = self.data
+        n_elec = len(data)
+        matrix = np.zeros((n_elec, n_elec), dtype=np.float64)
+        full_results = [] if store_full_results else None
+
+        for i in range(n_elec):
+            for j in range(n_elec):
+                if i == j:
+                    matrix[i, j] = np.nan  # self-pair undefined for cross
+                    continue
+                result = compute_cross_resonance(data[i], data[j], sf=self.sf, config=config)
+                # Resolve the spectrum to summarize
+                if factor == "R":
+                    spec = result.resonance_spectrum[flavor]
+                else:
+                    spec = result.factors[factor][flavor]
+                # Reduce to scalar
+                if aggregate == "max":
+                    matrix[i, j] = float(np.max(spec))
+                elif aggregate == "mean":
+                    matrix[i, j] = float(np.mean(spec))
+                elif aggregate == "sum":
+                    matrix[i, j] = float(np.sum(spec))
+                elif aggregate == "peak":
+                    peak_key = factor
+                    peak_freqs = result.peaks.get(peak_key, np.array([]))
+                    if len(peak_freqs) == 0:
+                        matrix[i, j] = float(np.max(spec))
+                    else:
+                        # Value at the strongest detected peak
+                        idx = np.argmin(np.abs(result.freqs - peak_freqs[0]))
+                        matrix[i, j] = float(spec[idx])
+
+                if store_full_results:
+                    full_results.append((i, j, result))
+
+        if graph:
+            sbn.heatmap(matrix)
+            plt.title(f"Cross-resonance connectivity (factor={factor}[{flavor}], agg={aggregate})")
+            if save:
+                plt.savefig(f"cross_resonance_conn_{savename}.png")
+            plt.show()
+        self.cross_resonance_matrix = matrix
+        if store_full_results:
+            self.cross_resonance_results = full_results
+        return matrix
+
+    def compute_cross_resonance_connectivity_zscore(
+        self,
+        config=None,
+        factor="R",
+        flavor="all",
+        aggregate="max",
+        surrogate_kind="iaaft",
+        n_surrogates=50,
+        rng_seed=42,
+        graph=True,
+    ):
+        """Surrogate-normalized z-scored cross-resonance connectivity matrix.
+
+        For each surrogate, the multichannel data is replaced by independently
+        surrogated copies of each channel, the n_elec × n_elec connectivity
+        matrix is computed, and the surrogate mean/std is collected per cell.
+        The observed matrix is then z-scored against the surrogate distribution.
+
+        Parameters
+        ----------
+        surrogate_kind : {'phase_randomize', 'iaaft', 'time_shuffle'}
+            Which surrogate generator to use (see :mod:`biotuner.resonance.nulls`).
+            Default ``'iaaft'`` — tightest cross-channel null per Fig 30.
+        n_surrogates : int, default 50
+            Number of surrogate matrices.
+        Other args forwarded to :meth:`compute_cross_resonance_connectivity`.
+
+        Returns
+        -------
+        observed : ndarray (n_elec, n_elec)
+        z_matrix : ndarray (n_elec, n_elec)
+        p_matrix : ndarray (n_elec, n_elec)   one-sided empirical p-value
+        """
+        from biotuner.resonance.nulls import CROSS_SURROGATE_GENERATORS
+
+        if surrogate_kind not in CROSS_SURROGATE_GENERATORS:
+            raise ValueError(
+                f"surrogate_kind must be one of {sorted(CROSS_SURROGATE_GENERATORS)}, "
+                f"got {surrogate_kind!r}"
+            )
+        gen = CROSS_SURROGATE_GENERATORS[surrogate_kind]
+
+        # Observed matrix
+        observed = self.compute_cross_resonance_connectivity(
+            config=config, factor=factor, flavor=flavor, aggregate=aggregate, graph=False,
+        )
+
+        # Surrogate matrices
+        master_rng = np.random.default_rng(rng_seed)
+        n_elec = len(self.data)
+        surr_stack = np.empty((n_surrogates, n_elec, n_elec), dtype=np.float64)
+        orig_data = self.data
+        try:
+            for k in range(n_surrogates):
+                surr_data = np.empty_like(orig_data)
+                for c in range(n_elec):
+                    surr_data[c] = gen(
+                        orig_data[c],
+                        np.random.default_rng(master_rng.integers(0, 2**31)),
+                    )
+                self.data = surr_data
+                surr_stack[k] = self.compute_cross_resonance_connectivity(
+                    config=config, factor=factor, flavor=flavor, aggregate=aggregate, graph=False,
+                )
+        finally:
+            self.data = orig_data
+
+        mu = np.nanmean(surr_stack, axis=0)
+        sd = np.nanstd(surr_stack, axis=0) + 1e-12
+        z_matrix = (observed - mu) / sd
+        # Empirical one-sided p-value (with NaN-safe sum)
+        p_matrix = (np.nansum(surr_stack >= observed[None, :, :], axis=0) + 1) / (n_surrogates + 1)
+
+        if graph:
+            fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
+            sbn.heatmap(observed, ax=axes[0]); axes[0].set_title(f"Observed ({factor}[{flavor}])")
+            sbn.heatmap(z_matrix, ax=axes[1], cmap="coolwarm", center=0); axes[1].set_title(f"z-score ({surrogate_kind})")
+            sbn.heatmap(p_matrix, ax=axes[2], cmap="viridis_r"); axes[2].set_title("Empirical p")
+            plt.tight_layout()
+            plt.show()
+
+        self.cross_resonance_z_matrix = z_matrix
+        self.cross_resonance_p_matrix = p_matrix
+        return observed, z_matrix, p_matrix
+
+
     def compute_IMF_correlation(self, nIMFs=5, freq_range=(1, 60), precision=0.5, delta_lim=50):
         """
         Compute the correlation, coherence, and peak frequency between each pair of IMFs for each pair of electrodes.
