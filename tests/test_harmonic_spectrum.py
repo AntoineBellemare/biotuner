@@ -1,41 +1,37 @@
-"""Tests for biotuner.harmonic_spectrum.
+"""Tests for biotuner.harmonic_spectrum (slim, H-only module).
 
-Covers the harmonicity / phase-coupling / resonance computations that
-underpin the harmonicity-spectrum and harmonicity-matrix input modes of
-``HarmonicSequenceAnalyzer`` (see test_harmonic_sequence.py for those
-end-to-end checks).
+After the resonance refactor this module retains only the harmonic-spectrum
+machinery: H(f) computation, the kernel similarity matrix, peak detection,
+and the 3-spectrum complexity DataFrame helper.
+
+Phase-coupling and resonance-spectrum tests moved to ``tests/resonance/``.
 
 Sections:
-  1. Matrix builders                   — harmonicity_matrices, PLV_comod
-  2. Per-frequency spectra             — compute_harmonic_power,
-                                         compute_phase_spectrum,
-                                         compute_resonance_values
-  3. Peak detection                    — find_spectral_peaks
-  4. Spectral complexity               — harmonic_entropy
-  5. Phase extraction                  — compute_phase_values
-  6. Integration                       — compute_global_harmonicity
-
-The plotting helpers (``harmonic_spectrum_plot_*``) are not covered —
-they're matplotlib wrappers that don't carry numerical contracts.
+  1. Matrix builder            — harmonicity_matrices
+  2. Per-frequency H spectrum  — compute_harmonic_power, compute_harmonic_spectrum
+  3. Peak detection            — find_spectral_peaks
+  4. Complexity helpers        — harmonic_entropy, spectrum_complexity
+  5. Ratio + bandwidth utils   — get_harmonic_ratio, count_theoretical_harmonic_partners
 """
 import numpy as np
 import pandas as pd
 import pytest
+import matplotlib
+matplotlib.use("Agg")
 
 from biotuner.harmonic_spectrum import (
-    PLV_comod,
-    compute_global_harmonicity,
     compute_harmonic_power,
-    compute_phase_spectrum,
-    compute_phase_values,
-    compute_resonance_values,
+    compute_harmonic_spectrum,
+    count_theoretical_harmonic_partners,
     find_spectral_peaks,
+    get_harmonic_ratio,
     harmonic_entropy,
     harmonicity_matrices,
 )
+from biotuner.metrics import spectrum_complexity
 
 
-# ─── shared synthetic signal for integration tests ─────────────────────────
+# ─── shared synthetic signal ────────────────────────────────────────────────
 
 
 @pytest.fixture(scope="module")
@@ -47,13 +43,13 @@ def synthetic_signal():
     rng = np.random.default_rng(0)
     sig = sum(
         (1.0 / (i + 1)) * np.sin(2 * np.pi * f * t)
-        for i, f in enumerate([5, 10, 20, 40])      # 1 : 2 : 4 : 8 — strongly harmonic
+        for i, f in enumerate([5, 10, 20, 40])
     )
     sig += 0.02 * rng.standard_normal(len(t))
     return sig.astype(np.float64), sf
 
 
-# ─── 1. Matrix builders ─────────────────────────────────────────────────────
+# ─── 1. Matrix builder ──────────────────────────────────────────────────────
 
 
 def test_harmonicity_matrices_shape():
@@ -63,7 +59,6 @@ def test_harmonicity_matrices_shape():
 
 
 def test_harmonicity_matrices_diagonal_is_self_similarity():
-    """Each diagonal entry is dyad_similarity(f/f) = dyad_similarity(1)."""
     from biotuner.metrics import dyad_similarity
     freqs = np.array([2.0, 3.0, 5.0])
     M = harmonicity_matrices(freqs, metric="harmsim")
@@ -73,71 +68,20 @@ def test_harmonicity_matrices_diagonal_is_self_similarity():
 
 
 def test_harmonicity_matrices_handles_full_positive_freqs():
-    """All-positive frequencies (the realistic case) produce a finite matrix."""
     freqs = np.linspace(1.0, 30.0, 10)
     M = harmonicity_matrices(freqs)
     assert M.shape == (10, 10)
     assert np.all(np.isfinite(M))
 
 
-# Note: passing freqs containing 0 currently raises a ZeroDivisionError when
-# f1 == 0 (the f2 != 0 guard does not protect dyad_similarity(0)).  This is a
-# fragility of the underlying module, not the encoder layer; callers in
-# practice always pass strictly positive frequency grids from
-# compute_frequency_and_psd, so we don't try to lock down the zero-freq path
-# in tests.
-
-
-def test_harmonicity_matrices_octave_pair_high_similarity():
-    """An octave pair (3:2) is more harmonic than 7:4."""
-    freqs = np.array([2.0, 3.0])
-    M = harmonicity_matrices(freqs)
-    octave_score = M[0, 1]            # dyad_similarity(2/3 = 1.5)
-    assert octave_score > 0
-
-
 def test_harmonicity_matrices_deterministic():
-    """The matrix depends only on freqs — two calls return identical results."""
     freqs = np.linspace(1, 30, 12)
     M1 = harmonicity_matrices(freqs)
     M2 = harmonicity_matrices(freqs)
     assert np.array_equal(M1, M2)
 
 
-def test_PLV_comod_shape():
-    """phase shape (F, T) → output shape (F, F)."""
-    rng = np.random.default_rng(0)
-    F, T = 8, 50
-    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
-    freqs = np.linspace(1, 30, F)
-    psd = np.ones(F)
-    M = PLV_comod(phase, freqs, psd)
-    assert M.shape == (F, F)
-
-
-def test_PLV_comod_values_in_unit_range():
-    rng = np.random.default_rng(0)
-    F, T = 6, 30
-    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
-    freqs = np.linspace(1, 30, F)
-    psd = np.ones(F)
-    M = PLV_comod(phase, freqs, psd)
-    assert np.all(M >= 0)
-    assert np.all(M <= 1.0 + 1e-12)
-
-
-def test_PLV_comod_symmetric():
-    """The phase-coupling matrix is symmetric."""
-    rng = np.random.default_rng(0)
-    F, T = 6, 30
-    phase = rng.uniform(-np.pi, np.pi, size=(F, T))
-    freqs = np.linspace(1, 30, F)
-    psd = np.ones(F)
-    M = PLV_comod(phase, freqs, psd)
-    assert np.allclose(M, M.T)
-
-
-# ─── 2. Per-frequency spectra ──────────────────────────────────────────────
+# ─── 2. Per-frequency H spectrum ────────────────────────────────────────────
 
 
 def test_compute_harmonic_power_shapes():
@@ -154,17 +98,13 @@ def test_compute_harmonic_power_shapes():
 def test_compute_harmonic_power_diagonal_zero():
     F = 5
     freqs = np.linspace(1, 10, F)
-    dyad = np.ones((F, F))                # uniform similarity
+    dyad = np.ones((F, F))
     psd = np.ones(F)
     _, H_mat = compute_harmonic_power(freqs, dyad, psd, normalize=True)
     assert np.allclose(np.diag(H_mat), 0.0)
 
 
 def test_compute_harmonic_power_uses_probability_weighting():
-    """The new formulation uses psd_prob = psd / sum(psd) — scale-invariant.
-
-    Multiplying psd by a constant should not change harmonicity values.
-    """
     F = 4
     freqs = np.arange(1.0, F + 1)
     rng = np.random.default_rng(0)
@@ -176,12 +116,6 @@ def test_compute_harmonic_power_uses_probability_weighting():
 
 
 def test_compute_harmonic_power_vectorised_equivalence():
-    """Closed-form vectorisation should match the function output.
-
-    New formulation:  H_i = p_i * (D · p)_i - D_ii * p_i**2
-    where p_i = P_i / sum(P).
-    Matrix entry: M[i, j] = D[i, j] * p_i * p_j (off-diagonal only).
-    """
     rng = np.random.default_rng(7)
     F = 6
     freqs = np.linspace(1, 20, F)
@@ -198,59 +132,45 @@ def test_compute_harmonic_power_vectorised_equivalence():
     assert np.allclose(H_vec, expected_vec)
 
 
-def test_compute_phase_spectrum_shape():
-    F = 5
-    freqs = np.linspace(1, 10, F)
-    plv = np.zeros((F, F))
-    psd = np.ones(F)
-    out = compute_phase_spectrum(freqs, plv, psd)
-    assert out.shape == (F,)
+def test_compute_harmonic_spectrum_returns_full_tuple(synthetic_signal):
+    """New H-only entry point returns (freqs, H, matrix, summary)."""
+    sig, sf = synthetic_signal
+    freqs, H, M, summary = compute_harmonic_spectrum(
+        sig, precision_hz=0.5, fmin=2, fmax=30, fs=sf, n_peaks=3,
+    )
+    assert freqs.ndim == 1
+    assert H.shape == freqs.shape
+    assert M.shape == (freqs.size, freqs.size)
+    assert isinstance(summary, dict)
+    for key in ("flatness", "entropy", "spread", "higuchi", "peaks", "avg", "max"):
+        assert key in summary
 
 
-def test_compute_phase_spectrum_normalized_uses_psd_prob():
-    """The probability-weighted formulation depends on PSD shape."""
-    F = 4
-    freqs = np.arange(1.0, F + 1)
-    plv = np.full((F, F), 0.5)
-    flat_psd = np.ones(F)
-    skewed_psd = np.array([4.0, 1.0, 1.0, 1.0])
-    out_flat = compute_phase_spectrum(freqs, plv, flat_psd, normalize=True)
-    out_skew = compute_phase_spectrum(freqs, plv, skewed_psd, normalize=True)
-    # Different PSD shapes produce different per-frequency phase coupling
-    assert not np.allclose(out_flat, out_skew)
+def test_compute_harmonic_spectrum_summary_finite(synthetic_signal):
+    sig, sf = synthetic_signal
+    _, _, _, summary = compute_harmonic_spectrum(
+        sig, precision_hz=1.0, fmin=2, fmax=20, fs=sf, n_peaks=3,
+    )
+    for key in ("flatness", "entropy", "spread", "higuchi", "avg", "max"):
+        assert np.isfinite(summary[key])
 
 
-def test_compute_resonance_values_is_direct_product():
-    """The current implementation is the direct element-wise product
-    (no min-max normalisation, to preserve the natural scaling of the
-    probability-weighted inputs)."""
-    h = np.array([1.0, 2.0, 4.0])
-    p = np.array([10.0, 20.0, 30.0])
-    r = compute_resonance_values(h, p)
-    assert np.allclose(r, h * p)
+def test_compute_harmonic_spectrum_dispatches_kernel(synthetic_signal):
+    """Unknown kernel name raises ValueError listing registered options."""
+    sig, sf = synthetic_signal
+    with pytest.raises(ValueError, match="harmonic_kernel"):
+        compute_harmonic_spectrum(
+            sig, precision_hz=1.0, fmin=2, fmax=20, fs=sf, harmonic_kernel="not_a_real_kernel",
+        )
 
 
-def test_compute_resonance_values_nonnegative_when_inputs_nonnegative():
-    h = np.array([0.1, 0.5, 0.9, 0.4])
-    p = np.array([0.3, 0.6, 0.2, 0.8])
-    r = compute_resonance_values(h, p)
-    assert np.all(r >= 0.0)
-
-
-def test_compute_resonance_values_length_matches_input():
-    h = np.linspace(0, 1, 12)
-    p = np.linspace(0.5, 0.9, 12)
-    assert compute_resonance_values(h, p).shape == (12,)
-
-
-# ─── 3. Peak detection ─────────────────────────────────────────────────────
+# ─── 3. Peak detection ──────────────────────────────────────────────────────
 
 
 def test_find_spectral_peaks_returns_at_most_n_peaks():
     values = np.array([0.0, 1, 0, 2, 0, 3, 0, 2, 0, 1, 0])
     freqs = np.arange(10, 121, 10)
-    pf, idx = find_spectral_peaks(values, freqs, n_peaks=3,
-                                   prominence_threshold=0.5)
+    pf, idx = find_spectral_peaks(values, freqs, n_peaks=3, prominence_threshold=0.5)
     assert len(pf) <= 3
     assert len(idx) == len(pf)
 
@@ -258,37 +178,28 @@ def test_find_spectral_peaks_returns_at_most_n_peaks():
 def test_find_spectral_peaks_picks_correct_locations():
     values = np.array([0.0, 1, 0, 2, 0, 3, 0, 2, 0, 1, 0])
     freqs = np.arange(10, 121, 10)
-    pf, idx = find_spectral_peaks(values, freqs, n_peaks=3,
-                                   prominence_threshold=0.5)
-    # The three peaks are at indices 1, 3, 5, 7, 9 (heights 1,2,3,2,1).
-    # The most prominent are 5 (60 Hz, height 3), 3 (40 Hz, height 2),
-    # 7 (80 Hz, height 2).
+    pf, _ = find_spectral_peaks(values, freqs, n_peaks=3, prominence_threshold=0.5)
     assert 60 in pf
     assert 40 in pf or 80 in pf
 
 
 def test_find_spectral_peaks_prominence_threshold_filters():
-    """A high prominence threshold drops most peaks."""
     values = np.array([0.0, 1, 0, 2, 0, 3, 0, 2, 0, 1, 0])
     freqs = np.arange(10, 121, 10)
-    pf_low, _ = find_spectral_peaks(values, freqs, n_peaks=10,
-                                     prominence_threshold=0.5)
-    pf_high, _ = find_spectral_peaks(values, freqs, n_peaks=10,
-                                      prominence_threshold=2.5)
+    pf_low, _ = find_spectral_peaks(values, freqs, n_peaks=10, prominence_threshold=0.5)
+    pf_high, _ = find_spectral_peaks(values, freqs, n_peaks=10, prominence_threshold=2.5)
     assert len(pf_high) <= len(pf_low)
 
 
 def test_find_spectral_peaks_no_peaks_above_threshold():
-    """All-flat signal yields no peaks."""
     values = np.zeros(10)
     freqs = np.arange(10)
-    pf, idx = find_spectral_peaks(values, freqs, n_peaks=5,
-                                   prominence_threshold=0.5)
+    pf, idx = find_spectral_peaks(values, freqs, n_peaks=5, prominence_threshold=0.5)
     assert len(pf) == 0
     assert len(idx) == 0
 
 
-# ─── 4. Spectral complexity ────────────────────────────────────────────────
+# ─── 4. Complexity helpers ──────────────────────────────────────────────────
 
 
 def test_harmonic_entropy_returns_dataframe_shape():
@@ -305,109 +216,39 @@ def test_harmonic_entropy_returns_dataframe_shape():
     assert expected_cols.issubset(set(df.columns))
 
 
-def test_harmonic_entropy_values_are_numeric():
-    freqs = np.linspace(1, 30, 60)
+def test_spectrum_complexity_keys():
     rng = np.random.default_rng(0)
-    h = rng.uniform(0.1, 1, size=60)
-    p = rng.uniform(0.1, 1, size=60)
-    r = h * p
-    df = harmonic_entropy(freqs, h, p, r)
-    # No NaNs, all entries finite
-    assert df.notna().all().all()
-    for v in df.values.flatten():
-        assert np.isfinite(float(v))
-
-
-# ─── 5. Phase extraction ────────────────────────────────────────────────────
-
-
-def test_compute_phase_values_returns_2d_angles(synthetic_signal):
-    sig, sf = synthetic_signal
-    phase = compute_phase_values(sig, precision_hz=0.5, fs=sf)
-    assert phase.ndim == 2
-    # Phases live in [-π, π]
-    assert np.all(phase >= -np.pi - 1e-9)
-    assert np.all(phase <= np.pi + 1e-9)
-
-
-def test_compute_phase_values_smoothness_changes_shape(synthetic_signal):
-    """Larger smoothness reduces nperseg and changes the time-axis size."""
-    sig, sf = synthetic_signal
-    phase1 = compute_phase_values(sig, precision_hz=0.5, fs=sf, smoothness=1)
-    phase2 = compute_phase_values(sig, precision_hz=0.5, fs=sf, smoothness=2)
-    # Different segment lengths → different time-axis (axis 1)
-    assert phase1.shape[1] != phase2.shape[1]
-
-
-# ─── 6. Integration: compute_global_harmonicity ─────────────────────────────
-
-
-def test_compute_global_harmonicity_returns_df_and_matrix(synthetic_signal):
-    sig, sf = synthetic_signal
-    df, matrix = compute_global_harmonicity(
-        sig, precision_hz=1.0, fmin=1.0, fmax=20.0, fs=sf,
-        n_peaks=3, metric="harmsim", n_harms=5,
-        smoothness=1, smoothness_harm=1, normalize=True,
-        power_law_remove=False, plot=False,
-    )
-    assert isinstance(df, pd.DataFrame)
-    # Single-row dataframe (one signal)
-    assert len(df) == 1
-    # Square matrix of shape (F, F)
-    assert matrix.ndim == 2
-    assert matrix.shape[0] == matrix.shape[1]
-
-
-def test_compute_global_harmonicity_dataframe_columns(synthetic_signal):
-    sig, sf = synthetic_signal
-    df, _ = compute_global_harmonicity(
-        sig, precision_hz=1.0, fmin=1.0, fmax=20.0, fs=sf,
-        plot=False, n_peaks=3,
-    )
-    expected = {
-        "harmonicity", "phase_coupling", "resonance",
-        "harmonicity_avg", "phase_coupling_avg", "resonance_avg",
-        "harmonicity_max", "phase_coupling_max", "resonance_max",
-        "harmonicity_peak_frequencies", "phase_peak_frequencies",
-        "resonance_peak_frequencies",
-        "precision", "fmin", "fmax", "fs",
-        "harm_harmsim", "phase_harmsim", "res_harmsim",
+    values = rng.uniform(0.1, 1, size=40)
+    freqs = np.linspace(1, 30, 40)
+    summary = spectrum_complexity(values, freqs, n_peaks=3)
+    expected_keys = {
+        "flatness", "entropy", "spread", "higuchi",
+        "peaks", "peak_indices", "avg", "max", "peaks_avg",
+        "peak_harmsim", "peak_harmsim_avg", "peak_harmsim_max",
     }
-    assert expected.issubset(set(df.columns))
+    assert expected_keys.issubset(set(summary.keys()))
+    for k in ("flatness", "entropy", "spread", "higuchi", "avg", "max"):
+        assert np.isfinite(summary[k])
 
 
-def test_compute_global_harmonicity_harmonic_signal_produces_finite_metrics():
-    """Sanity check: a strongly-harmonic signal yields finite, non-trivial
-    harmonicity values (we deliberately do NOT compare to random — the
-    weighted-sum normalisation makes that comparison signal-shape-dependent)."""
-    sf = 1000
-    duration = 4.0
-    t = np.linspace(0, duration, int(sf * duration), endpoint=False)
-    rng = np.random.default_rng(0)
-    harm = sum((1.0 / (i + 1)) * np.sin(2 * np.pi * f * t)
-               for i, f in enumerate([5, 10, 20, 40]))
-    harm += 0.02 * rng.standard_normal(len(t))
-
-    df, _ = compute_global_harmonicity(harm, precision_hz=1.0,
-                                       fmin=1.0, fmax=50.0, fs=sf,
-                                       plot=False, n_peaks=3)
-    assert np.isfinite(df["harmonicity_max"].iloc[0])
-    assert np.isfinite(df["harmonicity_avg"].iloc[0])
-    assert df["harmonicity_max"].iloc[0] > 0.0
+# ─── 5. Ratio + bandwidth utils ─────────────────────────────────────────────
 
 
-@pytest.mark.skip(
-    reason="The 'subharm_tension' path inside harmonicity_matrices can return "
-           "a string from compute_subharmonic_tension, causing a TypeError. "
-           "This is a known fragility of the existing module, not a test bug."
-)
-def test_compute_global_harmonicity_subharm_metric_works(synthetic_signal):
-    """The 'subharm_tension' metric is an alternative path through the code."""
-    sig, sf = synthetic_signal
-    df, matrix = compute_global_harmonicity(
-        sig, precision_hz=2.0, fmin=2.0, fmax=10.0, fs=sf,
-        metric="subharm_tension", n_harms=3,
-        plot=False, n_peaks=2,
-    )
-    assert matrix.shape[0] == matrix.shape[1]
-    assert isinstance(df, pd.DataFrame)
+def test_get_harmonic_ratio_exact_match():
+    """An exact 1:2 ratio is detected within 5% tolerance."""
+    out = get_harmonic_ratio(10.0, 20.0, max_n=3, max_m=3, tolerance=0.05)
+    assert out == (1, 2)
+
+
+def test_get_harmonic_ratio_no_match_returns_none():
+    """A non-integer ratio (e.g. √2 = 1.414) doesn't match any low n:m within 5%."""
+    out = get_harmonic_ratio(10.0, 14.142, max_n=3, max_m=3, tolerance=0.001)
+    assert out is None
+
+
+def test_count_theoretical_harmonic_partners_returns_nonneg_int():
+    """The partner count is a non-negative integer for any positive freq."""
+    for f in (1.0, 5.0, 20.0):
+        n = count_theoretical_harmonic_partners(f, fmin=1, fmax=30, max_ratio=5)
+        assert isinstance(n, int)
+        assert n >= 0

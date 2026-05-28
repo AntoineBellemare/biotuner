@@ -36,8 +36,6 @@ from biotuner.metrics import (
     peaks_to_harmsim,
 )
 from biotuner.harmonic_spectrum import (
-    compute_frequency_and_psd,
-    compute_resonance_values,
     find_spectral_peaks,
     harmonic_entropy,
 )
@@ -1481,9 +1479,8 @@ def compute_cross_spectrum_harmonicity(
     )
 
     # Step 1: Calculate a combined metric for harmonicity and phase-coupling by multiplying normalized values
-    normalized_combined_metric = compute_resonance_values(
-        harmonicity_values_all, phase_coupling_values_all
-    )
+    # (formerly compute_resonance_values; the resonance package's combine.product is equivalent)
+    normalized_combined_metric = harmonicity_values_all * phase_coupling_values_all
 
     # Find peaks in the spectra
     harmonicity_peak_frequencies, harm_peak_idx = find_spectral_peaks(
