@@ -21,9 +21,11 @@ import matplotlib.pyplot as plt
 from fractions import Fraction
 import mne
 import numpy.ma as ma
-from statsmodels.stats.multitest import multipletests
-from mne.viz import circular_layout
-#from mne_connectivity.viz import plot_connectivity_circle
+# statsmodels and mne.viz are imported lazily inside the functions that need
+# them (temporal_correlation_fdr and plot_conn_matrix respectively) so the
+# module can be imported in environments where these optional deps aren't
+# installed — useful for users who only need the core peak-based / spectrum
+# pipelines.
 import itertools
 import pandas as pd
 from scipy.signal import hilbert, coherence, welch
@@ -914,6 +916,10 @@ class harmonic_connectivity(object):
         if node_names is None:
             node_names = range(0, len(conn_matrix), 1)
             node_names = [str(x) for x in node_names]
+        # Lazy imports — mne.viz and mne_connectivity are optional deps used
+        # only by this plotting helper.
+        from mne.viz import circular_layout  # noqa: F401 (used by callers via mne)
+        from mne_connectivity.viz import plot_connectivity_circle
         fig = plot_connectivity_circle(
             conn_matrix,
             node_names=node_names,
@@ -1574,6 +1580,8 @@ def temporal_correlation_fdr(data):
 
             connectivity_matrix[i, j], pvals_matrix[i, j] = corr, pval
 
+    # Lazy import — statsmodels is an optional dep used only here.
+    from statsmodels.stats.multitest import multipletests
     pvals = pvals_matrix.flatten()
     fdr_corrected_pvals = multipletests(pvals, method="fdr_bh")[1]
     fdr_corrected_pvals = fdr_corrected_pvals.reshape((num_electrodes, num_electrodes))
