@@ -89,6 +89,8 @@ def test_compute_cross_resonance_matches_snapshot(pair_name, sig1_name, sig2_nam
 
     sig1 = SIGNALS[sig1_name](sf=BASE["fs"])
     sig2 = SIGNALS[sig2_name](sf=BASE["fs"])
+    # Explicitly opt out of the new joint+n:m defaults so snapshot
+    # reproduction tests the LEGACY behavior of compute_cross_spectrum_harmonicity.
     cfg = ResonanceConfig(
         precision_hz=BASE["precision_hz"],
         fmin=BASE["fmin"], fmax=BASE["fmax"],
@@ -101,6 +103,8 @@ def test_compute_cross_resonance_matches_snapshot(pair_name, sig1_name, sig2_nam
         coupling_metric="nm_wpli_complex",
         gaussian_smooth_sigma=BASE["smoothness_harm"],
         combine="product",
+        cross_pc_reducer="count",          # legacy reducer
+        cross_use_ratio_kernel=False,       # legacy 1:1 cross-spectrum
     )
     result = compute_cross_resonance(sig1, sig2, sf=BASE["fs"], config=cfg)
 
@@ -140,13 +144,60 @@ def test_cross_resonance_result_has_three_flavors():
 
 
 def test_cross_resonance_default_config_works():
-    """Calling compute_cross_resonance with no config uses sensible defaults
-    (matches legacy compute_cross_spectrum_harmonicity behavior)."""
+    """Calling compute_cross_resonance with no config produces sensible output.
+
+    The defaults are the NEW recommended ones (joint PC + n:m PC), which
+    differ from the legacy compute_cross_spectrum_harmonicity. Bit-exact
+    legacy behavior is available via cross_pc_reducer='count' +
+    cross_use_ratio_kernel=False (tested separately above).
+    """
     sig1 = SIGNALS["harmonic_5_10_20_40"](sf=1000)
     sig2 = SIGNALS["inharmonic_7_11_18_23"](sf=1000)
     result = compute_cross_resonance(sig1, sig2, sf=1000)
     assert result.freqs.size > 0
     assert np.all(np.isfinite(result.resonance_spectrum["all"]))
+
+
+def test_cross_resonance_new_defaults_differ_from_legacy():
+    """Confirms the new defaults (cross_pc_reducer='joint' +
+    cross_use_ratio_kernel=True) produce DIFFERENT output from the legacy
+    config — i.e. flipping the defaults actually had effect.
+    """
+    sig1 = SIGNALS["harmonic_5_10_20_40"](sf=1000)
+    sig2 = SIGNALS["inharmonic_7_11_18_23"](sf=1000)
+
+    # No-args call → uses NEW defaults
+    r_new = compute_cross_resonance(sig1, sig2, sf=1000)
+    # Explicit legacy values
+    cfg_legacy = ResonanceConfig(
+        precision_hz=1.0, fmin=1.0, fmax=30.0, noverlap=1, smoothness=1.0,
+        remove_aperiodic=False, harmonic_kernel="harmsim",
+        harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
+        phase_estimator="stft", coupling_metric="nm_wpli_complex",
+        gaussian_smooth_sigma=1.0, combine="product",
+        cross_pc_reducer="count",
+        cross_use_ratio_kernel=False,
+    )
+    r_legacy = compute_cross_resonance(sig1, sig2, sf=1000, config=cfg_legacy)
+
+    # PC and R should differ substantially between new and legacy
+    assert not np.allclose(
+        r_new.factors["PC"]["all"], r_legacy.factors["PC"]["all"], atol=1e-4
+    )
+    assert not np.allclose(
+        r_new.resonance_spectrum["all"], r_legacy.resonance_spectrum["all"], atol=1e-4
+    )
+
+
+def test_resonance_config_field_defaults_are_refined():
+    """The ResonanceConfig field defaults must be the refined values."""
+    cfg = ResonanceConfig()
+    assert cfg.cross_pc_reducer == "joint", (
+        f"Expected cross_pc_reducer='joint', got {cfg.cross_pc_reducer!r}"
+    )
+    assert cfg.cross_use_ratio_kernel is True, (
+        f"Expected cross_use_ratio_kernel=True, got {cfg.cross_use_ratio_kernel}"
+    )
 
 
 # ---------------------------------------------------------------------------

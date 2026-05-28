@@ -1719,13 +1719,15 @@ def compute_cross_resonance(
     :class:`CrossResonanceResult`
     """
     if config is None:
-        # Legacy-default config matching compute_cross_spectrum_harmonicity.
-        # NOTE: compute_cross_resonance always applies its own per-channel
-        # min-max rescale to [0, 1] internally (NO probability division),
-        # regardless of config.psd_normalization — that field is honored by
-        # the single-channel compute_resonance but ignored here, because the
-        # legacy cross-spectrum reducer uses a different total-power
-        # normalization scheme (see _cross_reduce_3flavors).
+        # Sensible recommended-defaults config:
+        # - cross_pc_reducer='joint'      (frequency-localized PC; recommended)
+        # - cross_use_ratio_kernel=True   (true n:m phase coupling via binary_nm)
+        # - ratio_kernel='binary'
+        # These come from ResonanceConfig field defaults — see orchestrator.py
+        # for the rationale. To exactly reproduce legacy
+        # compute_cross_spectrum_harmonicity numerics, pass a config with
+        # cross_pc_reducer='count' and cross_use_ratio_kernel=False (this is
+        # what the shim compute_cross_spectrum_harmonicity does internally).
         config = ResonanceConfig(
             harmonic_kernel="harmsim",
             harmonic_kernel_params={"n_harms": 10, "delta_lim": 0.1, "min_notes": 2},
@@ -1737,7 +1739,11 @@ def compute_cross_resonance(
             fmin=1.0, fmax=30.0, noverlap=1,
             smoothness=1.0,
             n_peaks=5,
-            remove_aperiodic=False,              # legacy default for cross-spectrum
+            remove_aperiodic=False,              # legacy cross-spectrum default
+            # cross_pc_reducer and cross_use_ratio_kernel inherit the new
+            # joint+n:m defaults from ResonanceConfig field defaults.
+            ratio_kernel="binary",
+            ratio_kernel_params={"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True},
         )
 
     nperseg = int(sf / config.precision_hz)
@@ -1934,6 +1940,13 @@ def compute_cross_spectrum_harmonicity(
     # cross-channel orchestrator) and repackages the output as the historical
     # DataFrame format. Bit-exact reproduction is asserted by
     # tests/resonance/test_cross_snapshot_regression.py.
+    #
+    # IMPORTANT: this shim explicitly OPTS OUT of the new
+    # cross_pc_reducer='joint' and cross_use_ratio_kernel=True defaults
+    # (set in ResonanceConfig) because the legacy compute_cross_spectrum_harmonicity
+    # used 'count' reducer + 1:1 PC. The legacy formula is preserved here for
+    # paper reproducibility; new analyses should call compute_cross_resonance
+    # directly and accept the (better) registry defaults.
     cfg = ResonanceConfig(
         precision_hz=precision_hz,
         fmin=fmin if fmin is not None else 1.0,
@@ -1951,6 +1964,9 @@ def compute_cross_spectrum_harmonicity(
         coupling_metric="nm_wpli_complex",
         gaussian_smooth_sigma=smoothness_harm,
         combine="product",
+        # LEGACY OVERRIDES — keep snapshot regression bit-exact.
+        cross_pc_reducer="count",
+        cross_use_ratio_kernel=False,
     )
     result = compute_cross_resonance(signal1, signal2, sf=fs, config=cfg)
 

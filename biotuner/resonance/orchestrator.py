@@ -114,17 +114,19 @@ class ResonanceConfig:
     # --- Cross-channel-specific config (used only by
     #     biotuner.harmonic_connectivity.compute_cross_resonance) ---
     # PC reducer for cross-channel:
-    #   'count'         — legacy uniform average over freq pairs (default; preserves
-    #                     compute_cross_spectrum_harmonicity bit-exactness)
-    #   'joint'         — same joint-probability weighting as H (uses
-    #                     p1[i] * p2[j] gating; frequency-localizes PC)
-    #   'joint_2T_count'— legacy 'weighted' phase_mode behavior
-    cross_pc_reducer: Literal["count", "joint", "joint_2T_count"] = "count"
-    # If True, use config.ratio_kernel + ratio_kernel_params to determine (n, m)
-    # for each cross-channel freq pair, and pass them to the coupling metric
-    # for n:m phase locking. Default False = always use (n=1, m=1) which is
-    # what the legacy cross-spectrum wPLI does.
-    cross_use_ratio_kernel: bool = False
+    #   'joint'         — DEFAULT: joint-probability weighting like H (uses
+    #                     p1[i] * p2[j] gating; frequency-localizes PC).
+    #                     Recommended for all new analyses.
+    #   'count'         — legacy uniform average over freq pairs. Use ONLY to
+    #                     reproduce historical compute_cross_spectrum_harmonicity
+    #                     numerics bit-exactly.
+    #   'joint_2T_count'— legacy 'weighted' phase_mode behavior.
+    cross_pc_reducer: Literal["count", "joint", "joint_2T_count"] = "joint"
+    # If True (DEFAULT), use config.ratio_kernel + ratio_kernel_params to
+    # determine (n, m) per freq pair and pass them to the coupling metric, so
+    # cross-PC measures TRUE n:m phase locking. Set False to fall back to the
+    # legacy always-1:1 behavior (useful only for snapshot reproduction).
+    cross_use_ratio_kernel: bool = True
 
     # Logging / debug
     return_intermediates: bool = False
