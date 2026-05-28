@@ -277,7 +277,8 @@ The biotuner package is organized by *kind* — stateful pipeline classes first,
 | `scale_construction` | Sethares dissonance curve, harmonic entropy, Euler-Fokker, harmonic tunings |
 | `rhythm_construction` | Euclidean / discrete & continuous polyrhythms / second-order / evolution / MIDI / OSC |
 | `metrics` | Tenney height, Euler gradus, dyad similarity, harmonic similarity, subharmonic tension |
-| `harmonic_spectrum` | Harmonicity / resonance / phase fields from PSDs |
+| `harmonic_spectrum` | Per-frequency H(f) harmonicity spectrum + complexity summary (`compute_harmonic_spectrum`) |
+| `resonance` (subpackage) | Modular H × PC = R resonance framework: kernels, ratio gates, phase estimators, pairwise coupling metrics (PLV/PLI/wPLI/RRCi/canonical), combine rules, surrogate-null normalization — all dispatched by name via `ResonanceConfig` |
 | `biocolors` | Map biosignal frequencies to visible-light wavelengths and RGB |
 | `bioelements` | Match biosignal peaks to atomic spectral lines (H, O, N, …) |
 | `biotuner_mne` | MNE-Python integration entry point |

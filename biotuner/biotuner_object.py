@@ -3083,7 +3083,7 @@ class compute_biotuner(object):
 
         return peaks, amps
 
-    def compute_resonance(
+    def compute_peak_resonance(
         self,
         harm_thresh=30,
         PPC_thresh=0.6,
@@ -3091,7 +3091,17 @@ class compute_biotuner(object):
         harmonicity_metric="harmsim",
         delta_lim=50,
     ):
-        """Compute resonances between pairs of frequency peaks in the data.
+        """Compute resonance between pairs of extracted frequency peaks via bispectrum.
+
+        This method evaluates pairwise harmonicity × bispectral-power-correlation on
+        the extracted peaks (a peak-based, scalar resonance score). It is distinct
+        from the spectrum-based :func:`biotuner.resonance.compute_resonance` (formerly
+        :func:`biotuner.harmonic_spectrum.compute_global_harmonicity`), which builds
+        a per-frequency H(f) × PC(f) resonance spectrum across the full PSD.
+
+        For backward compatibility this method was previously named
+        ``compute_resonance``. It was renamed in the resonance-package refactor to
+        disambiguate from the spectrum-based pipeline.
 
         Parameters
         ----------
@@ -3201,13 +3211,34 @@ class compute_biotuner(object):
                         resonant_freqs.append((pair[0], pair[1]))
         # resonance = np.corrcoef(harm_sim, bicor)[0][1]
         resonance_ = np.mean(weighted_bicor)
-        self.resonance = resonance_
-        self.resonant_freqs = resonant_freqs
+        # Renamed attrs (resonance-package refactor) — old names kept as aliases
+        # for one release cycle to avoid breaking consumers.
+        self.peak_resonance = resonance_
+        self.peak_resonant_freqs = resonant_freqs
         scale = scale_from_pairs(resonant_freqs)
-        self.res_tuning = np.sort(list(set(scale)))
+        self.peak_res_tuning = np.sort(list(set(scale)))
         self.PPC_bicor = np.mean(bicor_all)
+        # Backward-compatibility aliases (deprecated)
+        self.resonance = self.peak_resonance
+        self.resonant_freqs = self.peak_resonant_freqs
+        self.res_tuning = self.peak_res_tuning
 
         return resonance_, resonant_freqs, harm_all, bicor_all
+
+    # Backward-compatibility alias: the old method name is preserved as a thin
+    # wrapper around the renamed implementation. Will be removed in a future
+    # release; new code should call :meth:`compute_peak_resonance`.
+    def compute_resonance(self, *args, **kwargs):
+        """Deprecated alias for :meth:`compute_peak_resonance`."""
+        import warnings
+        warnings.warn(
+            "BiotunerObject.compute_resonance has been renamed to "
+            "compute_peak_resonance to disambiguate from the spectrum-based "
+            "biotuner.resonance.compute_resonance. Please update your code.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.compute_peak_resonance(*args, **kwargs)
 
     """Listening methods"""
 

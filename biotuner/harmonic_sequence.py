@@ -364,7 +364,8 @@ def _compute_harmonicity_from_signal(
 ) -> Tuple[np.ndarray, Optional[np.ndarray], np.ndarray]:
     """Fast harmonicity computation for one window — no DataFrame, no phase.
 
-    Compared to :func:`biotuner.harmonic_spectrum.compute_global_harmonicity`,
+    Compared to :func:`biotuner.harmonic_spectrum.compute_harmonic_spectrum`
+    (or the full :func:`biotuner.resonance.compute_resonance` pipeline),
     this skips:
 
       - phase / PLV / resonance computations (we don't use them),
@@ -408,8 +409,9 @@ def _compute_harmonicity_from_signal(
     H_values, H_matrix = _harmonicity_from_psd(
         psd_clean, dyad, normalize=normalize
     )
-    # Match compute_global_harmonicity: gaussian_filter is applied
-    # unconditionally (default sigma=1 in the original is NOT a no-op).
+    # Match the legacy compute_global_harmonicity (now biotuner.resonance.compute_resonance
+    # with legacy-default ResonanceConfig): gaussian_filter is applied unconditionally
+    # (default sigma=1 in the original is NOT a no-op).
     H_values = gaussian_filter(H_values, smoothness_harm)
     return H_values, (H_matrix if return_matrix else None), freqs
 
@@ -521,7 +523,9 @@ def encode_harmonicity_spectrum(
 
     For each ``compute_biotuner`` object, computes the per-frequency
     power-weighted dyad-similarity values.  This is much faster than the
-    full :func:`compute_global_harmonicity` because it:
+    full :func:`biotuner.resonance.compute_resonance` pipeline (or its
+    H-only wrapper :func:`biotuner.harmonic_spectrum.compute_harmonic_spectrum`)
+    because it:
 
       - reuses the freq-only dyad-similarity matrix across all windows
         (it depends only on the frequency axis),

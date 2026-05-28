@@ -1333,3 +1333,47 @@ def higuchi_fd(data, kmax):
         x, L, rcond=None
     )  # Use rcond=None to silence future warning
     return p[0]
+
+
+def spectrum_complexity(values, freqs, n_peaks=5, prominence_threshold=0.5, hfd_kmax=10):
+    """Bundle the standard complexity / summary stats for an arbitrary 1-D spectrum.
+
+    Shared helper used by both :func:`biotuner.harmonic_spectrum.compute_harmonic_spectrum`
+    (on the harmonicity spectrum) and :func:`biotuner.resonance.compute_resonance`
+    (on each of H, PC, R factors).
+
+    Returns
+    -------
+    dict with keys:
+        flatness, entropy, spread, higuchi          (scalar complexity metrics)
+        peaks, peak_indices                          (top-prominence peaks)
+        avg, max, peaks_avg                          (basic summaries)
+        peak_harmsim, peak_harmsim_avg, peak_harmsim_max
+                                                     (pairwise harmsim on detected peaks)
+    """
+    # Local imports to avoid circular dependency (harmonic_spectrum imports from metrics)
+    from biotuner.harmonic_spectrum import find_spectral_peaks
+    from biotuner.biotuner_utils import safe_mean, safe_max
+
+    values = np.asarray(values, dtype=np.float64)
+    freqs = np.asarray(freqs, dtype=np.float64)
+
+    peak_freqs, peak_idx = find_spectral_peaks(
+        values, freqs, n_peaks, prominence_threshold=prominence_threshold
+    )
+    peak_harmsim = peaks_to_harmsim(peak_freqs)
+
+    return {
+        "flatness": spectral_flatness(values),
+        "entropy": spectral_entropy(values),
+        "spread": spectral_spread(freqs, values),
+        "higuchi": higuchi_fd(values, kmax=hfd_kmax),
+        "peaks": peak_freqs,
+        "peak_indices": peak_idx,
+        "avg": float(np.mean(values)) if values.size else float("nan"),
+        "max": float(np.max(values)) if values.size else float("nan"),
+        "peaks_avg": safe_mean(peak_freqs),
+        "peak_harmsim": peak_harmsim,
+        "peak_harmsim_avg": safe_mean(peak_harmsim),
+        "peak_harmsim_max": safe_max(peak_harmsim),
+    }
