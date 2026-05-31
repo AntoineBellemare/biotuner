@@ -131,35 +131,37 @@ def test_alternative_combine_rule_geomean():
 
 
 def test_fraction_kernel_returns_exact_simple_ratios():
-    """For pairs at exact simple ratios, fraction_kernel returns (n, m) = the
-    obvious reduced fraction."""
+    """For pairs at exact simple ratios, fraction_kernel returns (n, m)
+    matching the legacy biotuner convention ``ratio = f_j/f_i = m/n``.
+    """
     from biotuner.resonance.kernels_ratio import fraction_kernel
 
     freqs = np.array([10.0, 20.0, 30.0, 15.0])
     W, N, M = fraction_kernel(freqs, freqs, max_denom=16, beta=1.0)
-    # f_j / f_i convention: n*f_i ≈ m*f_j → n/m = f_j/f_i
+    # Convention: ratio = f_j/f_i = m/n (matches binary_nm_kernel)
 
-    # (10, 20): ratio = 2 → (n, m) = (2, 1)
-    assert (N[0, 1], M[0, 1]) == (2, 1)
-    # (10, 30): ratio = 3 → (3, 1)
-    assert (N[0, 2], M[0, 2]) == (3, 1)
-    # (10, 15): ratio = 1.5 → (3, 2)
-    assert (N[0, 3], M[0, 3]) == (3, 2)
-    # (20, 30): ratio = 1.5 → (3, 2)
-    assert (N[1, 2], M[1, 2]) == (3, 2)
+    # (10, 20): ratio = 2 → m/n = 2/1 → (n=1, m=2)
+    assert (N[0, 1], M[0, 1]) == (1, 2)
+    # (10, 30): ratio = 3 → m/n = 3/1 → (n=1, m=3)
+    assert (N[0, 2], M[0, 2]) == (1, 3)
+    # (10, 15): ratio = 1.5 → m/n = 3/2 → (n=2, m=3)
+    assert (N[0, 3], M[0, 3]) == (2, 3)
+    # (20, 30): ratio = 1.5 → (n=2, m=3)
+    assert (N[1, 2], M[1, 2]) == (2, 3)
 
 
 def test_fraction_kernel_returns_exact_complex_ratio():
     """For non-simple pairs like 10:17, fraction_kernel returns the actual
-    integer ratio (n=17, m=10) when max_denom is large enough — unlike
-    binary_nm_kernel which only goes up to max_nm=3 and falls back to 1:1."""
+    integer ratio (n=10, m=17 — legacy convention ratio = m/n = 17/10) when
+    max_denom is large enough — unlike binary_nm_kernel which only goes up
+    to max_nm=3 and falls back to 1:1."""
     from biotuner.resonance.kernels_ratio import fraction_kernel
 
     freqs = np.array([10.0, 17.0])
     W, N, M = fraction_kernel(freqs, freqs, max_denom=20, beta=1.0)
-    # 17/10 = 17/10 exactly
-    assert (N[0, 1], M[0, 1]) == (17, 10), (
-        f"Expected (17, 10), got ({N[0, 1]}, {M[0, 1]})"
+    # ratio = 17/10 → m/n = 17/10 → (n=10, m=17) under legacy convention
+    assert (N[0, 1], M[0, 1]) == (10, 17), (
+        f"Expected (10, 17), got ({N[0, 1]}, {M[0, 1]})"
     )
 
 
@@ -171,8 +173,9 @@ def test_fraction_kernel_simpler_approximation_with_low_max_denom():
     freqs = np.array([10.0, 17.0])
     W, N, M = fraction_kernel(freqs, freqs, max_denom=5, beta=1.0)
     # Closest rational to 1.7 with denom <= 5: 5/3 ≈ 1.667
-    assert (N[0, 1], M[0, 1]) == (5, 3), (
-        f"Expected (5, 3) (closest to 1.7 with denom <= 5), got ({N[0, 1]}, {M[0, 1]})"
+    # Under legacy convention: m/n = 5/3 → (n=3, m=5)
+    assert (N[0, 1], M[0, 1]) == (3, 5), (
+        f"Expected (3, 5) (closest to 1.7 with denom <= 5), got ({N[0, 1]}, {M[0, 1]})"
     )
 
 
@@ -219,6 +222,34 @@ def test_fraction_kernel_registered():
     """fraction_kernel is discoverable via the registry."""
     from biotuner.resonance.registry import RATIO_KERNELS
     assert "fraction" in RATIO_KERNELS
+
+
+def test_fraction_and_binary_kernels_share_convention():
+    """fraction_kernel and binary_nm_kernel both use the legacy convention
+    ratio = f_j/f_i = m/n, so they return the same (n, m) for any pair that
+    binary can handle (small integer ratios). This guarantees that
+    coupling_metric='nm_plv_canonical' is the correct choice regardless of
+    which ratio kernel the user picks.
+    """
+    from biotuner.resonance.kernels_ratio import (
+        binary_nm_kernel, fraction_kernel,
+    )
+
+    # Pairs at simple ratios that BOTH kernels can find
+    freqs = np.array([10.0, 20.0, 30.0, 15.0])
+    W_b, N_b, M_b = binary_nm_kernel(freqs, freqs, max_nm=3,
+                                     tolerance=0.05, fallback_to_1_1=False)
+    W_f, N_f, M_f = fraction_kernel(freqs, freqs, max_denom=16)
+
+    # Where binary returned a match (W=1), fraction must agree on (n, m).
+    for i in range(4):
+        for j in range(4):
+            if i == j or W_b[i, j] == 0:
+                continue
+            assert (N_b[i, j], M_b[i, j]) == (N_f[i, j], M_f[i, j]), (
+                f"Convention mismatch at ({i}, {j}): binary={N_b[i,j],M_b[i,j]} "
+                f"vs fraction={N_f[i,j],M_f[i,j]}"
+            )
 
 
 def test_orchestrator_works_with_fraction_kernel():

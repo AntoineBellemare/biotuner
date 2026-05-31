@@ -7,23 +7,37 @@ The orchestrator's PC pipeline calls these to drive ``build_pairwise_coupling_ma
 Each kernel returns ``(W, N, M)`` where:
     W : (Ni, Nj) weights in [0, 1]
     N, M : (Ni, Nj) int arrays giving the (n, m) pair to test per cell
-           Convention: n * f_i ≈ m * f_j  (mode-lock condition)
 
-Registered kernels:
+Convention (shared by all registered kernels)
+---------------------------------------------
+All ratio kernels return ``(n, m)`` such that
+``ratio = f_j / f_i ≈ m / n``. This is the legacy biotuner convention,
+preserved across all kernels for consistency. To get a mathematically
+correct n:m phase-locking test (Tass 1998 form ``n·φ_i − m·φ_j = const``),
+ALWAYS pair these kernels with the coupling metric ``nm_plv_canonical``
+(which swaps internally). Pairing with the raw ``nm_plv`` keeps the legacy
+behavior preserved for bit-exact paper reproduction.
 
-  fraction (DEFAULT)
+Quick rule
+----------
+* New analyses: ``coupling_metric='nm_plv_canonical'`` with any ratio kernel.
+* Paper reproduction: ``coupling_metric='nm_plv'`` with ``ratio_kernel='binary'``.
+
+Registered kernels
+------------------
+
+  fraction
     For each pair, computes ``Fraction(f_j / f_i).limit_denominator(max_denom)``
-    to get the EXACT closest rational ratio. Works for any frequency pair —
-    e.g. for (10 Hz, 17 Hz) returns (n=10, m=17) at max_denom>=17, testing the
-    actual 10:17 mode-lock. Weight W = exp(-beta * log2(n*m)) so high-order
-    ratios get small weight while simple ones (like 1:2) get W close to 1.
+    to get the EXACT closest rational. Works for any frequency pair —
+    e.g. (10 Hz, 17 Hz) gives (n=10, m=17), testing the actual 10:17 mode-lock.
+    Weight W = exp(-beta * log2(n*m)) penalizes high-order ratios.
 
-  binary
-    Legacy gate (preserves bit-exact reproduction of pre-refactor pipeline):
-    tries (n, m) pairs with 1 ≤ n, m ≤ max_nm (default 3) and picks the best
-    match within tolerance. Returns W=1 if ANY match found, W=0 otherwise
-    (or W=1 at (1,1) if fallback_to_1_1=True). Misses coupling at any ratio
-    outside the small preset table — use 'fraction' instead for new analyses.
+  binary (DEFAULT)
+    Legacy gate (preserves bit-exact reproduction): tries (n, m) pairs with
+    1 ≤ n, m ≤ max_nm (default 3) and picks the best match within tolerance.
+    Returns W=1 if any match found, W=0 otherwise (or W=1 at (1,1) if
+    ``fallback_to_1_1=True``). Misses coupling at any ratio outside the small
+    preset table — use 'fraction' for new analyses.
 
 Phase 2 will add 'arnold_tongue' (soft Gaussian membership of Arnold tongues,
 Pikovsky-Rosenblum-Kurths 2001) and 'stern_brocot' (depth-weighted complexity).
@@ -98,21 +112,33 @@ def fraction_kernel(
 ):
     """For each pair, picks (n, m) as the exact closest rational of f_j/f_i.
 
-    For ANY frequency pair this returns a meaningful (n, m) that tests the
-    actual mode-lock condition ``n * f_i ≈ m * f_j``. The weight W penalizes
-    high-order ratios via Tenney height (``log2(n * m)``):
+    For ANY frequency pair this returns a meaningful (n, m) — the legacy
+    ``binary_nm_kernel`` could only handle ratios up to max_nm=3.
+
+    Convention
+    ----------
+    Returns ``(n, m)`` such that ``ratio = f_j / f_i ≈ m / n`` — the SAME
+    convention as :func:`binary_nm_kernel`. This is the legacy biotuner
+    convention; to get a mathematically correct n:m phase-locking test,
+    pair this kernel with ``coupling_metric='nm_plv_canonical'`` (which
+    swaps internally to apply the Tass 1998 convention).
+
+    The weight W penalizes high-order ratios via Tenney height:
 
         W[i, j] = exp(-beta * log2(n * m))
 
-    Examples (with max_denom=16):
-        (10, 20) → (1, 2), W = 0.5             — simple octave, high weight
-        (10, 15) → (2, 3), W = 0.167           — perfect fifth, moderate
-        (10, 17) → (10, 17), W ≈ 0.0059        — complex ratio, low weight
-        (10, 14.14) → (5, 7), W = 0.0286       — closest simple approximation
+    Examples (max_denom=16, beta=1.0):
+        (10, 20) → (n=1, m=2),  W = 0.368   octave
+        (10, 15) → (n=2, m=3),  W = 0.075   perfect fifth
+        (10, 17) → (n=10, m=17), W ≈ 6e-4   complex, but exact test
+        (10, 14.14) → (n=12, m=17), W ≈ 5e-4  closest rational to √2
 
-    Compare to the legacy ``binary_nm_kernel`` which only tests (n, m) ≤
-    max_nm=3 and falls back to a meaningless 1:1 for any pair outside that
-    preset table.
+    The recommended pairing for new analyses is::
+
+        ResonanceConfig(
+            ratio_kernel='fraction',
+            coupling_metric='nm_plv_canonical',   # not just 'nm_plv'!
+        )
 
     Parameters
     ----------
@@ -122,9 +148,8 @@ def fraction_kernel(
         values give more exact ratios; smaller values force simpler
         approximations. The legacy ``cross_frequency_rrci`` used 16 as well.
     beta : float, default=1.0
-        Tenney-height complexity penalty exponent. beta=0 gives W=1 everywhere
-        (no complexity penalty); beta=1 gives a moderate penalty matching
-        typical musicological assumptions.
+        Tenney-height complexity penalty exponent. beta=0 gives W=1 everywhere;
+        beta=1 matches typical musicological assumptions.
 
     Returns
     -------
@@ -144,10 +169,10 @@ def fraction_kernel(
             if fj[j] == 0:
                 continue
             frac = Fraction(float(fj[j] / fi[i])).limit_denominator(max_denom)
-            # Convention: n * f_i ≈ m * f_j, so n / m = f_j / f_i = frac.
-            # frac = numerator / denominator, so n = numerator, m = denominator.
-            n = frac.numerator
-            m = frac.denominator
+            # Convention: ratio = f_j / f_i = m / n (matches binary_nm_kernel).
+            # frac = numerator / denominator, so m = numerator, n = denominator.
+            m = frac.numerator
+            n = frac.denominator
             if n <= 0 or m <= 0:
                 continue
             N[i, j] = n
