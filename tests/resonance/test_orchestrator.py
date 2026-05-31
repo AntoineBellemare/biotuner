@@ -122,6 +122,115 @@ def test_alternative_combine_rule_geomean():
     sf = 1000
     sig = SIGNALS["harmonic_5_10_20_40"](sf=sf)
     result = compute_resonance(sig, sf=sf, config=cfg)
+    assert np.all(np.isfinite(result.resonance_spectrum))
+
+
+# ---------------------------------------------------------------------------
+# fraction_kernel — Fraction.limit_denominator-based ratio kernel
+# ---------------------------------------------------------------------------
+
+
+def test_fraction_kernel_returns_exact_simple_ratios():
+    """For pairs at exact simple ratios, fraction_kernel returns (n, m) = the
+    obvious reduced fraction."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([10.0, 20.0, 30.0, 15.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=16, beta=1.0)
+    # f_j / f_i convention: n*f_i ≈ m*f_j → n/m = f_j/f_i
+
+    # (10, 20): ratio = 2 → (n, m) = (2, 1)
+    assert (N[0, 1], M[0, 1]) == (2, 1)
+    # (10, 30): ratio = 3 → (3, 1)
+    assert (N[0, 2], M[0, 2]) == (3, 1)
+    # (10, 15): ratio = 1.5 → (3, 2)
+    assert (N[0, 3], M[0, 3]) == (3, 2)
+    # (20, 30): ratio = 1.5 → (3, 2)
+    assert (N[1, 2], M[1, 2]) == (3, 2)
+
+
+def test_fraction_kernel_returns_exact_complex_ratio():
+    """For non-simple pairs like 10:17, fraction_kernel returns the actual
+    integer ratio (n=17, m=10) when max_denom is large enough — unlike
+    binary_nm_kernel which only goes up to max_nm=3 and falls back to 1:1."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([10.0, 17.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=20, beta=1.0)
+    # 17/10 = 17/10 exactly
+    assert (N[0, 1], M[0, 1]) == (17, 10), (
+        f"Expected (17, 10), got ({N[0, 1]}, {M[0, 1]})"
+    )
+
+
+def test_fraction_kernel_simpler_approximation_with_low_max_denom():
+    """When max_denom is small, fraction_kernel returns the closest simpler
+    approximation. 17/10 ≈ 5/3 (closest with denom ≤ 5)."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([10.0, 17.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=5, beta=1.0)
+    # Closest rational to 1.7 with denom <= 5: 5/3 ≈ 1.667
+    assert (N[0, 1], M[0, 1]) == (5, 3), (
+        f"Expected (5, 3) (closest to 1.7 with denom <= 5), got ({N[0, 1]}, {M[0, 1]})"
+    )
+
+
+def test_fraction_kernel_weight_decreases_with_complexity():
+    """Tenney-height penalty: simpler ratios get higher weight than complex ones."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([10.0, 17.0, 20.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=20, beta=1.0)
+    # (10, 20): (2, 1), T=log2(2)=1 → W ≈ e^-1 ≈ 0.37
+    # (10, 17): (17, 10), T=log2(170)≈7.4 → W ≈ e^-7.4 ≈ 6e-4
+    w_simple = W[0, 2]   # 10:20 = 1:2
+    w_complex = W[0, 1]  # 10:17
+    assert w_simple > w_complex * 100, (
+        f"Simple ratio weight {w_simple:.4f} should be >> complex {w_complex:.4f}"
+    )
+
+
+def test_fraction_kernel_beta_zero_gives_uniform_weight():
+    """beta=0 disables the Tenney penalty — every found ratio gets W=1."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([10.0, 20.0, 17.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=20, beta=0.0)
+    # Off-diagonal entries should all be 1.0 (every freq pair finds a ratio)
+    off_diag = W[~np.eye(3, dtype=bool)]
+    np.testing.assert_allclose(off_diag, 1.0, atol=1e-12)
+
+
+def test_fraction_kernel_handles_zero_freqs():
+    """Zero frequencies produce W=0 (no division)."""
+    from biotuner.resonance.kernels_ratio import fraction_kernel
+
+    freqs = np.array([0.0, 10.0, 20.0])
+    W, N, M = fraction_kernel(freqs, freqs, max_denom=16)
+    # Row 0 and col 0 (involving the 0 Hz bin) should be zero
+    assert np.all(W[0, :] == 0)
+    assert np.all(W[:, 0] == 0)
+    # Other entries should be nonzero
+    assert W[1, 2] > 0
+
+
+def test_fraction_kernel_registered():
+    """fraction_kernel is discoverable via the registry."""
+    from biotuner.resonance.registry import RATIO_KERNELS
+    assert "fraction" in RATIO_KERNELS
+
+
+def test_orchestrator_works_with_fraction_kernel():
+    """End-to-end: compute_resonance with ratio_kernel='fraction' runs and
+    produces finite output."""
+    cfg_kwargs = legacy_default_resonance_config_kwargs()
+    cfg_kwargs["ratio_kernel"] = "fraction"
+    cfg_kwargs["ratio_kernel_params"] = {"max_denom": 16, "beta": 1.0}
+    cfg = ResonanceConfig(**cfg_kwargs)
+    sf = 1000
+    sig = SIGNALS["harmonic_5_10_20_40"](sf=sf)
+    result = compute_resonance(sig, sf=sf, config=cfg)
     assert result.resonance_spectrum.shape == result.factors["H"].shape
 
 
