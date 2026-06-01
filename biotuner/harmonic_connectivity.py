@@ -2165,7 +2165,21 @@ def compute_cross_resonance(
     # Refinement B: if cross_use_ratio_kernel, dispatch through the ratio kernel
     # (binary_nm or others) to determine (n, m) for each freq pair and compute
     # true n:m phase coupling instead of always 1:1.
+    #
+    # Metric-input dispatch (bug fix): registry tags each metric with 'phase'
+    # (real phase angles in [-π, π]) or 'analytic' (complex Zxx). Phase-input
+    # metrics applied to raw Zxx blow up numerically — they compute
+    # ``n·x - m·y`` which is bounded for real phases but unbounded for
+    # complex Zxx, especially with large (n, m) from the fraction kernel.
+    # Convert to phase angles when the metric expects them.
     metric_fn = PAIRWISE_COUPLING_METRICS[config.coupling_metric]
+    input_type = COUPLING_INPUT_TYPE.get(config.coupling_metric, "phase")
+    if input_type == "phase":
+        arg1_full = np.angle(Zxx1)
+        arg2_full = np.angle(Zxx2)
+    else:
+        arg1_full = Zxx1
+        arg2_full = Zxx2
     Phi = np.zeros((n_freqs, n_freqs), dtype=np.float64)
     if config.cross_use_ratio_kernel:
         ratio_fn = RATIO_KERNELS[config.ratio_kernel]
@@ -2174,12 +2188,12 @@ def compute_cross_resonance(
             for j in range(n_freqs):
                 if freqs[j] != 0 and W[i, j] > 0:
                     n, m = int(N_mat[i, j]), int(M_mat[i, j])
-                    Phi[i, j] = float(W[i, j]) * metric_fn(Zxx1[i], Zxx2[j], n, m)
+                    Phi[i, j] = float(W[i, j]) * metric_fn(arg1_full[i], arg2_full[j], n, m)
     else:
         for i in range(n_freqs):
             for j in range(n_freqs):
                 if freqs[j] != 0:
-                    Phi[i, j] = metric_fn(Zxx1[i], Zxx2[j], 1, 1)
+                    Phi[i, j] = metric_fn(arg1_full[i], arg2_full[j], 1, 1)
 
     # Reduce to 3-flavor H and PC. H always uses joint-probability weighting
     # (legacy behavior). PC reducer is configurable via config.cross_pc_reducer:

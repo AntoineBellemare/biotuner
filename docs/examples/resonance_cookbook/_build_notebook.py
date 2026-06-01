@@ -642,10 +642,38 @@ def uncoupled_control(seed=0):
     b = np.sin(2 * np.pi * 10 * t + np.cumsum(dphi)) + _noise(seed + 2)
     return a, b
 
+def selective_locking(seed=0):
+    \"\"\"Designed so H peaks WHERE PC DOES NOT — three PSD peaks, only one
+    actually phase-locked across channels.
+
+    Both channels share a 6+12 Hz phase-locked harmonic stack (so PC should
+    peak at 6 and 12). Channel B has an ADDITIONAL narrowband-noise component
+    centered at 24 Hz (a strong PSD peak, but its phase is independent of A
+    since it's driven by white noise). The 24 Hz peak is a 1:2 partner of 12
+    Hz in PSD space, so H gets a contribution there — but the phase coupling
+    is absent, so PC at 24 Hz is low.
+
+    Expected:  H peaks at 6, 12, AND 24
+               PC peaks at 6 and 12 only
+    \"\"\"
+    from scipy.signal import butter, filtfilt
+    t = SCENARIO_T; rng = np.random.default_rng(seed)
+    phi = 2 * np.pi * 6 * t
+    a = 1.2 * np.sin(phi) + 0.8 * np.sin(2 * phi + 0.3) + _noise(seed + 1)
+    b_locked = 1.2 * np.sin(phi + np.pi/6) + 0.8 * np.sin(2 * phi + 0.3 + np.pi/6)
+    # Narrowband noise centered at 24 Hz — strong PSD peak, random phase per window
+    w = rng.standard_normal(len(t))
+    nyq = SF / 2; bw_hz = 1.0
+    bcoef, acoef = butter(4, [(24 - bw_hz/2)/nyq, (24 + bw_hz/2)/nyq], btype='band')
+    noise_24 = filtfilt(bcoef, acoef, w); noise_24 /= noise_24.std()
+    b = b_locked + 2.5 * noise_24 + _noise(seed + 2)
+    return a, b
+
 SCENARIOS = {
     'lagged_alpha':       alpha_lagged(),
     'harmonic_stack':     harmonic_stack_xchan(),
     'theta_gamma_PAC':    theta_gamma_pac(),
+    'selective_locking':  selective_locking(),
     'uncoupled_control':  uncoupled_control(),
 }
 
@@ -673,7 +701,7 @@ for name, (a, b) in SCENARIOS.items():
 
 # Stacked H / PC / R panel comparison (symmetric 'all' flavor)
 fig, axes = plt.subplots(3, 1, figsize=(11, 7), sharex=True)
-colors = ['#1a237e', '#2e7d32', '#b71c1c', '#7d7d7d']
+colors = ['#1a237e', '#2e7d32', '#b71c1c', '#ef6c00', '#7d7d7d']
 for ax, (lbl, factor_key) in zip(axes, [
     ('H — harmonicity',      'H'),
     ('PC — phase coupling',  'PC'),
@@ -683,20 +711,29 @@ for ax, (lbl, factor_key) in zip(axes, [
         vals = r.resonance_spectrum['all'] if factor_key is None else r.factors[factor_key]['all']
         ax.plot(r.freqs, vals, label=name, color=color, lw=1.4)
     ax.set_ylabel(lbl)
-    ax.legend(loc='upper right', fontsize=8, ncols=2)
+    ax.legend(loc='upper right', fontsize=8, ncols=3)
 axes[-1].set_xlabel("Frequency (Hz)")
-axes[0].set_title("Cross-channel H / PC / R across coupling regimes — note 6/12 Hz peaks for the rich harmonic stack,\\n"
-                   "the 6 Hz dominance for theta-gamma PAC, and the suppressed uncoupled-control trace")
+axes[0].set_title("Cross-channel H / PC / R across coupling regimes — note for 'selective_locking', H peaks at 24 Hz\\n"
+                   "(narrowband-noise impostor with simple-ratio PSD partners) while PC does NOT")
 plt.tight_layout(); plt.show()
 
-# Numeric summary at key bins for the four cases
+# Numeric table: which frequencies dominate H vs PC vs R, per scenario?
 print()
-print(f"{'scenario':<22}  {'R_peak':>8}  {'R(6)':>8}  {'R(10)':>8}  {'R(40)':>8}")
-print("-" * 60)
+print(f"{'scenario':<22}  {'top H peak':>16}  {'top PC peak':>16}  {'top R peak':>16}")
+print("-" * 75)
 for name, r in results.items():
-    R_all = r.resonance_spectrum['all']
-    def at(f): return float(R_all[int(np.argmin(np.abs(r.freqs - f)))])
-    print(f"{name:<22}  {R_all.max():>8.4f}  {at(6):>8.4f}  {at(10):>8.4f}  {at(40):>8.4f}")
+    H = r.factors['H']['all']
+    PC = r.factors['PC']['all']
+    R = r.resonance_spectrum['all']
+    f_H  = r.freqs[int(np.argmax(H))]
+    f_PC = r.freqs[int(np.argmax(PC))]
+    f_R  = r.freqs[int(np.argmax(R))]
+    print(f"{name:<22}  {f'{f_H:.1f} Hz ({H.max():.3f})':>16}  "
+          f"{f'{f_PC:.1f} Hz ({PC.max():.3f})':>16}  "
+          f"{f'{f_R:.1f} Hz ({R.max():.3f})':>16}")
+print()
+print("For 'selective_locking', H's 24 Hz contribution from the narrowband-noise")
+print("impostor is visible — PC tells the truth: no actual coupling there.")
 """)
 
 md("""
@@ -710,41 +747,69 @@ coupling — it pays to inspect the matrices directly via `result.intermediates`
 """)
 
 code("""
-# Re-run on theta-gamma PAC, keeping intermediates
+# Re-run on theta-gamma PAC with the FRACTION ratio kernel.
+# This is important: the default 'binary' kernel with fallback_to_1_1=True
+# fills Phi[i,j] for EVERY frequency pair (testing 1:1 coupling at non-matching
+# pairs), which washes out the heatmap. The 'fraction' kernel returns the
+# exact (n, m) for the closest rational and weights via Tenney height — so
+# simple-ratio cells stand out cleanly against an exponentially suppressed
+# background of complex ratios.
 a, b = SCENARIOS['theta_gamma_PAC']
-cfg_keep = ResonanceConfig(precision_hz=0.5, fmin=2, fmax=50, noverlap=400,
-                            return_intermediates=True)
+cfg_keep = ResonanceConfig(
+    precision_hz=0.5, fmin=2, fmax=50, noverlap=400,
+    ratio_kernel='fraction',
+    ratio_kernel_params={'max_denom': 16, 'beta': 1.0},
+    coupling_metric='nm_plv_canonical',
+    return_intermediates=True,
+)
 r_pac = compute_cross_resonance(a, b, sf=SF, config=cfg_keep)
 inter = r_pac.intermediates
 print("intermediates keys:", list(inter.keys()))
-H_mat = inter['harmonicity_matrix']    # S[i, j], symmetric in freq pair
-PC_mat = inter['phase_coupling_matrix']  # Φ[i, j]
+H_mat  = inter['harmonicity_matrix']
+PC_mat = inter['phase_coupling_matrix']
 print(f"H matrix shape:  {H_mat.shape}")
 print(f"PC matrix shape: {PC_mat.shape}")
-print(f"Diagonal of H = harmsim(f, f) = max similarity (self-pair); off-diagonal = harmonic similarity at (i, j).")
 
-# Heatmap the two matrices side by side, masking the (subtracted) diagonal
 freqs = r_pac.freqs
 
-def _heatmap(ax, M, title, cmap='viridis'):
-    M_show = M.copy()
-    np.fill_diagonal(M_show, np.nan)   # mask self-pair (legacy subtracted)
+def _heatmap(ax, M, title, cmap='viridis', vmax=None, log=False):
+    M_show = M.copy().astype(float)
+    np.fill_diagonal(M_show, np.nan)                     # mask self-pair
+    if log:
+        # log scale for highly skewed Tenney-weighted matrix
+        with np.errstate(divide='ignore'):
+            M_show = np.log10(np.clip(M_show, 1e-6, None))
+        cb_label = 'log10 value'
+    else:
+        cb_label = 'value'
+    finite = M_show[np.isfinite(M_show)]
+    vmin = float(np.nanmin(finite)) if finite.size else 0.0
+    if vmax is None:
+        vmax = float(np.nanmax(finite)) if finite.size else 1.0
     im = ax.imshow(M_show, origin='lower', cmap=cmap, aspect='equal',
+                    vmin=vmin, vmax=vmax,
                     extent=[freqs[0], freqs[-1], freqs[0], freqs[-1]])
     ax.set_xlabel('channel-B frequency (Hz)')
     ax.set_ylabel('channel-A frequency (Hz)')
     ax.set_title(title)
-    plt.colorbar(im, ax=ax, fraction=0.046)
+    plt.colorbar(im, ax=ax, fraction=0.046, label=cb_label)
 
 fig, axes = plt.subplots(1, 2, figsize=(13, 5))
-_heatmap(axes[0], H_mat,  'H matrix S[i,j] (harmonic similarity)',  cmap='viridis')
-_heatmap(axes[1], PC_mat, 'PC matrix Φ[i,j] (phase coupling)',       cmap='plasma')
-fig.suptitle('Theta-gamma PAC: full cross-frequency H and PC matrices', fontsize=11)
+_heatmap(axes[0], H_mat,  'H matrix S[i, j] (harmonic similarity)',          cmap='viridis')
+_heatmap(axes[1], PC_mat, 'PC matrix Φ[i, j] (phase coupling, log scale)',   cmap='plasma', log=True)
+fig.suptitle('Theta-gamma PAC: cross-frequency H and PC matrices\\n'
+              '(with fraction ratio kernel — no 1:1 fallback to wash out the background)',
+              fontsize=11)
 plt.tight_layout(); plt.show()
 print()
-print("Off-diagonal hot pixels = cross-frequency interactions. For theta-gamma PAC,")
-print("look for elevated H at (6, 40) (1:7 not in harmsim's preferred range, so dim)")
-print("and elevated PC at (6, 12) where the shared 6 Hz drives a 1:2 phase lock.")
+print("Reading the H matrix: bright cells line up along simple-ratio bands radiating")
+print("from the diagonal (the 1:2 ridge, 1:3 ridge, etc.) — that's the harmonic")
+print("similarity grid. The diagonal is masked.")
+print()
+print("Reading the PC matrix (log10): the dominant hot spot is the (6 Hz, 12 Hz)")
+print("region where the shared theta drives a 1:2 phase lock. The vertical band")
+print("around 40 Hz on channel B shows cross-frequency phase coupling between")
+print("channel A's theta and channel B's gamma envelope — the theta-gamma PAC.")
 """)
 
 md("""
