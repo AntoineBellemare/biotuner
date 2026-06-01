@@ -587,38 +587,251 @@ The cross-channel analog of `compute_resonance`, for two signals. Returns a
 - `'all'` — symmetrized average
 
 The three flavors expose directional information that the symmetric average
+loses. We'll work through four progressively richer paired-channel cases.
+
+### 9a. Four paired-channel scenarios
+
+The same `compute_cross_resonance(sig1, sig2)` call applies to all of them —
+only the input changes.
+""")
+
+code("""
+# Build four paired-channel datasets covering different coupling regimes.
+SCENARIO_DUR = 12.0   # seconds
+SCENARIO_T   = np.arange(int(SF * SCENARIO_DUR)) / SF
+
+def _noise(seed, scale=0.2):
+    return scale * pink_noise(len(SCENARIO_T), SF, seed=seed)
+
+def alpha_lagged(seed=0):
+    \"\"\"Same 10 Hz in both channels, B lags A by pi/3. Simple lagged coupling.\"\"\"
+    t = SCENARIO_T
+    phi = 2 * np.pi * 10 * t
+    return np.sin(phi) + _noise(seed + 1), np.sin(phi + np.pi/3) + _noise(seed + 2)
+
+def harmonic_stack_xchan(seed=0):
+    \"\"\"6+12 Hz phase-locked harmonic stack in both channels, B offset by pi/8.
+    Rich harmonic coupling — H, PC, R all peak at both 6 and 12 Hz.\"\"\"
+    t = SCENARIO_T
+    phi = 2 * np.pi * 6 * t + 0.4
+    a = 1.2 * np.sin(phi) + 0.7 * np.sin(2 * phi + 0.3) + _noise(seed + 1)
+    b = 1.2 * np.sin(phi + np.pi/8) + 0.7 * np.sin(2 * phi + 0.3 + np.pi/8) + _noise(seed + 2)
+    return a, b
+
+def theta_gamma_pac(seed=0):
+    \"\"\"Theta-gamma cross-frequency coupling.
+    A: clean 6 Hz theta.
+    B: 6 Hz theta + 40 Hz gamma amplitude-modulated by the theta phase
+       (gamma is loudest at theta peaks). The two share a base frequency,
+       but B carries an additional cross-frequency 6:40 amplitude lock.\"\"\"
+    t = SCENARIO_T
+    rng = np.random.default_rng(seed)
+    theta = np.sin(2 * np.pi * 6 * t + 0.3)
+    a = theta + _noise(seed + 1)
+    # gamma envelope follows theta amplitude (peaks at theta peaks)
+    gamma_env = 0.5 * (1 + np.cos(2 * np.pi * 6 * t + 0.3))   # 0..1, locked to theta
+    gamma = gamma_env * np.sin(2 * np.pi * 40 * t + rng.uniform(0, 2*np.pi))
+    b = 0.7 * theta + 1.0 * gamma + _noise(seed + 2)
+    return a, b
+
+def uncoupled_control(seed=0):
+    \"\"\"Independent 10 Hz oscillators with random-walk phase drift in B.\"\"\"
+    t = SCENARIO_T; rng = np.random.default_rng(seed)
+    a = np.sin(2 * np.pi * 10 * t) + _noise(seed + 1)
+    dphi = rng.standard_normal(len(t)) * 1.0 * np.sqrt(1.0/SF)
+    b = np.sin(2 * np.pi * 10 * t + np.cumsum(dphi)) + _noise(seed + 2)
+    return a, b
+
+SCENARIOS = {
+    'lagged_alpha':       alpha_lagged(),
+    'harmonic_stack':     harmonic_stack_xchan(),
+    'theta_gamma_PAC':    theta_gamma_pac(),
+    'uncoupled_control':  uncoupled_control(),
+}
+
+# Plot waveforms (first 2 sec) for each pair
+fig, axes = plt.subplots(len(SCENARIOS), 1, figsize=(11, 7), sharex=True)
+t_show = SCENARIO_T[:int(SF * 2)]
+for ax, (name, (a, b)) in zip(axes, SCENARIOS.items()):
+    ax.plot(t_show, a[:len(t_show)], color='#1a237e', lw=0.8, label='channel A')
+    ax.plot(t_show, b[:len(t_show)] - 4, color='#b71c1c', lw=0.8, label='channel B (offset)')
+    ax.set_ylabel(name, fontsize=9)
+    ax.set_yticks([]); ax.legend(loc='upper right', fontsize=8)
+axes[-1].set_xlabel("Time (s)")
+axes[0].set_title("Four paired-channel scenarios (first 2 sec shown)")
+plt.tight_layout(); plt.show()
+""")
+
+md("### 9b. Cross-resonance R(f) compared across all four scenarios")
+
+code("""
+cfg_xc = ResonanceConfig(precision_hz=0.5, fmin=2, fmax=50, noverlap=400)
+
+results = {}
+for name, (a, b) in SCENARIOS.items():
+    results[name] = compute_cross_resonance(a, b, sf=SF, config=cfg_xc)
+
+# Stacked H / PC / R panel comparison (symmetric 'all' flavor)
+fig, axes = plt.subplots(3, 1, figsize=(11, 7), sharex=True)
+colors = ['#1a237e', '#2e7d32', '#b71c1c', '#7d7d7d']
+for ax, (lbl, factor_key) in zip(axes, [
+    ('H — harmonicity',      'H'),
+    ('PC — phase coupling',  'PC'),
+    ('R = H · PC',           None),  # None means resonance_spectrum
+]):
+    for (name, r), color in zip(results.items(), colors):
+        vals = r.resonance_spectrum['all'] if factor_key is None else r.factors[factor_key]['all']
+        ax.plot(r.freqs, vals, label=name, color=color, lw=1.4)
+    ax.set_ylabel(lbl)
+    ax.legend(loc='upper right', fontsize=8, ncols=2)
+axes[-1].set_xlabel("Frequency (Hz)")
+axes[0].set_title("Cross-channel H / PC / R across coupling regimes — note 6/12 Hz peaks for the rich harmonic stack,\\n"
+                   "the 6 Hz dominance for theta-gamma PAC, and the suppressed uncoupled-control trace")
+plt.tight_layout(); plt.show()
+
+# Numeric summary at key bins for the four cases
+print()
+print(f"{'scenario':<22}  {'R_peak':>8}  {'R(6)':>8}  {'R(10)':>8}  {'R(40)':>8}")
+print("-" * 60)
+for name, r in results.items():
+    R_all = r.resonance_spectrum['all']
+    def at(f): return float(R_all[int(np.argmin(np.abs(r.freqs - f)))])
+    print(f"{name:<22}  {R_all.max():>8.4f}  {at(6):>8.4f}  {at(10):>8.4f}  {at(40):>8.4f}")
+""")
+
+md("""
+### 9c. Cross-resonance MATRICES — what the spectra throw away
+
+The H(f) and PC(f) spectra are reductions of the full **N × N cross-frequency
+matrices**, where entry `[i, j]` = (similarity / phase coupling) between
+channel-1 frequency bin `i` and channel-2 frequency bin `j`. The spectra
+collapse columns away. For diagnostics — and especially for cross-frequency
+coupling — it pays to inspect the matrices directly via `result.intermediates`.
+""")
+
+code("""
+# Re-run on theta-gamma PAC, keeping intermediates
+a, b = SCENARIOS['theta_gamma_PAC']
+cfg_keep = ResonanceConfig(precision_hz=0.5, fmin=2, fmax=50, noverlap=400,
+                            return_intermediates=True)
+r_pac = compute_cross_resonance(a, b, sf=SF, config=cfg_keep)
+inter = r_pac.intermediates
+print("intermediates keys:", list(inter.keys()))
+H_mat = inter['harmonicity_matrix']    # S[i, j], symmetric in freq pair
+PC_mat = inter['phase_coupling_matrix']  # Φ[i, j]
+print(f"H matrix shape:  {H_mat.shape}")
+print(f"PC matrix shape: {PC_mat.shape}")
+print(f"Diagonal of H = harmsim(f, f) = max similarity (self-pair); off-diagonal = harmonic similarity at (i, j).")
+
+# Heatmap the two matrices side by side, masking the (subtracted) diagonal
+freqs = r_pac.freqs
+
+def _heatmap(ax, M, title, cmap='viridis'):
+    M_show = M.copy()
+    np.fill_diagonal(M_show, np.nan)   # mask self-pair (legacy subtracted)
+    im = ax.imshow(M_show, origin='lower', cmap=cmap, aspect='equal',
+                    extent=[freqs[0], freqs[-1], freqs[0], freqs[-1]])
+    ax.set_xlabel('channel-B frequency (Hz)')
+    ax.set_ylabel('channel-A frequency (Hz)')
+    ax.set_title(title)
+    plt.colorbar(im, ax=ax, fraction=0.046)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+_heatmap(axes[0], H_mat,  'H matrix S[i,j] (harmonic similarity)',  cmap='viridis')
+_heatmap(axes[1], PC_mat, 'PC matrix Φ[i,j] (phase coupling)',       cmap='plasma')
+fig.suptitle('Theta-gamma PAC: full cross-frequency H and PC matrices', fontsize=11)
+plt.tight_layout(); plt.show()
+print()
+print("Off-diagonal hot pixels = cross-frequency interactions. For theta-gamma PAC,")
+print("look for elevated H at (6, 40) (1:7 not in harmsim's preferred range, so dim)")
+print("and elevated PC at (6, 12) where the shared 6 Hz drives a 1:2 phase lock.")
+""")
+
+md("""
+### 9d. Directional flavors — `1to2` vs `2to1` vs `all`
+
+For an **asymmetric** coupling like theta-gamma PAC (channel B carries an
+extra cross-frequency lock that channel A does not), the three reducer
+flavors expose directional information that the symmetric `'all'` average
 loses.
 """)
 
 code("""
-# Two coupled alpha signals (signal2 = signal1 shifted by π/4)
-t = np.arange(int(SF * 8)) / SF
-sig1 = np.sin(2 * np.pi * 10 * t) + 0.25 * pink_noise(len(t), SF, seed=1)
-sig2 = np.sin(2 * np.pi * 10 * t + np.pi/4) + 0.25 * pink_noise(len(t), SF, seed=2)
+# Same theta-gamma PAC result
+fig, axes = plt.subplots(3, 1, figsize=(11, 7), sharex=True)
+for ax, (lbl, factor) in zip(axes, [
+    ('H', 'H'), ('PC', 'PC'), ('R', None),
+]):
+    for flavor, ls, color in [('all', '-', '#37474f'),
+                                ('1to2', '--', '#1a237e'),
+                                ('2to1', ':',  '#b71c1c')]:
+        vals = (r_pac.resonance_spectrum[flavor] if factor is None
+                else r_pac.factors[factor][flavor])
+        ax.plot(r_pac.freqs, vals, ls=ls, color=color, lw=1.4, label=flavor)
+    ax.set_ylabel(lbl)
+    ax.legend(loc='upper right', fontsize=9)
+axes[-1].set_xlabel("Frequency (Hz)")
+axes[0].set_title("Theta-gamma PAC: directional flavors of cross-resonance\\n"
+                   "1to2 weights channel A's PSD at f; 2to1 weights channel B's. "
+                   "Their difference reveals which side drives which band.")
+plt.tight_layout(); plt.show()
 
-cross = compute_cross_resonance(sig1, sig2, sf=SF)
+# Directional asymmetry index at key frequencies
+print()
+print("Directional asymmetry index (1to2 - 2to1) / (1to2 + 2to1):")
+for f0 in [6, 12, 40]:
+    i = int(np.argmin(np.abs(r_pac.freqs - f0)))
+    a12 = r_pac.resonance_spectrum['1to2'][i]
+    a21 = r_pac.resonance_spectrum['2to1'][i]
+    denom = a12 + a21
+    asym = (a12 - a21) / denom if denom > 0 else 0.0
+    print(f"  {f0:>3} Hz   1to2={a12:.4f}  2to1={a21:.4f}  asymmetry={asym:+.3f}")
+""")
 
-print("Flavors:", list(cross.resonance_spectrum.keys()))
-print("Factors:", list(cross.factors.keys()))
-print(f"R peak (all flavor): {cross.resonance_spectrum['all'].max():.4f}")
-print(f"PC peak (all flavor): {cross.factors['PC']['all'].max():.4f}")
+md("""
+### 9e. Surrogate-normalized cross-resonance
+
+The same surrogate-normalization story as Section 8, applied to cross-channel
+data. Here, we use `compute_cross_resonance_connectivity_zscore` from the
+multi-channel API but on a 2-row matrix to make the comparison explicit:
+how much of the observed coupling survives a null that preserves each
+channel's PSD but destroys their cross-channel phase relation?
 """)
 
 code("""
-freqs = cross.freqs
-fig, axes = plt.subplots(3, 1, figsize=(10, 7), sharex=True)
-for ax, (name, color) in zip(axes, [
-    ('H', '#1a237e'), ('PC', '#6a1b9a'), ('R', '#b71c1c'),
-]):
-    for flavor, ls in zip(['all', '1to2', '2to1'], ['-', '--', ':']):
-        if name == 'R':
-            vals = cross.resonance_spectrum[flavor]
-        else:
-            vals = cross.factors[name][flavor]
-        ax.plot(freqs, vals, color=color, ls=ls, label=f"{flavor}")
-    ax.set_ylabel(name); ax.legend(loc='upper right', fontsize=8)
-axes[-1].set_xlabel("Frequency (Hz)")
-plt.tight_layout(); plt.show()
+# Use the harmonic-stack scenario (cleanest signal-vs-noise)
+a, b = SCENARIOS['harmonic_stack']
+data_2ch = np.stack([a, b])
+
+hc2 = harmonic_connectivity(
+    sf=SF, data=data_2ch, peaks_function='FOOOF',
+    precision=0.5, n_harm=5, min_freq=2, max_freq=30, n_peaks=4,
+)
+
+obs, z, p = hc2.compute_cross_resonance_connectivity_zscore(
+    config=cfg_xc, factor='R', flavor='all', aggregate='peak_to_median',
+    surrogate_kind='iaaft', n_surrogates=20, rng_seed=42, graph=False,
+)
+print(f"Observed R aggregate (off-diagonal): {obs[0,1]:.4f}")
+print(f"z-score vs IAAFT null:               {z[0,1]:.2f}")
+print(f"Empirical p-value:                   {p[0,1]:.4f}")
+print()
+
+# Compare against uncoupled control
+a, b = SCENARIOS['uncoupled_control']
+data_2ch_uc = np.stack([a, b])
+hc2_uc = harmonic_connectivity(
+    sf=SF, data=data_2ch_uc, peaks_function='FOOOF',
+    precision=0.5, n_harm=5, min_freq=2, max_freq=30, n_peaks=4,
+)
+obs2, z2, p2 = hc2_uc.compute_cross_resonance_connectivity_zscore(
+    config=cfg_xc, factor='R', flavor='all', aggregate='peak_to_median',
+    surrogate_kind='iaaft', n_surrogates=20, rng_seed=42, graph=False,
+)
+print("Same metric on uncoupled control:")
+print(f"  Observed: {obs2[0,1]:.4f}   z: {z2[0,1]:.2f}   p: {p2[0,1]:.4f}")
+print()
+print("z-score discriminates real coupling from same-PSD chance.")
 """)
 
 # ---------------------------------------------------------------------------
