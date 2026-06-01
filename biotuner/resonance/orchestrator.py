@@ -147,7 +147,32 @@ class HigherOrderResult:
 
 @dataclass
 class ResonanceResult:
-    """Plan §4.3. Output of :func:`compute_resonance`."""
+    """Plan §4.3. Output of :func:`compute_resonance`.
+
+    Quick reference for getting different views of the analysis:
+
+    - **Reduced 1-D spectra** (length ``n_freqs``)
+        ``result.factors["H"]`` — harmonicity spectrum
+        ``result.factors["PC"]`` — phase coupling spectrum
+        ``result.resonance_spectrum`` — R = combine(H, PC)
+    - **Full 2-D matrices** (shape ``n_freqs × n_freqs``)
+        ``result.harmonicity_matrix`` — S[i, j] harmonic similarity
+        ``result.phase_coupling_matrix`` — Φ[i, j] phase coupling
+        These need ``config.return_intermediates=True`` — the matrix
+        properties raise a clear error otherwise.
+    - **Scalar metrics per spectrum**
+        ``result.summaries["H" | "PC" | "R"]`` → dict with ``avg``, ``max``,
+        ``peaks``, ``peaks_avg``, ``flatness``, ``entropy``, ``spread``,
+        ``higuchi``, ``peak_harmsim``, ``peak_harmsim_avg``,
+        ``peak_harmsim_max``. Match the legacy
+        ``compute_global_harmonicity`` columns one-to-one.
+    - **Peak frequencies per spectrum**
+        ``result.peaks["H" | "PC" | "R"]`` → ndarray of peak frequencies
+        (the same array that lives at ``summaries[...]["peaks"]``).
+
+    For a flat pandas DataFrame of multiple results, see
+    :func:`biotuner.resonance.results_to_dataframe`.
+    """
 
     freqs: np.ndarray
     resonance_spectrum: np.ndarray
@@ -161,6 +186,39 @@ class ResonanceResult:
     higher_order: Optional[HigherOrderResult] = None
     participation_spectrum: Optional[np.ndarray] = None
     intermediates: Optional[Dict[str, Any]] = None
+
+    def _get_matrix(self, key: str, label: str) -> np.ndarray:
+        if self.intermediates is None or key not in self.intermediates:
+            raise AttributeError(
+                f"{label} matrix not available — re-run compute_resonance with "
+                f"ResonanceConfig(return_intermediates=True) to populate "
+                f"result.intermediates['{key}']."
+            )
+        return self.intermediates[key]
+
+    @property
+    def harmonicity_matrix(self) -> np.ndarray:
+        """The N×N harmonic-similarity matrix ``S[i, j]``.
+
+        Requires ``ResonanceConfig(return_intermediates=True)``.
+        Off-diagonal cells encode harmonic similarity between frequency bins
+        ``i`` and ``j`` (high where the ratio is musically simple). Row-summing
+        ``S * p[j]`` and scaling by ``p[i]`` gives the reduced
+        ``factors["H"]`` spectrum.
+        """
+        return self._get_matrix("harmonicity_matrix", "Harmonicity")
+
+    @property
+    def phase_coupling_matrix(self) -> np.ndarray:
+        """The N×N phase-coupling matrix ``Φ[i, j]``.
+
+        Requires ``ResonanceConfig(return_intermediates=True)``.
+        Each cell is ``W[i, j] · metric(phase_i, phase_j, n, m)`` where
+        ``(n, m)`` comes from the ratio kernel and ``metric`` from the
+        coupling metric. Row-summing gives the reduced ``factors["PC"]``
+        spectrum.
+        """
+        return self._get_matrix("phase_coupling_matrix", "Phase-coupling")
 
 
 # ---------------------------------------------------------------------------

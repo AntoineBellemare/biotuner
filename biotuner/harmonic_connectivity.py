@@ -2006,6 +2006,34 @@ class CrossResonanceResult:
     config: Optional[ResonanceConfig] = None
     intermediates: Optional[Dict[str, Any]] = None
 
+    def _get_matrix(self, key: str, label: str) -> np.ndarray:
+        if self.intermediates is None or key not in self.intermediates:
+            raise AttributeError(
+                f"{label} matrix not available — re-run compute_cross_resonance with "
+                f"ResonanceConfig(return_intermediates=True) to populate "
+                f"result.intermediates['{key}']."
+            )
+        return self.intermediates[key]
+
+    @property
+    def harmonicity_matrix(self) -> np.ndarray:
+        """The N×N cross-channel harmonic-similarity matrix ``S[i, j]``.
+
+        Symmetric in (i, j). Requires ``ResonanceConfig(return_intermediates=True)``.
+        """
+        return self._get_matrix("harmonicity_matrix", "Harmonicity")
+
+    @property
+    def phase_coupling_matrix(self) -> np.ndarray:
+        """The N×N cross-channel phase-coupling matrix ``Φ[i, j]``.
+
+        Each cell is ``W[i, j] · metric(channel-1 at i, channel-2 at j, n, m)``.
+        NOT symmetric — ``Φ[i, j]`` and ``Φ[j, i]`` correspond to different
+        directional weightings. Requires
+        ``ResonanceConfig(return_intermediates=True)``.
+        """
+        return self._get_matrix("phase_coupling_matrix", "Phase-coupling")
+
 
 def _cross_reduce_3flavors(
     matrix: np.ndarray,

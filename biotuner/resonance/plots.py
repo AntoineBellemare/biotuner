@@ -22,22 +22,56 @@ import seaborn as sns
 from scipy.stats import pearsonr, chi2, ttest_ind
 
 
-def results_to_dataframe(results):
-    """Convert a list of ResonanceResult into the legacy DataFrame format.
+def results_to_dataframe(results, *, flatten_summaries: bool = True):
+    """Convert a list of ResonanceResult into a wide DataFrame.
 
-    Each result becomes one row with columns 'harmonicity', 'phase_coupling',
-    'resonance', and 'trial' (0-indexed).
+    By default, expands ``result.summaries`` into one column per
+    ``{spectrum}_{metric}`` pair so the returned frame matches the
+    pre-refactor ``compute_global_harmonicity`` column layout.
+
+    Columns always present (one row per result)::
+
+        trial              — 0-indexed
+        freqs              — 1-D ndarray, the frequency grid
+        harmonicity        — 1-D ndarray, the H(f) spectrum
+        phase_coupling     — 1-D ndarray, the PC(f) spectrum
+        resonance          — 1-D ndarray, the R(f) spectrum
+
+    Additional columns when ``flatten_summaries=True`` (default) — for each
+    spectrum ``s ∈ {'harm', 'phase', 'res'}`` and each metric exposed by
+    ``ResonanceResult.summaries``::
+
+        {s}_avg                {s}_max               {s}_peaks
+        {s}_peak_indices       {s}_peaks_avg         {s}_flatness
+        {s}_entropy            {s}_spread            {s}_higuchi
+        {s}_peak_harmsim       {s}_peak_harmsim_avg  {s}_peak_harmsim_max
+
+    The ``s`` prefix follows the legacy DataFrame convention (``harm_*``,
+    ``phase_*``, ``res_*``) rather than the result's internal keys
+    (``H``, ``PC``, ``R``).
+
+    Parameters
+    ----------
+    results : list of ResonanceResult
+    flatten_summaries : bool, default=True
+        If False, return only the bare 5 columns (back-compat).
     """
+    KEY_TO_PREFIX = {"H": "harm", "PC": "phase", "R": "res"}
     rows = []
     for i, r in enumerate(results):
-        rows.append(
-            {
-                "trial": i,
-                "harmonicity": r.factors["H"],
-                "phase_coupling": r.factors["PC"],
-                "resonance": r.resonance_spectrum,
-            }
-        )
+        row = {
+            "trial": i,
+            "freqs": r.freqs,
+            "harmonicity": r.factors["H"],
+            "phase_coupling": r.factors["PC"],
+            "resonance": r.resonance_spectrum,
+        }
+        if flatten_summaries:
+            for key, prefix in KEY_TO_PREFIX.items():
+                summary = r.summaries.get(key, {})
+                for metric, value in summary.items():
+                    row[f"{prefix}_{metric}"] = value
+        rows.append(row)
     return pd.DataFrame(rows)
 
 

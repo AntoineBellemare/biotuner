@@ -248,6 +248,34 @@ for k, s in result.summaries.items():
 """)
 
 code("""
+# Getting different views of the result — the public API
+print("Reduced 1-D spectra (length n_freqs):")
+print(f"  result.factors['H'].shape          = {result.factors['H'].shape}")
+print(f"  result.factors['PC'].shape         = {result.factors['PC'].shape}")
+print(f"  result.resonance_spectrum.shape    = {result.resonance_spectrum.shape}")
+print()
+print("Per-spectrum scalar metrics (legacy compute_global_harmonicity columns):")
+for k in ['H', 'PC', 'R']:
+    s = result.summaries[k]
+    print(f"  result.summaries[{k!r}]: avg={s['avg']:.3g}  max={s['max']:.3g}  "
+          f"flatness={s['flatness']:.3f}  entropy={s['entropy']:.3f}  "
+          f"spread={s['spread']:.3f}  peaks_avg={s['peaks_avg']:.2f}")
+print()
+print("Peak frequencies per spectrum:")
+for k in ['H', 'PC', 'R']:
+    print(f"  result.peaks[{k!r}] = {result.peaks[k]}")
+print()
+print("To get a flat pandas DataFrame across multiple results (legacy layout):")
+print("  from biotuner.resonance import results_to_dataframe")
+print("  df = results_to_dataframe([result, ...])   # 41 columns")
+print()
+print("Full N x N matrices (need return_intermediates=True on the config):")
+print(f"  result.harmonicity_matrix   - raises AttributeError when not opted in,")
+print(f"                                else (n_freqs, n_freqs) S[i, j]")
+print(f"  result.phase_coupling_matrix - same, Phi[i, j]")
+""")
+
+code("""
 freqs = result.freqs
 H = result.factors['H']; PC = result.factors['PC']; R = result.resonance_spectrum
 
@@ -763,10 +791,10 @@ cfg_keep = ResonanceConfig(
     return_intermediates=True,
 )
 r_pac = compute_cross_resonance(a, b, sf=SF, config=cfg_keep)
-inter = r_pac.intermediates
-print("intermediates keys:", list(inter.keys()))
-H_mat  = inter['harmonicity_matrix']
-PC_mat = inter['phase_coupling_matrix']
+# With return_intermediates=True, the N×N matrices are accessible as typed
+# properties on the result — no dictionary fishing required.
+H_mat  = r_pac.harmonicity_matrix
+PC_mat = r_pac.phase_coupling_matrix
 print(f"H matrix shape:  {H_mat.shape}")
 print(f"PC matrix shape: {PC_mat.shape}")
 
