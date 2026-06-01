@@ -1,0 +1,1347 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.media.wave_field.interference &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/media/wave_field/interference';</script>
+    <link rel="icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.media.wave_field.interference</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Open-medium wave interference patterns from harmonic inputs.</span>
+
+<span class="sd">Belongs to the ``wave_field`` family of :mod:`biotuner.harmonic_geometry.media`:</span>
+<span class="sd">the operator here is a coherent superposition of travelling / standing</span>
+<span class="sd">plane waves in free space, with no boundary eigenproblem. Five rendering</span>
+<span class="sd">paradigms are exposed as functions; the class wrapper :class:`Interference`</span>
+<span class="sd">plugs into the pipeline contract defined in</span>
+<span class="sd">:mod:`biotuner.harmonic_geometry.media.base`.</span>
+
+<span class="sd">This module is the *unbounded-wave* sibling of :mod:`.chladni` and</span>
+<span class="sd">:mod:`.spherical_harmonics`. Where those produce eigenmodes confined by</span>
+<span class="sd">a boundary (plate, sphere), the functions here produce</span>
+<span class="sd">**travelling-wave coherent superpositions in free space**, each</span>
+<span class="sd">generating its own family of emergent 2-D interference complexity.</span>
+
+<span class="sd">What&#39;s here</span>
+<span class="sd">-----------</span>
+<span class="sd">Five rendering paradigms, each producing a qualitatively different</span>
+<span class="sd">emergent symmetry from the same chord:</span>
+
+<span class="sd">- :func:`harmonic_interference_field_2d` — **radial / soft rotational**.</span>
+<span class="sd">  Chord components projected onto many plane-wave directions and</span>
+<span class="sd">  averaged. Concentric ring + radial spoke patterns.</span>
+<span class="sd">- :func:`quasicrystal_field_2d` — **discrete N-fold quasi-periodic**.</span>
+<span class="sd">  Each chord component is a sum of N plane waves at evenly spaced</span>
+<span class="sd">  angles (no averaging). For non-crystallographic N (5, 7, 11, 13) the</span>
+<span class="sd">  result is a true quasi-crystal: exact N-fold symmetry, never repeats.</span>
+<span class="sd">- :func:`standing_wave_lattice_2d` — **Cartesian 2-D lattice**. The</span>
+<span class="sd">  chord&#39;s outer-product ``(r_i, r_j)`` paints an `N²`-mode 2-D Fourier</span>
+<span class="sd">  lattice. Square-lattice symmetric, intermodulation cross-peaks.</span>
+<span class="sd">- :func:`vortex_field_2d` — **spiral / topological**. Each chord</span>
+<span class="sd">  component is a vortex mode with topological charge derived from the</span>
+<span class="sd">  ratio. Sum produces interleaved spiral arms with phase singularities.</span>
+<span class="sd">- :func:`interference_field_2d` — **N-source Young&#39;s-style fringes**.</span>
+<span class="sd">  Idealised free-space superposition from emitters at fixed positions.</span>
+
+<span class="sd">Composability with peaks_extension</span>
+<span class="sd">----------------------------------</span>
+<span class="sd">Every function here takes a :class:`HarmonicInput`. To enrich a chord</span>
+<span class="sd">*before* rendering, pass it through one of the helpers in</span>
+<span class="sd">:mod:`.extensions` first::</span>
+
+<span class="sd">    chord = HarmonicInput(ratios=[1, 5/4, 3/2])</span>
+<span class="sd">    rich  = extend_harmonics(chord, n_harmonics=8)</span>
+<span class="sd">    field = harmonic_interference_field_2d(rich)</span>
+
+<span class="sd">Each renderer scales its visual richness with component count.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_genlaguerre</span><span class="p">,</span> <span class="n">jv</span> <span class="k">as</span> <span class="n">bessel_jv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span> <span class="k">as</span> <span class="n">_Medium</span>
+
+
+<span class="c1"># ============================================================ shared helpers</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_amps_phases</span><span class="p">(</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">amps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+    <span class="n">phases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve per-component amplitudes / phases with the module&#39;s defaults.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">amps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">amps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;amps has length </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> components were given.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;phases has length </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> components were given.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">p</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_input_components</span><span class="p">(</span>
+    <span class="n">inp</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract (ratios, amplitudes, phases) from a HarmonicInput.&quot;&quot;&quot;</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+        <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+    <span class="p">)</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span>
+
+
+<span class="n">_VALID_OUTPUTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span> <span class="s2">&quot;amplitude&quot;</span><span class="p">,</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span> <span class="s2">&quot;real&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_output_transform</span><span class="p">(</span>
+    <span class="n">field_complex</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a complex field to the requested real output.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;intensity&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">field_complex</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;amplitude&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">field_complex</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">field_complex</span><span class="p">)</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">field_complex</span><span class="o">.</span><span class="n">real</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;output must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_VALID_OUTPUTS</span><span class="p">)</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">output</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">extent</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;extent must be &gt; 0, got </span><span class="si">{</span><span class="n">extent</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resolution</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution must be &gt;= 4, got </span><span class="si">{</span><span class="n">resolution</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>
+
+
+<span class="c1"># ====================================== 1. flagship: harmonic interference 2D</span>
+
+
+<div class="viewcode-block" id="harmonic_interference_field_2d">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonic_interference_field_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_interference_field_2d</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">n_directions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">24</span><span class="p">,</span>
+    <span class="n">base_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rich 2-D interference field with soft rotational symmetry.</span>
+
+<span class="sd">    For each chord component ``i``, project ``n_directions`` coherent</span>
+<span class="sd">    plane waves at evenly-spaced angles around the unit circle, then</span>
+<span class="sd">    sum the complex field everywhere. Amplitudes are divided by</span>
+<span class="sd">    ``n_directions`` to *average* the projections — the result has</span>
+<span class="sd">    approximate continuous rotational symmetry (concentric rings),</span>
+<span class="sd">    overlaid with a discrete N-fold lattice from the finite direction</span>
+<span class="sd">    count.</span>
+
+<span class="sd">    Mathematical form</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        Ψ(x, y) = Σ_i  (a_i / N_dir) · Σ_θ  exp(i · k_i · (x·cos θ + y·sin θ)  +  i · φ_i)</span>
+
+<span class="sd">    Where ``k_i = 2π · r_i / L`` and ``θ`` ranges over ``N_dir`` angles</span>
+<span class="sd">    in ``[0, 2π)``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    n_directions : int, default=24</span>
+<span class="sd">        Plane-wave directions per component. Larger values approach</span>
+<span class="sd">        full rotational symmetry.</span>
+<span class="sd">    base_period : float, default=1.0</span>
+<span class="sd">    extent : float, default=1.5</span>
+<span class="sd">    resolution : int, default=384</span>
+<span class="sd">    output : {&#39;amplitude_pow&#39;, &#39;amplitude&#39;, &#39;intensity&#39;, &#39;real&#39;}</span>
+<span class="sd">    power : float, default=0.5</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;field_2d&#39;``, ``metadata.kind=&#39;harmonic_interference_field_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_period</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base_period must be &gt; 0, got </span><span class="si">{</span><span class="n">base_period</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_directions</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_directions must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_directions</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">_input_components</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">n_directions</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cos_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">sin_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">inv_L</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">base_period</span>
+    <span class="k">for</span> <span class="n">r_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">):</span>
+        <span class="n">k_i</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r_i</span> <span class="o">*</span> <span class="n">inv_L</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cos_t</span><span class="p">,</span> <span class="n">sin_t</span><span class="p">):</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="o">+</span> <span class="p">(</span><span class="n">a_i</span> <span class="o">/</span> <span class="n">n_directions</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_i</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="n">phi_i</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_directions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_directions</span><span class="p">),</span>
+            <span class="s2">&quot;base_period&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_period</span><span class="p">),</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span>
+            <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">),</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="n">ratios</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;harmonic_interference_field_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="s2">&quot;soft_rotational&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># =================================================== 2. quasicrystal field 2D</span>
+
+
+<div class="viewcode-block" id="quasicrystal_field_2d">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.quasicrystal_field_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">quasicrystal_field_2d</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">n_fold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">base_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">direction_phase_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Quasi-crystal field with exact discrete N-fold symmetry.</span>
+
+<span class="sd">    Same idea as :func:`harmonic_interference_field_2d` but the</span>
+<span class="sd">    plane-wave projections are kept *separate* (no averaging) and ``N``</span>
+<span class="sd">    is small. For non-crystallographic ``n_fold`` (5, 7, 11, 13) the</span>
+<span class="sd">    pattern is a *quasi-crystal*: exact ``n_fold``-rotational symmetry,</span>
+<span class="sd">    no translational period — a 2-D analogue of Penrose tilings.</span>
+
+<span class="sd">    Mathematical form</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        Ψ(x, y) = Σ_i Σ_{k=0..n_fold-1}  a_i · exp(i · k_i · (x·cos α_k + y·sin α_k)  +  i · ψ_{i,k})</span>
+
+<span class="sd">    where ``α_k = 2π·k/n_fold`` and ``ψ_{i,k} = φ_i + k · ε``</span>
+<span class="sd">    (per-direction phase step ``ε`` defaults to 0).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    n_fold : int, default=5</span>
+<span class="sd">        Number of plane-wave directions per chord component. Choose</span>
+<span class="sd">        non-crystallographic values (5, 7, 11, 13) for a true</span>
+<span class="sd">        quasi-crystal; crystallographic values (3, 4, 6) yield ordinary</span>
+<span class="sd">        periodic lattices.</span>
+<span class="sd">    base_period : float, default=1.0</span>
+<span class="sd">    extent : float, default=1.5</span>
+<span class="sd">    resolution : int, default=384</span>
+<span class="sd">    output : {&#39;amplitude_pow&#39;, &#39;amplitude&#39;, &#39;intensity&#39;, &#39;real&#39;}</span>
+<span class="sd">    power : float, default=0.5</span>
+<span class="sd">    direction_phase_step : float, default=0.0</span>
+<span class="sd">        Optional phase advance ``ε`` applied per direction. Setting</span>
+<span class="sd">        ``ε = 2π/n_fold`` makes each direction&#39;s contribution</span>
+<span class="sd">        chirally rotated, producing pinwheel-type quasicrystals.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``metadata.kind=&#39;quasicrystal_field_2d&#39;``, ``symmetry=&#39;discrete_nfold&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_period</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base_period must be &gt; 0, got </span><span class="si">{</span><span class="n">base_period</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_fold</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_fold must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_fold</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">_input_components</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_fold</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">n_fold</span><span class="p">)</span>
+    <span class="n">cos_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">sin_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">inv_L</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">base_period</span>
+    <span class="k">for</span> <span class="n">r_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">):</span>
+        <span class="n">k_i</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r_i</span> <span class="o">*</span> <span class="n">inv_L</span>
+        <span class="k">for</span> <span class="n">k_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cos_t</span><span class="p">,</span> <span class="n">sin_t</span><span class="p">)):</span>
+            <span class="n">psi</span> <span class="o">=</span> <span class="n">phi_i</span> <span class="o">+</span> <span class="n">k_idx</span> <span class="o">*</span> <span class="n">direction_phase_step</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="o">+</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_i</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="n">psi</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_fold&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_fold</span><span class="p">),</span>
+            <span class="s2">&quot;base_period&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_period</span><span class="p">),</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span>
+            <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">),</span>
+            <span class="s2">&quot;direction_phase_step&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">direction_phase_step</span><span class="p">),</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="n">ratios</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;quasicrystal_field_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="s2">&quot;discrete_nfold&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================ 3. standing-wave 2D Fourier lattice</span>
+
+
+<div class="viewcode-block" id="standing_wave_lattice_2d">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.standing_wave_lattice_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">standing_wave_lattice_2d</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">cross_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cartesian 2-D Fourier lattice from the chord&#39;s outer product.</span>
+
+<span class="sd">    Builds an ``N²``-mode 2-D field where the chord&#39;s ratios appear as</span>
+<span class="sd">    *both* x- and y-direction frequencies, with intermodulation</span>
+<span class="sd">    cross-peaks at every ``(r_i, r_j)`` combination.</span>
+
+<span class="sd">    Mathematical form</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        Ψ(x, y) = Σ_i Σ_j  a_i · a_j · exp(i · 2π · (r_i · x + r_j · y) / L  +  i · φ_{i,j})</span>
+
+<span class="sd">    where ``φ_{i,j} = φ_i + φ_j`` (or ``φ_i · φ_j`` when ``cross_phase=True``,</span>
+<span class="sd">    introducing additional asymmetry).</span>
+
+<span class="sd">    The result is **square-lattice symmetric** (90° rotation invariant</span>
+<span class="sd">    if all input phases are zero). With ``N`` chord components, the</span>
+<span class="sd">    lattice has ``N²`` peaks. Extension multiplies this dramatically —</span>
+<span class="sd">    a 10-component chord paints a 100-peak lattice with rich IMD-style</span>
+<span class="sd">    sub-peaks between them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    base_period : float, default=1.0</span>
+<span class="sd">    extent : float, default=2.0</span>
+<span class="sd">    resolution : int, default=384</span>
+<span class="sd">    output : {&#39;amplitude_pow&#39;, &#39;amplitude&#39;, &#39;intensity&#39;, &#39;real&#39;}</span>
+<span class="sd">    power : float, default=0.5</span>
+<span class="sd">    cross_phase : bool, default=False</span>
+<span class="sd">        If True, use the *antisymmetric* combination ``φ_i − φ_j`` for</span>
+<span class="sd">        the cross-term phase instead of the symmetric ``φ_i + φ_j``.</span>
+<span class="sd">        This breaks the ``(i, j) ↔ (j, i)`` exchange symmetry — and so</span>
+<span class="sd">        the field&#39;s ``x ↔ y`` swap symmetry — introducing chirality</span>
+<span class="sd">        in the lattice.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``metadata.kind=&#39;standing_wave_lattice_2d&#39;``, ``symmetry=&#39;cartesian&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_period</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base_period must be &gt; 0, got </span><span class="si">{</span><span class="n">base_period</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">_input_components</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="n">inv_L</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">base_period</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">r_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">)):</span>
+        <span class="n">kx</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r_i</span> <span class="o">*</span> <span class="n">inv_L</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">r_j</span><span class="p">,</span> <span class="n">a_j</span><span class="p">,</span> <span class="n">phi_j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">)):</span>
+            <span class="n">ky</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r_j</span> <span class="o">*</span> <span class="n">inv_L</span>
+            <span class="c1"># `+` is commutative ⇒ symmetric under (i, j) ↔ (j, i);</span>
+            <span class="c1"># `-` is antisymmetric ⇒ breaks that symmetry, hence chiral.</span>
+            <span class="n">phi_ij</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi_i</span> <span class="o">-</span> <span class="n">phi_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">cross_phase</span> <span class="k">else</span> <span class="p">(</span><span class="n">phi_i</span> <span class="o">+</span> <span class="n">phi_j</span><span class="p">)</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="o">+</span> <span class="p">(</span><span class="n">a_i</span> <span class="o">*</span> <span class="n">a_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">kx</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">phi_ij</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;base_period&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_period</span><span class="p">),</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span>
+            <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">),</span>
+            <span class="s2">&quot;cross_phase&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">cross_phase</span><span class="p">),</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="n">ratios</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;standing_wave_lattice_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="s2">&quot;cartesian&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="s2">&quot;n_modes&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ===================================================== 4. vortex / spiral field</span>
+
+
+<span class="n">_RADIAL_KINDS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bessel&quot;</span><span class="p">,</span> <span class="s2">&quot;laguerre_gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;propagating&quot;</span><span class="p">,</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">}</span>
+<span class="n">_P_INDEX_RULES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;denominator&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="s2">&quot;zero&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_vortex_radial_factor</span><span class="p">(</span>
+    <span class="n">R</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">k_i</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">l_i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">p_i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">beam_waist</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">radial_kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Per-component radial factor for :func:`vortex_field_2d`.</span>
+
+<span class="sd">    Returns a real-valued ndarray with the same shape as ``R``.</span>
+<span class="sd">    The angular ``exp(i·l·θ)`` factor is applied by the caller.</span>
+
+<span class="sd">    radial_kind options</span>
+<span class="sd">    -------------------</span>
+<span class="sd">    * ``&#39;bessel&#39;`` (default): ``J_{|l|}(k·r)``. The natural cylindrical</span>
+<span class="sd">      eigenmode of an open 2-D circular geometry. Oscillates indefinitely</span>
+<span class="sd">      with slow ``1/√(k·r)`` decay → many ring crossings, rich rendering.</span>
+<span class="sd">    * ``&#39;laguerre_gauss&#39;``: full Laguerre-Gauss mode</span>
+<span class="sd">      ``(r/w)^|l| · L_p^|l|(2r²/w²) · exp(-r²/w²)``.</span>
+<span class="sd">      Has ``p`` radial zeros, giving a controlled number of rings.</span>
+<span class="sd">    * ``&#39;propagating&#39;``: ``(r/w)^|l| · exp(-r²/2w²) · cos(k·r)``.</span>
+<span class="sd">      Original Gaussian-envelope LG-zero modulated by a propagating</span>
+<span class="sd">      cosine — cheaper than Bessel, gives oscillatory rings inside a</span>
+<span class="sd">      bounded envelope.</span>
+<span class="sd">    * ``&#39;gaussian&#39;``: original behaviour, ``(r/w)^|l| · exp(-r²/2w²)``,</span>
+<span class="sd">      monotonic radial profile (kept for backward compatibility and</span>
+<span class="sd">      for the smooth-blob aesthetic).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inv_w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">beam_waist</span>
+    <span class="k">if</span> <span class="n">radial_kind</span> <span class="o">==</span> <span class="s2">&quot;bessel&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">bessel_jv</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">l_i</span><span class="p">),</span> <span class="n">k_i</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">radial_kind</span> <span class="o">==</span> <span class="s2">&quot;propagating&quot;</span><span class="p">:</span>
+        <span class="n">rho_w</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">inv_w</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">rho_w</span> <span class="o">**</span> <span class="nb">abs</span><span class="p">(</span><span class="n">l_i</span><span class="p">))</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">rho_w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k_i</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">radial_kind</span> <span class="o">==</span> <span class="s2">&quot;laguerre_gauss&quot;</span><span class="p">:</span>
+        <span class="n">rho_w</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">inv_w</span>
+        <span class="n">rho_w_sq</span> <span class="o">=</span> <span class="n">rho_w</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># Full LG_pl: (r/w)^|l| · L_p^|l|(2r²/w²) · exp(-r²/w²)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">rho_w</span> <span class="o">**</span> <span class="nb">abs</span><span class="p">(</span><span class="n">l_i</span><span class="p">))</span>
+            <span class="o">*</span> <span class="n">eval_genlaguerre</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">l_i</span><span class="p">),</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">rho_w_sq</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rho_w_sq</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">radial_kind</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+        <span class="n">rho_w</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">inv_w</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">rho_w</span> <span class="o">**</span> <span class="nb">abs</span><span class="p">(</span><span class="n">l_i</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">rho_w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;radial_kind must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_RADIAL_KINDS</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">radial_kind</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="vortex_field_2d">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.vortex_field_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">vortex_field_2d</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">radial_kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bessel&quot;</span><span class="p">,</span>
+    <span class="n">beam_waist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">charge_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">use_numerator_charges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">p_index_rule</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;denominator&quot;</span><span class="p">,</span>
+    <span class="n">radial_indices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coherent superposition of chord-driven optical vortex modes.</span>
+
+<span class="sd">    Each chord component contributes one vortex mode with topological</span>
+<span class="sd">    charge ``l_i`` derived from the ratio&#39;s rationalised numerator (so</span>
+<span class="sd">    Major&#39;s ratio 5/4 → l = 5, ratio 3/2 → l = 3, etc.). The composite</span>
+<span class="sd">    field has chord-driven **spiral arms and phase singularities** —</span>
+<span class="sd">    the modulus shows interleaving rotational lobes braided around</span>
+<span class="sd">    each other.</span>
+
+<span class="sd">    Mathematical form</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    The field is</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        Ψ(r, θ) = Σ_i  a_i · radial_i(r) · exp(i · l_i · θ + i · φ_i)</span>
+
+<span class="sd">    where the radial factor depends on ``radial_kind``. See</span>
+<span class="sd">    :func:`_vortex_radial_factor` for the four supported families.</span>
+
+<span class="sd">    The default ``radial_kind=&#39;bessel&#39;`` uses the natural cylindrical</span>
+<span class="sd">    eigenmode ``J_{|l|}(k·r)`` — its oscillatory radial profile gives a</span>
+<span class="sd">    rich ring pattern that scales properly with extension (more chord</span>
+<span class="sd">    components ⇒ more interlocking rings + spirals). The simpler</span>
+<span class="sd">    Gaussian-envelope variants are visually softer and deliberately</span>
+<span class="sd">    don&#39;t grow with extension.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    radial_kind : {&#39;bessel&#39;, &#39;laguerre_gauss&#39;, &#39;propagating&#39;, &#39;gaussian&#39;}, default=&#39;bessel&#39;</span>
+<span class="sd">        How to build the radial factor of each vortex mode. See</span>
+<span class="sd">        :func:`_vortex_radial_factor` for details.</span>
+<span class="sd">    beam_waist : float, default=1.0</span>
+<span class="sd">        Reference radial scale ``w``. Wavenumbers are</span>
+<span class="sd">        ``k_i = 2π · r_i / w``.</span>
+<span class="sd">    extent : float, default=2.0</span>
+<span class="sd">    resolution : int, default=384</span>
+<span class="sd">    output : {&#39;amplitude_pow&#39;, &#39;amplitude&#39;, &#39;intensity&#39;, &#39;real&#39;}</span>
+<span class="sd">    power : float, default=0.5</span>
+<span class="sd">    charge_scale : float, default=1.0</span>
+<span class="sd">        Multiplies the chord-derived azimuthal charges. ``charge_scale=2``</span>
+<span class="sd">        doubles every component&#39;s spiral-arm count.</span>
+<span class="sd">    use_numerator_charges : bool, default=True</span>
+<span class="sd">        If True, ``l_i`` is the numerator of</span>
+<span class="sd">        ``Fraction(r_i).limit_denominator(20)`` (musical chord ratios</span>
+<span class="sd">        produce small spread-out integer charges this way). If False,</span>
+<span class="sd">        ``l_i = round(charge_scale · r_i)``.</span>
+<span class="sd">    p_index_rule : {&#39;denominator&#39;, &#39;index&#39;, &#39;zero&#39;}, default=&#39;denominator&#39;</span>
+<span class="sd">        Only used when ``radial_kind=&#39;laguerre_gauss&#39;``. Picks the</span>
+<span class="sd">        radial index ``p_i`` per component:</span>
+
+<span class="sd">        * ``&#39;denominator&#39;`` — denominator of the rationalised ratio</span>
+<span class="sd">          (Major&#39;s 5/4, 3/2 → p = 4, 2). Chord-distinct ring counts.</span>
+<span class="sd">        * ``&#39;index&#39;`` — sequential ``p = 0, 1, 2, …`` per component.</span>
+<span class="sd">          Useful when the chord ratios all rationalise to the same</span>
+<span class="sd">          denominator.</span>
+<span class="sd">        * ``&#39;zero&#39;`` — ``p = 0``, no radial nodes (collapses LG to its</span>
+<span class="sd">          zeroth-order Gaussian-modulated form).</span>
+<span class="sd">    radial_indices : sequence of int, optional</span>
+<span class="sd">        If given, overrides ``p_index_rule`` and uses these ``p_i``</span>
+<span class="sd">        values directly. Length must match the number of components.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``metadata.kind=&#39;vortex_field_2d&#39;``, ``symmetry=&#39;spiral&#39;``,</span>
+<span class="sd">        ``parameters[&#39;radial_kind&#39;]`` records which radial flavour was used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">radial_kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_RADIAL_KINDS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;radial_kind must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_RADIAL_KINDS</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">radial_kind</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">p_index_rule</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_P_INDEX_RULES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;p_index_rule must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_P_INDEX_RULES</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">p_index_rule</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">beam_waist</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;beam_waist must be &gt; 0, got </span><span class="si">{</span><span class="n">beam_waist</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">_input_components</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+    <span class="n">THETA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+    <span class="c1"># ── Topological charges per component ────────────────────────────────</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+
+    <span class="n">charges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fraction_objs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Fraction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Fraction</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">use_numerator_charges</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fraction_objs</span><span class="p">:</span>
+            <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">charge_scale</span> <span class="o">*</span> <span class="n">f</span><span class="o">.</span><span class="n">numerator</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">r_i</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">:</span>
+            <span class="n">charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">charge_scale</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">r_i</span><span class="p">))))</span>
+
+    <span class="c1"># ── Radial p-indices per component (LG only) ─────────────────────────</span>
+    <span class="k">if</span> <span class="n">radial_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">p_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">radial_indices</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_indices</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;radial_indices has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">p_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;components were given.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p_index_rule</span> <span class="o">==</span> <span class="s2">&quot;denominator&quot;</span><span class="p">:</span>
+            <span class="c1"># Subtract 1 so a denominator of 1 produces p=0 (no extra rings).</span>
+            <span class="n">p_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">denominator</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fraction_objs</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">p_index_rule</span> <span class="o">==</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span>
+            <span class="n">p_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># &#39;zero&#39;</span>
+            <span class="n">p_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+
+    <span class="c1"># ── Compute the field ────────────────────────────────────────────────</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">inv_w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">beam_waist</span>
+    <span class="k">for</span> <span class="n">r_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span><span class="p">,</span> <span class="n">l_i</span><span class="p">,</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">charges</span><span class="p">,</span> <span class="n">p_indices</span>
+    <span class="p">):</span>
+        <span class="n">k_i</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">r_i</span><span class="p">)</span> <span class="o">/</span> <span class="n">beam_waist</span>
+        <span class="n">radial</span> <span class="o">=</span> <span class="n">_vortex_radial_factor</span><span class="p">(</span>
+            <span class="n">R</span><span class="p">,</span> <span class="n">k_i</span><span class="p">,</span> <span class="n">l_i</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">beam_waist</span><span class="p">,</span> <span class="n">radial_kind</span>
+        <span class="p">)</span>
+        <span class="c1"># Normalise to keep amplitudes in a comparable range across</span>
+        <span class="c1"># components — different l (and the radial flavour) give wildly</span>
+        <span class="c1"># different peak magnitudes otherwise.</span>
+        <span class="n">peak</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">radial</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">peak</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">radial</span> <span class="o">=</span> <span class="n">radial</span> <span class="o">/</span> <span class="n">peak</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="o">+</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">radial</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_i</span> <span class="o">*</span> <span class="n">THETA</span> <span class="o">+</span> <span class="n">phi_i</span><span class="p">))</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;radial_kind&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">radial_kind</span><span class="p">),</span>
+            <span class="s2">&quot;beam_waist&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">beam_waist</span><span class="p">),</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span>
+            <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">),</span>
+            <span class="s2">&quot;charge_scale&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">charge_scale</span><span class="p">),</span>
+            <span class="s2">&quot;use_numerator_charges&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">use_numerator_charges</span><span class="p">),</span>
+            <span class="s2">&quot;p_index_rule&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">p_index_rule</span><span class="p">),</span>
+            <span class="s2">&quot;charges&quot;</span><span class="p">:</span> <span class="n">charges</span><span class="p">,</span>
+            <span class="s2">&quot;p_indices&quot;</span><span class="p">:</span> <span class="n">p_indices</span><span class="p">,</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="n">ratios</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;vortex_field_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="s2">&quot;spiral&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="s2">&quot;radial_kind&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">radial_kind</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================== 5. multi-source interference</span>
+
+
+<span class="n">_LAYOUTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_emitter_positions</span><span class="p">(</span>
+    <span class="n">n_sources</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return ``(n_sources, 2)`` array of source positions in the xy plane.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_LAYOUTS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;layout must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_LAYOUTS</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">layout</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;line&quot;</span><span class="p">:</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_sources</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">n_sources</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">spacing</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sources</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;circle&quot;</span><span class="p">:</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">n_sources</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">spacing</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">spacing</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &#39;pairwise&#39;</span>
+        <span class="n">half</span> <span class="o">=</span> <span class="n">n_sources</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="n">n_sources</span> <span class="o">-</span> <span class="n">half</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">half</span><span class="p">,</span> <span class="o">-</span><span class="n">spacing</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="o">+</span><span class="n">spacing</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span>
+        <span class="p">])</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">half</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">half</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">spacing</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">half</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">rest</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">spacing</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="interference_field_2d">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.interference_field_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interference_field_2d</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
+    <span class="n">base_wavelength</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_pow&quot;</span><span class="p">,</span>
+    <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;N-source interference field from a chord, in free space.</span>
+
+<span class="sd">    Each chord component is associated with a wavelength</span>
+<span class="sd">    ``λ_i = base_wavelength / r_i`` and emits an idealised (no</span>
+<span class="sd">    ``1/r`` falloff) 2-D wave from the ``i``-th source position.</span>
+<span class="sd">    The composite field is</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        u(x, y) = Σ_i  a_i · exp(i · k_i · |r - r_i|  +  i · φ_i)</span>
+
+<span class="sd">    The classical Young&#39;s two-slit case is recovered with a</span>
+<span class="sd">    2-component equal-ratio input and ``layout=&#39;line&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``metadata.kind=&#39;interference_field_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base_wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;base_wavelength must be &gt; 0, got </span><span class="si">{</span><span class="n">base_wavelength</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">_input_components</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="n">n_sources</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_sources</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">sources</span> <span class="o">=</span> <span class="n">_emitter_positions</span><span class="p">(</span><span class="n">n_sources</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">_xy_grid</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">),</span> <span class="n">r_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">sx</span><span class="p">,</span> <span class="n">Y</span> <span class="o">-</span> <span class="n">sy</span><span class="p">)</span>
+        <span class="n">lam_i</span> <span class="o">=</span> <span class="n">base_wavelength</span> <span class="o">/</span> <span class="n">r_i</span>
+        <span class="n">k_i</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">lam_i</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">field</span> <span class="o">+</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_i</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="n">phi_i</span><span class="p">))</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;layout&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">layout</span><span class="p">),</span>
+            <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">spacing</span><span class="p">),</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+            <span class="s2">&quot;base_wavelength&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_wavelength</span><span class="p">),</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span>
+            <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">power</span><span class="p">),</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="n">ratios</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;interference_field_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="s2">&quot;source_array&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_sources&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_sources</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================ Medium API</span>
+
+
+<span class="n">_INTERFERENCE_PARADIGMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;harmonic&quot;</span><span class="p">:</span> <span class="n">harmonic_interference_field_2d</span><span class="p">,</span>
+    <span class="s2">&quot;quasicrystal&quot;</span><span class="p">:</span> <span class="n">quasicrystal_field_2d</span><span class="p">,</span>
+    <span class="s2">&quot;standing_lattice&quot;</span><span class="p">:</span> <span class="n">standing_wave_lattice_2d</span><span class="p">,</span>
+    <span class="s2">&quot;vortex&quot;</span><span class="p">:</span> <span class="n">vortex_field_2d</span><span class="p">,</span>
+    <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">interference_field_2d</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="Interference">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Interference</span><span class="p">(</span><span class="n">_Medium</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wave-field-family medium: open-medium coherent superposition.</span>
+
+<span class="sd">    Wraps the five paradigm functions in this module behind the pipeline</span>
+<span class="sd">    contract defined by</span>
+<span class="sd">    :class:`biotuner.harmonic_geometry.media.base.Medium`. The paradigm</span>
+<span class="sd">    is selected at construction; per-call kwargs are forwarded.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    paradigm : str, default=&#39;harmonic&#39;</span>
+<span class="sd">        One of ``&#39;harmonic&#39;`` (rotational averaging),</span>
+<span class="sd">        ``&#39;quasicrystal&#39;`` (N-fold quasi-periodic),</span>
+<span class="sd">        ``&#39;standing_lattice&#39;`` (Cartesian 2-D lattice),</span>
+<span class="sd">        ``&#39;vortex&#39;`` (spiral / topological),</span>
+<span class="sd">        ``&#39;sources&#39;`` (N-source Young&#39;s-style fringes).</span>
+<span class="sd">    **defaults</span>
+<span class="sd">        Default kwargs for the chosen paradigm (e.g. ``n_directions``,</span>
+<span class="sd">        ``extent``, ``resolution``). Per-call overrides take precedence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">family</span> <span class="o">=</span> <span class="s2">&quot;wave_field&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">paradigm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;harmonic&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">defaults</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">paradigm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_INTERFERENCE_PARADIGMS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;paradigm must be one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_INTERFERENCE_PARADIGMS</span><span class="p">)</span><span class="si">}</span><span class="s2">; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">paradigm</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paradigm</span> <span class="o">=</span> <span class="n">paradigm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Interference.respond">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference.respond">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">respond</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">forcing</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">overrides</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forcing</span><span class="p">,</span> <span class="n">HarmonicInput</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Interference.respond requires a HarmonicInput; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">forcing</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaults</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">_INTERFERENCE_PARADIGMS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">paradigm</span><span class="p">](</span><span class="n">forcing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Interference.default_source">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference.default_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forcing</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">respond</span><span class="p">(</span><span class="n">forcing</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Interference(paradigm=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">paradigm</span><span class="si">!r}</span><span class="s2">)&quot;</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

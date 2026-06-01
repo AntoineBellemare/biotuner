@@ -1,0 +1,703 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Lissajous &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/harmonic_geometry/lissajous';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Chladni" href="chladni.html" />
+    <link rel="prev" title="Geometry Data" href="geometry_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../harmonic_geometry.html">Harmonic Geometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api/harmonic_geometry/lissajous.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Lissajous</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_2d"><code class="docutils literal notranslate"><span class="pre">lissajous_2d()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_3d"><code class="docutils literal notranslate"><span class="pre">lissajous_3d()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_pairwise_grid"><code class="docutils literal notranslate"><span class="pre">lissajous_pairwise_grid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_compound"><code class="docutils literal notranslate"><span class="pre">lissajous_compound()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_phase_drift"><code class="docutils literal notranslate"><span class="pre">lissajous_phase_drift()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_topology"><code class="docutils literal notranslate"><span class="pre">lissajous_topology()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-biotuner.harmonic_geometry.lissajous">
+<span id="lissajous"></span><h1>Lissajous<a class="headerlink" href="#module-biotuner.harmonic_geometry.lissajous" title="Link to this heading">#</a></h1>
+<p>Lissajous-curve geometry.</p>
+<p>Standard 2-D form: <code class="docutils literal notranslate"><span class="pre">x(t)</span> <span class="pre">=</span> <span class="pre">A_x</span> <span class="pre">·</span> <span class="pre">sin(a</span> <span class="pre">·</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">δ)</span></code>, <code class="docutils literal notranslate"><span class="pre">y(t)</span> <span class="pre">=</span> <span class="pre">A_y</span> <span class="pre">·</span> <span class="pre">sin(b</span> <span class="pre">·</span> <span class="pre">t)</span></code>.</p>
+<p>For coprime integer frequency ratios <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> and arbitrary phase <code class="docutils literal notranslate"><span class="pre">δ</span></code>, the
+curve closes after <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">∈</span> <span class="pre">[0,</span> <span class="pre">2π]</span></code>. A pairwise-coprime triple <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b,</span> <span class="pre">c)</span></code>
+applied to the three Cartesian axes yields a Lissajous knot.</p>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Bowditch, N. (1815). On the motion of a pendulum suspended from two
+points.</p>
+</aside>
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Lissajous, J. A. (1857). Mémoire sur l’étude optique des mouvements
+vibratoires.</p>
+</aside>
+</aside>
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_2d">
+<span class="sig-name descname"><span class="pre">lissajous_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5707963267948966</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_2d" title="Link to this definition">#</a></dt>
+<dd><p>A single 2-D Lissajous curve.</p>
+<p>Samples <code class="docutils literal notranslate"><span class="pre">x(t)</span> <span class="pre">=</span> <span class="pre">A_x</span> <span class="pre">·</span> <span class="pre">sin(a</span> <span class="pre">·</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">phase)</span></code> and <code class="docutils literal notranslate"><span class="pre">y(t)</span> <span class="pre">=</span> <span class="pre">A_y</span> <span class="pre">·</span> <span class="pre">sin(b</span> <span class="pre">·</span> <span class="pre">t)</span></code>
+over <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">∈</span> <span class="pre">[0,</span> <span class="pre">2π</span> <span class="pre">·</span> <span class="pre">n_periods]</span></code>, where <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> is a coprime
+representation of <code class="docutils literal notranslate"><span class="pre">ratio</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>Fraction, int, float, or (int, int)</em>) – Frequency ratio <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/</span> <span class="pre">b</span></code> of the x-component to the y-component.</p></li>
+<li><p><strong>phase</strong> (<em>float, default=π/2</em>) – Phase shift <code class="docutils literal notranslate"><span class="pre">δ</span></code> in radians applied to the x-component.</p></li>
+<li><p><strong>amps</strong> (<em>tuple of float, default=(1.0, 1.0)</em>) – Amplitudes <code class="docutils literal notranslate"><span class="pre">(A_x,</span> <span class="pre">A_y)</span></code>.</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=1000</em>) – Number of samples along the curve.</p></li>
+<li><p><strong>n_periods</strong> (<em>int, default=1</em>) – Number of fundamental periods to sample. For coprime <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> the
+curve closes after one period.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">2)</span></code>. Metadata
+includes the coprime <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> pair, closure flag, and phase.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_3d">
+<span class="sig-name descname"><span class="pre">lissajous_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_3d" title="Link to this definition">#</a></dt>
+<dd><p>A 3-D Lissajous curve.</p>
+<p>Samples <code class="docutils literal notranslate"><span class="pre">x_i(t)</span> <span class="pre">=</span> <span class="pre">A_i</span> <span class="pre">·</span> <span class="pre">sin(f_i</span> <span class="pre">·</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">φ_i)</span></code> for <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">∈</span> <span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">2}</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">f_i</span></code> is a coprime integer derived from <code class="docutils literal notranslate"><span class="pre">ratios[i]</span></code>.</p>
+<p>When all three <code class="docutils literal notranslate"><span class="pre">f_i</span></code> are pairwise coprime the resulting curve is a
+<em>Lissajous knot</em>; this is flagged in <code class="docutils literal notranslate"><span class="pre">metadata['knot']</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>sequence of length 3</em>) – Frequencies for x, y, z.</p></li>
+<li><p><strong>phases</strong> (<em>sequence of length 3, default=(0, 0, 0)</em>) – Phase per axis in radians.</p></li>
+<li><p><strong>amps</strong> (<em>sequence of length 3, default=(1, 1, 1)</em>) – Amplitude per axis.</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=2000</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_3d'</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_pairwise_grid">
+<span class="sig-name descname"><span class="pre">lissajous_pairwise_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5707963267948966</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_pairwise_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_pairwise_grid" title="Link to this definition">#</a></dt>
+<dd><p>Build a 2-D grid of pairwise Lissajous curves from a HarmonicInput.</p>
+<p>For an input with N components, returns an N×N nested list where entry
+<code class="docutils literal notranslate"><span class="pre">[i][j]</span></code> is the 2-D Lissajous of component i (x-axis) against
+component j (y-axis). The diagonal contains 1:1 unison curves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=500</em>)</p></li>
+<li><p><strong>phase</strong> (<em>float, default=π/2</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of list of GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">×</span> <span class="pre">N</span></code> matrix of <code class="docutils literal notranslate"><span class="pre">curve_2d</span></code> geometries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_compound">
+<span class="sig-name descname"><span class="pre">lissajous_compound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_compound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_compound" title="Link to this definition">#</a></dt>
+<dd><p>Sum-of-sinusoids Lissajous from a HarmonicInput.</p>
+<p>Treats the input components as a chord. The x-coordinate is the sum of
+all components phase-shifted by <code class="docutils literal notranslate"><span class="pre">π/2</span></code>; the y-coordinate is the sum
+without the phase shift. This collapses an N-component HarmonicInput
+into a single 2-D Lissajous-like curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=2000</em>)</p></li>
+<li><p><strong>n_periods</strong> (<em>int, default=1</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_phase_drift">
+<span class="sig-name descname"><span class="pre">lissajous_phase_drift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drift_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_phase_drift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_phase_drift" title="Link to this definition">#</a></dt>
+<dd><p>Lissajous with a linearly-drifting phase.</p>
+<p>The phase <code class="docutils literal notranslate"><span class="pre">δ(t)</span> <span class="pre">=</span> <span class="pre">drift_rate</span> <span class="pre">·</span> <span class="pre">t</span></code> evolves linearly with time, producing
+the classic “spinning” Lissajous animation when rendered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>Fraction, int, float, or (int, int)</em>)</p></li>
+<li><p><strong>drift_rate</strong> (<em>float</em>) – Phase drift in radians per second.</p></li>
+<li><p><strong>duration</strong> (<em>float</em>) – Total duration in seconds.</p></li>
+<li><p><strong>sr</strong> (<em>int, default=1000</em>) – Sample rate (samples per second).</p></li>
+<li><p><strong>amps</strong> (<em>tuple of float, default=(1.0, 1.0)</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(int(sr</span> <span class="pre">*</span> <span class="pre">duration),</span> <span class="pre">2)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.lissajous.lissajous_topology">
+<span class="sig-name descname"><span class="pre">lissajous_topology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/lissajous.html#lissajous_topology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.lissajous.lissajous_topology" title="Link to this definition">#</a></dt>
+<dd><p>Inspect a Lissajous-style <code class="docutils literal notranslate"><span class="pre">curve_2d</span></code> and return topological summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>geom</strong> (<em>GeometryData</em>) – Must have <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>dict</em> – Keys:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'lobes_x'</span></code>, <code class="docutils literal notranslate"><span class="pre">'lobes_y'</span></code> — integer lobe counts (read from
+metadata when available; otherwise estimated by counting zero
+crossings on each axis).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'closed'</span></code> — whether the first and last points coincide within
+a small tolerance.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'self_intersections'</span></code> — count of polyline self-intersections
+(brute-force, <code class="docutils literal notranslate"><span class="pre">O(N²)</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'period_ratio'</span></code> — <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code> representing
+the <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/</span> <span class="pre">b</span></code> ratio when known, else <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="geometry_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Geometry Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="chladni.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chladni</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_2d"><code class="docutils literal notranslate"><span class="pre">lissajous_2d()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_3d"><code class="docutils literal notranslate"><span class="pre">lissajous_3d()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_pairwise_grid"><code class="docutils literal notranslate"><span class="pre">lissajous_pairwise_grid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_compound"><code class="docutils literal notranslate"><span class="pre">lissajous_compound()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_phase_drift"><code class="docutils literal notranslate"><span class="pre">lissajous_phase_drift()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.lissajous.lissajous_topology"><code class="docutils literal notranslate"><span class="pre">lissajous_topology()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

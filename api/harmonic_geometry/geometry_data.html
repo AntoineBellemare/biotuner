@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Geometry Data &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/harmonic_geometry/geometry_data';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Lissajous" href="lissajous.html" />
+    <link rel="prev" title="Inputs" href="inputs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../harmonic_geometry.html">Harmonic Geometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="inputs.html">Inputs</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api/harmonic_geometry/geometry_data.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Geometry Data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData"><code class="docutils literal notranslate"><span class="pre">GeometryData</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.geom_type"><code class="docutils literal notranslate"><span class="pre">GeometryData.geom_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.coordinates"><code class="docutils literal notranslate"><span class="pre">GeometryData.coordinates</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.edges"><code class="docutils literal notranslate"><span class="pre">GeometryData.edges</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.faces"><code class="docutils literal notranslate"><span class="pre">GeometryData.faces</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.weights"><code class="docutils literal notranslate"><span class="pre">GeometryData.weights</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.field_grid"><code class="docutils literal notranslate"><span class="pre">GeometryData.field_grid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.parameters"><code class="docutils literal notranslate"><span class="pre">GeometryData.parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.metadata"><code class="docutils literal notranslate"><span class="pre">GeometryData.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.save"><code class="docutils literal notranslate"><span class="pre">GeometryData.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.load"><code class="docutils literal notranslate"><span class="pre">GeometryData.load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-biotuner.harmonic_geometry.geometry_data">
+<span id="geometry-data"></span><h1>Geometry Data<a class="headerlink" href="#module-biotuner.harmonic_geometry.geometry_data" title="Link to this heading">#</a></h1>
+<p><a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryData</span></code></a> — output schema for the <code class="docutils literal notranslate"><span class="pre">harmonic_geometry</span></code> module.</p>
+<p>All geometry-producing functions in this module return a single
+<a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryData</span></code></a>, which carries:</p>
+<ul class="simple">
+<li><p>a discriminator <code class="docutils literal notranslate"><span class="pre">geom_type</span></code> (one of <code class="xref py py-data docutils literal notranslate"><span class="pre">GEOM_TYPES</span></code>) describing the
+layout of <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> and any auxiliary connectivity arrays,</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> themselves (an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> or list of <code class="docutils literal notranslate"><span class="pre">ndarray</span></code>),</p></li>
+<li><p>optional <code class="docutils literal notranslate"><span class="pre">edges</span></code> / <code class="docutils literal notranslate"><span class="pre">faces</span></code> for graph-, tree-, and mesh-shaped data,</p></li>
+<li><p>optional <code class="docutils literal notranslate"><span class="pre">weights</span></code> (per-point or per-edge),</p></li>
+<li><p>optional <code class="docutils literal notranslate"><span class="pre">field_grid</span></code> for scalar-field types,</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">parameters</span></code> snapshot of the inputs that produced the geometry,</p></li>
+<li><p>and free-form <code class="docutils literal notranslate"><span class="pre">metadata</span></code> (geom-specific, e.g. lobe count or mode
+multiplicity).</p></li>
+</ul>
+<p>The <code class="xref py py-data docutils literal notranslate"><span class="pre">geom_type</span></code> strings are the contract relied on by downstream
+renderers (Manim, Three.js, TouchDesigner, matplotlib). Shape conventions are
+documented inline below.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeometryData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">geom_type:</span> <span class="pre">str,</span> <span class="pre">coordinates:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">~typing.List[~numpy.ndarray],</span> <span class="pre">edges:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">faces:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">weights:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">field_grid:</span> <span class="pre">~typing.Tuple[~numpy.ndarray,</span> <span class="pre">...]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">parameters:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">metadata:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/geometry_data.html#GeometryData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container for one piece of geometric output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geom_type</strong> (<em>str</em>) – One of <code class="xref py py-data docutils literal notranslate"><span class="pre">GEOM_TYPES</span></code>. Describes the layout of <code class="docutils literal notranslate"><span class="pre">coordinates</span></code>
+and which optional fields are populated.</p></li>
+<li><p><strong>coordinates</strong> (<em>ndarray or list of ndarray</em>) – The primary geometric data. Exact shape depends on <code class="docutils literal notranslate"><span class="pre">geom_type</span></code>;
+see module docstring.</p></li>
+<li><p><strong>edges</strong> (<em>ndarray, optional</em>) – Integer index pairs of shape <code class="docutils literal notranslate"><span class="pre">(E,</span> <span class="pre">2)</span></code> for <code class="docutils literal notranslate"><span class="pre">graph</span></code> and <code class="docutils literal notranslate"><span class="pre">tree</span></code>
+types. Indices are into <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> along axis 0.</p></li>
+<li><p><strong>faces</strong> (<em>ndarray, optional</em>) – Integer triangle indices of shape <code class="docutils literal notranslate"><span class="pre">(F,</span> <span class="pre">3)</span></code> for <code class="docutils literal notranslate"><span class="pre">mesh_3d</span></code>.</p></li>
+<li><p><strong>weights</strong> (<em>ndarray, optional</em>) – Per-point or per-edge scalar weights. Shape must be broadcast-
+compatible with the entity it annotates.</p></li>
+<li><p><strong>field_grid</strong> (<em>tuple of ndarray, optional</em>) – <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y)</span></code> or <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y,</span> <span class="pre">Z)</span></code> meshgrid arrays for <code class="docutils literal notranslate"><span class="pre">field_2d</span></code> /
+<code class="docutils literal notranslate"><span class="pre">field_3d</span></code> types.</p></li>
+<li><p><strong>parameters</strong> (<em>dict</em>) – Snapshot of the inputs that produced this geometry (e.g. the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code> fields). Free-form; serialized via pickle.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Geom-specific annotations (e.g. lobe count for Lissajous, mode
+multiplicity for Chladni). Free-form; serialized via pickle.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Files written by <a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.save" title="biotuner.harmonic_geometry.geometry_data.GeometryData.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> are pickle-backed. <strong>Do not load
+GeometryData files from untrusted sources.</strong></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.geom_type">
+<span class="sig-name descname"><span class="pre">geom_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.geom_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.coordinates" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.edges">
+<span class="sig-name descname"><span class="pre">edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.edges" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.faces">
+<span class="sig-name descname"><span class="pre">faces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.faces" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.weights" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.field_grid">
+<span class="sig-name descname"><span class="pre">field_grid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.field_grid" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.parameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.metadata" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/geometry_data.html#GeometryData.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.save" title="Link to this definition">#</a></dt>
+<dd><p>Persist to <code class="docutils literal notranslate"><span class="pre">path</span></code> as a numpy <code class="docutils literal notranslate"><span class="pre">.npz</span></code> file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">metadata</span></code> are pickled into a 0-d object array.
+Lists of arrays (e.g. for <code class="docutils literal notranslate"><span class="pre">curve_set_2d</span></code>) are flattened with index
+suffixes so they round-trip through <code class="docutils literal notranslate"><span class="pre">np.savez</span></code>.</p>
+<p>Loading is the inverse via <a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.load" title="biotuner.harmonic_geometry.geometry_data.GeometryData.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>. Because pickled data is
+used, <strong>only load files from sources you trust.</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.geometry_data.GeometryData.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/geometry_data.html#GeometryData.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.load" title="Link to this definition">#</a></dt>
+<dd><p>Load a <a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryData</span></code></a> previously written by <a class="reference internal" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.save" title="biotuner.harmonic_geometry.geometry_data.GeometryData.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a>.</p>
+<p>Only load files from trusted sources — <code class="docutils literal notranslate"><span class="pre">parameters</span></code> and
+<code class="docutils literal notranslate"><span class="pre">metadata</span></code> are unpickled.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="inputs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Inputs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lissajous.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Lissajous</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData"><code class="docutils literal notranslate"><span class="pre">GeometryData</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.geom_type"><code class="docutils literal notranslate"><span class="pre">GeometryData.geom_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.coordinates"><code class="docutils literal notranslate"><span class="pre">GeometryData.coordinates</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.edges"><code class="docutils literal notranslate"><span class="pre">GeometryData.edges</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.faces"><code class="docutils literal notranslate"><span class="pre">GeometryData.faces</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.weights"><code class="docutils literal notranslate"><span class="pre">GeometryData.weights</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.field_grid"><code class="docutils literal notranslate"><span class="pre">GeometryData.field_grid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.parameters"><code class="docutils literal notranslate"><span class="pre">GeometryData.parameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.metadata"><code class="docutils literal notranslate"><span class="pre">GeometryData.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.save"><code class="docutils literal notranslate"><span class="pre">GeometryData.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.geometry_data.GeometryData.load"><code class="docutils literal notranslate"><span class="pre">GeometryData.load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

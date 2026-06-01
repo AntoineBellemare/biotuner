@@ -1,0 +1,907 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.lissajous &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/lissajous';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.lissajous</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Lissajous-curve geometry.</span>
+
+<span class="sd">Standard 2-D form: ``x(t) = A_x · sin(a · t + δ)``, ``y(t) = A_y · sin(b · t)``.</span>
+
+<span class="sd">For coprime integer frequency ratios ``(a, b)`` and arbitrary phase ``δ``, the</span>
+<span class="sd">curve closes after ``t ∈ [0, 2π]``. A pairwise-coprime triple ``(a, b, c)``</span>
+<span class="sd">applied to the three Cartesian axes yields a Lissajous knot.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. [1] Bowditch, N. (1815). On the motion of a pendulum suspended from two</span>
+<span class="sd">       points.</span>
+<span class="sd">.. [2] Lissajous, J. A. (1857). Mémoire sur l&#39;étude optique des mouvements</span>
+<span class="sd">       vibratoires.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">coerce_ratio</span><span class="p">,</span> <span class="n">coprime_pair</span><span class="p">,</span> <span class="n">is_coprime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+
+<span class="n">RatioLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+
+
+<span class="c1"># ---------------------------------------------------------------- 2-D Lissajous</span>
+
+
+<div class="viewcode-block" id="lissajous_2d">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_2d</span><span class="p">(</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">amps</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_periods</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single 2-D Lissajous curve.</span>
+
+<span class="sd">    Samples ``x(t) = A_x · sin(a · t + phase)`` and ``y(t) = A_y · sin(b · t)``</span>
+<span class="sd">    over ``t ∈ [0, 2π · n_periods]``, where ``(a, b)`` is a coprime</span>
+<span class="sd">    representation of ``ratio``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : Fraction, int, float, or (int, int)</span>
+<span class="sd">        Frequency ratio ``a / b`` of the x-component to the y-component.</span>
+<span class="sd">    phase : float, default=π/2</span>
+<span class="sd">        Phase shift ``δ`` in radians applied to the x-component.</span>
+<span class="sd">    amps : tuple of float, default=(1.0, 1.0)</span>
+<span class="sd">        Amplitudes ``(A_x, A_y)``.</span>
+<span class="sd">    n_points : int, default=1000</span>
+<span class="sd">        Number of samples along the curve.</span>
+<span class="sd">    n_periods : int, default=1</span>
+<span class="sd">        Number of fundamental periods to sample. For coprime ``(a, b)`` the</span>
+<span class="sd">        curve closes after one period.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;`` with shape ``(n_points, 2)``. Metadata</span>
+<span class="sd">        includes the coprime ``(a, b)`` pair, closure flag, and phase.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="n">A_x</span><span class="p">,</span> <span class="n">A_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">n_periods</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">A_x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">phase</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">A_y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span>
+            <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">A_x</span><span class="p">,</span> <span class="n">A_y</span><span class="p">),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+            <span class="s2">&quot;n_periods&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_periods</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;lissajous_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">,</span>
+            <span class="s2">&quot;closed&quot;</span><span class="p">:</span> <span class="n">is_coprime</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span>
+            <span class="s2">&quot;lobes_x&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">,</span>
+            <span class="s2">&quot;lobes_y&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------- 3-D Lissajous</span>
+
+
+<div class="viewcode-block" id="lissajous_3d">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_3d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_3d</span><span class="p">(</span>
+    <span class="n">ratios</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">RatioLike</span><span class="p">],</span>
+    <span class="n">phases</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="n">amps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A 3-D Lissajous curve.</span>
+
+<span class="sd">    Samples ``x_i(t) = A_i · sin(f_i · t + φ_i)`` for ``i ∈ {0, 1, 2}``,</span>
+<span class="sd">    where ``f_i`` is a coprime integer derived from ``ratios[i]``.</span>
+
+<span class="sd">    When all three ``f_i`` are pairwise coprime the resulting curve is a</span>
+<span class="sd">    *Lissajous knot*; this is flagged in ``metadata[&#39;knot&#39;]``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratios : sequence of length 3</span>
+<span class="sd">        Frequencies for x, y, z.</span>
+<span class="sd">    phases : sequence of length 3, default=(0, 0, 0)</span>
+<span class="sd">        Phase per axis in radians.</span>
+<span class="sd">    amps : sequence of length 3, default=(1, 1, 1)</span>
+<span class="sd">        Amplitude per axis.</span>
+<span class="sd">    n_points : int, default=2000</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_3d&#39;`` with shape ``(n_points, 3)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">amps</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;lissajous_3d requires exactly 3 ratios, phases, and amps.&quot;</span><span class="p">)</span>
+
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">:</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">den</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">freqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="n">dens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">den</span><span class="p">)</span>
+    <span class="c1"># Common period requires using a common denominator. We sample over enough</span>
+    <span class="c1"># time that each component completes its own periodicity at least once.</span>
+    <span class="n">lcm_den</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dens</span><span class="p">:</span>
+        <span class="n">lcm_den</span> <span class="o">=</span> <span class="n">lcm_den</span> <span class="o">*</span> <span class="n">d</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">lcm_den</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">lcm_den</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">den</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">dens</span><span class="p">)):</span>
+        <span class="c1"># Effective frequency along axis i is num/den; sampling over</span>
+        <span class="c1"># 2π * lcm_den ensures closure when components are commensurate.</span>
+        <span class="n">coords</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">num</span> <span class="o">/</span> <span class="n">den</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="n">pairwise_coprime</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="n">is_coprime</span><span class="p">(</span><span class="n">freqs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">freqs</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_3d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">dens</span><span class="p">)],</span>
+            <span class="s2">&quot;phases&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">amps</span><span class="p">),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;lissajous_3d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;freqs&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">freqs</span><span class="p">),</span>
+            <span class="s2">&quot;denominators&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dens</span><span class="p">),</span>
+            <span class="s2">&quot;knot&quot;</span><span class="p">:</span> <span class="n">pairwise_coprime</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># -------------------------------------------------------------- input adapters</span>
+
+
+<div class="viewcode-block" id="lissajous_pairwise_grid">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_pairwise_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_pairwise_grid</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GeometryData</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a 2-D grid of pairwise Lissajous curves from a HarmonicInput.</span>
+
+<span class="sd">    For an input with N components, returns an N×N nested list where entry</span>
+<span class="sd">    ``[i][j]`` is the 2-D Lissajous of component i (x-axis) against</span>
+<span class="sd">    component j (y-axis). The diagonal contains 1:1 unison curves.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    n_points : int, default=500</span>
+<span class="sd">    phase : float, default=π/2</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of list of GeometryData</span>
+<span class="sd">        ``N × N`` matrix of ``curve_2d`` geometries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_peaks</span><span class="p">()</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">GeometryData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GeometryData</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">peaks</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">if</span> <span class="n">peaks</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">lissajous_2d</span><span class="p">(</span>
+                    <span class="n">ratio</span><span class="p">,</span>
+                    <span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span>
+                    <span class="n">amps</span><span class="o">=</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">),</span>
+                    <span class="n">n_points</span><span class="o">=</span><span class="n">n_points</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+
+
+<div class="viewcode-block" id="lissajous_compound">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_compound">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_compound</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="n">n_periods</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum-of-sinusoids Lissajous from a HarmonicInput.</span>
+
+<span class="sd">    Treats the input components as a chord. The x-coordinate is the sum of</span>
+<span class="sd">    all components phase-shifted by ``π/2``; the y-coordinate is the sum</span>
+<span class="sd">    without the phase shift. This collapses an N-component HarmonicInput</span>
+<span class="sd">    into a single 2-D Lissajous-like curve.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    n_points : int, default=2000</span>
+<span class="sd">    n_periods : int, default=1</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_peaks</span><span class="p">()</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">peaks</span><span class="p">))</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">norm_freqs</span> <span class="o">=</span> <span class="n">peaks</span> <span class="o">/</span> <span class="n">base</span>  <span class="c1"># frequency ratios relative to fundamental</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">n_periods</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">ph</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">norm_freqs</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">+=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">ph</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">+=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">ph</span><span class="p">)</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+            <span class="s2">&quot;n_periods&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_periods</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;lissajous_compound&quot;</span><span class="p">,</span> <span class="s2">&quot;compound&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">))},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lissajous_phase_drift">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_phase_drift">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_phase_drift</span><span class="p">(</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">drift_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">sr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">amps</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lissajous with a linearly-drifting phase.</span>
+
+<span class="sd">    The phase ``δ(t) = drift_rate · t`` evolves linearly with time, producing</span>
+<span class="sd">    the classic &quot;spinning&quot; Lissajous animation when rendered.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : Fraction, int, float, or (int, int)</span>
+<span class="sd">    drift_rate : float</span>
+<span class="sd">        Phase drift in radians per second.</span>
+<span class="sd">    duration : float</span>
+<span class="sd">        Total duration in seconds.</span>
+<span class="sd">    sr : int, default=1000</span>
+<span class="sd">        Sample rate (samples per second).</span>
+<span class="sd">    amps : tuple of float, default=(1.0, 1.0)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;`` with shape ``(int(sr * duration), 2)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;duration must be &gt; 0, got </span><span class="si">{</span><span class="n">duration</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sr</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sr must be &gt; 0, got </span><span class="si">{</span><span class="n">sr</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="n">A_x</span><span class="p">,</span> <span class="n">A_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="n">duration</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">drift_rate</span> <span class="o">*</span> <span class="n">t</span>
+    <span class="c1"># Use the time variable directly (not a unitless 0..2π) so drift_rate</span>
+    <span class="c1"># is in physical rad/s.</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">A_x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">A_y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span>
+            <span class="s2">&quot;drift_rate&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">drift_rate</span><span class="p">),</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span>
+            <span class="s2">&quot;sr&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">sr</span><span class="p">),</span>
+            <span class="s2">&quot;amps&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">A_x</span><span class="p">,</span> <span class="n">A_y</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;lissajous_phase_drift&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">a</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="n">b</span><span class="p">,</span>
+                  <span class="s2">&quot;phase_drift&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------- topology</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_count_self_intersections</span><span class="p">(</span><span class="n">coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count segment-segment intersections in a polyline.</span>
+
+<span class="sd">    Brute force ``O(N²)``: for ``N`` points (``N-1`` segments) this is</span>
+<span class="sd">    ``~N²/2`` orientation tests. Endpoints shared by adjacent segments are</span>
+<span class="sd">    excluded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">n_seg</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ccw</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cy</span> <span class="o">-</span> <span class="n">ay</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">bx</span> <span class="o">-</span> <span class="n">ax</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">by</span> <span class="o">-</span> <span class="n">ay</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cx</span> <span class="o">-</span> <span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_seg</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span> <span class="o">=</span> <span class="n">p1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bx</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">p2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># Compare against non-adjacent segments only.</span>
+        <span class="n">js</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_seg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">js</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">p1</span><span class="p">[</span><span class="n">js</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">p1</span><span class="p">[</span><span class="n">js</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">p2</span><span class="p">[</span><span class="n">js</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">p2</span><span class="p">[</span><span class="n">js</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">_ccw</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">)</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">_ccw</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">)</span>
+        <span class="n">d3</span> <span class="o">=</span> <span class="n">_ccw</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span>
+        <span class="n">d4</span> <span class="o">=</span> <span class="n">_ccw</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="n">intersects</span> <span class="o">=</span> <span class="p">((</span><span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">d3</span> <span class="o">*</span> <span class="n">d4</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">intersects</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">count</span>
+
+
+<div class="viewcode-block" id="lissajous_topology">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous_topology">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lissajous_topology</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">GeometryData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect a Lissajous-style ``curve_2d`` and return topological summary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geom : GeometryData</span>
+<span class="sd">        Must have ``geom_type=&#39;curve_2d&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Keys:</span>
+
+<span class="sd">        * ``&#39;lobes_x&#39;``, ``&#39;lobes_y&#39;`` — integer lobe counts (read from</span>
+<span class="sd">          metadata when available; otherwise estimated by counting zero</span>
+<span class="sd">          crossings on each axis).</span>
+<span class="sd">        * ``&#39;closed&#39;`` — whether the first and last points coincide within</span>
+<span class="sd">          a small tolerance.</span>
+<span class="sd">        * ``&#39;self_intersections&#39;`` — count of polyline self-intersections</span>
+<span class="sd">          (brute-force, ``O(N²)``).</span>
+<span class="sd">        * ``&#39;period_ratio&#39;`` — :class:`~fractions.Fraction` representing</span>
+<span class="sd">          the ``a / b`` ratio when known, else ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">!=</span> <span class="s2">&quot;curve_2d&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;lissajous_topology expects geom_type=&#39;curve_2d&#39;, got </span><span class="si">{</span><span class="n">geom</span><span class="o">.</span><span class="n">geom_type</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;coordinates must have shape (N, 2).&quot;</span><span class="p">)</span>
+
+    <span class="n">lobes_x</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lobes_x&quot;</span><span class="p">)</span>
+    <span class="n">lobes_y</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lobes_y&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lobes_x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lobes_y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lobes_x</span> <span class="o">=</span> <span class="n">_count_zero_crossings</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">lobes_y</span> <span class="o">=</span> <span class="n">_count_zero_crossings</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">coords</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">1e-12</span>
+    <span class="n">closed</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ratio</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;a&quot;</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">and</span> <span class="s2">&quot;b&quot;</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;lobes_x&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lobes_x</span><span class="p">),</span>
+        <span class="s2">&quot;lobes_y&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lobes_y</span><span class="p">),</span>
+        <span class="s2">&quot;closed&quot;</span><span class="p">:</span> <span class="n">closed</span><span class="p">,</span>
+        <span class="s2">&quot;self_intersections&quot;</span><span class="p">:</span> <span class="n">_count_self_intersections</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span>
+        <span class="s2">&quot;period_ratio&quot;</span><span class="p">:</span> <span class="n">ratio</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span>
+            <span class="n">coerce_ratio</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="k">if</span> <span class="n">ratio</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_count_zero_crossings</span><span class="p">(</span><span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count sign changes in a 1-D signal (a rough lobe-count proxy).&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">signs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="c1"># Treat exact zeros as the sign of the next non-zero value to avoid</span>
+    <span class="c1"># double-counting.</span>
+    <span class="n">nz</span> <span class="o">=</span> <span class="n">signs</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">nz</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">signs_nz</span> <span class="o">=</span> <span class="n">signs</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">signs_nz</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

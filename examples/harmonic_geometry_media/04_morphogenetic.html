@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Morphogenetic media — pattern growth shaped by chords &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/harmonic_geometry_media/04_morphogenetic';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="API Reference" href="../../api/index.html" />
+    <link rel="prev" title="Parametric and transport media" href="03_parametric_and_transport.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/harmonic_geometry_media/04_morphogenetic.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Morphogenetic media — pattern growth shaped by chords</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crystallization-snowflake-style-chord-growth"><code class="docutils literal notranslate"><span class="pre">Crystallization</span></code> — snowflake-style chord growth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sweep-diffusion-on-a-single-central-seed">Sweep <code class="docutils literal notranslate"><span class="pre">diffusion</span></code> on a single central seed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reactiondiffusion-chord-driven-gray-scott-patterns"><code class="docutils literal notranslate"><span class="pre">ReactionDiffusion</span></code> — chord-driven Gray-Scott patterns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#canonical-pearson-regimes-chord-fixed-f-k-swept">Canonical Pearson regimes (chord fixed, $(F, K)$ swept)</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="morphogenetic-media-pattern-growth-shaped-by-chords">
+<h1>Morphogenetic media — pattern growth shaped by chords<a class="headerlink" href="#morphogenetic-media-pattern-growth-shaped-by-chords" title="Link to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">morphogenetic</span></code> family runs an iterative pattern-formation process
+whose <strong>parameters</strong> depend on the chord. The result is a 2-D scalar
+field whose final morphology is a fingerprint of the input chord —
+crystal branches, Turing patterns, etc.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span><span class="p">,</span> <span class="n">plotting</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">110</span>
+
+<span class="c1"># A small reference set of chord inputs used across the notebook.</span>
+<span class="n">CHORDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Major&quot;</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]),</span>
+    <span class="s2">&quot;Sus4&quot;</span><span class="p">:</span>  <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]),</span>
+    <span class="s2">&quot;Dom7&quot;</span><span class="p">:</span>  <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                    <span class="n">Fraction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]),</span>
+    <span class="s2">&quot;Dim7&quot;</span><span class="p">:</span>  <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                                    <span class="n">Fraction</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="crystallization-snowflake-style-chord-growth">
+<h2><code class="docutils literal notranslate"><span class="pre">Crystallization</span></code> — snowflake-style chord growth<a class="headerlink" href="#crystallization-snowflake-style-chord-growth" title="Link to this heading">#</a></h2>
+<p>A reaction-diffusion-like process on a hex grid; the anisotropy strength
+and number of sectors are derived from the chord ratios. Higher chord
+complexity → more elaborate branching.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Crystallization</span>
+
+<span class="c1"># The polygon seed plants a small V-blob at every Tonnetz-polygon vertex</span>
+<span class="c1"># of the chord. With ``seed_branch_length &gt; 0`` each seed is extended</span>
+<span class="c1"># along the polygon edges, so the resulting crystal silhouette carries</span>
+<span class="c1"># the chord&#39;s polygonal signature — Major reads as a triangle with</span>
+<span class="c1"># branches, Sus4 as an elongated triad, Dom7 / Dim7 as four-pointed</span>
+<span class="c1"># motifs. ``anisotropy_strength=0`` turns off the angular kernel bias</span>
+<span class="c1"># so the chord polygon, not the lattice, drives symmetry.</span>
+<span class="n">chord_crystal</span> <span class="o">=</span> <span class="n">Crystallization</span><span class="p">(</span>
+    <span class="n">n_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">grid_radius</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">output_resolution</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+    <span class="n">seed_strategy</span><span class="o">=</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="n">seed_branch_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">anisotropy_strength</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rng_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">chord_crystal</span><span class="p">(</span><span class="n">CHORDS</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">CHORDS</span><span class="p">]</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">gallery</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span> <span class="n">titles</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">CHORDS</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">suptitle</span><span class="o">=</span><span class="s2">&quot;Crystallization — chord polygon seed (chord shape preserved)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e0783d3bda652c5d27af5bf13e480aca3a56abb8b8bb7142d0eeb1cae427430b.png" src="../../_images/e0783d3bda652c5d27af5bf13e480aca3a56abb8b8bb7142d0eeb1cae427430b.png" />
+</div>
+</div>
+<section id="sweep-diffusion-on-a-single-central-seed">
+<h3>Sweep <code class="docutils literal notranslate"><span class="pre">diffusion</span></code> on a single central seed<a class="headerlink" href="#sweep-diffusion-on-a-single-central-seed" title="Link to this heading">#</a></h3>
+<p>With a single central seed and no chord-polygon to bias the shape, the
+underlying triangular Reiter lattice produces the classic six-armed
+snowflake. <code class="docutils literal notranslate"><span class="pre">diffusion</span></code> then controls how far latent water can spread
+between freezing steps — low diffusion gives a small compact crystal,
+high diffusion gives sparser, more ramified dendrites of the same
+6-fold symmetry.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diffusions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+<span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">Crystallization</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">grid_radius</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+                          <span class="n">output_resolution</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+                          <span class="n">seed_strategy</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="n">diffusion</span><span class="o">=</span><span class="n">d</span><span class="p">,</span>
+                          <span class="n">rng_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">CHORDS</span><span class="p">[</span><span class="s2">&quot;Major&quot;</span><span class="p">])</span>
+         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">diffusions</span><span class="p">]</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">gallery</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span>
+                 <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;diffusion = </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">diffusions</span><span class="p">],</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                 <span class="n">suptitle</span><span class="o">=</span><span class="s2">&quot;Crystallization — diffusion sweep (single seed, Major chord)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/14f89fc25d3c7c77decfacc866784a43cede84525d1265ca38f89ddc864dd5cb.png" src="../../_images/14f89fc25d3c7c77decfacc866784a43cede84525d1265ca38f89ddc864dd5cb.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="reactiondiffusion-chord-driven-gray-scott-patterns">
+<h2><code class="docutils literal notranslate"><span class="pre">ReactionDiffusion</span></code> — chord-driven Gray-Scott patterns<a class="headerlink" href="#reactiondiffusion-chord-driven-gray-scott-patterns" title="Link to this heading">#</a></h2>
+<p>Standard Gray-Scott $(U, V)$ kinetics where <code class="docutils literal notranslate"><span class="pre">feed</span></code> and <code class="docutils literal notranslate"><span class="pre">kill</span></code> rates
+are derived from the chord (or supplied explicitly). The output is the
+<code class="docutils literal notranslate"><span class="pre">v</span></code>-species concentration after <code class="docutils literal notranslate"><span class="pre">n_steps</span></code> updates — spots, stripes,
+mazes, or fingerprint depending on where the chord places you in
+parameter space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionDiffusion</span>
+
+<span class="c1"># The chord-derived F/K range is broad — some chords land in regions</span>
+<span class="c1"># of the Pearson plane where V dies out (uniform-red attractor). The</span>
+<span class="c1"># four below all map into the *active* labyrinth band so the chord</span>
+<span class="c1"># differences read cleanly:</span>
+<span class="c1">#   Sus4 → fine maze with stripe segments</span>
+<span class="c1">#   Aug  → coarser maze</span>
+<span class="c1">#   Maj7 → asymmetric stripes</span>
+<span class="c1">#   Dim7 → tight bubble field (chord with the densest seed polygon)</span>
+<span class="n">active</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Sus4&quot;</span><span class="p">:</span>  <span class="n">CHORDS</span><span class="p">[</span><span class="s2">&quot;Sus4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;Aug&quot;</span><span class="p">:</span>   <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]),</span>
+    <span class="s2">&quot;Maj7&quot;</span><span class="p">:</span>  <span class="n">HarmonicInput</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                    <span class="n">Fraction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]),</span>
+    <span class="s2">&quot;Dim7&quot;</span><span class="p">:</span>  <span class="n">CHORDS</span><span class="p">[</span><span class="s2">&quot;Dim7&quot;</span><span class="p">],</span>
+<span class="p">}</span>
+<span class="n">rd</span>    <span class="o">=</span> <span class="n">ReactionDiffusion</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">192</span><span class="p">,</span> <span class="n">rng_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">rd</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">active</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">gallery</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span> <span class="n">titles</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">active</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">suptitle</span><span class="o">=</span><span class="s2">&quot;ReactionDiffusion (Gray-Scott v-field) — four chords&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/9bf66fa9e0193e3c9e61d081eccd3db36161e57929ca8cf0425dd71da6ec92d0.png" src="../../_images/9bf66fa9e0193e3c9e61d081eccd3db36161e57929ca8cf0425dd71da6ec92d0.png" />
+</div>
+</div>
+<section id="canonical-pearson-regimes-chord-fixed-f-k-swept">
+<h3>Canonical Pearson regimes (chord fixed, $(F, K)$ swept)<a class="headerlink" href="#canonical-pearson-regimes-chord-fixed-f-k-swept" title="Link to this heading">#</a></h3>
+<p>Holding the chord constant and stepping through the canonical Pearson
+$(F, K)$ coordinates visits four qualitatively different attractors:
+β-foam, γ-spots, κ-labyrinth, and δ-replicating dots. The central-seed
+trigger makes the regimes converge faster than the polygon seed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">0.018</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">,</span> <span class="s2">&quot;β — foam&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.022</span><span class="p">,</span> <span class="mf">0.051</span><span class="p">,</span> <span class="s2">&quot;γ — spots&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.030</span><span class="p">,</span> <span class="mf">0.057</span><span class="p">,</span> <span class="s2">&quot;κ — labyrinth&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.042</span><span class="p">,</span> <span class="mf">0.059</span><span class="p">,</span> <span class="s2">&quot;δ — replicating dots&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">ReactionDiffusion</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span>
+                            <span class="n">feed</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">kill</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">seed_strategy</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                            <span class="n">rng_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">CHORDS</span><span class="p">[</span><span class="s2">&quot;Major&quot;</span><span class="p">])</span>
+         <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">]</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">gallery</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span>
+                 <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lbl</span><span class="si">}</span><span class="se">\n</span><span class="s2">F=</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">, K=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">pts</span><span class="p">],</span>
+                 <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">suptitle</span><span class="o">=</span><span class="s2">&quot;ReactionDiffusion — Pearson regime sweep (Major chord)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/0fe2c8b8e79cff99f01a63664dd508fe301107670ad28ca1ffaaf3a0928b8bda.png" src="../../_images/0fe2c8b8e79cff99f01a63664dd508fe301107670ad28ca1ffaaf3a0928b8bda.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_parametric_and_transport.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Parametric and transport media</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../api/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crystallization-snowflake-style-chord-growth"><code class="docutils literal notranslate"><span class="pre">Crystallization</span></code> — snowflake-style chord growth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sweep-diffusion-on-a-single-central-seed">Sweep <code class="docutils literal notranslate"><span class="pre">diffusion</span></code> on a single central seed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reactiondiffusion-chord-driven-gray-scott-patterns"><code class="docutils literal notranslate"><span class="pre">ReactionDiffusion</span></code> — chord-driven Gray-Scott patterns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#canonical-pearson-regimes-chord-fixed-f-k-swept">Canonical Pearson regimes (chord fixed, $(F, K)$ swept)</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,950 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Inputs &#8212; Biotuner 0.3.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/harmonic_geometry/inputs';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Geometry Data" href="geometry_data.html" />
+    <link rel="prev" title="Harmonic Geometry" href="../harmonic_geometry.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.3.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.3.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../harmonic_geometry.html">Harmonic Geometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api/harmonic_geometry/inputs.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Inputs</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput"><code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.peaks</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.amplitudes"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.amplitudes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.phases"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.damping"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.damping</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.base_freq"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.base_freq</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.equave"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.equave</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.metadata"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.linewidths"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.linewidths</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.freqs"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.freqs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.psd"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.psd</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectrum_method"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.spectrum_method</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.aperiodic_exponent"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.aperiodic_exponent</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectral_flatness"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.spectral_flatness</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_source"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios_source</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_alternates"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios_alternates</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.n_components"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.n_components()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.to_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.to_ratios()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.normalized_amplitudes"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.normalized_amplitudes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.validate"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_ratios()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_biotuner"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_biotuner()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.frames"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.frames</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.times"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.times</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.n_frames"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.n_frames()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.at"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.at()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.interpolate"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.interpolate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.from_biotuner_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_group"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.from_biotuner_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-biotuner.harmonic_geometry.inputs">
+<span id="inputs"></span><h1>Inputs<a class="headerlink" href="#module-biotuner.harmonic_geometry.inputs" title="Link to this heading">#</a></h1>
+<p>Backward-compatible re-export of the HarmonicInput descriptor.</p>
+<p><code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code> originally lived in this submodule because
+<a class="reference internal" href="../harmonic_geometry.html#module-biotuner.harmonic_geometry" title="biotuner.harmonic_geometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">biotuner.harmonic_geometry</span></code></a> was its only consumer. As of the
+cross-module HarmonicInput promotion, the canonical home is
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">biotuner.harmonic_input</span></code> at the top level — so unrelated modules
+(<code class="docutils literal notranslate"><span class="pre">harmonic_timbre</span></code>, the engine backend, exporters) can consume the
+descriptor without pulling in geometry as a transitive dependency.</p>
+<p>This file remains so that the ~24 internal call sites and any external
+code still doing <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">biotuner.harmonic_geometry.inputs</span> <span class="pre">import</span>
+<span class="pre">HarmonicInput</span></code> keep working unchanged. New code should prefer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_input</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span><span class="p">,</span> <span class="n">HarmonicSequence</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HarmonicInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios:</span> <span class="pre">~typing.List[~fractions.Fraction</span> <span class="pre">|</span> <span class="pre">float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peaks:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitudes:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phases:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damping:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_freq:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata:</span> <span class="pre">~typing.Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidths:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd:</span> <span class="pre">~typing.List[float]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_method:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aperiodic_exponent:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectral_flatness:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_source:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'peaks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_alternates:</span> <span class="pre">~typing.Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.List[float]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unified harmonic input.</p>
+<p>At least one of <code class="docutils literal notranslate"><span class="pre">ratios</span></code> or <code class="docutils literal notranslate"><span class="pre">peaks</span></code> must be provided. All list-typed
+optional fields, if given, must have lengths matching the number of
+components (<code class="docutils literal notranslate"><span class="pre">len(ratios)</span></code> or <code class="docutils literal notranslate"><span class="pre">len(peaks)</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratios</strong> (<em>list of Fraction or float, optional</em>) – Frequency ratios. Coerced to <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code> when a
+rational approximation within <code class="xref py py-data docutils literal notranslate"><span class="pre">DEFAULT_MAX_DENOMINATOR</span></code> exists.</p></li>
+<li><p><strong>peaks</strong> (<em>list of float, optional</em>) – Peak frequencies in Hz.</p></li>
+<li><p><strong>amplitudes</strong> (<em>list of float, optional</em>) – Linear (not dB) amplitudes per component. Defaults to uniform.</p></li>
+<li><p><strong>phases</strong> (<em>list of float, optional</em>) – Phase per component, in radians. Defaults to zeros.</p></li>
+<li><p><strong>damping</strong> (<em>list of float, optional</em>) – Decay rate (1/s) per component. Defaults to zeros.</p></li>
+<li><p><strong>base_freq</strong> (<em>float, default=1.0</em>) – Reference frequency in Hz. Used when <code class="docutils literal notranslate"><span class="pre">ratios</span></code> are given without
+<code class="docutils literal notranslate"><span class="pre">peaks</span></code> to recover absolute frequencies.</p></li>
+<li><p><strong>equave</strong> (<em>float, default=2.0</em>) – Equave width: <code class="docutils literal notranslate"><span class="pre">2.0</span></code> for octaves, <code class="docutils literal notranslate"><span class="pre">3.0</span></code> for tritaves, etc. Must
+be greater than 1.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Free-form annotations preserved across constructors and
+validation.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Validation is invoked by <code class="xref py py-meth docutils literal notranslate"><span class="pre">__post_init__()</span></code>; constructing an
+inconsistent <a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_geometry.inputs.HarmonicInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a> raises <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.ratios">
+<span class="sig-name descname"><span class="pre">ratios</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.peaks">
+<span class="sig-name descname"><span class="pre">peaks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.peaks" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.amplitudes">
+<span class="sig-name descname"><span class="pre">amplitudes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.amplitudes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.phases">
+<span class="sig-name descname"><span class="pre">phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.phases" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.damping">
+<span class="sig-name descname"><span class="pre">damping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.damping" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.base_freq">
+<span class="sig-name descname"><span class="pre">base_freq</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.base_freq" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.equave">
+<span class="sig-name descname"><span class="pre">equave</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.equave" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.metadata" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.linewidths">
+<span class="sig-name descname"><span class="pre">linewidths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.linewidths" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.freqs">
+<span class="sig-name descname"><span class="pre">freqs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.freqs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.psd">
+<span class="sig-name descname"><span class="pre">psd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.psd" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.spectrum_method">
+<span class="sig-name descname"><span class="pre">spectrum_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectrum_method" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.aperiodic_exponent">
+<span class="sig-name descname"><span class="pre">aperiodic_exponent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.aperiodic_exponent" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.spectral_flatness">
+<span class="sig-name descname"><span class="pre">spectral_flatness</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectral_flatness" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_source">
+<span class="sig-name descname"><span class="pre">ratios_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'peaks'</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_source" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_alternates">
+<span class="sig-name descname"><span class="pre">ratios_alternates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_alternates" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.n_components">
+<span class="sig-name descname"><span class="pre">n_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.n_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.n_components" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of harmonic components.</p>
+<p>Resolved from <code class="docutils literal notranslate"><span class="pre">ratios</span></code> first, then <code class="docutils literal notranslate"><span class="pre">peaks</span></code>. At least one of the
+two is guaranteed to be present after <a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.validate" title="biotuner.harmonic_geometry.inputs.HarmonicInput.validate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validate()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.to_peaks">
+<span class="sig-name descname"><span class="pre">to_peaks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.to_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_peaks" title="Link to this definition">#</a></dt>
+<dd><p>Return absolute peak frequencies in Hz as a 1-D <code class="docutils literal notranslate"><span class="pre">float64</span></code> array.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">peaks</span></code> is set, those values are returned directly. Otherwise
+peaks are reconstructed as <code class="docutils literal notranslate"><span class="pre">base_freq</span> <span class="pre">*</span> <span class="pre">ratios</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.to_ratios">
+<span class="sig-name descname"><span class="pre">to_ratios</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.to_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_ratios" title="Link to this definition">#</a></dt>
+<dd><p>Return ratios.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">ratios</span></code> is set, those values are returned. Otherwise ratios are
+derived as <code class="docutils literal notranslate"><span class="pre">peaks</span> <span class="pre">/</span> <span class="pre">base_freq</span></code> and coerced to <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.normalized_amplitudes">
+<span class="sig-name descname"><span class="pre">normalized_amplitudes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.normalized_amplitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.normalized_amplitudes" title="Link to this definition">#</a></dt>
+<dd><p>Return amplitudes scaled to sum to 1.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">amplitudes</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, returns a uniform distribution over
+the components.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.validate" title="Link to this definition">#</a></dt>
+<dd><p>Raise <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code> if the input is internally inconsistent.</p>
+<p>Checked invariants:</p>
+<ul class="simple">
+<li><p>at least one of <code class="docutils literal notranslate"><span class="pre">ratios</span></code> / <code class="docutils literal notranslate"><span class="pre">peaks</span></code> is given,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">equave</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">base_freq</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>,</p></li>
+<li><p>all list-typed fields have matching lengths,</p></li>
+<li><p>all amplitudes are non-negative,</p></li>
+<li><p>all peaks are positive,</p></li>
+<li><p>if both <code class="docutils literal notranslate"><span class="pre">ratios</span></code> and <code class="docutils literal notranslate"><span class="pre">peaks</span></code> are given, they agree up to
+<code class="docutils literal notranslate"><span class="pre">base_freq</span></code> within a small relative tolerance.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.from_ratios">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ratios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratios</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitudes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.from_ratios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_ratios" title="Link to this definition">#</a></dt>
+<dd><p>Build from a sequence of ratios.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.from_peaks">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitudes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">damping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.from_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_peaks" title="Link to this definition">#</a></dt>
+<dd><p>Build from a sequence of peak frequencies in Hz.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">base_freq</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> it is set to the smallest peak so that
+the implied ratio of the lowest component is exactly 1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicInput.from_biotuner">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_biotuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_alternates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_fooof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicInput.from_biotuner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_biotuner" title="Link to this definition">#</a></dt>
+<dd><p>Build from a fitted <code class="xref py py-class docutils literal notranslate"><span class="pre">compute_biotuner</span></code> instance.</p>
+<p>Two selection modes for the canonical <code class="docutils literal notranslate"><span class="pre">ratios</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Legacy mode</strong> (<code class="docutils literal notranslate"><span class="pre">scale_priority</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default) —
+reproduces the historical behaviour exactly: pulls <code class="docutils literal notranslate"><span class="pre">peaks</span></code>
+(required), <code class="docutils literal notranslate"><span class="pre">amps</span></code> when length-aligned, and uses
+<code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code> as the canonical ratios when it’s 1:1 aligned
+with peaks. <code class="docutils literal notranslate"><span class="pre">ratios_source</span></code> is set to <code class="docutils literal notranslate"><span class="pre">&quot;peaks&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ratios_alternates</span></code> is left empty so existing callers see no
+schema change.</p></li>
+<li><p><strong>Scale-priority mode</strong> (<code class="docutils literal notranslate"><span class="pre">scale_priority</span></code> provided) — walks
+the priority list in order (using the canonical names from
+<code class="xref py py-data docutils literal notranslate"><span class="pre">SCALE_KEYS</span></code>), picks the first non-empty scale as
+<code class="docutils literal notranslate"><span class="pre">ratios</span></code>, records its label in <code class="docutils literal notranslate"><span class="pre">ratios_source</span></code>. When
+<code class="docutils literal notranslate"><span class="pre">include_alternates=True</span></code> (default), every other non-empty
+scale found on <code class="docutils literal notranslate"><span class="pre">bt</span></code> is stored in <code class="docutils literal notranslate"><span class="pre">ratios_alternates</span></code> under
+the same canonical name. Amplitudes / linewidths are populated
+only if their lengths align with the chosen scale.</p></li>
+</ul>
+<p>Tier-A spectral context is populated regardless of mode:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">freqs</span></code> / <code class="docutils literal notranslate"><span class="pre">psd</span></code> / <code class="docutils literal notranslate"><span class="pre">spectrum_method</span></code> (when <code class="docutils literal notranslate"><span class="pre">include_spectrum</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aperiodic_exponent</span></code> / <code class="docutils literal notranslate"><span class="pre">linewidths</span></code> (when <code class="docutils literal notranslate"><span class="pre">include_fooof</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spectral_flatness</span></code> (always, if available)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bt</strong> (<em>compute_biotuner</em>) – A fitted biotuner object on which <code class="docutils literal notranslate"><span class="pre">peaks_extraction</span></code> has
+been called.</p></li>
+<li><p><strong>equave</strong> (<em>float, default=2.0</em>)</p></li>
+<li><p><strong>scale_priority</strong> (<em>sequence of str, optional</em>) – Ordered preference for <code class="docutils literal notranslate"><span class="pre">ratios</span></code>. Values must come from
+<code class="xref py py-data docutils literal notranslate"><span class="pre">SCALE_KEYS</span></code>. Unknown keys raise <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></li>
+<li><p><strong>include_alternates</strong> (<em>bool, default=True</em>) – In scale-priority mode, populate <code class="docutils literal notranslate"><span class="pre">ratios_alternates</span></code> with
+every other non-empty scale found on <code class="docutils literal notranslate"><span class="pre">bt</span></code>. Ignored in
+legacy mode.</p></li>
+<li><p><strong>include_spectrum</strong> (<em>bool, default=True</em>) – Copy <code class="docutils literal notranslate"><span class="pre">bt.freqs</span></code> / <code class="docutils literal notranslate"><span class="pre">bt.psd</span></code> / <code class="docutils literal notranslate"><span class="pre">bt.spectrum_method</span></code> if
+available.</p></li>
+<li><p><strong>include_fooof</strong> (<em>bool, default=True</em>) – Copy <code class="docutils literal notranslate"><span class="pre">bt.aperiodic_exponent</span></code> and a length-aligned
+<code class="docutils literal notranslate"><span class="pre">bt.linewidth</span></code> if available.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>AttributeError</strong> – If <code class="docutils literal notranslate"><span class="pre">bt</span></code> lacks a <code class="docutils literal notranslate"><span class="pre">peaks</span></code> attribute.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">bt.peaks</span></code> is empty, or <code class="docutils literal notranslate"><span class="pre">scale_priority</span></code> contains an
+    unknown key.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HarmonicSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Time-resolved sequence of <a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_geometry.inputs.HarmonicInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a> frames.</p>
+<p>Pairs naturally with the output of <code class="docutils literal notranslate"><span class="pre">biotuner.transitional_harmony</span></code> and
+<code class="docutils literal notranslate"><span class="pre">biotuner.harmonic_sequence</span></code>: each window’s peaks become a frame here,
+and downstream geometry functions can be applied frame-by-frame via
+<code class="docutils literal notranslate"><span class="pre">transformations.geometry_sequence</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>list of HarmonicInput</em>) – At least one frame is required.</p></li>
+<li><p><strong>times</strong> (<em>ndarray, optional</em>) – Time of each frame in seconds. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, frames are assumed to
+be uniformly spaced at unit intervals.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.frames">
+<span class="sig-name descname"><span class="pre">frames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.frames" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.times">
+<span class="sig-name descname"><span class="pre">times</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.times" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.n_frames">
+<span class="sig-name descname"><span class="pre">n_frames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence.n_frames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.n_frames" title="Link to this definition">#</a></dt>
+<dd><p>Number of frames in the sequence.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.at">
+<span class="sig-name descname"><span class="pre">at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence.at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.at" title="Link to this definition">#</a></dt>
+<dd><p>Return the frame nearest to time <code class="docutils literal notranslate"><span class="pre">t</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'log'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence.interpolate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.interpolate" title="Link to this definition">#</a></dt>
+<dd><p>Return a <a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_geometry.inputs.HarmonicInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a> interpolated to time <code class="docutils literal notranslate"><span class="pre">t</span></code>.</p>
+<p>Currently supports two-frame interpolation between the bracketing
+frames. <code class="docutils literal notranslate"><span class="pre">mode</span></code> selects the space in which ratios / peaks are
+blended:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'log'</span></code> (default) — logarithmic, musically correct,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code> — straight linear interpolation,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code> — return the nearest frame (no blending).</p></li>
+</ul>
+<p>Frames must have equal <code class="docutils literal notranslate"><span class="pre">n_components</span></code>; if they do not, this
+raises <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code>. Richer interpolation (mismatched
+component counts, phase wrapping, etc.) is the job of
+<code class="docutils literal notranslate"><span class="pre">transformations.interpolate_input</span></code> in Phase 6.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_biotuner_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bt_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence" title="biotuner.harmonic_input.HarmonicSequence"><span class="pre">HarmonicSequence</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence.from_biotuner_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list" title="Link to this definition">#</a></dt>
+<dd><p>Build from a sequence of fitted <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> objects.</p>
+<p>Each biotuner object becomes one frame. Objects with no peaks are
+skipped; if every object is empty, <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code> is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bt_list</strong> (<em>sequence of compute_biotuner</em>) – Fitted biotuner objects (<code class="docutils literal notranslate"><span class="pre">peaks_extraction</span></code> already called).</p></li>
+<li><p><strong>times</strong> (<em>sequence of float, optional</em>) – One time per <em>kept</em> frame. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, frames are uniformly
+spaced. If provided, must match the number of non-empty
+biotuner objects.</p></li>
+<li><p><strong>equave</strong> (<em>float, default=2.0</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_group">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_biotuner_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">btg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence" title="biotuner.harmonic_input.HarmonicSequence"><span class="pre">HarmonicSequence</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_input.html#HarmonicSequence.from_biotuner_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_group" title="Link to this definition">#</a></dt>
+<dd><p>Build from a <a class="reference internal" href="../biotuner_group.html#biotuner.biotuner_group.BiotunerGroup" title="biotuner.biotuner_group.BiotunerGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">biotuner.biotuner_group.BiotunerGroup</span></code></a> instance.</p>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">btg.objects</span></code> (the per-series <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> instances).
+<code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code> must have been constructed with
+<code class="docutils literal notranslate"><span class="pre">store_objects=True</span></code> (the default).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>btg</strong> (<em>BiotunerGroup</em>) – A group whose <code class="docutils literal notranslate"><span class="pre">compute_peaks</span></code> has been run.</p></li>
+<li><p><strong>times</strong> (<em>sequence of float, optional</em>) – One time per non-empty frame; see <a class="reference internal" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list" title="biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_biotuner_list()</span></code></a>.</p></li>
+<li><p><strong>equave</strong> (<em>float, default=2.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If <code class="docutils literal notranslate"><span class="pre">btg</span></code> has no <code class="docutils literal notranslate"><span class="pre">objects</span></code> attribute, or it is <code class="docutils literal notranslate"><span class="pre">None</span></code>
+    (e.g. <code class="docutils literal notranslate"><span class="pre">store_objects=False</span></code> was used).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../harmonic_geometry.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonic Geometry</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="geometry_data.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Geometry Data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput"><code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.peaks</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.amplitudes"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.amplitudes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.phases"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.damping"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.damping</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.base_freq"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.base_freq</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.equave"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.equave</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.metadata"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.linewidths"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.linewidths</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.freqs"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.freqs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.psd"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.psd</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectrum_method"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.spectrum_method</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.aperiodic_exponent"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.aperiodic_exponent</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.spectral_flatness"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.spectral_flatness</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_source"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios_source</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_alternates"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.ratios_alternates</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.n_components"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.n_components()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.to_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.to_ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.to_ratios()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.normalized_amplitudes"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.normalized_amplitudes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.validate"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_ratios"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_ratios()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_peaks"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_peaks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicInput.from_biotuner"><code class="docutils literal notranslate"><span class="pre">HarmonicInput.from_biotuner()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.frames"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.frames</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.times"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.times</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.n_frames"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.n_frames()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.at"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.at()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.interpolate"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.interpolate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.from_biotuner_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_group"><code class="docutils literal notranslate"><span class="pre">HarmonicSequence.from_biotuner_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
