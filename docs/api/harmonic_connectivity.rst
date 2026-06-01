@@ -78,7 +78,11 @@ The class:
 Spectrum-based cross-channel orchestrator:
 
 * :func:`compute_cross_resonance` — single-call cross-channel R(f) on a signal pair
-* :class:`CrossResonanceResult` — output dataclass with 3 reducer flavors per factor
+* :class:`CrossResonanceResult` — output dataclass with 3 reducer flavors
+  (``'1to2'`` / ``'2to1'`` / ``'all'``) per factor. The full N×N matrices
+  are accessible as ``result.harmonicity_matrix`` and
+  ``result.phase_coupling_matrix`` when the config has
+  ``return_intermediates=True``.
 
 Legacy shim:
 

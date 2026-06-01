@@ -46,15 +46,33 @@ Public API
 Main entry points:
 
 * :func:`compute_resonance` — main entry point
-* :class:`ResonanceConfig` — all swappable knobs
-* :class:`ResonanceResult` — output dataclass
+* :class:`ResonanceConfig` — all swappable knobs (see ``return_intermediates``
+  to keep the full N×N matrices on the result)
+* :class:`ResonanceResult` — output dataclass; see "Result views" below
 * :class:`HigherOrderResult` — for Phase 3 higher-order metrics
 * :func:`with_surrogate_null` — surrogate-z-scored variant of ``compute_resonance``
+
+Result views (on :class:`ResonanceResult`):
+
+* ``result.factors["H" | "PC"]`` and ``result.resonance_spectrum`` —
+  reduced 1-D spectra, length ``n_freqs``
+* ``result.harmonicity_matrix`` and ``result.phase_coupling_matrix`` —
+  full N×N matrices ``S[i, j]`` and ``Φ[i, j]`` (need
+  ``ResonanceConfig(return_intermediates=True)``)
+* ``result.summaries["H" | "PC" | "R"]`` — scalar metrics per spectrum:
+  ``avg``, ``max``, ``flatness``, ``entropy``, ``spread``, ``higuchi``,
+  ``peaks``, ``peaks_avg``, ``peak_harmsim``, ``peak_harmsim_avg``,
+  ``peak_harmsim_max`` (one-to-one with legacy
+  ``compute_global_harmonicity`` columns)
+* ``result.peaks["H" | "PC" | "R"]`` — peak frequencies per spectrum
 
 Discovery + plotting helpers:
 
 * :func:`list_strategies` — print/return the registered strategies across all 8 registries
-* :func:`results_to_dataframe` — pack multiple results into a DataFrame for the plotters
+* :func:`results_to_dataframe` — pack multiple results into a wide
+  pandas DataFrame; flattens ``summaries`` into legacy-named columns
+  (``harm_flatness``, ``phase_peaks_avg``, ``res_peak_harmsim_max``, …)
+  by default; pass ``flatten_summaries=False`` for the narrow 4-column form
 * ``harmonic_spectrum_plot_avg_corr``, ``harmonic_spectrum_plot_trial_corr``,
   ``harmonic_spectrum_plot_freq_corr`` — comparison plots over collections of results
 
