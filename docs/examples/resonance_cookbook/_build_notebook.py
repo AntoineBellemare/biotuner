@@ -28,17 +28,20 @@ This notebook walks through ten workflow categories:
 
 1. **Setup** — synthetic signals + strategy discovery
 2. **H-only spectrum** — `compute_harmonic_spectrum`
-3. **Full single-signal R(f)** — `compute_resonance`
+3. **Full single-signal R(f)** — `compute_resonance`, and why surrogate
+   normalization is needed for `H ≠ PC ≠ R` discrimination
 4. **Swapping kernels** — harmonic kernel
-5. **Swapping coupling metrics** — including the n:m convention rule
-6. **Swapping ratio kernels** — binary vs. fraction
-7. **Swapping combine rules**
-8. **Surrogate-null normalization**
+5. **Swapping coupling metrics** — including the n:m convention rule, with a
+   cross-channel example that visibly separates PLV from PLI/wPLI
+6. **Swapping ratio kernels** — `binary` vs `fraction`, with a 10:17
+   mode-lock that only the fraction kernel can test
+7. **Swapping combine rules** — with H and PC peaks at different bins
+8. **Surrogate-null normalization** — `with_surrogate_null`
 9. **Cross-channel resonance** — `compute_cross_resonance`, 3 reducer flavors
 10. **Connectivity matrices + statistical inference**
 
-The cells are self-contained — each section can be run independently after the
-"Setup" block has been executed.
+The cells are self-contained — each section can be run independently after
+the "Setup" block has been executed.
 """)
 
 # ---------------------------------------------------------------------------
@@ -77,7 +80,7 @@ def pink_noise(n, sf, seed=0):
     return np.fft.irfft(np.fft.rfft(w) / np.sqrt(f), n=n)
 
 def harmonic_signal(sf=SF, duration=8.0, freqs=(5, 10, 20, 40), amp_decay=0.7, seed=0):
-    \"\"\"Harmonic stack: sum of sinusoids at the given freqs, decaying amplitude.\"\"\"
+    \"\"\"Phase-locked harmonic stack of sinusoids on pink-noise background.\"\"\"
     t = np.arange(int(sf * duration)) / sf
     sig = sum((amp_decay ** i) * np.sin(2 * np.pi * f * t) for i, f in enumerate(freqs))
     sig += 0.05 * pink_noise(len(t), sf, seed=seed)
@@ -86,8 +89,7 @@ def harmonic_signal(sf=SF, duration=8.0, freqs=(5, 10, 20, 40), amp_decay=0.7, s
 def alpha_burst_signal(sf=SF, duration=8.0, alpha_freq=10.0, n_bursts=6, seed=0):
     \"\"\"EEG-like: 1/f background + Hann-windowed alpha bursts.\"\"\"
     rng = np.random.default_rng(seed)
-    n = int(sf * duration)
-    t = np.arange(n) / sf
+    n = int(sf * duration); t = np.arange(n) / sf
     sig = 1.0 * pink_noise(n, sf, seed=seed)
     burst_times = np.linspace(0.5, duration - 1.0, n_bursts) + rng.uniform(-0.1, 0.1, size=n_bursts)
     for bt in burst_times:
@@ -96,6 +98,56 @@ def alpha_burst_signal(sf=SF, duration=8.0, alpha_freq=10.0, n_bursts=6, seed=0)
         win = np.sin(np.pi * local / 0.6) ** 2
         sig[idx] += 2.0 * win * np.sin(2 * np.pi * alpha_freq * local + rng.uniform(0, 2 * np.pi))
     return sig
+
+def detuned_pair_signal(sf=SF, duration=30.0, seed=0):
+    \"\"\"Two pairs that both LOOK like 1:2 harmonic stacks in the PSD, but
+    only one is actually phase-locked:
+
+      * 6 + 12 Hz — EXACT 1:2 ratio, phase-locked (high H, high PC, high R)
+      * 9 + 18.5 Hz — slightly detuned (18.5/9 = 2.056 within binary's 5%
+        tolerance, so H still sees it as 1:2) but the real phase relation
+        drifts (low PC, low R)
+
+    Pedagogical lesson: H reflects PSD shape; only the surrogate-z-scored
+    R distinguishes real coupling from same-PSD impostors.
+    \"\"\"
+    rng = np.random.default_rng(seed)
+    n = int(sf * duration); t = np.arange(n) / sf
+    phi = 2 * np.pi * 6 * t + 0.3
+    locked = 1.2 * np.sin(phi) + 0.8 * np.sin(2 * phi + 0.4)
+    detuned = (1.2 * np.sin(2 * np.pi * 9.0 * t + rng.uniform(0, 2 * np.pi))
+               + 0.8 * np.sin(2 * np.pi * 18.5 * t + rng.uniform(0, 2 * np.pi)))
+    lone = 0.7 * np.sin(2 * np.pi * 23 * t + 1.7)
+    bg = 0.15 * pink_noise(n, sf, seed=seed + 99)
+    return locked + detuned + lone + bg
+
+def coupled_channels(sf=SF, duration=12.0, mode='lagged', seed=0):
+    \"\"\"Two channels coupled at 10 Hz under three coupling regimes:
+
+      mode='zero_lag' : φ_A = φ_B exactly (volume-conduction artifact)
+      mode='lagged'   : φ_B = φ_A + π/3 (genuine lagged coupling)
+      mode='uncoupled': independent random phases (no coupling)
+
+    Use this to compare phase-coupling metrics — PLV detects all three
+    locked cases, PLI/wPLI suppress the zero-lag one.
+    \"\"\"
+    rng = np.random.default_rng(seed)
+    n = int(sf * duration); t = np.arange(n) / sf
+    phi = 2 * np.pi * 10 * t
+    sig_a = np.sin(phi) + 0.3 * pink_noise(n, sf, seed=seed + 1)
+    if mode == 'zero_lag':
+        sig_b = np.sin(phi) + 0.3 * pink_noise(n, sf, seed=seed + 2)
+    elif mode == 'lagged':
+        sig_b = np.sin(phi + np.pi / 3) + 0.3 * pink_noise(n, sf, seed=seed + 2)
+    elif mode == 'uncoupled':
+        # Random-walk phase: φ_B drifts independently — same PSD peak at 10 Hz,
+        # but the phase relation to φ_A is destroyed over time.
+        dphi = rng.standard_normal(n) * 1.0 * np.sqrt(1.0 / sf)
+        sig_b = (np.sin(2 * np.pi * 10 * t + np.cumsum(dphi))
+                 + 0.3 * pink_noise(n, sf, seed=seed + 2))
+    else:
+        raise ValueError(mode)
+    return sig_a, sig_b
 
 # Display a sample signal
 sig = harmonic_signal()
@@ -155,22 +207,44 @@ md("""
 
 `compute_resonance` runs the full pipeline: harmonic kernel → ratio kernel →
 phase estimator → coupling metric → reducers → combine.
+
+### Important caveat: H, PC, R correlate by construction
+
+Both H(f) and PC(f) are PSD-weighted in the orchestrator:
+
+```
+H(f)  = p(f) · Σⱼ S[f, j] · p(j)
+PC(f) = p(f) · Σⱼ W[f, j] · Φ[f, j] · p(j)
+```
+
+So **wherever PSD has a peak, both factors get amplified together** — the
+raw spectra tend to share peak locations, just with different relative
+heights. To see whether peaks reflect *real* harmonic coupling vs broadband
+power, use surrogate normalization (Section 8) or compare against the same
+signal's IAAFT-z-scored R.
+
+We demonstrate this with the `detuned_pair_signal`, designed so the
+9 + 18.5 Hz pair has nearly-identical PSD to the locked 6 + 12 Hz pair but
+NO actual phase coupling.
 """)
 
 code("""
-sig = harmonic_signal()
-result = compute_resonance(sig, sf=SF)
+sig = detuned_pair_signal(duration=30.0)
+cfg = ResonanceConfig(precision_hz=0.5, fmin=2, fmax=30, noverlap=900)
+result = compute_resonance(sig, sf=SF, config=cfg)
 
 print("type:", type(result).__name__)
-print("freqs:", result.freqs.shape)
+print("freqs shape:", result.freqs.shape)
 print("factors:", list(result.factors.keys()))
-print("resonance_spectrum:", result.resonance_spectrum.shape)
 print("peaks:", result.peaks)
+print()
+print("Note that both H and PC peak at the 'detuned' site 9 Hz, not just")
+print("the truly phase-locked site 6 Hz — this is the PSD-weighting effect.")
 print()
 print("Summaries (complexity per spectrum):")
 for k, s in result.summaries.items():
     print(f"  {k}: flatness={s['flatness']:.3f}  entropy={s['entropy']:.3f}  "
-          f"avg={s['avg']:.3g}  peaks={s['peaks']}")
+          f"avg={s['avg']:.3g}")
 """)
 
 code("""
@@ -179,15 +253,37 @@ H = result.factors['H']; PC = result.factors['PC']; R = result.resonance_spectru
 
 fig, axes = plt.subplots(3, 1, figsize=(10, 7), sharex=True)
 for ax, (name, vals, color) in zip(axes, [
-    ('H — harmonicity', H, '#1a237e'),
-    ('PC — phase coupling', PC, '#6a1b9a'),
-    ('R = H · PC — resonance', R, '#b71c1c'),
+    ('H — harmonicity',           H,  '#1a237e'),
+    ('PC — phase coupling',       PC, '#6a1b9a'),
+    ('R = H · PC — resonance',    R,  '#b71c1c'),
 ]):
     ax.plot(freqs, vals, color=color)
     ax.fill_between(freqs, 0, vals, color=color, alpha=0.15)
     ax.set_ylabel(name)
+    for tgt, lbl, col in [(6, '6 (locked)', 'green'),
+                            (9, '9 (detuned)', 'orange'),
+                            (12, '12 (locked)', 'green'),
+                            (18.5, '18.5 (detuned)', 'orange'),
+                            (23, '23 (lone)', 'red')]:
+        ax.axvline(tgt, color=col, alpha=0.4, lw=0.7, ls='--')
+
 axes[-1].set_xlabel("Frequency (Hz)")
+axes[0].set_title("H, PC, R from compute_resonance — all PSD-weighted, so they share peak structure")
 plt.tight_layout(); plt.show()
+
+# Quantify how similar H/PC/R shapes are (Pearson correlation, normalized to max)
+print()
+def corr(a, b): return float(np.corrcoef(a/a.max(), b/b.max())[0, 1])
+print("Shape correlations (peak-aligned across spectra):")
+print(f"  H ~ PC = {corr(H, PC):.3f}")
+print(f"  H ~ R  = {corr(H, R):.3f}")
+print(f"  PC ~ R = {corr(PC, R):.3f}")
+print()
+print("Both H and PC are PSD-weighted in the orchestrator (Step 9 reducer:")
+print("v[i] = p[i] * sum_j M[i,j] * p[j]), so wherever PSD peaks, both factors")
+print("are amplified. To distinguish TRUE phase coupling from PSD-impostors,")
+print("use surrogate normalization (Section 8) — AAFT/IAAFT surrogates preserve")
+print("PSD but destroy phase relations, so the z-scored R isolates pure coupling.")
 """)
 
 # ---------------------------------------------------------------------------
@@ -224,37 +320,86 @@ md("""
 
 Six pairwise metrics are registered, falling into two input-type categories:
 
-- **`phase` inputs** — operate on real-valued phase angles (e.g. STFT-bin phase):
-  `nm_plv`, `nm_pli`, `nm_wpli`, `nm_rrci`, `nm_plv_canonical`.
-- **`analytic` inputs** — operate on complex analytic signals (carries amplitude
-  AND phase): `nm_wpli_complex`.
+- **`phase` inputs**: `nm_plv`, `nm_pli`, `nm_wpli`, `nm_rrci`, `nm_plv_canonical`.
+- **`analytic` inputs**: `nm_wpli_complex`.
 
 ### Important: convention rule
 
 All ratio kernels in biotuner (`binary`, `fraction`, future Arnold-tongue)
 return `(n, m)` with the convention `ratio = f_j / f_i = m / n`. The plain
-`nm_plv` applies this as `n·φ_i − m·φ_j`, which is mathematically wrong for true
-n:m phase locking under Tass 1998. **For correct n:m phase coupling tests, use
-`coupling_metric='nm_plv_canonical'`** — it swaps `(n, m)` internally to apply
-the Tass formula.
+`nm_plv` applies this as `n·φ_i − m·φ_j`, which is mathematically wrong for
+true n:m phase locking under Tass 1998. **For correct n:m phase-coupling
+tests, use `coupling_metric='nm_plv_canonical'`** — it swaps `(n, m)`
+internally to apply the Tass formula. `nm_plv` is kept for **bit-exact
+reproduction** of legacy paper analyses only.
 
-`nm_plv` is kept for **bit-exact reproduction** of legacy paper analyses only.
+### Where do these metrics actually differ?
+
+For long, clean, single-signal data, all phase-input metrics give similar
+PC shapes (because they all measure the same underlying STFT phase
+coherence, just with different rejection of common-mode components). To
+see the **theoretical** differences cleanly, apply the metrics directly to
+synthesized phase arrays representing three canonical coupling regimes:
 """)
 
 code("""
-sig = harmonic_signal()
+from biotuner.resonance.coupling import nm_plv, nm_pli, nm_wpli, nm_plv_canonical, nm_rrci
 
-# Compare the 5 phase-input metrics on the same signal
-metrics = ['nm_plv', 'nm_plv_canonical', 'nm_pli', 'nm_wpli', 'nm_rrci']
-fig, axes = plt.subplots(len(metrics), 1, figsize=(10, 9), sharex=True)
-for ax, metric in zip(axes, metrics):
-    cfg = ResonanceConfig(coupling_metric=metric)
-    r = compute_resonance(sig, sf=SF, config=cfg)
-    ax.plot(r.freqs, r.factors['PC'], color='#6a1b9a')
-    ax.fill_between(r.freqs, 0, r.factors['PC'], color='#6a1b9a', alpha=0.15)
-    ax.set_ylabel(metric)
-axes[-1].set_xlabel("Frequency (Hz)")
-axes[0].set_title("Phase-coupling factor PC(f) across pairwise metrics")
+# Synthesize per-window phase arrays under three canonical coupling regimes
+rng = np.random.default_rng(0)
+N = 5000
+phi_a = 2 * np.pi * rng.random(N)
+
+regimes = {
+    'zero_lag (0)':       phi_a.copy(),                          # identical phases
+    'lagged (pi/3)':      phi_a + np.pi / 3,                     # constant offset
+    'anti_phase (pi)':    phi_a + np.pi,                         # anti-aligned
+    'noisy_lag':          phi_a + np.pi / 3 + 0.6 * rng.standard_normal(N),
+    'uncoupled':          2 * np.pi * rng.random(N),             # independent
+}
+
+metrics = {
+    'PLV':              nm_plv,
+    'PLV_canonical':    nm_plv_canonical,
+    'PLI':              nm_pli,
+    'wPLI':             nm_wpli,
+    'RRCi':             nm_rrci,
+}
+
+# Compute and tabulate
+print(f"{'regime':<22}  " + "  ".join(f"{name:>14}" for name in metrics))
+print("-" * (22 + len(metrics) * 16))
+results = {}
+for regime, phi_b in regimes.items():
+    row = {}
+    for mname, mfn in metrics.items():
+        row[mname] = mfn(phi_a, phi_b, 1, 1)
+    results[regime] = row
+    print(f"{regime:<22}  " + "  ".join(f"{row[n]:>14.4f}" for n in metrics))
+print()
+print("Key observations:")
+print("  PLV peaks for zero_lag AND lagged (it sees ALL constant phase relations)")
+print("  PLI/wPLI ~ 0 for zero_lag and anti_phase (sin(Delta phi) = 0)")
+print("  PLI/wPLI peak for lagged (Delta phi = pi/3 gives nonzero imag part)")
+print("  All metrics ~ 0 for uncoupled (random phase difference)")
+""")
+
+code("""
+# Grouped bar plot of the same table
+fig, ax = plt.subplots(figsize=(11, 4.5))
+regime_names = list(regimes)
+x = np.arange(len(regime_names))
+width = 0.16
+colors = ['#1a237e', '#283593', '#6a1b9a', '#b71c1c', '#00838f']
+for i, (mname, color) in enumerate(zip(metrics, colors)):
+    vals = [results[r][mname] for r in regime_names]
+    ax.bar(x + (i - len(metrics)/2 + 0.5) * width, vals, width, label=mname, color=color)
+ax.set_xticks(x); ax.set_xticklabels(regime_names, rotation=15, ha='right')
+ax.set_ylabel("Coupling metric value (1:1, raw on synthesized phases)")
+ax.set_title("Five coupling metrics under five phase-relation regimes\\n"
+              "(PLI/wPLI reject zero-lag and anti-phase; PLV does not)")
+ax.legend(loc='upper right', ncols=5, fontsize=9)
+ax.set_ylim(0, 1.05)
 plt.tight_layout(); plt.show()
 """)
 
@@ -262,36 +407,70 @@ plt.tight_layout(); plt.show()
 md("""
 ## 6. Ratio kernels — `binary` (legacy) vs `fraction` (new)
 
-The ratio kernel decides which (n, m) integer pair to test at each frequency
+The ratio kernel decides which `(n, m)` integer pair to test at each frequency
 pair, and how heavily to weight the result.
 
-- **`binary`** — tries (n, m) with 1 ≤ n, m ≤ max_nm (default 3) and picks the
-  best match within 5% tolerance. Returns W=1 if matched, W=0 otherwise
-  (or W=1 at 1:1 if `fallback_to_1_1=True`). Misses any ratio outside the
-  small preset table.
+- **`binary`** — iterates `1 ≤ n, m ≤ max_nm` (default 3), picks the best
+  match within 5% tolerance. Returns W=1 if matched, W=0 otherwise — or
+  `(n=1, m=1)` if `fallback_to_1_1=True`. **Misses any ratio outside the
+  small preset table.**
 - **`fraction`** — computes `Fraction(f_j / f_i).limit_denominator(max_denom)`
-  to find the EXACT closest rational for ANY frequency pair. Weights via Tenney
-  height: `W = exp(-β · log₂(n·m))` so simple ratios dominate.
+  to find the EXACT closest rational. Weights via Tenney height
+  `W = exp(-β · log₂(n·m))`, so simple ratios dominate but complex ones can
+  still be tested.
 
-Both share the same `(n, m)` convention, so pairing with `nm_plv_canonical`
-gives correct n:m tests regardless of which ratio kernel you pick.
+### Demonstration: a 10 + 17 Hz phase-locked signal
+
+`17 / 10 = 1.7` matches no integer ratio with `n, m ≤ 3`, so `binary` falls
+back to 1:1 (testing a meaningless 10:10 coupling at the 10/17 bin pair).
+`fraction` returns `(n=10, m=17)` — the actual mode-lock — though heavily
+down-weighted by Tenney height.
 """)
 
 code("""
-sig = harmonic_signal()
+# Build a 10:17 phase-locked signal
+def lock_signal_1017(sf=SF, duration=30.0, seed=0):
+    n = int(sf * duration); t = np.arange(n) / sf
+    phi_unit = 2 * np.pi * 1.0 * t  # common subharmonic
+    # 10 Hz and 17 Hz share the same 1 Hz base phase — true 10:17 lock
+    sig = (np.sin(10 * phi_unit) + 0.7 * np.sin(17 * phi_unit + 0.3)
+           + 0.15 * pink_noise(n, sf, seed=seed))
+    return sig
 
+sig_1017 = lock_signal_1017()
+
+print("Ratio kernel comparison at the 10 Hz peak:")
+print(f"{'kernel':<10}  {'PC(10)':>8}  {'PC(17)':>8}  {'(n, m) at (10, 17)':<22}")
+print("-" * 60)
+
+import numpy as _np
 for kernel_name, kernel_params in [
     ('binary',  {'max_nm': 3, 'tolerance': 0.05, 'fallback_to_1_1': True}),
-    ('fraction', {'max_denom': 16, 'beta': 1.0}),
+    ('fraction', {'max_denom': 32, 'beta': 0.5}),
 ]:
     cfg = ResonanceConfig(
+        precision_hz=0.5, fmin=2, fmax=30, noverlap=900,
         ratio_kernel=kernel_name,
         ratio_kernel_params=kernel_params,
         coupling_metric='nm_plv_canonical',  # always pair with canonical
     )
-    r = compute_resonance(sig, sf=SF, config=cfg)
-    print(f"ratio_kernel='{kernel_name}': PC peaks = {r.peaks['PC']}, "
-          f"max PC = {r.factors['PC'].max():.4g}")
+    r = compute_resonance(sig_1017, sf=SF, config=cfg)
+    i10 = int(_np.argmin(_np.abs(r.freqs - 10)))
+    i17 = int(_np.argmin(_np.abs(r.freqs - 17)))
+
+    # Probe what (n, m) the kernel actually returned at (10, 17)
+    from biotuner.resonance.registry import RATIO_KERNELS
+    W, N, M = RATIO_KERNELS[kernel_name](_np.array([10.0]), _np.array([17.0]),
+                                          **kernel_params)
+    nm_str = f"n={int(N[0,0])}, m={int(M[0,0])}, W={W[0,0]:.3f}"
+
+    print(f"{kernel_name:<10}  {r.factors['PC'][i10]:>8.4f}  {r.factors['PC'][i17]:>8.4f}  {nm_str}")
+
+print()
+print("Reading: binary maps (10, 17) -> (n=1, m=1) — a spurious 1:1 test that")
+print("contaminates the PC sum with whatever bins look 1:1 to 10 Hz.")
+print("fraction maps (10, 17) -> (n=10, m=17) — the TRUE mode-lock — with a")
+print("small Tenney weight reflecting how complex the ratio is.")
 """)
 
 # ---------------------------------------------------------------------------
@@ -299,21 +478,59 @@ md("""
 ## 7. Combine rules — H × PC → R
 
 Five combine rules. Default `product` (R = H · PC) is the legacy semantics.
+
+For typical signals from `compute_resonance` (where H and PC are
+PSD-weighted and end up with similar shapes), the five combine rules
+look very similar to each other. To make their differences visible, we
+construct a synthetic `(H_arr, PC_arr)` pair where peaks live at DIFFERENT
+bins, and apply each combine rule directly.
 """)
 
 code("""
-sig = harmonic_signal()
+from biotuner.resonance.registry import COMBINE_RULES
 
-fig, axes = plt.subplots(5, 1, figsize=(10, 9), sharex=True)
-for ax, combine in zip(axes, ['product', 'geomean', 'harmmean', 'min', 'weighted_log']):
-    cfg = ResonanceConfig(combine=combine)
-    r = compute_resonance(sig, sf=SF, config=cfg)
-    ax.plot(r.freqs, r.resonance_spectrum, color='#b71c1c')
-    ax.fill_between(r.freqs, 0, r.resonance_spectrum, color='#b71c1c', alpha=0.15)
-    ax.set_ylabel(combine)
+# Construct H and PC with peaks at DIFFERENT frequencies on purpose
+freqs = np.linspace(2, 30, 200)
+def gauss(c, w, h): return h * np.exp(-((freqs - c) ** 2) / (2 * w ** 2))
+
+H_arr  = gauss(8,  1.0, 1.0) + gauss(15, 1.0, 0.6) + 0.05      # peaks at 8, 15
+PC_arr = gauss(15, 1.0, 1.0) + gauss(22, 1.0, 0.6) + 0.05      # peaks at 15, 22
+
+print("Peaks: H at 8 & 15 ; PC at 15 & 22.")
+print("Combine rules respond DIFFERENTLY to non-overlapping peaks:")
+print()
+
+fig, axes = plt.subplots(7, 1, figsize=(10, 11), sharex=True)
+axes[0].plot(freqs, H_arr, color='#1a237e', label='H'); axes[0].fill_between(freqs, 0, H_arr, color='#1a237e', alpha=0.15)
+axes[0].set_ylabel('H'); axes[0].set_title('Engineered H and PC arrays (peaks at different bins)')
+axes[1].plot(freqs, PC_arr, color='#6a1b9a', label='PC'); axes[1].fill_between(freqs, 0, PC_arr, color='#6a1b9a', alpha=0.15)
+axes[1].set_ylabel('PC')
+
+for ax, rule_name in zip(axes[2:], ['product', 'geomean', 'harmmean', 'min', 'weighted_log']):
+    rule = COMBINE_RULES[rule_name]
+    R_arr = rule([H_arr, PC_arr])
+    ax.plot(freqs, R_arr, color='#b71c1c')
+    ax.fill_between(freqs, 0, R_arr, color='#b71c1c', alpha=0.15)
+    ax.set_ylabel(rule_name)
+
 axes[-1].set_xlabel("Frequency (Hz)")
-axes[0].set_title("Combine rules: R(f) shape under different aggregation")
+
+# Annotate where each combine rule places its peak
+peak_freqs = {}
+for rule_name in ['product', 'geomean', 'harmmean', 'min', 'weighted_log']:
+    R_arr = COMBINE_RULES[rule_name]([H_arr, PC_arr])
+    peak_freqs[rule_name] = freqs[int(np.argmax(R_arr))]
 plt.tight_layout(); plt.show()
+
+print()
+print("Peak frequency of R(f) per rule:")
+for rule_name, pf in peak_freqs.items():
+    print(f"  {rule_name:<15}  {pf:.2f} Hz")
+print()
+print("'min' and 'harmmean' aggressively reject sites where one factor is small:")
+print("  peak settles at 15 (the only overlap).")
+print("'product'/'geomean' tilt toward 15 but preserve some signal at 8 (H high)")
+print("  and 22 (PC high). 'weighted_log' further amplifies asymmetry.")
 """)
 
 # ---------------------------------------------------------------------------
@@ -340,7 +557,6 @@ result_z = with_surrogate_null(
 freqs = result_z.freqs
 R = result_z.resonance_spectrum
 z = result_z.resonance_spectrum_z
-p = result_z.summaries.get('p_value_spectrum')
 
 fig, axes = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
 axes[0].plot(freqs, R, color='#b71c1c')
