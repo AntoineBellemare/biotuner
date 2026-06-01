@@ -110,8 +110,9 @@ def list_strategies(verbose: bool = True) -> Dict[str, Dict[str, Callable]]:
         HARMONIC_KERNELS (2)
           - harmsim
           - subharm_tension
-        RATIO_KERNELS (1)
+        RATIO_KERNELS (2)
           - binary
+          - fraction
         ...
 
     All names returned here are valid for the corresponding
