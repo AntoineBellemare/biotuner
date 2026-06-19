@@ -1,12 +1,24 @@
 """Build the resonance_cookbook.ipynb from a list of (kind, source) cells.
 
-Run this once to (re)generate the notebook. Keeping cells defined in Python
-keeps the notebook content under git review-friendly diffs.
+Run this to (re)generate the notebook. Keeping cells defined in Python keeps
+the notebook content under git review-friendly diffs.
 
-Usage:
+Usage
+-----
+    # Build the notebook (no cell outputs — fast iteration)
     python docs/examples/resonance_cookbook/_build_notebook.py
+
+    # Build AND execute, baking matplotlib figures into cell outputs.
+    # The docs site (Sphinx with nb_execution_mode='off') displays the
+    # outputs straight from the .ipynb, so this step is REQUIRED before
+    # committing changes that should show figures on the live docs.
+    python docs/examples/resonance_cookbook/_build_notebook.py --execute
+
+Requires ``nbclient``, ``nbformat``, and ``ipykernel`` for ``--execute``.
 """
+import argparse
 import json
+import sys
 from pathlib import Path
 
 OUT = Path(__file__).parent / "resonance_cookbook.ipynb"
@@ -1152,5 +1164,56 @@ def build_notebook():
           f"{sum(1 for k, _ in CELLS if k == 'code')} code)")
 
 
+def execute_notebook():
+    """Execute the freshly-built notebook in place to bake in cell outputs.
+
+    The docs CI runs Sphinx with ``nb_execution_mode='off'``, so figures only
+    appear on the live site when they are already stored in the .ipynb. Run
+    this after :func:`build_notebook` (via ``--execute``) before committing
+    a notebook update that should ship to the docs.
+    """
+    try:
+        import nbformat
+        from nbclient import NotebookClient
+    except ImportError as exc:
+        print(
+            "ERROR: --execute requires 'nbclient' and 'nbformat'.\n"
+            "Install: pip install nbclient nbformat ipykernel",
+            file=sys.stderr,
+        )
+        raise SystemExit(1) from exc
+
+    nb = nbformat.read(str(OUT), as_version=4)
+    # Run the kernel from the repo root so the in-tree biotuner package
+    # imports cleanly (matches how a developer runs `python -c` from there).
+    repo_root = Path(__file__).resolve().parents[3]
+    client = NotebookClient(
+        nb, timeout=900, kernel_name="python3",
+        resources={"metadata": {"path": str(repo_root)}},
+    )
+    print("Executing notebook (this may take a few minutes)...", flush=True)
+    client.execute()
+    nbformat.write(nb, str(OUT))
+
+    n_code = sum(1 for c in nb.cells if c.cell_type == "code")
+    n_out = sum(1 for c in nb.cells if c.cell_type == "code" and c.get("outputs"))
+    n_fig = sum(
+        1
+        for c in nb.cells
+        if c.cell_type == "code"
+        and any("image/png" in (o.get("data") or {}) for o in c.get("outputs") or [])
+    )
+    print(f"Executed: {n_code} code cells, {n_out} with outputs, {n_fig} with figures.")
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Execute the notebook after building, baking outputs in place.",
+    )
+    args = parser.parse_args()
     build_notebook()
+    if args.execute:
+        execute_notebook()
