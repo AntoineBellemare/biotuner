@@ -48,7 +48,7 @@ def get_latest_version_from_pypi(package_name):
 
 
 # Replace 'biotuner' with your package's name as registered on PyPI
-version = "0.3.1"
+version = "0.4.0"
 release = version
 
 # -- General configuration ---------------------------------------------------
