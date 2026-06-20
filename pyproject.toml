@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biotuner"
-version = "0.4.0"
+version = "0.4.1"
 description = "Time series harmonic analysis for adaptive tuning systems and microtonal exploration"
 authors = [
     { name = "Antoine Bellemare", email = "antoine.bellemare9@gmail.com" }
@@ -65,8 +65,16 @@ gui = [
 [project.urls]
 "Homepage" = "https://github.com/antoinebellemare/biotuner"
 
-[tool.setuptools]
-packages = ["biotuner"]
+# Discover the top-level biotuner package AND all of its subpackages
+# (biotuner.resonance, biotuner.harmonic_geometry, biotuner.harmonic_timbre, …).
+# An explicit ``packages = ["biotuner"]`` list does NOT recurse, which silently
+# dropped every subpackage from the published wheel — see the v0.4.0 packaging fix.
+[tool.setuptools.packages.find]
+include = ["biotuner*"]
+
+# Ship non-Python data files that live inside the package tree.
+[tool.setuptools.package-data]
+"biotuner.harmonic_timbre.exporters" = ["*.json"]
 
 [tool.black]
 line-length = 128
