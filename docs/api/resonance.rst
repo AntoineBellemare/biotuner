@@ -50,12 +50,22 @@ Main entry points:
   to keep the full N×N matrices on the result)
 * :class:`ResonanceResult` — output dataclass; see "Result views" below
 * :class:`HigherOrderResult` — for Phase 3 higher-order metrics
-* :func:`with_surrogate_null` — surrogate-z-scored variant of ``compute_resonance``
+* :func:`with_surrogate_null` — surrogate-z-scored variant of ``compute_resonance``.
+  Default ``surr_type='IAAFT'`` (iterated AAFT: preserves PSD + amplitude
+  distribution); also accepts ``'phase_randomize'``, ``'time_shuffle'``, and the
+  ``generate_surrogate`` types (``'AAFT'``, ``'phase'``, ``'shuffle'``, colored).
+  Populates **per-factor** z-scores — see ``factor_z`` below.
 
 Result views (on :class:`ResonanceResult`):
 
 * ``result.factors["H" | "PC"]`` and ``result.resonance_spectrum`` —
   reduced 1-D spectra, length ``n_freqs``
+* ``result.factor_z["H" | "PC" | "R"]`` — per-frequency surrogate z-scores
+  (populated by :func:`with_surrogate_null`), with matching
+  ``result.factor_surrogate_mean`` / ``result.factor_surrogate_std``. Use
+  ``factor_z["PC"]`` for phase-coupling inference: R is harmonicity-dominated
+  (PSD-driven), so ``factor_z["R"]`` is largely blind to phase coupling under a
+  PSD-preserving null. ``result.resonance_spectrum_z`` mirrors ``factor_z["R"]``.
 * ``result.harmonicity_matrix`` and ``result.phase_coupling_matrix`` —
   full N×N matrices ``S[i, j]`` and ``Φ[i, j]`` (need
   ``ResonanceConfig(return_intermediates=True)``)

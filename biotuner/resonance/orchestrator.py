@@ -179,6 +179,14 @@ class ResonanceResult:
     resonance_spectrum_z: Optional[np.ndarray] = None
     surrogate_mean: Optional[np.ndarray] = None
     surrogate_std: Optional[np.ndarray] = None
+    # Factor-level surrogate statistics (populated by with_surrogate_null).
+    # factor_z maps "H"/"PC"/"R" -> per-frequency z-score against the surrogate
+    # ensemble; factor_surrogate_mean/std hold the matching null moments. R is
+    # H-dominated (PSD-driven), so PC_z is the correct detector for phase
+    # coupling under a PSD-preserving null — see factor_z["PC"].
+    factor_z: Optional[Dict[str, np.ndarray]] = None
+    factor_surrogate_mean: Optional[Dict[str, np.ndarray]] = None
+    factor_surrogate_std: Optional[Dict[str, np.ndarray]] = None
     factors: Dict[str, np.ndarray] = field(default_factory=dict)
     summaries: Dict[str, Any] = field(default_factory=dict)
     config: Optional[ResonanceConfig] = None

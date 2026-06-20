@@ -28,6 +28,49 @@ import numpy as np
 from typing import Optional, Literal
 
 
+# Aliases so 'IAAFT' (and friends) route to the local generators below rather
+# than to biotuner.surrogates.generate_surrogate, which does not implement them.
+_LOCAL_SURROGATE_ALIASES = {
+    "IAAFT": "iaaft",
+    "iaaft": "iaaft",
+    "phase_randomize": "phase_randomize",
+    "time_shuffle": "time_shuffle",
+}
+
+
+def _make_surrogate_generator(signal, sf, surr_type):
+    """Return a function ``seed -> surrogate array`` for the requested type.
+
+    Routes IAAFT / phase_randomize / time_shuffle to the local high-quality
+    generators (which the single-signal ``generate_surrogate`` lacks), and
+    everything else (AAFT, TFT, phase, shuffle, white/pink/brown/blue) to
+    ``biotuner.surrogates.generate_surrogate``.
+    """
+    sig = np.asarray(signal, dtype=np.float64)
+    alias = _LOCAL_SURROGATE_ALIASES.get(surr_type)
+    if alias is not None:
+        gen = CROSS_SURROGATE_GENERATORS[alias]
+
+        def _fn(seed):
+            rng = np.random.default_rng(seed)
+            return np.asarray(gen(sig, rng), dtype=np.float64)
+        return _fn
+
+    from biotuner.surrogates import generate_surrogate, SURROGATE_TYPES
+    if surr_type not in SURROGATE_TYPES:
+        raise ValueError(
+            f"Unknown surr_type {surr_type!r}. Valid options: "
+            f"{('IAAFT',) + tuple(SURROGATE_TYPES) + ('phase_randomize', 'time_shuffle')}."
+        )
+
+    def _fn(seed):
+        # generate_surrogate uses the legacy global RNG; seed it per call so
+        # surrogates both vary and stay reproducible under rng_seed.
+        np.random.seed(int(seed) % (2 ** 32 - 1))
+        return np.asarray(generate_surrogate(sig, surr_type=surr_type, sf=sf), dtype=np.float64)
+    return _fn
+
+
 def with_surrogate_null(
     signal: np.ndarray,
     sf: float,
@@ -39,65 +82,88 @@ def with_surrogate_null(
     parallel: bool = True,
     rng_seed: Optional[int] = None,
 ):
-    """Compute resonance on signal and on ``n`` surrogates; z-score the spectrum.
+    """Compute resonance on signal and on ``n`` surrogates; z-score every factor.
 
-    Returns a :class:`ResonanceResult` with ``resonance_spectrum_z``,
-    ``surrogate_mean``, ``surrogate_std`` populated (and ``summaries['p_value_spectrum']``
-    if ``correction`` includes pvalue).
+    Returns a :class:`ResonanceResult` with, for the resonance spectrum R:
+    ``resonance_spectrum_z``, ``surrogate_mean``, ``surrogate_std`` — and, for
+    ALL three factors, ``factor_z`` / ``factor_surrogate_mean`` /
+    ``factor_surrogate_std`` dicts keyed ``"H"``/``"PC"``/``"R"``.
+
+    Because R is H-dominated (H is PSD-driven), R_z is largely blind to phase
+    coupling under a PSD-preserving null; ``factor_z["PC"]`` is the correct
+    detector for n:m phase coupling. See the resonance_paper validation suite.
 
     Parameters
     ----------
     signal : 1-D ndarray
     sf : sampling frequency (Hz)
     config : ResonanceConfig (the null_model field is ignored to avoid recursion)
-    surr_type : surrogate type understood by ``biotuner.surrogates.generate_surrogate``
+    surr_type : ``'IAAFT'`` (default; iterated AAFT, preserves PSD + amplitude
+        distribution), ``'phase_randomize'``, ``'time_shuffle'``, or any type
+        accepted by :func:`biotuner.surrogates.generate_surrogate`
+        (``'AAFT'``, ``'TFT'``, ``'phase'``, ``'shuffle'``,
+        ``'white'/'pink'/'brown'/'blue'``).
     n : number of surrogates
-    correction : 'zscore' | 'pvalue' | 'both'
+    correction : 'zscore' | 'pvalue' | 'both' (p-values added per factor when
+        pvalue is requested: ``summaries['p_value_H'|'p_value_PC'|'p_value_spectrum']``)
     parallel : if True and joblib is importable, parallelize across surrogates
     rng_seed : optional seed for reproducibility
     """
     # Lazy import to avoid circular dep at package load
     from biotuner.resonance.orchestrator import compute_resonance
-    from biotuner.surrogates import generate_surrogate
 
     # Strip null_model from the config we pass to the per-surrogate call
     import dataclasses
     cfg_no_null = dataclasses.replace(config, null_model=None)
 
     real = compute_resonance(signal, sf, config=cfg_no_null)
-    n_freqs = real.resonance_spectrum.size
+    gen = _make_surrogate_generator(signal, sf, surr_type)
 
     def _one(seed):
-        s = generate_surrogate(signal, surr_type=surr_type, sf=sf)
+        s = gen(seed)
         r = compute_resonance(s, sf, config=cfg_no_null)
-        return r.resonance_spectrum
+        return r.factors["H"], r.factors["PC"], r.resonance_spectrum
 
+    rng = np.random.default_rng(rng_seed)
+    seeds = [int(s) for s in rng.integers(0, 2 ** 31 - 1, size=n)]
+
+    results = None
     if parallel:
         try:
             from joblib import Parallel, delayed
-            rng = np.random.default_rng(rng_seed)
-            seeds = rng.integers(0, 2**31 - 1, size=n)
-            surr_spectra = np.asarray(
-                Parallel(n_jobs=-1)(delayed(_one)(int(s)) for s in seeds),
-                dtype=np.float64,
-            )
+            results = Parallel(n_jobs=-1)(delayed(_one)(s) for s in seeds)
         except ImportError:
-            surr_spectra = np.empty((n, n_freqs), dtype=np.float64)
-            for k in range(n):
-                surr_spectra[k] = _one(k)
-    else:
-        surr_spectra = np.empty((n, n_freqs), dtype=np.float64)
-        for k in range(n):
-            surr_spectra[k] = _one(k)
+            results = None
+    if results is None:
+        results = [_one(s) for s in seeds]
 
-    mu = surr_spectra.mean(axis=0)
-    sd = surr_spectra.std(axis=0) + 1e-12
-    real.resonance_spectrum_z = (real.resonance_spectrum - mu) / sd
-    real.surrogate_mean = mu
-    real.surrogate_std = sd
+    surr = {
+        "H": np.asarray([r[0] for r in results], dtype=np.float64),
+        "PC": np.asarray([r[1] for r in results], dtype=np.float64),
+        "R": np.asarray([r[2] for r in results], dtype=np.float64),
+    }
+    observed = {"H": real.factors["H"], "PC": real.factors["PC"],
+                "R": real.resonance_spectrum}
+
+    real.factor_z = {}
+    real.factor_surrogate_mean = {}
+    real.factor_surrogate_std = {}
+    for k in ("H", "PC", "R"):
+        mu = surr[k].mean(axis=0)
+        sd = surr[k].std(axis=0) + 1e-12
+        real.factor_z[k] = (observed[k] - mu) / sd
+        real.factor_surrogate_mean[k] = mu
+        real.factor_surrogate_std[k] = sd
+
+    # Back-compat: the R-spectrum fields mirror factor_z['R'].
+    real.resonance_spectrum_z = real.factor_z["R"]
+    real.surrogate_mean = real.factor_surrogate_mean["R"]
+    real.surrogate_std = real.factor_surrogate_std["R"]
+
     if correction in ("pvalue", "both"):
-        p = (np.sum(surr_spectra >= real.resonance_spectrum[None, :], axis=0) + 1) / (n + 1)
-        real.summaries["p_value_spectrum"] = p
+        for k, key in (("R", "p_value_spectrum"), ("PC", "p_value_PC"), ("H", "p_value_H")):
+            real.summaries[key] = (
+                np.sum(surr[k] >= observed[k][None, :], axis=0) + 1) / (n + 1)
     return real
 
 
