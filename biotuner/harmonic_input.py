@@ -26,6 +26,7 @@ this module).
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass, field
 from fractions import Fraction
 from typing import Any, ClassVar, Dict, Iterable, List, Optional, Sequence, Union
@@ -474,13 +475,38 @@ class HarmonicInput:
 
         amps_attr = getattr(bt, "amps", None)
         amps_list: Optional[List[float]] = None
+        amps_from_db = False
         if amps_attr is not None:
-            amps_arr = np.asarray(amps_attr).ravel()
+            amps_arr = np.asarray(amps_attr, dtype=np.float64).ravel()
             if amps_arr.size == len(peaks):
-                amps_list = [float(a) for a in amps_arr]
+                # `amplitudes` is contracted to be linear and non-negative (see
+                # the dataclass docstring, validate(), and normalize_amplitudes,
+                # which divides by the sum and treats a non-positive sum as
+                # "no information"). compute_biotuner stores the spectrum in dB
+                # (psd = 10*log10(power); see compute_peaks_ts), so peak
+                # amplitudes read off it are routinely negative. A negative
+                # value is impossible for a linear magnitude, so we treat the
+                # whole array as dB power and convert it back to linear power
+                # (10**(dB/10)): this is non-negative, preserves the relative
+                # loudness ordering, and normalises sensibly. Non-finite amps
+                # are unusable and dropped (downstream falls back to uniform).
+                if not np.all(np.isfinite(amps_arr)):
+                    warnings.warn(
+                        "Dropping bt.amps: contains non-finite values; "
+                        "downstream consumers will use uniform amplitudes.",
+                        stacklevel=2,
+                    )
+                elif np.any(amps_arr < 0):
+                    amps_list = [float(10.0 ** (a / 10.0)) for a in amps_arr]
+                    amps_from_db = True
+                else:
+                    amps_list = [float(a) for a in amps_arr]
 
         base_freq = float(min(peaks))
         metadata = {"source": "compute_biotuner"}
+        if amps_from_db:
+            # Record that amplitudes were converted from biotuner's dB spectrum.
+            metadata["amplitudes_scale"] = "linear_from_db"
 
         # ---------------- Canonical ratios selection ----------------------
         canonical_ratios: Optional[List[Union[Fraction, float]]] = None

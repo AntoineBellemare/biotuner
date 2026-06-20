@@ -14,6 +14,7 @@ Science
    biotuner_MNE/biotuner_MNE
    peaks_extraction/peaks_extraction
    harmonicity_metrics/harmonicity_metrics
+   math_series/math_series
    harmonic_spectrum/harmonic_spectrum
    resonance_cookbook/resonance_cookbook
    toolbox_paper_notebook/toolbox_paper_notebook

@@ -28,6 +28,7 @@ Stateful pipeline classes — instantiate and call methods.
    harmonic_connectivity
    transitional_harmony
    harmonic_sequence
+   math_series
 
 Subpackages
 -----------

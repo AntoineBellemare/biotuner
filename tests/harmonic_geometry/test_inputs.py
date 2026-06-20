@@ -148,6 +148,50 @@ class TestHarmonicInputFromBiotuner:
         h = HarmonicInput.from_biotuner(bt)
         assert h.amplitudes is None
 
+    def test_negative_amps_converted_from_db(self):
+        # compute_biotuner stores the spectrum in dB, so peak amps are routinely
+        # negative. from_biotuner should convert them back to linear power
+        # (10**(dB/10)) rather than dropping or raising: the values must be
+        # non-negative, preserve the relative loudness ordering, and the
+        # conversion is flagged in metadata. The peaks must still come through.
+        bt = SimpleNamespace(
+            peaks=np.array([5.0, 8.0, 21.0]),
+            amps=np.array([-0.99, -2.89, -8.83]),  # dB power, length-aligned
+        )
+        h = HarmonicInput.from_biotuner(bt)
+        assert h.amplitudes is not None
+        assert all(a >= 0 for a in h.amplitudes)
+        np.testing.assert_allclose(
+            h.amplitudes, [10.0 ** (-0.99 / 10.0), 10.0 ** (-2.89 / 10.0), 10.0 ** (-8.83 / 10.0)]
+        )
+        # least-negative dB -> loudest linear component (ordering preserved).
+        assert np.argmax(h.amplitudes) == 0
+        assert h.metadata.get("amplitudes_scale") == "linear_from_db"
+        np.testing.assert_allclose(h.to_peaks(), [5.0, 8.0, 21.0])
+        # normalized amplitudes are a valid distribution (would be uniform/garbage
+        # if raw dB had been stored instead of converted).
+        norm = h.normalized_amplitudes()
+        assert np.isclose(norm.sum(), 1.0) and np.all(norm > 0)
+
+    def test_positive_amps_kept_as_linear(self):
+        # Already-linear (non-negative) amps must be passed through untouched.
+        bt = SimpleNamespace(
+            peaks=np.array([2.0, 4.0, 6.0]),
+            amps=np.array([1.0, 0.5, 0.25]),
+        )
+        h = HarmonicInput.from_biotuner(bt)
+        np.testing.assert_allclose(h.amplitudes, [1.0, 0.5, 0.25])
+        assert "amplitudes_scale" not in h.metadata
+
+    def test_nonfinite_amps_are_dropped(self):
+        bt = SimpleNamespace(
+            peaks=np.array([2.0, 4.0]),
+            amps=np.array([1.0, np.nan]),  # length-aligned but non-finite
+        )
+        with pytest.warns(UserWarning):
+            h = HarmonicInput.from_biotuner(bt)
+        assert h.amplitudes is None
+
 
 # -------------------------------------------------------------- HarmonicSequence
 
