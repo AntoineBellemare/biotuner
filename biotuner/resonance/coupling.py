@@ -159,6 +159,55 @@ def nm_plv_canonical(phase_i: np.ndarray, phase_j: np.ndarray, n: int, m: int) -
     return float(np.abs(np.mean(np.exp(1j * phase_diff))))
 
 
+def nm_intertrial_plv(
+    phase_epochs_i: np.ndarray,
+    phase_epochs_j: np.ndarray,
+    n: int = 1,
+    m: int = 1,
+) -> float:
+    """Inter-trial n:m phase-locking value across epochs (Tass convention).
+
+    Inputs are 2-D **epoched** phase arrays ``(n_epochs, n_times)`` for the two
+    frequencies. For each epoch the time-averaged n:m relative-phase resultant
+    ``< exp(i*(m*φ_i - n*φ_j)) >_t`` is formed (note the m/n swap, matching
+    :func:`nm_plv_canonical`); the inter-trial PLV is the magnitude of the mean
+    of those per-epoch resultants across epochs::
+
+        ITC = | (1/E) Σ_e  < exp(i*(m*φ_i[e] - n*φ_j[e])) >_t |
+
+    This is the correct estimator when coupling is *consistent across trials* but
+    the absolute phase resets between trials — the regime where a continuous
+    single-trial PLV cannot distinguish genuine coupling from a stationary
+    process (see resonance_paper Study 1B / Study 5). It is provided as a
+    standalone utility because it requires an epoch dimension that the
+    single-trial orchestrator does not model; it is therefore NOT registered as
+    a ``PAIRWISE_COUPLING_METRIC`` (those receive 1-D phase from the orchestrator).
+
+    Parameters
+    ----------
+    phase_epochs_i, phase_epochs_j : ndarray (n_epochs, n_times)
+        Instantaneous phase per epoch at the two frequencies (e.g. from the
+        ``hilbert`` phase estimator applied per epoch).
+    n, m : int
+        n:m ratio. For 1:1 this is the standard inter-trial coherence of the
+        phase difference.
+
+    Returns
+    -------
+    float in [0, 1] — 1 = perfectly trial-consistent n:m relative phase.
+    """
+    pi = np.atleast_2d(np.asarray(phase_epochs_i, dtype=np.float64))
+    pj = np.atleast_2d(np.asarray(phase_epochs_j, dtype=np.float64))
+    if pi.shape != pj.shape:
+        raise ValueError(
+            f"phase epoch arrays must have matching shape, got {pi.shape} vs {pj.shape}"
+        )
+    # m/n swap matches nm_plv_canonical's Tass convention.
+    rel = m * pi - n * pj
+    per_epoch = np.mean(np.exp(1j * rel), axis=1)   # (n_epochs,) resultant per trial
+    return float(np.abs(np.mean(per_epoch)))
+
+
 # ---------------------------------------------------------------------------
 # Matrix builder — dispatches the pairwise metric over freq pairs
 # ---------------------------------------------------------------------------

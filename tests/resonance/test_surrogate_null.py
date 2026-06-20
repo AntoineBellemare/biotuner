@@ -67,3 +67,26 @@ def test_reproducible_with_seed():
     a = with_surrogate_null(_signal(), sf=500, config=CFG, n=10, parallel=False, rng_seed=42)
     b = with_surrogate_null(_signal(), sf=500, config=CFG, n=10, parallel=False, rng_seed=42)
     assert np.allclose(a.factor_z["PC"], b.factor_z["PC"])
+
+
+def test_intertrial_plv_separates_coupled_from_uncoupled():
+    """nm_intertrial_plv: trial-consistent relative phase -> ~1; random -> ~0."""
+    from biotuner.resonance import nm_intertrial_plv
+    rng = np.random.default_rng(0)
+    n_ep, n_t = 40, 1000
+    base = rng.uniform(0, 2 * np.pi, size=(n_ep, 1)) + np.linspace(0, 4 * np.pi, n_t)[None, :]
+    # coupled: B = A + constant offset every trial
+    pi = base
+    pj_coupled = base + np.pi / 4
+    pj_uncoupled = base + rng.uniform(0, 2 * np.pi, size=(n_ep, 1))  # random per-trial offset
+    itc_c = nm_intertrial_plv(pi, pj_coupled, 1, 1)
+    itc_u = nm_intertrial_plv(pi, pj_uncoupled, 1, 1)
+    assert itc_c > 0.9
+    assert itc_u < 0.5
+    assert itc_c > itc_u
+
+
+def test_intertrial_plv_shape_validation():
+    from biotuner.resonance import nm_intertrial_plv
+    with pytest.raises(ValueError):
+        nm_intertrial_plv(np.zeros((3, 100)), np.zeros((3, 50)), 1, 1)

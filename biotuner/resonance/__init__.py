@@ -78,6 +78,12 @@ except ImportError:
     pass
 
 try:
+    from biotuner.resonance.coupling import nm_intertrial_plv
+    __all__.append("nm_intertrial_plv")
+except ImportError:
+    pass
+
+try:
     from biotuner.resonance.plots import (
         harmonic_spectrum_plot_trial_corr,
         harmonic_spectrum_plot_freq_corr,
