@@ -257,6 +257,40 @@ def _coerce_ratio_list(values: Any) -> List[float]:
     return [float(x) for x in arr if np.isfinite(x) and x > 0]
 
 
+def _cents(ratios: Any) -> np.ndarray:
+    """Convert ratio(s) to cents (1200*log2). Accepts a scalar or an array."""
+    return 1200.0 * np.log2(np.asarray(ratios, dtype=float))
+
+
+def _octave_comb_fit(ratios, peaks_hz, fmin, fmax, octaves):
+    """Best-fit across-octave frequency grid of a series' ratios to peaks.
+
+    Replicates the series ratios across ``octaves`` and scales by a base in
+    ``[1, 2)`` chosen to minimise the mean cents distance from the peaks to the
+    nearest grid line. Returns the winning grid (sorted Hz array).
+    """
+    ratios = np.asarray(ratios, dtype=float)
+    peaks_hz = np.asarray(peaks_hz, dtype=float)
+    if ratios.size == 0 or peaks_hz.size == 0:
+        return np.array([])
+
+    def grid_for(base):
+        g = [base * r * (2.0 ** k) for k in octaves for r in ratios]
+        return np.array(sorted({round(x, 4) for x in g if fmin <= x <= fmax}))
+
+    peaks_c = _cents(peaks_hz)
+    best_grid, best_d = np.array([]), np.inf
+    for base in np.linspace(1.0, 2.0, 160, endpoint=False):
+        grid = grid_for(base)
+        if grid.size == 0:
+            continue
+        gc = _cents(grid)
+        d = float(np.mean([np.min(np.abs(p - gc)) for p in peaks_c]))
+        if d < best_d:
+            best_grid, best_d = grid, d
+    return best_grid
+
+
 def series_ratio_pairs(
     name: str,
     order: int,
@@ -430,6 +464,12 @@ class math_series(object):
                 "Did you run peaks_extraction()/peaks_extension()?"
             )
 
+        # Peak frequencies (Hz) when the source carries them — used by the
+        # across-octave comb plot. None for ratios-only construction.
+        self.peaks_hz: Optional[np.ndarray] = (
+            self._extract_peaks_hz(source, ratios_source) if source is not None else None
+        )
+
         self.series_scores: Dict[str, Dict[str, Any]] = {}
         self.best_series: Optional[str] = None
         self._series_pairs: Dict[str, List[RatioPair]] = {}
@@ -437,6 +477,28 @@ class math_series(object):
         self._colors = _series_colors(self.series_names)
 
     # ------------------------------------------------------------- extraction
+    @staticmethod
+    def _extract_peaks_hz(source: Any, ratios_source: str) -> Optional[np.ndarray]:
+        """Best-effort peak frequencies (Hz) from a biotuner / HarmonicInput."""
+        if "extended" in ratios_source:
+            val = getattr(source, "extended_peaks", None)
+            if val is not None:
+                arr = np.asarray(val, dtype=float).ravel()
+                if arr.size:
+                    return arr
+        if hasattr(source, "to_peaks"):  # HarmonicInput
+            try:
+                arr = np.asarray(source.to_peaks(), dtype=float).ravel()
+                if arr.size:
+                    return arr
+            except Exception:
+                pass
+        val = getattr(source, "peaks", None)
+        if val is not None:
+            arr = np.asarray(val, dtype=float).ravel()
+            if arr.size:
+                return arr
+        return None
     @staticmethod
     def _extract_target_ratios(source: Any, ratios_source: str) -> List[float]:
         """Normalise a biotuner object or HarmonicInput to a list of ratios."""
@@ -755,6 +817,227 @@ class math_series(object):
         if plot and created:
             plt.show()
         return fig
+
+    # --------------------------------------------------- creative visualizations
+    def _display_series(self, order: Optional[int] = None):
+        """Return ``(order, {name: ratios}, {name: matched-ratio set})`` for plots.
+
+        Uses the analysed data when ``order`` matches the instance; otherwise it
+        regenerates each series' ratios at the requested ``order`` (and re-derives
+        which of them match the signal) purely for display — handy to thin dense
+        lattices without changing the instance's matching settings.
+        """
+        self._ensure_analyzed()
+        order = order or self.order
+        if order == self.order:
+            pairs_by = self._series_pairs
+            matched = {n: {round(r, 5) for r, _ in self.series_scores[n]["matched_series_pairs"]}
+                       for n in self.series_names}
+        else:
+            target_keys = {_frac_key(r, self.maxdenom) for r in self.ratios}
+            pairs_by, matched = {}, {}
+            for n in self.series_names:
+                pairs = series_ratio_pairs(n, order, octave=self.octave,
+                                           which=self.which, lucas_seed=self.lucas_seed)
+                pairs_by[n] = pairs
+                matched[n] = {round(r, 5) for r, _ in pairs
+                              if _frac_key(r, self.maxdenom) in target_keys}
+        ratios_by = {n: np.array(sorted({round(r, 5) for r, _ in pairs_by[n]}))
+                     for n in self.series_names}
+        return order, ratios_by, matched
+
+    @staticmethod
+    def _new_ax(ax, **kw):
+        """Return ``(fig, ax, created)``; apply the biotuner style on new figures."""
+        if ax is None:
+            set_biotuner_style()
+            fig, ax = plt.subplots(**kw)
+            return fig, ax, True
+        return ax.figure, ax, False
+
+    def _finish(self, fig, created, plot, save, savename):
+        if save:
+            fig.savefig(f"{savename}.png", dpi=150, bbox_inches="tight")
+        if plot and created:
+            plt.show()
+        return fig
+
+    def plot_octave_wheel(self, order: Optional[int] = None, ax: Optional["plt.Axes"] = None,
+                          plot: bool = True, save: bool = False,
+                          savename: str = "series_octave_wheel") -> "plt.Figure":
+        """Octave wrapped to a circle (angle = cents): a ratio-ring per series,
+        the signal peaks as spokes, and a filled dot where a spoke matches.
+
+        ``order`` overrides the instance order for display only (thins the rings).
+        """
+        order, ratios_by, matched = self._display_series(order)
+        created = ax is None
+        if created:
+            set_biotuner_style()
+            fig = plt.figure(figsize=(7.5, 7.5))
+            ax = fig.add_subplot(projection="polar")
+        else:
+            fig = ax.figure
+        ax.set_theta_zero_location("N")
+        ax.set_theta_direction(-1)
+        for name, rr in zip(self.series_names, np.linspace(1.25, 2.0, len(self.series_names))):
+            rats = ratios_by[name]
+            if rats.size:
+                ax.scatter(2 * np.pi * np.log2(rats), [rr] * len(rats), s=20,
+                           color=self._colors[name], alpha=0.5, label=name, zorder=2)
+            if matched[name]:
+                mt = 2 * np.pi * np.log2(sorted(matched[name]))
+                ax.scatter(mt, [rr] * len(mt), s=130, color=self._colors[name],
+                           edgecolor="k", linewidth=1.1, zorder=4)
+        brain = np.asarray(self.ratios, dtype=float)
+        for r in brain:
+            ax.plot([2 * np.pi * np.log2(r)] * 2, [0.95, 2.08], color="#1F1F1F", lw=1.4, alpha=0.5, zorder=3)
+        ax.scatter(2 * np.pi * np.log2(brain), [2.12] * len(brain), marker="v", s=80,
+                   color="#1F1F1F", zorder=5, label="signal peaks")
+        ax.set_ylim(0, 2.3)
+        ax.set_yticklabels([])
+        ax.set_xticks(np.linspace(0, 2 * np.pi, 13)[:-1])
+        ax.set_xticklabels([str(c) for c in range(0, 1200, 100)])
+        ax.set_title("Octave wheel — series rings + signal-peak spokes (filled = matched)")
+        ax.legend(loc="center left", bbox_to_anchor=(1.04, 0.5), fontsize=9)
+        return self._finish(fig, created, plot, save, savename)
+
+    def plot_cents_ruler(self, order: Optional[int] = None, ax: Optional["plt.Axes"] = None,
+                         plot: bool = True, save: bool = False,
+                         savename: str = "series_cents_ruler") -> "plt.Figure":
+        """Each series as a lane of ratio-ticks on a 0-1200 cents axis (bold =
+        matched); guide lines drop from each signal peak."""
+        order, ratios_by, matched = self._display_series(order)
+        fig, ax, created = self._new_ax(ax, figsize=(12, 4.8))
+        names = self.series_names
+        brain_c = _cents(self.ratios)
+        for c in brain_c:
+            ax.axvline(c, color="#1F1F1F", lw=1, alpha=0.18, zorder=1)
+        for i, name in enumerate(names):
+            y = len(names) - i
+            if ratios_by[name].size:
+                ax.vlines(_cents(ratios_by[name]), y - 0.32, y + 0.32,
+                          color=self._colors[name], lw=1.3, alpha=0.5, zorder=2)
+            if matched[name]:
+                ax.vlines(_cents(sorted(matched[name])), y - 0.4, y + 0.4,
+                          color=self._colors[name], lw=3, zorder=3)
+        ax.scatter(brain_c, [0] * len(brain_c), marker="v", s=100, color="#1F1F1F", zorder=4)
+        ax.set_yticks(range(len(names) + 1))
+        ax.set_yticklabels(["signal peaks"] + names[::-1])
+        ax.set_ylim(-0.7, len(names) + 0.7)
+        ax.set_xlim(0, 1200)
+        ax.set_xlabel("Cents within the octave")
+        ax.set_title("Where the signal peaks land among each series' ratio lattice (bold = matched)")
+        if created:
+            fig.tight_layout()
+        return self._finish(fig, created, plot, save, savename)
+
+    def plot_fit_landscape(self, order: Optional[int] = None, ax: Optional["plt.Axes"] = None,
+                           plot: bool = True, save: bool = False,
+                           savename: str = "series_fit") -> "plt.Figure":
+        """For each signal peak, the cents distance to the nearest ratio of each
+        series (lower = the series hugs the spectrum more tightly)."""
+        order, ratios_by, _ = self._display_series(order)
+        fig, ax, created = self._new_ax(ax, figsize=(8.5, 4.8))
+        names = self.series_names
+        brain_c = _cents(self.ratios)
+        jit = np.linspace(-0.18, 0.18, len(brain_c))
+        for i, name in enumerate(names):
+            sc = _cents(ratios_by[name])
+            if sc.size == 0:
+                continue
+            nearest = np.array([np.min(np.abs(sc - c)) for c in brain_c])
+            ax.scatter(np.full(len(nearest), i) + jit, nearest, s=60,
+                       color=self._colors[name], edgecolor="k", linewidth=0.5, zorder=3)
+            ax.hlines(nearest.mean(), i - 0.3, i + 0.3, color=self._colors[name], lw=3, zorder=2)
+            ax.text(i, nearest.mean() + 4, f"{nearest.mean():.0f}c", ha="center", fontsize=10)
+        ax.set_xticks(range(len(names)))
+        ax.set_xticklabels(names)
+        ax.set_ylabel("Cents to nearest series ratio")
+        ax.set_xlabel("Mathematical series")
+        ax.set_ylim(bottom=0)
+        ax.set_title("How tightly each series hugs the signal's peak ratios (lower = closer)")
+        if created:
+            fig.tight_layout()
+        return self._finish(fig, created, plot, save, savename)
+
+    def plot_simplicity_bubbles(self, order: Optional[int] = None, ax: Optional["plt.Axes"] = None,
+                                plot: bool = True, save: bool = False,
+                                savename: str = "series_simplicity_bubbles") -> "plt.Figure":
+        """Each series ratio as a bubble sized by simplicity (bigger = smaller
+        denominator); outlined bubbles are matched. Shows whether the signal
+        peaks land on simple rungs."""
+        order, ratios_by, matched = self._display_series(order)
+        fig, ax, created = self._new_ax(ax, figsize=(12, 4.8))
+        names = self.series_names
+        brain_c = _cents(self.ratios)
+        for c in brain_c:
+            ax.axvline(c, color="#1F1F1F", lw=1, ls="--", alpha=0.22, zorder=1)
+        for i, name in enumerate(names):
+            y = len(names) - i
+            for r in ratios_by[name]:
+                _, q = ratio2frac(float(r), maxdenom=self.maxdenom)
+                hit = round(float(r), 5) in matched[name]
+                ax.scatter(float(_cents(r)), y, s=900.0 / max(q, 1), color=self._colors[name],
+                           alpha=0.85 if hit else 0.35,
+                           edgecolor="k" if hit else "none", linewidth=1.3 if hit else 0,
+                           zorder=3 if hit else 2)
+        ax.scatter(brain_c, [0] * len(brain_c), marker="v", s=100, color="#1F1F1F", zorder=4)
+        ax.set_yticks(range(len(names) + 1))
+        ax.set_yticklabels(["signal peaks"] + names[::-1])
+        ax.set_ylim(-0.7, len(names) + 0.7)
+        ax.set_xlim(0, 1200)
+        ax.set_xlabel("Cents within the octave")
+        ax.set_title("Series ratios as simplicity bubbles (bigger = simpler); outlined = matched")
+        if created:
+            fig.tight_layout()
+        return self._finish(fig, created, plot, save, savename)
+
+    def plot_series_comb(self, peaks_hz: Optional[Sequence[float]] = None,
+                         fmin: float = 2.0, fmax: float = 45.0, order: Optional[int] = None,
+                         ax: Optional["plt.Axes"] = None, plot: bool = True, save: bool = False,
+                         savename: str = "series_comb") -> "plt.Figure":
+        """Each series as an across-octave frequency comb (scaled to best fit the
+        signal); the signal peaks (Hz) snap onto the nearest comb step, and each
+        lane is labelled with the mean miss in cents.
+
+        Needs peak frequencies: uses :attr:`peaks_hz` (captured from a
+        biotuner / HarmonicInput) or an explicit ``peaks_hz``.
+        """
+        peaks = peaks_hz if peaks_hz is not None else self.peaks_hz
+        if peaks is None:
+            raise ValueError(
+                "plot_series_comb needs peak frequencies in Hz. Pass peaks_hz=..., "
+                "or build math_series from a compute_biotuner / HarmonicInput."
+            )
+        peaks = np.asarray(peaks, dtype=float).ravel()
+        peaks = np.array([f for f in peaks if fmin <= f <= fmax])
+        order, ratios_by, _ = self._display_series(order)
+        names = self.series_names
+        fig, ax, created = self._new_ax(ax, figsize=(12, 0.95 * len(names) + 1.6))
+        octaves = range(-3, 7)
+        for i, name in enumerate(names):
+            y = len(names) - i
+            grid = _octave_comb_fit(ratios_by[name], peaks, fmin, fmax, octaves)
+            for g in grid:
+                ax.plot([g, g], [y - 0.42, y + 0.42], color=self._colors[name], lw=1.0, alpha=0.4)
+            if grid.size and peaks.size:
+                gc = _cents(grid)
+                miss = float(np.mean([np.min(np.abs(p - gc)) for p in _cents(peaks)]))
+                ax.text(fmax * 1.02, y, f"{miss:.0f}c", va="center", fontsize=9, color="#333")
+        ax.scatter(peaks, [0] * len(peaks), marker="v", s=90, color="#1F1F1F", zorder=4)
+        ax.set_xscale("log")
+        ax.set_xlim(fmin, fmax * 1.18)
+        ax.set_xticks([2, 5, 10, 20, 40])
+        ax.set_xticklabels(["2", "5", "10", "20", "40"])
+        ax.set_yticks(range(len(names) + 1))
+        ax.set_yticklabels(["signal peaks"] + names[::-1])
+        ax.set_ylim(-0.7, len(names) + 0.7)
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_title("Each series as an across-octave comb; signal peaks snapped on (label = mean miss)")
+        if created:
+            fig.tight_layout()
+        return self._finish(fig, created, plot, save, savename)
 
     def __repr__(self) -> str:
         best = self.best_series if self.series_scores else "not analyzed"

@@ -135,117 +135,45 @@ to a consonance-selected mode."""),
 print("7-note mode (pairwise):", [round(x, 3) for x in ms.series_mode(n_steps=7, method="pairwise")])
 print("Scale in cents:        ", [round(c, 1) for c in ms.scale_cents()])"""),
 
-    (MD, """## 5. Creative views — where the extended peaks sit among the series
+    (MD, """## 5. Creative views — where the (extended) peaks sit among the series
 
-These figures put the EEG's **extended**-peak ratios next to each series' ratio
-lattice. First a few shared helpers (colours, a cents helper, each series'
-ratio set, and which series ratios the EEG matched)."""),
+These are built-in `math_series` methods. We build a matcher on the
+*extended*-peak ratios and call each visualization. ``order=`` thins the
+lattice for legibility without changing the matching settings."""),
 
-    (CODE, """from biotuner.math_series import series_ratio_pairs
-from biotuner.biotuner_utils import ratio2frac
-from biotuner.plot_config import get_color_palette
-
-SERIES = ms.series_names
-COLORS = dict(zip(SERIES, get_color_palette("biotuner_gradient", len(SERIES))))
-MAXDENOM, ORDER = 24, 13
-
-def cents(r):
-    return 1200 * np.log2(np.asarray(r, float))
-
-def series_ratios(name, order=ORDER):
-    return np.array(sorted({round(x, 5) for x, _ in series_ratio_pairs(name, order)}))
-
-# EEG extended-peak ratios and which series ratios they matched
-ms_ext = math_series(bt, ratios_source="extended_peaks_ratios", maxdenom=MAXDENOM).analyze()
-brain_ext = np.array(sorted(set(np.round(bt.extended_peaks_ratios, 5))))
-matched = {n: {round(r, 5) for r, _ in ms_ext.series_scores[n]["matched_series_pairs"]}
-           for n in SERIES}
-print("EEG extended-peak ratios (cents):", [int(c) for c in cents(brain_ext)])"""),
-
-    (MD, """### Octave wheel
-
-The octave wrapped onto a circle (angle = cents); each series is a ring of
-ratio-ticks, the EEG extended peaks are the black spokes, and a filled dot
-marks a match."""),
-
-    (CODE, """fig = plt.figure(figsize=(7, 7))
-ax = fig.add_subplot(projection="polar")
-ax.set_theta_zero_location("N"); ax.set_theta_direction(-1)
-for name, rr in zip(SERIES, np.linspace(1.25, 2.0, len(SERIES))):
-    rats = series_ratios(name)
-    ax.scatter(2*np.pi*np.log2(rats), [rr]*len(rats), s=18, color=COLORS[name], alpha=0.5, label=name)
-    if matched[name]:
-        mt = 2*np.pi*np.log2(sorted(matched[name]))
-        ax.scatter(mt, [rr]*len(mt), s=120, color=COLORS[name], edgecolor="k", linewidth=1.1)
-for r in brain_ext:
-    ax.plot([2*np.pi*np.log2(r)]*2, [0.95, 2.08], color="k", lw=1.4, alpha=0.5)
-ax.scatter(2*np.pi*np.log2(brain_ext), [2.12]*len(brain_ext), marker="v", color="k", s=70)
-ax.set_ylim(0, 2.3); ax.set_yticklabels([])
-ax.set_xticks(np.linspace(0, 2*np.pi, 13)[:-1]); ax.set_xticklabels(range(0, 1200, 100))
-ax.set_title("Octave wheel — series rings + EEG extended-peak spokes (filled = matched)")
-ax.legend(loc="center left", bbox_to_anchor=(1.05, 0.5));"""),
+    (CODE, """ms_ext = math_series(bt, ratios_source="extended_peaks_ratios", maxdenom=24).analyze()
+print("best (extended):", ms_ext.best_series)
+ms_ext.plot_octave_wheel(order=13);"""),
 
     (MD, """### Cents ruler — the ratio lattice
 
 Each series as a lane of ratio-ticks on a 0–1200 cents axis (bold = matched);
-guide lines drop from each EEG extended peak."""),
+guide lines drop from each signal peak."""),
 
-    (CODE, """fig, ax = plt.subplots(figsize=(12, 4.5))
-for c in cents(brain_ext):
-    ax.axvline(c, color="k", lw=1, alpha=0.18)
-for i, name in enumerate(SERIES):
-    y = len(SERIES) - i
-    ax.vlines(cents(series_ratios(name)), y - 0.32, y + 0.32, color=COLORS[name], lw=1.3, alpha=0.5)
-    if matched[name]:
-        ax.vlines(cents(sorted(matched[name])), y - 0.4, y + 0.4, color=COLORS[name], lw=3)
-ax.scatter(cents(brain_ext), [0]*len(brain_ext), marker="v", s=100, color="k")
-ax.set_yticks(range(len(SERIES) + 1))
-ax.set_yticklabels(["EEG extended peaks"] + SERIES[::-1])
-ax.set_xlim(0, 1200); ax.set_xlabel("Cents within the octave")
-ax.set_title("Where the EEG extended peaks land among each series' ratio lattice (bold = matched)");"""),
+    (CODE, """ms_ext.plot_cents_ruler(order=13);"""),
 
     (MD, """### How tightly each series fits
 
 For every extended peak, the cents distance to the *nearest* ratio of each
-series (lower = closer). A continuous, density-aware view of the match —
-note Farey is dense yet does not fit tightest, so this is not just a density
-effect."""),
+series (lower = closer). A density-aware view — note Farey is dense yet does
+not fit tightest, so this is not just a density effect."""),
 
-    (CODE, """fig, ax = plt.subplots(figsize=(8.5, 4.5))
-ext_c = cents(brain_ext)
-jit = np.linspace(-0.18, 0.18, len(ext_c))
-for i, name in enumerate(SERIES):
-    sc = cents(series_ratios(name))
-    nearest = np.array([np.min(np.abs(sc - c)) for c in ext_c])
-    ax.scatter(np.full(len(nearest), i) + jit, nearest, s=60, color=COLORS[name], edgecolor="k", linewidth=0.5)
-    ax.hlines(nearest.mean(), i - 0.3, i + 0.3, color=COLORS[name], lw=3)
-    ax.text(i, nearest.mean() + 4, f"{nearest.mean():.0f}c", ha="center", fontsize=10)
-ax.set_xticks(range(len(SERIES))); ax.set_xticklabels(SERIES)
-ax.set_ylabel("Cents to nearest series ratio"); ax.set_ylim(bottom=0)
-ax.set_title("How tightly each series hugs the EEG's extended-peak ratios (lower = closer)");"""),
+    (CODE, """ms_ext.plot_fit_landscape();"""),
 
     (MD, """### Simplicity bubbles
 
-Each series ratio is a bubble sized by simplicity (bigger = simpler fraction,
-i.e. smaller denominator). Do the EEG peaks land on the simple rungs? Outlined
-bubbles are matched."""),
+Each series ratio as a bubble sized by simplicity (bigger = simpler fraction).
+Do the signal peaks land on the simple rungs? Outlined bubbles are matched."""),
 
-    (CODE, """fig, ax = plt.subplots(figsize=(12, 4.5))
-for c in cents(brain_ext):
-    ax.axvline(c, color="k", lw=1, ls="--", alpha=0.22)
-for i, name in enumerate(SERIES):
-    y = len(SERIES) - i
-    for r in series_ratios(name):
-        _, q = ratio2frac(r, MAXDENOM)
-        hit = round(r, 5) in matched[name]
-        ax.scatter(float(cents(r)), y, s=900 / q, color=COLORS[name],
-                   alpha=0.85 if hit else 0.35,
-                   edgecolor="k" if hit else "none", linewidth=1.3 if hit else 0)
-ax.scatter(cents(brain_ext), [0]*len(brain_ext), marker="v", s=100, color="k")
-ax.set_yticks(range(len(SERIES) + 1))
-ax.set_yticklabels(["EEG extended peaks"] + SERIES[::-1])
-ax.set_xlim(0, 1200); ax.set_xlabel("Cents within the octave")
-ax.set_title("Series ratios as simplicity bubbles (bigger = simpler); outlined = matched");"""),
+    (CODE, """ms_ext.plot_simplicity_bubbles(order=13);"""),
+
+    (MD, """### Across-octave frequency comb (the series as canvas)
+
+Flip it around: each series, tiled across octaves and scaled to best fit the
+signal, becomes a frequency grid; the signal peaks (Hz) snap onto the nearest
+step, with each lane's mean miss in cents."""),
+
+    (CODE, """ms_ext.plot_series_comb(order=7);"""),
 
     (MD, """## 6. Effect of `order` on matching
 
@@ -256,12 +184,16 @@ comparing series** — only proportions computed at the same `order` (and
 `maxdenom`) are comparable. The *ranking* is usually far more stable than the
 absolute values."""),
 
-    (CODE, """orders = list(range(5, 41, 3))
+    (CODE, """from biotuner.plot_config import get_color_palette
+
+orders = list(range(5, 41, 3))
+series = ms.series_names
+colors = dict(zip(series, get_color_palette("biotuner_gradient", len(series))))
 fig, ax = plt.subplots(figsize=(8.5, 4.5))
-for name in SERIES:
-    props = [math_series(bt, ratios_source="peaks_ratios", order=o, maxdenom=MAXDENOM)
+for name in series:
+    props = [math_series(bt, ratios_source="peaks_ratios", order=o, maxdenom=24)
              .analyze().series_scores[name]["proportion"] for o in orders]
-    ax.plot(orders, props, "-o", color=COLORS[name], label=name)
+    ax.plot(orders, props, "-o", color=colors[name], label=name)
 ax.set_xlabel("order (terms generated per series)")
 ax.set_ylabel("match proportion — peak ratios")
 ax.set_title("Effect of `order` on matching (keep it fixed when comparing series)")
@@ -284,9 +216,10 @@ ax.legend();"""),
 and `maxdenom` fixed across signals when comparing series — proportions are
 only comparable under the same settings.
 
-One more view — each series as an across-octave frequency *comb*, with the EEG
-peaks snapped onto the nearest step — is in
-`scripts/math_series_series_canvas.py`; see the `biotuner.math_series` API page
+All of these visualizations are methods on `math_series` — `plot_proportions`,
+`plot_ratio_pairs`, `plot_octave_wheel`, `plot_cents_ruler`,
+`plot_fit_landscape`, `plot_simplicity_bubbles`, and `plot_series_comb` — so you
+can call them on any biotuner object. See the `biotuner.math_series` API page
 for the full reference.
 """),
 ]

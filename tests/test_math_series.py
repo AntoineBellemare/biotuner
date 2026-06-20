@@ -225,6 +225,40 @@ def test_plots_compose_onto_provided_ax(ms_instance):
     assert len(ax2.collections) > 0  # scatter points
 
 
+@pytest.mark.parametrize(
+    "method",
+    ["plot_octave_wheel", "plot_cents_ruler", "plot_fit_landscape", "plot_simplicity_bubbles"],
+)
+def test_creative_plots_return_fig(ms_instance, method):
+    fig = getattr(ms_instance, method)(plot=False)
+    assert fig is not None
+
+
+def test_creative_plot_order_override(ms_instance):
+    # `order` thins the lattice for display without changing matching settings.
+    fig = ms_instance.plot_octave_wheel(order=8, plot=False)
+    assert fig is not None
+
+
+def test_plot_series_comb_with_explicit_peaks(ms_instance):
+    fig = ms_instance.plot_series_comb(peaks_hz=[5, 8, 13, 21, 34], plot=False)
+    assert fig is not None
+
+
+def test_plot_series_comb_without_peaks_raises(ms_instance):
+    # a ratios-only instance carries no peak frequencies
+    assert ms_instance.peaks_hz is None
+    with pytest.raises(ValueError):
+        ms_instance.plot_series_comb(plot=False)
+
+
+def test_peaks_hz_extracted_from_biotuner_mock():
+    bt = SimpleNamespace(peaks_ratios=[1.5, 1.25, 1.333, 1.6], peaks=np.array([5.0, 8.0, 13.0, 21.0]))
+    ms = math_series(bt, ratios_source="peaks_ratios").analyze()
+    assert ms.peaks_hz is not None and len(ms.peaks_hz) == 4
+    assert ms.plot_series_comb(plot=False) is not None
+
+
 # --------------------------------------------------------------------------- edge cases
 def test_no_input_raises():
     with pytest.raises(ValueError):
