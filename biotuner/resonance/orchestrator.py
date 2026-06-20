@@ -295,7 +295,10 @@ def compute_resonance(
     else:  # 'none'
         psd_prob_for_reducer = psd_clean.copy()
 
-    # Step 4 — phase extraction
+    # Step 4 — phase extraction. Passing freqs_arr aligns the phase rows to the
+    # analysis frequency grid: phase[i] is the phase at freqs_arr[i]. (Previously
+    # the full 0..Nyquist STFT grid was indexed with the clipped freqs_arr, so
+    # every phase row was off by fmin — corrupting the phase-coupling matrix.)
     phase_fn = PHASE_ESTIMATORS[cfg.phase_estimator]
     phase = phase_fn(
         signal,
@@ -303,6 +306,7 @@ def compute_resonance(
         precision_hz=cfg.precision_hz,
         noverlap=cfg.noverlap,
         smoothness=cfg.smoothness,
+        freqs=freqs_arr,
         **cfg.phase_estimator_params,
     )
 

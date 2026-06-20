@@ -1,6 +1,16 @@
-"""Regression test: the new compute_resonance pipeline with the legacy-default
-ResonanceConfig reproduces the snapshots captured from the pre-refactor
-``compute_global_harmonicity`` on all reference signals.
+"""Regression test for compute_resonance against reference snapshots.
+
+Contract (post phase-alignment fix)
+-----------------------------------
+* **H (harmonicity)** is asserted bit-exact against the FROZEN legacy
+  ``compute_global_harmonicity`` snapshot. H does not depend on phase, so the
+  alignment fix leaves it unchanged — the published-paper reproduction for the
+  harmonic spectrum is preserved.
+* **PC / R** are asserted against CORRECTED baselines (regenerated from the
+  fixed pipeline). The legacy code indexed the full 0..Nyquist STFT phase grid
+  with the [fmin, fmax]-clipped frequency array, so every phase-coupling entry
+  was offset by fmin; this is now fixed, so PC and R intentionally differ from
+  the legacy values. We do NOT preserve bit-legacy for PC/R (they were buggy).
 
 Tolerance
 ---------
@@ -56,15 +66,17 @@ def test_snapshot_matches_legacy_output(name):
     result = compute_resonance(sig, sf=BASELINE_CONFIG["fs"], config=cfg)
 
     snap = np.load(snapshot_path, allow_pickle=True)
+    # H: bit-exact vs FROZEN legacy (harmonic-spectrum reproduction contract).
     np.testing.assert_allclose(result.factors["H"], snap["harmonicity"],
                                 rtol=RTOL, atol=ATOL,
-                                err_msg=f"H mismatch on {name}")
+                                err_msg=f"H mismatch on {name} (legacy contract)")
+    # PC / R: vs CORRECTED baselines (alignment fix; not legacy values).
     np.testing.assert_allclose(result.factors["PC"], snap["phase_coupling"],
                                 rtol=RTOL, atol=ATOL,
-                                err_msg=f"PC mismatch on {name}")
+                                err_msg=f"PC mismatch on {name} (corrected baseline)")
     np.testing.assert_allclose(result.resonance_spectrum, snap["resonance"],
                                 rtol=RTOL, atol=ATOL,
-                                err_msg=f"R mismatch on {name}")
+                                err_msg=f"R mismatch on {name} (corrected baseline)")
 
 
 # NOTE: The legacy ``compute_global_harmonicity`` returned a *weighted*

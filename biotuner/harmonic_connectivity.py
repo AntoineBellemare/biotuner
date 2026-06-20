@@ -2173,9 +2173,17 @@ def compute_cross_resonance(
     p2_min, p2_max = np.min(psd2_clean), np.max(psd2_clean)
     psd2_clean = (psd2_clean - p2_min) / (p2_max - p2_min)
 
-    # STFT per channel — gives complex coefficients used by nm_wpli_complex
-    _, _, Zxx1 = stft(signal1, sf, nperseg=int(nperseg / config.smoothness), noverlap=config.noverlap)
+    # STFT per channel — gives complex coefficients used by nm_wpli_complex.
+    # Align the STFT rows to the [fmin, fmax]-clipped analysis grid `freqs` so
+    # that Zxx*[i] is the coefficient at freqs[i]. (Without this the full
+    # 0..Nyquist STFT grid was indexed with the clipped freqs, offsetting every
+    # cross-frequency phase-coupling entry by fmin — the same alignment bug as
+    # the single-signal path.)
+    f_stft, _, Zxx1 = stft(signal1, sf, nperseg=int(nperseg / config.smoothness), noverlap=config.noverlap)
     _, _, Zxx2 = stft(signal2, sf, nperseg=int(nperseg / config.smoothness), noverlap=config.noverlap)
+    _align = np.abs(f_stft[:, None] - np.asarray(freqs)[None, :]).argmin(axis=0)
+    Zxx1 = Zxx1[_align, :]
+    Zxx2 = Zxx2[_align, :]
 
     n_freqs = len(freqs)
 

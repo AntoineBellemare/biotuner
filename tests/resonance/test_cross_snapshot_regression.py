@@ -1,12 +1,20 @@
-"""Bit-exact snapshot regression for the cross-channel resonance pipeline.
+"""Snapshot regression for the cross-channel resonance pipeline.
 
-Asserts that the refactored ``compute_cross_spectrum_harmonicity`` (now a
-thin shim over :func:`biotuner.harmonic_connectivity.compute_cross_resonance`)
-reproduces the pre-refactor numerics within ``atol=1e-5`` on 3 reference
-signal pairs.
+``compute_cross_spectrum_harmonicity`` is now a thin shim over
+:func:`biotuner.harmonic_connectivity.compute_cross_resonance`.
 
-Snapshots in ``snapshots/cross_*.npz`` were captured from the pre-refactor
-``compute_cross_spectrum_harmonicity`` via ``_generate_cross_baseline.py``.
+Contract (post phase-alignment fix)
+-----------------------------------
+* **H (harmonicity)** reproduces the FROZEN pre-refactor cross-spectrum snapshot
+  bit-exactly (H is phase-independent — unchanged by the alignment fix).
+* **PC / R** are compared to CORRECTED baselines (regenerated from the fixed
+  pipeline). The legacy cross path indexed the full STFT grid with the
+  fmin-clipped frequency array, offsetting every cross-frequency phase-coupling
+  entry; this is fixed, so PC/R intentionally differ from the original legacy
+  values.
+
+Snapshots in ``snapshots/cross_*.npz``: ``harmonicity`` is the frozen legacy
+value; ``phase_coupling`` / ``resonance`` are corrected baselines.
 """
 import os
 import sys
