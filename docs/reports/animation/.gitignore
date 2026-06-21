@@ -3,6 +3,9 @@ out/
 .remotion/
 *.log
 
+# Exploration/preview scratch (palette + parameter sweeps, still frames).
+renders/
+
 # Pre-rendered soundtrack output of render_audio.py — kept local, not
 # committed. Regenerate locally:
 #   python docs/reports/animation/render_audio.py

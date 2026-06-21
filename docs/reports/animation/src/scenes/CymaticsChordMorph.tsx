@@ -12,14 +12,22 @@ import { theme, fonts, getChordHue } from "../theme";
 import {
   cymaticsDensity,
   lerpRatios,
-  afmhot,
+  tidepool,
   type Chord,
 } from "../reels/cymatics";
 import type { ReelData } from "../reels/reelData";
 
-// Field resolution computed live per frame. 120 reads crisply when upscaled
-// to a ~880 px plate and stays fast enough for offline render.
-const FIELD_N = 120;
+// Field resolution computed live per frame. Higher = crisper when upscaled
+// to the ~880 px plate (120 was visibly pixelated). 384 gives ~2 source
+// pixels per displayed pixel and renders comfortably offline.
+const FIELD_N = 384;
+
+// Gamma "sweep": each chord blooms BOLD (low gamma → curves push into the
+// warm coral/sand end of the Tidepool ramp) as it lands, then cools/thins
+// (high gamma → more teal mid-tones) through the morph to the next chord.
+// Pulses both brightness AND hue in time with the chord rhythm.
+const GAMMA_BOLD = 0.72;
+const GAMMA_THIN = 1.15;
 
 /**
  * "What does a chord look like?" — morphs a sequence of chords through their
@@ -44,6 +52,11 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
   const toChord = chords[(segIdx + 1) % n];
   const ratios = lerpRatios(fromChord.ratios, toChord.ratios, local);
 
+  // Gamma bloom: bold (low γ) at the chord keyframes, thin (high γ) mid-morph.
+  // sin(π·local) is 0 at local∈{0,1} and 1 at local=0.5.
+  const gamma =
+    GAMMA_BOLD + (GAMMA_THIN - GAMMA_BOLD) * Math.sin(Math.PI * local);
+
   // Paint the field whenever the frame changes.
   useEffect(() => {
     const handle = delayRender("cymatics field");
@@ -54,10 +67,10 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
         const dens = cymaticsDensity(ratios, FIELD_N, {
           symmetry: data.symmetry,
         });
-        // paint inline (afmhot warm ramp)
+        // paint inline (Tidepool earthy multicolor ramp, animated gamma)
         const img = ctx.createImageData(FIELD_N, FIELD_N);
         for (let k = 0; k < dens.length; k++) {
-          const [r, g, b] = afmhot(dens[k], 0.82);
+          const [r, g, b] = tidepool(dens[k], gamma);
           img.data[k * 4 + 0] = r;
           img.data[k * 4 + 1] = g;
           img.data[k * 4 + 2] = b;

@@ -143,6 +143,46 @@ export function grayscale(v: number, gamma = 0.7): [number, number, number] {
   return [x, x, x];
 }
 
+/**
+ * Sample a multi-stop colour ramp (evenly spaced stops) at v∈[0,1] with an
+ * optional gamma. Stops are [r,g,b] in 0–255. Used for the earthy multicolor
+ * reel palettes where the density traverses several distinct hues.
+ */
+export function sampleRamp(
+  stops: Array<[number, number, number]>,
+  v: number,
+  gamma = 1
+): [number, number, number] {
+  const x = Math.pow(Math.max(0, Math.min(1, v)), gamma);
+  const n = stops.length - 1;
+  const t = x * n;
+  const i = Math.min(Math.floor(t), n - 1);
+  const f = t - i;
+  const a = stops[i];
+  const b = stops[i + 1];
+  return [
+    Math.round(a[0] + (b[0] - a[0]) * f),
+    Math.round(a[1] + (b[1] - a[1]) * f),
+    Math.round(a[2] + (b[2] - a[2]) * f),
+  ];
+}
+
+/**
+ * "Tidepool" — earthy multicolor ramp: deep teal → seafoam → ochre → coral
+ * → sand. Each cymatics curve gradates through several natural hues.
+ */
+const TIDEPOOL_STOPS: Array<[number, number, number]> = [
+  [10, 26, 31], // #0a1a1f deep teal-black
+  [29, 94, 107], // #1d5e6b deep teal
+  [74, 168, 156], // #4aa89c seafoam
+  [200, 160, 74], // #c8a04a ochre
+  [217, 116, 74], // #d9744a coral
+  [240, 216, 176], // #f0d8b0 sand
+];
+export function tidepool(v: number, gamma = 0.9): [number, number, number] {
+  return sampleRamp(TIDEPOOL_STOPS, v, gamma);
+}
+
 /** Paint a density field into an ImageData-backed canvas, upscaled. */
 export function paintDensity(
   ctx: CanvasRenderingContext2D,

@@ -1,7 +1,8 @@
 /**
  * Reel registry. Each entry is one renderable Instagram reel: its
- * dimensions, fps, duration, and a parameterless React component (scene
- * content wrapped in the generic <Reel> frame with its soundtrack).
+ * dimensions, fps, duration, and a parameterless React component (the
+ * shared brand intro + the reel's main scene, wrapped in the generic
+ * <Reel> frame with its soundtrack).
  *
  * Adding a reel = (1) a builder in export_reels.py, (2) a data import in
  * reelData.ts, (3) one entry here. Root.tsx registers a <Composition> for
@@ -9,6 +10,7 @@
  */
 import React from "react";
 import { Reel } from "./Reel";
+import { ReelTimeline } from "./ReelTimeline";
 import { CymaticsChordMorph } from "../scenes/CymaticsChordMorph";
 import { REEL_DATA } from "./reelData";
 
@@ -33,7 +35,12 @@ export const REEL_SPECS: ReelSpec[] = [
     Component: () =>
       React.createElement(Reel, {
         audio: reel02.audio,
-        children: React.createElement(CymaticsChordMorph, { data: reel02 }),
+        children: React.createElement(ReelTimeline, {
+          introFrames: reel02.intro_frames,
+          mainFrames: reel02.morph_frames,
+          intro: reel02.intro!,
+          main: React.createElement(CymaticsChordMorph, { data: reel02 }),
+        }),
       }),
   },
 ];

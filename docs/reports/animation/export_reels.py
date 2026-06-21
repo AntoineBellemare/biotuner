@@ -30,6 +30,8 @@ import numpy as np
 
 # Reuse the flagship synth voice so every reel shares the sonic brand.
 from render_audio import SR, voice_chord, chladni_morph_filter
+from intro_synths import singing_bowl
+from soundscape import build_bed
 
 HERE = Path(__file__).resolve().parent
 PUB = HERE / "public"
@@ -59,9 +61,17 @@ REEL02_CYMATICS = {
     "id": "Reel02-Cymatics",
     "fps": 30,
     "frames_per_segment": 60,  # 2.0 s per chord
+    "intro_frames": 90,        # 3.0 s brand opening
     "symmetry": "d4_max",
     "root_hz": 130.81,  # C3 assigned to each chord's lowest voice
     "loop": True,
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Harmonic Geometry",
+        "motif": "flower_of_life",
+        "accent": "#7ad6c1",
+    },
     "chords": [
         {"name": "Major",      "label": "major",      "ratios": [4, 5, 6]},
         {"name": "Diminished", "label": "diminished", "ratios": [5, 6, 7]},
@@ -84,25 +94,20 @@ def _chord_freqs(ratios: list[float], root_hz: float) -> list[float]:
     return [root_hz * (r / m) for r in ratios]
 
 
-def render_reel_audio(spec: dict) -> np.ndarray:
-    """Render a looping chord-pad soundtrack with portamento glides between
-    chords that match the visual morph timing. Returns float (n, 2)."""
+def render_chord_morph(spec: dict) -> np.ndarray:
+    """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2)."""
     fps = spec["fps"]
-    seg_frames = spec["frames_per_segment"]
-    seg_dur = seg_frames / fps
+    seg_dur = spec["frames_per_segment"] / fps
     root_hz = spec["root_hz"]
     chords = spec["chords"]
-    n_seg = len(chords)  # looping: one morph per chord
+    n_seg = len(chords)
 
-    total_n = int(n_seg * seg_dur * SR)
+    morph_n = int(n_seg * seg_dur * SR)
     tail = int(1.0 * SR)
-    out = np.zeros((total_n + tail, 2))
-
+    morph = np.zeros((morph_n + tail, 2))
     prev_freqs: list[float] | None = None
     for i in range(n_seg):
         freqs = _chord_freqs(chords[i]["ratios"], root_hz)
-        # Pad portamento source if cardinality differs (all triads here, but
-        # robust for future reels).
         porta = prev_freqs
         if porta is not None and len(porta) < len(freqs):
             porta = porta + [porta[-1]] * (len(freqs) - len(porta))
@@ -112,19 +117,59 @@ def render_reel_audio(spec: dict) -> np.ndarray:
             portamento_from=porta, portamento_s=0.5,
         )
         start = int(i * seg_dur * SR)
-        end = min(start + seg.shape[0], out.shape[0])
-        out[start:end] += seg[: end - start]
+        end = min(start + seg.shape[0], morph.shape[0])
+        morph[start:end] += seg[: end - start]
         prev_freqs = freqs
+    morph = morph[:morph_n]
+    return chladni_morph_filter(morph, sweep_period_s=seg_dur * 2, depth=0.25)
 
-    out = out[:total_n]
-    # Light shimmer-band sweep for a watery cymatics feel.
-    out = chladni_morph_filter(out, sweep_period_s=seg_dur * 2, depth=0.25)
+
+def render_reel_audio(spec: dict) -> np.ndarray:
+    """Full soundtrack:
+        intro  = singing-bowl strike (rings into the morph)
+        morph  = looping chord-pad cymatics morph
+        bed    = quiet public-domain nature soundscape under the whole reel
+    Returns float (n, 2) of exactly total_frames length."""
+    fps = spec["fps"]
+    intro_frames = spec.get("intro_frames", 0)
+    intro_n = int(intro_frames / fps * SR)
+    intro_dur = intro_frames / fps
+
+    morph = render_chord_morph(spec)
+    morph_n = morph.shape[0]
+    total_n = intro_n + morph_n
+    total_dur = total_n / SR
+
+    # Synth layer = bowl (front) + morph (after the intro). The bowl is
+    # rendered long so its ring overlaps the first chord rather than cutting.
+    synth = np.zeros((total_n, 2))
+    if intro_n > 0:
+        bowl = singing_bowl(intro_dur + 2.0)
+        bn = min(bowl.shape[0], total_n)
+        synth[:bn] += bowl[:bn] * 0.95
+    synth[intro_n:intro_n + morph_n] += morph
+
+    # Quiet nature bed under everything, slightly more present during the
+    # intro so the opening feels like stepping into a landscape.
+    bed = build_bed(total_dur, peak=0.26)[:total_n]
+    if bed.shape[0] < total_n:
+        bed = np.vstack([bed, np.zeros((total_n - bed.shape[0], 2))])
+    bed_env = np.ones(total_n)
+    if intro_n > 0:
+        bed_env[:intro_n] = 1.25  # +25% in the intro
+        # smooth the step over 0.5 s
+        k = int(0.5 * SR)
+        if intro_n + k < total_n:
+            bed_env[intro_n:intro_n + k] = np.linspace(1.25, 1.0, k)
+    bed *= bed_env[:, None]
+
+    out = synth + bed
 
     peak = float(np.max(np.abs(out)))
     if peak > 1e-6:
         out *= (10 ** (-1.0 / 20.0)) / peak
     head = int(0.04 * SR)
-    tail_f = int(0.2 * SR)
+    tail_f = int(0.25 * SR)
     out[:head] *= np.linspace(0, 1, head)[:, None]
     out[-tail_f:] *= np.linspace(1, 0, tail_f)[:, None]
     return out
@@ -147,9 +192,11 @@ def build_reel(spec: dict) -> None:
     rid = spec["id"]
     fps = spec["fps"]
     seg = spec["frames_per_segment"]
-    total_frames = len(spec["chords"]) * seg  # looping
-    print(f"[{rid}] {len(spec['chords'])} chords x {seg}f = "
-          f"{total_frames}f ({total_frames / fps:.1f}s)")
+    intro_frames = spec.get("intro_frames", 0)
+    morph_frames = len(spec["chords"]) * seg  # looping
+    total_frames = intro_frames + morph_frames
+    print(f"[{rid}] intro {intro_frames}f + {len(spec['chords'])} chords x "
+          f"{seg}f = {total_frames}f ({total_frames / fps:.1f}s)")
 
     # 1. Data JSON the React scene reads.
     np.random.seed(7)  # deterministic audio phases
@@ -158,9 +205,12 @@ def build_reel(spec: dict) -> None:
         "id": rid,
         "fps": fps,
         "frames_per_segment": seg,
+        "intro_frames": intro_frames,
+        "morph_frames": morph_frames,
         "total_frames": total_frames,
         "symmetry": spec["symmetry"],
         "loop": spec["loop"],
+        "intro": spec.get("intro"),
         "chords": spec["chords"],
         "audio": f"audio/{rid}.wav",
     }

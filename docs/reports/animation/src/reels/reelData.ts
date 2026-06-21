@@ -5,14 +5,18 @@
  */
 import reel02 from "../../public/reels/Reel02-Cymatics.json";
 import type { Chord } from "./cymatics";
+import type { IntroConfig } from "./ReelIntro";
 
 export type ReelData = {
   id: string;
   fps: number;
   frames_per_segment: number;
+  intro_frames: number;
+  morph_frames: number;
   total_frames: number;
   symmetry: "d4_max" | "d4_sum" | "none";
   loop: boolean;
+  intro: IntroConfig | null;
   chords: Chord[];
   audio: string; // staticFile-relative path, e.g. "audio/Reel02-Cymatics.wav"
 };
