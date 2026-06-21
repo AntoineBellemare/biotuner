@@ -31,7 +31,6 @@ import numpy as np
 # Reuse the flagship synth voice so every reel shares the sonic brand.
 from render_audio import SR, voice_chord, chladni_morph_filter
 from intro_synths import singing_bowl
-from soundscape import build_bed
 
 HERE = Path(__file__).resolve().parent
 PUB = HERE / "public"
@@ -128,7 +127,6 @@ def render_reel_audio(spec: dict) -> np.ndarray:
     """Full soundtrack:
         intro  = singing-bowl strike (rings into the morph)
         morph  = looping chord-pad cymatics morph
-        bed    = quiet public-domain nature soundscape under the whole reel
     Returns float (n, 2) of exactly total_frames length."""
     fps = spec["fps"]
     intro_frames = spec.get("intro_frames", 0)
@@ -138,32 +136,15 @@ def render_reel_audio(spec: dict) -> np.ndarray:
     morph = render_chord_morph(spec)
     morph_n = morph.shape[0]
     total_n = intro_n + morph_n
-    total_dur = total_n / SR
 
-    # Synth layer = bowl (front) + morph (after the intro). The bowl is
-    # rendered long so its ring overlaps the first chord rather than cutting.
-    synth = np.zeros((total_n, 2))
+    # Bowl leads the intro and rings (rendered long) into the first chord;
+    # then the chord morph carries the rest. No ambience bed.
+    out = np.zeros((total_n, 2))
     if intro_n > 0:
         bowl = singing_bowl(intro_dur + 2.0)
         bn = min(bowl.shape[0], total_n)
-        synth[:bn] += bowl[:bn] * 0.95
-    synth[intro_n:intro_n + morph_n] += morph
-
-    # Quiet nature bed under everything, slightly more present during the
-    # intro so the opening feels like stepping into a landscape.
-    bed = build_bed(total_dur, peak=0.26)[:total_n]
-    if bed.shape[0] < total_n:
-        bed = np.vstack([bed, np.zeros((total_n - bed.shape[0], 2))])
-    bed_env = np.ones(total_n)
-    if intro_n > 0:
-        bed_env[:intro_n] = 1.25  # +25% in the intro
-        # smooth the step over 0.5 s
-        k = int(0.5 * SR)
-        if intro_n + k < total_n:
-            bed_env[intro_n:intro_n + k] = np.linspace(1.25, 1.0, k)
-    bed *= bed_env[:, None]
-
-    out = synth + bed
+        out[:bn] += bowl[:bn] * 0.95
+    out[intro_n:intro_n + morph_n] += morph
 
     peak = float(np.max(np.abs(out)))
     if peak > 1e-6:
