@@ -8,6 +8,9 @@ import reel03 from "../../public/reels/Reel03-Intervals.json";
 import reel04 from "../../public/reels/Reel04-HeyJude.json";
 import reel05 from "../../public/reels/Reel05-LetItBe.json";
 import reel06 from "../../public/reels/Reel06-Canon.json";
+import reel07 from "../../public/reels/Reel07-BrainHeart.json";
+import reel08 from "../../public/reels/Reel08-ManyShapes.json";
+import reel09 from "../../public/reels/Reel09-CanonHarmonograph.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -25,6 +28,10 @@ export type ReelData = {
   hold_fraction: number;
   /** Top-of-frame hook line for the viz scene. */
   hook: string | null;
+  /** Which viz scene to render: "cymatics" (default) or "multi". */
+  scene?: string;
+  /** Optional per-segment geometry type (for the multi-geometry scene). */
+  geometries?: string[] | null;
   intro: IntroConfig | null;
   chords: Chord[];
   audio: string; // staticFile-relative path, e.g. "audio/Reel02-Cymatics.wav"
@@ -36,4 +43,7 @@ export const REEL_DATA: Record<string, ReelData> = {
   "Reel04-HeyJude": reel04 as unknown as ReelData,
   "Reel05-LetItBe": reel05 as unknown as ReelData,
   "Reel06-Canon": reel06 as unknown as ReelData,
+  "Reel07-BrainHeart": reel07 as unknown as ReelData,
+  "Reel08-ManyShapes": reel08 as unknown as ReelData,
+  "Reel09-CanonHarmonograph": reel09 as unknown as ReelData,
 };

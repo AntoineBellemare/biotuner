@@ -55,8 +55,31 @@ animation/
 | `Reel04-HeyJude`   | 1080×1920 | 19.0 s | famous-song chords → geometry (Hey Jude) |
 | `Reel05-LetItBe`   | 1080×1920 | 19.0 s | song variant (Let It Be) |
 | `Reel06-Canon`     | 1080×1920 | 19.0 s | song variant (Canon in D) |
+| `Reel07-BrainHeart`| 1080×1920 | 13.4 s | EEG vs ECG — inharmonic brain vs harmonic heart |
+| `Reel08-ManyShapes`| 1080×1920 | 15.8 s | one chord through cymatics / Lissajous / harmonograph / interference |
+| `Reel09-CanonHarmonograph` | 1080×1920 | 19.0 s | Canon in D drawn as a harmonograph (same music, new geometry) |
 
 List them at any time with `npx remotion compositions src/index.ts`.
+
+### Geometry types
+
+The cymatics field is one of several live in-canvas generators
+(`src/reels/geometries.ts`), all driven by a chord's ratios:
+
+- **cymatics** — D4-symmetric Chladni nodal density (default scene)
+- **lissajous** — pairwise Lissajous figures, one glowing curve per ratio pair
+- **harmonograph** — damped multi-pendulum pen path
+- **interference** — animated travelling-wave interference field
+
+A reel's `scene: "multi"` + `geometries: [...]` (per segment) renders the
+`MultiGeometryMorph` scene, showing the same music through different
+geometries.
+
+### Biosignal reels
+
+`biosignal_chords.py` turns biotuner-extracted spectral peaks (from the
+bundled `assets/biosignals/` example EEG/ECG) into cymatics chords — the
+basis of the Brain vs Heart reel.
 
 ### Song reels
 

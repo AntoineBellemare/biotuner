@@ -159,6 +159,81 @@ REEL04_HEYJUDE = _song_reel("Reel04-HeyJude", "HeyJude")
 REEL05_LETITBE = _song_reel("Reel05-LetItBe", "LetItBe")
 REEL06_CANON = _song_reel("Reel06-Canon", "CanonInD")
 
+# ── Reel 07 — Brain vs Heart (biosignal-derived geometry) ────────────────────
+from biosignal_chords import brain_heart_chords  # noqa: E402
+
+REEL07_BRAINHEART = {
+    "id": "Reel07-BrainHeart",
+    "fps": 30,
+    "frames_per_segment": 78,   # 2.6 s per signal
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.62,
+    "portamento_s": 0.3,
+    "hook": "your <b>brain</b> vs your <b>heart</b>",
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Brain vs Heart",
+        "motif": "flower_of_life",
+        "accent": "#b89be8",
+    },
+    "chords": brain_heart_chords(),
+}
+
+# ── Reel 08 — One Sound, Many Shapes (same chord, 4 geometry types) ──────────
+_DOM7 = {"name": "a 7th chord", "label": "dom7", "ratios": [4, 5, 6, 7]}
+REEL08_MANYSHAPES = {
+    "id": "Reel08-ManyShapes",
+    "fps": 30,
+    "frames_per_segment": 96,   # 3.2 s per geometry
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.0,
+    "portamento_s": 0.3,
+    "scene": "multi",
+    "geometries": ["cymatics", "lissajous", "harmonograph", "interference"],
+    "hook": "one sound, <b>many shapes</b>",
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "One Sound, Many Shapes",
+        "motif": "flower_of_life",
+        "accent": "#7ad6c1",
+    },
+    # Same chord through every geometry.
+    "chords": [dict(_DOM7), dict(_DOM7), dict(_DOM7), dict(_DOM7)],
+}
+
+# ── Reel 09 — Canon in D as a harmonograph (same music, different geometry) ──
+_canon_chords = song_chords("CanonInD")
+REEL09_CANON_HARMONO = {
+    "id": "Reel09-CanonHarmonograph",
+    "fps": 30,
+    "frames_per_segment": 60,
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.5,
+    "portamento_s": 0.04,
+    "scene": "multi",
+    "geometries": ["harmonograph"] * len(_canon_chords),
+    "hook": "<b>Canon in D</b> &middot; the same chords, drawn",
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Canon in D — drawn",
+        "motif": "flower_of_life",
+        "accent": "#e8c98a",
+    },
+    "chords": _canon_chords,
+}
+
 REELS = {
     r["id"]: r
     for r in [
@@ -167,6 +242,9 @@ REELS = {
         REEL04_HEYJUDE,
         REEL05_LETITBE,
         REEL06_CANON,
+        REEL07_BRAINHEART,
+        REEL08_MANYSHAPES,
+        REEL09_CANON_HARMONO,
     ]
 }
 
@@ -288,6 +366,8 @@ def build_reel(spec: dict) -> None:
         "loop": spec["loop"],
         "hold_fraction": spec.get("hold_fraction", 0),
         "hook": spec.get("hook"),
+        "scene": spec.get("scene", "cymatics"),
+        "geometries": spec.get("geometries"),
         "intro": spec.get("intro"),
         "chords": spec["chords"],
         "audio": f"audio/{rid}.wav",

@@ -12,6 +12,7 @@ import React from "react";
 import { Reel } from "./Reel";
 import { ReelTimeline } from "./ReelTimeline";
 import { CymaticsChordMorph } from "../scenes/CymaticsChordMorph";
+import { MultiGeometryMorph } from "../scenes/MultiGeometryMorph";
 import { REEL_DATA } from "./reelData";
 
 export type ReelSpec = {
@@ -23,9 +24,12 @@ export type ReelSpec = {
   Component: React.FC;
 };
 
-/** Build a standard reel composition (brand intro → cymatics scene). */
+/** Build a standard reel composition (brand intro → viz scene). The viz
+ *  scene is chosen by `data.scene`: "multi" → MultiGeometryMorph, else the
+ *  Reel-02 cymatics scene. */
 function cymaticsReel(id: string): ReelSpec {
   const d = REEL_DATA[id];
+  const Scene = d.scene === "multi" ? MultiGeometryMorph : CymaticsChordMorph;
   return {
     id,
     width: 1080,
@@ -39,7 +43,7 @@ function cymaticsReel(id: string): ReelSpec {
           introFrames: d.intro_frames,
           mainFrames: d.morph_frames,
           intro: d.intro!,
-          main: React.createElement(CymaticsChordMorph, { data: d }),
+          main: React.createElement(Scene, { data: d }),
         }),
       }),
   };
@@ -51,4 +55,7 @@ export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel04-HeyJude"),
   cymaticsReel("Reel05-LetItBe"),
   cymaticsReel("Reel06-Canon"),
+  cymaticsReel("Reel07-BrainHeart"),
+  cymaticsReel("Reel08-ManyShapes"),
+  cymaticsReel("Reel09-CanonHarmonograph"),
 ];
