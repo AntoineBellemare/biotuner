@@ -1,75 +1,130 @@
-# biotuner.harmonic_geometry — animation
+# biotuner.harmonic_geometry — animations
 
-A Remotion (React + TypeScript) animation showcasing Phase 1 – 3 outputs of the
-`harmonic_geometry` module: Lissajous curves, harmonograph traces, star polygons,
-the tuning circle, and Chladni nodal fields.
+Remotion (React + TypeScript) animations that turn `harmonic_geometry`
+outputs into shareable video. There are two layers:
 
-## Architecture
+1. **GeometryV2 / GeometryV2-IG** — the flagship 94.5-second showcase
+   (landscape + Instagram-portrait) with a chord-synced soundtrack. This is
+   "Reel 01".
+2. **Reels** — a lightweight per-reel pipeline for producing many short
+   Instagram posts without writing new React each time. See
+   [Reels](#reels) below.
+
+The Python side computes geometry and writes JSON; the React side reads that
+JSON and animates it; a Python audio renderer writes a synced `.wav`. The
+three never import each other at runtime.
+
+## Layout
 
 ```
 animation/
-├── export_geometry_data.py       # Python: builds public/geometry.json from harmonic_geometry
+├── export_geometry_data.py     # Python → public/geometry.json (flagship scenes)
+├── render_audio.py             # Python → public/audio/score.wav (flagship soundtrack)
+├── export_reels.py             # Python → public/reels/<name>.json + reel soundtracks
 ├── public/
-│   └── geometry.json             # ~1 MB; pre-computed coordinates / fields per scene
+│   ├── geometry.json           # flagship scene data (committed, ~6 MB)
+│   ├── reels/                  # per-reel data (committed)
+│   └── audio/                  # rendered .wav soundtracks (gitignored — regenerate)
+├── out/                        # rendered .mp4 (gitignored — regenerate)
 ├── src/
-│   ├── index.ts                  # Remotion entry point
-│   ├── Root.tsx                  # registers <Composition>
-│   ├── Main.tsx                  # timeline assembly via <Series>
-│   ├── theme.ts                  # color palette + fonts
-│   ├── geometry.ts               # typed accessor for public/geometry.json
-│   ├── components/
-│   │   ├── Backdrop.tsx          # animated radial-glow background
-│   │   ├── Stage.tsx             # centered SVG using normalized [-1, 1] coords
-│   │   └── Caption.tsx           # lower-thirds title + monospace subtitle
-│   └── scenes/
-│       ├── Title.tsx             # opening — drifting unit-circle Lissajous + title
-│       ├── LissajousMorph.tsx    # crossfades through six 2-D Lissajous ratios
-│       ├── Harmonograph.tsx      # progressive reveal of a damped harmonograph
-│       ├── StarPolygons.tsx      # rotating Schläfli {n/k} family
-│       ├── TuningCircle.tsx      # JI diatonic landing on the octave-equave
-│       ├── ChladniMorph.tsx      # canvas-rendered rectangular plate fields
-│       └── Outro.tsx             # fade-out title slate
-└── out/
-    └── harmonic-geometry.mp4     # rendered video
+│   ├── index.ts                # Remotion entry point
+│   ├── Root.tsx                # registers every <Composition> (flagship + reels)
+│   ├── MainV2.tsx              # flagship timeline (GeometryV2 / GeometryV2-IG)
+│   ├── theme.ts                # palette + fonts + per-chord hues
+│   ├── geometry.ts             # typed accessor for public/geometry.json
+│   ├── projection.ts           # 3-D → 2-D projection helpers
+│   ├── reels/                  # reel specs + the generic <Reel> composition
+│   │   ├── reelData.ts         # typed accessor for public/reels/*.json
+│   │   ├── Reel.tsx            # generic reel renderer (scene list + audio)
+│   │   └── specs.ts            # registry: which scenes + audio each reel uses
+│   ├── components/             # Backdrop, Stage, Caption, PedagogyCardIG, …
+│   └── scenes/                 # individual scene components (reused across reels)
+└── package.json
 ```
 
-The Python side never touches the JS side — it dumps coordinates / fields once.
-The React side reads that JSON and animates it. To regenerate after changing
-the source data, rerun the Python step before re-rendering.
+## Compositions
 
-## Re-render
+`Root.tsx` registers each renderable composition by id:
+
+| id | size | duration | what |
+|---|---|---|---|
+| `GeometryV2`    | 1920×1080 | 94.5 s | flagship landscape showcase |
+| `GeometryV2-IG` | 1080×1920 | 94.5 s | **Reel 01** — flagship Instagram portrait |
+| `Reel02-Cymatics` | 1080×1920 | (see specs) | chord cymatics — "what a chord looks like" |
+| …more reels… | 1080×1920 | | added via `src/reels/specs.ts` |
+
+List them at any time with `npx remotion compositions src/index.ts`.
+
+## Sound
+
+`render_audio.py` builds the flagship soundtrack. It pulls the chord events
+straight out of `public/geometry.json` so the audio is locked to the visual
+timeline (no manual sync). Each chord is voiced by a 3-voice detuned-unison ×
+8-partial additive stack with shimmer + vibrato, portamento glides between
+chords, and a resonant band-pass sweep over the Chladni section.
+`MainV2.tsx` plays it via `<Audio src={staticFile("audio/score.wav")} />`.
+
+Reel soundtracks are produced the same way by `export_reels.py` (each reel
+declares its own chord sequence and synth/percussion config).
+
+> **Outputs are not committed.** `public/audio/*.wav` and `out/*.mp4` are
+> gitignored — they are large and fully reproducible. The committed JSON +
+> the two Python scripts + npm are everything needed to rebuild them.
+
+## Build the flagship (Reel 01)
 
 ```bash
-# 1. (optional) regenerate the data with the biotuner conda env
-PYTHONPATH=../../.. python export_geometry_data.py
+cd docs/reports/animation
 
-# 2. install once
+# 1. (optional) regenerate scene data — needs the biotuner env
+python export_geometry_data.py            # → public/geometry.json
+
+# 2. render the synced soundtrack — pure Python (numpy + scipy)
+python render_audio.py                    # → public/audio/score.wav
+
+# 3. install JS deps once
 npm install
 
-# 3. render to MP4
-npm run build           # writes out/harmonic-geometry.mp4
-# or for a smaller WebM:
-npm run build-webm
+# 4. render
+npm run render:ig                         # → out/GeometryV2-IG.mp4  (portrait)
+npm run render:geometry                   # → out/GeometryV2.mp4     (landscape)
 
 # Live editing
-npm run dev             # opens the Remotion Studio at localhost:3000
+npm run dev                               # Remotion Studio at localhost:3000
 ```
+
+## Reels
+
+The reel pipeline turns "a new Instagram post" into config rather than code.
+Each reel is:
+
+1. a **data builder** in `export_reels.py` that writes `public/reels/<name>.json`
+   and (optionally) a `public/audio/<name>.wav` soundtrack;
+2. a **spec** in `src/reels/specs.ts` — the ordered scenes, captions, audio
+   file, fps and duration;
+3. an automatic **`<Composition>`** registered from that spec in `Root.tsx`.
+
+Most reels reuse existing scene components, so adding one is ~1 hour of config.
+
+```bash
+# build all reel data + soundtracks
+python export_reels.py                    # → public/reels/*.json, public/audio/*.wav
+
+# render a specific reel (id from src/reels/specs.ts)
+npx remotion render src/index.ts Reel02-Cymatics out/Reel02-Cymatics.mp4
+```
+
+To add a new reel: add a builder to `export_reels.py`, add a spec entry to
+`src/reels/specs.ts`, run `python export_reels.py`, then render. No new React
+unless the reel needs a genuinely new visual.
 
 ## Specs
 
-- 1920 × 1080, 30 fps
-- ~40 s total (1192 frames)
-- Seven scenes via `<Series.Sequence>`; durations live in `Main.tsx`
-- Color palette: dark background (`#0a0e1a`), warm gold accent (`#e8d68a`),
-  cool blue secondary (`#6da3d8`)
-
-## Notes
-
-- Chladni fields are pre-downsampled to 64×64 in `export_geometry_data.py` to
-  keep `geometry.json` small (~1 MB). The canvas component then upscales them
-  with bilinear smoothing.
-- All curves use SVG strokes with a soft drop-shadow for the gold trace plus a
-  wider semi-transparent cool stroke underneath, giving each line a subtle
-  glow without hand-rolled shaders.
-- `delayRender` / `continueRender` is used in `ChladniMorph.tsx` so Remotion
-  waits for the canvas paint to finish before snapshotting each frame.
+- Flagship: 1920×1080 and 1080×1920, 30 fps, 94.5 s (2835 frames)
+- Reels: 1080×1920 portrait, 30 fps, length per spec
+- Palette: dark background (`#0a0e1a`), warm gold accent, cool blue secondary;
+  per-chord hues in `theme.ts`
+- Chladni / cymatics fields are downsampled in the Python exporters to keep
+  the JSON small; the canvas scenes upscale with bilinear smoothing.
+- `delayRender` / `continueRender` gate every canvas-painting scene so Remotion
+  waits for the paint before snapshotting each frame.

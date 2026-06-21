@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "remotion studio src/index.ts",
-    "build": "remotion render src/index.ts MainVideo out/harmonic-geometry.mp4",
-    "build-webm": "remotion render src/index.ts MainVideo out/harmonic-geometry.webm --codec=vp8"
+    "render:geometry": "remotion render src/index.ts GeometryV2 out/GeometryV2.mp4",
+    "render:ig": "remotion render src/index.ts GeometryV2-IG out/GeometryV2-IG.mp4",
+    "render:reel": "remotion render src/index.ts"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.249",
