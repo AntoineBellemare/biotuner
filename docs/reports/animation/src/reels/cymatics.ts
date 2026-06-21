@@ -93,19 +93,31 @@ export function cymaticsDensity(
   // raw signed field. Each pair is weighted 1/n_pairs so the amplitudes
   // sum to 1, matching biotuner's _resolve_amps_phases default (without
   // this the field is scaled by n_pairs and the auto-σ density saturates).
+  // Per-pair amplitudes. Static → every pair weighted equally (sum 1). When
+  // animating, each pair's signed weight oscillates at its own slow rate/phase,
+  // but the weights are normalised (Σ|amp| = 1) so total field magnitude stays
+  // constant — only the *distribution* shifts, so the nodal set drifts without
+  // the whole plate brightening or washing out.
   const wpair = 1 / ps.length;
+  const amps = new Float32Array(ps.length);
+  if (time !== undefined) {
+    let absSum = 0;
+    for (let p = 0; p < ps.length; p++) {
+      const f = 0.05 + 0.02 * p; // distinct slow rate per pair
+      const phi = p * 1.9 + seed * 0.7;
+      amps[p] = Math.cos(2 * Math.PI * f * time + phi);
+      absSum += Math.abs(amps[p]);
+    }
+    const norm = absSum > 1e-4 ? 1 / absSum : wpair;
+    for (let p = 0; p < ps.length; p++) amps[p] *= norm;
+  } else {
+    for (let p = 0; p < ps.length; p++) amps[p] = wpair;
+  }
+
   const field = new Float32Array(N * N);
   for (let p = 0; p < ps.length; p++) {
     const [a, b] = ps[p];
-    // Per-pair amplitude. Static (1) unless animating, in which case each
-    // pair breathes at its own slow rate/phase so the relative weighting —
-    // and thus the nodal set — drifts over time.
-    let amp = wpair;
-    if (time !== undefined) {
-      const f = 0.05 + 0.02 * p; // Hz, distinct slow rate per pair
-      const phi = p * 1.9 + seed * 0.7;
-      amp *= 0.35 + 0.65 * Math.cos(2 * Math.PI * f * time + phi);
-    }
+    const amp = amps[p];
     const ca = cosTab[a];
     const cb = cosTab[b];
     for (let r = 0; r < N; r++) {

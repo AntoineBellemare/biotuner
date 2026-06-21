@@ -1,7 +1,9 @@
 /**
- * Multi-palette morphing for the meditative reel. A handful of earthy /
- * luminous palettes (RGB stops) and a `morphedStops(phase)` that smoothly
- * cross-fades between consecutive palettes as phase ∈ [0,1) sweeps the cycle.
+ * Colour ramps for the reels.
+ *   - GALLERY_PALETTES: 9 vivid multi-hue ramps, one per brain/heart cell.
+ *   - MEDITATIVE_HUES: a cyclic ring of muted hues the meditative scene maps
+ *     by position (a mix of hues per frame) while density drives brightness.
+ *   - sampleStops / sampleCyclic: linear and wrap-around samplers.
  */
 
 export type Stops = Array<[number, number, number]>;
@@ -31,10 +33,6 @@ const ROSE: Stops = [
   [232, 99, 138], [244, 168, 156], [255, 232, 224],
 ];
 
-export const MEDITATIVE_PALETTES: Stops[] = [
-  TIDEPOOL, BIOLUM, AURORA, ULTRAVIOLET, ROSE, EMBER,
-];
-
 // Three more multi-hue ramps so each of the 9 gallery cells gets its own.
 const SUNSET: Stops = [
   [8, 4, 16], [54, 12, 64], [142, 30, 86],
@@ -59,24 +57,33 @@ export const GALLERY_PALETTES: Stops[] = [
   TIDEPOOL, SUNSET, AURORA, MAGMA, BIOLUM, ROSE, GLACIER, ULTRAVIOLET, VERDANT,
 ];
 
-const lerp = (a: number, b: number, f: number) => a + (b - a) * f;
+// A cyclic ring of muted, medium-bright hues spanning the wheel. The
+// meditative scene drives HUE from this by position (so a single frame shows a
+// mix of hues) and BRIGHTNESS from the cymatics density (keeping the dark
+// ground + bright lattice). First/last are both cool so the ring wraps smoothly.
+export const MEDITATIVE_HUES: Stops = [
+  [110, 150, 145], // teal
+  [140, 162, 118], // sage
+  [188, 168, 120], // gold
+  [196, 152, 150], // rose
+  [168, 142, 182], // mauve
+  [122, 138, 178], // slate-blue
+];
 
-/** Interpolated 6-stop palette at cycle position `phase` ∈ [0,1). */
-export function morphedStops(phase: number): Stops {
-  const n = MEDITATIVE_PALETTES.length;
-  const p = ((phase % 1) + 1) % 1 * n;
-  const i = Math.floor(p) % n;
+/** Sample a CYCLIC ramp at u (wraps mod 1) — linear between neighbours. */
+export function sampleCyclic(ramp: Stops, u: number): [number, number, number] {
+  const n = ramp.length;
+  const t = ((((u % 1) + 1) % 1)) * n;
+  const i = Math.floor(t) % n;
   const j = (i + 1) % n;
-  const f = p - Math.floor(p);
-  // cosine-eased crossfade so palette transitions are gentle
-  const e = 0.5 * (1 - Math.cos(Math.PI * f));
-  const A = MEDITATIVE_PALETTES[i];
-  const B = MEDITATIVE_PALETTES[j];
-  return A.map((s, k) => [
-    Math.round(lerp(s[0], B[k][0], e)),
-    Math.round(lerp(s[1], B[k][1], e)),
-    Math.round(lerp(s[2], B[k][2], e)),
-  ]) as Stops;
+  const f = t - Math.floor(t);
+  const a = ramp[i];
+  const b = ramp[j];
+  return [
+    Math.round(a[0] + (b[0] - a[0]) * f),
+    Math.round(a[1] + (b[1] - a[1]) * f),
+    Math.round(a[2] + (b[2] - a[2]) * f),
+  ];
 }
 
 /** Sample evenly-spaced stops at v∈[0,1] with gamma. */

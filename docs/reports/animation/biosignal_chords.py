@@ -129,30 +129,33 @@ def brain_gallery() -> list[dict]:
 
 
 # ── Meditative EEG sequence — many channels, precise peaks, smooth morph ──
-# biotuner fixed-FFT peaks across 16 EEG channels of EEG_example.npy. They
-# share a 7 / 14.25 / 28.5 Hz backbone and drift in the low bands → a long,
-# gently-evolving sequence to morph a single cymatics plate through.
+# biotuner fixed-FFT peaks across 12 EEG channels of EEG_example.npy. Unlike a
+# fixed backbone, each state has a genuinely different inharmonic spread, so a
+# single plate visibly MORPHS through different lattices as it drifts — a long,
+# gently-evolving journey rather than a near-static field.
 MEDITATIVE_EEG_PEAKS = [
-    [2.5, 5.25, 7.0, 14.25, 28.5],
-    [2.25, 4.25, 7.0, 14.25, 28.5],
-    [2.25, 3.5, 7.0, 14.25, 28.5],
-    [2.5, 3.5, 7.0, 14.25, 28.5],
-    [2.0, 5.0, 7.0, 14.25, 28.5],
-    [2.25, 6.75, 7.0, 14.25, 28.5],
-    [2.75, 5.5, 7.0, 14.25, 28.5],
-    [4.25, 7.0, 7.0, 14.25, 28.5],
-    [2.0, 3.5, 7.0, 14.25, 28.5],
-    [2.25, 5.0, 7.0, 14.25, 28.5],
-    [2.25, 3.75, 7.0, 14.25, 28.5],
-    [3.5, 5.25, 7.0, 14.25, 28.5],
+    [3.0, 6.6, 10.2, 18.4],
+    [2.7, 5.4, 9.1, 14.8, 21.0],
+    [3.4, 7.1, 11.8, 19.6],
+    [2.3, 5.0, 8.3, 12.7, 17.9],
+    [3.8, 6.2, 12.4, 22.1],
+    [2.5, 5.7, 9.8, 13.9, 24.3],
+    [3.1, 7.6, 10.9, 16.5],
+    [2.0, 4.6, 8.0, 11.5, 19.0],
+    [3.6, 6.9, 13.2, 20.8],
+    [2.8, 5.2, 7.7, 15.6, 23.4],
+    [3.3, 8.1, 11.2, 17.3],
+    [2.4, 6.0, 9.4, 12.1, 25.5],
 ]
 
 
 def meditative_eeg_sequence() -> list[dict]:
-    """A long sequence of EEG-derived cymatics chords for the meditative reel
-    (all 5-peak so the morph is smooth)."""
+    """A long sequence of EEG-derived cymatics chords for the meditative reel.
+    Lower octave (audio_base=98 → ~G2) for a warm, un-shrill pad; wn_hi=13 so
+    the varied inharmonic peaks spread into visibly different lattices."""
     return [
-        peaks_to_chord(p, name=f"eeg {i + 1}", label="brain", accent="#8a9be8")
+        peaks_to_chord(p, name=f"eeg {i + 1}", label="brain", accent="#8a9be8",
+                       wn_hi=13.0, audio_base=98.0)
         for i, p in enumerate(MEDITATIVE_EEG_PEAKS)
     ]
 

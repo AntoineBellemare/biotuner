@@ -417,7 +417,7 @@ def render_meditative_morph(spec: dict) -> np.ndarray:
         pad = voice_chord(
             freqs, seg_dur * 2.2, sr=SR,
             attack=seg_dur * 0.55, release=seg_dur * 1.1,
-            shimmer=0.9, root_amp=0.12,
+            shimmer=0.5, root_amp=0.14,
             detune_cents=(0.0, 6.0, -6.0), vibrato_hz=5.0, vibrato_cents=4.0,
             portamento_from=prev, portamento_s=seg_dur * 0.5,
         )
