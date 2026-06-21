@@ -33,7 +33,12 @@ function pairs(n: number): Array<[number, number]> {
   return out;
 }
 
-/** Pairwise Lissajous overlay — one glowing figure per ratio pair. */
+/**
+ * Rotating 3-D Lissajous knot: x=sin(aτ), y=sin(bτ+φ), z=sin(cτ+ψ) for the
+ * chord's first three ratios, rotated in 3-D and projected — a spinning knot
+ * whose crossing structure is the chord's signature. Far more dynamic than a
+ * flat 2-D figure, and clearly different per chord.
+ */
 export function drawLissajous(
   ctx: CanvasRenderingContext2D,
   ratios: number[],
@@ -45,33 +50,59 @@ export function drawLissajous(
   ctx.clearRect(0, 0, W, H);
   const cx = W / 2;
   const cy = H / 2;
-  const R = Math.min(W, H) * 0.42;
+  const R = Math.min(W, H) * 0.38;
   const t = frame / fps;
-  const N = 1400;
-  const ps = pairs(ratios.length);
+  const n = ratios.length;
+  const a = ratios[0];
+  const b = ratios[1 % n];
+  const c = ratios[2 % n];
+  const N = 2600;
 
+  // Slowly drifting phases (morph) + a spin around two axes.
+  const px = 0.0;
+  const py = Math.PI / 3 + 0.12 * t;
+  const pz = Math.PI / 5 + 0.08 * t;
+  const ay = 0.35 * t;
+  const ax = 0.45 + 0.12 * Math.sin(0.18 * t);
+  const cay = Math.cos(ay), say = Math.sin(ay);
+  const cax = Math.cos(ax), sax = Math.sin(ax);
+
+  const pts: Array<[number, number, number]> = [];
+  for (let s = 0; s <= N; s++) {
+    const tau = (s / N) * 2 * Math.PI;
+    const x = Math.sin(a * tau + px);
+    const y = Math.sin(b * tau + py);
+    const z = Math.sin(c * tau + pz);
+    // rotate Y then X
+    const x1 = x * cay + z * say;
+    const z1 = -x * say + z * cay;
+    const y1 = y * cax + z1 * sax;
+    const z2 = -y * sax + z1 * cax;
+    pts.push([cx + R * x1, cy + R * y1, z2]);
+  }
+
+  const trace = () => {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let s = 1; s < pts.length; s++) ctx.lineTo(pts[s][0], pts[s][1]);
+  };
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  ps.forEach(([i, j], k) => {
-    const a = ratios[i];
-    const b = ratios[j];
-    const phase = 0.35 * t + (k * Math.PI) / ps.length; // slow drift per pair
-    const col = TIDE[k % TIDE.length];
-    ctx.strokeStyle = col;
-    ctx.shadowColor = col;
-    ctx.shadowBlur = 16;
-    ctx.lineWidth = 2.4;
-    ctx.globalAlpha = 0.9;
-    ctx.beginPath();
-    for (let s = 0; s <= N; s++) {
-      const tau = (s / N) * 2 * Math.PI;
-      const x = cx + R * Math.sin(a * tau + phase);
-      const y = cy + R * Math.sin(b * tau);
-      if (s === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  });
+  // teal halo + gold core
+  ctx.strokeStyle = "#4aa89c";
+  ctx.shadowColor = "rgba(74,168,156,0.5)";
+  ctx.shadowBlur = 18;
+  ctx.lineWidth = 4;
+  ctx.globalAlpha = 0.4;
+  trace();
+  ctx.stroke();
+  ctx.strokeStyle = "#f0d8b0";
+  ctx.shadowColor = "rgba(240,216,176,0.7)";
+  ctx.shadowBlur = 8;
+  ctx.lineWidth = 2.2;
+  ctx.globalAlpha = 0.95;
+  trace();
+  ctx.stroke();
   ctx.shadowBlur = 0;
   ctx.globalAlpha = 1;
 }
@@ -95,34 +126,32 @@ export function drawHarmonograph(
   const cy = H / 2;
   const R = Math.min(W, H) * 0.4;
   const t = frame / fps;
-  const cycles = 26; // longer path → richer knot
-  const N = 6000;
-  const damp = 0.16; // light: the figure stays full
+  const cycles = 42; // long path → full rosette
+  const N = 6500;
+  const damp = 0.26; // petals fade gently inward
 
   const n = ratios.length;
   const r = (i: number) => ratios[((i % n) + n) % n];
-  // Assign distinct, slightly-detuned frequencies to the two x and two y
-  // pendulums. Detuning is what makes the curve breathe/precess.
+  // Ratio-driven flower: the chord's frequency ratios shape a distinct
+  // rosette per chord. Low detune keeps the figure crisp (not a scribble);
+  // gentle phase drift makes it breathe/rotate slowly.
   const fx1 = r(0);
-  const fx2 = r(2) * 1.003;
-  const fy1 = r(1) * 1.002;
-  const fy2 = r(3) * 0.997;
-  // Phases drift with time → the whole figure morphs every frame.
-  const d1 = 0.18 * t;
-  const d2 = 0.13 * t;
-  const d3 = 0.21 * t + Math.PI / 2;
-  const d4 = 0.16 * t + Math.PI / 3;
+  const fx2 = r(-1);
+  const fy1 = r(1);
+  const fy2 = r(2);
+  const d1 = 0.07 * t;
+  const d2 = 0.05 * t + 0.4;
+  const d3 = 0.06 * t + 1.2;
+  const d4 = 0.04 * t + 0.7;
 
   const pts: Array<[number, number]> = [];
   for (let s = 0; s <= N; s++) {
     const u = s / N;
     const tau = u * cycles * 2 * Math.PI;
-    const env = Math.exp(-damp * u * cycles * 0.16);
-    const x =
-      0.6 * Math.sin(fx1 * tau + d1) + 0.4 * Math.sin(fx2 * tau + d2);
-    const y =
-      0.6 * Math.sin(fy1 * tau + d3) + 0.4 * Math.sin(fy2 * tau + d4);
-    pts.push([cx + R * env * x, cy + R * env * y]);
+    const env = Math.exp(-damp * u * cycles * 0.1);
+    const x = Math.sin(fx1 * tau + d1) + 0.5 * Math.sin(fx2 * tau + d2);
+    const y = Math.sin(fy1 * tau + d3) + 0.5 * Math.sin(fy2 * tau + d4);
+    pts.push([cx + R * env * 0.62 * x, cy + R * env * 0.62 * y]);
   }
 
   const tracePath = () => {
@@ -154,7 +183,12 @@ export function drawHarmonograph(
   ctx.globalAlpha = 1;
 }
 
-/** Travelling-wave interference field (animated). N×N, painted via tidepool. */
+/**
+ * Vortex-interference field: each chord ratio contributes a spiral with that
+ * many arms (cos(2π(αRk − kθ − ωt))). The spiral-arm count + density is the
+ * chord's signature, and the rotating spirals look unmistakably different
+ * from the lattice/curve geometries. Painted via the tidepool ramp.
+ */
 export function drawInterference(
   ctx: CanvasRenderingContext2D,
   ratios: number[],
@@ -164,21 +198,17 @@ export function drawInterference(
 ): void {
   const t = frame / fps;
   const field = new Float32Array(N * N);
-  // A small ring of sources, each emitting at one chord frequency.
-  const srcs = ratios.map((r, i) => {
-    const ang = (i / ratios.length) * 2 * Math.PI;
-    return { x: 0.5 + 0.32 * Math.cos(ang), y: 0.5 + 0.32 * Math.sin(ang), k: r };
-  });
   let mn = Infinity;
   let mx = -Infinity;
   for (let r = 0; r < N; r++) {
-    const y = r / (N - 1);
+    const y = (r / (N - 1)) * 2 - 1;
     for (let c = 0; c < N; c++) {
-      const x = c / (N - 1);
+      const x = (c / (N - 1)) * 2 - 1;
+      const R = Math.hypot(x, y);
+      const th = Math.atan2(y, x);
       let v = 0;
-      for (const s of srcs) {
-        const d = Math.hypot(x - s.x, y - s.y);
-        v += Math.cos(2 * Math.PI * s.k * (d * 3 - 0.6 * t));
+      for (const k of ratios) {
+        v += Math.cos(2 * Math.PI * (2.0 * R * k - k * th - 0.06 * t * k));
       }
       field[r * N + c] = v;
       if (v < mn) mn = v;

@@ -67,9 +67,14 @@ The cymatics field is one of several live in-canvas generators
 (`src/reels/geometries.ts`), all driven by a chord's ratios:
 
 - **cymatics** — D4-symmetric Chladni nodal density (default scene)
-- **lissajous** — pairwise Lissajous figures, one glowing curve per ratio pair
-- **harmonograph** — damped multi-pendulum pen path
-- **interference** — animated travelling-wave interference field
+- **lissajous** — rotating 3-D Lissajous knot (projected), x/y/z = first 3 ratios
+- **harmonograph** — ratio-driven flower/rosette, gently drifting (one distinct
+  figure per chord)
+- **interference** — vortex-spiral interference; spiral-arm count/density = the
+  chord's signature, visually distinct from the lattice/curve geometries
+
+Each geometry has a deliberately different visual language so the four read
+as four views of the same chord: lattice / 3-D knot / flower / spiral.
 
 A reel's `scene: "multi"` + `geometries: [...]` (per segment) renders the
 `MultiGeometryMorph` scene, showing the same music through different
