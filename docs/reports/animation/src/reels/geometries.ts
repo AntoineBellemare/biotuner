@@ -76,7 +76,12 @@ export function drawLissajous(
   ctx.globalAlpha = 1;
 }
 
-/** Damped multi-pendulum harmonograph pen path for the chord's ratios. */
+/**
+ * Two-pendulum-per-axis harmonograph with detuned frequencies and slowly
+ * drifting phases, so the figure CONTINUOUSLY MORPHS instead of settling
+ * into a static rosette. Light damping keeps the whole knot visible; a soft
+ * dual-tone gradient stroke gives it depth.
+ */
 export function drawHarmonograph(
   ctx: CanvasRenderingContext2D,
   ratios: number[],
@@ -90,38 +95,63 @@ export function drawHarmonograph(
   const cy = H / 2;
   const R = Math.min(W, H) * 0.4;
   const t = frame / fps;
-  const cycles = 14;
-  const N = 4200;
-  const damp = 0.55;
+  const cycles = 26; // longer path → richer knot
+  const N = 6000;
+  const damp = 0.16; // light: the figure stays full
 
-  // Component phases drift slowly so the figure evolves.
-  const px = ratios.map((_, i) => 0.22 * t + i * 1.7);
-  const py = ratios.map((_, i) => 0.22 * t + i * 2.3 + Math.PI / 2);
-  const amp = ratios.map((_, i) => 1 / (i + 1.3));
-  const ampSum = amp.reduce((s, a) => s + a, 0);
+  const n = ratios.length;
+  const r = (i: number) => ratios[((i % n) + n) % n];
+  // Assign distinct, slightly-detuned frequencies to the two x and two y
+  // pendulums. Detuning is what makes the curve breathe/precess.
+  const fx1 = r(0);
+  const fx2 = r(2) * 1.003;
+  const fy1 = r(1) * 1.002;
+  const fy2 = r(3) * 0.997;
+  // Phases drift with time → the whole figure morphs every frame.
+  const d1 = 0.18 * t;
+  const d2 = 0.13 * t;
+  const d3 = 0.21 * t + Math.PI / 2;
+  const d4 = 0.16 * t + Math.PI / 3;
+
+  const pts: Array<[number, number]> = [];
+  for (let s = 0; s <= N; s++) {
+    const u = s / N;
+    const tau = u * cycles * 2 * Math.PI;
+    const env = Math.exp(-damp * u * cycles * 0.16);
+    const x =
+      0.6 * Math.sin(fx1 * tau + d1) + 0.4 * Math.sin(fx2 * tau + d2);
+    const y =
+      0.6 * Math.sin(fy1 * tau + d3) + 0.4 * Math.sin(fy2 * tau + d4);
+    pts.push([cx + R * env * x, cy + R * env * y]);
+  }
+
+  const tracePath = () => {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let s = 1; s < pts.length; s++) ctx.lineTo(pts[s][0], pts[s][1]);
+  };
 
   ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  // Teal halo underlay (whole path) for depth, then gold core on top.
+  ctx.strokeStyle = "#7ad6c1";
+  ctx.shadowColor = "rgba(122,214,193,0.5)";
+  ctx.shadowBlur = 16;
+  ctx.lineWidth = 3.2;
+  ctx.globalAlpha = 0.35;
+  tracePath();
+  ctx.stroke();
+
   ctx.strokeStyle = "#e8c98a";
   ctx.shadowColor = "rgba(232,201,138,0.6)";
-  ctx.shadowBlur = 12;
-  ctx.lineWidth = 1.7;
-  ctx.beginPath();
-  for (let s = 0; s <= N; s++) {
-    const tau = (s / N) * cycles * 2 * Math.PI;
-    const env = Math.exp((-damp * s) / N);
-    let x = 0;
-    let y = 0;
-    for (let i = 0; i < ratios.length; i++) {
-      x += amp[i] * Math.sin(ratios[i] * tau + px[i]);
-      y += amp[i] * Math.sin(ratios[i] * tau + py[i]);
-    }
-    const X = cx + (R * env * x) / ampSum;
-    const Y = cy + (R * env * y) / ampSum;
-    if (s === 0) ctx.moveTo(X, Y);
-    else ctx.lineTo(X, Y);
-  }
+  ctx.shadowBlur = 8;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.95;
+  tracePath();
   ctx.stroke();
+
   ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
 }
 
 /** Travelling-wave interference field (animated). N×N, painted via tidepool. */

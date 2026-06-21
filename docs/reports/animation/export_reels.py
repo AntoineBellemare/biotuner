@@ -165,13 +165,14 @@ from biosignal_chords import brain_heart_chords  # noqa: E402
 REEL07_BRAINHEART = {
     "id": "Reel07-BrainHeart",
     "fps": 30,
-    "frames_per_segment": 78,   # 2.6 s per signal
+    "frames_per_segment": 114,  # 3.8 s per signal (longer)
     "intro_frames": 90,
     "symmetry": "d4_max",
     "root_hz": 130.81,
     "loop": True,
-    "hold_fraction": 0.62,
+    "hold_fraction": 0.6,
     "portamento_s": 0.3,
+    "audio_style": "brainheart",  # brain = shimmer pad, heart = heartbeat pulse
     "hook": "your <b>brain</b> vs your <b>heart</b>",
     "intro": {
         "title": "BIOTUNER",
@@ -183,30 +184,37 @@ REEL07_BRAINHEART = {
     "chords": brain_heart_chords(),
 }
 
-# ── Reel 08 — One Sound, Many Shapes (same chord, 4 geometry types) ──────────
-_DOM7 = {"name": "a 7th chord", "label": "dom7", "ratios": [4, 5, 6, 7]}
+# ── Reel 08 — Four geometries at once, many chords (2×2 quadrant grid) ───────
+_MANY_CHORDS = [
+    {"name": "Major",     "label": "major",  "ratios": [4, 5, 6]},
+    {"name": "Minor",     "label": "minor",  "ratios": [10, 12, 15]},
+    {"name": "Sus 4",     "label": "sus4",   "ratios": [6, 8, 9]},
+    {"name": "Dom 7",     "label": "dom7",   "ratios": [4, 5, 6, 7]},
+    {"name": "Maj 7",     "label": "maj7",   "ratios": [8, 10, 12, 15]},
+    {"name": "Dim 7",     "label": "dim7",   "ratios": [5, 6, 7, 9]},
+    {"name": "Augmented", "label": "aug",    "ratios": [16, 20, 25]},
+    {"name": "Min 7",     "label": "minor",  "ratios": [10, 12, 15, 18]},
+]
 REEL08_MANYSHAPES = {
     "id": "Reel08-ManyShapes",
     "fps": 30,
-    "frames_per_segment": 96,   # 3.2 s per geometry
+    "frames_per_segment": 66,   # 2.2 s per chord
     "intro_frames": 90,
     "symmetry": "d4_max",
     "root_hz": 130.81,
     "loop": True,
-    "hold_fraction": 0.0,
-    "portamento_s": 0.3,
-    "scene": "multi",
-    "geometries": ["cymatics", "lissajous", "harmonograph", "interference"],
-    "hook": "one sound, <b>many shapes</b>",
+    "hold_fraction": 0.5,       # settle each chord, then morph (all 4 quadrants)
+    "portamento_s": 0.4,
+    "scene": "quad",
+    "hook": "every chord, <b>four geometries</b>",
     "intro": {
         "title": "BIOTUNER",
         "tagline": "Visualizing and sonifying biological signals",
-        "topic": "One Sound, Many Shapes",
+        "topic": "Four Geometries",
         "motif": "flower_of_life",
         "accent": "#7ad6c1",
     },
-    # Same chord through every geometry.
-    "chords": [dict(_DOM7), dict(_DOM7), dict(_DOM7), dict(_DOM7)],
+    "chords": _MANY_CHORDS,
 }
 
 # ── Reel 09 — Canon in D as a harmonograph (same music, different geometry) ──
@@ -286,6 +294,65 @@ def _chord_freqs(ratios: list[float], root_hz: float) -> list[float]:
     return [root_hz * (r / m) for r in ratios]
 
 
+def _heartbeat_segment(dur: float, freqs: list[float], hr: float = 1.05) -> np.ndarray:
+    """A 'lub-dub' heartbeat at ``hr`` Hz + a soft harmonic drone. (n, 2)."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    out = np.zeros(n)
+    period = 1.0 / hr
+    bt = 0.0
+    while bt < dur:
+        for off, f, amp, dec in [(0.0, 54.0, 1.0, 0.10), (0.17, 44.0, 0.62, 0.13)]:
+            i0 = int((bt + off) * SR)
+            lt = (np.arange(n) - i0) / SR
+            env = np.where(lt >= 0, np.exp(-np.maximum(lt, 0) / dec), 0.0)
+            out += amp * env * np.sin(2 * np.pi * f * np.maximum(lt, 0))
+        bt += period
+    # soft tonal drone from the heart's harmonic peaks
+    drone = np.zeros(n)
+    for f in freqs:
+        drone += 0.05 * np.sin(2 * np.pi * f * t)
+    mono = 0.55 * out + drone
+    env_in = np.minimum(t / 0.05, 1.0)
+    mono *= env_in
+    return np.stack([mono, mono], axis=1)
+
+
+def _brain_segment(dur: float, freqs: list[float],
+                   porta: list[float] | None) -> np.ndarray:
+    """Shimmery, inharmonic, ethereal pad — the brain's peak cluster."""
+    return voice_chord(
+        freqs, dur, sr=SR,
+        attack=0.9, release=1.4, shimmer=0.95, root_amp=0.16,
+        detune_cents=(0.0, 8.0, -8.0, 4.0), vibrato_hz=6.5, vibrato_cents=5.0,
+        portamento_from=porta, portamento_s=0.6,
+    )
+
+
+def render_brainheart_morph(spec: dict) -> np.ndarray:
+    """Per-segment audio that DIFFERS by signal: brain = shimmer pad,
+    heart = heartbeat pulse. Driven by each chord's ``label``."""
+    fps = spec["fps"]
+    seg_dur = spec["frames_per_segment"] / fps
+    chords = spec["chords"]
+    n_seg = len(chords)
+    morph_n = int(n_seg * seg_dur * SR)
+    tail = int(1.2 * SR)
+    out = np.zeros((morph_n + tail, 2))
+    prev: list[float] | None = None
+    for i, ch in enumerate(chords):
+        freqs = ch["freqs"]
+        if ch.get("label") == "heart":
+            seg = _heartbeat_segment(seg_dur + 1.0, freqs)
+        else:
+            seg = _brain_segment(seg_dur + 1.0, freqs, prev)
+        start = int(i * seg_dur * SR)
+        end = min(start + seg.shape[0], out.shape[0])
+        out[start:end] += seg[: end - start]
+        prev = freqs
+    return out[:morph_n]
+
+
 def render_chord_morph(spec: dict) -> np.ndarray:
     """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2).
 
@@ -333,7 +400,10 @@ def render_reel_audio(spec: dict) -> np.ndarray:
     intro_n = int(intro_frames / fps * SR)
     intro_dur = intro_frames / fps
 
-    morph = render_chord_morph(spec)
+    if spec.get("audio_style") == "brainheart":
+        morph = render_brainheart_morph(spec)
+    else:
+        morph = render_chord_morph(spec)
     morph_n = morph.shape[0]
     total_n = intro_n + morph_n
 
