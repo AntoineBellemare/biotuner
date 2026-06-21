@@ -50,10 +50,28 @@ animation/
 |---|---|---|---|
 | `GeometryV2`    | 1920×1080 | 94.5 s | flagship landscape showcase |
 | `GeometryV2-IG` | 1080×1920 | 94.5 s | **Reel 01** — flagship Instagram portrait |
-| `Reel02-Cymatics` | 1080×1920 | (see specs) | chord cymatics — "what a chord looks like" |
-| …more reels… | 1080×1920 | | added via `src/reels/specs.ts` |
+| `Reel02-Cymatics`  | 1080×1920 | 13.0 s | chord cymatics — "what a chord looks like" |
+| `Reel03-Intervals` | 1080×1920 | 20.6 s | consonance vs dissonance — interval journey |
+| `Reel04-HeyJude`   | 1080×1920 | 19.0 s | famous-song chords → geometry (Hey Jude) |
+| `Reel05-LetItBe`   | 1080×1920 | 19.0 s | song variant (Let It Be) |
+| `Reel06-Canon`     | 1080×1920 | 19.0 s | song variant (Canon in D) |
 
 List them at any time with `npx remotion compositions src/index.ts`.
+
+### Song reels
+
+Song reels synthesise only the **chord progression** (harmony) of a famous
+song — no copyrighted recording is used. `song_chords.py` maps each chord
+(scale-degree + quality, in a key) to:
+
+- small-integer cymatics wavenumbers, scaled globally across the song so
+  each chord's pattern is distinct yet legible (harmonic motion shows), and
+- octave-voiced audio frequencies with a bass root, so the pad progression
+  sounds like the song's chords.
+
+Add a song in `song_chords.py` (`SONGS` dict) and one `_song_reel(...)` line
+in `export_reels.py`. The reel is branded with the song title so the
+progression is recognisable; overlay the real track in-app if desired.
 
 ## Sound
 

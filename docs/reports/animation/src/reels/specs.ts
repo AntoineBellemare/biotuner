@@ -48,4 +48,7 @@ function cymaticsReel(id: string): ReelSpec {
 export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel02-Cymatics"),
   cymaticsReel("Reel03-Intervals"),
+  cymaticsReel("Reel04-HeyJude"),
+  cymaticsReel("Reel05-LetItBe"),
+  cymaticsReel("Reel06-Canon"),
 ];

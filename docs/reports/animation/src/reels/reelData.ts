@@ -5,6 +5,9 @@
  */
 import reel02 from "../../public/reels/Reel02-Cymatics.json";
 import reel03 from "../../public/reels/Reel03-Intervals.json";
+import reel04 from "../../public/reels/Reel04-HeyJude.json";
+import reel05 from "../../public/reels/Reel05-LetItBe.json";
+import reel06 from "../../public/reels/Reel06-Canon.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -30,4 +33,7 @@ export type ReelData = {
 export const REEL_DATA: Record<string, ReelData> = {
   "Reel02-Cymatics": reel02 as unknown as ReelData,
   "Reel03-Intervals": reel03 as unknown as ReelData,
+  "Reel04-HeyJude": reel04 as unknown as ReelData,
+  "Reel05-LetItBe": reel05 as unknown as ReelData,
+  "Reel06-Canon": reel06 as unknown as ReelData,
 };

@@ -127,7 +127,48 @@ REEL03_INTERVALS = {
     ],
 }
 
-REELS = {r["id"]: r for r in [REEL02_CYMATICS, REEL03_INTERVALS]}
+# ── Famous-song reels (Reel 04 + variants) — synthesised chord progressions ──
+from song_chords import SONGS, song_chords  # noqa: E402
+
+
+def _song_reel(reel_id: str, song_id: str) -> dict:
+    s = SONGS[song_id]
+    return {
+        "id": reel_id,
+        "fps": 30,
+        "frames_per_segment": 60,   # 2.0 s per chord
+        "intro_frames": 90,
+        "symmetry": "d4_max",
+        "root_hz": 130.81,          # unused: chords carry explicit freqs
+        "loop": True,
+        "hold_fraction": 0.55,      # settle each chord, then morph
+        "portamento_s": 0.04,       # crisp chord changes (not gliding)
+        "hook": f"<b>{s['title']}</b> &middot; the chords",
+        "intro": {
+            "title": "BIOTUNER",
+            "tagline": "Visualizing and sonifying biological signals",
+            "topic": s["title"],
+            "motif": "flower_of_life",
+            "accent": s["accent"],
+        },
+        "chords": song_chords(song_id),
+    }
+
+
+REEL04_HEYJUDE = _song_reel("Reel04-HeyJude", "HeyJude")
+REEL05_LETITBE = _song_reel("Reel05-LetItBe", "LetItBe")
+REEL06_CANON = _song_reel("Reel06-Canon", "CanonInD")
+
+REELS = {
+    r["id"]: r
+    for r in [
+        REEL02_CYMATICS,
+        REEL03_INTERVALS,
+        REEL04_HEYJUDE,
+        REEL05_LETITBE,
+        REEL06_CANON,
+    ]
+}
 
 
 # ======================================================================
@@ -141,26 +182,33 @@ def _chord_freqs(ratios: list[float], root_hz: float) -> list[float]:
 
 
 def render_chord_morph(spec: dict) -> np.ndarray:
-    """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2)."""
+    """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2).
+
+    Each chord's audio frequencies are taken from its explicit ``freqs``
+    (song reels carry real chord voicings) or derived from its ``ratios``
+    (abstract-chord reels). ``portamento_s`` controls how much pitch glides
+    between chords — small for song reels so chords change crisply."""
     fps = spec["fps"]
     seg_dur = spec["frames_per_segment"] / fps
     root_hz = spec["root_hz"]
     chords = spec["chords"]
     n_seg = len(chords)
+    porta_s = spec.get("portamento_s", 0.5)
 
     morph_n = int(n_seg * seg_dur * SR)
     tail = int(1.0 * SR)
     morph = np.zeros((morph_n + tail, 2))
     prev_freqs: list[float] | None = None
     for i in range(n_seg):
-        freqs = _chord_freqs(chords[i]["ratios"], root_hz)
+        ch = chords[i]
+        freqs = ch["freqs"] if "freqs" in ch else _chord_freqs(ch["ratios"], root_hz)
         porta = prev_freqs
         if porta is not None and len(porta) < len(freqs):
             porta = porta + [porta[-1]] * (len(freqs) - len(porta))
         seg = voice_chord(
             freqs, seg_dur + 1.0, sr=SR,
             attack=0.35, release=1.2, shimmer=0.5, root_amp=0.17,
-            portamento_from=porta, portamento_s=0.5,
+            portamento_from=porta, portamento_s=porta_s,
         )
         start = int(i * seg_dur * SR)
         end = min(start + seg.shape[0], morph.shape[0])
