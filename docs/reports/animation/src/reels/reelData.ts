@@ -4,6 +4,7 @@
  * just chord sequences + timing).
  */
 import reel02 from "../../public/reels/Reel02-Cymatics.json";
+import reel03 from "../../public/reels/Reel03-Intervals.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -16,6 +17,11 @@ export type ReelData = {
   total_frames: number;
   symmetry: "d4_max" | "d4_sum" | "none";
   loop: boolean;
+  /** 0 = continuous morph; >0 holds each chord for that fraction of the
+      segment, then morphs to the next over the remainder. */
+  hold_fraction: number;
+  /** Top-of-frame hook line for the viz scene. */
+  hook: string | null;
   intro: IntroConfig | null;
   chords: Chord[];
   audio: string; // staticFile-relative path, e.g. "audio/Reel02-Cymatics.wav"
@@ -23,4 +29,5 @@ export type ReelData = {
 
 export const REEL_DATA: Record<string, ReelData> = {
   "Reel02-Cymatics": reel02 as unknown as ReelData,
+  "Reel03-Intervals": reel03 as unknown as ReelData,
 };

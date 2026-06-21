@@ -64,6 +64,8 @@ REEL02_CYMATICS = {
     "symmetry": "d4_max",
     "root_hz": 130.81,  # C3 assigned to each chord's lowest voice
     "loop": True,
+    "hold_fraction": 0.0,      # continuous morph
+    "hook": "every chord has a <b>shape</b>",
     "intro": {
         "title": "BIOTUNER",
         "tagline": "Visualizing and sonifying biological signals",
@@ -80,7 +82,52 @@ REEL02_CYMATICS = {
     ],
 }
 
-REELS = {r["id"]: r for r in [REEL02_CYMATICS]}
+# Consonance palette for the interval labels (calm teal → tense red).
+_TEAL = "#7ad6c1"
+_GOLD = "#e8d68a"
+_AMBER = "#e8a26b"
+_RED = "#e87a7a"
+
+REEL03_INTERVALS = {
+    "id": "Reel03-Intervals",
+    "fps": 30,
+    "frames_per_segment": 66,  # 2.2 s per interval (held, then morph)
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.58,     # show/hear each interval clearly, then morph
+    "hook": "can you <b>see</b> dissonance?",
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Consonance & Dissonance",
+        "motif": "flower_of_life",
+        "accent": "#9bb1e8",
+    },
+    # Ordered most-consonant → most-dissonant. ratios = integer plate
+    # wavenumbers; ratio_str = the musical interval; tag = perceptual label.
+    "chords": [
+        {"name": "Octave",        "label": "octave",  "ratios": [4, 8],
+         "ratio_str": "1 : 2",  "tag": "perfectly consonant", "accent": _TEAL},
+        {"name": "Perfect Fifth", "label": "fifth",   "ratios": [4, 6],
+         "ratio_str": "2 : 3",  "tag": "consonant",           "accent": _TEAL},
+        {"name": "Perfect Fourth","label": "fourth",  "ratios": [6, 8],
+         "ratio_str": "3 : 4",  "tag": "consonant",           "accent": _TEAL},
+        {"name": "Major Third",   "label": "third",   "ratios": [4, 5],
+         "ratio_str": "4 : 5",  "tag": "sweet",               "accent": _GOLD},
+        {"name": "Minor Third",   "label": "minorthird", "ratios": [5, 6],
+         "ratio_str": "5 : 6",  "tag": "sweet",               "accent": _GOLD},
+        {"name": "Major Second",  "label": "second",  "ratios": [8, 9],
+         "ratio_str": "8 : 9",  "tag": "mild tension",        "accent": _AMBER},
+        {"name": "Tritone",       "label": "tritone", "ratios": [5, 7],
+         "ratio_str": "5 : 7",  "tag": "restless",            "accent": _AMBER},
+        {"name": "Minor Second",  "label": "minorsecond", "ratios": [15, 16],
+         "ratio_str": "15 : 16", "tag": "dissonant",          "accent": _RED},
+    ],
+}
+
+REELS = {r["id"]: r for r in [REEL02_CYMATICS, REEL03_INTERVALS]}
 
 
 # ======================================================================
@@ -191,6 +238,8 @@ def build_reel(spec: dict) -> None:
         "total_frames": total_frames,
         "symmetry": spec["symmetry"],
         "loop": spec["loop"],
+        "hold_fraction": spec.get("hold_fraction", 0),
+        "hook": spec.get("hook"),
         "intro": spec.get("intro"),
         "chords": spec["chords"],
         "audio": f"audio/{rid}.wav",

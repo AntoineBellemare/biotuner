@@ -14,7 +14,17 @@
  * very different chords.
  */
 
-export type Chord = { name: string; label: string; ratios: number[] };
+export type Chord = {
+  name: string;
+  label: string;
+  ratios: number[];
+  /** Optional display ratio (e.g. "2 : 3") if different from `ratios`. */
+  ratio_str?: string;
+  /** Optional descriptor shown under the ratio (e.g. "perfectly consonant"). */
+  tag?: string;
+  /** Optional label colour override (hex). Falls back to the chord hue. */
+  accent?: string;
+};
 
 /** All distinct unordered index pairs of a ratio list. */
 function pairs(n: number): Array<[number, number]> {

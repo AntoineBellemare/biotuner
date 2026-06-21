@@ -50,12 +50,20 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
   const local = (frame % seg) / seg; // 0..1
   const fromChord = chords[segIdx];
   const toChord = chords[(segIdx + 1) % n];
-  const ratios = lerpRatios(fromChord.ratios, toChord.ratios, local);
 
-  // Gamma bloom: bold (low γ) at the chord keyframes, thin (high γ) mid-morph.
-  // sin(π·local) is 0 at local∈{0,1} and 1 at local=0.5.
+  // hold_fraction > 0 keeps each chord settled for that fraction of the
+  // segment, then morphs over the remainder (so each pattern reads clearly
+  // before it changes). 0 = continuous morph.
+  const hold = data.hold_fraction ?? 0;
+  const morphLocal =
+    hold > 0
+      ? Math.max(0, Math.min(1, (local - hold) / (1 - hold)))
+      : local;
+  const ratios = lerpRatios(fromChord.ratios, toChord.ratios, morphLocal);
+
+  // Gamma bloom: bold (low γ) while settled, thin (high γ) mid-morph.
   const gamma =
-    GAMMA_BOLD + (GAMMA_THIN - GAMMA_BOLD) * Math.sin(Math.PI * local);
+    GAMMA_BOLD + (GAMMA_THIN - GAMMA_BOLD) * Math.sin(Math.PI * morphLocal);
 
   // Paint the field whenever the frame changes.
   useEffect(() => {
@@ -89,19 +97,21 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame]);
 
-  // Label crossfade: hold the "from" chord through 65 % of the segment, then
-  // fade to the "to" chord over the last 35 %.
-  const toOpacity = interpolate(local, [0.65, 0.95], [0, 1], {
+  // Label crossfade aligned with the morph window: from-chord holds, then
+  // fades to the to-chord as the pattern morphs.
+  const labelStart = hold > 0 ? hold + 0.04 : 0.65;
+  const toOpacity = interpolate(local, [labelStart, Math.min(labelStart + 0.3, 0.97)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const fromOpacity = 1 - toOpacity;
-  const fromHue = getChordHue(fromChord.label);
-  const toHue = getChordHue(toChord.label);
+  const fromHue = hueOf(fromChord);
+  const toHue = hueOf(toChord);
 
   const plate = Math.min(width * 0.82, 900);
-  const ratioStr = fromChord.ratios.join(" : ");
-  const toRatioStr = toChord.ratios.join(" : ");
+  const ratioStr = fromChord.ratio_str ?? fromChord.ratios.join(" : ");
+  const toRatioStr = toChord.ratio_str ?? toChord.ratios.join(" : ");
+  const hook = data.hook ?? "every chord has a shape";
 
   // Whole-frame entrance fade (first 12 frames only, once).
   const introFade = interpolate(frame, [0, 12], [0, 1], {
@@ -126,10 +136,10 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
           letterSpacing: 1,
           color: theme.ink,
           opacity: 0.85,
+          padding: "0 60px",
         }}
-      >
-        every chord has a <span style={{ fontWeight: 700 }}>shape</span>
-      </div>
+        dangerouslySetInnerHTML={{ __html: hook }}
+      />
 
       {/* Cymatics plate, centered */}
       <div
@@ -188,6 +198,9 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
           >
             {ratioStr}
           </div>
+          {fromChord.tag ? (
+            <div style={tagStyle(fromHue.primary)}>{fromChord.tag}</div>
+          ) : null}
         </div>
         <div style={{ position: "absolute", left: 0, right: 0, opacity: toOpacity }}>
           <div
@@ -212,6 +225,9 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
           >
             {toRatioStr}
           </div>
+          {toChord.tag ? (
+            <div style={tagStyle(toHue.primary)}>{toChord.tag}</div>
+          ) : null}
         </div>
       </div>
 
@@ -235,3 +251,36 @@ export const CymaticsChordMorph: React.FC<{ data: ReelData }> = ({ data }) => {
     </AbsoluteFill>
   );
 };
+
+/** Chord label hue: an explicit per-chord accent overrides the chord-name hue. */
+function hueOf(c: Chord): { primary: string; soft: string; glow: string } {
+  if (c.accent) {
+    return {
+      primary: c.accent,
+      soft: c.accent,
+      glow: hexToRgba(c.accent, 0.35),
+    };
+  }
+  const h = getChordHue(c.label);
+  return { primary: h.primary, soft: h.soft, glow: h.glow };
+}
+
+function tagStyle(color: string): React.CSSProperties {
+  return {
+    marginTop: 12,
+    fontSize: 26,
+    fontFamily: fonts.display,
+    fontWeight: 500,
+    letterSpacing: 1,
+    color,
+    opacity: 0.85,
+  };
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

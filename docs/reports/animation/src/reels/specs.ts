@@ -23,24 +23,29 @@ export type ReelSpec = {
   Component: React.FC;
 };
 
-const reel02 = REEL_DATA["Reel02-Cymatics"];
-
-export const REEL_SPECS: ReelSpec[] = [
-  {
-    id: "Reel02-Cymatics",
+/** Build a standard reel composition (brand intro → cymatics scene). */
+function cymaticsReel(id: string): ReelSpec {
+  const d = REEL_DATA[id];
+  return {
+    id,
     width: 1080,
     height: 1920,
-    fps: reel02.fps,
-    durationInFrames: reel02.total_frames,
+    fps: d.fps,
+    durationInFrames: d.total_frames,
     Component: () =>
       React.createElement(Reel, {
-        audio: reel02.audio,
+        audio: d.audio,
         children: React.createElement(ReelTimeline, {
-          introFrames: reel02.intro_frames,
-          mainFrames: reel02.morph_frames,
-          intro: reel02.intro!,
-          main: React.createElement(CymaticsChordMorph, { data: reel02 }),
+          introFrames: d.intro_frames,
+          mainFrames: d.morph_frames,
+          intro: d.intro!,
+          main: React.createElement(CymaticsChordMorph, { data: d }),
         }),
       }),
-  },
+  };
+}
+
+export const REEL_SPECS: ReelSpec[] = [
+  cymaticsReel("Reel02-Cymatics"),
+  cymaticsReel("Reel03-Intervals"),
 ];
