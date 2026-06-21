@@ -62,6 +62,10 @@ const CHORD_HUE_TABLE: Record<string, ChordHue> = {
     primary: "#e87a7a", soft: "#c25555",
     glow: "rgba(232,122,122,0.30)", rgb: [232, 122, 122],
   },
+  diminished: {
+    primary: "#e87a7a", soft: "#c25555",
+    glow: "rgba(232,122,122,0.30)", rgb: [232, 122, 122],
+  },
 };
 
 /**

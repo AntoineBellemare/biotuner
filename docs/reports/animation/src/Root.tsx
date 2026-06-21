@@ -1,10 +1,11 @@
 import React from "react";
 import { Composition } from "remotion";
 import { MainV2, TOTAL_FRAMES_V2 } from "./MainV2";
+import { REEL_SPECS } from "./reels/specs";
 
-// Note: the legacy "MainVideo" / Phase 1-3 complete composition has been
-// retired. GeometryV2 is the active animation; the v1 scene files remain
-// on disk in case any are reused.
+// GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
+// portrait crop (Reel 01). The v1 "MainVideo" composition has been retired.
+// Short-form reels are registered from src/reels/specs.ts.
 
 export const Root: React.FC = () => {
   return (
@@ -17,9 +18,7 @@ export const Root: React.FC = () => {
         width={1920}
         height={1080}
       />
-      {/* Instagram Reels / TikTok / Shorts — 9:16 portrait at 1080×1920.
-          Same scene timeline; layouts use AbsoluteFill + centered Stage so
-          the portrait crop reads cleanly. */}
+      {/* Instagram Reels / TikTok / Shorts — 9:16 portrait at 1080×1920. */}
       <Composition
         id="GeometryV2-IG"
         component={MainV2}
@@ -28,6 +27,19 @@ export const Root: React.FC = () => {
         width={1080}
         height={1920}
       />
+
+      {/* Short-form reels — one <Composition> per spec. */}
+      {REEL_SPECS.map((spec) => (
+        <Composition
+          key={spec.id}
+          id={spec.id}
+          component={spec.Component}
+          durationInFrames={spec.durationInFrames}
+          fps={spec.fps}
+          width={spec.width}
+          height={spec.height}
+        />
+      ))}
     </>
   );
 };
