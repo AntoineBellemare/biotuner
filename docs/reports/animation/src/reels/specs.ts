@@ -58,4 +58,5 @@ export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel07-BrainHeart"),
   cymaticsReel("Reel08-ManyShapes"),
   cymaticsReel("Reel09-CanonHarmonograph"),
+  cymaticsReel("Reel10-LetItBeShapes"),
 ];

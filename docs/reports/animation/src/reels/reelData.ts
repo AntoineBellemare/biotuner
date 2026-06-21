@@ -11,6 +11,7 @@ import reel06 from "../../public/reels/Reel06-Canon.json";
 import reel07 from "../../public/reels/Reel07-BrainHeart.json";
 import reel08 from "../../public/reels/Reel08-ManyShapes.json";
 import reel09 from "../../public/reels/Reel09-CanonHarmonograph.json";
+import reel10 from "../../public/reels/Reel10-LetItBeShapes.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -46,4 +47,5 @@ export const REEL_DATA: Record<string, ReelData> = {
   "Reel07-BrainHeart": reel07 as unknown as ReelData,
   "Reel08-ManyShapes": reel08 as unknown as ReelData,
   "Reel09-CanonHarmonograph": reel09 as unknown as ReelData,
+  "Reel10-LetItBeShapes": reel10 as unknown as ReelData,
 };

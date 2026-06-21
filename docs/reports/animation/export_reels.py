@@ -234,6 +234,32 @@ REEL09_CANON_HARMONO = {
     "chords": _canon_chords,
 }
 
+# ── Reel 10 — Let It Be, every shape (each chord a different geometry) ───────
+_litb = song_chords("LetItBe")
+_geo_cycle = ["cymatics", "lissajous", "harmonograph", "interference"]
+REEL10_LETITBE_SHAPES = {
+    "id": "Reel10-LetItBeShapes",
+    "fps": 30,
+    "frames_per_segment": 66,
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.5,
+    "portamento_s": 0.04,
+    "scene": "multi",
+    "geometries": [_geo_cycle[i % len(_geo_cycle)] for i in range(len(_litb))],
+    "hook": "<b>Let It Be</b> &middot; every shape",
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Let It Be — every shape",
+        "motif": "flower_of_life",
+        "accent": "#7ad6c1",
+    },
+    "chords": _litb,
+}
+
 REELS = {
     r["id"]: r
     for r in [
@@ -245,6 +271,7 @@ REELS = {
         REEL07_BRAINHEART,
         REEL08_MANYSHAPES,
         REEL09_CANON_HARMONO,
+        REEL10_LETITBE_SHAPES,
     ]
 }
 
