@@ -131,38 +131,6 @@ REEL03_INTERVALS = {
     ],
 }
 
-# ── Famous-song reels (Reel 04 + variants) — synthesised chord progressions ──
-from song_chords import SONGS, song_chords  # noqa: E402
-
-
-def _song_reel(reel_id: str, song_id: str) -> dict:
-    s = SONGS[song_id]
-    return {
-        "id": reel_id,
-        "fps": 30,
-        "frames_per_segment": 60,   # 2.0 s per chord
-        "intro_frames": 90,
-        "symmetry": "d4_max",
-        "root_hz": 130.81,          # unused: chords carry explicit freqs
-        "loop": True,
-        "hold_fraction": 0.55,      # settle each chord, then morph
-        "portamento_s": 0.04,       # crisp chord changes (not gliding)
-        "hook": f"<b>{s['title']}</b> &middot; the chords",
-        "intro": {
-            "title": "BIOTUNER",
-            "tagline": "Visualizing and sonifying biological signals",
-            "topic": s["title"],
-            "motif": "flower_of_life",
-            "accent": s["accent"],
-        },
-        "chords": song_chords(song_id),
-    }
-
-
-REEL04_HEYJUDE = _song_reel("Reel04-HeyJude", "HeyJude")
-REEL05_LETITBE = _song_reel("Reel05-LetItBe", "LetItBe")
-REEL06_CANON = _song_reel("Reel06-Canon", "CanonInD")
-
 # ── Reel 07 — Brain vs Heart, as GALLERIES (a wall of each) ──────────────────
 from biosignal_chords import brain_gallery, heart_gallery_real  # noqa: E402
 
@@ -233,57 +201,6 @@ REEL08_MANYSHAPES = {
     "chords": _MANY_CHORDS,
 }
 
-# ── Reel 09 — Canon in D as a harmonograph (same music, different geometry) ──
-_canon_chords = song_chords("CanonInD")
-REEL09_CANON_HARMONO = {
-    "id": "Reel09-CanonHarmonograph",
-    "fps": 30,
-    "frames_per_segment": 60,
-    "intro_frames": 90,
-    "symmetry": "d4_max",
-    "root_hz": 130.81,
-    "loop": True,
-    "hold_fraction": 0.5,
-    "portamento_s": 0.04,
-    "scene": "multi",
-    "geometries": ["harmonograph"] * len(_canon_chords),
-    "hook": "<b>Canon in D</b> &middot; the same chords, drawn",
-    "intro": {
-        "title": "BIOTUNER",
-        "tagline": "Visualizing and sonifying biological signals",
-        "topic": "Canon in D — drawn",
-        "motif": "flower_of_life",
-        "accent": "#e8c98a",
-    },
-    "chords": _canon_chords,
-}
-
-# ── Reel 10 — Let It Be, every shape (each chord a different geometry) ───────
-_litb = song_chords("LetItBe")
-_geo_cycle = ["cymatics", "lissajous", "harmonograph", "interference"]
-REEL10_LETITBE_SHAPES = {
-    "id": "Reel10-LetItBeShapes",
-    "fps": 30,
-    "frames_per_segment": 66,
-    "intro_frames": 90,
-    "symmetry": "d4_max",
-    "root_hz": 130.81,
-    "loop": True,
-    "hold_fraction": 0.5,
-    "portamento_s": 0.04,
-    "scene": "multi",
-    "geometries": [_geo_cycle[i % len(_geo_cycle)] for i in range(len(_litb))],
-    "hook": "<b>Let It Be</b> &middot; every shape",
-    "intro": {
-        "title": "BIOTUNER",
-        "tagline": "Visualizing and sonifying biological signals",
-        "topic": "Let It Be — every shape",
-        "motif": "flower_of_life",
-        "accent": "#7ad6c1",
-    },
-    "chords": _litb,
-}
-
 # ── Reel 12 — Meditative: 1-min EEG cymatics morph + palette morph ───────────
 from biosignal_chords import meditative_eeg_sequence  # noqa: E402
 
@@ -309,19 +226,51 @@ REEL12_MEDITATIVE = {
     "chords": meditative_eeg_sequence(),  # 12 EEG chords × 5 s = 60 s
 }
 
+# ── Reel 13 — Forbidden Symmetry: quasicrystals + vortices (didactic) ────────
+# Fractional ratios (true r_i, NOT integer plate wavenumbers): the interference
+# math uses k_i ∝ r_i and the vortex charge = numerator of each ratio.
+REEL13_FORBIDDEN = {
+    "id": "Reel13-Forbidden",
+    "fps": 30,
+    "frames_per_segment": 108,  # 3.6 s per chord
+    "intro_frames": 90,
+    "outro_frames": 96,         # 3.2 s — motion eases to rest + closing card
+    "symmetry": "d4_max",       # unused by this scene
+    "root_hz": 130.81,          # C3
+    "loop": True,
+    "hold_fraction": 0.45,      # settle on each chord longer, then a quicker morph
+    "portamento_s": 0.25,
+    "scene": "forbidden",
+    "audio_style": "glass",     # crystalline FM-bell pad (not the usual voice)
+    "hook": None,               # the scene draws its own didactic captions
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Forbidden Symmetry",
+        "motif": "flower_of_life",
+        "accent": "#9b8ae8",
+    },
+    # 7 chords, all quasicrystals: act1 (5-fold)=3, act2 (7-fold)=2, act3 (12-fold)=2.
+    "chords": [
+        {"name": "Major",  "label": "major",  "ratios": [1.0, 1.25, 1.5]},
+        {"name": "Minor",  "label": "minor",  "ratios": [1.0, 1.2, 1.5]},
+        {"name": "Sus 4",  "label": "sus4",   "ratios": [1.0, 4 / 3, 1.5]},
+        {"name": "Maj 7",  "label": "maj7",   "ratios": [1.0, 1.25, 1.5, 1.875]},
+        {"name": "Add 9",  "label": "add9",   "ratios": [1.0, 1.125, 1.25, 1.5]},
+        {"name": "Dom 7",  "label": "dom7",   "ratios": [1.0, 1.25, 1.5, 1.75]},
+        {"name": "Quartal", "label": "quartal", "ratios": [1.0, 4 / 3, 5 / 3]},
+    ],
+}
+
 REELS = {
     r["id"]: r
     for r in [
         REEL02_CYMATICS,
         REEL03_INTERVALS,
-        REEL04_HEYJUDE,
-        REEL05_LETITBE,
-        REEL06_CANON,
         REEL07_BRAINHEART,
         REEL08_MANYSHAPES,
-        REEL09_CANON_HARMONO,
-        REEL10_LETITBE_SHAPES,
         REEL12_MEDITATIVE,
+        REEL13_FORBIDDEN,
     ]
 }
 
@@ -445,6 +394,69 @@ def render_meditative_morph(spec: dict) -> np.ndarray:
     return out
 
 
+def glass_voice(freqs: list[float], dur: float, *, attack: float = 0.35,
+                release: float = 1.2, detune: float = 0.004) -> np.ndarray:
+    """A glassy FM-bell pad — a crystalline, metallic timbre (distinct from the
+    warm additive ``voice_chord``). Each tone is an FM voice with a slightly
+    inharmonic modulator (→ bell/celeste shimmer), a soft sine body, and a
+    tremolo octave. Stereo-detuned for width. (n, 2)."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    left = np.zeros(n)
+    right = np.zeros(n)
+    nf = max(len(freqs), 1)
+    for f in freqs:
+        for acc, df in ((0, 1.0 - detune), (1, 1.0 + detune)):
+            fc = f * df
+            fm = fc * 2.01           # inharmonic modulator → glassy bell
+            idx = 1.8 * np.exp(-t * 1.2) + 0.55   # bright strike → sustain
+            car = np.sin(2 * np.pi * fc * t + idx * np.sin(2 * np.pi * fm * t))
+            body = 0.45 * np.sin(2 * np.pi * fc * t)
+            shim = (0.16 * np.sin(2 * np.pi * 2 * fc * t
+                                  + 1.2 * np.sin(2 * np.pi * fm * 1.5 * t))
+                    * (0.6 + 0.4 * np.sin(2 * np.pi * 5.0 * t)))
+            v = (car + body + shim) / nf
+            if acc == 0:
+                left += v
+            else:
+                right += v
+    env = np.ones(n)
+    a = int(attack * SR)
+    r = int(release * SR)
+    if a > 0:
+        env[:a] = np.linspace(0, 1, a)
+    if r > 0:
+        env[-r:] *= np.linspace(1, 0, r)
+    return np.stack([left * env, right * env], axis=1)
+
+
+def render_glass_morph(spec: dict) -> np.ndarray:
+    """Looping glass-bell pad morph through the chords (no intro/bed). The last
+    chord rings out across the outro with a long release. (n,2)."""
+    fps = spec["fps"]
+    seg_dur = spec["frames_per_segment"] / fps
+    outro_dur = spec.get("outro_frames", 0) / fps
+    chords = spec["chords"]
+    root_hz = spec["root_hz"]
+    n_seg = len(chords)
+    morph_n = int((n_seg * seg_dur + outro_dur) * SR)
+    tail = int(0.5 * SR)
+    out = np.zeros((morph_n + tail, 2))
+    for i, ch in enumerate(chords):
+        freqs = ch["freqs"] if "freqs" in ch else _chord_freqs(ch["ratios"], root_hz)
+        if i == n_seg - 1 and outro_dur > 0:
+            # final chord sustains through the outro, then a long graceful release
+            seg = glass_voice(freqs, seg_dur + outro_dur,
+                              release=max(1.4, outro_dur * 0.75))
+        else:
+            seg = glass_voice(freqs, seg_dur + 1.4)
+        start = int(i * seg_dur * SR)
+        end = min(start + seg.shape[0], out.shape[0])
+        out[start:end] += seg[: end - start]
+    out = out[:morph_n]
+    return chladni_morph_filter(out, sweep_period_s=seg_dur * 2, depth=0.18)
+
+
 def render_chord_morph(spec: dict) -> np.ndarray:
     """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2).
 
@@ -497,6 +509,8 @@ def render_reel_audio(spec: dict) -> np.ndarray:
         morph = render_brainheart_morph(spec)
     elif style == "meditative":
         morph = render_meditative_morph(spec)
+    elif style == "glass":
+        morph = render_glass_morph(spec)
     else:
         morph = render_chord_morph(spec)
     morph_n = morph.shape[0]
@@ -539,10 +553,11 @@ def build_reel(spec: dict) -> None:
     fps = spec["fps"]
     seg = spec["frames_per_segment"]
     intro_frames = spec.get("intro_frames", 0)
-    morph_frames = len(spec["chords"]) * seg  # looping
+    outro_frames = spec.get("outro_frames", 0)
+    morph_frames = len(spec["chords"]) * seg + outro_frames  # looping (+ outro)
     total_frames = intro_frames + morph_frames
     print(f"[{rid}] intro {intro_frames}f + {len(spec['chords'])} chords x "
-          f"{seg}f = {total_frames}f ({total_frames / fps:.1f}s)")
+          f"{seg}f + outro {outro_frames}f = {total_frames}f ({total_frames / fps:.1f}s)")
 
     # 1. Data JSON the React scene reads.
     np.random.seed(7)  # deterministic audio phases
@@ -552,6 +567,7 @@ def build_reel(spec: dict) -> None:
         "fps": fps,
         "frames_per_segment": seg,
         "intro_frames": intro_frames,
+        "outro_frames": outro_frames,
         "morph_frames": morph_frames,
         "total_frames": total_frames,
         "symmetry": spec["symmetry"],

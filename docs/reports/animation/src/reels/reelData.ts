@@ -5,14 +5,10 @@
  */
 import reel02 from "../../public/reels/Reel02-Cymatics.json";
 import reel03 from "../../public/reels/Reel03-Intervals.json";
-import reel04 from "../../public/reels/Reel04-HeyJude.json";
-import reel05 from "../../public/reels/Reel05-LetItBe.json";
-import reel06 from "../../public/reels/Reel06-Canon.json";
 import reel07 from "../../public/reels/Reel07-BrainHeart.json";
 import reel08 from "../../public/reels/Reel08-ManyShapes.json";
-import reel09 from "../../public/reels/Reel09-CanonHarmonograph.json";
-import reel10 from "../../public/reels/Reel10-LetItBeShapes.json";
 import reel12 from "../../public/reels/Reel12-Meditative.json";
+import reel13 from "../../public/reels/Reel13-Forbidden.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -21,6 +17,8 @@ export type ReelData = {
   fps: number;
   frames_per_segment: number;
   intro_frames: number;
+  /** 0 = none; >0 reserves a closing outro at the end of the main scene. */
+  outro_frames?: number;
   morph_frames: number;
   total_frames: number;
   symmetry: "d4_max" | "d4_sum" | "none";
@@ -49,12 +47,8 @@ export type ReelData = {
 export const REEL_DATA: Record<string, ReelData> = {
   "Reel02-Cymatics": reel02 as unknown as ReelData,
   "Reel03-Intervals": reel03 as unknown as ReelData,
-  "Reel04-HeyJude": reel04 as unknown as ReelData,
-  "Reel05-LetItBe": reel05 as unknown as ReelData,
-  "Reel06-Canon": reel06 as unknown as ReelData,
   "Reel07-BrainHeart": reel07 as unknown as ReelData,
   "Reel08-ManyShapes": reel08 as unknown as ReelData,
-  "Reel09-CanonHarmonograph": reel09 as unknown as ReelData,
-  "Reel10-LetItBeShapes": reel10 as unknown as ReelData,
   "Reel12-Meditative": reel12 as unknown as ReelData,
+  "Reel13-Forbidden": reel13 as unknown as ReelData,
 };

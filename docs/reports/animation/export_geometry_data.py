@@ -230,11 +230,10 @@ def _scene_harmonograph_variants() -> dict:
             phases=v["phases"],
             damping=v["damping"],
         )
-        # sr=100 keeps the trace smooth while cutting the per-variant point
-        # count in half (~2-4k pts instead of ~5-8k). The big SVG paths in
-        # Remotion render dramatically faster at this density without any
-        # visible loss of curve smoothness.
-        g = harmonograph_lateral(h_inp, duration=v["duration"], sr=100)
+        # sr=300: the fastest chord component (~7 Hz) needs ≥~40 samples per
+        # cycle to read as a smooth curve — at sr=100 it was only ~14, which
+        # showed as visible straight polyline segments ("breaking lines").
+        g = harmonograph_lateral(h_inp, duration=v["duration"], sr=300)
         out.append(
             {
                 "label": v["label"],

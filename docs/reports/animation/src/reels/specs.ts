@@ -12,10 +12,10 @@ import React from "react";
 import { Reel } from "./Reel";
 import { ReelTimeline } from "./ReelTimeline";
 import { CymaticsChordMorph } from "../scenes/CymaticsChordMorph";
-import { MultiGeometryMorph } from "../scenes/MultiGeometryMorph";
 import { QuadGeometry } from "../scenes/QuadGeometry";
 import { GalleryScene } from "../scenes/GalleryScene";
 import { MeditativeMorph } from "../scenes/MeditativeMorph";
+import { ForbiddenSymmetry } from "../scenes/ForbiddenSymmetry";
 import { REEL_DATA } from "./reelData";
 
 export type ReelSpec = {
@@ -28,8 +28,8 @@ export type ReelSpec = {
 };
 
 /** Build a standard reel composition (brand intro → viz scene). The viz
- *  scene is chosen by `data.scene`: "multi" → MultiGeometryMorph, else the
- *  Reel-02 cymatics scene. */
+ *  scene is chosen by `data.scene` (quad / gallery / meditative / forbidden),
+ *  defaulting to the Reel-02 cymatics scene. */
 function cymaticsReel(id: string): ReelSpec {
   const d = REEL_DATA[id];
   const Scene =
@@ -39,8 +39,8 @@ function cymaticsReel(id: string): ReelSpec {
       ? GalleryScene
       : d.scene === "meditative"
       ? MeditativeMorph
-      : d.scene === "multi"
-      ? MultiGeometryMorph
+      : d.scene === "forbidden"
+      ? ForbiddenSymmetry
       : CymaticsChordMorph;
   // No-intro reels (e.g. the meditative one) render the scene full-length.
   const main = React.createElement(Scene, { data: d });
@@ -67,12 +67,8 @@ function cymaticsReel(id: string): ReelSpec {
 export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel02-Cymatics"),
   cymaticsReel("Reel03-Intervals"),
-  cymaticsReel("Reel04-HeyJude"),
-  cymaticsReel("Reel05-LetItBe"),
-  cymaticsReel("Reel06-Canon"),
   cymaticsReel("Reel07-BrainHeart"),
   cymaticsReel("Reel08-ManyShapes"),
-  cymaticsReel("Reel09-CanonHarmonograph"),
-  cymaticsReel("Reel10-LetItBeShapes"),
   cymaticsReel("Reel12-Meditative"),
+  cymaticsReel("Reel13-Forbidden"),
 ];
