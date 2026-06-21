@@ -291,7 +291,7 @@ REEL12_MEDITATIVE = {
     "id": "Reel12-Meditative",
     "fps": 30,
     "frames_per_segment": 150,  # 5 s per EEG state, very slow
-    "intro_frames": 0,          # no brand intro — pure meditation
+    "intro_frames": 90,         # shared brand opening (singing-bowl strike)
     "symmetry": "d4_max",
     "root_hz": 130.81,
     "loop": True,
@@ -299,7 +299,13 @@ REEL12_MEDITATIVE = {
     "audio_style": "meditative",
     "scene": "meditative",
     "hook": None,
-    "intro": None,
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "A Mind, Resonating",
+        "motif": "flower_of_life",
+        "accent": "#a9c2bd",
+    },
     "chords": meditative_eeg_sequence(),  # 12 EEG chords × 5 s = 60 s
 }
 

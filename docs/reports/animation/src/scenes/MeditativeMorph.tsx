@@ -23,7 +23,11 @@ const FIELD_N = 300;
  */
 export const MeditativeMorph: React.FC<{ data: ReelData }> = ({ data }) => {
   const frame = useCurrentFrame();
-  const { width, fps, durationInFrames } = useVideoConfig();
+  const { width, fps } = useVideoConfig();
+  // The morph's own length (NOT the composition's) — so timing stays correct
+  // whether or not a brand intro is prepended (inside ReelTimeline `frame` is
+  // sequence-relative but useVideoConfig().durationInFrames is the whole reel).
+  const durationInFrames = data.morph_frames;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const chords: Chord[] = data.chords;
