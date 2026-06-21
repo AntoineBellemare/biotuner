@@ -163,21 +163,29 @@ REEL04_HEYJUDE = _song_reel("Reel04-HeyJude", "HeyJude")
 REEL05_LETITBE = _song_reel("Reel05-LetItBe", "LetItBe")
 REEL06_CANON = _song_reel("Reel06-Canon", "CanonInD")
 
-# ── Reel 07 — Brain vs Heart (biosignal-derived geometry) ────────────────────
-from biosignal_chords import brain_heart_chords  # noqa: E402
+# ── Reel 07 — Brain vs Heart, as GALLERIES (a wall of each) ──────────────────
+from biosignal_chords import brain_gallery, heart_gallery_real  # noqa: E402
 
+_r07_brains = brain_gallery()
+_r07_hearts = heart_gallery_real()  # real-ECG-precision hearts (decimal Hz)
 REEL07_BRAINHEART = {
     "id": "Reel07-BrainHeart",
     "fps": 30,
-    "frames_per_segment": 114,  # 3.8 s per signal (longer)
+    "frames_per_segment": 165,  # 5.5 s per wall
     "intro_frames": 90,
     "symmetry": "d4_max",
     "root_hz": 130.81,
     "loop": True,
-    "hold_fraction": 0.6,
-    "portamento_s": 0.3,
+    "hold_fraction": 0.0,
     "audio_style": "brainheart",  # brain = shimmer pad, heart = heartbeat pulse
-    "hook": "your <b>brain</b> vs your <b>heart</b>",
+    "scene": "gallery",
+    "hook": "nine <b>minds</b>, nine <b>hearts</b>",
+    "gallery_phases": [
+        {"title": "BRAINS", "subtitle": "EEG — every mind, intricate",
+         "accent": "#8a9be8", "cells": _r07_brains},
+        {"title": "HEARTS", "subtitle": "ECG — every beat, ordered",
+         "accent": "#e87a8a", "cells": _r07_hearts},
+    ],
     "intro": {
         "title": "BIOTUNER",
         "tagline": "Visualizing and sonifying biological signals",
@@ -185,7 +193,11 @@ REEL07_BRAINHEART = {
         "motif": "flower_of_life",
         "accent": "#b89be8",
     },
-    "chords": brain_heart_chords(),
+    # Audio: one brain sound, one heart sound (2 walls = 2 sounds).
+    "chords": [
+        {**_r07_brains[0], "name": "BRAIN", "label": "brain"},
+        {**_r07_hearts[0], "name": "HEART", "label": "heart"},
+    ],
 }
 
 # ── Reel 08 — Four geometries at once, many chords (2×2 quadrant grid) ───────
@@ -210,11 +222,11 @@ REEL08_MANYSHAPES = {
     "hold_fraction": 0.5,       # settle each chord, then morph (all 4 quadrants)
     "portamento_s": 0.4,
     "scene": "quad",
-    "hook": "every chord, <b>four geometries</b>",
+    "hook": "one chord, <b>four cymatics</b>",
     "intro": {
         "title": "BIOTUNER",
         "tagline": "Visualizing and sonifying biological signals",
-        "topic": "Four Geometries",
+        "topic": "Four Cymatics",
         "motif": "flower_of_life",
         "accent": "#7ad6c1",
     },
@@ -272,41 +284,23 @@ REEL10_LETITBE_SHAPES = {
     "chords": _litb,
 }
 
-# ── Reel 11 — Brain vs Heart, galleries (a wall of each) ─────────────────────
-from biosignal_chords import brain_gallery, heart_gallery  # noqa: E402
+# ── Reel 12 — Meditative: 1-min EEG cymatics morph + palette morph ───────────
+from biosignal_chords import meditative_eeg_sequence  # noqa: E402
 
-_brains = brain_gallery()
-_hearts = heart_gallery()
-REEL11_BRAINHEART_GALLERY = {
-    "id": "Reel11-BrainHeartGallery",
+REEL12_MEDITATIVE = {
+    "id": "Reel12-Meditative",
     "fps": 30,
-    "frames_per_segment": 150,  # 5 s per wall
-    "intro_frames": 90,
+    "frames_per_segment": 150,  # 5 s per EEG state, very slow
+    "intro_frames": 0,          # no brand intro — pure meditation
     "symmetry": "d4_max",
     "root_hz": 130.81,
     "loop": True,
-    "hold_fraction": 0.0,
-    "audio_style": "brainheart",
-    "scene": "gallery",
-    "hook": "nine <b>minds</b>, nine <b>hearts</b>",
-    "gallery_phases": [
-        {"title": "BRAINS", "subtitle": "EEG — every mind, intricate",
-         "accent": "#8a9be8", "cells": _brains},
-        {"title": "HEARTS", "subtitle": "ECG — every beat, ordered",
-         "accent": "#e87a8a", "cells": _hearts},
-    ],
-    "intro": {
-        "title": "BIOTUNER",
-        "tagline": "Visualizing and sonifying biological signals",
-        "topic": "Brains & Hearts",
-        "motif": "flower_of_life",
-        "accent": "#b89be8",
-    },
-    # Audio: one brain sound, one heart sound (2 segments = 2 walls).
-    "chords": [
-        {**_brains[0], "name": "BRAIN", "label": "brain"},
-        {**_hearts[0], "name": "HEART", "label": "heart"},
-    ],
+    "hold_fraction": 0.0,       # continuous smooth morph
+    "audio_style": "meditative",
+    "scene": "meditative",
+    "hook": None,
+    "intro": None,
+    "chords": meditative_eeg_sequence(),  # 12 EEG chords × 5 s = 60 s
 }
 
 REELS = {
@@ -321,7 +315,7 @@ REELS = {
         REEL08_MANYSHAPES,
         REEL09_CANON_HARMONO,
         REEL10_LETITBE_SHAPES,
-        REEL11_BRAINHEART_GALLERY,
+        REEL12_MEDITATIVE,
     ]
 }
 
@@ -395,6 +389,56 @@ def render_brainheart_morph(spec: dict) -> np.ndarray:
     return out[:morph_n]
 
 
+def render_meditative_morph(spec: dict) -> np.ndarray:
+    """A soft, continuous, evolving drone-pad through the EEG chords — long
+    attacks/releases, heavy overlap, a sustained low drone, lots of air. (n,2)."""
+    fps = spec["fps"]
+    seg_dur = spec["frames_per_segment"] / fps
+    chords = spec["chords"]
+    n_seg = len(chords)
+    total_n = int(n_seg * seg_dur * SR)
+    tail = int(4.0 * SR)
+    out = np.zeros((total_n + tail, 2))
+
+    # Sustained low drone (C2 + C3 + G3), very soft, slow tremolo.
+    t = np.arange(total_n + tail) / SR
+    trem = 0.85 + 0.15 * np.sin(2 * np.pi * 0.07 * t)
+    drone = np.zeros(total_n + tail)
+    for f, a in [(65.41, 0.5), (130.81, 0.35), (196.0, 0.18)]:
+        drone += a * np.sin(2 * np.pi * f * t)
+    drone *= 0.10 * trem
+    out[:, 0] += drone
+    out[:, 1] += drone
+
+    # Slowly-morphing pad: each EEG chord, long attack/release, big overlap.
+    prev = None
+    for i, ch in enumerate(chords):
+        freqs = ch["freqs"]
+        pad = voice_chord(
+            freqs, seg_dur * 2.2, sr=SR,
+            attack=seg_dur * 0.55, release=seg_dur * 1.1,
+            shimmer=0.9, root_amp=0.12,
+            detune_cents=(0.0, 6.0, -6.0), vibrato_hz=5.0, vibrato_cents=4.0,
+            portamento_from=prev, portamento_s=seg_dur * 0.5,
+        )
+        start = int(i * seg_dur * SR)
+        end = min(start + pad.shape[0], out.shape[0])
+        out[start:end] += pad[: end - start]
+        prev = freqs
+
+    out = out[:total_n]
+    # airy shimmer sweep
+    out = chladni_morph_filter(out, sweep_period_s=18.0, depth=0.18)
+    peak = float(np.max(np.abs(out)))
+    if peak > 1e-6:
+        out *= (10 ** (-2.0 / 20.0)) / peak  # leave gentle headroom
+    head = int(1.5 * SR)
+    tl = int(2.5 * SR)
+    out[:head] *= np.linspace(0, 1, head)[:, None]
+    out[-tl:] *= np.linspace(1, 0, tl)[:, None]
+    return out
+
+
 def render_chord_morph(spec: dict) -> np.ndarray:
     """The looping chord-pad morph (no intro, no bed). Returns (morph_n, 2).
 
@@ -442,8 +486,11 @@ def render_reel_audio(spec: dict) -> np.ndarray:
     intro_n = int(intro_frames / fps * SR)
     intro_dur = intro_frames / fps
 
-    if spec.get("audio_style") == "brainheart":
+    style = spec.get("audio_style")
+    if style == "brainheart":
         morph = render_brainheart_morph(spec)
+    elif style == "meditative":
+        morph = render_meditative_morph(spec)
     else:
         morph = render_chord_morph(spec)
     morph_n = morph.shape[0]

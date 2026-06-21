@@ -9,32 +9,33 @@ import {
 } from "remotion";
 import { Backdrop } from "../components/Backdrop";
 import { theme, fonts, getChordHue } from "../theme";
-import { lerpRatios, type Chord } from "../reels/cymatics";
+import { cymaticsDensity, lerpRatios, tidepool, type Chord } from "../reels/cymatics";
 import type { ReelData } from "../reels/reelData";
-import {
-  drawCymatics,
-  drawLissajous,
-  drawHarmonograph,
-  drawInterference,
-  GEOM_LABEL,
-  type GeomKind,
-} from "../reels/geometries";
 
-const QUAD: GeomKind[] = [
-  "cymatics",
-  "lissajous",
-  "harmonograph",
-  "interference",
+// Four CYMATICS variants of the same plate — different mode / symmetry /
+// density so the four panels are four readings of one Chladni field.
+type Variant = {
+  label: string;
+  opts: Parameters<typeof cymaticsDensity>[2];
+};
+// Four distinct cymatics READINGS of the same chord: the classic D4-folded
+// nodal lattice, the symmetric (+) plate mode, the raw unfolded plate, and
+// the open root-pairs-only lattice.
+const VARIANTS: Variant[] = [
+  { label: "nodal · D4", opts: { symmetry: "d4_max", antisymmetric: true } },
+  { label: "symmetric", opts: { symmetry: "d4_max", antisymmetric: false } },
+  { label: "raw plate", opts: { symmetry: "none", antisymmetric: true } },
+  { label: "root modes", opts: { symmetry: "d4_max", antisymmetric: true, pairSubset: "root" } },
 ];
 
 /**
- * 2×2 grid showing the SAME chord through all four geometries at once,
- * while the chord morphs through a long sequence — so you can compare how
- * each geometry responds, chord after chord.
+ * 2×2 grid showing the SAME chord through four cymatics readings
+ * (nodal / symmetric-mode / raw-asymmetric / antinodal) while the chord
+ * morphs through a long sequence.
  */
 export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
   const frame = useCurrentFrame();
-  const { width, fps } = useVideoConfig();
+  const { width } = useVideoConfig();
   const refs = [
     useRef<HTMLCanvasElement>(null),
     useRef<HTMLCanvasElement>(null),
@@ -50,7 +51,6 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
   const local = (frame % seg) / seg;
   const fromChord = chords[segIdx];
   const toChord = chords[(segIdx + 1) % n];
-
   const hold = data.hold_fraction ?? 0.5;
   const morphLocal =
     hold > 0 ? Math.max(0, Math.min(1, (local - hold) / (1 - hold))) : local;
@@ -58,18 +58,29 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
   const gamma = 0.72 + 0.4 * Math.sin(Math.PI * morphLocal);
 
   useEffect(() => {
-    const handle = delayRender("quad geometry");
-    QUAD.forEach((kind, q) => {
+    const handle = delayRender("quad cymatics");
+    const N = 190;
+    VARIANTS.forEach((v, q) => {
       const canvas = refs[q].current;
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      if (kind === "cymatics") drawCymatics(ctx, ratios, gamma, 200);
-      else if (kind === "lissajous") drawLissajous(ctx, ratios, frame, fps);
-      else if (kind === "harmonograph")
-        drawHarmonograph(ctx, ratios, frame, fps);
-      else if (kind === "interference")
-        drawInterference(ctx, ratios, frame, fps, 150);
+      const dens = cymaticsDensity(ratios, N, v.opts);
+      const img = ctx.createImageData(N, N);
+      for (let k = 0; k < dens.length; k++) {
+        const [r, gg, b] = tidepool(dens[k], gamma);
+        img.data[k * 4 + 0] = r;
+        img.data[k * 4 + 1] = gg;
+        img.data[k * 4 + 2] = b;
+        img.data[k * 4 + 3] = 255;
+      }
+      const off = document.createElement("canvas");
+      off.width = N;
+      off.height = N;
+      off.getContext("2d")!.putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
     });
     continueRender(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,15 +93,11 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const introFade = interpolate(frame, [0, 12], [0, 1], {
-    extrapolateRight: "clamp",
-  });
+  const introFade = interpolate(frame, [0, 12], [0, 1], { extrapolateRight: "clamp" });
 
   return (
     <AbsoluteFill style={{ opacity: introFade }}>
       <Backdrop />
-
-      {/* Hook */}
       <div
         style={{
           position: "absolute",
@@ -106,10 +113,8 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
           opacity: 0.85,
           padding: "0 60px",
         }}
-        dangerouslySetInnerHTML={{ __html: data.hook ?? "four geometries, one chord" }}
+        dangerouslySetInnerHTML={{ __html: data.hook ?? "one chord, four cymatics" }}
       />
-
-      {/* 2×2 grid */}
       <div
         style={{
           position: "absolute",
@@ -122,47 +127,40 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
           gap: 18,
         }}
       >
-        {QUAD.map((kind, q) => {
-          const isField = kind === "cymatics" || kind === "interference";
-          return (
+        {VARIANTS.map((v, q) => (
+          <div
+            key={v.label}
+            style={{
+              position: "relative",
+              width: cell,
+              height: cell,
+              borderRadius: 8,
+              overflow: "hidden",
+              boxShadow: `0 0 36px ${labelHue.glow}, inset 0 0 0 1px rgba(255,255,255,0.05)`,
+            }}
+          >
+            <canvas
+              ref={refs[q]}
+              width={760}
+              height={760}
+              style={{ width: "100%", height: "100%", display: "block" }}
+            />
             <div
-              key={kind}
               style={{
-                position: "relative",
-                width: cell,
-                height: cell,
-                borderRadius: 8,
-                overflow: "hidden",
-                boxShadow: isField
-                  ? `0 0 36px ${labelHue.glow}, inset 0 0 0 1px rgba(255,255,255,0.05)`
-                  : "inset 0 0 0 1px rgba(255,255,255,0.05)",
+                position: "absolute",
+                left: 12,
+                bottom: 10,
+                fontFamily: fonts.mono,
+                fontSize: 20,
+                letterSpacing: 1,
+                color: "rgba(240,244,255,0.7)",
               }}
             >
-              <canvas
-                ref={refs[q]}
-                width={isField ? 760 : 680}
-                height={isField ? 760 : 680}
-                style={{ width: "100%", height: "100%", display: "block" }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  left: 12,
-                  bottom: 10,
-                  fontFamily: fonts.mono,
-                  fontSize: 20,
-                  letterSpacing: 1,
-                  color: "rgba(240,244,255,0.7)",
-                }}
-              >
-                {GEOM_LABEL[kind]}
-              </div>
+              {v.label}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
-
-      {/* Cycling chord name (the music) */}
       <div
         style={{
           position: "absolute",
@@ -187,8 +185,6 @@ export const QuadGeometry: React.FC<{ data: ReelData }> = ({ data }) => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
       <div
         style={{
           position: "absolute",

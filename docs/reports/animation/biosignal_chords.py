@@ -126,6 +126,63 @@ def heart_gallery() -> list[dict]:
     ]
 
 
+# ── Meditative EEG sequence — many channels, precise peaks, smooth morph ──
+# biotuner fixed-FFT peaks across 16 EEG channels of EEG_example.npy. They
+# share a 7 / 14.25 / 28.5 Hz backbone and drift in the low bands → a long,
+# gently-evolving sequence to morph a single cymatics plate through.
+MEDITATIVE_EEG_PEAKS = [
+    [2.5, 5.25, 7.0, 14.25, 28.5],
+    [2.25, 4.25, 7.0, 14.25, 28.5],
+    [2.25, 3.5, 7.0, 14.25, 28.5],
+    [2.5, 3.5, 7.0, 14.25, 28.5],
+    [2.0, 5.0, 7.0, 14.25, 28.5],
+    [2.25, 6.75, 7.0, 14.25, 28.5],
+    [2.75, 5.5, 7.0, 14.25, 28.5],
+    [4.25, 7.0, 7.0, 14.25, 28.5],
+    [2.0, 3.5, 7.0, 14.25, 28.5],
+    [2.25, 5.0, 7.0, 14.25, 28.5],
+    [2.25, 3.75, 7.0, 14.25, 28.5],
+    [3.5, 5.25, 7.0, 14.25, 28.5],
+]
+
+
+def meditative_eeg_sequence() -> list[dict]:
+    """A long sequence of EEG-derived cymatics chords for the meditative reel
+    (all 5-peak so the morph is smooth)."""
+    return [
+        peaks_to_chord(p, name=f"eeg {i + 1}", label="brain", accent="#8a9be8")
+        for i, p in enumerate(MEDITATIVE_EEG_PEAKS)
+    ]
+
+
+# ── Real-precision ECG hearts (decimal harmonics, not idealised integers) ──
+# biotuner fixed-FFT peaks from sliding windows of the example ECG: the 1 Hz
+# fundamental + its (slightly inharmonic, HRV-jittered) upper partials.
+# Fundamental + 2 strongest partials (real ECG decimal Hz) — kept to 3 peaks
+# so each heart stays a clean, ordered pattern (the 4th high partial made
+# some busy and muddied the brain-vs-heart contrast).
+HEART_REAL_PEAKS = [
+    [1.0, 5.55, 10.25],
+    [1.0, 3.7, 10.2],
+    [1.0, 3.8, 12.1],
+    [1.0, 3.9, 9.9],
+    [1.0, 3.95, 9.85],
+    [1.0, 4.05, 10.1],
+    [1.0, 3.6, 9.7],
+    [1.0, 4.1, 12.3],
+    [1.0, 3.75, 10.0],
+]
+
+
+def heart_gallery_real() -> list[dict]:
+    """9 real-ECG-precision hearts for the gallery (decimal harmonics)."""
+    return [
+        peaks_to_chord([float(x) for x in p], name=f"beat {i + 1}",
+                       label="heart", accent="#e87a8a")
+        for i, p in enumerate(HEART_REAL_PEAKS)
+    ]
+
+
 def extract_peaks(signal_col: str = "EEG", sf: int = 100,
                   mn: float = 2.0, mx: float = 45.0,
                   n_peaks: int = 5) -> list[float]:

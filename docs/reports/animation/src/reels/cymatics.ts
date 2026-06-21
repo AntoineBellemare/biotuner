@@ -26,9 +26,19 @@ export type Chord = {
   accent?: string;
 };
 
-/** All distinct unordered index pairs of a ratio list. */
-function pairs(n: number): Array<[number, number]> {
+/** Distinct unordered index pairs of a ratio list.
+ *  subset='all' → every pair; subset='root' → only pairs with the
+ *  fundamental (index 0), matching biotuner's `pair_subset='root'`: a
+ *  simpler, more open nodal lattice. */
+function pairs(
+  n: number,
+  subset: "all" | "root" = "all"
+): Array<[number, number]> {
   const out: Array<[number, number]> = [];
+  if (subset === "root") {
+    for (let j = 1; j < n; j++) out.push([0, j]);
+    return out;
+  }
   for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) out.push([i, j]);
   return out;
 }
@@ -48,12 +58,20 @@ export function autoSigma(ratios: number[]): number {
 export function cymaticsDensity(
   ratios: number[],
   N: number,
-  opts: { symmetry?: "d4_max" | "d4_sum" | "none"; sigma?: number } = {}
+  opts: {
+    symmetry?: "d4_max" | "d4_sum" | "none";
+    sigma?: number;
+    antisymmetric?: boolean; // false → symmetric (+) plate mode
+    mode?: "nodal" | "antinodal"; // antinodal = 1 − nodal density
+    pairSubset?: "all" | "root"; // 'root' → only fundamental pairs
+  } = {}
 ): Float32Array {
   const symmetry = opts.symmetry ?? "d4_max";
+  const antisym = opts.antisymmetric ?? true;
+  const antinodal = opts.mode === "antinodal";
   const sigma = opts.sigma ?? autoSigma(ratios);
   const inv2s2 = 1 / (sigma * sigma);
-  const ps = pairs(ratios.length);
+  const ps = pairs(ratios.length, opts.pairSubset ?? "all");
 
   // Precompute cos(k·π·t) for every grid line and every distinct wavenumber.
   // Grid coordinate t = i/(N-1) in [0,1]; argument is k·π·t.
@@ -77,17 +95,20 @@ export function cymaticsDensity(
       const cbr = cb[r] * wpair;
       const base = r * N;
       for (let c = 0; c < N; c++) {
-        // (cos(mπx)cos(nπy) − cos(nπx)cos(mπy)) / n_pairs, x=col, y=row
-        field[base + c] += car * cb[c] - cbr * ca[c];
+        // antisymmetric: cos·cos − cos·cos ; symmetric: cos·cos + cos·cos
+        field[base + c] += antisym
+          ? car * cb[c] - cbr * ca[c]
+          : car * cb[c] + cbr * ca[c];
       }
     }
   }
 
-  // density = exp(−field²/σ²)
+  // density = exp(−field²/σ²) (nodal) or its complement (antinodal)
   const dens = new Float32Array(N * N);
   for (let k = 0; k < dens.length; k++) {
     const w = field[k];
-    dens[k] = Math.exp(-w * w * inv2s2);
+    const nodal = Math.exp(-w * w * inv2s2);
+    dens[k] = antinodal ? 1 - nodal : nodal;
   }
   if (symmetry === "none") return dens;
 

@@ -15,6 +15,7 @@ import { CymaticsChordMorph } from "../scenes/CymaticsChordMorph";
 import { MultiGeometryMorph } from "../scenes/MultiGeometryMorph";
 import { QuadGeometry } from "../scenes/QuadGeometry";
 import { GalleryScene } from "../scenes/GalleryScene";
+import { MeditativeMorph } from "../scenes/MeditativeMorph";
 import { REEL_DATA } from "./reelData";
 
 export type ReelSpec = {
@@ -36,9 +37,22 @@ function cymaticsReel(id: string): ReelSpec {
       ? QuadGeometry
       : d.scene === "gallery"
       ? GalleryScene
+      : d.scene === "meditative"
+      ? MeditativeMorph
       : d.scene === "multi"
       ? MultiGeometryMorph
       : CymaticsChordMorph;
+  // No-intro reels (e.g. the meditative one) render the scene full-length.
+  const main = React.createElement(Scene, { data: d });
+  const body =
+    d.intro_frames > 0 && d.intro
+      ? React.createElement(ReelTimeline, {
+          introFrames: d.intro_frames,
+          mainFrames: d.morph_frames,
+          intro: d.intro,
+          main,
+        })
+      : main;
   return {
     id,
     width: 1080,
@@ -46,15 +60,7 @@ function cymaticsReel(id: string): ReelSpec {
     fps: d.fps,
     durationInFrames: d.total_frames,
     Component: () =>
-      React.createElement(Reel, {
-        audio: d.audio,
-        children: React.createElement(ReelTimeline, {
-          introFrames: d.intro_frames,
-          mainFrames: d.morph_frames,
-          intro: d.intro!,
-          main: React.createElement(Scene, { data: d }),
-        }),
-      }),
+      React.createElement(Reel, { audio: d.audio, children: body }),
   };
 }
 
@@ -68,5 +74,5 @@ export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel08-ManyShapes"),
   cymaticsReel("Reel09-CanonHarmonograph"),
   cymaticsReel("Reel10-LetItBeShapes"),
-  cymaticsReel("Reel11-BrainHeartGallery"),
+  cymaticsReel("Reel12-Meditative"),
 ];
