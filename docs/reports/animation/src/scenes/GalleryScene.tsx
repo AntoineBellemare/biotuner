@@ -9,10 +9,11 @@ import {
 } from "remotion";
 import { Backdrop } from "../components/Backdrop";
 import { theme, fonts } from "../theme";
-import { cymaticsDensity, tidepool } from "../reels/cymatics";
+import { cymaticsDensity } from "../reels/cymatics";
+import { GALLERY_PALETTES, sampleStops } from "../reels/palettes";
 import type { ReelData } from "../reels/reelData";
 
-const FIELD_N = 150;
+const FIELD_N = 140;
 
 /**
  * Gallery scene: a 3×3 grid of cymatics patterns per "phase". Used for the
@@ -33,6 +34,7 @@ export const GalleryScene: React.FC<{ data: ReelData }> = ({ data }) => {
   const cells = phase.cells.slice(0, 9);
 
   const refs = Array.from({ length: 9 }, () => useRef<HTMLCanvasElement>(null));
+  const time = frame / data.fps;
 
   useEffect(() => {
     const handle = delayRender("gallery");
@@ -41,10 +43,17 @@ export const GalleryScene: React.FC<{ data: ReelData }> = ({ data }) => {
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      const dens = cymaticsDensity(cell.ratios, FIELD_N, { symmetry: "d4_max" });
+      // Each cell is a living, vibrating plate (time-animated) with its own
+      // phase offset (animSeed) and its own multi-hue palette.
+      const dens = cymaticsDensity(cell.ratios, FIELD_N, {
+        symmetry: "d4_max",
+        time,
+        animSeed: i + phaseIdx * 4,
+      });
+      const pal = GALLERY_PALETTES[i % GALLERY_PALETTES.length];
       const img = ctx.createImageData(FIELD_N, FIELD_N);
       for (let k = 0; k < dens.length; k++) {
-        const [r, g, b] = tidepool(dens[k], 0.85);
+        const [r, g, b] = sampleStops(pal, dens[k], 0.85);
         img.data[k * 4 + 0] = r;
         img.data[k * 4 + 1] = g;
         img.data[k * 4 + 2] = b;
@@ -60,7 +69,7 @@ export const GalleryScene: React.FC<{ data: ReelData }> = ({ data }) => {
     });
     continueRender(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phaseIdx]);
+  }, [frame]);
 
   // Phase fade in/out so the two walls swap cleanly.
   const phaseFade = interpolate(local, [0, 0.08, 0.9, 1], [0, 1, 1, 0], {

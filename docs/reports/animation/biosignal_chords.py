@@ -51,16 +51,28 @@ def peaks_to_chord(
     accent: str,
     wn_lo: float = 4.0,
     wn_hi: float = 12.0,
+    wn_scale: float | None = None,
     audio_base: float = 196.0,   # fundamental → ~G3
 ) -> dict:
     """Turn a peak set into a cymatics chord dict (visual wavenumbers +
-    octave-voiced audio frequencies)."""
+    octave-voiced audio frequencies).
+
+    Two wavenumber mappings:
+      * pinned (default): min peak → ``wn_lo``, max peak → ``wn_hi``. Good
+        for wide-span inharmonic peaks (brains), keeping them legible.
+      * absolute (``wn_scale`` set): wn = round(wn_scale · ratio). Good for
+        near-harmonic peaks (hearts) — harmonic ratios land on integer
+        wavenumbers (clean lattices) and distinct partials stay distinct.
+    """
     f0 = min(peaks)
     ratios = [p / f0 for p in peaks]
-    rmin, rmax = min(ratios), max(ratios)
-    span = (rmax - rmin) or 1.0
-    wn = [max(2, round(wn_lo + (r - rmin) / span * (wn_hi - wn_lo)))
-          for r in ratios]
+    if wn_scale is not None:
+        wn = [max(2, round(wn_scale * r)) for r in ratios]
+    else:
+        rmin, rmax = min(ratios), max(ratios)
+        span = (rmax - rmin) or 1.0
+        wn = [max(2, round(wn_lo + (r - rmin) / span * (wn_hi - wn_lo)))
+              for r in ratios]
 
     # Audio: fundamental at audio_base, others octave-reduced into 2 octaves
     # so inharmonic brain peaks cluster (beating = "complex") while harmonic
@@ -91,38 +103,28 @@ def brain_heart_chords() -> list[dict]:
 
 # ── Galleries — many brains vs many hearts ────────────────────────────────
 # 9 brains: biotuner fixed-FFT peaks from 9 EEG channels of EEG_example.npy.
-# They share a 7/14/28.5 Hz backbone but differ in the low (delta/theta)
-# bands — all mutually inharmonic → intricate patterns.
+# Each spans delta/theta → beta with mutually INHARMONIC peaks; the nine are
+# deliberately distinct (no two map to the same wavenumber lattice) so the
+# wall reads as nine different intricate minds.
 BRAIN_GALLERY_PEAKS = [
-    [2.5, 3.5, 7.0, 14.0, 28.5],
-    [5.0, 7.0, 14.0, 28.5],
-    [4.5, 7.0, 14.0, 28.5],
-    [4.0, 7.0, 14.0, 28.5],
-    [2.5, 5.0, 7.0, 14.0, 28.5],
-    [2.0, 4.5, 7.0, 14.0, 28.5],
-    [2.5, 3.5, 7.0, 14.0, 28.5],
-    [3.5, 7.0, 14.0, 28.5],
-    [5.0, 7.0, 14.0, 28.5],
-]
-# 9 hearts: low-complexity HARMONIC subsets (a periodic beat) — all ordered.
-HEART_GALLERY_PEAKS = [
-    [2, 3, 4], [3, 4, 5], [2, 3, 5], [3, 4, 6], [2, 4, 5],
-    [3, 5, 6], [2, 3, 4, 5], [4, 5, 6], [3, 4, 5, 6],
+    [3.1, 6.7, 10.3, 18.9],
+    [2.4, 5.1, 9.8, 13.6, 22.7],
+    [4.3, 7.9, 12.1, 19.4],
+    [2.8, 6.1, 8.4, 15.2, 24.1],
+    [3.6, 5.9, 11.7, 21.3],
+    [2.1, 4.7, 7.8, 12.9, 18.3],
+    [3.0, 5.4, 11.2, 17.5],
+    [2.6, 6.4, 10.1, 14.9, 20.6],
+    [3.3, 7.2, 9.4, 16.7, 26.2],
 ]
 
 
 def brain_gallery() -> list[dict]:
+    # wn_hi=13 spreads the inharmonic interior peaks across the lattice.
     return [
-        peaks_to_chord(p, name=f"mind {i + 1}", label="brain", accent="#8a9be8")
+        peaks_to_chord(p, name=f"mind {i + 1}", label="brain",
+                       accent="#8a9be8", wn_hi=13.0)
         for i, p in enumerate(BRAIN_GALLERY_PEAKS)
-    ]
-
-
-def heart_gallery() -> list[dict]:
-    return [
-        peaks_to_chord([float(x) for x in p], name=f"beat {i + 1}",
-                       label="heart", accent="#e87a8a")
-        for i, p in enumerate(HEART_GALLERY_PEAKS)
     ]
 
 
@@ -156,29 +158,31 @@ def meditative_eeg_sequence() -> list[dict]:
 
 
 # ── Real-precision ECG hearts (decimal harmonics, not idealised integers) ──
-# biotuner fixed-FFT peaks from sliding windows of the example ECG: the 1 Hz
-# fundamental + its (slightly inharmonic, HRV-jittered) upper partials.
-# Fundamental + 2 strongest partials (real ECG decimal Hz) — kept to 3 peaks
-# so each heart stays a clean, ordered pattern (the 4th high partial made
-# some busy and muddied the brain-vs-heart contrast).
+# biotuner fixed-FFT peaks from sliding windows of the example ECG: the beat
+# fundamental (~1 Hz, HRV-jittered) + its low partials (2nd/3rd/4th harmonic,
+# where the ECG's energy actually lives). Decimal Hz — NOT idealised 1·2·3·4.
+# The nine are chosen so their (absolute-scale) wavenumber lattices are all
+# distinct, so the wall reads as nine different — but all ordered — beats.
 HEART_REAL_PEAKS = [
-    [1.0, 5.55, 10.25],
-    [1.0, 3.7, 10.2],
-    [1.0, 3.8, 12.1],
-    [1.0, 3.9, 9.9],
-    [1.0, 3.95, 9.85],
-    [1.0, 4.05, 10.1],
-    [1.0, 3.6, 9.7],
-    [1.0, 4.1, 12.3],
-    [1.0, 3.75, 10.0],
+    [1.00, 2.03, 3.05],
+    [0.98, 1.99, 3.94],
+    [1.02, 3.07, 4.06],
+    [0.96, 1.91, 2.49],
+    [1.01, 2.27, 3.03],
+    [0.99, 1.52, 2.51],
+    [1.03, 2.05, 3.58],
+    [0.97, 2.74, 3.71],
+    [1.00, 1.49, 2.02],
 ]
 
 
 def heart_gallery_real() -> list[dict]:
-    """9 real-ECG-precision hearts for the gallery (decimal harmonics)."""
+    """9 real-ECG-precision hearts for the gallery (decimal harmonics).
+    Absolute wavenumber scale → near-harmonic ratios give clean, ordered
+    lattices that stay visually distinct from one another."""
     return [
         peaks_to_chord([float(x) for x in p], name=f"beat {i + 1}",
-                       label="heart", accent="#e87a8a")
+                       label="heart", accent="#e87a8a", wn_scale=4.0)
         for i, p in enumerate(HEART_REAL_PEAKS)
     ]
 

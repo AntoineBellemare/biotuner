@@ -64,6 +64,12 @@ export function cymaticsDensity(
     antisymmetric?: boolean; // false → symmetric (+) plate mode
     mode?: "nodal" | "antinodal"; // antinodal = 1 − nodal density
     pairSubset?: "all" | "root"; // 'root' → only fundamental pairs
+    /** Animation time (seconds). When set, each mode pair's amplitude
+     *  oscillates — the plate driven through its modes, so the nodal
+     *  lattice continuously reorganises (living cymatics). */
+    time?: number;
+    /** Per-cell phase offset so a wall of plates all move differently. */
+    animSeed?: number;
   } = {}
 ): Float32Array {
   const symmetry = opts.symmetry ?? "d4_max";
@@ -72,6 +78,8 @@ export function cymaticsDensity(
   const sigma = opts.sigma ?? autoSigma(ratios);
   const inv2s2 = 1 / (sigma * sigma);
   const ps = pairs(ratios.length, opts.pairSubset ?? "all");
+  const time = opts.time;
+  const seed = opts.animSeed ?? 0;
 
   // Precompute cos(k·π·t) for every grid line and every distinct wavenumber.
   // Grid coordinate t = i/(N-1) in [0,1]; argument is k·π·t.
@@ -87,12 +95,22 @@ export function cymaticsDensity(
   // this the field is scaled by n_pairs and the auto-σ density saturates).
   const wpair = 1 / ps.length;
   const field = new Float32Array(N * N);
-  for (const [a, b] of ps) {
+  for (let p = 0; p < ps.length; p++) {
+    const [a, b] = ps[p];
+    // Per-pair amplitude. Static (1) unless animating, in which case each
+    // pair breathes at its own slow rate/phase so the relative weighting —
+    // and thus the nodal set — drifts over time.
+    let amp = wpair;
+    if (time !== undefined) {
+      const f = 0.05 + 0.02 * p; // Hz, distinct slow rate per pair
+      const phi = p * 1.9 + seed * 0.7;
+      amp *= 0.35 + 0.65 * Math.cos(2 * Math.PI * f * time + phi);
+    }
     const ca = cosTab[a];
     const cb = cosTab[b];
     for (let r = 0; r < N; r++) {
-      const car = ca[r] * wpair;
-      const cbr = cb[r] * wpair;
+      const car = ca[r] * amp;
+      const cbr = cb[r] * amp;
       const base = r * N;
       for (let c = 0; c < N; c++) {
         // antisymmetric: cos·cos − cos·cos ; symmetric: cos·cos + cos·cos

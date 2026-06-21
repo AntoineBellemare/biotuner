@@ -35,6 +35,30 @@ export const MEDITATIVE_PALETTES: Stops[] = [
   TIDEPOOL, BIOLUM, AURORA, ULTRAVIOLET, ROSE, EMBER,
 ];
 
+// Three more multi-hue ramps so each of the 9 gallery cells gets its own.
+const SUNSET: Stops = [
+  [8, 4, 16], [54, 12, 64], [142, 30, 86],
+  [232, 92, 70], [255, 168, 64], [255, 240, 196],
+];
+const GLACIER: Stops = [
+  [3, 8, 18], [16, 44, 92], [40, 110, 168],
+  [96, 188, 214], [176, 232, 230], [240, 252, 255],
+];
+const VERDANT: Stops = [
+  [6, 12, 6], [22, 56, 28], [60, 122, 52],
+  [150, 196, 70], [226, 224, 120], [248, 252, 210],
+];
+const MAGMA: Stops = [
+  [4, 2, 10], [44, 14, 56], [122, 32, 92],
+  [206, 62, 80], [248, 142, 70], [253, 232, 168],
+];
+
+/** Nine distinct multi-hue palettes — one per gallery cell, so every brain
+ *  and every heart in the 3×3 wall reads in its own colour world. */
+export const GALLERY_PALETTES: Stops[] = [
+  TIDEPOOL, SUNSET, AURORA, MAGMA, BIOLUM, ROSE, GLACIER, ULTRAVIOLET, VERDANT,
+];
+
 const lerp = (a: number, b: number, f: number) => a + (b - a) * f;
 
 /** Interpolated 6-stop palette at cycle position `phase` ∈ [0,1). */
