@@ -14,6 +14,7 @@ import { ReelTimeline } from "./ReelTimeline";
 import { CymaticsChordMorph } from "../scenes/CymaticsChordMorph";
 import { MultiGeometryMorph } from "../scenes/MultiGeometryMorph";
 import { QuadGeometry } from "../scenes/QuadGeometry";
+import { GalleryScene } from "../scenes/GalleryScene";
 import { REEL_DATA } from "./reelData";
 
 export type ReelSpec = {
@@ -33,6 +34,8 @@ function cymaticsReel(id: string): ReelSpec {
   const Scene =
     d.scene === "quad"
       ? QuadGeometry
+      : d.scene === "gallery"
+      ? GalleryScene
       : d.scene === "multi"
       ? MultiGeometryMorph
       : CymaticsChordMorph;
@@ -65,4 +68,5 @@ export const REEL_SPECS: ReelSpec[] = [
   cymaticsReel("Reel08-ManyShapes"),
   cymaticsReel("Reel09-CanonHarmonograph"),
   cymaticsReel("Reel10-LetItBeShapes"),
+  cymaticsReel("Reel11-BrainHeartGallery"),
 ];

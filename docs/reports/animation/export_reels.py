@@ -105,8 +105,9 @@ REEL03_INTERVALS = {
         "motif": "flower_of_life",
         "accent": "#9bb1e8",
     },
-    # Ordered most-consonant → most-dissonant. ratios = integer plate
-    # wavenumbers; ratio_str = the musical interval; tag = perceptual label.
+    # Ordered most-consonant → most-dissonant by Tenney height (so the
+    # cymatics complexity rises monotonically and the tritone — the most
+    # dissonant — is the complex climax). ratios = integer plate wavenumbers.
     "chords": [
         {"name": "Octave",        "label": "octave",  "ratios": [4, 8],
          "ratio_str": "1 : 2",  "tag": "perfectly consonant", "accent": _TEAL},
@@ -120,10 +121,13 @@ REEL03_INTERVALS = {
          "ratio_str": "5 : 6",  "tag": "sweet",               "accent": _GOLD},
         {"name": "Major Second",  "label": "second",  "ratios": [8, 9],
          "ratio_str": "8 : 9",  "tag": "mild tension",        "accent": _AMBER},
-        {"name": "Tritone",       "label": "tritone", "ratios": [5, 7],
-         "ratio_str": "5 : 7",  "tag": "restless",            "accent": _AMBER},
         {"name": "Minor Second",  "label": "minorsecond", "ratios": [15, 16],
-         "ratio_str": "15 : 16", "tag": "dissonant",          "accent": _RED},
+         "ratio_str": "15 : 16", "tag": "harsh",              "accent": _RED},
+        # Tritone (23:16) — the most dissonant; a genuinely complex, bold
+        # nodal lattice. (The simple septimal 5:7 looked far too clean; the
+        # 45:32 was so high-wavenumber it rendered as a faint speckle.)
+        {"name": "Tritone",       "label": "tritone", "ratios": [16, 23],
+         "ratio_str": "16 : 23", "tag": "the devil's interval", "accent": _RED},
     ],
 }
 
@@ -268,6 +272,43 @@ REEL10_LETITBE_SHAPES = {
     "chords": _litb,
 }
 
+# ── Reel 11 — Brain vs Heart, galleries (a wall of each) ─────────────────────
+from biosignal_chords import brain_gallery, heart_gallery  # noqa: E402
+
+_brains = brain_gallery()
+_hearts = heart_gallery()
+REEL11_BRAINHEART_GALLERY = {
+    "id": "Reel11-BrainHeartGallery",
+    "fps": 30,
+    "frames_per_segment": 150,  # 5 s per wall
+    "intro_frames": 90,
+    "symmetry": "d4_max",
+    "root_hz": 130.81,
+    "loop": True,
+    "hold_fraction": 0.0,
+    "audio_style": "brainheart",
+    "scene": "gallery",
+    "hook": "nine <b>minds</b>, nine <b>hearts</b>",
+    "gallery_phases": [
+        {"title": "BRAINS", "subtitle": "EEG — every mind, intricate",
+         "accent": "#8a9be8", "cells": _brains},
+        {"title": "HEARTS", "subtitle": "ECG — every beat, ordered",
+         "accent": "#e87a8a", "cells": _hearts},
+    ],
+    "intro": {
+        "title": "BIOTUNER",
+        "tagline": "Visualizing and sonifying biological signals",
+        "topic": "Brains & Hearts",
+        "motif": "flower_of_life",
+        "accent": "#b89be8",
+    },
+    # Audio: one brain sound, one heart sound (2 segments = 2 walls).
+    "chords": [
+        {**_brains[0], "name": "BRAIN", "label": "brain"},
+        {**_hearts[0], "name": "HEART", "label": "heart"},
+    ],
+}
+
 REELS = {
     r["id"]: r
     for r in [
@@ -280,6 +321,7 @@ REELS = {
         REEL08_MANYSHAPES,
         REEL09_CANON_HARMONO,
         REEL10_LETITBE_SHAPES,
+        REEL11_BRAINHEART_GALLERY,
     ]
 }
 
@@ -465,6 +507,7 @@ def build_reel(spec: dict) -> None:
         "hook": spec.get("hook"),
         "scene": spec.get("scene", "cymatics"),
         "geometries": spec.get("geometries"),
+        "gallery_phases": spec.get("gallery_phases"),
         "intro": spec.get("intro"),
         "chords": spec["chords"],
         "audio": f"audio/{rid}.wav",

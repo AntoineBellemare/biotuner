@@ -12,6 +12,7 @@ import reel07 from "../../public/reels/Reel07-BrainHeart.json";
 import reel08 from "../../public/reels/Reel08-ManyShapes.json";
 import reel09 from "../../public/reels/Reel09-CanonHarmonograph.json";
 import reel10 from "../../public/reels/Reel10-LetItBeShapes.json";
+import reel11 from "../../public/reels/Reel11-BrainHeartGallery.json";
 import type { Chord } from "./cymatics";
 import type { IntroConfig } from "./ReelIntro";
 
@@ -33,6 +34,13 @@ export type ReelData = {
   scene?: string;
   /** Optional per-segment geometry type (for the multi-geometry scene). */
   geometries?: string[] | null;
+  /** Optional gallery phases (for the gallery scene): each phase is a grid. */
+  gallery_phases?: Array<{
+    title: string;
+    subtitle: string;
+    accent: string;
+    cells: Chord[];
+  }> | null;
   intro: IntroConfig | null;
   chords: Chord[];
   audio: string; // staticFile-relative path, e.g. "audio/Reel02-Cymatics.wav"
@@ -48,4 +56,5 @@ export const REEL_DATA: Record<string, ReelData> = {
   "Reel08-ManyShapes": reel08 as unknown as ReelData,
   "Reel09-CanonHarmonograph": reel09 as unknown as ReelData,
   "Reel10-LetItBeShapes": reel10 as unknown as ReelData,
+  "Reel11-BrainHeartGallery": reel11 as unknown as ReelData,
 };

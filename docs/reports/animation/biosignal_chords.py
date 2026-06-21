@@ -89,6 +89,43 @@ def brain_heart_chords() -> list[dict]:
     return [brain, heart, brain, heart]
 
 
+# ── Galleries — many brains vs many hearts ────────────────────────────────
+# 9 brains: biotuner fixed-FFT peaks from 9 EEG channels of EEG_example.npy.
+# They share a 7/14/28.5 Hz backbone but differ in the low (delta/theta)
+# bands — all mutually inharmonic → intricate patterns.
+BRAIN_GALLERY_PEAKS = [
+    [2.5, 3.5, 7.0, 14.0, 28.5],
+    [5.0, 7.0, 14.0, 28.5],
+    [4.5, 7.0, 14.0, 28.5],
+    [4.0, 7.0, 14.0, 28.5],
+    [2.5, 5.0, 7.0, 14.0, 28.5],
+    [2.0, 4.5, 7.0, 14.0, 28.5],
+    [2.5, 3.5, 7.0, 14.0, 28.5],
+    [3.5, 7.0, 14.0, 28.5],
+    [5.0, 7.0, 14.0, 28.5],
+]
+# 9 hearts: low-complexity HARMONIC subsets (a periodic beat) — all ordered.
+HEART_GALLERY_PEAKS = [
+    [2, 3, 4], [3, 4, 5], [2, 3, 5], [3, 4, 6], [2, 4, 5],
+    [3, 5, 6], [2, 3, 4, 5], [4, 5, 6], [3, 4, 5, 6],
+]
+
+
+def brain_gallery() -> list[dict]:
+    return [
+        peaks_to_chord(p, name=f"mind {i + 1}", label="brain", accent="#8a9be8")
+        for i, p in enumerate(BRAIN_GALLERY_PEAKS)
+    ]
+
+
+def heart_gallery() -> list[dict]:
+    return [
+        peaks_to_chord([float(x) for x in p], name=f"beat {i + 1}",
+                       label="heart", accent="#e87a8a")
+        for i, p in enumerate(HEART_GALLERY_PEAKS)
+    ]
+
+
 def extract_peaks(signal_col: str = "EEG", sf: int = 100,
                   mn: float = 2.0, mx: float = 45.0,
                   n_peaks: int = 5) -> list[float]:

@@ -58,6 +58,8 @@ animation/
 | `Reel07-BrainHeart`| 1080×1920 | 13.4 s | EEG vs ECG — inharmonic brain vs harmonic heart |
 | `Reel08-ManyShapes`| 1080×1920 | 15.8 s | one chord through cymatics / Lissajous / harmonograph / interference |
 | `Reel09-CanonHarmonograph` | 1080×1920 | 19.0 s | Canon in D drawn as a harmonograph (same music, new geometry) |
+| `Reel10-LetItBeShapes` | 1080×1920 | ~19 s | Let It Be — each chord a different geometry |
+| `Reel11-BrainHeartGallery` | 1080×1920 | 13.0 s | a 3×3 wall of brains (EEG) then hearts (ECG) — population contrast |
 
 List them at any time with `npx remotion compositions src/index.ts`.
 
