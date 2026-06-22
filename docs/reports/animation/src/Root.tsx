@@ -1,6 +1,7 @@
 import React from "react";
 import { Composition } from "remotion";
 import { MainV2, TOTAL_FRAMES_V2 } from "./MainV2";
+import { MainV3, TOTAL_FRAMES_V3 } from "./MainV3";
 import { REEL_SPECS } from "./reels/specs";
 
 // GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
@@ -23,6 +24,16 @@ export const Root: React.FC = () => {
         id="GeometryV2-IG"
         component={MainV2}
         durationInFrames={TOTAL_FRAMES_V2}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      {/* GeometryV3-IG — same reel, Chladni section in the nodal-density
+          "sand" style of the short-form reels. */}
+      <Composition
+        id="GeometryV3-IG"
+        component={MainV3}
+        durationInFrames={TOTAL_FRAMES_V3}
         fps={30}
         width={1080}
         height={1920}

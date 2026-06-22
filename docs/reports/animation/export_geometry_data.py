@@ -650,8 +650,10 @@ def _scene_chladni_expanded() -> dict:
                  "resolution": 64,
                  "field": _downsample_field(g_rect.coordinates)},
                 {"type": "circ",  "label": "circular",
-                 "resolution": 64,
-                 "field": _downsample_field(g_circ.coordinates)},
+                 # 140 res: the GeometryV3 reel renders the circle as a smooth
+                 # nodal-density "sand" Bessel plate and morphs the field itself.
+                 "resolution": 140,
+                 "field": _downsample_field(g_circ.coordinates, res_keep=140)},
                 {"type": "poly5", "label": "pentagon",
                  "resolution": 64,
                  "field": _downsample_field(g_poly.coordinates)},

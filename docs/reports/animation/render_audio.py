@@ -254,7 +254,11 @@ def render_chord_sequence(
         out[start:end_clip] += seg[: end_clip - start]
         prev_freqs = freqs
 
-    return out[:total_n]
+    # Return the FULL buffer including the last chord's release tail (which
+    # fades to zero at the buffer end). main() overlap-adds it so each scene's
+    # tail crossfades into the next; truncating to total_n here would chop the
+    # final release mid-amplitude → an audible jump at every scene boundary.
+    return out
 
 
 def chladni_morph_filter(stereo: np.ndarray, sr: int = SR,
