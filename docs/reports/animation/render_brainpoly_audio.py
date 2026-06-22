@@ -28,14 +28,15 @@ OUT = HERE / "public" / "audio" / "brain_polyrhythm.wav"
 SR = 44_100
 FPS = 30
 
-INTRO = 18
-NECK = 160
+DIDACTIC = 200
+NECK = 150
 CYCLE = 84
 NCYC = 6
 PLAY = NCYC * CYCLE
 TAIL = 44
-PLAY_START = INTRO + NECK
+PLAY_START = DIDACTIC + NECK
 N_FRAMES = PLAY_START + PLAY + TAIL
+PEAK_FRAMES = [88, 104, 120, 136]   # didactic: a ping as each peak is found
 
 dat = json.load(open(HERE / "public" / "brain_polyrhythm.json", encoding="utf-8"))
 VOICES = dat["voices"]
@@ -95,20 +96,24 @@ def main() -> None:
         buf[s:e, 0] += sig[: e - s] * gain * (1 - max(0, pan))
         buf[s:e, 1] += sig[: e - s] * gain * (1 + min(0, pan))
 
-    # ── ambient pad bed: tiled to cover the play, swelling, slowly opening ──
-    play_s, end_s = PLAY_START / FPS, N_FRAMES / FPS
+    # ── ambient pad bed: enters during the didactic, swells over the reel ──
+    bed_s, play_s, end_s = 70 / FPS, PLAY_START / FPS, N_FRAMES / FPS
     bed_track = np.zeros(n)
-    pos = int((play_s - 1.0) * SR)
+    pos = int(bed_s * SR)
     while pos < int(end_s * SR):
-        seg = bed
-        e = min(pos + len(seg), n)
-        bed_track[pos:e] += seg[: e - pos]
-        pos += len(seg) - int(0.5 * SR)         # 0.5s overlap
+        e = min(pos + len(bed), n)
+        bed_track[pos:e] += bed[: e - pos]
+        pos += len(bed) - int(0.5 * SR)         # 0.5s overlap
     t = np.arange(n) / SR
-    swell = np.clip((t - (play_s - 1.0)) / 2.5, 0, 1) * np.clip((end_s - t) / 1.6, 0, 1)
-    swell *= 0.55 + 0.45 * np.clip((t - play_s) / (PLAY / FPS), 0, 1)   # grows over the reel
-    buf[:, 0] += 0.34 * bed_track * swell
-    buf[:, 1] += 0.34 * bed_track * swell
+    swell = np.clip((t - bed_s) / 2.5, 0, 1) * np.clip((end_s - t) / 1.6, 0, 1)
+    swell *= 0.5 + 0.5 * np.clip((t - play_s) / (PLAY / FPS), 0, 1)   # grows over the reel
+    buf[:, 0] += 0.32 * bed_track * swell
+    buf[:, 1] += 0.32 * bed_track * swell
+
+    # ── didactic: a kalimba ping as each peak appears, a bowl on the 5:7:11 reveal
+    for i, fr in enumerate(PEAK_FRAMES):
+        add(fr, pitch(kal, 0.62 + 0.14 * i), 0.32, (-0.3 + 0.2 * i))
+    add(196, bowl, 0.5)
 
     pans = (-0.35, 0.0, 0.35)
     for c in range(NCYC):

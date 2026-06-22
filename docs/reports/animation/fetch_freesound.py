@@ -30,11 +30,12 @@ TOKEN = os.environ.get("FREESOUND_TOKEN", "")
 
 # role → Freesound sound id (all Creative Commons 0)
 KIT = {
-    "bed": 411593,      # Mysterious Ambient Pad Loop 84 bpm Dm
-    "low": 555527,      # deep_tom
-    "kalimba": 536549,  # Kalimba C3
-    "shaker": 199823,   # Egg Shaker - 1 Throw
-    "bowl": 271370,     # singing bowl strike
+    "bed": 411593,        # Mysterious Ambient Pad Loop 84 bpm Dm
+    "low": 555527,        # deep_tom
+    "kalimba": 536549,    # Kalimba C3
+    "shaker": 199823,     # Egg Shaker - 1 Throw
+    "bowl": 271370,       # singing bowl strike
+    "heartbeat": 22440,   # Single Heartbeat Clean HQ (for the Heart×Brain duet)
 }
 
 

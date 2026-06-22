@@ -49,12 +49,24 @@ def eeg_peaks(n_peaks=4):
     ch = int(np.argmax(pE[:, (fE >= 8) & (fE <= 12)].sum(axis=1)))
     sig = eeg[ch] * 1e6
     f, p = welch(sig, fs=sf, nperseg=sf * 4)
-    m = f <= 45
+    fmax = 45
+    m = f <= fmax
     f, p = f[m], p[m] / p[m].max()
     band = f >= 4
     pk, _ = find_peaks(np.where(band, p, 0), prominence=0.02, distance=max(1, len(p) // 60))
     pk = np.sort(pk[np.argsort(p[pk])[::-1][:n_peaks]])
-    return [round(float(f[i]), 2) for i in pk], [round(float(p[i]), 3) for i in pk]
+    peaks = [round(float(f[i]), 2) for i in pk]
+    amps = [round(float(p[i]), 3) for i in pk]
+    # waveform snippet + spectrum for the didactic extraction beat
+    wave = sig[: int(2.4 * sf)]
+    wave = wave / (np.max(np.abs(wave)) or 1)
+    spectrum = {
+        "wave": [round(float(x), 4) for x in downsample(wave, 520)],
+        "spec_f": [round(float(x), 3) for x in downsample(f, 300)],
+        "spec_mag": [round(float(x), 4) for x in downsample(p, 300)],
+        "fmax": fmax,
+    }
+    return peaks, amps, spectrum
 
 
 def brain_voices(ratios):
@@ -68,7 +80,7 @@ def brain_voices(ratios):
 
 
 def main() -> None:
-    peaks, amps = eeg_peaks()
+    peaks, amps, spectrum = eeg_peaks()
     minf = min(peaks)
     ratios = [round(p / minf, 4) for p in peaks]
     voices, counts = brain_voices(ratios)
@@ -93,6 +105,7 @@ def main() -> None:
         "poly_label": ":".join(str(c) for c in counts),
         "euclid": euclid, "lcm": int(lcm),
         "coincidences": brain_coinc,
+        **spectrum,
     }
     (PUB / "brain_polyrhythm.json").write_text(json.dumps(brain, separators=(",", ":")), encoding="utf-8")
 
