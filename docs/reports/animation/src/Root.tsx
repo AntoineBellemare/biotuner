@@ -8,6 +8,9 @@ import { SetharesDissonance, TOTAL_SETHARES } from "./scenes/SetharesDissonance"
 import { DissonancePipeline, TOTAL_DISSPIPE } from "./scenes/DissonancePipeline";
 import { BrainPolyrhythm, TOTAL_BRAINPOLY } from "./scenes/BrainPolyrhythm";
 import { HeartBrainDuet, TOTAL_HEARTBRAIN } from "./scenes/HeartBrainDuet";
+import { BrainGrooves, TOTAL_BRAINGROOVES } from "./scenes/BrainGrooves";
+import { PitchRhythm, TOTAL_PITCHRHYTHM } from "./scenes/PitchRhythm";
+import { FractalRhythm, TOTAL_FRACTAL } from "./scenes/FractalRhythm";
 import { REEL_SPECS } from "./reels/specs";
 
 // GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
@@ -100,6 +103,36 @@ export const Root: React.FC = () => {
         id="HeartBrainDuet-IG"
         component={HeartBrainDuet}
         durationInFrames={TOTAL_HEARTBRAIN}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Biorhythm — EEG → Euclidean rhythms → named world grooves. */}
+      <Composition
+        id="BrainGrooves-IG"
+        component={BrainGrooves}
+        durationInFrames={TOTAL_BRAINGROOVES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Rhythm — beat_envelope: pitch ↔ rhythm continuum. */}
+      <Composition
+        id="PitchRhythm-IG"
+        component={PitchRhythm}
+        durationInFrames={TOTAL_PITCHRHYTHM}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Rhythm — second_order_polyrhythm: rhythm nested inside rhythm. */}
+      <Composition
+        id="FractalRhythm-IG"
+        component={FractalRhythm}
+        durationInFrames={TOTAL_FRACTAL}
         fps={30}
         width={1080}
         height={1920}
