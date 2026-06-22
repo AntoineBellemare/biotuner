@@ -17,11 +17,22 @@ import data from "../../public/subharmonicity.json";
 
 /**
  * "Is there one home note?" — subharmonic tension. Each chord note grows a
- * subharmonic ladder (f, f/2, f/3 …); where ladders meet, a glowing row marks
- * a shared subharmonic — a candidate common fundamental. Harmonic chords
- * converge on one home (calm); inharmonic chords never do (the notes jitter).
+ * subharmonic ladder (f, f/2, f/3 …). Where ladders from different notes nearly
+ * meet (within biotuner's delta_lim), a SHARED SUBHARMONIC lights up — brighter
+ * the tighter the alignment. A perfectly tight alignment touched by every note
+ * is a common fundamental ("home"): harmonic chords lock onto one (calm);
+ * inharmonic chords only ever graze loose, faint ones (the notes jitter).
  * The gauge reads biotuner's real compute_subharmonic_tension.
  */
+type Align = {
+  freq: number;
+  members: { i: number; k: number }[];
+  n_notes: number;
+  spread: number;
+  tight: number;
+  full: boolean;
+};
+
 const BASE = data.base_freq;
 const NSUB = data.n_subharm;
 const CHORDS = data.chords;
@@ -30,13 +41,13 @@ const HOT = "#e8746a";
 const GOLD = "#f2c14e";
 
 const INTRO = 30;
-const DRAW = 46;
-const DWELL = 88;
+const DRAW = 50;
+const DWELL = 92;
 const BEAT = DRAW + DWELL;
 const TAIL = 46;
 export const TOTAL_SUBHARM = INTRO + CHORDS.length * BEAT + TAIL;
 
-const FMIN = 9, FMAX = 470; // FMIN low → deep subharmonic stacks
+const FMIN = 13, FMAX = 440;
 
 export const SubharmonicTension: React.FC = () => {
   const frame = useCurrentFrame();
@@ -49,46 +60,39 @@ export const SubharmonicTension: React.FC = () => {
   const freqs = chord.ratios.map((r) => r * BASE);
   const nNotes = freqs.length;
   const tNorm = chord.tension_norm as number;
+  const aligns = chord.alignments as Align[];
 
-  // reveal of the ladders, settle of the convergence
   const reveal = interpolate(beatLocal, [0, DRAW], [0, 1], {
     extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic),
   });
-  const settle = spring({ frame: beatLocal - DRAW, fps, config: { damping: 14, stiffness: 90 } });
+  const settle = spring({ frame: beatLocal - DRAW, fps, config: { damping: 15, stiffness: 80 } });
 
   // layout: column per note (x), frequency on y (log, high freq at top)
   const leftPad = 150, rightPad = 150;
   const axisW = width - leftPad - rightPad;
   const xCol = (i: number) => leftPad + ((i + 0.5) / nNotes) * axisW;
-  const yTop = 440, yBot = 1540;
+  const yTop = 430, yBot = 1530;
   const lf = (f: number) => Math.log(f);
   const yOf = (f: number) =>
     interpolate(lf(f), [lf(FMIN), lf(FMAX)], [yBot, yTop], {
       extrapolateLeft: "clamp", extrapolateRight: "clamp",
     });
 
-  // subharmonic ticks per note + convergence bins (shared subharmonics)
-  type Tick = { i: number; k: number; f: number };
-  const ticks: Tick[] = [];
-  for (let i = 0; i < nNotes; i++)
-    for (let k = 1; k <= NSUB; k++) {
-      const f = freqs[i] / k;
-      if (f >= FMIN) ticks.push({ i, k, f });
-    }
-  // bin by rounded frequency (≈ delta tolerance) → which columns share it
-  const TOL = 4;
-  const bins = new Map<number, Set<number>>();
-  for (const t of ticks) {
-    const key = Math.round(t.f / TOL);
-    if (!bins.has(key)) bins.set(key, new Set());
-    bins.get(key)!.add(t.i);
-  }
-  const convergences = [...bins.entries()]
-    .filter(([, cols]) => cols.size >= 2)
-    .map(([key, cols]) => ({ f: key * TOL, cols: cols.size }));
-  // the home: lowest shared-by-all subharmonic
-  const home = convergences.filter((c) => c.cols >= nNotes).sort((a, b) => a.f - b.f)[0];
-  const isAligned = (t: Tick) => (bins.get(Math.round(t.f / TOL))?.size ?? 0) >= 2;
+  // which (note,k) rungs participate in an alignment, and how tightly
+  const memTight = new Map<string, number>();
+  aligns.forEach((a) =>
+    a.members.forEach((m) => {
+      const key = `${m.i}-${m.k}`;
+      const q = a.tight * (a.full ? 1 : 0.7);
+      memTight.set(key, Math.max(memTight.get(key) ?? 0, q));
+    })
+  );
+
+  // the home: lowest-frequency full alignment; "locked" if tight enough
+  const fulls = aligns.filter((a) => a.full);
+  const maxFullTight = fulls.length ? Math.max(...fulls.map((a) => a.tight)) : 0;
+  const home = fulls.slice().sort((a, b) => a.freq - b.freq)[0];
+  const locked = maxFullTight >= 0.8;
 
   const introFade = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
   const orbColor = interpolateColors(tNorm, [0, 0.45, 1], [TEAL, GOLD, HOT]);
@@ -98,57 +102,69 @@ export const SubharmonicTension: React.FC = () => {
       <Audio src={staticFile("audio/subharmonicity.wav")} />
       <Backdrop />
 
-      <div style={{ position: "absolute", top: 116, left: 0, right: 0, textAlign: "center",
+      <div style={{ position: "absolute", top: 110, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.display, fontSize: 50, fontWeight: 300, letterSpacing: 1, color: theme.ink }}>
         is there one <b style={{ fontWeight: 800 }}>home</b> note?
       </div>
-      <div style={{ position: "absolute", top: 196, left: 0, right: 0, textAlign: "center",
+      <div style={{ position: "absolute", top: 190, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.mono, fontSize: 32, letterSpacing: 3, color: orbColor }}>
         {chord.label}
       </div>
 
       <svg width="100%" height="100%" viewBox={`0 0 ${width} 1920`} style={{ position: "absolute", inset: 0 }}>
-        {/* convergence rows (shared subharmonics) */}
-        {convergences.map((c, idx) => {
-          const y = yOf(c.f);
-          const full = c.cols >= nNotes;
-          const op = (full ? 0.5 + 0.5 * settle : 0.18 + 0.12 * c.cols) * reveal;
+        {/* convergence: faint lines folding every note down to the home */}
+        {locked && home &&
+          Array.from({ length: nNotes }, (_, i) => i).map((i) => (
+            <line key={`fold${i}`} x1={xCol(i)} y1={yOf(freqs[i])} x2={width / 2} y2={yOf(home.freq)}
+              stroke={GOLD} strokeWidth={1.4} opacity={0.22 * settle} />
+          ))}
+
+        {/* shared subharmonics — brightness ∝ tightness, gold (all notes) / teal */}
+        {aligns.map((a, idx) => {
+          const y = yOf(a.freq);
+          const q = a.tight;
+          const op = reveal * settle * (0.08 + 0.92 * q * q) * (a.full ? 1 : 0.55);
+          const col = a.full ? GOLD : TEAL;
           return (
-            <line key={`c${idx}`} x1={leftPad - 30} y1={y} x2={width - rightPad + 30} y2={y}
-              stroke={full ? GOLD : "rgba(150,180,220,0.5)"} strokeWidth={full ? 3 : 1.5}
-              opacity={op} />
+            <line key={`al${idx}`} x1={leftPad - 36} y1={y} x2={width - rightPad + 36} y2={y}
+              stroke={col} strokeWidth={1.4 + 4.4 * q} opacity={op}
+              strokeDasharray={q < 0.5 ? "5 9" : undefined}
+              style={q > 0.55 ? { filter: `drop-shadow(0 0 ${5 + 10 * q}px ${col})` } : undefined} />
           );
         })}
 
         {/* per-note columns: subharmonic ladders */}
         {Array.from({ length: nNotes }, (_, i) => i).map((i) => {
           const x = xCol(i);
-          const jitter = noise2D("o", i * 2.1, frame * 0.12) * 26 * tNorm * settle;
+          const jitter = noise2D("o", i * 2.1, frame * 0.12) * 24 * tNorm * settle;
           const orbY = yOf(freqs[i]);
-          const colTicks = ticks.filter((t) => t.i === i);
           return (
             <g key={`col${i}`}>
-              {/* vertical guide */}
-              <line x1={x} y1={orbY} x2={x} y2={yOf(freqs[i] / NSUB)}
-                stroke="rgba(160,185,225,0.12)" strokeWidth={2} />
-              {/* subharmonic ticks */}
-              {colTicks.map((t) => {
-                const ty = yOf(t.f);
-                const shown = reveal > (t.k - 1) / NSUB;
-                if (!shown) return null;
-                const al = isAligned(t);
+              {/* vertical guide down the ladder */}
+              <line x1={x} y1={orbY} x2={x} y2={yOf(Math.max(FMIN, freqs[i] / NSUB))}
+                stroke="rgba(160,185,225,0.1)" strokeWidth={2} />
+              {/* subharmonic rungs */}
+              {Array.from({ length: NSUB }, (_, kk) => kk + 1).map((k) => {
+                const f = freqs[i] / k;
+                if (f < FMIN) return null;
+                if (reveal <= (k - 1) / NSUB) return null;
+                const ty = yOf(f);
+                const q = memTight.get(`${i}-${k}`) ?? 0;
+                const lit = q > 0.05 ? settle : 1;
+                const half = 14 + 16 * q;
                 return (
-                  <g key={`t${t.k}`}>
-                    <line x1={x - (al ? 26 : 16)} y1={ty} x2={x + (al ? 26 : 16)} y2={ty}
-                      stroke={al ? GOLD : "rgba(180,205,240,0.55)"}
-                      strokeWidth={al ? 5 : 3} strokeLinecap="round" />
-                    {al && <circle cx={x} cy={ty} r={6 + 5 * settle} fill={GOLD} opacity={0.85} />}
+                  <g key={`t${k}`}>
+                    <line x1={x - half} y1={ty} x2={x + half} y2={ty}
+                      stroke={q > 0.05 ? GOLD : "rgba(180,205,240,0.5)"}
+                      strokeWidth={2.5 + 4 * q} strokeLinecap="round"
+                      opacity={(q > 0.05 ? 0.4 + 0.6 * q : 0.5) * lit}
+                      style={q > 0.4 ? { filter: `drop-shadow(0 0 ${6 * q}px ${GOLD})` } : undefined} />
+                    {q > 0.4 && <circle cx={x} cy={ty} r={4 + 5 * q * settle} fill={GOLD} opacity={0.85} />}
                   </g>
                 );
               })}
               {/* the note orb (jitters with tension) */}
-              <circle cx={x + jitter} cy={orbY} r={26}
-                fill={orbColor} opacity={0.95}
+              <circle cx={x + jitter} cy={orbY} r={26} fill={orbColor} opacity={0.95}
                 style={{ filter: `drop-shadow(0 0 ${16 + 18 * tNorm}px ${orbColor})` }} />
               <circle cx={x + jitter} cy={orbY} r={11} fill="#fff" opacity={0.85} />
             </g>
@@ -156,25 +172,27 @@ export const SubharmonicTension: React.FC = () => {
         })}
 
         {/* HOME marker / verdict */}
-        {home ? (
+        {locked && home ? (
           <g opacity={settle}>
-            <circle cx={width / 2} cy={yOf(home.f)} r={20 + 10 * settle} fill="none"
-              stroke={GOLD} strokeWidth={3} opacity={0.8} />
-            <text x={width / 2} y={yOf(home.f) + 64} fill={GOLD} fontSize={28}
-              fontFamily="monospace" textAnchor="middle" letterSpacing={2} opacity={0.9}>
-              one shared fundamental
+            <circle cx={width / 2} cy={yOf(home.freq)} r={18 + 12 * settle} fill="none"
+              stroke={GOLD} strokeWidth={3} opacity={0.85}
+              style={{ filter: `drop-shadow(0 0 14px ${GOLD})` }} />
+            <circle cx={width / 2} cy={yOf(home.freq)} r={7} fill={GOLD} />
+            <text x={width / 2} y={yOf(home.freq) + 60} fill={GOLD} fontSize={28}
+              fontFamily="monospace" textAnchor="middle" letterSpacing={2} opacity={0.92}>
+              {aligns.length} shared subharmonics → one home
             </text>
           </g>
         ) : (
-          <text x={width / 2} y={yBot - 30} fill={HOT} fontSize={28} fontFamily="monospace"
+          <text x={width / 2} y={yBot - 18} fill={HOT} fontSize={28} fontFamily="monospace"
             textAnchor="middle" letterSpacing={2} opacity={settle * 0.9}>
-            no shared home — tension
+            {aligns.length} shared subharmonics, all loose — tension
           </text>
         )}
       </svg>
 
       {/* tension gauge */}
-      <div style={{ position: "absolute", bottom: 170, left: 150, right: 150 }}>
+      <div style={{ position: "absolute", bottom: 168, left: 150, right: 150 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline",
           fontFamily: fonts.mono, color: theme.muted, fontSize: 24, letterSpacing: 2, marginBottom: 12 }}>
           <span>subharmonic tension</span>
@@ -190,7 +208,7 @@ export const SubharmonicTension: React.FC = () => {
 
       <div style={{ position: "absolute", bottom: 80, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
-        biotuner · subharmonic tension
+        biotuner · subharmonic tension · δ {data.delta_lim}ms
       </div>
     </AbsoluteFill>
   );
