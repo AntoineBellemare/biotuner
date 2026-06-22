@@ -10,9 +10,14 @@
     "render:reel": "remotion render src/index.ts"
   },
   "dependencies": {
+    "@remotion/animation-utils": "^4.0.249",
     "@remotion/bundler": "4.0.249",
     "@remotion/cli": "4.0.249",
+    "@remotion/motion-blur": "^4.0.249",
+    "@remotion/noise": "^4.0.249",
+    "@remotion/paths": "^4.0.249",
     "@remotion/renderer": "4.0.249",
+    "@remotion/transitions": "^4.0.249",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.249"

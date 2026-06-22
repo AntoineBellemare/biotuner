@@ -2,6 +2,9 @@ import React from "react";
 import { Composition } from "remotion";
 import { MainV2, TOTAL_FRAMES_V2 } from "./MainV2";
 import { MainV3, TOTAL_FRAMES_V3 } from "./MainV3";
+import { HarmonicSimilarity, TOTAL_HARMSIM } from "./scenes/HarmonicSimilarity";
+import { SubharmonicTension, TOTAL_SUBHARM } from "./scenes/SubharmonicTension";
+import { SetharesDissonance, TOTAL_SETHARES } from "./scenes/SetharesDissonance";
 import { REEL_SPECS } from "./reels/specs";
 
 // GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
@@ -34,6 +37,36 @@ export const Root: React.FC = () => {
         id="GeometryV3-IG"
         component={MainV3}
         durationInFrames={TOTAL_FRAMES_V3}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Didactic — harmonic similarity (dyad_similarity comb alignment). */}
+      <Composition
+        id="HarmonicSimilarity-IG"
+        component={HarmonicSimilarity}
+        durationInFrames={TOTAL_HARMSIM}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Didactic — subharmonic tension (common-fundamental convergence). */}
+      <Composition
+        id="SubharmonicTension-IG"
+        component={SubharmonicTension}
+        durationInFrames={TOTAL_SUBHARM}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Didactic — Sethares / Plomp-Levelt sensory dissonance curve. */}
+      <Composition
+        id="SetharesDissonance-IG"
+        component={SetharesDissonance}
+        durationInFrames={TOTAL_SETHARES}
         fps={30}
         width={1080}
         height={1920}
