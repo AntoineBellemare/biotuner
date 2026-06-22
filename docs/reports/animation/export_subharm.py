@@ -58,7 +58,7 @@ def main() -> None:
 
     payload = {
         "base_freq": 174.61,   # F3 — bottom voice
-        "n_subharm": 8,        # subharmonic ticks drawn per note
+        "n_subharm": 15,       # subharmonic ticks drawn per note (deep stacks)
         "chords": rows,
         "tension_max": round(tmax, 5),
     }

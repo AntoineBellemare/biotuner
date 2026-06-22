@@ -36,7 +36,7 @@ const BEAT = DRAW + DWELL;
 const TAIL = 46;
 export const TOTAL_SUBHARM = INTRO + CHORDS.length * BEAT + TAIL;
 
-const FMIN = 36, FMAX = 470;
+const FMIN = 9, FMAX = 470; // FMIN low → deep subharmonic stacks
 
 export const SubharmonicTension: React.FC = () => {
   const frame = useCurrentFrame();
@@ -60,7 +60,7 @@ export const SubharmonicTension: React.FC = () => {
   const leftPad = 150, rightPad = 150;
   const axisW = width - leftPad - rightPad;
   const xCol = (i: number) => leftPad + ((i + 0.5) / nNotes) * axisW;
-  const yTop = 470, yBot = 1500;
+  const yTop = 440, yBot = 1540;
   const lf = (f: number) => Math.log(f);
   const yOf = (f: number) =>
     interpolate(lf(f), [lf(FMIN), lf(FMAX)], [yBot, yTop], {
