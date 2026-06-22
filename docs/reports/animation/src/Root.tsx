@@ -5,6 +5,7 @@ import { MainV3, TOTAL_FRAMES_V3 } from "./MainV3";
 import { HarmonicSimilarity, TOTAL_HARMSIM } from "./scenes/HarmonicSimilarity";
 import { SubharmonicTension, TOTAL_SUBHARM } from "./scenes/SubharmonicTension";
 import { SetharesDissonance, TOTAL_SETHARES } from "./scenes/SetharesDissonance";
+import { DissonancePipeline, TOTAL_DISSPIPE } from "./scenes/DissonancePipeline";
 import { REEL_SPECS } from "./reels/specs";
 
 // GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
@@ -67,6 +68,16 @@ export const Root: React.FC = () => {
         id="SetharesDissonance-IG"
         component={SetharesDissonance}
         durationInFrames={TOTAL_SETHARES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Didactic — signal → peaks → dissonance curve → scale (incl. EEG). */}
+      <Composition
+        id="DissonancePipeline-IG"
+        component={DissonancePipeline}
+        durationInFrames={TOTAL_DISSPIPE}
         fps={30}
         width={1080}
         height={1920}
