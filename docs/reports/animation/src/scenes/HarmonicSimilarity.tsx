@@ -32,7 +32,7 @@ const FMAX = 6.6; // frequency-axis upper bound (× root)
 const TEAL = "#6fd6c4";
 const GOLD = "#f2c14e";
 
-const TITLE = 66;
+const TITLE = 84;
 const INTRO = 36;
 const APPROACH = 18;
 const DWELL = 58;
@@ -111,8 +111,8 @@ export const HarmonicSimilarity: React.FC = () => {
         <Audio src={staticFile("audio/harmonicity.wav")} />
       </Sequence>
       <Backdrop />
-      <MetricIntro frame={frame} dur={TITLE} eyebrow="a biotuner metric"
-        title="Harmonic Similarity" hook="when do two tones share the same overtones?" accent={GOLD} />
+      <MetricIntro frame={frame} dur={TITLE}
+        title="Harmonic Similarity" hook="when do two tones share the same overtones?" />
 
       <AbsoluteFill style={{ opacity: introFade }}>
       {/* Title + live interval label */}

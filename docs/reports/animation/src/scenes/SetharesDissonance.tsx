@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -11,6 +12,7 @@ import {
 } from "remotion";
 import { evolvePath } from "@remotion/paths";
 import { Backdrop } from "../components/Backdrop";
+import { MetricIntro } from "../components/MetricIntro";
 import { theme, fonts } from "../theme";
 import data from "../../public/sethares.json";
 
@@ -31,18 +33,20 @@ const TEAL = "#6fd6c4";
 const HOT = "#e8746a";
 const GOLD = "#f2c14e";
 
+const TITLE = 84;
 const INTRO = 24;
 const SWEEP = 150;
 const HOLD = 70;
 const BEAT = SWEEP + HOLD;
 const OUTRO = 34;
-export const TOTAL_SETHARES = INTRO + TIMBRES.length * BEAT + OUTRO;
+export const TOTAL_SETHARES = TITLE + INTRO + TIMBRES.length * BEAT + OUTRO;
 
 export const SetharesDissonance: React.FC = () => {
   const frame = useCurrentFrame();
   const { width } = useVideoConfig();
 
-  const local = frame - INTRO;
+  const sf = frame - TITLE; // scene frame (content begins after the title card)
+  const local = sf - INTRO;
   const ti = Math.max(0, Math.min(TIMBRES.length - 1, Math.floor(local / BEAT)));
   const beatLocal = local - ti * BEAT;
   const T = TIMBRES[ti];
@@ -75,7 +79,7 @@ export const SetharesDissonance: React.FC = () => {
     path += `${i === 0 ? "M" : "L"} ${cx(1 + i / (CURVE.length - 1)).toFixed(1)} ${cy(CURVE[i]).toFixed(1)} `;
   const draw = evolvePath(swp, path);
 
-  const introFade = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
+  const introFade = interpolate(sf, [0, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const settled = beatLocal >= SWEEP;
   const verdict = ti === 0
     ? "few partials → few consonances"
@@ -84,10 +88,15 @@ export const SetharesDissonance: React.FC = () => {
     : "valleys land ON the just grid";
 
   return (
-    <AbsoluteFill style={{ opacity: introFade, backgroundColor: "#06070e" }}>
-      <Audio src={staticFile("audio/sethares.wav")} />
+    <AbsoluteFill style={{ backgroundColor: "#06070e" }}>
+      <Sequence from={TITLE}>
+        <Audio src={staticFile("audio/sethares.wav")} />
+      </Sequence>
       <Backdrop />
+      <MetricIntro frame={frame} dur={TITLE}
+        title="Dissonance Curve" hook="where do the smooth intervals fall?" />
 
+      <AbsoluteFill style={{ opacity: introFade }}>
       <div style={{ position: "absolute", top: 108, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.display, fontSize: 46, fontWeight: 300, letterSpacing: 1, color: theme.ink }}>
         the consonant scale <b style={{ fontWeight: 800 }}>follows the timbre</b>
@@ -170,6 +179,7 @@ export const SetharesDissonance: React.FC = () => {
         fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
         biotuner · sensory dissonance · Sethares
       </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

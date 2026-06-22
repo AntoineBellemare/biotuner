@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -11,6 +12,7 @@ import {
 } from "remotion";
 import { evolvePath } from "@remotion/paths";
 import { Backdrop } from "../components/Backdrop";
+import { MetricIntro } from "../components/MetricIntro";
 import { theme, fonts } from "../theme";
 import data from "../../public/diss_pipeline.json";
 
@@ -28,10 +30,11 @@ const TEAL = "#6fd6c4";
 const HOT = "#e8746a";
 const GOLD = "#f2c14e";
 
+const TITLE = 84;
 const INTRO = 24;
 const BEAT = 408;
 const OUTRO = 30;
-export const TOTAL_DISSPIPE = INTRO + SIGNALS.length * BEAT + OUTRO;
+export const TOTAL_DISSPIPE = TITLE + INTRO + SIGNALS.length * BEAT + OUTRO;
 
 const FMAX_COMB = 6.6;
 
@@ -39,7 +42,8 @@ export const DissonancePipeline: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 
-  const local = frame - INTRO;
+  const sFrame = frame - TITLE; // scene frame (content begins after the title card)
+  const local = sFrame - INTRO;
   const ti = Math.max(0, Math.min(SIGNALS.length - 1, Math.floor(local / BEAT)));
   const bl = local - ti * BEAT;
   const d = SIGNALS[ti];
@@ -88,16 +92,21 @@ export const DissonancePipeline: React.FC = () => {
   const cd = evolvePath(sweepRaw, curvePath);
   const dissAt = (a: number) => curve[Math.max(0, Math.min(curve.length - 1, Math.round((a - 1) * (curve.length - 1))))];
 
-  const introFade = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
+  const introFade = interpolate(sFrame, [0, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   const stageLabel =
     bl < 160 ? "1 · spectral peaks" : bl < 235 ? "2 · build the comb" : "3 · dissonance → scale";
 
   return (
-    <AbsoluteFill style={{ opacity: introFade, backgroundColor: "#06070e" }}>
-      <Audio src={staticFile("audio/diss_pipeline.wav")} />
+    <AbsoluteFill style={{ backgroundColor: "#06070e" }}>
+      <Sequence from={TITLE}>
+        <Audio src={staticFile("audio/diss_pipeline.wav")} />
+      </Sequence>
       <Backdrop />
+      <MetricIntro frame={frame} dur={TITLE}
+        title="Signal to Scale" hook="the scale hidden in any signal" />
 
+      <AbsoluteFill style={{ opacity: introFade }}>
       <div style={{ position: "absolute", top: 64, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.display, fontSize: 44, fontWeight: 300, letterSpacing: 1, color: theme.ink }}>
         from <b style={{ fontWeight: 800 }}>{d.label}</b> to a scale
@@ -190,6 +199,7 @@ export const DissonancePipeline: React.FC = () => {
         fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
         biotuner · peaks → dissonance → tuning
       </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

@@ -42,7 +42,7 @@ const TEAL = "#6fd6c4";
 const HOT = "#e8746a";
 const GOLD = "#f2c14e";
 
-const TITLE = 66;
+const TITLE = 84;
 const INTRO = 30;
 const DRAW = 50;
 const DWELL = 92;
@@ -107,8 +107,8 @@ export const SubharmonicTension: React.FC = () => {
         <Audio src={staticFile("audio/subharmonicity.wav")} />
       </Sequence>
       <Backdrop />
-      <MetricIntro frame={frame} dur={TITLE} eyebrow="a biotuner metric"
-        title="Subharmonic Tension" hook="does a chord agree on one home note?" accent={GOLD} />
+      <MetricIntro frame={frame} dur={TITLE}
+        title="Subharmonic Tension" hook="does a chord agree on one home note?" />
 
       <AbsoluteFill style={{ opacity: introFade }}>
       <div style={{ position: "absolute", top: 110, left: 0, right: 0, textAlign: "center",
