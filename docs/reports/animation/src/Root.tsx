@@ -6,6 +6,8 @@ import { HarmonicSimilarity, TOTAL_HARMSIM } from "./scenes/HarmonicSimilarity";
 import { SubharmonicTension, TOTAL_SUBHARM } from "./scenes/SubharmonicTension";
 import { SetharesDissonance, TOTAL_SETHARES } from "./scenes/SetharesDissonance";
 import { DissonancePipeline, TOTAL_DISSPIPE } from "./scenes/DissonancePipeline";
+import { BrainPolyrhythm, TOTAL_BRAINPOLY } from "./scenes/BrainPolyrhythm";
+import { HeartBrainDuet, TOTAL_HEARTBRAIN } from "./scenes/HeartBrainDuet";
 import { REEL_SPECS } from "./reels/specs";
 
 // GeometryV2 is the flagship showcase; GeometryV2-IG is its Instagram
@@ -78,6 +80,26 @@ export const Root: React.FC = () => {
         id="DissonancePipeline-IG"
         component={DissonancePipeline}
         durationInFrames={TOTAL_DISSPIPE}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Biorhythm — EEG peaks → 5:7:11 polyrhythm phase wheel. */}
+      <Composition
+        id="BrainPolyrhythm-IG"
+        component={BrainPolyrhythm}
+        durationInFrames={TOTAL_BRAINPOLY}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+
+      {/* Biorhythm — ECG heartbeat × EEG polyrhythm duet (coincidence groove). */}
+      <Composition
+        id="HeartBrainDuet-IG"
+        component={HeartBrainDuet}
+        durationInFrames={TOTAL_HEARTBRAIN}
         fps={30}
         width={1080}
         height={1920}
