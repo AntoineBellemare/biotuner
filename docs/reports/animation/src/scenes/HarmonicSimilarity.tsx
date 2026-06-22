@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -14,6 +15,7 @@ import { noise2D } from "@remotion/noise";
 import { evolvePath } from "@remotion/paths";
 import { interpolateStyles } from "@remotion/animation-utils";
 import { Backdrop } from "../components/Backdrop";
+import { MetricIntro } from "../components/MetricIntro";
 import { theme, fonts } from "../theme";
 import data from "../../public/harmonicity.json";
 
@@ -30,11 +32,12 @@ const FMAX = 6.6; // frequency-axis upper bound (× root)
 const TEAL = "#6fd6c4";
 const GOLD = "#f2c14e";
 
+const TITLE = 66;
 const INTRO = 36;
 const APPROACH = 18;
 const DWELL = 58;
 const BEAT = APPROACH + DWELL;
-export const TOTAL_HARMSIM = INTRO + STOPS.length * BEAT + 56;
+export const TOTAL_HARMSIM = TITLE + INTRO + STOPS.length * BEAT + 56;
 
 function simAt(r: number): number {
   const t = (r - 1) / (2 - 1);
@@ -47,7 +50,8 @@ export const HarmonicSimilarity: React.FC = () => {
   const { fps, width } = useVideoConfig();
 
   // ── ratio over time: glide to each stop, then dwell ──────────────────────
-  const local = frame - INTRO;
+  const sf = frame - TITLE; // scene frame (content begins after the title card)
+  const local = sf - INTRO;
   const beat = Math.max(0, Math.min(STOPS.length - 1, Math.floor(local / BEAT)));
   const beatLocal = local - beat * BEAT;
   const fromR = beat === 0 ? STOPS[0].ratio : STOPS[beat - 1].ratio;
@@ -94,18 +98,23 @@ export const HarmonicSimilarity: React.FC = () => {
     curvePath += `${i === 0 ? "M" : "L"} ${sx(rr).toFixed(1)} ${sy(CURVE[i]).toFixed(1)} `;
   }
   const draw = evolvePath(
-    interpolate(frame, [4, 34], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+    interpolate(sf, [4, 34], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
     curvePath
   );
 
-  const introFade = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
+  const introFade = interpolate(sf, [0, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const meterFill = (parked ? sim : sim) / 100;
 
   return (
-    <AbsoluteFill style={{ opacity: introFade, backgroundColor: "#05070e" }}>
-      <Audio src={staticFile("audio/harmonicity.wav")} />
+    <AbsoluteFill style={{ backgroundColor: "#05070e" }}>
+      <Sequence from={TITLE}>
+        <Audio src={staticFile("audio/harmonicity.wav")} />
+      </Sequence>
       <Backdrop />
+      <MetricIntro frame={frame} dur={TITLE} eyebrow="a biotuner metric"
+        title="Harmonic Similarity" hook="when do two tones share the same overtones?" accent={GOLD} />
 
+      <AbsoluteFill style={{ opacity: introFade }}>
       {/* Title + live interval label */}
       <div style={{ position: "absolute", top: 116, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.display, fontSize: 50, fontWeight: 300, letterSpacing: 1, color: theme.ink }}>
@@ -139,7 +148,7 @@ export const HarmonicSimilarity: React.FC = () => {
         {/* SLIDE comb — teeth down (gold), shimmer via noise */}
         {slideTeeth.map((s) => {
           const x = xOf(s.f);
-          const wob = noise2D("h", s.k * 1.7, frame * 0.03) * 5;
+          const wob = noise2D("h", s.k * 1.7, sf * 0.03) * 5;
           const m = alignOf(s.f);
           return <line key={`s${s.k}`} x1={x} y1={axisY} x2={x} y2={axisY + s.len + wob}
             stroke={m ? GOLD : "#caa24a"} strokeWidth={s.k === 1 ? 6 : 4} strokeLinecap="round"
@@ -204,6 +213,7 @@ export const HarmonicSimilarity: React.FC = () => {
         fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
         biotuner · harmonic geometry
       </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

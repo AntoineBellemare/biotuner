@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -12,6 +13,7 @@ import {
 } from "remotion";
 import { noise2D } from "@remotion/noise";
 import { Backdrop } from "../components/Backdrop";
+import { MetricIntro } from "../components/MetricIntro";
 import { theme, fonts } from "../theme";
 import data from "../../public/subharmonicity.json";
 
@@ -40,12 +42,13 @@ const TEAL = "#6fd6c4";
 const HOT = "#e8746a";
 const GOLD = "#f2c14e";
 
+const TITLE = 66;
 const INTRO = 30;
 const DRAW = 50;
 const DWELL = 92;
 const BEAT = DRAW + DWELL;
 const TAIL = 46;
-export const TOTAL_SUBHARM = INTRO + CHORDS.length * BEAT + TAIL;
+export const TOTAL_SUBHARM = TITLE + INTRO + CHORDS.length * BEAT + TAIL;
 
 const FMIN = 13, FMAX = 440;
 
@@ -53,7 +56,8 @@ export const SubharmonicTension: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 
-  const local = frame - INTRO;
+  const sf = frame - TITLE; // scene frame (content begins after the title card)
+  const local = sf - INTRO;
   const ci = Math.max(0, Math.min(CHORDS.length - 1, Math.floor(local / BEAT)));
   const beatLocal = local - ci * BEAT;
   const chord = CHORDS[ci];
@@ -94,14 +98,19 @@ export const SubharmonicTension: React.FC = () => {
   const home = fulls.slice().sort((a, b) => a.freq - b.freq)[0];
   const locked = maxFullTight >= 0.8;
 
-  const introFade = interpolate(frame, [0, 16], [0, 1], { extrapolateRight: "clamp" });
+  const introFade = interpolate(sf, [0, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const orbColor = interpolateColors(tNorm, [0, 0.45, 1], [TEAL, GOLD, HOT]);
 
   return (
-    <AbsoluteFill style={{ opacity: introFade, backgroundColor: "#06070e" }}>
-      <Audio src={staticFile("audio/subharmonicity.wav")} />
+    <AbsoluteFill style={{ backgroundColor: "#06070e" }}>
+      <Sequence from={TITLE}>
+        <Audio src={staticFile("audio/subharmonicity.wav")} />
+      </Sequence>
       <Backdrop />
+      <MetricIntro frame={frame} dur={TITLE} eyebrow="a biotuner metric"
+        title="Subharmonic Tension" hook="does a chord agree on one home note?" accent={GOLD} />
 
+      <AbsoluteFill style={{ opacity: introFade }}>
       <div style={{ position: "absolute", top: 110, left: 0, right: 0, textAlign: "center",
         fontFamily: fonts.display, fontSize: 50, fontWeight: 300, letterSpacing: 1, color: theme.ink }}>
         is there one <b style={{ fontWeight: 800 }}>home</b> note?
@@ -136,7 +145,7 @@ export const SubharmonicTension: React.FC = () => {
         {/* per-note columns: subharmonic ladders */}
         {Array.from({ length: nNotes }, (_, i) => i).map((i) => {
           const x = xCol(i);
-          const jitter = noise2D("o", i * 2.1, frame * 0.12) * 24 * tNorm * settle;
+          const jitter = noise2D("o", i * 2.1, sf * 0.12) * 24 * tNorm * settle;
           const orbY = yOf(freqs[i]);
           return (
             <g key={`col${i}`}>
@@ -210,6 +219,7 @@ export const SubharmonicTension: React.FC = () => {
         fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
         biotuner · subharmonic tension · δ {data.delta_lim}ms
       </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
