@@ -42,6 +42,7 @@ KIT = {
     "woodblock": 53403,   # wood block
     "clave": 132417,      # Percussion clave-like hit
     "tabla": 130430,      # tas_3
+    "modperc": 83375,     # MetalPerc02 — modern resonant ambient perc
 }
 
 

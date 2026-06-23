@@ -36,7 +36,6 @@ PICKS = [
     ("E(5,7)", 5, 7, "Nawakhat", "Arabia", "a popular Arabic rhythm · 'Al Noht' in Nubia"),
     ("E(4,7)", 4, 7, "Ruchenitza", "Bulgaria", "a Bulgarian folk-dance"),
     ("E(5,11)", 5, 11, "Savari tala", "India", "Hindustani classical · also Bulgaria & Serbia"),
-    ("E(4,11)", 4, 11, "Outside Now", "Frank Zappa", "the meter of a Zappa piece"),
 ]
 
 

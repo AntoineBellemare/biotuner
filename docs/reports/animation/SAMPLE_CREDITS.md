@@ -16,3 +16,4 @@ Re-fetch with `FREESOUND_TOKEN=… python fetch_freesound.py`.
 | woodblock | [53403](https://freesound.org/people/calaudio/sounds/53403/) | wood block.wav | calaudio | http://creativecommons.org/publicdomain/zero/1.0/ |
 | clave | [132417](https://freesound.org/people/Sajmund/sounds/132417/) | Percussion clave like hit | Sajmund | http://creativecommons.org/publicdomain/zero/1.0/ |
 | tabla | [130430](https://freesound.org/people/mmiron/sounds/130430/) | tas_3.wav | mmiron | http://creativecommons.org/publicdomain/zero/1.0/ |
+| modperc | [83375](https://freesound.org/people/ra_gun/sounds/83375/) | MetalPerc02.wav | ra_gun | http://creativecommons.org/publicdomain/zero/1.0/ |

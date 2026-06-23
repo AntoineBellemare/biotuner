@@ -22,10 +22,10 @@ const F = data.front as { wave: number[]; spec_f: number[]; spec_mag: number[]; 
 const COLORS = ["#f2c14e", "#6fd6c4", "#e8746a", "#9b8cff", "#7ad6a1"];
 
 const TITLE = 84;
-const DIDACTIC = 130;
-const ADD = 48;        // frames between each rhythm joining
+const DIDACTIC = 116;
+const ADD = 120;       // frames between each rhythm joining (≈1.5 bars to digest)
 const BAR = 80;        // playhead revolution
-const HOLD = 156;
+const HOLD = 150;
 const OUTRO = 44;
 const NR = RH.length;
 const MIX_START = DIDACTIC;
@@ -43,10 +43,10 @@ export const BrainGrooves: React.FC = () => {
   const sf = frame - TITLE;
   const introFade = interpolate(sf, [0, 16], [0, 1], clampOpt);
 
-  const didOp = interpolate(sf, [6, 20], [0, 1], clampOpt) * interpolate(sf, [DIDACTIC - 24, DIDACTIC], [1, 0], clampOpt);
+  const didOp = interpolate(sf, [6, 20], [0, 1], clampOpt) * interpolate(sf, [DIDACTIC - 22, DIDACTIC], [1, 0], clampOpt);
   const mixOp = interpolate(sf, [DIDACTIC - 10, DIDACTIC + 16], [0, 1], clampOpt);
-  const waveP = interpolate(sf, [10, 66], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
-  const specP = interpolate(sf, [56, 116], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
+  const waveP = interpolate(sf, [10, 58], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
+  const specP = interpolate(sf, [48, 100], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
 
   const mf = sf - MIX_START;
   const playing = mf >= 0;
@@ -105,7 +105,7 @@ export const BrainGrooves: React.FC = () => {
           </svg>
           <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center",
             fontFamily: fonts.display, fontSize: 30, fontWeight: 300, color: theme.muted,
-            opacity: interpolate(sf, [92, 124], [0, 1], clampOpt) }}>
+            opacity: interpolate(sf, [80, 106], [0, 1], clampOpt) }}>
             and these are real rhythms from <b style={{ color: "#fff", fontWeight: 700 }}>around the world</b>
           </div>
         </div>

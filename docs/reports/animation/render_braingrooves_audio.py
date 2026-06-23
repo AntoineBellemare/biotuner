@@ -27,14 +27,14 @@ SR = 44_100
 FPS = 30
 
 TITLE = 84
-DIDACTIC = 130
-ADD = 48
+DIDACTIC = 116
+ADD = 120
 BAR = 80
-HOLD = 156
+HOLD = 150
 OUTRO = 44
-PEAK_FRAMES = [56, 72, 88, 104]
-INSTR = ["clave", "rebana", "bongo", "tabla", "woodblock"]
-PANS = [-0.4, -0.2, 0.0, 0.2, 0.4]
+PEAK_FRAMES = [46, 60, 74, 88]
+INSTR = ["modperc", "rebana", "bongo", "tabla"]
+PANS = [-0.34, -0.12, 0.12, 0.34]
 
 RH = json.load(open(HERE / "public" / "brain_grooves.json", encoding="utf-8"))["rhythms"]
 NR = len(RH)
