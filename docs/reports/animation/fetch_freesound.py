@@ -36,6 +36,12 @@ KIT = {
     "shaker": 199823,     # Egg Shaker - 1 Throw
     "bowl": 271370,       # singing bowl strike
     "heartbeat": 22440,   # Single Heartbeat Clean HQ (for the Heart×Brain duet)
+    # world-percussion one-shots for Brain Grooves (all CC0)
+    "bongo": 219157,      # Bongo01
+    "rebana": 88594,      # rebana4 (frame drum)
+    "woodblock": 53403,   # wood block
+    "clave": 132417,      # Percussion clave-like hit
+    "tabla": 130430,      # tas_3
 }
 
 

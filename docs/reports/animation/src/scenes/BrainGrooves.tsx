@@ -12,9 +12,8 @@ import data from "../../public/brain_grooves.json";
 /**
  * "Brain Grooves" — the world's rhythms hidden in EEG. Each brain peak-ratio
  * becomes a Euclidean rhythm (Bjorklund); biotuner names it from Toussaint's
- * catalog. The same EEG that plays a 5:7:11 polyrhythm also reproduces the
- * Cuban tresillo, the Arabic Nawakhat, India's Savari tala, Bulgaria's
- * Ruchenitza — even a Frank Zappa meter. A didactic front-end, then a gallery.
+ * catalog. A short didactic front-end, then the named rhythms LAYER one by one
+ * onto concentric rings — each on its own hand-drum — into a world polygroove.
  */
 type Rhythm = { label: string; pulses: number; steps: number; pattern: number[];
   ivec: number[]; name: string; region: string; blurb: string };
@@ -23,16 +22,20 @@ const F = data.front as { wave: number[]; spec_f: number[]; spec_mag: number[]; 
 const COLORS = ["#f2c14e", "#6fd6c4", "#e8746a", "#9b8cff", "#7ad6a1"];
 
 const TITLE = 84;
-const DIDACTIC = 168;
-const RHYTHM = 156;
+const DIDACTIC = 130;
+const ADD = 48;        // frames between each rhythm joining
+const BAR = 80;        // playhead revolution
+const HOLD = 156;
+const OUTRO = 44;
 const NR = RH.length;
-const TAIL = 46;
-const STEP_FRAMES = 8;
-export const TOTAL_BRAINGROOVES = TITLE + DIDACTIC + NR * RHYTHM + TAIL;
+const MIX_START = DIDACTIC;
+const MIX_LEN = (NR - 1) * ADD + HOLD;
+export const TOTAL_BRAINGROOVES = TITLE + DIDACTIC + MIX_LEN + OUTRO;
 
 const clampOpt = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const PAD = 110, AXW = 1080 - 2 * PAD;
-const NCX = 540, NCY = 900, NR_RAD = 300;
+const CX = 540, CY = 790;
+const RAD = [132, 206, 280, 354, 424];
 
 export const BrainGrooves: React.FC = () => {
   const frame = useCurrentFrame();
@@ -40,34 +43,30 @@ export const BrainGrooves: React.FC = () => {
   const sf = frame - TITLE;
   const introFade = interpolate(sf, [0, 16], [0, 1], clampOpt);
 
-  const didOp = interpolate(sf, [6, 20], [0, 1], clampOpt) * interpolate(sf, [DIDACTIC - 26, DIDACTIC], [1, 0], clampOpt);
-  const galOp = interpolate(sf, [DIDACTIC - 10, DIDACTIC + 16], [0, 1], clampOpt);
+  const didOp = interpolate(sf, [6, 20], [0, 1], clampOpt) * interpolate(sf, [DIDACTIC - 24, DIDACTIC], [1, 0], clampOpt);
+  const mixOp = interpolate(sf, [DIDACTIC - 10, DIDACTIC + 16], [0, 1], clampOpt);
+  const waveP = interpolate(sf, [10, 66], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
+  const specP = interpolate(sf, [56, 116], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
 
-  // didactic sub-phases
-  const waveP = interpolate(sf, [12, 80], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
-  const specP = interpolate(sf, [70, 140], [0, 1], { ...clampOpt, easing: Easing.out(Easing.cubic) });
+  const mf = sf - MIX_START;
+  const playing = mf >= 0;
+  const cyclePos = playing ? (mf % BAR) / BAR : 0;
+  const ang = (frac: number) => -Math.PI / 2 + 2 * Math.PI * frac;
+  const pt = (r: number, frac: number): [number, number] => [CX + r * Math.cos(ang(frac)), CY + r * Math.sin(ang(frac))];
+  const fireOf = (onset: number) => playing ? Math.exp(-((((cyclePos - onset) % 1) + 1) % 1) * 8) : 0;
+  const activeAt = (i: number) => spring({ frame: mf - i * ADD, fps, config: { damping: 15, stiffness: 90 } });
+  const [phx, phy] = pt(RAD[NR - 1] + 22, cyclePos);
 
-  // gallery: which rhythm + local frame
-  const gf = sf - DIDACTIC;
-  const ri = Math.max(0, Math.min(NR - 1, Math.floor(gf / RHYTHM)));
-  const rl = gf - ri * RHYTHM;
-  const R = RH[ri];
-  const col = COLORS[ri % COLORS.length];
-  const n = R.steps;
-  const reveal = spring({ frame: rl - 4, fps, config: { damping: 15, stiffness: 90 } });
-  const nameIn = spring({ frame: rl - 18, fps, config: { damping: 14, stiffness: 80 } });
-  const stepPos = rl > 24 ? ((rl - 24) / STEP_FRAMES) % n : -1; // continuous sweep
-
-  const ang = (i: number) => -Math.PI / 2 + 2 * Math.PI * (i / n);
-  const pt = (rad: number, i: number): [number, number] => [NCX + rad * Math.cos(ang(i)), NCY + rad * Math.sin(ang(i))];
-  const [phx, phy] = stepPos >= 0 ? pt(NR_RAD + 24, stepPos) : [NCX, NCY];
+  // which rhythm is "entering" right now (for the announce banner)
+  const ai = Math.floor(mf / ADD);
+  const announce = playing && ai >= 0 && ai < NR && (mf - ai * ADD) < 42 ? ai : -1;
 
   // didactic waveform + spectrum
   const wfx = (i: number) => PAD + (i / (F.wave.length - 1)) * AXW;
-  const waveCY = 620, waveAmp = 64;
+  const waveCY = 560, waveAmp = 56;
   const wavePath = F.wave.map((v, i) => `${i === 0 ? "M" : "L"} ${wfx(i).toFixed(1)} ${(waveCY - v * waveAmp).toFixed(1)}`).join(" ");
   const wd = evolvePath(waveP, wavePath);
-  const sBase = 1060, sH = 190;
+  const sBase = 960, sH = 170;
   const sfx = (f: number) => PAD + (f / F.fmax) * AXW;
   const sfy = (m: number) => sBase - m * sH;
   const specPath = `M ${PAD} ${sBase} ` + F.spec_f.map((f, i) => `L ${sfx(f).toFixed(1)} ${sfy(F.spec_mag[i] * specP).toFixed(1)}`).join(" ") + ` L ${width - PAD} ${sBase} Z`;
@@ -86,13 +85,13 @@ export const BrainGrooves: React.FC = () => {
             : <>your brain plays the <b style={{ fontWeight: 800 }}>world</b></>}
         </div>
 
-        {/* ── DIDACTIC: EEG → spectrum → peaks → Euclidean ── */}
+        {/* ── DIDACTIC ── */}
         <div style={{ opacity: didOp }}>
           <svg width="100%" height="100%" viewBox={`0 0 ${width} 1920`} style={{ position: "absolute", inset: 0 }}>
-            <text x={PAD} y={waveCY - 120} fill={theme.muted} fontSize={22} fontFamily="monospace" letterSpacing={2}>EEG signal</text>
+            <text x={PAD} y={waveCY - 110} fill={theme.muted} fontSize={22} fontFamily="monospace" letterSpacing={2}>EEG signal</text>
             <path d={wavePath} fill="none" stroke={COLORS[1]} strokeWidth={2.5} strokeDasharray={wd.strokeDasharray} strokeDashoffset={wd.strokeDashoffset} opacity={0.9} />
             <g opacity={specP}>
-              <text x={PAD} y={sBase - sH - 16} fill={theme.muted} fontSize={22} fontFamily="monospace" letterSpacing={2}>spectral peaks → ratios</text>
+              <text x={PAD} y={sBase - sH - 16} fill={theme.muted} fontSize={22} fontFamily="monospace" letterSpacing={2}>spectral peaks → Euclidean rhythms</text>
               <path d={specPath} fill="rgba(120,150,210,0.16)" stroke="rgba(150,180,220,0.5)" strokeWidth={2} />
               <line x1={PAD} y1={sBase} x2={width - PAD} y2={sBase} stroke="rgba(180,200,230,0.18)" strokeWidth={2} />
             </g>
@@ -104,59 +103,77 @@ export const BrainGrooves: React.FC = () => {
               </g>;
             })}
           </svg>
-          <div style={{ position: "absolute", top: 1230, left: 0, right: 0, textAlign: "center",
-            fontFamily: fonts.display, fontSize: 32, fontWeight: 300, color: theme.muted,
-            opacity: interpolate(sf, [120, 160], [0, 1], clampOpt) }}>
-            Bjorklund spreads each ratio's pulses <b style={{ color: "#fff", fontWeight: 700 }}>evenly</b> — a Euclidean rhythm
+          <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center",
+            fontFamily: fonts.display, fontSize: 30, fontWeight: 300, color: theme.muted,
+            opacity: interpolate(sf, [92, 124], [0, 1], clampOpt) }}>
+            and these are real rhythms from <b style={{ color: "#fff", fontWeight: 700 }}>around the world</b>
           </div>
         </div>
 
-        {/* ── GALLERY: necklace + name/region ── */}
-        <div style={{ opacity: galOp }}>
+        {/* ── MIX: layered rings ── */}
+        <div style={{ opacity: mixOp }}>
           <svg width="100%" height="100%" viewBox={`0 0 ${width} 1920`} style={{ position: "absolute", inset: 0 }}>
-            <circle cx={NCX} cy={NCY} r={NR_RAD} fill="none" stroke={col} strokeWidth={1.5} opacity={0.2 * reveal} />
-            {/* step ticks + pulse beads */}
-            {Array.from({ length: n }, (_, i) => i).map((i) => {
-              const isPulse = R.pattern[i] === 1;
-              const [tx, ty] = pt(NR_RAD, i);
-              const rel = stepPos >= 0 ? (((stepPos - i) % n) + n) % n : 99;
-              const fire = isPulse && rel < 1.4 ? Math.exp(-rel * 2.2) : 0;
-              const bIn = Math.min(1, Math.max(0, reveal * 1.3 - i / n));
-              if (!isPulse) return <circle key={i} cx={tx} cy={ty} r={3 * bIn} fill="rgba(180,200,230,0.4)" opacity={bIn} />;
+            {RH.map((R, i) => {
+              const act = Math.min(1, activeAt(i));
+              if (act <= 0.01) return null;
+              const r = RAD[i], col = COLORS[i % COLORS.length], n = R.steps;
               return (
-                <g key={i}>
-                  {fire > 0.3 && <circle cx={tx} cy={ty} r={14 + 30 * (1 - fire)} fill="none" stroke={col} strokeWidth={2} opacity={0.6 * fire} />}
-                  <circle cx={tx} cy={ty} r={(9 + 9 * fire) * bIn} fill={col} opacity={(0.55 + 0.45 * fire) * bIn}
-                    style={fire > 0.1 ? { filter: `drop-shadow(0 0 ${12 * fire}px ${col})` } : undefined} />
+                <g key={i} opacity={act}>
+                  <circle cx={CX} cy={CY} r={r} fill="none" stroke={col} strokeWidth={1.4} opacity={0.2} />
+                  {Array.from({ length: n }, (_, j) => j).map((j) => {
+                    if (!R.pattern[j]) return null;
+                    const [bx, by] = pt(r, j / n), fire = fireOf(j / n);
+                    return (
+                      <g key={j}>
+                        {fire > 0.35 && <circle cx={bx} cy={by} r={11 + 22 * (1 - fire)} fill="none" stroke={col} strokeWidth={2} opacity={0.6 * fire} />}
+                        <circle cx={bx} cy={by} r={(6.5 + 8 * fire) * act} fill={col} opacity={0.5 + 0.5 * fire}
+                          style={fire > 0.2 ? { filter: `drop-shadow(0 0 ${11 * fire}px ${col})` } : undefined} />
+                      </g>
+                    );
+                  })}
                 </g>
               );
             })}
-            {/* playhead */}
-            {stepPos >= 0 && <>
-              <line x1={NCX} y1={NCY} x2={phx} y2={phy} stroke="#fff" strokeWidth={2} opacity={0.45} />
+            {/* shared playhead */}
+            {playing && <>
+              {Array.from({ length: 8 }, (_, i) => i).map((i) => {
+                const [tx, ty] = pt(RAD[NR - 1] + 22, cyclePos - i * 0.013);
+                return <line key={i} x1={CX} y1={CY} x2={tx} y2={ty} stroke="#fff" strokeWidth={2.2 - i * 0.2} opacity={0.4 - i * 0.045} />;
+              })}
               <circle cx={phx} cy={phy} r={6} fill="#fff" style={{ filter: "drop-shadow(0 0 8px #fff)" }} />
             </>}
-            <circle cx={NCX} cy={NCY} r={6} fill="#fff" opacity={0.5} />
+            <circle cx={CX} cy={CY} r={6} fill="#fff" opacity={0.5} />
           </svg>
 
-          {/* name / region / blurb */}
-          <div style={{ position: "absolute", top: 1280, left: 0, right: 0, textAlign: "center", opacity: nameIn,
-            transform: `translateY(${(1 - nameIn) * 20}px)` }}>
-            <div style={{ fontFamily: fonts.mono, fontSize: 26, letterSpacing: 4, color: col }}>{R.label} · {R.ivec.join("·")}</div>
-            <div style={{ fontFamily: fonts.display, fontSize: 74, fontWeight: 800, color: "#fff", letterSpacing: 1, marginTop: 6,
-              textShadow: `0 0 26px ${col}66` }}>{R.name}</div>
-            <div style={{ fontFamily: fonts.display, fontSize: 38, fontWeight: 300, color: col, marginTop: 4 }}>{R.region}</div>
-            <div style={{ fontFamily: fonts.display, fontSize: 26, fontWeight: 300, color: theme.muted, marginTop: 14 }}>{R.blurb}</div>
-          </div>
-          {/* progress dots */}
-          <div style={{ position: "absolute", bottom: 120, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 14 }}>
-            {RH.map((_, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: 5,
-              background: i === ri ? COLORS[i % COLORS.length] : "rgba(180,200,230,0.25)" }} />)}
+          {/* announce banner */}
+          {announce >= 0 && (
+            <div style={{ position: "absolute", top: CY - 30, left: 0, right: 0, textAlign: "center",
+              opacity: interpolate((mf - announce * ADD), [0, 6, 34, 42], [0, 1, 1, 0], clampOpt) }}>
+              <div style={{ fontFamily: fonts.display, fontSize: 56, fontWeight: 800, color: "#fff",
+                textShadow: `0 0 26px ${COLORS[announce % COLORS.length]}` }}>+ {RH[announce].name}</div>
+            </div>
+          )}
+
+          {/* legend */}
+          <div style={{ position: "absolute", top: 1290, left: 130, right: 130, display: "flex", flexDirection: "column", gap: 10 }}>
+            {RH.map((R, i) => {
+              const act = Math.min(1, activeAt(i));
+              return (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, opacity: act,
+                  transform: `translateX(${(1 - act) * -20}px)`, fontFamily: fonts.display }}>
+                  <div style={{ width: 12, height: 12, borderRadius: 6, background: COLORS[i % COLORS.length],
+                    boxShadow: `0 0 ${8 + 10 * fireOf(0)}px ${COLORS[i % COLORS.length]}` }} />
+                  <div style={{ fontSize: 30, fontWeight: 700, color: "#fff" }}>{R.name}</div>
+                  <div style={{ fontSize: 26, fontWeight: 300, color: COLORS[i % COLORS.length] }}>{R.region}</div>
+                  <div style={{ fontSize: 20, color: theme.muted, fontFamily: fonts.mono, marginLeft: "auto" }}>{R.label}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <div style={{ position: "absolute", bottom: 70, left: 0, right: 0, textAlign: "center",
-          fontFamily: fonts.mono, fontSize: 22, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
+        <div style={{ position: "absolute", bottom: 62, left: 0, right: 0, textAlign: "center",
+          fontFamily: fonts.mono, fontSize: 21, letterSpacing: 3, color: theme.muted, opacity: 0.7 }}>
           biotuner · rhythm · scale2euclid · dict_rhythms
         </div>
       </AbsoluteFill>
