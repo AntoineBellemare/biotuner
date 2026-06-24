@@ -319,9 +319,55 @@ def reduce_matrix_to_spectrum(
     return (p ** alpha_self) * (M_off @ p_partner)
 
 
+# ---------------------------------------------------------------------------
+# Canonical (Tass-convention) variants — apply the (n, m) -> (m, n) swap for ALL
+# metrics, not just PLV.
+#
+# Rationale: the ratio kernels (binary_nm_kernel, fraction_kernel) return (n, m)
+# under the legacy convention ``ratio = f_j / f_i ≈ m / n``. The base metrics apply
+# ``n*φ_i - m*φ_j`` literally, which is NON-stationary for a true n:m mode-lock
+# (validated in resonance_paper Study 39: every raw metric anti-detects clean
+# polyrhythmic ground truth — PLV AUC≈0.13). The mathematically correct n:m
+# phase-locking test (Tass 1998) needs ``m*φ_i - n*φ_j`` for these kernels, i.e.
+# the (n, m) -> (m, n) swap that ``nm_plv_canonical`` already applies. These
+# wrappers extend that fix to pli / wpli / rrci / wpli_complex so the
+# volume-conduction-robust metrics can be used at genuine n:m. Use the canonical
+# variants for any new n:m analysis; the raw names are kept for bit-exact
+# reproduction of prior papers.
+
+
+def _canonical(metric_fn):
+    """Wrap a pairwise metric to apply the Tass n:m convention (swap n<->m).
+
+    The wrapped metric receives the ratio-kernel's ``(n, m)`` (ratio≈m/n) and
+    internally calls ``metric_fn(arg_i, arg_j, m, n, ...)`` so the stationary
+    combination ``m*φ_i - n*φ_j`` is tested. For 1:1 (n==m) it is a no-op.
+    """
+    def _wrapped(arg_i, arg_j, n, m, **kw):
+        return metric_fn(arg_i, arg_j, m, n, **kw)
+    _wrapped.__name__ = metric_fn.__name__ + "_canonical"
+    _wrapped.__qualname__ = _wrapped.__name__
+    _wrapped.__doc__ = (
+        f"Canonical (Tass-convention) variant of :func:`{metric_fn.__name__}` — "
+        "swaps (n, m) so the genuine n:m mode-lock is tested with the legacy ratio kernels."
+    )
+    return _wrapped
+
+
+nm_pli_canonical = _canonical(nm_pli)
+nm_wpli_canonical = _canonical(nm_wpli)
+nm_rrci_canonical = _canonical(nm_rrci)
+nm_wpli_complex_canonical = _canonical(nm_wpli_complex)
+
+
 register_coupling_metric("nm_plv", nm_plv, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_pli", nm_pli, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_wpli", nm_wpli, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_rrci", nm_rrci, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_plv_canonical", nm_plv_canonical, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_wpli_complex", nm_wpli_complex, arity="pairwise_symmetric", input_type="analytic")
+# canonical variants for the 0-lag-robust / amplitude-weighted metrics (Study 39 fix)
+register_coupling_metric("nm_pli_canonical", nm_pli_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_wpli_canonical", nm_wpli_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_rrci_canonical", nm_rrci_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_wpli_complex_canonical", nm_wpli_complex_canonical, arity="pairwise_symmetric", input_type="analytic")
