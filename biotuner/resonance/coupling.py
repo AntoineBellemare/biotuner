@@ -209,6 +209,73 @@ def nm_intertrial_plv(
 
 
 # ---------------------------------------------------------------------------
+# n:m indices BEYOND the first circular moment (Tass 1998; Palus 1997)
+#
+# The PLV family above reads only the FIRST circular moment of the relative phase
+# psi = n*phi_i - m*phi_j, so it is maximal only for a UNIMODAL psi and CANCELS on
+# multimodal / antipodal / multistable n:m locks (resonance_paper Study 41: PLV
+# anti-detects them, AUC<0.5). These indices read the whole psi distribution and
+# recover those locks. Same (n, m) convention as the raw metrics — pair with the
+# canonical wrapper (or correct multipliers) for genuine n:m.
+# ---------------------------------------------------------------------------
+
+
+def nm_rho_entropy(phase_i, phase_j, n, m, nbins: int = 18):
+    """Tass 1998 n:m entropy synchronization index in [0, 1].
+
+    ``rho = (Hmax - H)/Hmax`` where ``H`` is the Shannon entropy of the histogram
+    of ``psi = n*phi_i - m*phi_j`` (wrapped) and ``Hmax = ln(nbins)``. Reads ANY
+    departure of psi from uniformity (all moments), so it detects multimodal n:m
+    locks the PLV family misses. Positively biased at small N — use a surrogate z.
+    Ref: Tass et al. 1998 PRL 81:3291.
+    """
+    psi = np.angle(np.exp(1j * (n * np.asarray(phase_i, dtype=np.float64)
+                                - m * np.asarray(phase_j, dtype=np.float64))))
+    h, _ = np.histogram(psi, bins=nbins, range=(-np.pi, np.pi))
+    p = h / h.sum()
+    p = p[p > 0]
+    H = -np.sum(p * np.log(p))
+    return float((np.log(nbins) - H) / np.log(nbins))
+
+
+def nm_conditional_prob(phase_i, phase_j, n, m, nbins: int = 18, min_count: int = 5):
+    """Tass 1998 n:m conditional-probability index in [0, 1].
+
+    Bins ``n*phi_i`` and takes the mean resultant of ``m*phi_j`` within each bin.
+    Captures dependence of one phase given the other, but each bin's resultant is
+    again a first moment — so it shares the PLV family's blindness to *within-bin*
+    antipodal structure. Ref: Tass et al. 1998 PRL 81:3291.
+    """
+    x = np.angle(np.exp(1j * n * np.asarray(phase_i, dtype=np.float64)))
+    y = m * np.asarray(phase_j, dtype=np.float64)
+    edges = np.linspace(-np.pi, np.pi, nbins + 1)
+    idx = np.clip(np.digitize(x, edges) - 1, 0, nbins - 1)
+    rs = [np.abs(np.mean(np.exp(1j * y[idx == k]))) for k in range(nbins) if np.sum(idx == k) > min_count]
+    return float(np.mean(rs)) if rs else 0.0
+
+
+def nm_phase_mi(phase_i, phase_j, n, m, nbins: int = 16):
+    """Normalized mutual information in [0, 1] between ``n*phi_i`` and ``m*phi_j``.
+
+    Model-free, all-moment statistical dependence — the most general n:m detector;
+    recovers any multimodal/nonlinear lock. Most data-hungry; use a surrogate z.
+    Ref: Palus 1997 Phys Lett A 235:341.
+    """
+    x = np.angle(np.exp(1j * n * np.asarray(phase_i, dtype=np.float64)))
+    y = np.angle(np.exp(1j * m * np.asarray(phase_j, dtype=np.float64)))
+    c, _, _ = np.histogram2d(x, y, bins=nbins, range=[[-np.pi, np.pi], [-np.pi, np.pi]])
+    pxy = c / c.sum()
+    px = pxy.sum(axis=1, keepdims=True)
+    py = pxy.sum(axis=0, keepdims=True)
+    outer = px * py
+    nz = pxy > 0
+    mi = float(np.sum(pxy[nz] * np.log(pxy[nz] / outer[nz])))
+    Hx = -np.sum(px[px > 0] * np.log(px[px > 0]))
+    Hy = -np.sum(py[py > 0] * np.log(py[py > 0]))
+    return float(mi / (min(Hx, Hy) + 1e-12))
+
+
+# ---------------------------------------------------------------------------
 # Matrix builder — dispatches the pairwise metric over freq pairs
 # ---------------------------------------------------------------------------
 
@@ -358,6 +425,9 @@ nm_pli_canonical = _canonical(nm_pli)
 nm_wpli_canonical = _canonical(nm_wpli)
 nm_rrci_canonical = _canonical(nm_rrci)
 nm_wpli_complex_canonical = _canonical(nm_wpli_complex)
+nm_rho_entropy_canonical = _canonical(nm_rho_entropy)
+nm_conditional_prob_canonical = _canonical(nm_conditional_prob)
+nm_phase_mi_canonical = _canonical(nm_phase_mi)
 
 
 register_coupling_metric("nm_plv", nm_plv, arity="pairwise_symmetric", input_type="phase")
@@ -371,3 +441,10 @@ register_coupling_metric("nm_pli_canonical", nm_pli_canonical, arity="pairwise_s
 register_coupling_metric("nm_wpli_canonical", nm_wpli_canonical, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_rrci_canonical", nm_rrci_canonical, arity="pairwise_symmetric", input_type="phase")
 register_coupling_metric("nm_wpli_complex_canonical", nm_wpli_complex_canonical, arity="pairwise_symmetric", input_type="analytic")
+# all-moment n:m indices (Study 41: recover multimodal locks the PLV family misses)
+register_coupling_metric("nm_rho_entropy", nm_rho_entropy, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_conditional_prob", nm_conditional_prob, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_phase_mi", nm_phase_mi, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_rho_entropy_canonical", nm_rho_entropy_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_conditional_prob_canonical", nm_conditional_prob_canonical, arity="pairwise_symmetric", input_type="phase")
+register_coupling_metric("nm_phase_mi_canonical", nm_phase_mi_canonical, arity="pairwise_symmetric", input_type="phase")
