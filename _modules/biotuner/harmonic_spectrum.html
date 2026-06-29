@@ -1,0 +1,944 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_spectrum &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_spectrum';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_spectrum</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;biotuner.harmonic_spectrum — harmonicity-field computations from PSDs.</span>
+
+<span class="sd">Module type: Functions</span>
+
+<span class="sd">This module is the **H-only entry point** of biotuner&#39;s spectral resonance</span>
+<span class="sd">machinery. For per-frequency harmonicity H(f) on a single signal, this is the</span>
+<span class="sd">right module.</span>
+
+<span class="sd">Quick start</span>
+<span class="sd">-----------</span>
+<span class="sd">::</span>
+
+<span class="sd">    from biotuner.harmonic_spectrum import compute_harmonic_spectrum</span>
+
+<span class="sd">    freqs, H, S, summary = compute_harmonic_spectrum(</span>
+<span class="sd">        signal, precision_hz=0.5, fmin=2, fmax=30, fs=1000,</span>
+<span class="sd">    )</span>
+<span class="sd">    # H        — per-frequency harmonicity spectrum  (n_freqs,)</span>
+<span class="sd">    # S        — N×N kernel similarity matrix</span>
+<span class="sd">    # summary  — dict of complexity metrics (flatness, entropy, higuchi, ...)</span>
+
+<span class="sd">Sister modules</span>
+<span class="sd">--------------</span>
+<span class="sd">- :mod:`biotuner.resonance` — full H × PC = R pipeline with surrogate</span>
+<span class="sd">  normalization, swappable kernels, and higher-order coupling extensions.</span>
+<span class="sd">  Use ``compute_resonance(signal, sf, config=...)`` when you want the full</span>
+<span class="sd">  per-frequency resonance spectrum, not just H(f).</span>
+<span class="sd">- :mod:`biotuner.harmonic_connectivity` — cross-channel analogs. Use</span>
+<span class="sd">  ``compute_cross_resonance(sig1, sig2, sf)`` for two signals,</span>
+<span class="sd">  ``harmonic_connectivity(...).compute_cross_resonance_connectivity(...)``</span>
+<span class="sd">  for N-channel matrices.</span>
+
+<span class="sd">Public API</span>
+<span class="sd">----------</span>
+<span class="sd">- :func:`compute_harmonic_spectrum`            — main entry point</span>
+<span class="sd">- :func:`harmonicity_matrices`                 — N×N similarity matrix (legacy helper)</span>
+<span class="sd">- :func:`compute_harmonic_power`               — probability-weighted reduction of S to H(f)</span>
+<span class="sd">- :func:`find_spectral_peaks`                  — peak detector (shared across the resonance package)</span>
+<span class="sd">- :func:`harmonic_entropy`                     — complexity DataFrame for H / PC / R together</span>
+<span class="sd">- :func:`get_harmonic_ratio`                   — best (n, m) within tolerance for a freq pair</span>
+<span class="sd">- :func:`count_theoretical_harmonic_partners`  — bandwidth-correction helper</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;compute_harmonic_spectrum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;harmonicity_matrices&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;compute_harmonic_power&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_spectral_peaks&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;harmonic_entropy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_harmonic_ratio&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;count_theoretical_harmonic_partners&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_peaks</span><span class="p">,</span> <span class="n">peak_prominences</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">dyad_similarity</span><span class="p">,</span>
+    <span class="n">compute_subharmonic_tension</span><span class="p">,</span>
+    <span class="n">spectral_flatness</span><span class="p">,</span>
+    <span class="n">spectral_entropy</span><span class="p">,</span>
+    <span class="n">spectral_spread</span><span class="p">,</span>
+    <span class="n">higuchi_fd</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">apply_power_law_remove</span><span class="p">,</span>
+    <span class="n">compute_frequency_and_psd</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="compute_harmonic_spectrum">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_spectrum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_spectrum</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">,</span>
+    <span class="n">precision_hz</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">fmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">fmax</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">noverlap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">smoothness</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">smoothness_harm</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">power_law_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">harmonic_kernel</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">,</span>
+    <span class="n">harmonic_kernel_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">bandwidth_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">psd_normalization</span><span class="o">=</span><span class="s2">&quot;minmax_prob&quot;</span><span class="p">,</span>
+    <span class="n">legacy_self_pair_subtract</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the harmonicity spectrum H(f) and its complexity summary.</span>
+
+<span class="sd">    This is the narrow, H-only entry point — replaces the harmonicity portion</span>
+<span class="sd">    of the legacy ``compute_global_harmonicity``. For the full H/PC/R triple</span>
+<span class="sd">    use :func:`biotuner.resonance.compute_resonance`.</span>
+
+<span class="sd">    Under the hood this dispatches the harmonic kernel from the</span>
+<span class="sd">    :mod:`biotuner.resonance` registry, so all kernels added in later phases</span>
+<span class="sd">    (sethares, stolzenburg, harmonic_entropy, hopf, lorentzian) become available</span>
+<span class="sd">    automatically by name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal : 1-D array</span>
+<span class="sd">    precision_hz : float</span>
+<span class="sd">    fmin, fmax : float</span>
+<span class="sd">    fs : int, sampling frequency</span>
+<span class="sd">    noverlap : int, STFT overlap</span>
+<span class="sd">    smoothness : float, divides STFT nperseg</span>
+<span class="sd">    smoothness_harm : float, Gaussian smoothing on H before summary</span>
+<span class="sd">    power_law_remove : bool, FOOOF aperiodic removal</span>
+<span class="sd">    harmonic_kernel : str, name in :data:`biotuner.resonance.registry.HARMONIC_KERNELS`</span>
+<span class="sd">        ``&#39;harmsim&#39;`` (default) | ``&#39;subharm_tension&#39;`` (legacy) | future kernels.</span>
+<span class="sd">    harmonic_kernel_params : dict, passed to the kernel</span>
+<span class="sd">    n_peaks : int, peaks returned by the summary</span>
+<span class="sd">    normalize : bool, legacy normalize flag for the per-bin reducer</span>
+<span class="sd">    bandwidth_correction : bool, legacy bandwidth correction</span>
+<span class="sd">    psd_normalization : &#39;minmax_prob&#39; (legacy) | &#39;prob&#39; | &#39;none&#39;</span>
+<span class="sd">    legacy_self_pair_subtract : bool, reproduce legacy self-pair-subtract reducer</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    freqs : ndarray (n_freqs,)</span>
+<span class="sd">    H_values : ndarray (n_freqs,)  -- the harmonicity spectrum</span>
+<span class="sd">    harmonicity_matrix : ndarray (n_freqs, n_freqs)  -- the kernel similarity matrix</span>
+<span class="sd">    summary : dict</span>
+<span class="sd">        spectrum_complexity output: flatness, entropy, spread, higuchi, peaks,</span>
+<span class="sd">        peak_indices, avg, max, peaks_avg, peak_harmsim, peak_harmsim_avg,</span>
+<span class="sd">        peak_harmsim_max.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; freqs, H, M, summary = compute_harmonic_spectrum(signal, 0.5, fmin=2, fmax=30)</span>
+<span class="sd">    &gt;&gt;&gt; summary[&#39;flatness&#39;], summary[&#39;entropy&#39;], summary[&#39;peaks&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">HARMONIC_KERNELS</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance.coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce_matrix_to_spectrum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">spectrum_complexity</span>
+
+    <span class="k">if</span> <span class="n">harmonic_kernel_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">harmonic_kernel_params</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">freqs</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">compute_frequency_and_psd</span><span class="p">(</span>
+        <span class="n">signal</span><span class="p">,</span> <span class="n">precision_hz</span><span class="p">,</span> <span class="n">smoothness</span><span class="o">=</span><span class="n">smoothness</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="n">noverlap</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="n">fmax</span>
+    <span class="p">)</span>
+    <span class="n">psd_clean</span> <span class="o">=</span> <span class="n">apply_power_law_remove</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">psd</span><span class="p">,</span> <span class="n">power_law_remove</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">psd_normalization</span> <span class="o">==</span> <span class="s2">&quot;minmax_prob&quot;</span><span class="p">:</span>
+        <span class="n">psd_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+        <span class="n">psd_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+        <span class="n">psd_clean</span> <span class="o">=</span> <span class="p">(</span><span class="n">psd_clean</span> <span class="o">-</span> <span class="n">psd_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">psd_max</span> <span class="o">-</span> <span class="n">psd_min</span><span class="p">)</span>
+        <span class="n">psd_prob</span> <span class="o">=</span> <span class="n">psd_clean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">psd_normalization</span> <span class="o">==</span> <span class="s2">&quot;prob&quot;</span><span class="p">:</span>
+        <span class="n">psd_prob</span> <span class="o">=</span> <span class="n">psd_clean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">psd_prob</span> <span class="o">=</span> <span class="n">psd_clean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">harmonic_kernel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HARMONIC_KERNELS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown harmonic_kernel </span><span class="si">{</span><span class="n">harmonic_kernel</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">HARMONIC_KERNELS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">kernel_fn</span> <span class="o">=</span> <span class="n">HARMONIC_KERNELS</span><span class="p">[</span><span class="n">harmonic_kernel</span><span class="p">]</span>
+    <span class="n">harmonicity_matrix</span> <span class="o">=</span> <span class="n">kernel_fn</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="o">**</span><span class="n">harmonic_kernel_params</span><span class="p">)</span>
+
+    <span class="n">H_values</span> <span class="o">=</span> <span class="n">reduce_matrix_to_spectrum</span><span class="p">(</span>
+        <span class="n">harmonicity_matrix</span><span class="p">,</span>
+        <span class="n">psd_prob</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="n">legacy_self_pair_subtract</span><span class="o">=</span><span class="n">legacy_self_pair_subtract</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bandwidth_correction</span><span class="p">:</span>
+        <span class="n">max_possible_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">fmin</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)):</span>
+            <span class="n">n_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">freqs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_partners</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">H_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">max_possible_partners</span> <span class="o">/</span> <span class="n">n_partners</span>
+
+    <span class="k">if</span> <span class="n">smoothness_harm</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">H_values</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="n">smoothness_harm</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">spectrum_complexity</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">H_values</span><span class="p">,</span> <span class="n">harmonicity_matrix</span><span class="p">,</span> <span class="n">summary</span></div>
+
+
+
+<div class="viewcode-block" id="harmonicity_matrices">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonicity_matrices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonicity_matrices</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;harmsim&#39;</span><span class="p">,</span> <span class="n">n_harms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">delta_lim</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">min_notes</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute harmonicity matrix of frequencies.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freqs : ndarray</span>
+<span class="sd">        Array of frequencies.</span>
+<span class="sd">    metric : str, optional</span>
+<span class="sd">        The metric to compute dyad similarity. Default is &#39;harmsim&#39;.</span>
+<span class="sd">    n_harms : int, optional</span>
+<span class="sd">        The number of harmonics. Default is 5.</span>
+<span class="sd">    delta_lim : int, optional</span>
+<span class="sd">        The delta limit. Default is 150.</span>
+<span class="sd">    min_notes : int, optional</span>
+<span class="sd">        The minimum number of notes. Default is 2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The harmonicity matrix.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    biotuner.resonance.kernels_harmonic.kernel_harmsim : new strategy-registry version</span>
+<span class="sd">        with the same numerics, plus support for additional kernels (sethares,</span>
+<span class="sd">        stolzenburg, harmonic_entropy, hopf, lorentzian) in later phases.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">harmonicity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">freqs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">f2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">freqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">f2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;harmsim&#39;</span><span class="p">:</span>
+                    <span class="n">harmonicity</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dyad_similarity</span><span class="p">(</span><span class="n">f1</span> <span class="o">/</span> <span class="n">f2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;subharm_tension&#39;</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">subharm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_subharmonic_tension</span><span class="p">([</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">],</span> <span class="n">n_harmonics</span><span class="o">=</span><span class="n">n_harms</span><span class="p">,</span> <span class="n">delta_lim</span><span class="o">=</span><span class="n">delta_lim</span><span class="p">,</span> <span class="n">min_notes</span><span class="o">=</span><span class="n">min_notes</span><span class="p">)</span>
+                    <span class="n">harmonicity</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">subharm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">harmonicity</span></div>
+
+
+
+<div class="viewcode-block" id="get_harmonic_ratio">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.get_harmonic_ratio">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_harmonic_ratio</span><span class="p">(</span><span class="n">freq_i</span><span class="p">,</span> <span class="n">freq_j</span><span class="p">,</span> <span class="n">max_n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_m</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identify if two frequencies are at an n:m harmonic ratio.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freq_i : float</span>
+<span class="sd">        First frequency.</span>
+<span class="sd">    freq_j : float</span>
+<span class="sd">        Second frequency.</span>
+<span class="sd">    max_n : int, default=3</span>
+<span class="sd">        Maximum value for n in n:m ratio.</span>
+<span class="sd">    max_m : int, default=3</span>
+<span class="sd">        Maximum value for m in n:m ratio.</span>
+<span class="sd">    tolerance : float, default=0.05</span>
+<span class="sd">        Relative tolerance for ratio matching (5%).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple or None</span>
+<span class="sd">        (n, m) if frequencies are harmonically related, None otherwise.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    biotuner.resonance.kernels_ratio.binary_nm_kernel : vectorized version</span>
+<span class="sd">        operating on freq arrays (returns W, N, M matrices).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">freq_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">freq_j</span> <span class="o">/</span> <span class="n">freq_i</span>
+    <span class="n">best_match</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">min_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">expected_ratio</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ratio</span> <span class="o">-</span> <span class="n">expected_ratio</span><span class="p">)</span> <span class="o">/</span> <span class="n">expected_ratio</span>
+            <span class="k">if</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="n">tolerance</span> <span class="ow">and</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="n">min_error</span><span class="p">:</span>
+                <span class="n">min_error</span> <span class="o">=</span> <span class="n">error</span>
+                <span class="n">best_match</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">best_match</span></div>
+
+
+
+<div class="viewcode-block" id="count_theoretical_harmonic_partners">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.count_theoretical_harmonic_partners">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_theoretical_harmonic_partners</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count theoretical maximum number of harmonic partners within bandwidth.</span>
+
+<span class="sd">    This function counts how many frequencies at simple n:m ratios (up to max_ratio)</span>
+<span class="sd">    would fall within the analysis bandwidth [fmin, fmax] for a given frequency.</span>
+<span class="sd">    Lower frequencies have more potential partners, creating systematic bias.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freq : float</span>
+<span class="sd">        The frequency to analyze.</span>
+<span class="sd">    fmin : float</span>
+<span class="sd">        Minimum frequency of analysis bandwidth.</span>
+<span class="sd">    fmax : float</span>
+<span class="sd">        Maximum frequency of analysis bandwidth.</span>
+<span class="sd">    max_ratio : int, default=5</span>
+<span class="sd">        Maximum value for n and m in n:m ratios to consider.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Number of theoretical harmonic partners within bandwidth.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_partners</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_ratio</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_ratio</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">m</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">harmonic_freq</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fmin</span> <span class="o">&lt;=</span> <span class="n">harmonic_freq</span> <span class="o">&lt;=</span> <span class="n">fmax</span><span class="p">:</span>
+                <span class="n">n_partners</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">n_partners</span></div>
+
+
+
+<div class="viewcode-block" id="compute_harmonic_power">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_power">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_harmonic_power</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">dyad_similarities</span><span class="p">,</span> <span class="n">psd_clean</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                          <span class="n">bandwidth_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute harmonicity as probability-weighted average of dyad similarities.</span>
+
+<span class="sd">    The harmonicity of frequency i represents the expected harmonic similarity</span>
+<span class="sd">    with other frequencies, weighted by the joint probability of observing</span>
+<span class="sd">    each frequency pair. This formulation is scale-invariant and not sensitive</span>
+<span class="sd">    to spectral shape or total power distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freqs : ndarray</span>
+<span class="sd">        Array of frequencies.</span>
+<span class="sd">    dyad_similarities : ndarray</span>
+<span class="sd">        Dyad similarities matrix.</span>
+<span class="sd">    psd_clean : ndarray</span>
+<span class="sd">        The cleaned Power Spectral Density (PSD).</span>
+<span class="sd">    normalize : bool, default=True</span>
+<span class="sd">        If True, compute harmonicity as weighted average (recommended).</span>
+<span class="sd">        If False, compute as sum of weighted harmonic contributions.</span>
+<span class="sd">    bandwidth_correction : bool, default=False</span>
+<span class="sd">        If True, apply correction for bandwidth bias where lower frequencies</span>
+<span class="sd">        have more potential harmonic partners within the analysis range.</span>
+<span class="sd">    fmin : float, default=1</span>
+<span class="sd">        Minimum frequency of analysis bandwidth (used for bandwidth correction).</span>
+<span class="sd">    fmax : float, default=30</span>
+<span class="sd">        Maximum frequency of analysis bandwidth (used for bandwidth correction).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of ndarrays</span>
+<span class="sd">        The harmonicity values and the harmonicity matrix.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    biotuner.resonance.coupling.reduce_matrix_to_spectrum : strategy-registry</span>
+<span class="sd">        version supporting both the legacy self-pair-subtract reduction and the</span>
+<span class="sd">        clean off-diagonal-mask reduction recommended for new code.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The weighting uses psd_prob[i] * psd_prob[j] which requires both</span>
+<span class="sd">    frequencies to have high power for high harmonicity contribution.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">psd_prob</span> <span class="o">=</span> <span class="n">psd_clean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+    <span class="n">harmonicity_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">))</span>
+    <span class="n">harmonicity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">harmonicity_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dyad_similarities</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">psd_prob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">psd_prob</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">normalize</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">harmonicity_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">psd_prob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">dyad_similarities</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">psd_prob</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">dyad_similarities</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">psd_prob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># exclude self-pair</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">harmonicity_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">harmonicity_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="k">if</span> <span class="n">bandwidth_correction</span><span class="p">:</span>
+        <span class="n">max_possible_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">fmin</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)):</span>
+            <span class="n">n_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">freqs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_partners</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">correction</span> <span class="o">=</span> <span class="n">max_possible_partners</span> <span class="o">/</span> <span class="n">n_partners</span>
+                <span class="n">harmonicity_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">harmonicity_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">correction</span>
+    <span class="k">return</span> <span class="n">harmonicity_values</span><span class="p">,</span> <span class="n">harmonicity_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="find_spectral_peaks">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.find_spectral_peaks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_spectral_peaks</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identify the prominent spectral peaks in a frequency spectrum.</span>
+
+<span class="sd">    This function uses the peak prominence to select the most notable peaks,</span>
+<span class="sd">    and returns their frequencies and indices. Prominence is a measure of how</span>
+<span class="sd">    much a peak stands out due to its intrinsic height and its location relative</span>
+<span class="sd">    to other peaks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : array_like</span>
+<span class="sd">        1-D array of values for the frequency spectrum.</span>
+<span class="sd">    freqs : array_like</span>
+<span class="sd">        1-D array of frequencies corresponding to the values in &#39;values&#39;.</span>
+<span class="sd">    n_peaks : int</span>
+<span class="sd">        The number of top prominent peaks to return.</span>
+<span class="sd">    prominence_threshold : float, default=0.5</span>
+<span class="sd">        The minimum prominence a peak must have to be considered notable.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    peak_frequencies : ndarray</span>
+<span class="sd">        Frequencies of the &#39;n_peaks&#39; most prominent peaks.</span>
+<span class="sd">    prominent_peaks : ndarray</span>
+<span class="sd">        Indices in &#39;values&#39; and &#39;freqs&#39; of the &#39;n_peaks&#39; most prominent peaks.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    scipy.signal.find_peaks</span>
+<span class="sd">    scipy.signal.peak_prominences</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; values = np.array([0, 1, 0, 2, 0, 3, 0, 2, 0, 1, 0])</span>
+<span class="sd">    &gt;&gt;&gt; freqs = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110])</span>
+<span class="sd">    &gt;&gt;&gt; find_spectral_peaks(values, freqs, n_peaks=3)</span>
+<span class="sd">    (array([60, 40, 80]), array([5, 3, 7]))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">peaks</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">prominences</span> <span class="o">=</span> <span class="n">peak_prominences</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">peaks</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">filtered_peak_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prominences</span> <span class="o">&gt;</span> <span class="n">prominence_threshold</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sorted_peak_indices</span> <span class="o">=</span> <span class="n">prominences</span><span class="p">[</span><span class="n">filtered_peak_indices</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="o">-</span><span class="n">n_peaks</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">prominent_peaks</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="n">filtered_peak_indices</span><span class="p">[</span><span class="n">sorted_peak_indices</span><span class="p">]]</span>
+    <span class="n">peak_frequencies</span> <span class="o">=</span> <span class="n">freqs</span><span class="p">[</span><span class="n">prominent_peaks</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">peak_frequencies</span><span class="p">,</span> <span class="n">prominent_peaks</span></div>
+
+
+
+<div class="viewcode-block" id="harmonic_entropy">
+<a class="viewcode-back" href="../../api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_entropy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_entropy</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">harmonicity_values</span><span class="p">,</span> <span class="n">phase_coupling_values</span><span class="p">,</span> <span class="n">resonance_values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute spectral features and Higuchi Fractal Dimension of Harmonicity, Phase Coupling, and Resonance spectra.</span>
+
+<span class="sd">    This function calculates several spectral properties: flatness, entropy, spread, and Higuchi Fractal Dimension</span>
+<span class="sd">    for three input spectra: Harmonicity, Phase Coupling, and Resonance. Results are returned as a pandas DataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freqs : array_like</span>
+<span class="sd">        1-D array of frequencies common for all the spectra.</span>
+<span class="sd">    harmonicity_values : array_like</span>
+<span class="sd">        1-D array of spectral values for the Harmonicity spectrum.</span>
+<span class="sd">    phase_coupling_values : array_like</span>
+<span class="sd">        1-D array of spectral values for the Phase Coupling spectrum.</span>
+<span class="sd">    resonance_values : array_like</span>
+<span class="sd">        1-D array of spectral values for the Resonance spectrum.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    harmonic_complexity : DataFrame</span>
+<span class="sd">        A pandas DataFrame with spectral flatness, entropy, spread, and Higuchi Fractal Dimension</span>
+<span class="sd">        for each of the Harmonicity, Phase Coupling, and Resonance spectra.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    biotuner.metrics.spectrum_complexity : single-spectrum version returning a dict;</span>
+<span class="sd">        used by both this function and the resonance orchestrator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SpecFlat_harmonicity</span> <span class="o">=</span> <span class="n">spectral_flatness</span><span class="p">(</span><span class="n">harmonicity_values</span><span class="p">)</span>
+    <span class="n">SpecFlat_phase_coupling</span> <span class="o">=</span> <span class="n">spectral_flatness</span><span class="p">(</span><span class="n">phase_coupling_values</span><span class="p">)</span>
+    <span class="n">SpecFlat_resonance</span> <span class="o">=</span> <span class="n">spectral_flatness</span><span class="p">(</span><span class="n">resonance_values</span><span class="p">)</span>
+
+    <span class="n">SpecEnt_harmonicity</span> <span class="o">=</span> <span class="n">spectral_entropy</span><span class="p">(</span><span class="n">harmonicity_values</span><span class="p">)</span>
+    <span class="n">SpecEnt_phase_coupling</span> <span class="o">=</span> <span class="n">spectral_entropy</span><span class="p">(</span><span class="n">phase_coupling_values</span><span class="p">)</span>
+    <span class="n">SpecEnt_resonance</span> <span class="o">=</span> <span class="n">spectral_entropy</span><span class="p">(</span><span class="n">resonance_values</span><span class="p">)</span>
+
+    <span class="n">SpecSpread_harmonicity</span> <span class="o">=</span> <span class="n">spectral_spread</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">harmonicity_values</span><span class="p">)</span>
+    <span class="n">SpecSpread_phase_coupling</span> <span class="o">=</span> <span class="n">spectral_spread</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">phase_coupling_values</span><span class="p">)</span>
+    <span class="n">SpecSpread_resonance</span> <span class="o">=</span> <span class="n">spectral_spread</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">resonance_values</span><span class="p">)</span>
+
+    <span class="n">HFD_harmonicity</span> <span class="o">=</span> <span class="n">higuchi_fd</span><span class="p">(</span><span class="n">harmonicity_values</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">HFD_phase_coupling</span> <span class="o">=</span> <span class="n">higuchi_fd</span><span class="p">(</span><span class="n">phase_coupling_values</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">HFD_resonance</span> <span class="o">=</span> <span class="n">higuchi_fd</span><span class="p">(</span><span class="n">resonance_values</span><span class="p">,</span> <span class="n">kmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">harmonic_complexity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;Spectral Flatness&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">SpecFlat_harmonicity</span><span class="p">,</span> <span class="n">SpecFlat_phase_coupling</span><span class="p">,</span> <span class="n">SpecFlat_resonance</span><span class="p">],</span>
+            <span class="s1">&#39;Spectral Entropy&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">SpecEnt_harmonicity</span><span class="p">,</span> <span class="n">SpecEnt_phase_coupling</span><span class="p">,</span> <span class="n">SpecEnt_resonance</span><span class="p">],</span>
+            <span class="s1">&#39;Spectral Spread&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">SpecSpread_harmonicity</span><span class="p">,</span> <span class="n">SpecSpread_phase_coupling</span><span class="p">,</span> <span class="n">SpecSpread_resonance</span><span class="p">],</span>
+            <span class="s1">&#39;Higuchi Fractal Dimension&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">HFD_harmonicity</span><span class="p">,</span> <span class="n">HFD_phase_coupling</span><span class="p">,</span> <span class="n">HFD_resonance</span><span class="p">],</span>
+        <span class="p">},</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Harmonicity&#39;</span><span class="p">,</span> <span class="s1">&#39;Phase Coupling&#39;</span><span class="p">,</span> <span class="s1">&#39;Resonance&#39;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">harmonic_complexity</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

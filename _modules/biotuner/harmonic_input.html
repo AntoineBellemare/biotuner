@@ -1,0 +1,1385 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_input &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_input';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_input</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Canonical &quot;tuning + acoustic context&quot; descriptor for the biotuner toolbox.</span>
+
+<span class="sd">:class:`HarmonicInput` is the unified per-frame harmonic descriptor consumed</span>
+<span class="sd">by every module that wants a tuning to work from — geometry routines,</span>
+<span class="sd">the timbre adapter, the engine backend, downstream exporters. Originally</span>
+<span class="sd">this lived inside :mod:`biotuner.harmonic_geometry.inputs` because geometry</span>
+<span class="sd">was its only consumer; promoting it to the top level keeps import graphs</span>
+<span class="sd">clean (modules that aren&#39;t doing geometry don&#39;t have to depend on</span>
+<span class="sd">``harmonic_geometry`` just to read the descriptor format).</span>
+
+<span class="sd">:class:`HarmonicSequence` is a time-resolved list of :class:`HarmonicInput`</span>
+<span class="sd">frames, used for animation / morphing pipelines and naturally paired with</span>
+<span class="sd">the output of ``biotuner.transitional_harmony`` or</span>
+<span class="sd">``biotuner.harmonic_sequence``.</span>
+
+<span class="sd">:data:`SCALE_ATTRS` is the canonical vocabulary mapping HarmonicInput-side</span>
+<span class="sd">scale labels to ``compute_biotuner`` attribute names — used by</span>
+<span class="sd">:meth:`HarmonicInput.from_biotuner` to walk scale priorities and populate</span>
+<span class="sd">:attr:`HarmonicInput.ratios_alternates`.</span>
+
+<span class="sd">Backward compatibility: ``from biotuner.harmonic_geometry.inputs import</span>
+<span class="sd">HarmonicInput`` still works (the old location is now a thin re-export of</span>
+<span class="sd">this module).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># NOTE: helpers from biotuner.harmonic_geometry._utils are imported LAZILY</span>
+<span class="c1"># inside the methods that need them — see __post_init__, to_peaks, etc.</span>
+<span class="c1"># Doing it eagerly here would force importing biotuner.harmonic_geometry,</span>
+<span class="c1"># whose __init__.py re-imports HarmonicInput from this module via the</span>
+<span class="c1"># back-compat shim biotuner/harmonic_geometry/inputs.py, creating a</span>
+<span class="c1"># circular import on first load. Lazy = no cycle.</span>
+
+<span class="n">RatioLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Canonical scale vocabulary.</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1"># Mapping of HarmonicInput-side scale labels → biotuner attribute names. The</span>
+<span class="c1"># left column is what gets stored in :attr:`HarmonicInput.ratios_source` and</span>
+<span class="c1"># what keys the :attr:`HarmonicInput.ratios_alternates` dict; the right</span>
+<span class="c1"># column is what&#39;s actually looked up on a ``compute_biotuner`` instance.</span>
+<span class="c1">#</span>
+<span class="c1"># The order is also the default ``scale_priority`` used by</span>
+<span class="c1"># :meth:`HarmonicInput.from_biotuner` — first non-empty wins. To add a new</span>
+<span class="c1"># scale type, add one row here and every downstream consumer can opt into</span>
+<span class="c1"># it immediately.</span>
+<span class="n">SCALE_ATTRS</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># (HarmonicInput key, biotuner attribute name)</span>
+    <span class="p">(</span><span class="s2">&quot;peaks_ratios_cons&quot;</span><span class="p">,</span>          <span class="s2">&quot;peaks_ratios_cons&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span>               <span class="s2">&quot;peaks_ratios&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;extended_peaks_ratios_cons&quot;</span><span class="p">,</span> <span class="s2">&quot;extended_peaks_ratios_cons&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;extended_peaks_ratios&quot;</span><span class="p">,</span>      <span class="s2">&quot;extended_peaks_ratios&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;diss_scale&quot;</span><span class="p">,</span>                 <span class="s2">&quot;diss_scale&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;HE&quot;</span><span class="p">,</span>                         <span class="s2">&quot;HE_scale&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;euler_fokker&quot;</span><span class="p">,</span>               <span class="s2">&quot;euler_fokker&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;harm_tuning&quot;</span><span class="p">,</span>                <span class="s2">&quot;harm_tuning_scale&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;harm_fit&quot;</span><span class="p">,</span>                   <span class="s2">&quot;harm_fit_tuning_scale&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">SCALE_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">SCALE_ATTRS</span><span class="p">]</span>
+<span class="n">_SCALE_KEY_TO_ATTR</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">SCALE_ATTRS</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_scale_values</span><span class="p">(</span><span class="n">bt</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return ``bt.&lt;attr_name&gt;`` as a non-empty list of floats, or None.</span>
+
+<span class="sd">    Centralised so the (handle-missing / handle-empty / cast-to-float) logic</span>
+<span class="sd">    is in one place. None means &quot;this scale isn&#39;t usable on this bt&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="c1"># Ratios must be strictly positive and finite.</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="HarmonicInput">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HarmonicInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unified harmonic input.</span>
+
+<span class="sd">    At least one of ``ratios`` or ``peaks`` must be provided. All list-typed</span>
+<span class="sd">    optional fields, if given, must have lengths matching the number of</span>
+<span class="sd">    components (``len(ratios)`` or ``len(peaks)``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratios : list of Fraction or float, optional</span>
+<span class="sd">        Frequency ratios. Coerced to :class:`~fractions.Fraction` when a</span>
+<span class="sd">        rational approximation within :data:`DEFAULT_MAX_DENOMINATOR` exists.</span>
+<span class="sd">    peaks : list of float, optional</span>
+<span class="sd">        Peak frequencies in Hz.</span>
+<span class="sd">    amplitudes : list of float, optional</span>
+<span class="sd">        Linear (not dB) amplitudes per component. Defaults to uniform.</span>
+<span class="sd">    phases : list of float, optional</span>
+<span class="sd">        Phase per component, in radians. Defaults to zeros.</span>
+<span class="sd">    damping : list of float, optional</span>
+<span class="sd">        Decay rate (1/s) per component. Defaults to zeros.</span>
+<span class="sd">    base_freq : float, default=1.0</span>
+<span class="sd">        Reference frequency in Hz. Used when ``ratios`` are given without</span>
+<span class="sd">        ``peaks`` to recover absolute frequencies.</span>
+<span class="sd">    equave : float, default=2.0</span>
+<span class="sd">        Equave width: ``2.0`` for octaves, ``3.0`` for tritaves, etc. Must</span>
+<span class="sd">        be greater than 1.</span>
+<span class="sd">    metadata : dict</span>
+<span class="sd">        Free-form annotations preserved across constructors and</span>
+<span class="sd">        validation.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Validation is invoked by :meth:`__post_init__`; constructing an</span>
+<span class="sd">    inconsistent :class:`HarmonicInput` raises :class:`ValueError`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ratios</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">peaks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">amplitudes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">phases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">damping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">base_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Tier-A additions ----------------------------------------</span>
+    <span class="c1"># Per-partial Lorentzian half-widths in Hz. Optional. When present,</span>
+    <span class="c1"># consumers like Timbre derive decay_times via 1/(π·linewidth).</span>
+    <span class="n">linewidths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Raw spectrum context. freqs and psd MUST have matching length when</span>
+    <span class="c1"># either is provided; both can stay None for descriptor-only inputs.</span>
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">psd</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Spectrum producer, e.g. &#39;fft&#39; / &#39;multitaper&#39; / &#39;welch&#39;. Free-form</span>
+    <span class="c1"># string; consumers can match exact values they recognise.</span>
+    <span class="n">spectrum_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># FOOOF-style 1/f slope from aperiodic component fitting. Maps to</span>
+    <span class="c1"># Timbre.spectral_tilt.</span>
+    <span class="n">aperiodic_exponent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Spectral flatness / entropy estimate in [0, 1]. Maps to</span>
+    <span class="c1"># Timbre.noise_floor.</span>
+    <span class="n">spectral_flatness</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Provenance: which scale source was used for `ratios`. Defaults to</span>
+    <span class="c1"># &quot;peaks&quot; — the historical implicit behaviour. Set explicitly by</span>
+    <span class="c1"># `from_biotuner` when the canonical ratios came from a derived</span>
+    <span class="c1"># scale (e.g. &quot;peaks_ratios_cons&quot;, &quot;HE&quot;, &quot;euler_fokker&quot;).</span>
+    <span class="n">ratios_source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;peaks&quot;</span>
+    <span class="c1"># Other available scales from the source biotuner object, keyed by</span>
+    <span class="c1"># the same vocabulary as `ratios_source` (see SCALE_ATTRS). Lets a</span>
+    <span class="c1"># downstream tool present a &quot;switch scale&quot; UI without rebuilding the</span>
+    <span class="c1"># HarmonicInput, or compare scales side-by-side.</span>
+    <span class="n">ratios_alternates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># Tolerance (relative) when checking peaks vs ratios * base_freq.</span>
+    <span class="n">_CONSISTENCY_RTOL</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Coerce ratios eagerly so all downstream code sees a uniform type.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="o">=</span> <span class="n">coerce_ratios</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phases</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">phases</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">damping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">damping</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">damping</span><span class="p">]</span>
+        <span class="c1"># Tier-A coercions</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">psd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">psd</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">psd</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_exponent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_exponent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span><span class="p">)</span>
+        <span class="c1"># ratios_alternates: ensure values are list[float]; drop empties.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios_alternates</span><span class="p">:</span>
+            <span class="n">cleaned</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios_alternates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">arr</span><span class="p">:</span>
+                    <span class="n">cleaned</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">arr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ratios_alternates</span> <span class="o">=</span> <span class="n">cleaned</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="c1"># ------------------------------------------------------------- properties</span>
+
+<div class="viewcode-block" id="HarmonicInput.n_components">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.n_components">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_components</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of harmonic components.</span>
+
+<span class="sd">        Resolved from ``ratios`` first, then ``peaks``. At least one of the</span>
+<span class="sd">        two is guaranteed to be present after :meth:`validate`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># unreachable — validate() rejects this case</span></div>
+
+
+    <span class="c1"># -------------------------------------------------------------- accessors</span>
+
+<div class="viewcode-block" id="HarmonicInput.to_peaks">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.to_peaks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return absolute peak frequencies in Hz as a 1-D ``float64`` array.</span>
+
+<span class="sd">        If ``peaks`` is set, those values are returned directly. Otherwise</span>
+<span class="sd">        peaks are reconstructed as ``base_freq * ratios``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span> <span class="o">*</span> <span class="n">ratios_to_floats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HarmonicInput.to_ratios">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.to_ratios">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_ratios</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ratios.</span>
+
+<span class="sd">        If ``ratios`` is set, those values are returned. Otherwise ratios are</span>
+<span class="sd">        derived as ``peaks / base_freq`` and coerced to :class:`Fraction`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coerce_ratios</span><span class="p">([</span><span class="n">p</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="HarmonicInput.normalized_amplitudes">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.normalized_amplitudes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalized_amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return amplitudes scaled to sum to 1.</span>
+
+<span class="sd">        If ``amplitudes`` is ``None``, returns a uniform distribution over</span>
+<span class="sd">        the components.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">normalize_amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">)</span></div>
+
+
+    <span class="c1"># -------------------------------------------------------------- validate</span>
+
+<div class="viewcode-block" id="HarmonicInput.validate">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise :class:`ValueError` if the input is internally inconsistent.</span>
+
+<span class="sd">        Checked invariants:</span>
+
+<span class="sd">        * at least one of ``ratios`` / ``peaks`` is given,</span>
+<span class="sd">        * ``equave &gt; 1`` and ``base_freq &gt; 0``,</span>
+<span class="sd">        * all list-typed fields have matching lengths,</span>
+<span class="sd">        * all amplitudes are non-negative,</span>
+<span class="sd">        * all peaks are positive,</span>
+<span class="sd">        * if both ``ratios`` and ``peaks`` are given, they agree up to</span>
+<span class="sd">          ``base_freq`` within a small relative tolerance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;HarmonicInput requires at least one of `ratios` or `peaks`.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equave</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;equave must be &gt; 1, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">equave</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base_freq must be &gt; 0, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;ratios&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;peaks&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;amplitudes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;phases&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phases</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;damping&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">damping</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;linewidths&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="si">}</span><span class="s2"> but expected </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;(must match n_components).&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All amplitudes must be non-negative.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All peaks must be strictly positive.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linewidths</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All linewidths must be non-negative.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Spectrum: freqs and psd must either both be present or both absent;</span>
+        <span class="c1"># if present, they must have matching length. NOT tied to n_components.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freqs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;`freqs` and `psd` must be provided together or both omitted.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">psd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freqs</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psd</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;`freqs` (len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freqs</span><span class="p">)</span><span class="si">}</span><span class="s2">) and `psd` &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(len </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psd</span><span class="p">)</span><span class="si">}</span><span class="s2">) must have matching length.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;spectral_flatness must be in [0, 1], got &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spectral_flatness</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">peaks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ratios_f</span> <span class="o">=</span> <span class="n">ratios_to_floats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span>
+            <span class="n">peaks_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">implied_peaks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span> <span class="o">*</span> <span class="n">ratios_f</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">implied_peaks</span><span class="p">,</span> <span class="n">peaks_f</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONSISTENCY_RTOL</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;ratios and peaks are inconsistent given base_freq=&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_freq</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;base_freq * ratios = </span><span class="si">{</span><span class="n">implied_peaks</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but peaks = </span><span class="si">{</span><span class="n">peaks_f</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------ constructors</span>
+
+<div class="viewcode-block" id="HarmonicInput.from_ratios">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.from_ratios">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_ratios</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">ratios</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RatioLike</span><span class="p">],</span>
+        <span class="n">base_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">amplitudes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">phases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">damping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HarmonicInput&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a sequence of ratios.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">ratios</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ratios</span><span class="p">),</span>
+            <span class="n">base_freq</span><span class="o">=</span><span class="n">base_freq</span><span class="p">,</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">)</span> <span class="k">if</span> <span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">phases</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span> <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">damping</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">damping</span><span class="p">)</span> <span class="k">if</span> <span class="n">damping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">equave</span><span class="o">=</span><span class="n">equave</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="p">{},</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HarmonicInput.from_peaks">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.from_peaks">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_peaks</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">peaks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">base_freq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">amplitudes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">phases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">damping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HarmonicInput&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a sequence of peak frequencies in Hz.</span>
+
+<span class="sd">        If ``base_freq`` is ``None`` it is set to the smallest peak so that</span>
+<span class="sd">        the implied ratio of the lowest component is exactly 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">peaks_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">peaks_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`peaks` must be non-empty.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">base_freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base_freq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">peaks_list</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">peaks</span><span class="o">=</span><span class="n">peaks_list</span><span class="p">,</span>
+            <span class="n">base_freq</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">base_freq</span><span class="p">),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">)</span> <span class="k">if</span> <span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">phases</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span> <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">damping</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">damping</span><span class="p">)</span> <span class="k">if</span> <span class="n">damping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">equave</span><span class="o">=</span><span class="n">equave</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="p">{},</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HarmonicInput.from_biotuner">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicInput.from_biotuner">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_biotuner</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">bt</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">scale_priority</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">include_alternates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">include_spectrum</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">include_fooof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HarmonicInput&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a fitted :class:`compute_biotuner` instance.</span>
+
+<span class="sd">        Two selection modes for the canonical ``ratios``:</span>
+
+<span class="sd">        * **Legacy mode** (``scale_priority`` is ``None``, the default) —</span>
+<span class="sd">          reproduces the historical behaviour exactly: pulls ``peaks``</span>
+<span class="sd">          (required), ``amps`` when length-aligned, and uses</span>
+<span class="sd">          ``peaks_ratios`` as the canonical ratios when it&#39;s 1:1 aligned</span>
+<span class="sd">          with peaks. ``ratios_source`` is set to ``&quot;peaks&quot;`` and</span>
+<span class="sd">          ``ratios_alternates`` is left empty so existing callers see no</span>
+<span class="sd">          schema change.</span>
+
+<span class="sd">        * **Scale-priority mode** (``scale_priority`` provided) — walks</span>
+<span class="sd">          the priority list in order (using the canonical names from</span>
+<span class="sd">          :data:`SCALE_KEYS`), picks the first non-empty scale as</span>
+<span class="sd">          ``ratios``, records its label in ``ratios_source``. When</span>
+<span class="sd">          ``include_alternates=True`` (default), every other non-empty</span>
+<span class="sd">          scale found on ``bt`` is stored in ``ratios_alternates`` under</span>
+<span class="sd">          the same canonical name. Amplitudes / linewidths are populated</span>
+<span class="sd">          only if their lengths align with the chosen scale.</span>
+
+<span class="sd">        Tier-A spectral context is populated regardless of mode:</span>
+
+<span class="sd">        * ``freqs`` / ``psd`` / ``spectrum_method`` (when ``include_spectrum``)</span>
+<span class="sd">        * ``aperiodic_exponent`` / ``linewidths`` (when ``include_fooof``)</span>
+<span class="sd">        * ``spectral_flatness`` (always, if available)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bt : compute_biotuner</span>
+<span class="sd">            A fitted biotuner object on which ``peaks_extraction`` has</span>
+<span class="sd">            been called.</span>
+<span class="sd">        equave : float, default=2.0</span>
+<span class="sd">        scale_priority : sequence of str, optional</span>
+<span class="sd">            Ordered preference for ``ratios``. Values must come from</span>
+<span class="sd">            :data:`SCALE_KEYS`. Unknown keys raise :class:`ValueError`.</span>
+<span class="sd">        include_alternates : bool, default=True</span>
+<span class="sd">            In scale-priority mode, populate ``ratios_alternates`` with</span>
+<span class="sd">            every other non-empty scale found on ``bt``. Ignored in</span>
+<span class="sd">            legacy mode.</span>
+<span class="sd">        include_spectrum : bool, default=True</span>
+<span class="sd">            Copy ``bt.freqs`` / ``bt.psd`` / ``bt.spectrum_method`` if</span>
+<span class="sd">            available.</span>
+<span class="sd">        include_fooof : bool, default=True</span>
+<span class="sd">            Copy ``bt.aperiodic_exponent`` and a length-aligned</span>
+<span class="sd">            ``bt.linewidth`` if available.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If ``bt`` lacks a ``peaks`` attribute.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``bt.peaks`` is empty, or ``scale_priority`` contains an</span>
+<span class="sd">            unknown key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;peaks&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Object passed to from_biotuner has no `peaks` attribute. &quot;</span>
+                <span class="s2">&quot;Did you call peaks_extraction()?&quot;</span>
+            <span class="p">)</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Biotuner object has no peaks (empty array).&quot;</span><span class="p">)</span>
+
+        <span class="n">amps_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;amps&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">amps_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">amps_from_db</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">amps_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">amps_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">amps_attr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">amps_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+                <span class="c1"># `amplitudes` is contracted to be linear and non-negative (see</span>
+                <span class="c1"># the dataclass docstring, validate(), and normalize_amplitudes,</span>
+                <span class="c1"># which divides by the sum and treats a non-positive sum as</span>
+                <span class="c1"># &quot;no information&quot;). compute_biotuner stores the spectrum in dB</span>
+                <span class="c1"># (psd = 10*log10(power); see compute_peaks_ts), so peak</span>
+                <span class="c1"># amplitudes read off it are routinely negative. A negative</span>
+                <span class="c1"># value is impossible for a linear magnitude, so we treat the</span>
+                <span class="c1"># whole array as dB power and convert it back to linear power</span>
+                <span class="c1"># (10**(dB/10)): this is non-negative, preserves the relative</span>
+                <span class="c1"># loudness ordering, and normalises sensibly. Non-finite amps</span>
+                <span class="c1"># are unusable and dropped (downstream falls back to uniform).</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">amps_arr</span><span class="p">)):</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s2">&quot;Dropping bt.amps: contains non-finite values; &quot;</span>
+                        <span class="s2">&quot;downstream consumers will use uniform amplitudes.&quot;</span><span class="p">,</span>
+                        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">amps_arr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">amps_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">amps_arr</span><span class="p">]</span>
+                    <span class="n">amps_from_db</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">amps_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">amps_arr</span><span class="p">]</span>
+
+        <span class="n">base_freq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">peaks</span><span class="p">))</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;compute_biotuner&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">amps_from_db</span><span class="p">:</span>
+            <span class="c1"># Record that amplitudes were converted from biotuner&#39;s dB spectrum.</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;amplitudes_scale&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;linear_from_db&quot;</span>
+
+        <span class="c1"># ---------------- Canonical ratios selection ----------------------</span>
+        <span class="n">canonical_ratios</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">canonical_peaks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">peaks</span>
+        <span class="n">ratios_source</span> <span class="o">=</span> <span class="s2">&quot;peaks&quot;</span>
+        <span class="n">ratios_alternates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">canonical_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">scale_priority</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Legacy path — identical behaviour to the pre-extension code.</span>
+            <span class="n">ratios_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ratios_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ratios_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ratios_attr</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">ratios_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+                    <span class="n">canonical_ratios</span> <span class="o">=</span> <span class="n">coerce_ratios</span><span class="p">(</span>
+                        <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios_arr</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">canonical_peaks</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># avoid consistency conflict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Scale-priority path — walk SCALE_ATTRS in user order.</span>
+            <span class="n">unknown</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">scale_priority</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_SCALE_KEY_TO_ATTR</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unknown scale_priority keys: </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid keys: </span><span class="si">{</span><span class="n">SCALE_KEYS</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">chosen_key</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">chosen_vals</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scale_priority</span><span class="p">:</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="n">_SCALE_KEY_TO_ATTR</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">_get_scale_values</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">chosen_key</span> <span class="o">=</span> <span class="n">key</span>
+                    <span class="n">chosen_vals</span> <span class="o">=</span> <span class="n">vals</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">chosen_vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Adopt the chosen scale as canonical ratios. If it</span>
+                <span class="c1"># aligns with peaks 1:1, also clear `peaks` to avoid the</span>
+                <span class="c1"># base_freq * ratios consistency check (same trick as the</span>
+                <span class="c1"># legacy path).</span>
+                <span class="n">canonical_ratios</span> <span class="o">=</span> <span class="n">coerce_ratios</span><span class="p">(</span><span class="n">chosen_vals</span><span class="p">)</span>
+                <span class="n">ratios_source</span> <span class="o">=</span> <span class="n">chosen_key</span>
+                <span class="n">canonical_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chosen_vals</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chosen_vals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+                    <span class="n">canonical_peaks</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">canonical_peaks</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># only ratios are canonical</span>
+                <span class="c1"># Amps only travel if they happen to match the chosen scale.</span>
+                <span class="k">if</span> <span class="n">amps_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">amps_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">canonical_n</span><span class="p">:</span>
+                    <span class="n">amps_list</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">include_alternates</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">SCALE_ATTRS</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ratios_source</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">vals</span> <span class="o">=</span> <span class="n">_get_scale_values</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">ratios_alternates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
+
+        <span class="c1"># ---------------- Tier-A spectral context -------------------------</span>
+        <span class="n">freqs_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">psd_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spectrum_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">include_spectrum</span><span class="p">:</span>
+            <span class="n">f_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;freqs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">p_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;psd&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">p_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">f_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_attr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                    <span class="n">p_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p_attr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">f_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">f_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">p_arr</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                        <span class="n">freqs_list</span> <span class="o">=</span> <span class="n">f_arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                        <span class="n">psd_list</span> <span class="o">=</span> <span class="n">p_arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="n">sm_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;spectrum_method&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sm_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">spectrum_method</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sm_attr</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">spectrum_method</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># ---------------- FOOOF -------------------------------------------</span>
+        <span class="n">aperiodic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">linewidths_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">include_fooof</span><span class="p">:</span>
+            <span class="n">ap_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;aperiodic_exponent&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ap_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;aperiodic_params&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="n">ap_attr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+                        <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">ap_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ap_attr</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">aperiodic</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">pass</span>
+            <span class="c1"># linewidths: only attach when length matches canonical n</span>
+            <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;linewidth&quot;</span><span class="p">,</span> <span class="s2">&quot;peaks_linewidth&quot;</span><span class="p">,</span> <span class="s2">&quot;fooof_linewidth&quot;</span><span class="p">):</span>
+                <span class="n">lw_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">cand</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">lw_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">lw_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lw_attr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">lw_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">canonical_n</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lw_arr</span><span class="p">)):</span>
+                    <span class="n">linewidths_list</span> <span class="o">=</span> <span class="n">lw_arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># ---------------- Spectral flatness / noise estimate --------------</span>
+        <span class="n">sf_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;spectral_flatness&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sf_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sf_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;spectral_entropy&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">spectral_flatness</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">sf_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sf_attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="n">spectral_flatness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">ratios</span><span class="o">=</span><span class="n">canonical_ratios</span><span class="p">,</span>
+            <span class="n">peaks</span><span class="o">=</span><span class="n">canonical_peaks</span><span class="p">,</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">amps_list</span><span class="p">,</span>
+            <span class="n">base_freq</span><span class="o">=</span><span class="n">base_freq</span><span class="p">,</span>
+            <span class="n">equave</span><span class="o">=</span><span class="n">equave</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="n">linewidths</span><span class="o">=</span><span class="n">linewidths_list</span><span class="p">,</span>
+            <span class="n">freqs</span><span class="o">=</span><span class="n">freqs_list</span><span class="p">,</span>
+            <span class="n">psd</span><span class="o">=</span><span class="n">psd_list</span><span class="p">,</span>
+            <span class="n">spectrum_method</span><span class="o">=</span><span class="n">spectrum_method</span><span class="p">,</span>
+            <span class="n">aperiodic_exponent</span><span class="o">=</span><span class="n">aperiodic</span><span class="p">,</span>
+            <span class="n">spectral_flatness</span><span class="o">=</span><span class="n">spectral_flatness</span><span class="p">,</span>
+            <span class="n">ratios_source</span><span class="o">=</span><span class="n">ratios_source</span><span class="p">,</span>
+            <span class="n">ratios_alternates</span><span class="o">=</span><span class="n">ratios_alternates</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="HarmonicSequence">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HarmonicSequence</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Time-resolved sequence of :class:`HarmonicInput` frames.</span>
+
+<span class="sd">    Pairs naturally with the output of ``biotuner.transitional_harmony`` and</span>
+<span class="sd">    ``biotuner.harmonic_sequence``: each window&#39;s peaks become a frame here,</span>
+<span class="sd">    and downstream geometry functions can be applied frame-by-frame via</span>
+<span class="sd">    ``transformations.geometry_sequence``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frames : list of HarmonicInput</span>
+<span class="sd">        At least one frame is required.</span>
+<span class="sd">    times : ndarray, optional</span>
+<span class="sd">        Time of each frame in seconds. If ``None``, frames are assumed to</span>
+<span class="sd">        be uniformly spaced at unit intervals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">HarmonicInput</span><span class="p">]</span>
+    <span class="n">times</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;HarmonicSequence requires at least one frame.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;times must be a 1-D array.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;times has length </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> but there are &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;times must be non-decreasing.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># -------------------------------------------------------------- accessors</span>
+
+<div class="viewcode-block" id="HarmonicSequence.n_frames">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence.n_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of frames in the sequence.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_times</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HarmonicSequence.at">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence.at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HarmonicInput</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the frame nearest to time ``t``.&quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_times</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">times</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">))))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="HarmonicSequence.interpolate">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence.interpolate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;log&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HarmonicInput</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a :class:`HarmonicInput` interpolated to time ``t``.</span>
+
+<span class="sd">        Currently supports two-frame interpolation between the bracketing</span>
+<span class="sd">        frames. ``mode`` selects the space in which ratios / peaks are</span>
+<span class="sd">        blended:</span>
+
+<span class="sd">        * ``&#39;log&#39;`` (default) — logarithmic, musically correct,</span>
+<span class="sd">        * ``&#39;linear&#39;`` — straight linear interpolation,</span>
+<span class="sd">        * ``&#39;nearest&#39;`` — return the nearest frame (no blending).</span>
+
+<span class="sd">        Frames must have equal ``n_components``; if they do not, this</span>
+<span class="sd">        raises :class:`ValueError`. Richer interpolation (mismatched</span>
+<span class="sd">        component counts, phase wrapping, etc.) is the job of</span>
+<span class="sd">        ``transformations.interpolate_input`` in Phase 6.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;nearest&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;mode must be &#39;log&#39;, &#39;linear&#39;, or &#39;nearest&#39;; got </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_times</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;nearest&quot;</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Bracket: largest i such that times[i] &lt;= t &lt; times[i + 1].</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">t0</span><span class="p">,</span> <span class="n">t1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">t1</span> <span class="o">==</span> <span class="n">t0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span>
+
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">n_components</span><span class="p">()</span> <span class="o">!=</span> <span class="n">b</span><span class="o">.</span><span class="n">n_components</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Bracketing frames have different n_components &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">n_components</span><span class="p">()</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">n_components</span><span class="p">()</span><span class="si">}</span><span class="s2">); component-count &quot;</span>
+                <span class="s2">&quot;mismatch handling lives in transformations.interpolate_input.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">peaks_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">to_peaks</span><span class="p">()</span>
+        <span class="n">peaks_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">to_peaks</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
+            <span class="n">blended_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">peaks_a</span><span class="p">)</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">peaks_b</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># linear</span>
+            <span class="n">blended_peaks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">peaks_a</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">peaks_b</span>
+
+        <span class="n">amps_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+        <span class="n">amps_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+        <span class="n">amps</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">amps_a</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">amps_b</span>
+
+        <span class="c1"># Phases interpolate linearly without wrapping; renderers that care</span>
+        <span class="c1"># about wrapping should rewrap on read.</span>
+        <span class="n">phases_a</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n_components</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="n">phases_b</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">n_components</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">phases_a</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">phases_b</span>
+
+        <span class="k">return</span> <span class="n">HarmonicInput</span><span class="o">.</span><span class="n">from_peaks</span><span class="p">(</span>
+            <span class="n">blended_peaks</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">base_freq</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">blended_peaks</span><span class="p">)),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">amps</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">equave</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">equave</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;interpolated_from&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="n">mode</span><span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------ constructors</span>
+
+<div class="viewcode-block" id="HarmonicSequence.from_biotuner_list">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence.from_biotuner_list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_biotuner_list</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">bt_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">times</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HarmonicSequence&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a sequence of fitted ``compute_biotuner`` objects.</span>
+
+<span class="sd">        Each biotuner object becomes one frame. Objects with no peaks are</span>
+<span class="sd">        skipped; if every object is empty, :class:`ValueError` is raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bt_list : sequence of compute_biotuner</span>
+<span class="sd">            Fitted biotuner objects (``peaks_extraction`` already called).</span>
+<span class="sd">        times : sequence of float, optional</span>
+<span class="sd">            One time per *kept* frame. If ``None``, frames are uniformly</span>
+<span class="sd">            spaced. If provided, must match the number of non-empty</span>
+<span class="sd">            biotuner objects.</span>
+<span class="sd">        equave : float, default=2.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">HarmonicInput</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">kept_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bt_list</span><span class="p">):</span>
+            <span class="n">peaks</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="s2">&quot;peaks&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">peaks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HarmonicInput</span><span class="o">.</span><span class="n">from_biotuner</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">equave</span><span class="o">=</span><span class="n">equave</span><span class="p">))</span>
+            <span class="n">kept_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">frames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No biotuner objects in bt_list yielded any peaks; cannot &quot;</span>
+                <span class="s2">&quot;build a HarmonicSequence.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">times_arr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">times</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">times_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">times_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;times has length </span><span class="si">{</span><span class="n">times_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;non-empty frames were collected.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">frames</span><span class="p">,</span> <span class="n">times</span><span class="o">=</span><span class="n">times_arr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HarmonicSequence.from_biotuner_group">
+<a class="viewcode-back" href="../../api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.HarmonicSequence.from_biotuner_group">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_biotuner_group</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">btg</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">times</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">equave</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HarmonicSequence&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a :class:`biotuner.biotuner_group.BiotunerGroup` instance.</span>
+
+<span class="sd">        Uses ``btg.objects`` (the per-series ``compute_biotuner`` instances).</span>
+<span class="sd">        ``BiotunerGroup`` must have been constructed with</span>
+<span class="sd">        ``store_objects=True`` (the default).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        btg : BiotunerGroup</span>
+<span class="sd">            A group whose ``compute_peaks`` has been run.</span>
+<span class="sd">        times : sequence of float, optional</span>
+<span class="sd">            One time per non-empty frame; see :meth:`from_biotuner_list`.</span>
+<span class="sd">        equave : float, default=2.0</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If ``btg`` has no ``objects`` attribute, or it is ``None``</span>
+<span class="sd">            (e.g. ``store_objects=False`` was used).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">btg</span><span class="p">,</span> <span class="s2">&quot;objects&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;BiotunerGroup has no `objects` available. Did you construct &quot;</span>
+                <span class="s2">&quot;it with store_objects=True and run compute_peaks()?&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_biotuner_list</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span> <span class="n">equave</span><span class="o">=</span><span class="n">equave</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Deferred helper imports.</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1"># Done at the BOTTOM of the file (after the class definitions) to break a</span>
+<span class="c1"># circular-import trap: doing this at the top would trigger</span>
+<span class="c1"># ``biotuner.harmonic_geometry.__init__`` to load, which in turn re-imports</span>
+<span class="c1"># HarmonicInput via the back-compat shim at</span>
+<span class="c1"># ``biotuner.harmonic_geometry.inputs``. By the time we hit this import the</span>
+<span class="c1"># class is already defined and registered in this module&#39;s globals, so the</span>
+<span class="c1"># round-trip succeeds. Method bodies look up these names via the module&#39;s</span>
+<span class="c1"># globals at call time, so the order doesn&#39;t affect runtime correctness.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry._utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402</span>
+    <span class="n">coerce_ratios</span><span class="p">,</span>
+    <span class="n">normalize_amplitudes</span><span class="p">,</span>
+    <span class="n">ratios_to_floats</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

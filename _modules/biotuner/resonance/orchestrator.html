@@ -1,0 +1,869 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.resonance.orchestrator &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/resonance/orchestrator';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.resonance.orchestrator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;biotuner.resonance.orchestrator — main entry point for resonance computation.</span>
+
+<span class="sd">The orchestrator dispatches strategies named in :class:`ResonanceConfig` against the</span>
+<span class="sd">registries in :mod:`biotuner.resonance.registry`, runs the per-bin pipeline</span>
+<span class="sd">(harmonic kernel → ratio kernel → phase coupling → combine), and returns a</span>
+<span class="sd">:class:`ResonanceResult`.</span>
+
+<span class="sd">Output-arity invariant (plan §4.4): the per-bin resonance spectrum is built ONLY</span>
+<span class="sd">from pairwise-or-lower factors. Higher-order coupling metrics (bplv / mplv / cf_plm</span>
+<span class="sd">/ gpla) run on a separate code path and attach as ``ResonanceResult.higher_order``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">detrend</span> <span class="k">as</span> <span class="n">_detrend</span>
+
+<span class="c1"># Side-effect imports register kernels / metrics / combine rules / etc.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance</span><span class="w"> </span><span class="kn">import</span> <span class="n">kernels_harmonic</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance</span><span class="w"> </span><span class="kn">import</span> <span class="n">kernels_ratio</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_estimators</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance</span><span class="w"> </span><span class="kn">import</span> <span class="n">coupling</span> <span class="k">as</span> <span class="n">_coupling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance</span><span class="w"> </span><span class="kn">import</span> <span class="n">combine</span> <span class="k">as</span> <span class="n">_combine</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance.registry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HARMONIC_KERNELS</span><span class="p">,</span>
+    <span class="n">RATIO_KERNELS</span><span class="p">,</span>
+    <span class="n">PHASE_ESTIMATORS</span><span class="p">,</span>
+    <span class="n">PAIRWISE_COUPLING_METRICS</span><span class="p">,</span>
+    <span class="n">COMBINE_RULES</span><span class="p">,</span>
+    <span class="n">COUPLING_ARITY</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Dataclasses</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="ResonanceConfig">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.ResonanceConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResonanceConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for :func:`compute_resonance`. Plan §4.1.</span>
+
+<span class="sd">    Default values reproduce the legacy ``compute_global_harmonicity`` pipeline so</span>
+<span class="sd">    that the snapshot regression test (``tests/resonance/test_snapshot.py``) passes.</span>
+<span class="sd">    New code should override these to opt in to cleaner numerics (e.g. switch</span>
+<span class="sd">    ``psd_normalization`` to ``&#39;prob&#39;`` and ``legacy_self_pair_subtract`` to False).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Spectral preprocessing</span>
+    <span class="n">psd_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;welch&quot;</span><span class="p">,</span> <span class="s2">&quot;multitaper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;welch&quot;</span>
+    <span class="n">remove_aperiodic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">psd_normalization</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;prob&quot;</span><span class="p">,</span> <span class="s2">&quot;minmax_prob&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;minmax_prob&quot;</span>
+
+    <span class="c1"># Harmonic kernel</span>
+    <span class="n">harmonic_kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;harmsim&quot;</span>
+    <span class="n">harmonic_kernel_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># Ratio kernel (n:m gate)</span>
+    <span class="n">ratio_kernel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
+    <span class="n">ratio_kernel_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;max_nm&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;tolerance&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;fallback_to_1_1&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Phase estimation</span>
+    <span class="n">phase_estimator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stft&quot;</span>
+    <span class="n">phase_estimator_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># Pairwise phase coupling metric (must be arity &#39;pairwise_*&#39;)</span>
+    <span class="n">coupling_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nm_plv&quot;</span>
+    <span class="n">coupling_metric_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">pac_convention</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;row&quot;</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="s2">&quot;symmetrize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;row&quot;</span>
+
+    <span class="c1"># Higher-order coupling (separate path; plan §4.4)</span>
+    <span class="n">higher_order_coupling</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">higher_order_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">project_higher_order_to_bins</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">projection_op</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;complexity_weighted_sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;complexity_weighted_sum&quot;</span>
+
+    <span class="c1"># Persistence / Q (Phase 3)</span>
+    <span class="n">persistence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">persistence_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># Combine rule</span>
+    <span class="n">combine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;product&quot;</span>
+    <span class="n">combine_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="c1"># Power weighting exponents (clean off-diagonal mode only)</span>
+    <span class="n">alpha_self</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">alpha_partner</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="c1"># Reducer mode: legacy keeps the bit-equivalent self-pair-subtract formula</span>
+    <span class="n">legacy_self_pair_subtract</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Smoothing &amp; detrending (per plan; legacy defaults preserved)</span>
+    <span class="n">gaussian_smooth_sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">detrend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">rescale_factors_after_detrend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># legacy behavior</span>
+
+    <span class="c1"># PSD / phase computation knobs (legacy compatibility)</span>
+    <span class="n">precision_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">fmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">fmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">noverlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">smoothness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># divides STFT nperseg</span>
+    <span class="n">n_peaks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># for the per-bin reducer</span>
+    <span class="n">bandwidth_correction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Null model (off by default; opt in via dict)</span>
+    <span class="n">null_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># --- Cross-channel-specific config (used only by</span>
+    <span class="c1">#     biotuner.harmonic_connectivity.compute_cross_resonance) ---</span>
+    <span class="c1"># PC reducer for cross-channel:</span>
+    <span class="c1">#   &#39;joint&#39;         — DEFAULT: joint-probability weighting like H (uses</span>
+    <span class="c1">#                     p1[i] * p2[j] gating; frequency-localizes PC).</span>
+    <span class="c1">#                     Recommended for all new analyses.</span>
+    <span class="c1">#   &#39;count&#39;         — legacy uniform average over freq pairs. Use ONLY to</span>
+    <span class="c1">#                     reproduce historical compute_cross_spectrum_harmonicity</span>
+    <span class="c1">#                     numerics bit-exactly.</span>
+    <span class="c1">#   &#39;joint_2T_count&#39;— legacy &#39;weighted&#39; phase_mode behavior.</span>
+    <span class="n">cross_pc_reducer</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;joint_2T_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;joint&quot;</span>
+    <span class="c1"># If True (DEFAULT), use config.ratio_kernel + ratio_kernel_params to</span>
+    <span class="c1"># determine (n, m) per freq pair and pass them to the coupling metric, so</span>
+    <span class="c1"># cross-PC measures TRUE n:m phase locking. Set False to fall back to the</span>
+    <span class="c1"># legacy always-1:1 behavior (useful only for snapshot reproduction).</span>
+    <span class="n">cross_use_ratio_kernel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Logging / debug</span>
+    <span class="n">return_intermediates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="HigherOrderResult">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.HigherOrderResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HigherOrderResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plan §4.4. Populated only when ``config.higher_order_coupling`` is set.&quot;&quot;&quot;</span>
+
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">triplets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># bplv</span>
+    <span class="n">polyrhythms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># mplv</span>
+    <span class="n">coupled_pairs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># cf_plm</span>
+    <span class="n">gplv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># gpla</span>
+    <span class="n">singular_vectors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># gpla</span>
+    <span class="n">summaries</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ResonanceResult">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.ResonanceResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResonanceResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plan §4.3. Output of :func:`compute_resonance`.</span>
+
+<span class="sd">    Quick reference for getting different views of the analysis:</span>
+
+<span class="sd">    - **Reduced 1-D spectra** (length ``n_freqs``)</span>
+<span class="sd">        ``result.factors[&quot;H&quot;]`` — harmonicity spectrum</span>
+<span class="sd">        ``result.factors[&quot;PC&quot;]`` — phase coupling spectrum</span>
+<span class="sd">        ``result.resonance_spectrum`` — R = combine(H, PC)</span>
+<span class="sd">    - **Full 2-D matrices** (shape ``n_freqs × n_freqs``)</span>
+<span class="sd">        ``result.harmonicity_matrix`` — S[i, j] harmonic similarity</span>
+<span class="sd">        ``result.phase_coupling_matrix`` — Φ[i, j] phase coupling</span>
+<span class="sd">        These need ``config.return_intermediates=True`` — the matrix</span>
+<span class="sd">        properties raise a clear error otherwise.</span>
+<span class="sd">    - **Scalar metrics per spectrum**</span>
+<span class="sd">        ``result.summaries[&quot;H&quot; | &quot;PC&quot; | &quot;R&quot;]`` → dict with ``avg``, ``max``,</span>
+<span class="sd">        ``peaks``, ``peaks_avg``, ``flatness``, ``entropy``, ``spread``,</span>
+<span class="sd">        ``higuchi``, ``peak_harmsim``, ``peak_harmsim_avg``,</span>
+<span class="sd">        ``peak_harmsim_max``. Match the legacy</span>
+<span class="sd">        ``compute_global_harmonicity`` columns one-to-one.</span>
+<span class="sd">    - **Peak frequencies per spectrum**</span>
+<span class="sd">        ``result.peaks[&quot;H&quot; | &quot;PC&quot; | &quot;R&quot;]`` → ndarray of peak frequencies</span>
+<span class="sd">        (the same array that lives at ``summaries[...][&quot;peaks&quot;]``).</span>
+
+<span class="sd">    For a flat pandas DataFrame of multiple results, see</span>
+<span class="sd">    :func:`biotuner.resonance.results_to_dataframe`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">resonance_spectrum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">resonance_spectrum_z</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">surrogate_mean</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">surrogate_std</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Factor-level surrogate statistics (populated by with_surrogate_null).</span>
+    <span class="c1"># factor_z maps &quot;H&quot;/&quot;PC&quot;/&quot;R&quot; -&gt; per-frequency z-score against the surrogate</span>
+    <span class="c1"># ensemble; factor_surrogate_mean/std hold the matching null moments. R is</span>
+    <span class="c1"># H-dominated (PSD-driven), so PC_z is the correct detector for phase</span>
+    <span class="c1"># coupling under a PSD-preserving null — see factor_z[&quot;PC&quot;].</span>
+    <span class="n">factor_z</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">factor_surrogate_mean</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">factor_surrogate_std</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">factors</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">summaries</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResonanceConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">peaks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">higher_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HigherOrderResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">participation_spectrum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">intermediates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediates</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> matrix not available — re-run compute_resonance with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ResonanceConfig(return_intermediates=True) to populate &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;result.intermediates[&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;].&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">harmonicity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The N×N harmonic-similarity matrix ``S[i, j]``.</span>
+
+<span class="sd">        Requires ``ResonanceConfig(return_intermediates=True)``.</span>
+<span class="sd">        Off-diagonal cells encode harmonic similarity between frequency bins</span>
+<span class="sd">        ``i`` and ``j`` (high where the ratio is musically simple). Row-summing</span>
+<span class="sd">        ``S * p[j]`` and scaling by ``p[i]`` gives the reduced</span>
+<span class="sd">        ``factors[&quot;H&quot;]`` spectrum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matrix</span><span class="p">(</span><span class="s2">&quot;harmonicity_matrix&quot;</span><span class="p">,</span> <span class="s2">&quot;Harmonicity&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">phase_coupling_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The N×N phase-coupling matrix ``Φ[i, j]``.</span>
+
+<span class="sd">        Requires ``ResonanceConfig(return_intermediates=True)``.</span>
+<span class="sd">        Each cell is ``W[i, j] · metric(phase_i, phase_j, n, m)`` where</span>
+<span class="sd">        ``(n, m)`` comes from the ratio kernel and ``metric`` from the</span>
+<span class="sd">        coupling metric. Row-summing gives the reduced ``factors[&quot;PC&quot;]``</span>
+<span class="sd">        spectrum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matrix</span><span class="p">(</span><span class="s2">&quot;phase_coupling_matrix&quot;</span><span class="p">,</span> <span class="s2">&quot;Phase-coupling&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Orchestrator</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_pairwise</span><span class="p">(</span><span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">arity</span> <span class="o">=</span> <span class="n">COUPLING_ARITY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown coupling metric </span><span class="si">{</span><span class="n">metric_name</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Registered pairwise metrics: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">PAIRWISE_COUPLING_METRICS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">arity</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pairwise&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;coupling_metric must be a pairwise metric (got </span><span class="si">{</span><span class="n">metric_name</span><span class="si">!r}</span><span class="s2"> with arity &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arity</span><span class="si">!r}</span><span class="s2">). Higher-order methods belong in higher_order_coupling.&quot;</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="compute_resonance">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.compute_resonance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_resonance</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">sf</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResonanceConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResonanceResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the resonance spectrum + factor breakdown for a 1-D signal.</span>
+
+<span class="sd">    With default ``ResonanceConfig`` this reproduces the legacy</span>
+<span class="sd">    ``compute_global_harmonicity`` numerics within ``atol=1e-6`` on the snapshot</span>
+<span class="sd">    regression set (``tests/resonance/snapshots/``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ResonanceResult</span>
+<span class="sd">        freqs, resonance_spectrum, factors={&#39;H&#39;, &#39;PC&#39;}, summaries (added by callers),</span>
+<span class="sd">        config, peaks={&#39;H&#39;, &#39;PC&#39;, &#39;R&#39;}, optional surrogate fields and higher_order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="n">ResonanceConfig</span><span class="p">()</span>
+
+    <span class="c1"># Step 0 — arity check</span>
+    <span class="n">_validate_pairwise</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">coupling_metric</span><span class="p">)</span>
+
+    <span class="c1"># Step 1-3 — PSD, optional aperiodic removal, normalization to probability</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_frequency_and_psd</span><span class="p">,</span> <span class="n">apply_power_law_remove</span>
+
+    <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">compute_frequency_and_psd</span><span class="p">(</span>
+        <span class="n">signal</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">precision_hz</span><span class="p">,</span>
+        <span class="n">smoothness</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">smoothness</span><span class="p">,</span>
+        <span class="n">fs</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span>
+        <span class="n">noverlap</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">noverlap</span><span class="p">,</span>
+        <span class="n">fmin</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">fmin</span><span class="p">,</span>
+        <span class="n">fmax</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">fmax</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">psd_clean</span> <span class="o">=</span> <span class="n">apply_power_law_remove</span><span class="p">(</span><span class="n">freqs_arr</span><span class="p">,</span> <span class="n">psd</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">remove_aperiodic</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">psd_normalization</span> <span class="o">==</span> <span class="s2">&quot;minmax_prob&quot;</span><span class="p">:</span>
+        <span class="n">psd_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+        <span class="n">psd_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+        <span class="n">psd_clean</span> <span class="o">=</span> <span class="p">(</span><span class="n">psd_clean</span> <span class="o">-</span> <span class="n">psd_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">psd_max</span> <span class="o">-</span> <span class="n">psd_min</span><span class="p">)</span>
+        <span class="n">psd_prob_for_reducer</span> <span class="o">=</span> <span class="n">psd_clean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">psd_normalization</span> <span class="o">==</span> <span class="s2">&quot;prob&quot;</span><span class="p">:</span>
+        <span class="n">psd_prob_for_reducer</span> <span class="o">=</span> <span class="n">psd_clean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psd_clean</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &#39;none&#39;</span>
+        <span class="n">psd_prob_for_reducer</span> <span class="o">=</span> <span class="n">psd_clean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Step 4 — phase extraction. Passing freqs_arr aligns the phase rows to the</span>
+    <span class="c1"># analysis frequency grid: phase[i] is the phase at freqs_arr[i]. (Previously</span>
+    <span class="c1"># the full 0..Nyquist STFT grid was indexed with the clipped freqs_arr, so</span>
+    <span class="c1"># every phase row was off by fmin — corrupting the phase-coupling matrix.)</span>
+    <span class="n">phase_fn</span> <span class="o">=</span> <span class="n">PHASE_ESTIMATORS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">phase_estimator</span><span class="p">]</span>
+    <span class="n">phase</span> <span class="o">=</span> <span class="n">phase_fn</span><span class="p">(</span>
+        <span class="n">signal</span><span class="p">,</span>
+        <span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span>
+        <span class="n">precision_hz</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">precision_hz</span><span class="p">,</span>
+        <span class="n">noverlap</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">noverlap</span><span class="p">,</span>
+        <span class="n">smoothness</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">smoothness</span><span class="p">,</span>
+        <span class="n">freqs</span><span class="o">=</span><span class="n">freqs_arr</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">phase_estimator_params</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Step 5 — harmonic similarity matrix S[i,j]</span>
+    <span class="n">kernel_fn</span> <span class="o">=</span> <span class="n">HARMONIC_KERNELS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">harmonic_kernel</span><span class="p">]</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">kernel_fn</span><span class="p">(</span><span class="n">freqs_arr</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">harmonic_kernel_params</span><span class="p">)</span>
+
+    <span class="c1"># Step 6-7 — phase coupling matrix Φ[i,j] via the ratio kernel + pairwise metric</span>
+    <span class="n">ratio_fn</span> <span class="o">=</span> <span class="n">RATIO_KERNELS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">ratio_kernel</span><span class="p">]</span>
+    <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">PAIRWISE_COUPLING_METRICS</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">coupling_metric</span><span class="p">]</span>
+    <span class="n">Phi</span> <span class="o">=</span> <span class="n">_coupling</span><span class="o">.</span><span class="n">build_pairwise_coupling_matrix</span><span class="p">(</span>
+        <span class="n">phase</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">ratio_fn</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ratio_kernel_params</span><span class="p">,</span> <span class="n">metric_fn</span><span class="o">=</span><span class="n">metric_fn</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Step 9 — per-bin reduction</span>
+    <span class="n">PC_values</span> <span class="o">=</span> <span class="n">_coupling</span><span class="o">.</span><span class="n">reduce_matrix_to_spectrum</span><span class="p">(</span>
+        <span class="n">Phi</span><span class="p">,</span>
+        <span class="n">psd_prob_for_reducer</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="n">legacy_self_pair_subtract</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">legacy_self_pair_subtract</span><span class="p">,</span>
+        <span class="n">alpha_self</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">alpha_self</span><span class="p">,</span>
+        <span class="n">alpha_partner</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">alpha_partner</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">H_values</span> <span class="o">=</span> <span class="n">_coupling</span><span class="o">.</span><span class="n">reduce_matrix_to_spectrum</span><span class="p">(</span>
+        <span class="n">S</span><span class="p">,</span>
+        <span class="n">psd_prob_for_reducer</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="n">legacy_self_pair_subtract</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">legacy_self_pair_subtract</span><span class="p">,</span>
+        <span class="n">alpha_self</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">alpha_self</span><span class="p">,</span>
+        <span class="n">alpha_partner</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">alpha_partner</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Legacy: apply bandwidth correction to H only (compute_harmonic_power signature)</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">bandwidth_correction</span><span class="p">:</span>
+        <span class="n">max_possible_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">fmin</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freqs_arr</span><span class="p">)):</span>
+            <span class="n">n_partners</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">fmax</span> <span class="o">/</span> <span class="n">freqs_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_partners</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">H_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">max_possible_partners</span> <span class="o">/</span> <span class="n">n_partners</span>
+
+    <span class="c1"># Step 10 — Gaussian smoothing on H and PC (legacy: smoothness_harm)</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">gaussian_smooth_sigma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">H_values</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">gaussian_smooth_sigma</span><span class="p">)</span>
+        <span class="n">PC_values</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">PC_values</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">gaussian_smooth_sigma</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">detrend</span><span class="p">:</span>
+        <span class="n">H_values</span> <span class="o">=</span> <span class="n">_detrend</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">rescale_factors_after_detrend</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">H_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">H_values</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">H_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rng</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">H_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">H_values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">H_values</span><span class="p">))</span> <span class="o">/</span> <span class="n">rng</span>
+        <span class="n">PC_values</span> <span class="o">=</span> <span class="n">_detrend</span><span class="p">(</span><span class="n">PC_values</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">rescale_factors_after_detrend</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">PC_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">PC_values</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">PC_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rng</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">PC_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">PC_values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">PC_values</span><span class="p">))</span> <span class="o">/</span> <span class="n">rng</span>
+
+    <span class="c1"># Step 11 — combine factors</span>
+    <span class="n">combine_fn</span> <span class="o">=</span> <span class="n">COMBINE_RULES</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">combine</span><span class="p">]</span>
+    <span class="n">resonance_spectrum</span> <span class="o">=</span> <span class="n">combine_fn</span><span class="p">([</span><span class="n">H_values</span><span class="p">,</span> <span class="n">PC_values</span><span class="p">],</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">combine_params</span><span class="p">)</span>
+
+    <span class="c1"># Step 15 — peaks per factor + rich complexity summaries per spectrum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spectral_peaks</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">spectrum_complexity</span>
+
+    <span class="n">peaks</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="n">find_spectral_peaks</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;PC&quot;</span><span class="p">:</span> <span class="n">find_spectral_peaks</span><span class="p">(</span><span class="n">PC_values</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">find_spectral_peaks</span><span class="p">(</span><span class="n">resonance_spectrum</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">summaries</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="n">spectrum_complexity</span><span class="p">(</span><span class="n">H_values</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+        <span class="s2">&quot;PC&quot;</span><span class="p">:</span> <span class="n">spectrum_complexity</span><span class="p">(</span><span class="n">PC_values</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">),</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">spectrum_complexity</span><span class="p">(</span><span class="n">resonance_spectrum</span><span class="p">,</span> <span class="n">freqs_arr</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">,</span> <span class="n">prominence_threshold</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ResonanceResult</span><span class="p">(</span>
+        <span class="n">freqs</span><span class="o">=</span><span class="n">freqs_arr</span><span class="p">,</span>
+        <span class="n">resonance_spectrum</span><span class="o">=</span><span class="n">resonance_spectrum</span><span class="p">,</span>
+        <span class="n">factors</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="n">H_values</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">:</span> <span class="n">PC_values</span><span class="p">},</span>
+        <span class="n">peaks</span><span class="o">=</span><span class="n">peaks</span><span class="p">,</span>
+        <span class="n">summaries</span><span class="o">=</span><span class="n">summaries</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">return_intermediates</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">intermediates</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;psd_clean&quot;</span><span class="p">:</span> <span class="n">psd_clean</span><span class="p">,</span>
+            <span class="s2">&quot;psd_prob&quot;</span><span class="p">:</span> <span class="n">psd_prob_for_reducer</span><span class="p">,</span>
+            <span class="s2">&quot;harmonicity_matrix&quot;</span><span class="p">:</span> <span class="n">S</span><span class="p">,</span>
+            <span class="s2">&quot;phase_coupling_matrix&quot;</span><span class="p">:</span> <span class="n">Phi</span><span class="p">,</span>
+            <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="n">phase</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Step 12 — null model</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">null_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance.nulls</span><span class="w"> </span><span class="kn">import</span> <span class="n">with_surrogate_null</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">null_model</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">with_surrogate_null</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

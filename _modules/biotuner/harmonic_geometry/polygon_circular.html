@@ -1,0 +1,1227 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.polygon_circular &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/polygon_circular';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.polygon_circular</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Polygon and circular geometric structures.</span>
+
+<span class="sd">Phase 2 implements the basic ratio-driven shapes. Phase 4 adds the</span>
+<span class="sd">biotuner-metric-driven variants: ``interval_vector_diagram``,</span>
+<span class="sd">``polygon_chord_pattern``, and ``consonance_polygon``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">coprime_pair</span><span class="p">,</span> <span class="n">log_ratio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+
+<span class="n">RatioLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+
+
+<span class="c1"># ----------------------------------------------------------------- star polygon</span>
+
+
+<div class="viewcode-block" id="star_polygon">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.star_polygon">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">star_polygon</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schläfli star polygon ``{n/k}``.</span>
+
+<span class="sd">    Vertices are placed on a circle of given ``radius``. Edges connect</span>
+<span class="sd">    vertex ``i`` to vertex ``(i + k) mod n``. When ``gcd(n, k) &gt; 1`` the</span>
+<span class="sd">    figure decomposes into ``gcd(n, k)`` disjoint compound polygons; the</span>
+<span class="sd">    return type is then ``polygon_set``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of vertices on the circle, ``n &gt;= 3``.</span>
+<span class="sd">    k : int</span>
+<span class="sd">        Step size, ``1 &lt;= k &lt; n``.</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        - ``geom_type=&#39;polygon&#39;`` when ``gcd(n, k) == 1``</span>
+<span class="sd">        - ``geom_type=&#39;polygon_set&#39;`` when ``gcd(n, k) &gt; 1``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n must be &gt;= 3, got </span><span class="si">{</span><span class="n">n</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;k must satisfy 1 &lt;= k &lt; n, got n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;radius must be &gt; 0, got </span><span class="si">{</span><span class="n">radius</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">base_vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">g</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Single closed compound traversal: i, (i+k), (i+2k), ... mod n.</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">base_vertices</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+            <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span>
+            <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">)},</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;star_polygon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;schlafli&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;compound&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;n_vertices&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Compound: g disjoint polygons of length n // g.</span>
+    <span class="n">polygons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seen</span><span class="p">[</span><span class="n">start</span><span class="p">]:</span>
+            <span class="k">continue</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">seen</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">seen</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_vertices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">path</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;polygon_set&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">polygons</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">)},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;star_polygon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;schlafli&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;compound&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
+            <span class="s2">&quot;vertices_per_component&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="n">g</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------- times-table circle</span>
+
+
+<div class="viewcode-block" id="times_table_circle">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.times_table_circle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">times_table_circle</span><span class="p">(</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modular-multiplication &quot;times-table&quot; pattern on a circle.</span>
+
+<span class="sd">    ``n_points`` points are placed evenly on a circle of given ``radius``.</span>
+<span class="sd">    For each ``i ∈ [0, n_points)``, an edge is drawn from ``i`` to</span>
+<span class="sd">    ``int(round(i * multiplier)) mod n_points``. Self-loops (the i==j case)</span>
+<span class="sd">    are dropped.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_points : int, must be &gt;= 2</span>
+<span class="sd">    multiplier : float</span>
+<span class="sd">        Modular multiplier. Integer multipliers produce the classic</span>
+<span class="sd">        Mardi-Gras patterns; non-integer values produce richer textures.</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;graph&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_points</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;radius must be &gt; 0, got </span><span class="si">{</span><span class="n">radius</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_points</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">multiplier</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">sources</span> <span class="o">!=</span> <span class="n">targets</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">sources</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">targets</span><span class="p">[</span><span class="n">mask</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+            <span class="s2">&quot;multiplier&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">multiplier</span><span class="p">),</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;times_table_circle&quot;</span><span class="p">,</span> <span class="s2">&quot;n_edges&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="times_table_from_input">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.times_table_from_input">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">times_table_from_input</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ratio&quot;</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Chord-driven times-table: one edge family per harmonic ratio.</span>
+
+<span class="sd">    Each component of ``input`` contributes its own multiplier; all edge</span>
+<span class="sd">    families share the same ``n_points``-vertex circle and are returned in</span>
+<span class="sd">    a single :class:`GeometryData` so they can be drawn as overlaid colour</span>
+<span class="sd">    layers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    n_points : int, default=360</span>
+<span class="sd">        Number of points on the circle.  360 is a convenient default</span>
+<span class="sd">        because most rational chord ratios give clean modular periods.</span>
+<span class="sd">    mode : {&#39;ratio&#39;, &#39;pitch_class&#39;, &#39;integer&#39;}, default=&#39;ratio&#39;</span>
+<span class="sd">        How each ratio is converted into a multiplier:</span>
+
+<span class="sd">        * ``&#39;ratio&#39;`` — multiplier = ``ratio`` (float).</span>
+<span class="sd">          ``i → int(round(i * ratio)) mod n_points``.</span>
+<span class="sd">        * ``&#39;pitch_class&#39;`` — multiplier = ``round(n_points * log2(ratio))``.</span>
+<span class="sd">          One &quot;octave&quot; wraps the circle once.</span>
+<span class="sd">        * ``&#39;integer&#39;`` — multiplier = ``Fraction(ratio).limit_denominator(32).numerator``.</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;graph&#39;``.  ``edges`` carries every edge across all</span>
+<span class="sd">        ratio families; ``metadata[&#39;ratio_index&#39;]`` is an int array</span>
+<span class="sd">        aligned with ``edges`` mapping each edge to the originating ratio</span>
+<span class="sd">        index (so a renderer can colour each family separately).</span>
+<span class="sd">        ``metadata[&#39;multipliers&#39;]`` lists the resolved multiplier per</span>
+<span class="sd">        ratio.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_points</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;radius must be &gt; 0, got </span><span class="si">{</span><span class="n">radius</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;pitch_class&quot;</span><span class="p">,</span> <span class="s2">&quot;integer&quot;</span><span class="p">}:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mode must be &#39;ratio&#39;, &#39;pitch_class&#39; or &#39;integer&#39;, got </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ratios</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;times_table_from_input requires at least one ratio.&quot;</span><span class="p">)</span>
+
+    <span class="n">angles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_points</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">edges_all</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ratio_idx</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">multipliers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratios</span><span class="p">):</span>
+        <span class="n">rf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+            <span class="n">mult</span> <span class="o">=</span> <span class="n">rf</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;pitch_class&quot;</span><span class="p">:</span>
+            <span class="n">mult</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_points</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))))</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># integer</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span> <span class="k">as</span> <span class="n">_F</span>
+            <span class="n">mult</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_F</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">numerator</span><span class="p">)</span>
+        <span class="n">multipliers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mult</span><span class="p">)</span>
+
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span> <span class="o">*</span> <span class="n">mult</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">n_points</span>
+        <span class="p">)</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">sources</span> <span class="o">!=</span> <span class="n">targets</span>
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sources</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">targets</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+            <span class="n">edges_all</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">])</span>
+            <span class="n">ratio_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges_all</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+             <span class="k">if</span> <span class="n">edges_all</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+            <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="n">mode</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;times_table_from_input&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_ratios&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">),</span>
+            <span class="s2">&quot;multipliers&quot;</span><span class="p">:</span> <span class="n">multipliers</span><span class="p">,</span>
+            <span class="s2">&quot;ratio_index&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ratio_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------- tuning circle</span>
+
+
+<div class="viewcode-block" id="tuning_circle">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.tuning_circle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tuning_circle</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place input components on a circle by their log-equave pitch class.</span>
+
+<span class="sd">    For each ratio ``r``, the angle is ``2π · log_equave(r)``, wrapped into</span>
+<span class="sd">    ``[0, 2π)``. Amplitudes are exposed as per-point weights.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;point_cloud_2d&#39;`` with shape ``(n_components, 2)`` and</span>
+<span class="sd">        ``weights`` of length ``n_components``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;radius must be &gt; 0, got </span><span class="si">{</span><span class="n">radius</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;HarmonicInput must have at least one component.&quot;</span><span class="p">)</span>
+
+    <span class="n">pitch_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">log_ratio</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">equave</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">equave</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">pitch_classes</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;point_cloud_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span> <span class="s2">&quot;equave&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">equave</span><span class="p">)},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;tuning_circle&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pitch_classes&quot;</span><span class="p">:</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------ rose curve</span>
+
+
+<div class="viewcode-block" id="rose_curve">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.rose_curve">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rose_curve</span><span class="p">(</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="n">n_periods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Polar rose: ``r(θ) = radius · cos((p/q) · θ)``.</span>
+
+<span class="sd">    For coprime ``(p, q)``, the curve closes after:</span>
+<span class="sd">    - ``θ ∈ [0, q · π]`` if ``p + q`` is even,</span>
+<span class="sd">    - ``θ ∈ [0, 2 · q · π]`` if ``p + q`` is odd.</span>
+
+<span class="sd">    If ``n_periods`` is given, the curve is sampled over ``[0, n_periods · π]``</span>
+<span class="sd">    explicitly; otherwise the closure-aware default above is used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : Fraction, int, float, or (int, int)</span>
+<span class="sd">    n_points : int, default=2000</span>
+<span class="sd">    n_periods : int, optional</span>
+<span class="sd">        Override the auto-computed sampling range (in units of π).</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_points</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_periods</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_periods</span> <span class="o">=</span> <span class="n">q</span> <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">q</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_periods</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">p</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+            <span class="s2">&quot;n_periods&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_periods</span><span class="p">),</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;rose&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span>
+            <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">q</span><span class="p">,</span>
+            <span class="s2">&quot;petals&quot;</span><span class="p">:</span> <span class="n">p</span> <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------- (epi|hypo)cycloid</span>
+
+
+<div class="viewcode-block" id="epicycloid">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.epicycloid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">epicycloid</span><span class="p">(</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Epicycloid traced by a point on a small circle rolling outside a large one.</span>
+
+<span class="sd">    With ``ratio = R / r = p / q`` (coprime), the curve has ``p`` cusps and</span>
+<span class="sd">    closes after the small circle completes ``q`` revolutions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : Fraction, int, float, or (int, int)</span>
+<span class="sd">        Ratio of fixed circle radius to rolling circle radius, ``R / r``.</span>
+<span class="sd">    R : float, default=1.0</span>
+<span class="sd">        Radius of the fixed (large) circle.</span>
+<span class="sd">    n_points : int, default=2000</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_points</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">R</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R must be &gt; 0, got </span><span class="si">{</span><span class="n">R</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">q</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epicycloid requires positive p/q; got </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">r_small</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">q</span> <span class="o">/</span> <span class="n">p</span>
+
+    <span class="c1"># Closure: t goes through 2π · q so the small circle returns home.</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">q</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_small</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_small</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_small</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">),</span>
+            <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">),</span>
+            <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">r_small</span><span class="p">),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;epicycloid&quot;</span><span class="p">,</span> <span class="s2">&quot;cusps&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="hypocycloid">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.hypocycloid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hypocycloid</span><span class="p">(</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hypocycloid traced by a point on a small circle rolling inside a large one.</span>
+
+<span class="sd">    With ``ratio = R / r = p / q`` (coprime, ``p &gt; q``), the curve has</span>
+<span class="sd">    ``p - q`` cusps. For ``p = q`` the trace is a degenerate point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : Fraction, int, float, or (int, int)</span>
+<span class="sd">        ``R / r``. Must satisfy ``R &gt; r &gt; 0`` for a non-degenerate curve;</span>
+<span class="sd">        i.e., the coprime form must have ``p &gt; q``.</span>
+<span class="sd">    R : float, default=1.0</span>
+<span class="sd">    n_points : int, default=2000</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;curve_2d&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_points must be &gt;= 2, got </span><span class="si">{</span><span class="n">n_points</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">R</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R must be &gt; 0, got </span><span class="si">{</span><span class="n">R</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">coprime_pair</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">q</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;hypocycloid requires ratio &gt; 1 (p &gt; q); got </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">r_small</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">q</span> <span class="o">/</span> <span class="n">p</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">q</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_small</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">r_small</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">r_small</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_small</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;curve_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">),</span>
+            <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">R</span><span class="p">),</span>
+            <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">r_small</span><span class="p">),</span>
+            <span class="s2">&quot;n_points&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_points</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;hypocycloid&quot;</span><span class="p">,</span> <span class="s2">&quot;cusps&quot;</span><span class="p">:</span> <span class="n">p</span> <span class="o">-</span> <span class="n">q</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================ Phase 4: metric-driven variants</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tuning_circle_positions</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place input components on the equave-circle; angles in radians.&quot;&quot;&quot;</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()</span>
+    <span class="n">pcs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">log_ratio</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">equave</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">equave</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">pcs</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_pair_metric</span><span class="p">(</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a pair-wise metric function ``f(r_i, r_j) -&gt; score``.</span>
+
+<span class="sd">    String options are resolved against ``biotuner.metrics``. Most biotuner</span>
+<span class="sd">    metrics take a single ratio (e.g. ``dyad_similarity(r)``); for pairs we</span>
+<span class="sd">    apply them to the quotient ``r_j / r_i`` (rebound to ``&gt; 1``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner</span><span class="w"> </span><span class="kn">import</span> <span class="n">metrics</span> <span class="k">as</span> <span class="n">bt_metrics</span>  <span class="c1"># lazy</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rebound_quotient</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">b</span> <span class="o">/</span> <span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">q</span>
+        <span class="k">return</span> <span class="n">q</span>
+
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">metric</span><span class="p">):</span>
+        <span class="n">single</span> <span class="o">=</span> <span class="n">metric</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">pair</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">single</span><span class="p">(</span><span class="n">_rebound_quotient</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">pair</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;dyad_similarity&quot;</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">bt_metrics</span><span class="o">.</span><span class="n">dyad_similarity</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">_rebound_quotient</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;compute_consonance&quot;</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">bt_metrics</span><span class="o">.</span><span class="n">compute_consonance</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">_rebound_quotient</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;tenneyHeight&quot;</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">bt_metrics</span><span class="o">.</span><span class="n">tenneyHeight</span>
+        <span class="c1"># Lower = more consonant. Invert so higher = more consonant for edge weights.</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">fn</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)]))</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;log_distance&quot;</span><span class="p">:</span>
+        <span class="c1"># Falls back to a trivial log-distance metric (no biotuner needed).</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_rebound_quotient</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Unknown metric </span><span class="si">{</span><span class="n">metric</span><span class="si">!r}</span><span class="s2">. Use a callable or one of &quot;</span>
+        <span class="s2">&quot;&#39;dyad_similarity&#39;, &#39;compute_consonance&#39;, &#39;tenneyHeight&#39;, &#39;log_distance&#39;.&quot;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="interval_vector_diagram">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.interval_vector_diagram">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interval_vector_diagram</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">bin_cents</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Graph of pairwise intervals binned into cents-classes.</span>
+
+<span class="sd">    Nodes are placed on the tuning circle. For each pair ``(i, j)``,</span>
+<span class="sd">    the interval in cents is computed (modulo equave). Intervals are</span>
+<span class="sd">    bucketed in ``bin_cents``-wide classes; an edge&#39;s weight is the</span>
+<span class="sd">    *interval-class count* — how many other pairs share that bucket.</span>
+<span class="sd">    Edges thus highlight the chord&#39;s interval-vector multiplicities.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    radius : float, default=1.0</span>
+<span class="sd">    bin_cents : float, default=50.0</span>
+<span class="sd">        Bucket width for grouping intervals into classes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;graph&#39;`` with ``edges`` of shape ``(E, 2)`` and</span>
+<span class="sd">        per-edge ``weights``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bin_cents</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bin_cents must be &gt; 0, got </span><span class="si">{</span><span class="n">bin_cents</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">_tuning_circle_positions</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;interval_vector_diagram needs at least 2 components.&quot;</span><span class="p">)</span>
+
+    <span class="n">equave_cents</span> <span class="o">=</span> <span class="mf">1200.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">equave</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">raw_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">cents</span> <span class="o">=</span> <span class="mf">1200.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">cents</span> <span class="o">=</span> <span class="n">cents</span> <span class="o">%</span> <span class="n">equave_cents</span>
+            <span class="n">cents</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cents</span><span class="p">,</span> <span class="n">equave_cents</span> <span class="o">-</span> <span class="n">cents</span><span class="p">)</span>  <span class="c1"># interval class folding</span>
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="n">raw_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cents</span><span class="p">)</span>
+    <span class="n">raw_intervals_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">raw_intervals</span><span class="p">)</span>
+
+    <span class="c1"># Bucket and count.</span>
+    <span class="n">buckets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">raw_intervals_arr</span> <span class="o">/</span> <span class="n">bin_cents</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">buckets</span> <span class="o">==</span> <span class="n">b</span><span class="p">))</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">buckets</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+            <span class="s2">&quot;bin_cents&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_cents</span><span class="p">),</span>
+            <span class="s2">&quot;equave&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">equave</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;interval_vector_diagram&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_nodes&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="s2">&quot;n_edges&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)),</span>
+            <span class="s2">&quot;intervals_cents&quot;</span><span class="p">:</span> <span class="n">raw_intervals_arr</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="polygon_chord_pattern">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_chord_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polygon_chord_pattern</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;dyad_similarity&quot;</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Chord-pattern graph weighted by a biotuner harmonicity metric.</span>
+
+<span class="sd">    Nodes are placed on the tuning circle. Every pair of distinct</span>
+<span class="sd">    components has an edge weighted by ``metric(ratio_j / ratio_i)``</span>
+<span class="sd">    (after rebounding the quotient into ``[1, ∞)``). Optionally</span>
+<span class="sd">    threshold to keep only the strongest pairs — yields the polygonal</span>
+<span class="sd">    &quot;chord skeleton&quot; of the most consonant relationships.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    metric : str or callable, default=&#39;dyad_similarity&#39;</span>
+<span class="sd">        Either a single-ratio biotuner metric name (one of</span>
+<span class="sd">        ``&#39;dyad_similarity&#39;``, ``&#39;compute_consonance&#39;``,</span>
+<span class="sd">        ``&#39;tenneyHeight&#39;``, ``&#39;log_distance&#39;``) or a callable</span>
+<span class="sd">        ``ratio -&gt; score``. ``tenneyHeight`` is sign-flipped so higher</span>
+<span class="sd">        always means &quot;more consonant&quot; downstream.</span>
+<span class="sd">    threshold : float, optional</span>
+<span class="sd">        Drop edges with weight below ``threshold``. ``None`` keeps all.</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;graph&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">_tuning_circle_positions</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;polygon_chord_pattern needs at least 2 components.&quot;</span><span class="p">)</span>
+    <span class="n">pair_metric</span> <span class="o">=</span> <span class="n">_resolve_pair_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+
+    <span class="n">edges_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">weights_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">pair_metric</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ratios</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">edges_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="n">weights_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">edges_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="k">if</span> <span class="n">edges_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">if</span> <span class="n">weights_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;metric&quot;</span><span class="p">:</span> <span class="n">metric</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&lt;callable&gt;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;polygon_chord_pattern&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_nodes&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="s2">&quot;n_edges&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="consonance_polygon">
+<a class="viewcode-back" href="../../../api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.consonance_polygon">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">consonance_polygon</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;dyad_similarity&quot;</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convex polygon whose vertex angles encode each ratio&#39;s consonance share.</span>
+
+<span class="sd">    Each component&#39;s &quot;consonance share&quot; is the sum of pairwise</span>
+<span class="sd">    ``metric`` scores against all other components. Vertices are then</span>
+<span class="sd">    placed at cumulative-angle positions: the polygon&#39;s angular density</span>
+<span class="sd">    spikes around the most-connected ratios and thins around outliers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : HarmonicInput</span>
+<span class="sd">    metric : str or callable, default=&#39;dyad_similarity&#39;</span>
+<span class="sd">    radius : float, default=1.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;polygon&#39;`` with ``weights`` carrying the per-vertex</span>
+<span class="sd">        consonance share. The first vertex is placed at angle 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">input</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;consonance_polygon needs at least 3 components.&quot;</span><span class="p">)</span>
+    <span class="n">pair_metric</span> <span class="o">=</span> <span class="n">_resolve_pair_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+
+    <span class="c1"># Per-vertex consonance share = sum of pairwise scores.</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pair_metric</span><span class="p">(</span><span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ratios</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+    <span class="c1"># Shift to non-negative so cumulative angles are monotonic, even if the</span>
+    <span class="c1"># metric is negative (e.g. tenneyHeight after sign-flip can still be</span>
+    <span class="c1"># arbitrary). Add a small epsilon so all-equal scores still produce a</span>
+    <span class="c1"># valid polygon.</span>
+    <span class="n">shifted</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-9</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">shifted</span><span class="p">))</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">shifted</span><span class="p">)</span> <span class="o">/</span> <span class="n">total</span>
+    <span class="c1"># Anchor first vertex at angle 0 by rotating everything.</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">angles</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">),</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;metric&quot;</span><span class="p">:</span> <span class="n">metric</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&lt;callable&gt;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;consonance_polygon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_vertices&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+            <span class="s2">&quot;consonance_share&quot;</span><span class="p">:</span> <span class="n">scores</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

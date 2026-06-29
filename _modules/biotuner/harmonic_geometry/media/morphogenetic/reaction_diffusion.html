@@ -1,0 +1,862 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.media.morphogenetic.reaction_diffusion &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/media/morphogenetic/reaction_diffusion';</script>
+    <link rel="icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.media.morphogenetic.reaction_diffusion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Reaction–diffusion patterns (Gray–Scott).</span>
+
+<span class="sd">Belongs to the ``morphogenetic`` family of</span>
+<span class="sd">:mod:`biotuner.harmonic_geometry.media`. The Gray–Scott model describes</span>
+<span class="sd">two interacting chemicals ``U`` and ``V`` undergoing the reaction</span>
+<span class="sd">``U + 2V → 3V`` with feed/kill terms, on a 2-D diffusing substrate:</span>
+
+<span class="sd">    ∂U/∂t = D_u · ∇²U − U·V² + F · (1 − U)</span>
+<span class="sd">    ∂V/∂t = D_v · ∇²V + U·V² − (F + K) · V</span>
+
+<span class="sd">The two scalar parameters ``F`` (feed) and ``K`` (kill) trace out a</span>
+<span class="sd">rich phase diagram of stationary and travelling patterns: spots,</span>
+<span class="sd">stripes, labyrinths, solitons, mitosis-like spot division, etc. See</span>
+<span class="sd">Pearson, Science 261 (1993) for the canonical regime map.</span>
+
+<span class="sd">Chord coupling</span>
+<span class="sd">--------------</span>
+<span class="sd">With ``feed`` / ``kill`` set to ``None`` (default), the chord drives</span>
+<span class="sd">both from *structural* descriptors of the ratio set (not just scalar</span>
+<span class="sd">reductions), so that chords with similar overall consonance still land</span>
+<span class="sd">in qualitatively different Pearson regimes:</span>
+
+<span class="sd">- ``feed``  F ← ``structure.prime_limit``        in ``[0.020, 0.062]``</span>
+<span class="sd">            (low primes give the spotty / mitosis side;</span>
+<span class="sd">             high primes give the stripe / replicating side).</span>
+<span class="sd">- ``kill``  K ← ``log(structure.max_common_int)``</span>
+<span class="sd">            in ``[0.045, 0.065]``  — chords with larger common-</span>
+<span class="sd">            denominator integers (e.g. 11:7:5 → 200) get a higher K,</span>
+<span class="sd">            pushing them into stripe / labyrinth territory; chords</span>
+<span class="sd">            with smaller ones (Major = 4:5:6 → 6) get a lower K.</span>
+<span class="sd">- ``diffusion_ratio`` (D_u / D_v) ← ``structure.max_common_int``</span>
+<span class="sd">            in ``[1.5, 3.0]``  — relative spatial scales.</span>
+
+<span class="sd">Initial conditions</span>
+<span class="sd">------------------</span>
+<span class="sd">``seed_strategy`` selects the trigger pattern:</span>
+
+<span class="sd">- ``&quot;single&quot;``   small central V-blob — produces a single growing</span>
+<span class="sd">                 pattern that fills the domain.</span>
+<span class="sd">- ``&quot;polygon&quot;``  V-blobs planted at the chord&#39;s Tonnetz polygon</span>
+<span class="sd">                 vertices — chord-structured initial condition</span>
+<span class="sd">                 (default). Same idea as Crystallization&#39;s polygon</span>
+<span class="sd">                 seed: different chord = different starting</span>
+<span class="sd">                 configuration = visibly different attractor reached.</span>
+<span class="sd">- ``&quot;random&quot;``   stochastic V-seeding (uniform density).</span>
+
+<span class="sd">Outputs</span>
+<span class="sd">-------</span>
+<span class="sd">``output_mode=&#39;v&#39;``  — V concentration field (``field_2d``); typically</span>
+<span class="sd">the most visually striking channel.</span>
+<span class="sd">``output_mode=&#39;u&#39;``  — U concentration field.</span>
+<span class="sd">``output_mode=&#39;difference&#39;`` — ``V − U`` (signed; useful for nodal-</span>
+<span class="sd">line-style rendering).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">coupling</span> <span class="k">as</span> <span class="n">_coupling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">structure</span> <span class="k">as</span> <span class="n">_structure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
+
+
+<span class="n">_VALID_OUTPUT_MODES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">)</span>
+<span class="n">_VALID_SEED_STRATEGIES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;random&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_laplacian5</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;5-point Laplacian with periodic boundaries (unit spacing).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">field</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_initial_condition</span><span class="p">(</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">chord</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">seed_strategy</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">seed_scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">seed_radius_cells</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build initial ``(U, V)`` fields at ``resolution × resolution``.</span>
+
+<span class="sd">    Background: ``U = 1``, ``V = 0`` (the &quot;no-pattern&quot; steady state).</span>
+<span class="sd">    Trigger blobs flip a local patch to ``U ≈ 0.5``, ``V ≈ 0.25``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plant</span><span class="p">(</span><span class="n">cx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cy</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">XX</span><span class="p">,</span> <span class="n">YY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+        <span class="n">disk</span> <span class="o">=</span> <span class="p">(</span><span class="n">XX</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">YY</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r</span>
+        <span class="c1"># Add a small noise so symmetry can break.</span>
+        <span class="k">for</span> <span class="n">di</span><span class="p">,</span> <span class="n">dj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">disk</span><span class="p">)):</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="p">(</span><span class="n">cx</span> <span class="o">+</span> <span class="n">xs</span><span class="p">[</span><span class="n">di</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+            <span class="n">jj</span> <span class="o">=</span> <span class="p">(</span><span class="n">cy</span> <span class="o">+</span> <span class="n">ys</span><span class="p">[</span><span class="n">dj</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+            <span class="c1"># Recompute integer offsets robustly.</span>
+        <span class="c1"># Simpler: just patch using slicing with wrap.</span>
+        <span class="n">x_lo</span> <span class="o">=</span> <span class="p">(</span><span class="n">cx</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+        <span class="n">y_lo</span> <span class="o">=</span> <span class="p">(</span><span class="n">cy</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r</span><span class="p">:</span>
+                    <span class="n">ii</span> <span class="o">=</span> <span class="p">(</span><span class="n">cx</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+                    <span class="n">jj</span> <span class="o">=</span> <span class="p">(</span><span class="n">cy</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+                    <span class="n">U</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span>
+                    <span class="n">V</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">+</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">seed_strategy</span> <span class="o">==</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span>
+        <span class="n">_plant</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seed_strategy</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
+        <span class="n">polygon</span> <span class="o">=</span> <span class="n">_structure</span><span class="o">.</span><span class="n">tonnetz_polygon</span><span class="p">(</span><span class="n">chord</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">polygon</span><span class="p">:</span>
+            <span class="n">_plant</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+            <span class="n">centered</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="o">-</span> <span class="n">cx</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">]</span>
+            <span class="n">max_r</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">centered</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_r</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+                <span class="n">_plant</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Scale to seed_scale * (N/2) pixels.</span>
+                <span class="n">pix_scale</span> <span class="o">=</span> <span class="n">seed_scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_r</span>
+                <span class="c1"># Always plant centroid as the anchor.</span>
+                <span class="n">_plant</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">centered</span><span class="p">:</span>
+                    <span class="n">ci</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">pix_scale</span><span class="p">))</span>
+                    <span class="n">cj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">pix_scale</span><span class="p">))</span>
+                    <span class="n">_plant</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">cj</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seed_strategy</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+        <span class="c1"># 1.5% area randomly seeded.</span>
+        <span class="n">n_seeds</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.015</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">N</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">seed_radius_cells</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_seeds</span><span class="p">):</span>
+            <span class="n">ci</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+            <span class="n">cj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+            <span class="n">_plant</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">cj</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover - validated earlier</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">seed_strategy</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gray_scott_step</span><span class="p">(</span>
+    <span class="n">U</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">V</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">Du</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">Dv</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">F</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">K</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One forward-Euler step of Gray–Scott.&quot;&quot;&quot;</span>
+    <span class="n">Lu</span> <span class="o">=</span> <span class="n">_laplacian5</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="n">Lv</span> <span class="o">=</span> <span class="n">_laplacian5</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">uvv</span> <span class="o">=</span> <span class="n">U</span> <span class="o">*</span> <span class="n">V</span> <span class="o">*</span> <span class="n">V</span>
+    <span class="n">U_new</span> <span class="o">=</span> <span class="n">U</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="p">(</span><span class="n">Du</span> <span class="o">*</span> <span class="n">Lu</span> <span class="o">-</span> <span class="n">uvv</span> <span class="o">+</span> <span class="n">F</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">U</span><span class="p">))</span>
+    <span class="n">V_new</span> <span class="o">=</span> <span class="n">V</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="p">(</span><span class="n">Dv</span> <span class="o">*</span> <span class="n">Lv</span> <span class="o">+</span> <span class="n">uvv</span> <span class="o">-</span> <span class="p">(</span><span class="n">F</span> <span class="o">+</span> <span class="n">K</span><span class="p">)</span> <span class="o">*</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">U_new</span><span class="p">,</span> <span class="n">V_new</span>
+
+
+<div class="viewcode-block" id="ReactionDiffusion">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReactionDiffusion</span><span class="p">(</span><span class="n">Medium</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Morphogenetic-family medium: Gray–Scott reaction–diffusion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feed : float, optional</span>
+<span class="sd">        Feed rate F. If ``None`` (default), derived from</span>
+<span class="sd">        :func:`structure.prime_limit` mapped into ``[0.020, 0.062]`` —</span>
+<span class="sd">        3-limit (Pythagorean) chords sit low (mitosis / spots side),</span>
+<span class="sd">        11-limit chords sit high (stripes / replicating side).</span>
+<span class="sd">        Typical Pearson regimes: F=0.022/K=0.051 → &quot;mitosis spots&quot;,</span>
+<span class="sd">        F=0.034/K=0.061 → &quot;alpha labyrinth&quot;, F=0.062/K=0.061 → stripes.</span>
+<span class="sd">    kill : float, optional</span>
+<span class="sd">        Kill rate K. If ``None`` (default), derived from</span>
+<span class="sd">        :func:`structure.max_common_int` (log-scaled) mapped into</span>
+<span class="sd">        ``[0.045, 0.065]``.</span>
+<span class="sd">    diffusion_u : float, default 0.16</span>
+<span class="sd">        Diffusion coefficient of ``U``.</span>
+<span class="sd">    diffusion_v : float, default 0.08</span>
+<span class="sd">        Diffusion coefficient of ``V``. The ratio ``Du/Dv`` controls</span>
+<span class="sd">        relative spatial scales (must be &gt; 1 for Turing instability).</span>
+<span class="sd">    dt : float, default 1.0</span>
+<span class="sd">        Forward-Euler timestep.</span>
+<span class="sd">    n_steps : int, default 4000</span>
+<span class="sd">        Number of integration steps.</span>
+<span class="sd">    resolution : int, default 192</span>
+<span class="sd">        Grid resolution; the simulation domain is square with periodic</span>
+<span class="sd">        boundaries.</span>
+<span class="sd">    extent : float, default 1.0</span>
+<span class="sd">        Half-side of the rendering extent (for the meshgrid).</span>
+<span class="sd">    seed_strategy : {&quot;single&quot;, &quot;polygon&quot;, &quot;random&quot;}, default &quot;polygon&quot;</span>
+<span class="sd">        Initial-condition pattern (see module docstring).</span>
+<span class="sd">    seed_scale : float, default 0.30</span>
+<span class="sd">        Radius (fraction of half-grid) at which polygon-vertex seeds</span>
+<span class="sd">        are placed.</span>
+<span class="sd">    seed_radius_cells : int, default 4</span>
+<span class="sd">        Radius (in cells) of each trigger blob.</span>
+<span class="sd">    rng_seed : int, optional</span>
+<span class="sd">        Seed for noise in the initial condition; defaults to a</span>
+<span class="sd">        deterministic per-chord seed.</span>
+<span class="sd">    output_mode : {&quot;u&quot;, &quot;v&quot;, &quot;difference&quot;}, default &quot;v&quot;</span>
+<span class="sd">        Which channel to return.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">family</span> <span class="o">=</span> <span class="s2">&quot;morphogenetic&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">feed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kill</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">diffusion_u</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.16</span><span class="p">,</span>
+        <span class="n">diffusion_v</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">n_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">192</span><span class="p">,</span>
+        <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">seed_strategy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;polygon&quot;</span><span class="p">,</span>
+        <span class="n">seed_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.30</span><span class="p">,</span>
+        <span class="n">seed_radius_cells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">rng_seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_OUTPUT_MODES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;output_mode must be one of </span><span class="si">{</span><span class="n">_VALID_OUTPUT_MODES</span><span class="si">}</span><span class="s2">; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">output_mode</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed_strategy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_SEED_STRATEGIES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;seed_strategy must be one of </span><span class="si">{</span><span class="n">_VALID_SEED_STRATEGIES</span><span class="si">}</span><span class="s2">; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">seed_strategy</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">feed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">feed</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;feed must be in (0, 0.2) when given.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">kill</span> <span class="o">&lt;</span> <span class="mf">0.2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;kill must be in (0, 0.2) when given.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diffusion_u</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">diffusion_v</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;diffusion coefficients must be &gt; 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dt</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dt must be &gt; 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_steps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_steps must be &gt;= 1.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolution</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;resolution must be &gt;= 32.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extent</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;extent must be &gt; 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">seed_scale</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;seed_scale must be in (0, 1).&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed_radius_cells</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;seed_radius_cells must be &gt;= 1.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">feed</span> <span class="o">=</span> <span class="n">feed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kill</span> <span class="o">=</span> <span class="n">kill</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffusion_u</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">diffusion_u</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diffusion_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">diffusion_v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_steps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_strategy</span> <span class="o">=</span> <span class="n">seed_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">seed_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_radius_cells</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seed_radius_cells</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span> <span class="o">=</span> <span class="n">rng_seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_mode</span> <span class="o">=</span> <span class="n">output_mode</span>
+
+    <span class="c1"># ----------------------------------------------------------- contract</span>
+
+<div class="viewcode-block" id="ReactionDiffusion.default_source">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion.default_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ReactionDiffusion.respond">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion.respond">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">respond</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">forcing</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forcing</span><span class="p">,</span> <span class="n">HarmonicInput</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;ReactionDiffusion.respond requires a HarmonicInput; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">forcing</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">feed_arg</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;feed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feed</span><span class="p">)</span>
+        <span class="n">kill_arg</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;kill&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kill</span><span class="p">)</span>
+        <span class="n">Du</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;diffusion_u&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffusion_u</span><span class="p">))</span>
+        <span class="n">Dv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;diffusion_v&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffusion_v</span><span class="p">))</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span>
+        <span class="n">n_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;n_steps&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">))</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;resolution&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">))</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">))</span>
+        <span class="n">seed_strategy</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed_strategy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed_strategy</span><span class="p">)</span>
+        <span class="n">seed_scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed_scale&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed_scale</span><span class="p">))</span>
+        <span class="n">seed_radius_cells</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;seed_radius_cells&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed_radius_cells</span><span class="p">))</span>
+        <span class="n">rng_seed</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rng_seed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">)</span>
+        <span class="n">output_mode</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output_mode&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mode</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">overrides</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unexpected override keys: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">overrides</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_OUTPUT_MODES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;output_mode must be one of </span><span class="si">{</span><span class="n">_VALID_OUTPUT_MODES</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed_strategy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_SEED_STRATEGIES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;seed_strategy must be one of </span><span class="si">{</span><span class="n">_VALID_SEED_STRATEGIES</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ------ chord-driven defaults (from structural descriptors)</span>
+        <span class="n">plim</span> <span class="o">=</span> <span class="n">_structure</span><span class="o">.</span><span class="n">prime_limit</span><span class="p">(</span><span class="n">forcing</span><span class="p">)</span>
+        <span class="n">mci</span> <span class="o">=</span> <span class="n">_structure</span><span class="o">.</span><span class="n">max_common_int</span><span class="p">(</span><span class="n">forcing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">feed_arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># prime_limit 2 → 0.020 (degenerate); 3 → 0.024;</span>
+            <span class="c1"># 5 → 0.032; 7 → 0.040; 11 → 0.056; 13 → 0.062.</span>
+            <span class="n">feed_arg</span> <span class="o">=</span> <span class="mf">0.020</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">plim</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.062</span> <span class="o">-</span> <span class="mf">0.020</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kill_arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Log-scaled max_common_int so the 6 → 200 range stretches</span>
+            <span class="c1"># reasonably: mci=6 → K≈0.048; mci=15 → K≈0.053; mci=60 → K≈0.060;</span>
+            <span class="c1"># mci=200 → K≈0.065.</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">mci</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">200.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">kill_arg</span> <span class="o">=</span> <span class="mf">0.045</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.065</span> <span class="o">-</span> <span class="mf">0.045</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">feed_arg</span><span class="p">)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">kill_arg</span><span class="p">)</span>
+
+        <span class="c1"># Diffusion ratio from max_common_int (varies relative spatial scale).</span>
+        <span class="n">ratio_target</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">mci</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">-</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="n">Dv</span> <span class="o">=</span> <span class="n">Du</span> <span class="o">/</span> <span class="n">ratio_target</span>
+
+        <span class="c1"># ------ initial conditions</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">rng_seed</span><span class="p">))</span> <span class="k">if</span> <span class="n">rng_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+               <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">forcing</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()))</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span><span class="p">))))</span>
+        <span class="n">U</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">_initial_condition</span><span class="p">(</span>
+            <span class="n">resolution</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span> <span class="n">seed_strategy</span><span class="p">,</span>
+            <span class="n">seed_scale</span><span class="p">,</span> <span class="n">seed_radius_cells</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ------ integrate</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+            <span class="n">U</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">_gray_scott_step</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Du</span><span class="p">,</span> <span class="n">Dv</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+        <span class="c1"># ------ output channel</span>
+        <span class="k">if</span> <span class="n">output_mode</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">U</span>
+        <span class="k">elif</span> <span class="n">output_mode</span> <span class="o">==</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">V</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">V</span> <span class="o">-</span> <span class="n">U</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;feed&quot;</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span>
+            <span class="s2">&quot;kill&quot;</span><span class="p">:</span> <span class="n">K</span><span class="p">,</span>
+            <span class="s2">&quot;diffusion_u&quot;</span><span class="p">:</span> <span class="n">Du</span><span class="p">,</span>
+            <span class="s2">&quot;diffusion_v&quot;</span><span class="p">:</span> <span class="n">Dv</span><span class="p">,</span>
+            <span class="s2">&quot;diffusion_ratio&quot;</span><span class="p">:</span> <span class="n">Du</span> <span class="o">/</span> <span class="n">Dv</span><span class="p">,</span>
+            <span class="s2">&quot;dt&quot;</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span>
+            <span class="s2">&quot;n_steps&quot;</span><span class="p">:</span> <span class="n">n_steps</span><span class="p">,</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">resolution</span><span class="p">,</span>
+            <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="n">extent</span><span class="p">,</span>
+            <span class="s2">&quot;seed_strategy&quot;</span><span class="p">:</span> <span class="n">seed_strategy</span><span class="p">,</span>
+            <span class="s2">&quot;seed_scale&quot;</span><span class="p">:</span> <span class="n">seed_scale</span><span class="p">,</span>
+            <span class="s2">&quot;seed_radius_cells&quot;</span><span class="p">:</span> <span class="n">seed_radius_cells</span><span class="p">,</span>
+            <span class="s2">&quot;rng_seed&quot;</span><span class="p">:</span> <span class="n">rng_seed</span><span class="p">,</span>
+            <span class="s2">&quot;output_mode&quot;</span><span class="p">:</span> <span class="n">output_mode</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;reaction_diffusion_</span><span class="si">{</span><span class="n">output_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;morphogenetic&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;u_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">max</span><span class="p">())),</span>
+            <span class="s2">&quot;v_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">max</span><span class="p">())),</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+            <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+            <span class="n">coordinates</span><span class="o">=</span><span class="n">field</span><span class="p">,</span>
+            <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ReactionDiffusion(feed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">feed</span><span class="si">}</span><span class="s2">, kill=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kill</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;seed_strategy=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_strategy</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;output_mode=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mode</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,2827 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Acoustic">Acoustic (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.all_harmonics">all_harmonics (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.alpha_partner">alpha_partner (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.alpha_partner">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.alpha_self">alpha_self (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.alpha_self">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.amplitudes">amplitudes (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.amplitudes">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.amps">amps (compute_biotuner.self attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.analyze">analyze() (math_series method)</a>
+</li>
+      <li><a href="api/stats.html#biotuner.stats.ancova_groups">ancova_groups() (in module biotuner.stats)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.animate_geometry_sequence">animate_geometry_sequence() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.animate_rotation">animate_rotation() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.aperiodic_exponent">aperiodic_exponent (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.aperiodic_exponent">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.at">at() (HarmonicSequence method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.at">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.axis_clean">axis_clean() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.bandwidth_correction">bandwidth_correction (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.bandwidth_correction">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.barycenter">barycenter() (WassersteinTrajectory method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.base_freq">base_freq (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.base_freq">[1]</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.beat_envelope">beat_envelope() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.beat_spectrogram">beat_spectrogram() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.best_series">best_series (math_series attribute)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology.betti_numbers_">betti_numbers_ (HarmonicTopology property)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.kernels_ratio.binary_nm_kernel">binary_nm_kernel() (in module biotuner.resonance.kernels_ratio)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.binome2euclid">binome2euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li>
+    biotuner.biotuner_group
+
+      <ul>
+        <li><a href="api/biotuner_group.html#module-biotuner.biotuner_group">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.biotuner_mne
+
+      <ul>
+        <li><a href="api/biotuner_mne.html#module-biotuner.biotuner_mne">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.biotuner_object
+
+      <ul>
+        <li><a href="api/biotuner_object.html#module-biotuner.biotuner_object">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_connectivity
+
+      <ul>
+        <li><a href="api/harmonic_connectivity.html#module-biotuner.harmonic_connectivity">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#module-biotuner.harmonic_geometry">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.chladni
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#module-biotuner.harmonic_geometry.chladni">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.fractal
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#module-biotuner.harmonic_geometry.fractal">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.generative
+
+      <ul>
+        <li><a href="api/harmonic_geometry/generative.html#module-biotuner.harmonic_geometry.generative">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.geometry_3d
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#module-biotuner.harmonic_geometry.geometry_3d">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.geometry_data
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_data.html#module-biotuner.harmonic_geometry.geometry_data">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.harmonograph
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#module-biotuner.harmonic_geometry.harmonograph">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.inputs
+
+      <ul>
+        <li><a href="api/harmonic_geometry/inputs.html#module-biotuner.harmonic_geometry.inputs">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.lissajous
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#module-biotuner.harmonic_geometry.lissajous">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.metrics
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#module-biotuner.harmonic_geometry.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.plotting
+
+      <ul>
+        <li><a href="api/harmonic_geometry/plotting.html#module-biotuner.harmonic_geometry.plotting">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_geometry.polygon_circular
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#module-biotuner.harmonic_geometry.polygon_circular">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_sequence
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#module-biotuner.harmonic_sequence">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_sequence_viz
+
+      <ul>
+        <li><a href="api/harmonic_sequence_viz.html#module-biotuner.harmonic_sequence_viz">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.harmonic_spectrum
+
+      <ul>
+        <li><a href="api/harmonic_spectrum.html#module-biotuner.harmonic_spectrum">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.math_series
+
+      <ul>
+        <li><a href="api/math_series.html#module-biotuner.math_series">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    biotuner.metrics
+
+      <ul>
+        <li><a href="api/metrics.html#module-biotuner.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.peaks_extension
+
+      <ul>
+        <li><a href="api/peaks_extension.html#module-biotuner.peaks_extension">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.peaks_extraction
+
+      <ul>
+        <li><a href="api/peaks_extraction.html#module-biotuner.peaks_extraction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.plot_config
+
+      <ul>
+        <li><a href="api/plot_config.html#module-biotuner.plot_config">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.plot_utils
+
+      <ul>
+        <li><a href="api/plot_utils.html#module-biotuner.plot_utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.combine
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.combine">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.coupling
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.coupling">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.kernels_harmonic
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.kernels_harmonic">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.kernels_ratio
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.kernels_ratio">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.nulls
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.nulls">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.orchestrator
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.orchestrator">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.phase_estimators
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.phase_estimators">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.plots
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.plots">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.resonance.registry
+
+      <ul>
+        <li><a href="api/resonance.html#module-biotuner.resonance.registry">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.rhythm_construction
+
+      <ul>
+        <li><a href="api/rhythm_construction.html#module-biotuner.rhythm_construction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.scale_construction
+
+      <ul>
+        <li><a href="api/scale_construction.html#module-biotuner.scale_construction">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.stats
+
+      <ul>
+        <li><a href="api/stats.html#module-biotuner.stats">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.surrogates
+
+      <ul>
+        <li><a href="api/surrogates.html#module-biotuner.surrogates">module</a>
+</li>
+      </ul></li>
+      <li>
+    biotuner.transitional_harmony
+
+      <ul>
+        <li><a href="api/transitional_harmony.html#module-biotuner.transitional_harmony">module</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_mne.html#biotuner.biotuner_mne.biotuner_mne">biotuner_mne() (in module biotuner.biotuner_mne)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.biotuner_style">biotuner_style (class in biotuner.plot_config)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup">BiotunerGroup (class in biotuner.biotuner_group)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.bjorklund">bjorklund() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.blend_fields">blend_fields() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Box3D">Box3D (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.build_nm_plv_matrix">build_nm_plv_matrix() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.build_pairwise_coupling_matrix">build_pairwise_coupling_matrix() (in module biotuner.resonance.coupling)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.cepstral_peaks">cepstral_peaks() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.cepstrum">cepstrum() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_field_3d_box">chladni_field_3d_box() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_field_3d_box">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_field_circular">chladni_field_circular() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_field_circular">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_field_polygon">chladni_field_polygon() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_field_polygon">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_field_rectangular">chladni_field_rectangular() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_field_rectangular">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_from_input">chladni_from_input() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_from_input">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_nodal_lines">chladni_nodal_lines() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_nodal_lines">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_nodal_surfaces">chladni_nodal_surfaces() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_nodal_surfaces">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.chladni_temporal">chladni_temporal() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.chladni_temporal">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.chord_sequence_">chord_sequence_ (HarmonicGrammar property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Circular">Circular (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.clear_harmonicity_cache">clear_harmonicity_cache() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ClosedSurface">ClosedSurface (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.coincidences_continuous">coincidences_continuous() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.combine">combine (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.combine">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.combine_params">combine_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.combine_params">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.compare">compare() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.compare">(in module biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/stats.html#biotuner.stats.compare_all_metrics">compare_all_metrics() (in module biotuner.stats)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony.compare_deltas">compare_deltas() (transitional_harmony method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compare_groups">compare_groups() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compare_oct_div">compare_oct_div() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner">compute_biotuner (class in biotuner.biotuner_object)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_consonance">compute_consonance() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.compute_cross_resonance">compute_cross_resonance() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_cross_resonance_connectivity">compute_cross_resonance_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_cross_resonance_connectivity_zscore">compute_cross_resonance_connectivity_zscore() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.compute_cross_spectrum_harmonicity">compute_cross_spectrum_harmonicity() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_diss_curve">compute_diss_curve() (BiotunerGroup method)</a>
+
+      <ul>
+        <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_diss_curve">(compute_biotuner method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_euler_fokker">compute_euler_fokker() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_extension">compute_extension() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.compute_FOOOF">compute_FOOOF() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_harm_connectivity">compute_harm_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_entropy">compute_harmonic_entropy() (BiotunerGroup method)</a>
+
+      <ul>
+        <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_harmonic_entropy">(compute_biotuner method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_domain_integral">compute_harmonic_entropy_domain_integral() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.compute_harmonic_entropy_simple_weights">compute_harmonic_entropy_simple_weights() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_power">compute_harmonic_power() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.compute_harmonic_spectrum">compute_harmonic_spectrum() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_harmonic_spectrum_connectivity">compute_harmonic_spectrum_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_harmonic_tuning">compute_harmonic_tuning() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_IMF_correlation">compute_IMF_correlation() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_metrics">compute_metrics() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.compute_multitaper_psd">compute_multitaper_psd() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_peak_phase_coupling_connectivity">compute_peak_phase_coupling_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_peak_resonance">compute_peak_resonance() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_peak_resonance_connectivity">compute_peak_resonance_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.compute_peaks">compute_peaks() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_peaks_metrics">compute_peaks_metrics() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_peaks_ts">compute_peaks_ts() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_resonance">compute_resonance() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.compute_resonance">(in module biotuner.resonance)</a>
+</li>
+        <li><a href="api/resonance.html#biotuner.resonance.orchestrator.compute_resonance">(in module biotuner.resonance.orchestrator)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.compute_rhythmic_ratio">compute_rhythmic_ratio() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.compute_sidebands">compute_sidebands() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.compute_spectromorph">compute_spectromorph() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonic_tension">compute_subharmonic_tension() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonics">compute_subharmonics() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.compute_subharmonics_2lists">compute_subharmonics_2lists() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.compute_time_resolved_harm_connectivity">compute_time_resolved_harm_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony.compute_trans_harmony">compute_trans_harmony() (transitional_harmony method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.config">config (CrossResonanceResult attribute)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.config">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.config">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/metrics.html#biotuner.metrics.consonance_peaks">consonance_peaks() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.consonance_polygon">consonance_polygon() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.consonance_polygon">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.consonant_euclid">consonant_euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.consonant_ratios">consonant_ratios() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.continued_fraction_rectangles">continued_fraction_rectangles() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#biotuner.harmonic_geometry.fractal.continued_fraction_rectangles">(in module biotuner.harmonic_geometry.fractal)</a>
+</li>
+      </ul></li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.convergents">convergents() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.coordinates">coordinates (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.coordinates">[1]</a>
+</li>
+      <li><a href="api/stats.html#biotuner.stats.correlate_metrics_peaks">correlate_metrics_peaks() (in module biotuner.stats)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.count_theoretical_harmonic_partners">count_theoretical_harmonic_partners() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.coupled_pairs">coupled_pairs (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.coupled_pairs">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.coupling_metric">coupling_metric (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.coupling_metric">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.coupling_metric_params">coupling_metric_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.coupling_metric_params">[1]</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.create_mode">create_mode() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.cross_frequency_rrci">cross_frequency_rrci() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.cross_pc_reducer">cross_pc_reducer (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.cross_pc_reducer">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.cross_use_ratio_kernel">cross_use_ratio_kernel (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.cross_use_ratio_kernel">[1]</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult">CrossResonanceResult (class in biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Crystallization">Crystallization (class in biotuner.harmonic_geometry)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.damping">damping (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.damping">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.decode">decode() (HarmonicLatentSpace method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.decode_viterbi">decode_viterbi() (HarmonicMarkov method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Acoustic.default_source">default_source() (Acoustic method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ClosedSurface.default_source">(ClosedSurface method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Crystallization.default_source">(Crystallization method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Elastic.default_source">(Elastic method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday.default_source">(Faraday method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Granular.default_source">(Granular method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference.default_source">(Interference method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Medium.default_source">(Medium method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PlasmaLattice.default_source">(PlasmaLattice method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion.default_source">(ReactionDiffusion method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.RigidPlate.default_source">(RigidPlate method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Streaming.default_source">(Streaming method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Tracer.default_source">(Tracer method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.derive_damping_from_linewidth">derive_damping_from_linewidth() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#biotuner.harmonic_geometry.harmonograph.derive_damping_from_linewidth">(in module biotuner.harmonic_geometry.harmonograph)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.detect_nm_coupling">detect_nm_coupling() (in module biotuner.resonance)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.detrend">detrend (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.detrend">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.diss_curve">diss_curve() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.diss_scale">diss_scale (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.diss_scale_cons">diss_scale_cons (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.dissmeasure">dissmeasure() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.distance_matrix_">distance_matrix_ (WassersteinTrajectory property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Domain">Domain (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_curve_2d">draw_curve_2d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_curve_3d">draw_curve_3d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_field_2d">draw_field_2d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_graph_2d">draw_graph_2d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_hyperbolic_graph">draw_hyperbolic_graph() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_image">draw_image() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_mesh_3d">draw_mesh_3d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_point_cloud_2d">draw_point_cloud_2d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_point_cloud_3d">draw_point_cloud_3d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_polygon">draw_polygon() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_polygon_set">draw_polygon_set() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_rectangles">draw_rectangles() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_tree_2d">draw_tree_2d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.draw_tree_3d">draw_tree_3d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.dyad_similarity">dyad_similarity() (in module biotuner.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.edges">edges (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.edges">[1]</a>
+</li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_div">EEG_harmonics_div() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.EEG_harmonics_mult">EEG_harmonics_mult() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.eigenvalues_">eigenvalues_ (HarmonicDMD property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Elastic">Elastic (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.embed">embed() (WassersteinTrajectory method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.EMD_eeg">EMD_eeg() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.EMD_time_resolved_harmonicity">EMD_time_resolved_harmonicity() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.encode">encode() (HarmonicLatentSpace method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.encode_harmonicity_matrices">encode_harmonicity_matrices() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.encode_harmonicity_spectrum">encode_harmonicity_spectrum() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.encode_histograms">encode_histograms() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.encode_ji_matrix">encode_ji_matrix() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.encode_scalar_metrics">encode_scalar_metrics() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.endogenous_intermodulations">endogenous_intermodulations() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.epicycloid">epicycloid() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.epicycloid">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.equave">equave (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.equave">[1]</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclid_long_to_short">euclid_long_to_short() (in module biotuner.rhythm_construction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclid_polyrhythm_to_midi">euclid_polyrhythm_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclid_string_to_referent">euclid_string_to_referent() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.euclidean_rhythm">euclidean_rhythm() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.euler">euler() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.euler_fokker">euler_fokker (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.euler_fokker_scale">euler_fokker_scale() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.euler_fokker_scale">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.evolve_density_ramp">evolve_density_ramp() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.evolve_metric_modulation">evolve_metric_modulation() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.evolve_onset_interpolation">evolve_onset_interpolation() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.evolve_phase_shift">evolve_phase_shift() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.explained_variance_ratio_">explained_variance_ratio_ (HarmonicLatentSpace property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.extend_harmonic_fit">extend_harmonic_fit() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.extend_harmonic_tuning">extend_harmonic_tuning() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.extend_harmonics">extend_harmonics() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.extend_subharmonics">extend_subharmonics() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.extract_coincidence_rhythm">extract_coincidence_rhythm() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.extract_tuning">extract_tuning() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.extract_welch_peaks">extract_welch_peaks() (in module biotuner.peaks_extraction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.faces">faces (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.faces">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.factor_surrogate_mean">factor_surrogate_mean (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.factor_surrogate_mean">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.factor_surrogate_std">factor_surrogate_std (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.factor_surrogate_std">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.factor_z">factor_z (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.factor_z">[1]</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.factors">factors (CrossResonanceResult attribute)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.factors">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.factors">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.fade_in_components">fade_in_components() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Acoustic.family">family (Acoustic attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ClosedSurface.family">(ClosedSurface attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Crystallization.family">(Crystallization attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Elastic.family">(Elastic attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday.family">(Faraday attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Granular.family">(Granular attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference.family">(Interference attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Medium.family">(Medium attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PlasmaLattice.family">(PlasmaLattice attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion.family">(ReactionDiffusion attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.RigidPlate.family">(RigidPlate attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Streaming.family">(Streaming attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Tracer.family">(Tracer attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday">Faraday (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.farey">farey() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.farey_sequence_layout">farey_sequence_layout() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#biotuner.harmonic_geometry.fractal.farey_sequence_layout">(in module biotuner.harmonic_geometry.fractal)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.features">features (HarmonicSequenceAnalyzer property)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.features_freqs_">features_freqs_ (HarmonicSequenceAnalyzer property)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.fibonacci">fibonacci() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.field_grid">field_grid (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.field_grid">[1]</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.find_MOS">find_MOS() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.find_optimal_n_states">find_optimal_n_states() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.find_optimal_offsets">find_optimal_offsets() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.find_spectral_peaks">find_spectral_peaks() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.fit">fit() (HarmonicDMD method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.fit">(HarmonicGrammar method)</a>
+</li>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.fit">(HarmonicLatentSpace method)</a>
+</li>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.fit">(HarmonicMarkov method)</a>
+</li>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology.fit">(HarmonicTopology method)</a>
+</li>
+        <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis.fit">(SingularSpectrumAnalysis method)</a>
+</li>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.fit">(WassersteinTrajectory method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.fit_all">fit_all() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_all">(HarmonicSequenceAnalyzer method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.fit_biotuner">fit_biotuner() (in module biotuner.biotuner_object)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_dmd">fit_dmd() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_grammar">fit_grammar() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_latent">fit_latent() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_markov">fit_markov() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_topology">fit_topology() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.UnivariateTransformerMixin.fit_transform">fit_transform() (UnivariateTransformerMixin method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.fit_wasserstein">fit_wasserstein() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.flux_">flux_ (WassersteinTrajectory property)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.fmax">fmax (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.fmax">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.fmin">fmin (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.fmin">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.kernels_ratio.fraction_kernel">fraction_kernel() (in module biotuner.resonance.kernels_ratio)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.frames">frames (HarmonicSequence attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.frames">[1]</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.frames_to_midi">frames_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.FREQ_BANDS">FREQ_BANDS (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.freqs">freqs (compute_biotuner.self attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.freqs">(CrossResonanceResult attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.freqs">(HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.freqs">[1]</a>
+</li>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.freqs">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.freqs">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.frequencies_">frequencies_ (HarmonicDMD property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.from_biotuner">from_biotuner() (HarmonicInput class method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.from_biotuner">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.from_biotuner_group">from_biotuner_group() (HarmonicSequence class method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_group">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.from_biotuner_list">from_biotuner_list() (HarmonicSequence class method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.from_biotuner_list">[1]</a>
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.from_biotuner_list">(HarmonicSequenceAnalyzer class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.from_peaks">from_peaks() (HarmonicInput class method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.from_peaks">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.from_ratios">from_ratios() (HarmonicInput class method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.from_ratios">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.from_ratios_list">from_ratios_list() (HarmonicSequenceAnalyzer class method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.gallery">gallery() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.gaussian_smooth_sigma">gaussian_smooth_sigma (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.gaussian_smooth_sigma">[1]</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.gen_interval_to_stern_brocot">gen_interval_to_stern_brocot() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/surrogates.html#biotuner.surrogates.generate_surrogate">generate_surrogate() (in module biotuner.surrogates)</a>
+</li>
+      <li><a href="api/surrogates.html#biotuner.surrogates.generate_surrogate_data">generate_surrogate_data() (in module biotuner.surrogates)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.generator_interval_tuning">generator_interval_tuning() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.generator_to_stern_brocot_fractions">generator_to_stern_brocot_fractions() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.geom_type">geom_type (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.geom_type">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.combine.geomean">geomean() (in module biotuner.resonance.combine)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.geometry_metrics">geometry_metrics() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.geometry_metrics">(in module biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.geometry_sequence">geometry_sequence() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/generative.html#biotuner.harmonic_geometry.generative.geometry_sequence">(in module biotuner.harmonic_geometry.generative)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData">GeometryData (class in biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData">(class in biotuner.harmonic_geometry.geometry_data)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeomType">GeomType (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.get_attribute">get_attribute() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.get_band_colors">get_band_colors() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.get_color_palette">get_color_palette() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.get_emd_colors">get_emd_colors() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.get_harm_spectrum_metric_matrix">get_harm_spectrum_metric_matrix() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.get_harmonic_ratio">get_harmonic_ratio() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.get_histograms">get_histograms() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.get_plot_config">get_plot_config() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.get_tuning_scales">get_tuning_scales() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.gplv">gplv (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.gplv">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Granular">Granular (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.growth_rates_">growth_rates_ (HarmonicDMD property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.combine.harmmean">harmmean() (in module biotuner.resonance.combine)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity">harmonic_connectivity (class in biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonic_entropy">harmonic_entropy() (in module biotuner.harmonic_spectrum)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.harmonic_entropy">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.harmonic_fit">harmonic_fit() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.harmonic_fit_tuning">harmonic_fit_tuning (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.harmonic_fit_tuning">harmonic_fit_tuning() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonic_interference_field_2d">harmonic_interference_field_2d() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.harmonic_kernel">harmonic_kernel (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.harmonic_kernel">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.harmonic_kernel_params">harmonic_kernel_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.harmonic_kernel_params">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonic_knot">harmonic_knot() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.harmonic_knot">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonic_point_cloud">harmonic_point_cloud() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.harmonic_point_cloud">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.harmonic_recurrence">harmonic_recurrence() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.harmonic_spectrum_plot_avg_corr">harmonic_spectrum_plot_avg_corr() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.plots.harmonic_spectrum_plot_avg_corr">(in module biotuner.resonance.plots)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.harmonic_spectrum_plot_freq_corr">harmonic_spectrum_plot_freq_corr() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.plots.harmonic_spectrum_plot_freq_corr">(in module biotuner.resonance.plots)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.harmonic_spectrum_plot_trial_corr">harmonic_spectrum_plot_trial_corr() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.plots.harmonic_spectrum_plot_trial_corr">(in module biotuner.resonance.plots)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonic_surface">harmonic_surface() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.harmonic_surface">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.harmonic_tuning">harmonic_tuning (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.harmonic_tuning">harmonic_tuning() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/scale_construction.html#biotuner.scale_construction.harmonic_tuning">(in module biotuner.scale_construction)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD">HarmonicDMD (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar">HarmonicGrammar (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput">HarmonicInput (class in biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput">(class in biotuner.harmonic_geometry.inputs)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_spectrum.html#biotuner.harmonic_spectrum.harmonicity_matrices">harmonicity_matrices() (in module biotuner.harmonic_spectrum)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.harmonicity_matrices_">harmonicity_matrices_ (HarmonicSequenceAnalyzer property)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.harmonicity_matrix">harmonicity_matrix (CrossResonanceResult property)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.harmonicity_matrix">(ResonanceResult property)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.harmonicity_matrix">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace">HarmonicLatentSpace (class in biotuner.harmonic_sequence)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov">HarmonicMarkov (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.harmonics">harmonics() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence">HarmonicSequence (class in biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence">(class in biotuner.harmonic_geometry.inputs)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer">HarmonicSequenceAnalyzer (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology">HarmonicTopology (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonograph_3d">harmonograph_3d() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#biotuner.harmonic_geometry.harmonograph.harmonograph_3d">(in module biotuner.harmonic_geometry.harmonograph)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonograph_from_peaks">harmonograph_from_peaks() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#biotuner.harmonic_geometry.harmonograph.harmonograph_from_peaks">(in module biotuner.harmonic_geometry.harmonograph)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonograph_lateral">harmonograph_lateral() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#biotuner.harmonic_geometry.harmonograph.harmonograph_lateral">(in module biotuner.harmonic_geometry.harmonograph)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.harmonograph_rotary">harmonograph_rotary() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/harmonograph.html#biotuner.harmonic_geometry.harmonograph.harmonograph_rotary">(in module biotuner.harmonic_geometry.harmonograph)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.HE_scale">HE_scale (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.HE_scale_cons">HE_scale_cons (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.high_order_transition_">high_order_transition_ (HarmonicMarkov property)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.higher_order">higher_order (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.higher_order">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.higher_order_coupling">higher_order_coupling (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.higher_order_coupling">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.higher_order_params">higher_order_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.higher_order_params">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult">HigherOrderResult (class in biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult">(class in biotuner.resonance.orchestrator)</a>
+</li>
+      </ul></li>
+      <li><a href="api/metrics.html#biotuner.metrics.higuchi_fd">higuchi_fd() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.phase_estimators.hilbert_bandpass_phase">hilbert_bandpass_phase() (in module biotuner.resonance.phase_estimators)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.HilbertHuang1D">HilbertHuang1D() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.HilbertHuang1D_nopeaks">HilbertHuang1D_nopeaks() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.histogram_to_ratios">histogram_to_ratios() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.histogram_to_scl">histogram_to_scl() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.histograms">histograms (HarmonicSequenceAnalyzer property)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.histograms_to_midi">histograms_to_midi() (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.hofstadter_q">hofstadter_q() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.horogram_tree">horogram_tree() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.horogram_tree_steps">horogram_tree_steps() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.hypocycloid">hypocycloid() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.hypocycloid">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.nulls.iaaft_surrogate">iaaft_surrogate() (in module biotuner.resonance.nulls)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IF">IF (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IFs">IFs (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ifs_harmonic">ifs_harmonic() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#biotuner.harmonic_geometry.fractal.ifs_harmonic">(in module biotuner.harmonic_geometry.fractal)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.IMFs">IMFs (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id6">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.info">info() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.integral_tenneyHeight">integral_tenneyHeight() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference">Interference (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.interference_field_2d">interference_field_2d() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.intermediates">intermediates (CrossResonanceResult attribute)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.intermediates">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.intermediates">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.intermodulation_spectrum">intermodulation_spectrum() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.interpolate">interpolate() (HarmonicLatentSpace method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.interpolate">(HarmonicSequence method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.interpolate">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.interpolate_chords">interpolate_chords() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory.interpolate_pair">interpolate_pair() (WassersteinTrajectory method)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.interval_exponents">interval_exponents() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.interval_to_radian">interval_to_radian() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.interval_vec_to_string">interval_vec_to_string() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.interval_vector">interval_vector() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.interval_vector_diagram">interval_vector_diagram() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.interval_vector_diagram">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.invert_ratio">invert_ratio() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.is_pairwise">is_pairwise() (in module biotuner.resonance.registry)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/math_series.html#biotuner.math_series.jacobsthal">jacobsthal() (in module biotuner.math_series)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.kernels_harmonic.kernel_harmsim">kernel_harmsim() (in module biotuner.resonance.kernels_harmonic)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.kernels_harmonic.kernel_subharm_tension">kernel_subharm_tension() (in module biotuner.resonance.kernels_harmonic)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.legacy_self_pair_subtract">legacy_self_pair_subtract (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.legacy_self_pair_subtract">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.levenshtein">levenshtein() (HarmonicGrammar static method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.linewidths">linewidths (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.linewidths">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_2d">lissajous_2d() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_2d">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_3d">lissajous_3d() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_3d">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_compound">lissajous_compound() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_compound">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_pairwise_grid">lissajous_pairwise_grid() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_pairwise_grid">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_phase_drift">lissajous_phase_drift() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_phase_drift">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_topology">lissajous_topology() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/lissajous.html#biotuner.harmonic_geometry.lissajous.lissajous_topology">(in module biotuner.harmonic_geometry.lissajous)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lissajous_tube">lissajous_tube() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.lissajous_tube">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.list_strategies">list_strategies() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.registry.list_strategies">(in module biotuner.resonance.registry)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.list_supported_kinds">list_supported_kinds() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.list_supported_kinds">(in module biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.listen_scale">listen_scale() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.load">load() (GeometryData class method)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.load">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.log">log() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.log">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.log_geometry">log_geometry() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.log_geometry">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.log_sequence">log_sequence() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.log_sequence">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lsystem_3d">lsystem_3d() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.lsystem_3d">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.lsystem_from_ratios">lsystem_from_ratios() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/generative.html#biotuner.harmonic_geometry.generative.lsystem_from_ratios">(in module biotuner.harmonic_geometry.generative)</a>
+</li>
+      </ul></li>
+      <li><a href="api/math_series.html#biotuner.math_series.lucas">lucas() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Box3D.Lx">Lx (Box3D attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Rectangular.Lx">(Rectangular attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Box3D.Ly">Ly (Box3D attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Rectangular.Ly">(Rectangular attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Box3D.Lz">Lz (Box3D attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.make_axis_3d">make_axis_3d() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series">math_series (class in biotuner.math_series)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.measure_symmetry">measure_symmetry() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Medium">Medium (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.mersenne">mersenne() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.metadata">metadata (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.metadata">[1]</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.metadata">(HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.metadata">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.method">method (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.method">[1]</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.metric_3">metric_3() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.metric_denom">metric_denom() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.metric_modulation_to_midi">metric_modulation_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog">MetricsLog (class in biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog">(class in biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.combine.min_combine">min_combine() (in module biotuner.resonance.combine)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.modes_">modes_ (HarmonicDMD property)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/biotuner_group.html#module-biotuner.biotuner_group">biotuner.biotuner_group</a>
+</li>
+        <li><a href="api/biotuner_mne.html#module-biotuner.biotuner_mne">biotuner.biotuner_mne</a>
+</li>
+        <li><a href="api/biotuner_object.html#module-biotuner.biotuner_object">biotuner.biotuner_object</a>
+</li>
+        <li><a href="api/harmonic_connectivity.html#module-biotuner.harmonic_connectivity">biotuner.harmonic_connectivity</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#module-biotuner.harmonic_geometry">biotuner.harmonic_geometry</a>
+</li>
+        <li><a href="api/harmonic_geometry/chladni.html#module-biotuner.harmonic_geometry.chladni">biotuner.harmonic_geometry.chladni</a>
+</li>
+        <li><a href="api/harmonic_geometry/fractal.html#module-biotuner.harmonic_geometry.fractal">biotuner.harmonic_geometry.fractal</a>
+</li>
+        <li><a href="api/harmonic_geometry/generative.html#module-biotuner.harmonic_geometry.generative">biotuner.harmonic_geometry.generative</a>
+</li>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#module-biotuner.harmonic_geometry.geometry_3d">biotuner.harmonic_geometry.geometry_3d</a>
+</li>
+        <li><a href="api/harmonic_geometry/geometry_data.html#module-biotuner.harmonic_geometry.geometry_data">biotuner.harmonic_geometry.geometry_data</a>
+</li>
+        <li><a href="api/harmonic_geometry/harmonograph.html#module-biotuner.harmonic_geometry.harmonograph">biotuner.harmonic_geometry.harmonograph</a>
+</li>
+        <li><a href="api/harmonic_geometry/inputs.html#module-biotuner.harmonic_geometry.inputs">biotuner.harmonic_geometry.inputs</a>
+</li>
+        <li><a href="api/harmonic_geometry/lissajous.html#module-biotuner.harmonic_geometry.lissajous">biotuner.harmonic_geometry.lissajous</a>
+</li>
+        <li><a href="api/harmonic_geometry/metrics.html#module-biotuner.harmonic_geometry.metrics">biotuner.harmonic_geometry.metrics</a>
+</li>
+        <li><a href="api/harmonic_geometry/plotting.html#module-biotuner.harmonic_geometry.plotting">biotuner.harmonic_geometry.plotting</a>
+</li>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#module-biotuner.harmonic_geometry.polygon_circular">biotuner.harmonic_geometry.polygon_circular</a>
+</li>
+        <li><a href="api/harmonic_sequence.html#module-biotuner.harmonic_sequence">biotuner.harmonic_sequence</a>
+</li>
+        <li><a href="api/harmonic_sequence_viz.html#module-biotuner.harmonic_sequence_viz">biotuner.harmonic_sequence_viz</a>
+</li>
+        <li><a href="api/harmonic_spectrum.html#module-biotuner.harmonic_spectrum">biotuner.harmonic_spectrum</a>
+</li>
+        <li><a href="api/math_series.html#module-biotuner.math_series">biotuner.math_series</a>
+</li>
+        <li><a href="api/metrics.html#module-biotuner.metrics">biotuner.metrics</a>
+</li>
+        <li><a href="api/peaks_extension.html#module-biotuner.peaks_extension">biotuner.peaks_extension</a>
+</li>
+        <li><a href="api/peaks_extraction.html#module-biotuner.peaks_extraction">biotuner.peaks_extraction</a>
+</li>
+        <li><a href="api/plot_config.html#module-biotuner.plot_config">biotuner.plot_config</a>
+</li>
+        <li><a href="api/plot_utils.html#module-biotuner.plot_utils">biotuner.plot_utils</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance">biotuner.resonance</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.combine">biotuner.resonance.combine</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.coupling">biotuner.resonance.coupling</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.kernels_harmonic">biotuner.resonance.kernels_harmonic</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.kernels_ratio">biotuner.resonance.kernels_ratio</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.nulls">biotuner.resonance.nulls</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.orchestrator">biotuner.resonance.orchestrator</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.phase_estimators">biotuner.resonance.phase_estimators</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.plots">biotuner.resonance.plots</a>
+</li>
+        <li><a href="api/resonance.html#module-biotuner.resonance.registry">biotuner.resonance.registry</a>
+</li>
+        <li><a href="api/rhythm_construction.html#module-biotuner.rhythm_construction">biotuner.rhythm_construction</a>
+</li>
+        <li><a href="api/scale_construction.html#module-biotuner.scale_construction">biotuner.scale_construction</a>
+</li>
+        <li><a href="api/stats.html#module-biotuner.stats">biotuner.stats</a>
+</li>
+        <li><a href="api/surrogates.html#module-biotuner.surrogates">biotuner.surrogates</a>
+</li>
+        <li><a href="api/transitional_harmony.html#module-biotuner.transitional_harmony">biotuner.transitional_harmony</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.MOS_metric_harmonic_mean">MOS_metric_harmonic_mean() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/peaks_extension.html#biotuner.peaks_extension.multi_consonance">multi_consonance() (in module biotuner.peaks_extension)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.multi_oct_subdiv">multi_oct_subdiv() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.n_components">n_components() (HarmonicInput method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.n_components">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.n_frames">n_frames() (HarmonicSequence method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.n_frames">[1]</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.n_m_phase_locking">n_m_phase_locking() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.n_peaks">n_peaks (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.n_peaks">[1]</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.n_series">n_series (BiotunerGroup attribute)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PolygonDomain.n_sides">n_sides (PolygonDomain attribute)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_conditional_prob">nm_conditional_prob() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_conditional_prob_canonical">nm_conditional_prob_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.nm_intertrial_plv">nm_intertrial_plv() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_intertrial_plv">(in module biotuner.resonance.coupling)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.nm_multipliers">nm_multipliers() (in module biotuner.resonance)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_phase_mi">nm_phase_mi() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_phase_mi_canonical">nm_phase_mi_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_pli">nm_pli() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_pli_canonical">nm_pli_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_plv">nm_plv() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_plv_canonical">nm_plv_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_rho_entropy">nm_rho_entropy() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_rho_entropy_canonical">nm_rho_entropy_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_rrci">nm_rrci() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_rrci_canonical">nm_rrci_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_wpli">nm_wpli() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_wpli_canonical">nm_wpli_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_wpli_complex">nm_wpli_complex() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.nm_wpli_complex_canonical">nm_wpli_complex_canonical() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.normalize">normalize (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.normalize">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.normalize_metrics">normalize_metrics() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.normalize_metrics">(in module biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.normalized_amplitudes">normalized_amplitudes() (HarmonicInput method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.normalized_amplitudes">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.noverlap">noverlap (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.noverlap">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.null_model">null_model (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.null_model">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.objects">objects (BiotunerGroup attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.oct_subdiv">oct_subdiv() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.oscillatory_modes">oscillatory_modes() (HarmonicDMD method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.pac">pac() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.pac_convention">pac_convention (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.pac_convention">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.pac_frequencies">pac_frequencies() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.pac_mode">pac_mode() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.padovan">padovan() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.parameters">parameters (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.parameters">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.participation_spectrum">participation_spectrum (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.participation_spectrum">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks">peaks (compute_biotuner.self attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.peaks">(CrossResonanceResult attribute)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.peaks">(HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.peaks">[1]</a>
+</li>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.peaks">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.peaks">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.peaks_extension">peaks_extension() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.peaks_extraction">peaks_extraction() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_metrics">peaks_metrics (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios">peaks_ratios (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_cons">peaks_ratios_cons (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_harm">peaks_ratios_harm (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id0">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc">peaks_ratios_inc (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id1">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_bound">peaks_ratios_inc_bound (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.peaks_ratios_inc_fit">peaks_ratios_inc_fit (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id2">[1]</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.peaks_to_harmsim">peaks_to_harmsim() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.pell">pell() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.persistence">persistence (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.persistence">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology.persistence_diagram_">persistence_diagram_ (HarmonicTopology property)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.persistence_params">persistence_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.persistence_params">[1]</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.phase_coupling_matrix">phase_coupling_matrix (CrossResonanceResult property)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.phase_coupling_matrix">(ResonanceResult property)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.phase_coupling_matrix">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.phase_estimator">phase_estimator (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.phase_estimator">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.phase_estimator_params">phase_estimator_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.phase_estimator_params">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.nulls.phase_randomize_surrogate">phase_randomize_surrogate() (in module biotuner.resonance.nulls)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.phases">phases (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.phases">[1]</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.phi_convergent_point">phi_convergent_point() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Pipeline">Pipeline (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PlasmaLattice">PlasmaLattice (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_cents_ruler">plot_cents_ruler() (math_series method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_common_intervals">plot_common_intervals() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_comparison_flux">plot_comparison_flux() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_comparison_latent">plot_comparison_latent() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_comparison_summary">plot_comparison_summary() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.plot_conn_matrix">plot_conn_matrix() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_dmd_spectrum">plot_dmd_spectrum() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_emd_peaks">plot_emd_peaks() (in module biotuner.plot_utils)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_fit_landscape">plot_fit_landscape() (math_series method)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.plot_geometry">plot_geometry() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_grammar_interval_heatmap">plot_grammar_interval_heatmap() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_group_peaks">plot_group_peaks() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_harmonic_fit">plot_harmonic_fit() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_harmonic_fit">(in module biotuner.plot_utils)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_harmonic_fit_matrix">plot_harmonic_fit_matrix() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_harmonic_fit_network">plot_harmonic_fit_network() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_harmonic_fit_positions">plot_harmonic_fit_positions() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_harmonic_peaks">plot_harmonic_peaks() (in module biotuner.plot_utils)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_harmonic_position_mappings">plot_harmonic_position_mappings() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_harmonic_position_mappings">(in module biotuner.plot_utils)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_histogram_heatmap">plot_histogram_heatmap() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.plot_IMF_correlation_matrix">plot_IMF_correlation_matrix() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_interval_histogram">plot_interval_histogram() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_latent_trajectory">plot_latent_trajectory() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_markov_matrix">plot_markov_matrix() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_metric_distribution">plot_metric_distribution() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_metric_matrix">plot_metric_matrix() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.plot_metric_radar">plot_metric_radar() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.plot_metric_trajectory">plot_metric_trajectory() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_octave_wheel">plot_octave_wheel() (math_series method)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_peak_distribution">plot_peak_distribution() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_peaks">plot_peaks() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_peaks">(in module biotuner.plot_utils)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_peaks_amplitude">plot_peaks_amplitude() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_peaks_matrix">plot_peaks_matrix() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_peaks_spectrum">plot_peaks_spectrum() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_peaks_summary">plot_peaks_summary() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_phase_shift_evolution">plot_phase_shift_evolution() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_polyrhythm_coincidence">plot_polyrhythm_coincidence() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_polyrhythm_coincidence_matrix">plot_polyrhythm_coincidence_matrix() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_polyrhythm_phase_wheel">plot_polyrhythm_phase_wheel() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_polyrhythm_piano_roll">plot_polyrhythm_piano_roll() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_polyrhythm_score">plot_polyrhythm_score() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_proportions">plot_proportions() (math_series method)</a>
+</li>
+      <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_psd_peaks">plot_psd_peaks() (in module biotuner.plot_utils)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_ratio_pairs">plot_ratio_pairs() (math_series method)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_rhythm_evolution">plot_rhythm_evolution() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_scale_size_distribution">plot_scale_size_distribution() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_scenario_overview">plot_scenario_overview() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.plot_second_order_polyrhythm">plot_second_order_polyrhythm() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_series_comb">plot_series_comb() (math_series method)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.plot_simplicity_bubbles">plot_simplicity_bubbles() (math_series method)</a>
+</li>
+      <li><a href="api/stats.html#biotuner.stats.plot_stats_comparison">plot_stats_comparison() (in module biotuner.stats)</a>
+</li>
+      <li><a href="api/surrogates.html#biotuner.surrogates.plot_surrogate_distributions">plot_surrogate_distributions() (in module biotuner.surrogates)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_tda_grammar_grid">plot_tda_grammar_grid() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_topology_barcode">plot_topology_barcode() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning">plot_tuning() (compute_biotuner method)</a>
+
+      <ul>
+        <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_tuning">(in module biotuner.plot_utils)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.plot_tuning_comparison">plot_tuning_comparison() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_consonance_profile">plot_tuning_consonance_profile() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_curve">plot_tuning_curve() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_tuning_dissonance">plot_tuning_dissonance() (in module biotuner.plot_utils)</a>
+</li>
+      <li><a href="api/plot_utils.html#biotuner.plot_utils.plot_tuning_entropy">plot_tuning_entropy() (in module biotuner.plot_utils)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_interval_table">plot_tuning_interval_table() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_intervals">plot_tuning_intervals() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_matrix">plot_tuning_matrix() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_scale">plot_tuning_scale() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.plot_tuning_summary">plot_tuning_summary() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_wasserstein_flux">plot_wasserstein_flux() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/harmonic_sequence_viz.html#biotuner.harmonic_sequence_viz.plot_wasserstein_matrix">plot_wasserstein_matrix() (in module biotuner.harmonic_sequence_viz)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.polycoherence">polycoherence() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.polygon_chord_pattern">polygon_chord_pattern() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.polygon_chord_pattern">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PolygonDomain">PolygonDomain (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.polyrhythm_continuous_to_midi">polyrhythm_continuous_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.polyrhythm_dump_osc_patterns">polyrhythm_dump_osc_patterns() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.polyrhythm_send_osc">polyrhythm_send_osc() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.polyrhythm_to_midi">polyrhythm_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.polyrhythm_to_osc_score">polyrhythm_to_osc_score() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.polyrhythms">polyrhythms (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.polyrhythms">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.polyspectrum_frequencies">polyspectrum_frequencies() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.precision_hz">precision_hz (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.precision_hz">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.predict_next_proba">predict_next_proba() (HarmonicMarkov method)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.combine.product">product() (in module biotuner.resonance.combine)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.project_higher_order_to_bins">project_higher_order_to_bins (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.project_higher_order_to_bins">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.projection_op">projection_op (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.projection_op">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.psd">psd (compute_biotuner.self attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.psd">(HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.psd">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.psd_method">psd_method (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.psd_method">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.psd_normalization">psd_normalization (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.psd_normalization">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.quasicrystal_field_2d">quasicrystal_field_2d() (in module biotuner.harmonic_geometry)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Circular.R">R (Circular attribute)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Sphere.R">(Sphere attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PolygonDomain.radius">radius (PolygonDomain attribute)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.ratio_kernel">ratio_kernel (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.ratio_kernel">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.ratio_kernel_params">ratio_kernel_params (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.ratio_kernel_params">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.ratios">ratios (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios">[1]</a>
+
+      <ul>
+        <li><a href="api/math_series.html#biotuner.math_series.math_series.ratios">(math_series attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/metrics.html#biotuner.metrics.ratios2harmsim">ratios2harmsim() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.ratios_alternates">ratios_alternates (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_alternates">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.ratios_extension">ratios_extension() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.ratios_source">ratios_source (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.ratios_source">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ratios_to_modes">ratios_to_modes() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/chladni.html#biotuner.harmonic_geometry.chladni.ratios_to_modes">(in module biotuner.harmonic_geometry.chladni)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ratios_to_modes_lm">ratios_to_modes_lm() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion">ReactionDiffusion (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicDMD.reconstruct">reconstruct() (HarmonicDMD method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.reconstruction_error_">reconstruction_error_ (HarmonicLatentSpace property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Rectangular">Rectangular (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.recursive_polygon">recursive_polygon() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/generative.html#biotuner.harmonic_geometry.generative.recursive_polygon">(in module biotuner.harmonic_geometry.generative)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.recursive_polyhedron">recursive_polyhedron() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/geometry_3d.html#biotuner.harmonic_geometry.geometry_3d.recursive_polyhedron">(in module biotuner.harmonic_geometry.geometry_3d)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.coupling.reduce_matrix_to_spectrum">reduce_matrix_to_spectrum() (in module biotuner.resonance.coupling)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_combine_rule">register_combine_rule() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_coupling_metric">register_coupling_metric() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_harmonic_kernel">register_harmonic_kernel() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_persistence">register_persistence() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_phase_estimator">register_phase_estimator() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_ratio_kernel">register_ratio_kernel() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.registry.register_surrogate_type">register_surrogate_type() (in module biotuner.resonance.registry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.remove_aperiodic">remove_aperiodic (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.remove_aperiodic">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.rescale_factors_after_detrend">rescale_factors_after_detrend (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.rescale_factors_after_detrend">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plot_config.html#biotuner.plot_config.reset_style">reset_style() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.resonance_spectrum">resonance_spectrum (CrossResonanceResult attribute)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.resonance_spectrum">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.resonance_spectrum">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.resonance_spectrum_z">resonance_spectrum_z (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.resonance_spectrum_z">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig">ResonanceConfig (class in biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig">(class in biotuner.resonance.orchestrator)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult">ResonanceResult (class in biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult">(class in biotuner.resonance.orchestrator)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Acoustic.respond">respond() (Acoustic method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ClosedSurface.respond">(ClosedSurface method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Crystallization.respond">(Crystallization method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Elastic.respond">(Elastic method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday.respond">(Faraday method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Granular.respond">(Granular method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Interference.respond">(Interference method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Medium.respond">(Medium method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Pipeline.respond">(Pipeline method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.PlasmaLattice.respond">(PlasmaLattice method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.ReactionDiffusion.respond">(ReactionDiffusion method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.RigidPlate.respond">(RigidPlate method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Streaming.respond">(Streaming method)</a>
+</li>
+        <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Tracer.respond">(Tracer method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.results">results (BiotunerGroup attribute)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.results_to_dataframe">results_to_dataframe() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.plots.results_to_dataframe">(in module biotuner.resonance.plots)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.return_intermediates">return_intermediates (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.return_intermediates">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.rhythm_construction">rhythm_construction() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.rhythmic_ratio_coupling_imaginary">rhythmic_ratio_coupling_imaginary() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.RigidPlate">RigidPlate (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.rose_curve">rose_curve() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.rose_curve">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.rotation_strip">rotation_strip() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.rows">rows (MetricsLog attribute)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.rows">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.save">save() (GeometryData method)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.save">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.save_figure">save_figure() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.scalar_metrics">scalar_metrics (HarmonicSequenceAnalyzer property)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2euclid">scale2euclid() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2polyrhythm">scale2polyrhythm() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2polyrhythm_continuous">scale2polyrhythm_continuous() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2polyrhythm_harmonic">scale2polyrhythm_harmonic() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.scale2polyrhythm_iso">scale2polyrhythm_iso() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.scale_cents">scale_cents() (math_series method)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.scale_metrics">scale_metrics (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id5">[1]</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.second_order_polyrhythm">second_order_polyrhythm() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.second_order_polyrhythm_to_midi">second_order_polyrhythm_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.self_similar_tuning">self_similar_tuning() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/generative.html#biotuner.harmonic_geometry.generative.self_similar_tuning">(in module biotuner.harmonic_geometry.generative)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.sequence_metrics">sequence_metrics() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.sequence_metrics">(in module biotuner.harmonic_geometry.metrics)</a>
+</li>
+      </ul></li>
+      <li><a href="api/math_series.html#biotuner.math_series.SERIES_FUNCS">SERIES_FUNCS (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.series_mode">series_mode() (math_series method)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.series_ratio_pairs">series_ratio_pairs() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.series_scale">series_scale() (math_series method)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.math_series.series_scores">series_scores (math_series attribute)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology.session_fingerprint">session_fingerprint() (HarmonicTopology method)</a>
+</li>
+      <li><a href="api/plot_config.html#biotuner.plot_config.set_biotuner_style">set_biotuner_style() (in module biotuner.plot_config)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.shape">shape (BiotunerGroup attribute)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.silhouette_scores_">silhouette_scores_ (HarmonicMarkov property)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.single_spherical_harmonic">single_spherical_harmonic() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.singular_vectors">singular_vectors (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.singular_vectors">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis">SingularSpectrumAnalysis (class in biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceConfig.smoothness">smoothness (ResonanceConfig attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceConfig.smoothness">[1]</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.sms_partials">sms_partials() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_entropy">spectral_entropy() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.spectral_flatness">spectral_flatness (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.spectral_flatness">[1]</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_flatness">spectral_flatness() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.spectral_spread">spectral_spread() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.spectro_chords">spectro_chords (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id4">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.spectro_EMD">spectro_EMD (compute_biotuner.self attribute)</a>, <a href="api/biotuner_object.html#id3">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/metrics.html#biotuner.metrics.spectrum_complexity">spectrum_complexity() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.spectrum_method">spectrum_method (HarmonicInput attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.spectrum_method">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Sphere">Sphere (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.spherical_harmonic_field">spherical_harmonic_field() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.spherical_harmonic_from_input">spherical_harmonic_from_input() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.spherical_harmonic_mesh">spherical_harmonic_mesh() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.spherical_harmonic_temporal">spherical_harmonic_temporal() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SSA_EEG">SSA_EEG() (in module biotuner.peaks_extraction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.standing_wave_lattice_2d">standing_wave_lattice_2d() (in module biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.star_polygon">star_polygon() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.star_polygon">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.state_labels_">state_labels_ (HarmonicMarkov property)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.steady_state_">steady_state_ (HarmonicMarkov property)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.Stern_Brocot">Stern_Brocot() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.stern_brocot_to_generator_interval">stern_brocot_to_generator_interval() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.stern_brocot_tree">stern_brocot_tree() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#biotuner.harmonic_geometry.fractal.stern_brocot_tree">(in module biotuner.harmonic_geometry.fractal)</a>
+</li>
+      </ul></li>
+      <li><a href="api/resonance.html#biotuner.resonance.phase_estimators.stft_phase">stft_phase() (in module biotuner.resonance.phase_estimators)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Streaming">Streaming (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.subharmonic_tree">subharmonic_tree() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/fractal.html#biotuner.harmonic_geometry.fractal.subharmonic_tree">(in module biotuner.harmonic_geometry.fractal)</a>
+</li>
+      </ul></li>
+      <li><a href="api/math_series.html#biotuner.math_series.subharmonics">subharmonics() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_distinct_intervals">sum_distinct_intervals() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_p_q">sum_p_q() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_p_q_for_all_intervals">sum_p_q_for_all_intervals() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.sum_q_for_all_intervals">sum_q_for_all_intervals() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.CrossResonanceResult.summaries">summaries (CrossResonanceResult attribute)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.summaries">(HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.summaries">[1]</a>
+</li>
+        <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.summaries">(ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.summaries">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.summary">summary() (BiotunerGroup method)</a>
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.summary">(HarmonicSequenceAnalyzer method)</a>
+</li>
+        <li><a href="api/math_series.html#biotuner.math_series.math_series.summary">(math_series method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/surrogates.html#biotuner.surrogates.surrogate_group">surrogate_group() (in module biotuner.surrogates)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.surrogate_mean">surrogate_mean (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.surrogate_mean">[1]</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.ResonanceResult.surrogate_std">surrogate_std (ResonanceResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.ResonanceResult.surrogate_std">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.sweep_strip">sweep_strip() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicTopology.takens_embedding_">takens_embedding_ (HarmonicTopology property)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.temporal_correlation_fdr">temporal_correlation_fdr() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.tenneyHeight">tenneyHeight() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.self.time_resolved_harmonicity">time_resolved_harmonicity (compute_biotuner.self attribute)</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.time_resolved_harmonicity">time_resolved_harmonicity() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.nulls.time_shuffle_surrogate">time_shuffle_surrogate() (in module biotuner.resonance.nulls)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.timepoint_consonance">timepoint_consonance() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicSequence.times">times (HarmonicSequence attribute)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicSequence.times">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.times_table_circle">times_table_circle() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.times_table_circle">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.times_table_from_input">times_table_from_input() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.times_table_from_input">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_geometry/plotting.html#biotuner.harmonic_geometry.plotting.title_ax">title_ax() (in module biotuner.harmonic_geometry.plotting)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.to_csv">to_csv() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.to_csv">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.to_dict">to_dict() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.to_dict">[1]</a>
+</li>
+      <li><a href="api/biotuner_object.html#biotuner.biotuner_object.compute_biotuner.to_harmonic_input">to_harmonic_input() (compute_biotuner method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.MetricsLog.to_json">to_json() (MetricsLog method)</a>, <a href="api/harmonic_geometry/metrics.html#biotuner.harmonic_geometry.metrics.MetricsLog.to_json">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.to_midi">to_midi() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.to_peaks">to_peaks() (HarmonicInput method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.to_peaks">[1]</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.to_ratios">to_ratios() (HarmonicInput method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.to_ratios">[1]</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.to_scl">to_scl() (HarmonicSequenceAnalyzer method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.top_motifs">top_motifs() (HarmonicGrammar method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.top_ngrams">top_ngrams() (HarmonicGrammar method)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.Tracer">Tracer (class in biotuner.harmonic_geometry)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicLatentSpace.trajectory">trajectory() (HarmonicLatentSpace method)</a>
+</li>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.SingularSpectrumAnalysis.transform">transform() (SingularSpectrumAnalysis method)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.transition_entropy_">transition_entropy_ (HarmonicGrammar property)</a>
+
+      <ul>
+        <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.transition_entropy_">(HarmonicMarkov property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicMarkov.transition_matrix_">transition_matrix_ (HarmonicMarkov property)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.transition_proba">transition_proba() (HarmonicGrammar method)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.harmonic_connectivity.transitional_connectivity">transitional_connectivity() (harmonic_connectivity method)</a>
+</li>
+      <li><a href="api/transitional_harmony.html#biotuner.transitional_harmony.transitional_harmony">transitional_harmony (class in biotuner.transitional_harmony)</a>
+</li>
+      <li><a href="api/math_series.html#biotuner.math_series.triangular">triangular() (in module biotuner.math_series)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.HigherOrderResult.triplets">triplets (HigherOrderResult attribute)</a>, <a href="api/resonance.html#biotuner.resonance.orchestrator.HigherOrderResult.triplets">[1]</a>
+</li>
+      <li><a href="api/stats.html#biotuner.stats.ttest_groups">ttest_groups() (in module biotuner.stats)</a>
+</li>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.TUNING_ATTRS">TUNING_ATTRS (in module biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.tuning_circle">tuning_circle() (in module biotuner.harmonic_geometry)</a>
+
+      <ul>
+        <li><a href="api/harmonic_geometry/polygon_circular.html#biotuner.harmonic_geometry.polygon_circular.tuning_circle">(in module biotuner.harmonic_geometry.polygon_circular)</a>
+</li>
+      </ul></li>
+      <li><a href="api/metrics.html#biotuner.metrics.tuning_cons_matrix">tuning_cons_matrix() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_MOS_info">tuning_MOS_info() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_range_to_MOS">tuning_range_to_MOS() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_reduction">tuning_reduction() (in module biotuner.scale_construction)</a>
+</li>
+      <li><a href="api/biotuner_group.html#biotuner.biotuner_group.BiotunerGroup.tuning_summary">tuning_summary() (BiotunerGroup method)</a>
+</li>
+      <li><a href="api/metrics.html#biotuner.metrics.tuning_to_metrics">tuning_to_metrics() (in module biotuner.metrics)</a>
+</li>
+      <li><a href="api/scale_construction.html#biotuner.scale_construction.tuning_to_radians">tuning_to_radians() (in module biotuner.scale_construction)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/peaks_extraction.html#biotuner.peaks_extraction.UnivariateTransformerMixin">UnivariateTransformerMixin (class in biotuner.peaks_extraction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plot_config.html#biotuner.plot_config.update_plot_config">update_plot_config() (in module biotuner.plot_config)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicSequenceAnalyzer.VALID_REPRESENTATIONS">VALID_REPRESENTATIONS (HarmonicSequenceAnalyzer attribute)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.HarmonicInput.validate">validate() (HarmonicInput method)</a>, <a href="api/harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput.validate">[1]</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.visualize_rhythms">visualize_rhythms() (in module biotuner.rhythm_construction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.HarmonicGrammar.vocabulary_">vocabulary_ (HarmonicGrammar property)</a>
+</li>
+      <li><a href="api/rhythm_construction.html#biotuner.rhythm_construction.voices_to_midi">voices_to_midi() (in module biotuner.rhythm_construction)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.vortex_field_2d">vortex_field_2d() (in module biotuner.harmonic_geometry)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/harmonic_sequence.html#biotuner.harmonic_sequence.WassersteinTrajectory">WassersteinTrajectory (class in biotuner.harmonic_sequence)</a>
+</li>
+      <li><a href="api/resonance.html#biotuner.resonance.combine.weighted_log">weighted_log() (in module biotuner.resonance.combine)</a>
+</li>
+      <li><a href="api/harmonic_geometry.html#biotuner.harmonic_geometry.GeometryData.weights">weights (GeometryData attribute)</a>, <a href="api/harmonic_geometry/geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData.weights">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/resonance.html#biotuner.resonance.with_surrogate_null">with_surrogate_null() (in module biotuner.resonance)</a>
+
+      <ul>
+        <li><a href="api/resonance.html#biotuner.resonance.nulls.with_surrogate_null">(in module biotuner.resonance.nulls)</a>
+</li>
+      </ul></li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.wPLI_crossfreq">wPLI_crossfreq() (in module biotuner.harmonic_connectivity)</a>
+</li>
+      <li><a href="api/harmonic_connectivity.html#biotuner.harmonic_connectivity.wPLI_multiband">wPLI_multiband() (in module biotuner.harmonic_connectivity)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

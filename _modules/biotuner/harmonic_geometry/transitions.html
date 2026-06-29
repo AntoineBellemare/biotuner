@@ -1,0 +1,821 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.transitions &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/transitions';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.transitions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Smooth transitions for animation pipelines.</span>
+
+<span class="sd">Three lightweight helpers for morphing between chords, extension levels,</span>
+<span class="sd">and rendering paradigms — designed so a video pipeline can produce</span>
+<span class="sd">flicker-free transitions on top of the existing</span>
+<span class="sd">:mod:`.interference_patterns` paradigms.</span>
+
+<span class="sd">Helpers</span>
+<span class="sd">-------</span>
+<span class="sd">- :func:`interpolate_chords` — chord-A ⇄ chord-B morph at parameter</span>
+<span class="sd">  ``t ∈ [0, 1]`` (sorted-by-ratio pairing; unpaired components fade</span>
+<span class="sd">  in/out at the endpoints).</span>
+<span class="sd">- :func:`fade_in_components` — smoothly grow a base chord into its</span>
+<span class="sd">  extension by fading in only the *new* components.</span>
+<span class="sd">- :func:`blend_fields` — pixel-space crossfade between two</span>
+<span class="sd">  ``field_2d`` GeometryData. Works between any pair of paradigms.</span>
+
+<span class="sd">These three cover the three morphing axes documented in the score card:</span>
+<span class="sd">phase animation works on the existing API directly (set</span>
+<span class="sd">``input.phases = 2π·f·t`` per frame); chord morphs use</span>
+<span class="sd">:func:`interpolate_chords`; extension morphs use</span>
+<span class="sd">:func:`fade_in_components`; algorithm morphs use :func:`blend_fields`.</span>
+
+<span class="sd">Composability</span>
+<span class="sd">-------------</span>
+<span class="sd">All three return either ``HarmonicInput`` or ``GeometryData``, so they</span>
+<span class="sd">slot in cleanly to any rendering pipeline:</span>
+
+<span class="sd">    inp_t = interpolate_chords(major, minor, t)</span>
+<span class="sd">    fld_t = quasicrystal_field_2d(inp_t, n_fold=7)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+
+
+<span class="c1"># ============================================================ interpolate_chords</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_component_arrays</span><span class="p">(</span>
+    <span class="n">inp</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract (ratios, amps, phases) as plain Python lists.&quot;&quot;&quot;</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()]</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">phases</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_components</span><span class="p">(</span>
+    <span class="n">ratios</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">amps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort components by ratio (ascending). Stable for ties.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ratios</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">[</span><span class="n">ratios</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">order</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">amps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">order</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">order</span><span class="p">],</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="interpolate_chords">
+<a class="viewcode-back" href="../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.interpolate_chords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_chords</span><span class="p">(</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_freq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">equave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HarmonicInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Smoothly morph chord ``a`` into chord ``b`` at parameter ``t ∈ [0, 1]``.</span>
+
+<span class="sd">    Pairing strategy</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    Both chords are sorted by ratio (ascending). The first</span>
+<span class="sd">    ``min(N_a, N_b)`` components are paired index-by-index and</span>
+<span class="sd">    linearly interpolated in ratio, amplitude, and phase. Any extra</span>
+<span class="sd">    components in the longer chord are kept at their full ratio + phase,</span>
+<span class="sd">    but their amplitudes ramp from 0 (at the opposite endpoint) to</span>
+<span class="sd">    their full value (at their own endpoint) — so when ``t=0`` the</span>
+<span class="sd">    output reproduces ``a`` exactly, and when ``t=1`` it reproduces ``b``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a, b : HarmonicInput</span>
+<span class="sd">        Source and target chords.</span>
+<span class="sd">    t : float</span>
+<span class="sd">        Interpolation parameter. Clamped to ``[0, 1]``.</span>
+<span class="sd">    base_freq, equave : float, optional</span>
+<span class="sd">        Override the corresponding fields on the returned input. By</span>
+<span class="sd">        default they are linearly interpolated between ``a`` and ``b``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HarmonicInput</span>
+<span class="sd">        ``metadata[&#39;transition&#39;] = {&#39;kind&#39;: &#39;interpolate_chords&#39;, &#39;t&#39;: t}``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; major = HarmonicInput(ratios=[1, 5/4, 3/2])</span>
+<span class="sd">    &gt;&gt;&gt; minor = HarmonicInput(ratios=[1, 6/5, 3/2])</span>
+<span class="sd">    &gt;&gt;&gt; midpoint = interpolate_chords(major, minor, 0.5)</span>
+<span class="sd">    &gt;&gt;&gt; [float(r) for r in midpoint.to_ratios()]</span>
+<span class="sd">    [1.0, 1.225, 1.5]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="n">ra</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">pa</span> <span class="o">=</span> <span class="n">_sort_components</span><span class="p">(</span><span class="o">*</span><span class="n">_component_arrays</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    <span class="n">rb</span><span class="p">,</span> <span class="n">ab</span><span class="p">,</span> <span class="n">pb</span> <span class="o">=</span> <span class="n">_sort_components</span><span class="p">(</span><span class="o">*</span><span class="n">_component_arrays</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+
+    <span class="n">n_pairs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ra</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb</span><span class="p">))</span>
+
+    <span class="n">new_ratios</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_amps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Paired components — full linear interpolation</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pairs</span><span class="p">):</span>
+        <span class="n">new_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">ra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">rb</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">new_amps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">aa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">ab</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">new_phases</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">pa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">pb</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Extras in `a` only — keep ratio, fade amplitude out as t→1</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ra</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n_pairs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pairs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ra</span><span class="p">)):</span>
+            <span class="n">new_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ra</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">new_amps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">aa</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">new_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pa</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Extras in `b` only — keep ratio, fade amplitude in as t→1</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n_pairs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_pairs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb</span><span class="p">)):</span>
+            <span class="n">new_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rb</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">new_amps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">ab</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">new_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pb</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">out_base_freq</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">base_freq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">base_freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">base_freq</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">base_freq</span>
+    <span class="p">)</span>
+    <span class="n">out_equave</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">equave</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">equave</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">equave</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">equave</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">HarmonicInput</span><span class="p">(</span>
+        <span class="n">ratios</span><span class="o">=</span><span class="n">new_ratios</span><span class="p">,</span>
+        <span class="n">amplitudes</span><span class="o">=</span><span class="n">new_amps</span><span class="p">,</span>
+        <span class="n">phases</span><span class="o">=</span><span class="n">new_phases</span><span class="p">,</span>
+        <span class="n">base_freq</span><span class="o">=</span><span class="n">out_base_freq</span><span class="p">,</span>
+        <span class="n">equave</span><span class="o">=</span><span class="n">out_equave</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;transition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;interpolate_chords&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                <span class="s2">&quot;n_pairs&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_pairs</span><span class="p">),</span>
+                <span class="s2">&quot;n_extras_a&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ra</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_pairs</span><span class="p">)),</span>
+                <span class="s2">&quot;n_extras_b&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_pairs</span><span class="p">)),</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================================ fade_in_components</span>
+
+
+<div class="viewcode-block" id="fade_in_components">
+<a class="viewcode-back" href="../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.fade_in_components">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fade_in_components</span><span class="p">(</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">extended</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">match_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HarmonicInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Smoothly grow ``base`` into ``extended`` as ``t`` goes 0 → 1.</span>
+
+<span class="sd">    For every component present in ``extended``:</span>
+
+<span class="sd">    * If its ratio matches a base component (within ``match_tol``), the</span>
+<span class="sd">      amplitude is linearly interpolated from the base value</span>
+<span class="sd">      (at ``t=0``) to the extended value (at ``t=1``).</span>
+<span class="sd">    * Otherwise (the component only exists in ``extended``), the</span>
+<span class="sd">      amplitude ramps from 0 (at ``t=0``) to its full extended value</span>
+<span class="sd">      (at ``t=1``).</span>
+
+<span class="sd">    At ``t=0`` the output reproduces ``base`` exactly (every new</span>
+<span class="sd">    component has amplitude 0); at ``t=1`` it reproduces ``extended``</span>
+<span class="sd">    exactly (shared components have switched to extended amps).</span>
+
+<span class="sd">    Designed for animating &quot;chord at extension level 0 → 4 → 8&quot; without</span>
+<span class="sd">    components abruptly popping in.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    base : HarmonicInput</span>
+<span class="sd">        The starting (smaller) chord. All its components must also</span>
+<span class="sd">        appear (within ``match_tol``) in ``extended``.</span>
+<span class="sd">    extended : HarmonicInput</span>
+<span class="sd">        The target chord — typically ``extend_harmonics(base, …)``.</span>
+<span class="sd">    t : float</span>
+<span class="sd">        In ``[0, 1]``. Clamped.</span>
+<span class="sd">    match_tol : float, default=1e-6</span>
+<span class="sd">        Tolerance for matching ratios when deciding which extended</span>
+<span class="sd">        components are &quot;new&quot; vs &quot;shared&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HarmonicInput</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="n">rb</span><span class="p">,</span> <span class="n">ab</span><span class="p">,</span> <span class="n">pb</span> <span class="o">=</span> <span class="n">_component_arrays</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+    <span class="n">re</span><span class="p">,</span> <span class="n">ae</span><span class="p">,</span> <span class="n">pe</span> <span class="o">=</span> <span class="n">_component_arrays</span><span class="p">(</span><span class="n">extended</span><span class="p">)</span>
+
+    <span class="c1"># Index extended by ratio for shared/new classification.</span>
+    <span class="c1"># We mark each extended component as &#39;shared&#39; if there&#39;s a base</span>
+    <span class="c1"># component within match_tol of its ratio.</span>
+    <span class="n">new_ratios</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_amps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Build a quick lookup of base ratios</span>
+    <span class="n">rb_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rb</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">amp</span><span class="p">,</span> <span class="n">phi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">re</span><span class="p">,</span> <span class="n">ae</span><span class="p">,</span> <span class="n">pe</span><span class="p">):</span>
+        <span class="c1"># Find the base index whose ratio matches within tol (if any).</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb_arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rb_arr</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">diffs</span><span class="p">))</span>
+            <span class="n">shared</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">diffs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">match_tol</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shared</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">shared</span><span class="p">:</span>
+            <span class="c1"># Interpolate shared amplitude from the base value (at t=0)</span>
+            <span class="c1"># to the extended value (at t=1). Phase blends similarly.</span>
+            <span class="n">new_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">new_amps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">ab</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">amp</span><span class="p">)</span>
+            <span class="n">new_phases</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">pb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">phi</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># New component — fade its amplitude in from 0 to the</span>
+            <span class="c1"># extended value as t goes 0 → 1.</span>
+            <span class="n">new_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">new_amps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amp</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">new_phases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">HarmonicInput</span><span class="p">(</span>
+        <span class="n">ratios</span><span class="o">=</span><span class="n">new_ratios</span><span class="p">,</span>
+        <span class="n">amplitudes</span><span class="o">=</span><span class="n">new_amps</span><span class="p">,</span>
+        <span class="n">phases</span><span class="o">=</span><span class="n">new_phases</span><span class="p">,</span>
+        <span class="n">base_freq</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">base_freq</span><span class="p">,</span>
+        <span class="n">equave</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">equave</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;transition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;fade_in_components&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                <span class="s2">&quot;n_base&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">rb</span><span class="p">),</span>
+                <span class="s2">&quot;n_extended&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================ blend_fields</span>
+
+
+<div class="viewcode-block" id="blend_fields">
+<a class="viewcode-back" href="../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.blend_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">blend_fields</span><span class="p">(</span>
+    <span class="n">geom_a</span><span class="p">:</span> <span class="n">GeometryData</span><span class="p">,</span>
+    <span class="n">geom_b</span><span class="p">:</span> <span class="n">GeometryData</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">require_same_grid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pixel-space crossfade between two ``field_2d`` geometries.</span>
+
+<span class="sd">    Used for **algorithm morphing** (e.g., harmonic_interference →</span>
+<span class="sd">    quasicrystal): render two paradigms on the same grid, then blend</span>
+<span class="sd">    them. No physical interpretation — purely a visual transition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geom_a, geom_b : GeometryData</span>
+<span class="sd">        Both must have ``geom_type=&#39;field_2d&#39;`` and matching coordinate</span>
+<span class="sd">        shapes.</span>
+<span class="sd">    t : float</span>
+<span class="sd">        In ``[0, 1]``. Clamped.</span>
+<span class="sd">    require_same_grid : bool, default=True</span>
+<span class="sd">        If True, additionally require that the ``field_grid`` arrays</span>
+<span class="sd">        match within float tolerance, so the blended field has a</span>
+<span class="sd">        well-defined coordinate system. Set False to allow blending</span>
+<span class="sd">        fields whose grids differ (the resulting ``field_grid`` is</span>
+<span class="sd">        taken from ``geom_a``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GeometryData</span>
+<span class="sd">        ``geom_type=&#39;field_2d&#39;``, ``metadata.kind=&#39;blended&#39;``, with the</span>
+<span class="sd">        constituent paradigm names recorded in ``parameters``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">geom_a</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">!=</span> <span class="s2">&quot;field_2d&quot;</span> <span class="ow">or</span> <span class="n">geom_b</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">!=</span> <span class="s2">&quot;field_2d&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;blend_fields requires both inputs to have geom_type=&#39;field_2d&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">fa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geom_a</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">fb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">geom_b</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fa</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">fb</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;shape mismatch: </span><span class="si">{</span><span class="n">fa</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">fb</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">require_same_grid</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">geom_a</span><span class="o">.</span><span class="n">field_grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">geom_b</span><span class="o">.</span><span class="n">field_grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;field_grid presence mismatch: one geometry has it, the other doesn&#39;t.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">geom_a</span><span class="o">.</span><span class="n">field_grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">g_a</span><span class="p">,</span> <span class="n">g_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">geom_a</span><span class="o">.</span><span class="n">field_grid</span><span class="p">,</span> <span class="n">geom_b</span><span class="o">.</span><span class="n">field_grid</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">g_a</span><span class="p">,</span> <span class="n">g_b</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;field_grid mismatch between geom_a and geom_b &quot;</span>
+                        <span class="s2">&quot;(set require_same_grid=False to bypass this check).&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="n">blended</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">fa</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">fb</span>
+
+    <span class="n">kind_a</span> <span class="o">=</span> <span class="p">(</span><span class="n">geom_a</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+    <span class="n">kind_b</span> <span class="o">=</span> <span class="p">(</span><span class="n">geom_b</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+        <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="o">=</span><span class="n">blended</span><span class="p">,</span>
+        <span class="n">field_grid</span><span class="o">=</span><span class="n">geom_a</span><span class="o">.</span><span class="n">field_grid</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+            <span class="s2">&quot;kind_a&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">kind_a</span><span class="p">),</span>
+            <span class="s2">&quot;kind_b&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">kind_b</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;blended&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;blend_fields&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                <span class="s2">&quot;kind_a&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">kind_a</span><span class="p">),</span>
+                <span class="s2">&quot;kind_b&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">kind_b</span><span class="p">),</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

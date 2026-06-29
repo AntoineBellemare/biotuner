@@ -1,0 +1,867 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.harmonic_geometry.media.parametric.faraday &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/harmonic_geometry/media/parametric/faraday';</script>
+    <link rel="icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.harmonic_geometry.media.parametric.faraday</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Faraday surface waves — parametric-instability cymatics.</span>
+
+<span class="sd">Belongs to the ``parametric`` family of :mod:`biotuner.harmonic_geometry.media`:</span>
+<span class="sd">when a fluid container is shaken vertically at frequency :math:`f`, the</span>
+<span class="sd">free surface develops standing-wave patterns at subharmonic frequency</span>
+<span class="sd">:math:`f / 2`. The selected wavenumber follows the capillary-gravity</span>
+<span class="sd">dispersion relation</span>
+
+<span class="sd">.. math:: \\omega^2 = g k + \\frac{\\sigma}{\\rho} k^3 ,</span>
+
+<span class="sd">where :math:`g` is gravity, :math:`\\sigma` surface tension, and</span>
+<span class="sd">:math:`\\rho` fluid density. For a chord, each component drives one</span>
+<span class="sd">wavenumber; the surface response is a superposition of plane waves at</span>
+<span class="sd">those wavenumbers, with their orientations selected by the pattern</span>
+<span class="sd">symmetry (stripe / square / hexagonal / 12-fold quasipattern). This is</span>
+<span class="sd">the operator behind &quot;true&quot; cymatics imagery (water on a vibrating plate)</span>
+<span class="sd">— a different regime from the rigid-plate Chladni eigenmode it visually</span>
+<span class="sd">resembles.</span>
+
+<span class="sd">Dispersion regimes</span>
+<span class="sd">------------------</span>
+<span class="sd">- ``&quot;gravity&quot;`` — :math:`\\omega^2 = g k`, large wavelengths, smooth</span>
+<span class="sd">  ripples. Dominant at low frequency.</span>
+<span class="sd">- ``&quot;capillary&quot;`` — :math:`\\omega^2 = (\\sigma / \\rho) k^3`, small</span>
+<span class="sd">  wavelengths, sharp wavelets. Dominant at high frequency.</span>
+<span class="sd">- ``&quot;mixed&quot;`` (default) — full capillary-gravity dispersion using</span>
+<span class="sd">  ``gravity``, ``surface_tension``, and ``density`` arguments.</span>
+
+<span class="sd">Pattern symmetry</span>
+<span class="sd">----------------</span>
+<span class="sd">- ``&quot;stripe&quot;`` — one direction per chord component (1-fold).</span>
+<span class="sd">- ``&quot;square&quot;`` — two orthogonal directions (4-fold).</span>
+<span class="sd">- ``&quot;hexagonal&quot;`` (default) — three directions at 60° (resonant triad,</span>
+<span class="sd">  the most commonly observed Faraday pattern).</span>
+<span class="sd">- ``&quot;twelve_fold&quot;`` — six directions at 30° (quasipattern).</span>
+<span class="sd">- ``&quot;random&quot;`` — N random directions per component (seedable).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. [1] Faraday, M. (1831). On a peculiar class of acoustical figures.</span>
+<span class="sd">       Philosophical Transactions of the Royal Society.</span>
+<span class="sd">.. [2] Cross, M. C. &amp; Hohenberg, P. C. (1993). Pattern formation outside</span>
+<span class="sd">       of equilibrium. Reviews of Modern Physics, 65, 851.</span>
+<span class="sd">.. [3] Edwards, W. S. &amp; Fauve, S. (1994). Patterns and quasi-patterns in</span>
+<span class="sd">       the Faraday experiment. J. Fluid Mech., 278, 123.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.geometry_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeometryData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.inputs</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicInput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.harmonic_geometry.media.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
+
+<span class="n">_VALID_PATTERNS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;stripe&quot;</span><span class="p">,</span> <span class="s2">&quot;square&quot;</span><span class="p">,</span> <span class="s2">&quot;hexagonal&quot;</span><span class="p">,</span> <span class="s2">&quot;twelve_fold&quot;</span><span class="p">,</span> <span class="s2">&quot;random&quot;</span><span class="p">)</span>
+<span class="n">_VALID_DISPERSIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;gravity&quot;</span><span class="p">,</span> <span class="s2">&quot;capillary&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">)</span>
+<span class="n">_VALID_OUTPUTS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;amplitude&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity&quot;</span><span class="p">,</span> <span class="s2">&quot;real&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ============================================================ dispersion</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_dispersion_wavenumbers</span><span class="p">(</span>
+    <span class="n">ratios</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dispersion</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">base_wavenumber</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">gravity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">surface_tension</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map chord ratios to per-component wavenumbers via the dispersion relation.</span>
+
+<span class="sd">    The lowest-frequency component is assigned ``base_wavenumber``; the rest</span>
+<span class="sd">    follow from the chord ratio via the dispersion regime. This keeps the</span>
+<span class="sd">    overall pattern size controllable while preserving the chord&#39;s</span>
+<span class="sd">    relative-frequency structure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratios : (N,) ndarray</span>
+<span class="sd">        Chord ratios, sorted or unsorted.</span>
+<span class="sd">    dispersion : {&quot;gravity&quot;, &quot;capillary&quot;, &quot;mixed&quot;}</span>
+<span class="sd">    base_wavenumber : float</span>
+<span class="sd">        Wavenumber assigned to ratio = 1.0 (the chord root).</span>
+<span class="sd">    gravity, surface_tension, density : float</span>
+<span class="sd">        Used only in the &quot;mixed&quot; regime (full capillary-gravity).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (N,) ndarray of wavenumbers, all &gt; 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dispersion</span> <span class="o">==</span> <span class="s2">&quot;gravity&quot;</span><span class="p">:</span>
+        <span class="c1"># ω² ∝ k  ⇒  k ∝ ω²  ⇒  k_i / k_0 = (ratio_i)²</span>
+        <span class="k">return</span> <span class="n">base_wavenumber</span> <span class="o">*</span> <span class="n">ratios</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">dispersion</span> <span class="o">==</span> <span class="s2">&quot;capillary&quot;</span><span class="p">:</span>
+        <span class="c1"># ω² ∝ k³  ⇒  k ∝ ω^(2/3)</span>
+        <span class="k">return</span> <span class="n">base_wavenumber</span> <span class="o">*</span> <span class="n">ratios</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dispersion</span> <span class="o">==</span> <span class="s2">&quot;mixed&quot;</span><span class="p">:</span>
+        <span class="c1"># Full ω² = g k + (σ/ρ) k³. Anchor k_0 at base_wavenumber, then for</span>
+        <span class="c1"># each ratio compute ω_i² = ratio_i² · ω_0² and solve the depressed</span>
+        <span class="c1"># cubic σ/ρ · k³ + g · k − ω² = 0 for the real positive root.</span>
+        <span class="n">sigma_over_rho</span> <span class="o">=</span> <span class="n">surface_tension</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">)</span>
+        <span class="n">omega0_sq</span> <span class="o">=</span> <span class="n">gravity</span> <span class="o">*</span> <span class="n">base_wavenumber</span> <span class="o">+</span> <span class="n">sigma_over_rho</span> <span class="o">*</span> <span class="n">base_wavenumber</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratios</span><span class="p">):</span>
+            <span class="n">omega_sq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">omega0_sq</span>
+            <span class="c1"># σ/ρ · k³ + g · k − ω² = 0; coefficients of cubic ax³ + bx + c = 0</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">sigma_over_rho</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">gravity</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="o">-</span><span class="n">omega_sq</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Pure-gravity fallback.</span>
+                <span class="n">ks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_sq</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">gravity</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># Solve depressed cubic via numpy (returns 3 roots).</span>
+            <span class="n">roots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roots</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+            <span class="n">real</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-9</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">real</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">real</span><span class="p">:</span>
+                <span class="c1"># Shouldn&#39;t happen for this monotone cubic, but fall back.</span>
+                <span class="n">ks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_sq</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">gravity</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">real</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ks</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;dispersion must be one of </span><span class="si">{</span><span class="n">_VALID_DISPERSIONS</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">dispersion</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ================================================================ angles</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pattern_angles</span><span class="p">(</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_random</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the directional angles (radians) for a given symmetry pattern.</span>
+
+<span class="sd">    Each chord component is replicated at every angle in this array; the</span>
+<span class="sd">    overall pattern&#39;s discrete rotational symmetry equals ``len(angles)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;stripe&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;square&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;hexagonal&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;twelve_fold&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_random</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;pattern must be one of </span><span class="si">{</span><span class="n">_VALID_PATTERNS</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">pattern</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ============================================================== output map</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_output_transform</span><span class="p">(</span><span class="n">complex_field</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;amplitude&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">complex_field</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;intensity&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">complex_field</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">complex_field</span><span class="o">.</span><span class="n">real</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;output must be one of </span><span class="si">{</span><span class="n">_VALID_OUTPUTS</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">output</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ============================================================== Faraday</span>
+
+
+<div class="viewcode-block" id="Faraday">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Faraday</span><span class="p">(</span><span class="n">Medium</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parametric-family medium: Faraday capillary-gravity surface waves.</span>
+
+<span class="sd">    For each chord component, computes the wavenumber selected by the</span>
+<span class="sd">    chosen dispersion regime, then sums plane waves at that wavenumber</span>
+<span class="sd">    rotated by every angle in the pattern&#39;s symmetry set. Drive amplitude</span>
+<span class="sd">    modulates the per-mode amplitude as a soft proxy for the Mathieu</span>
+<span class="sd">    growth rate; viscosity provides damping that suppresses higher</span>
+<span class="sd">    wavenumbers (capillary modes are damped faster than gravity modes in</span>
+<span class="sd">    real Faraday systems).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pattern : {&quot;stripe&quot;, &quot;square&quot;, &quot;hexagonal&quot;, &quot;twelve_fold&quot;, &quot;random&quot;},</span>
+<span class="sd">        default &quot;hexagonal&quot;</span>
+<span class="sd">        Discrete rotational symmetry of the response. Hexagonal is the</span>
+<span class="sd">        most commonly observed Faraday pattern in the resonant-triad</span>
+<span class="sd">        regime.</span>
+<span class="sd">    dispersion : {&quot;gravity&quot;, &quot;capillary&quot;, &quot;mixed&quot;}, default &quot;mixed&quot;</span>
+<span class="sd">        Dispersion relation that maps each chord component to a wavenumber.</span>
+<span class="sd">    base_wavenumber : float, default 8 * pi</span>
+<span class="sd">        Wavenumber assigned to the chord root (ratio = 1.0). Sets the</span>
+<span class="sd">        overall pattern length scale on the unit-square domain. Defaults</span>
+<span class="sd">        to ``8π`` so the chord root has ~4 wavelengths across the domain.</span>
+<span class="sd">    drive_amplitude : float, default 1.0</span>
+<span class="sd">        Per-mode amplitude scale.</span>
+<span class="sd">    viscosity : float, default 0.01</span>
+<span class="sd">        Viscous damping coefficient. Acts as a low-pass on the wavenumber</span>
+<span class="sd">        spectrum via ``exp(-viscosity · k²)``; higher viscosity suppresses</span>
+<span class="sd">        short-wavelength (capillary-dominated) modes.</span>
+<span class="sd">    gravity, surface_tension, density : float</span>
+<span class="sd">        Physical constants for the ``&quot;mixed&quot;`` dispersion regime. Defaults</span>
+<span class="sd">        match water (g=9.81 m/s², σ=0.072 N/m, ρ=1000 kg/m³).</span>
+<span class="sd">    extent : float, default 1.0</span>
+<span class="sd">        Half-width of the square render domain ``[-extent, extent]²``.</span>
+<span class="sd">    resolution : int, default 256</span>
+<span class="sd">        Grid resolution per axis.</span>
+<span class="sd">    output : {&quot;amplitude&quot;, &quot;intensity&quot;, &quot;real&quot;}, default &quot;amplitude&quot;</span>
+<span class="sd">        How the complex field is reduced to a real scalar.</span>
+<span class="sd">    n_random : int, default 6</span>
+<span class="sd">        Number of random angles when ``pattern=&quot;random&quot;``.</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        RNG seed for ``pattern=&quot;random&quot;``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This implementation captures Faraday *pattern selection* (the</span>
+<span class="sd">    qualitative regimes) rather than the full Mathieu stability problem.</span>
+<span class="sd">    Suitable for cymatics-style imagery; a more rigorous Floquet-based</span>
+<span class="sd">    variant could be added later as ``mode=&quot;mathieu&quot;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">family</span> <span class="o">=</span> <span class="s2">&quot;parametric&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hexagonal&quot;</span><span class="p">,</span>
+        <span class="n">dispersion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mixed&quot;</span><span class="p">,</span>
+        <span class="n">base_wavenumber</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+        <span class="n">drive_amplitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">viscosity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">gravity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">,</span>
+        <span class="n">surface_tension</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.072</span><span class="p">,</span>
+        <span class="n">density</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="n">extent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude&quot;</span><span class="p">,</span>
+        <span class="n">n_random</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pattern</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_PATTERNS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;pattern must be one of </span><span class="si">{</span><span class="n">_VALID_PATTERNS</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">pattern</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dispersion</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_DISPERSIONS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;dispersion must be one of </span><span class="si">{</span><span class="n">_VALID_DISPERSIONS</span><span class="si">}</span><span class="s2">; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dispersion</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_OUTPUTS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;output must be one of </span><span class="si">{</span><span class="n">_VALID_OUTPUTS</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">output</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">base_wavenumber</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;base_wavenumber must be &gt; 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">viscosity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;viscosity must be &gt;= 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extent</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;extent must be &gt; 0.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolution</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;resolution must be &gt;= 4.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_random</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_random must be &gt;= 1.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_wavenumber</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_wavenumber</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drive_amplitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">drive_amplitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viscosity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">viscosity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gravity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">surface_tension</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">surface_tension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_random</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_random</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+    <span class="c1"># ----------------------------------------------------------- contract</span>
+
+<div class="viewcode-block" id="Faraday.default_source">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday.default_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Faraday.respond">
+<a class="viewcode-back" href="../../../../../api/harmonic_geometry.html#biotuner.harmonic_geometry.Faraday.respond">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">respond</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">forcing</span><span class="p">:</span> <span class="n">HarmonicInput</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeometryData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forcing</span><span class="p">,</span> <span class="n">HarmonicInput</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Faraday.respond requires a HarmonicInput; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">forcing</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="n">dispersion</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dispersion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">)</span>
+        <span class="n">base_k</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;base_wavenumber&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_wavenumber</span><span class="p">))</span>
+        <span class="n">drive</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;drive_amplitude&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive_amplitude</span><span class="p">))</span>
+        <span class="n">visc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;viscosity&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">viscosity</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;gravity&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span><span class="p">))</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;surface_tension&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_tension</span><span class="p">))</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;density&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">))</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;extent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">))</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;resolution&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">n_random</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;n_random&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_random</span><span class="p">))</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">overrides</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">overrides</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unexpected override keys: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">overrides</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">pattern</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_PATTERNS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pattern must be one of </span><span class="si">{</span><span class="n">_VALID_PATTERNS</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dispersion</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_DISPERSIONS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dispersion must be one of </span><span class="si">{</span><span class="n">_VALID_DISPERSIONS</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_OUTPUTS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output must be one of </span><span class="si">{</span><span class="n">_VALID_OUTPUTS</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">forcing</span><span class="o">.</span><span class="n">to_ratios</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">)</span>
+        <span class="n">amps</span> <span class="o">=</span> <span class="n">forcing</span><span class="o">.</span><span class="n">normalized_amplitudes</span><span class="p">()</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">forcing</span><span class="o">.</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">forcing</span><span class="o">.</span><span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">ks</span> <span class="o">=</span> <span class="n">_dispersion_wavenumbers</span><span class="p">(</span>
+            <span class="n">ratios</span><span class="p">,</span>
+            <span class="n">dispersion</span><span class="o">=</span><span class="n">dispersion</span><span class="p">,</span>
+            <span class="n">base_wavenumber</span><span class="o">=</span><span class="n">base_k</span><span class="p">,</span>
+            <span class="n">gravity</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+            <span class="n">surface_tension</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+            <span class="n">density</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">_pattern_angles</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span> <span class="n">n_random</span><span class="o">=</span><span class="n">n_random</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Superposition: each chord component i with wavenumber k_i is</span>
+        <span class="c1"># replicated at every angle θ_j with phase φ_i. The amplitude is</span>
+        <span class="c1"># damped by exp(-ν · k_i²) (viscous low-pass) and scaled by the</span>
+        <span class="c1"># drive amplitude (acts as a Mathieu-growth proxy).</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="n">n_angles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="n">damping</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">visc</span> <span class="o">*</span> <span class="n">ks</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k_i</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">phi_i</span><span class="p">,</span> <span class="n">damp_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">damping</span><span class="p">):</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">:</span>
+                <span class="n">kx</span> <span class="o">=</span> <span class="n">k_i</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+                <span class="n">ky</span> <span class="o">=</span> <span class="n">k_i</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+                <span class="n">mode</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">kx</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">phi_i</span><span class="p">))</span>
+            <span class="c1"># Normalize so each component contributes consistent energy</span>
+            <span class="c1"># regardless of pattern (more angles → divide further).</span>
+            <span class="n">mode</span> <span class="o">/=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_angles</span><span class="p">)</span>
+            <span class="n">field</span> <span class="o">+=</span> <span class="n">drive</span> <span class="o">*</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">damp_i</span> <span class="o">*</span> <span class="n">mode</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_output_transform</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GeometryData</span><span class="p">(</span>
+            <span class="n">geom_type</span><span class="o">=</span><span class="s2">&quot;field_2d&quot;</span><span class="p">,</span>
+            <span class="n">coordinates</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
+            <span class="n">field_grid</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+                <span class="s2">&quot;dispersion&quot;</span><span class="p">:</span> <span class="n">dispersion</span><span class="p">,</span>
+                <span class="s2">&quot;base_wavenumber&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">base_k</span><span class="p">),</span>
+                <span class="s2">&quot;drive_amplitude&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">drive</span><span class="p">),</span>
+                <span class="s2">&quot;viscosity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">visc</span><span class="p">),</span>
+                <span class="s2">&quot;gravity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
+                <span class="s2">&quot;surface_tension&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">sigma</span><span class="p">),</span>
+                <span class="s2">&quot;density&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">rho</span><span class="p">),</span>
+                <span class="s2">&quot;extent&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">extent</span><span class="p">),</span>
+                <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="p">),</span>
+                <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span>
+                <span class="s2">&quot;wavenumbers&quot;</span><span class="p">:</span> <span class="n">ks</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">angles</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="p">},</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;faraday_field_2d&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;parametric&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;domain&quot;</span><span class="p">:</span> <span class="s2">&quot;open_2d_surface&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;symmetry&quot;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Faraday(pattern=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;dispersion=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;viscosity=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">viscosity</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

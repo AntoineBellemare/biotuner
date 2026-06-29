@@ -1,0 +1,935 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.resonance.coupling &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/resonance/coupling';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.resonance.coupling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;biotuner.resonance.coupling — phase coupling metrics and per-bin reducers.</span>
+
+<span class="sd">Pairwise coupling metrics (arity 2) build a ``Φ[i,j]`` matrix that feeds the</span>
+<span class="sd">per-bin phase-coupling spectrum. Higher-order metrics (arity 3, K, survey, state)</span>
+<span class="sd">go in plan Phase 3 and run on a separate code path.</span>
+
+<span class="sd">Phase 1 ships four pairwise-symmetric variants on the n:m complex-exponential</span>
+<span class="sd">mean, each emphasizing a different aspect of phase coherence:</span>
+
+<span class="sd">    nm_plv  — |&lt;exp(i*(n*φᵢ - m*φⱼ))&gt;|</span>
+<span class="sd">              Classical phase-locking value. Maximum when phase difference is</span>
+<span class="sd">              constant across time. Sensitive to volume conduction (0-lag bias).</span>
+<span class="sd">              Ref: Tass et al. 1998 *PRL* 81:3291.</span>
+
+<span class="sd">    nm_pli  — |&lt;sign(Im(exp(i*(n*φᵢ - m*φⱼ))))&gt;|</span>
+<span class="sd">              Phase-Lag Index. Counts only the SIGN of the imaginary part;</span>
+<span class="sd">              zero when phases are exactly aligned or anti-aligned. Robust to</span>
+<span class="sd">              instantaneous (0-lag) common reference but discards magnitude</span>
+<span class="sd">              information.</span>
+<span class="sd">              Ref: Stam, Nolte, Daffertshofer 2007 *Hum Brain Mapp* 28:1178.</span>
+
+<span class="sd">    nm_wpli — |&lt;|Im(X)| * sign(Im(X))&gt;| / &lt;|Im(X)|&gt;</span>
+<span class="sd">              Weighted Phase-Lag Index. Same 0-lag robustness as PLI but weights</span>
+<span class="sd">              by magnitude of the imaginary part — less variance-biased and</span>
+<span class="sd">              more sensitive than PLI on noisy data.</span>
+<span class="sd">              Ref: Vinck et al. 2011 *NeuroImage* 55:1548.</span>
+
+<span class="sd">    nm_rrci — |Im(&lt;exp(i*(n*φᵢ - m*φⱼ))&gt;)|</span>
+<span class="sd">              Rhythmic Ratio Coupling, imaginary part. Like PLV but discards the</span>
+<span class="sd">              real part of the mean exponential, isolating non-zero-lag coupling.</span>
+<span class="sd">              Ref: Scheffer-Teixeira &amp; Tort 2016 *eLife* 5:e20515.</span>
+
+<span class="sd">Higher-order metrics (bplv triplet, mplv N-ary, cf_plm survey, gpla state) land</span>
+<span class="sd">in Phase 3 and are NOT valid for ``ResonanceConfig.coupling_metric`` — see</span>
+<span class="sd">plan §4.4 (arity contract).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.resonance.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_coupling_metric</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Scalar pairwise metrics on already-extracted phase time series</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="nm_plv">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_plv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_plv</span><span class="p">(</span><span class="n">phase_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n:m phase-locking value (Tass 1998): ``| &lt;exp(i*(n*φᵢ - m*φⱼ))&gt; |``.&quot;&quot;&quot;</span>
+    <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">phase_j</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_diff</span><span class="p">))))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_pli">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_pli">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_pli</span><span class="p">(</span><span class="n">phase_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n:m phase-lag index (Stam 2007): ``|&lt;sign(Im(exp(i*(n*φᵢ - m*φⱼ))))&gt;|``.</span>
+
+<span class="sd">    Volume-conduction robust: returns 0 for perfectly synchronous (0-lag) or</span>
+<span class="sd">    anti-synchronous (π-lag) phase differences. Counts only sign of Im, so</span>
+<span class="sd">    discards magnitude.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">phase_j</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase_diff</span><span class="p">)</span>  <span class="c1"># imaginary part of exp(i*phase_diff)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">im</span><span class="p">))))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_wpli">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_wpli">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_wpli</span><span class="p">(</span><span class="n">phase_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n:m weighted phase-lag index (Vinck 2011):</span>
+<span class="sd">    ``|&lt;|Im(X)| * sign(Im(X))&gt;| / &lt;|Im(X)|&gt;`` where ``X = exp(i*(n*φᵢ - m*φⱼ))``.</span>
+
+<span class="sd">    Same 0-lag robustness as PLI but uses Im magnitude as weight, reducing</span>
+<span class="sd">    variance bias and improving noise sensitivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">phase_j</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase_diff</span><span class="p">)</span>
+    <span class="n">abs_im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">abs_im</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">denom</span> <span class="o">&lt;</span> <span class="mf">1e-15</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">im</span><span class="p">))</span> <span class="o">/</span> <span class="n">denom</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="nm_rrci">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_rrci">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_rrci</span><span class="p">(</span><span class="n">phase_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n:m Rhythmic Ratio Coupling, imaginary (Scheffer-Teixeira &amp; Tort 2016):</span>
+<span class="sd">    ``|Im(&lt;exp(i*(n*φᵢ - m*φⱼ))&gt;)|``.</span>
+
+<span class="sd">    Like PLV but discards the real part of the mean exponential, isolating</span>
+<span class="sd">    out-of-phase (non-zero-lag) coupling.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">phase_j</span>
+    <span class="n">mean_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_diff</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">mean_exp</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_wpli_complex">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_wpli_complex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_wpli_complex</span><span class="p">(</span>
+    <span class="n">analytic_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">analytic_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Amplitude-weighted n:m wPLI on complex analytic signals.</span>
+
+<span class="sd">    Computes::</span>
+
+<span class="sd">        |⟨Im(X * conj(Y))⟩| / ⟨|Im(X * conj(Y))|⟩</span>
+
+<span class="sd">    where ``X = |a_i| · exp(i·n·φ_i)``, ``Y = |a_j| · exp(i·m·φ_j)``, and the</span>
+<span class="sd">    analytic signals carry both amplitude and phase. For ``n = m = 1`` this is</span>
+<span class="sd">    simply ``|⟨Im(a_i · conj(a_j))⟩| / ⟨|Im(a_i · conj(a_j))|⟩``.</span>
+
+<span class="sd">    This matches the cross-spectrum formula used in legacy</span>
+<span class="sd">    ``compute_cross_spectrum_harmonicity``, where ``analytic_*`` are STFT</span>
+<span class="sd">    coefficients (``Zxx``) at the relevant frequency bins.</span>
+
+<span class="sd">    Differs from :func:`nm_wpli` in that the latter discards amplitude</span>
+<span class="sd">    information (uses only ``sin(Δφ)``), while this variant weights by the</span>
+<span class="sd">    instantaneous magnitudes ``|a_i| · |a_j|`` — more sensitive when joint</span>
+<span class="sd">    high-amplitude epochs carry the coupling signal.</span>
+
+<span class="sd">    Reference: Vinck et al. 2011 NeuroImage 55:1548 (wPLI); applied to STFT</span>
+<span class="sd">    cross-spectrum coefficients.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phase_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">analytic_i</span><span class="p">)</span>
+    <span class="n">phase_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">analytic_j</span><span class="p">)</span>
+    <span class="n">amp_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">analytic_i</span><span class="p">)</span>
+    <span class="n">amp_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">analytic_j</span><span class="p">)</span>
+    <span class="c1"># n:m generalization of X · conj(Y): magnitude product × phase rotation</span>
+    <span class="n">cross</span> <span class="o">=</span> <span class="n">amp_i</span> <span class="o">*</span> <span class="n">amp_j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">phase_j</span><span class="p">))</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">cross</span><span class="p">)</span>
+    <span class="c1"># The ``+ epsilon`` in the denominator matches legacy</span>
+    <span class="c1"># compute_cross_spectrum_harmonicity (epsilon=1e-10) and prevents</span>
+    <span class="c1"># divide-by-zero for bins with negligible imaginary cross-spectrum.</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">im</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">im</span><span class="p">))</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_plv_canonical">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_plv_canonical">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_plv_canonical</span><span class="p">(</span><span class="n">phase_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n:m PLV with the **Tass 1998** convention.</span>
+
+<span class="sd">    Note on convention</span>
+<span class="sd">    ------------------</span>
+<span class="sd">    The legacy biotuner ratio kernel (``get_harmonic_ratio`` / ``binary_nm_kernel``)</span>
+<span class="sd">    returns ``(n, m)`` such that ``freq_j / freq_i ≈ m / n``. The standard Tass et</span>
+<span class="sd">    al. 1998 convention is ``freq_j / freq_i = n / m``, with PLV defined as</span>
+<span class="sd">    ``|&lt;exp(i(n*φᵢ - m*φⱼ))&gt;|`` — so when ``n*f_i = m*f_j`` (a true n:m mode-lock),</span>
+<span class="sd">    the phase difference is constant in time and PLV = 1.</span>
+
+<span class="sd">    The legacy ``nm_plv`` applies ``n*φᵢ - m*φⱼ`` with the swapped ``(n, m)``,</span>
+<span class="sd">    which yields a non-stationary phase difference even for perfectly locked</span>
+<span class="sd">    harmonics — it measures STFT-phase-progression coherence rather than true</span>
+<span class="sd">    n:m phase locking. Bit-exact reproduction of the legacy snapshot preserves</span>
+<span class="sd">    this behavior.</span>
+
+<span class="sd">    This ``nm_plv_canonical`` variant internally swaps (n, m) to recover the</span>
+<span class="sd">    Tass convention, so it correctly returns 1.0 for perfectly locked harmonic</span>
+<span class="sd">    pairs. Use this for new analyses where standard n:m PLV semantics matter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_tass</span><span class="p">,</span> <span class="n">m_tass</span> <span class="o">=</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span>  <span class="c1"># swap to match Tass convention</span>
+    <span class="n">phase_diff</span> <span class="o">=</span> <span class="n">n_tass</span> <span class="o">*</span> <span class="n">phase_i</span> <span class="o">-</span> <span class="n">m_tass</span> <span class="o">*</span> <span class="n">phase_j</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_diff</span><span class="p">))))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_intertrial_plv">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_intertrial_plv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_intertrial_plv</span><span class="p">(</span>
+    <span class="n">phase_epochs_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">phase_epochs_j</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inter-trial n:m phase-locking value across epochs (Tass convention).</span>
+
+<span class="sd">    Inputs are 2-D **epoched** phase arrays ``(n_epochs, n_times)`` for the two</span>
+<span class="sd">    frequencies. For each epoch the time-averaged n:m relative-phase resultant</span>
+<span class="sd">    ``&lt; exp(i*(m*φ_i - n*φ_j)) &gt;_t`` is formed (note the m/n swap, matching</span>
+<span class="sd">    :func:`nm_plv_canonical`); the inter-trial PLV is the magnitude of the mean</span>
+<span class="sd">    of those per-epoch resultants across epochs::</span>
+
+<span class="sd">        ITC = | (1/E) Σ_e  &lt; exp(i*(m*φ_i[e] - n*φ_j[e])) &gt;_t |</span>
+
+<span class="sd">    This is the correct estimator when coupling is *consistent across trials* but</span>
+<span class="sd">    the absolute phase resets between trials — the regime where a continuous</span>
+<span class="sd">    single-trial PLV cannot distinguish genuine coupling from a stationary</span>
+<span class="sd">    process (see resonance_paper Study 1B / Study 5). It is provided as a</span>
+<span class="sd">    standalone utility because it requires an epoch dimension that the</span>
+<span class="sd">    single-trial orchestrator does not model; it is therefore NOT registered as</span>
+<span class="sd">    a ``PAIRWISE_COUPLING_METRIC`` (those receive 1-D phase from the orchestrator).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phase_epochs_i, phase_epochs_j : ndarray (n_epochs, n_times)</span>
+<span class="sd">        Instantaneous phase per epoch at the two frequencies (e.g. from the</span>
+<span class="sd">        ``hilbert`` phase estimator applied per epoch).</span>
+<span class="sd">    n, m : int</span>
+<span class="sd">        n:m ratio. For 1:1 this is the standard inter-trial coherence of the</span>
+<span class="sd">        phase difference.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float in [0, 1] — 1 = perfectly trial-consistent n:m relative phase.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_epochs_i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+    <span class="n">pj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_epochs_j</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">pi</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">pj</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;phase epoch arrays must have matching shape, got </span><span class="si">{</span><span class="n">pi</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">pj</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># m/n swap matches nm_plv_canonical&#39;s Tass convention.</span>
+    <span class="n">rel</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">pj</span>
+    <span class="n">per_epoch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">rel</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># (n_epochs,) resultant per trial</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">per_epoch</span><span class="p">)))</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># n:m indices BEYOND the first circular moment (Tass 1998; Palus 1997)</span>
+<span class="c1">#</span>
+<span class="c1"># The PLV family above reads only the FIRST circular moment of the relative phase</span>
+<span class="c1"># psi = n*phi_i - m*phi_j, so it is maximal only for a UNIMODAL psi and CANCELS on</span>
+<span class="c1"># multimodal / antipodal / multistable n:m locks (resonance_paper Study 41: PLV</span>
+<span class="c1"># anti-detects them, AUC&lt;0.5). These indices read the whole psi distribution and</span>
+<span class="c1"># recover those locks. Same (n, m) convention as the raw metrics — pair with the</span>
+<span class="c1"># canonical wrapper (or correct multipliers) for genuine n:m.</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="nm_rho_entropy">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_rho_entropy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_rho_entropy</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">nbins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">18</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tass 1998 n:m entropy synchronization index in [0, 1].</span>
+
+<span class="sd">    ``rho = (Hmax - H)/Hmax`` where ``H`` is the Shannon entropy of the histogram</span>
+<span class="sd">    of ``psi = n*phi_i - m*phi_j`` (wrapped) and ``Hmax = ln(nbins)``. Reads ANY</span>
+<span class="sd">    departure of psi from uniformity (all moments), so it detects multimodal n:m</span>
+<span class="sd">    locks the PLV family misses. Positively biased at small N — use a surrogate z.</span>
+<span class="sd">    Ref: Tass et al. 1998 PRL 81:3291.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                                <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_j</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))))</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">nbins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="n">h</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nbins</span><span class="p">)</span> <span class="o">-</span> <span class="n">H</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nbins</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="nm_conditional_prob">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_conditional_prob">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_conditional_prob</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">nbins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="n">min_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tass 1998 n:m conditional-probability index in [0, 1].</span>
+
+<span class="sd">    Bins ``n*phi_i`` and takes the mean resultant of ``m*phi_j`` within each bin.</span>
+<span class="sd">    Captures dependence of one phase given the other, but each bin&#39;s resultant is</span>
+<span class="sd">    again a first moment — so it shares the PLV family&#39;s blindness to *within-bin*</span>
+<span class="sd">    antipodal structure. Ref: Tass et al. 1998 PRL 81:3291.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_j</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nbins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span> <span class="o">==</span> <span class="n">k</span><span class="p">])))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbins</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_count</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span> <span class="k">if</span> <span class="n">rs</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+
+
+
+<div class="viewcode-block" id="nm_phase_mi">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.nm_phase_mi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nm_phase_mi</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">phase_j</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">nbins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalized mutual information in [0, 1] between ``n*phi_i`` and ``m*phi_j``.</span>
+
+<span class="sd">    Model-free, all-moment statistical dependence — the most general n:m detector;</span>
+<span class="sd">    recovers any multimodal/nonlinear lock. Most data-hungry; use a surrogate z.</span>
+<span class="sd">    Ref: Palus 1997 Phys Lett A 235:341.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase_j</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)))</span>
+    <span class="n">c</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">nbins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]])</span>
+    <span class="n">pxy</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="n">c</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">pxy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">pxy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">px</span> <span class="o">*</span> <span class="n">py</span>
+    <span class="n">nz</span> <span class="o">=</span> <span class="n">pxy</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">mi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pxy</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pxy</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span> <span class="o">/</span> <span class="n">outer</span><span class="p">[</span><span class="n">nz</span><span class="p">])))</span>
+    <span class="n">Hx</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="n">px</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="n">px</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">Hy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">py</span><span class="p">[</span><span class="n">py</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">py</span><span class="p">[</span><span class="n">py</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">mi</span> <span class="o">/</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Hx</span><span class="p">,</span> <span class="n">Hy</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Matrix builder — dispatches the pairwise metric over freq pairs</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="build_pairwise_coupling_matrix">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.build_pairwise_coupling_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_pairwise_coupling_matrix</span><span class="p">(</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ratio_kernel_fn</span><span class="p">,</span>
+    <span class="n">ratio_kernel_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">metric_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the ``(n_freqs, n_freqs)`` symmetric coupling matrix.</span>
+
+<span class="sd">    For each upper-triangular pair (i, j), consults ``ratio_kernel_fn`` to</span>
+<span class="sd">    determine the best (n, m); when the ratio kernel returns ``W=0``, the pair</span>
+<span class="sd">    gets coupling=0. With the legacy binary kernel and ``fallback_to_1_1=True``,</span>
+<span class="sd">    every pair gets a value (n:m if matched, else 1:1).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phase : (n_freqs, n_times) phase time series</span>
+<span class="sd">    freqs : (n_freqs,) frequency grid</span>
+<span class="sd">    ratio_kernel_fn : callable returning (W, N, M) arrays</span>
+<span class="sd">    ratio_kernel_params : dict passed to ratio_kernel_fn</span>
+<span class="sd">    metric_fn : scalar pairwise metric ``f(phase_i, phase_j, n, m) -&gt; float``.</span>
+<span class="sd">        Default is :func:`nm_plv` for backward compatibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">metric_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">nm_plv</span>
+    <span class="n">n_freqs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_freqs</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">W</span><span class="p">,</span> <span class="n">N_mat</span><span class="p">,</span> <span class="n">M_mat</span> <span class="o">=</span> <span class="n">ratio_kernel_fn</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="o">**</span><span class="n">ratio_kernel_params</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_freqs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">M_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">metric_fn</span><span class="p">(</span><span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">phase</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+            <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">M</span></div>
+
+
+
+<span class="c1"># Backwards-compat alias — the orchestrator originally called this name</span>
+<div class="viewcode-block" id="build_nm_plv_matrix">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.build_nm_plv_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_nm_plv_matrix</span><span class="p">(</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">freqs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ratio_kernel_fn</span><span class="p">,</span>
+    <span class="n">ratio_kernel_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Backwards-compat alias for :func:`build_pairwise_coupling_matrix` with</span>
+<span class="sd">    ``metric_fn=nm_plv``.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">build_pairwise_coupling_matrix</span><span class="p">(</span>
+        <span class="n">phase</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">ratio_kernel_fn</span><span class="p">,</span> <span class="n">ratio_kernel_params</span><span class="p">,</span> <span class="n">metric_fn</span><span class="o">=</span><span class="n">nm_plv</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="reduce_matrix_to_spectrum">
+<a class="viewcode-back" href="../../../api/resonance.html#biotuner.resonance.reduce_matrix_to_spectrum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reduce_matrix_to_spectrum</span><span class="p">(</span>
+    <span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">psd_prob</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">legacy_self_pair_subtract</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">alpha_self</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">alpha_partner</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reduce an N×N similarity/coupling matrix to a length-N per-bin spectrum.</span>
+
+<span class="sd">    Two reduction modes:</span>
+
+<span class="sd">    legacy_self_pair_subtract=True (DEFAULT, matches legacy compute_phase_spectrum</span>
+<span class="sd">    and compute_harmonic_power):</span>
+<span class="sd">        v[i] = p_i * Σ_j (M[i,j] * p_j)  -  M[i,i] * p_i^2</span>
+
+<span class="sd">    legacy_self_pair_subtract=False (plan §A.4 — recommended for new code):</span>
+<span class="sd">        v[i] = p_i^alpha_self * Σ_{j ≠ i} (M[i,j] * p_j^alpha_partner)</span>
+<span class="sd">        Off-diagonal mask, no subtraction artifact.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matrix : (N, N) similarity/coupling matrix</span>
+<span class="sd">    psd_prob : (N,) probability weights summing to 1</span>
+<span class="sd">    normalize : if False, mirrors legacy ``normalize=False`` branch (compute_phase_spectrum</span>
+<span class="sd">        uses an asymmetric formula; compute_harmonic_power uses a row sum of M*p_i*p_j)</span>
+<span class="sd">    legacy_self_pair_subtract : reproduce legacy diagonal-subtraction quirk</span>
+<span class="sd">    alpha_self, alpha_partner : only used in non-legacy mode</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">psd_prob</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">legacy_self_pair_subtract</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Legacy compute_phase_spectrum normalize=False branch:</span>
+                <span class="c1"># uses M[i,:] * p[i] * p (asymmetric in p[i] vs partner p)</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="c1"># Clean off-diagonal sum (plan §A.4)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">M_off</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">p_partner</span> <span class="o">=</span> <span class="n">p</span> <span class="o">**</span> <span class="n">alpha_partner</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">p</span> <span class="o">**</span> <span class="n">alpha_self</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">M_off</span> <span class="o">@</span> <span class="n">p_partner</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Canonical (Tass-convention) variants — apply the (n, m) -&gt; (m, n) swap for ALL</span>
+<span class="c1"># metrics, not just PLV.</span>
+<span class="c1">#</span>
+<span class="c1"># Rationale: the ratio kernels (binary_nm_kernel, fraction_kernel) return (n, m)</span>
+<span class="c1"># under the legacy convention ``ratio = f_j / f_i ≈ m / n``. The base metrics apply</span>
+<span class="c1"># ``n*φ_i - m*φ_j`` literally, which is NON-stationary for a true n:m mode-lock</span>
+<span class="c1"># (validated in resonance_paper Study 39: every raw metric anti-detects clean</span>
+<span class="c1"># polyrhythmic ground truth — PLV AUC≈0.13). The mathematically correct n:m</span>
+<span class="c1"># phase-locking test (Tass 1998) needs ``m*φ_i - n*φ_j`` for these kernels, i.e.</span>
+<span class="c1"># the (n, m) -&gt; (m, n) swap that ``nm_plv_canonical`` already applies. These</span>
+<span class="c1"># wrappers extend that fix to pli / wpli / rrci / wpli_complex so the</span>
+<span class="c1"># volume-conduction-robust metrics can be used at genuine n:m. Use the canonical</span>
+<span class="c1"># variants for any new n:m analysis; the raw names are kept for bit-exact</span>
+<span class="c1"># reproduction of prior papers.</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_canonical</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a pairwise metric to apply the Tass n:m convention (swap n&lt;-&gt;m).</span>
+
+<span class="sd">    The wrapped metric receives the ratio-kernel&#39;s ``(n, m)`` (ratio≈m/n) and</span>
+<span class="sd">    internally calls ``metric_fn(arg_i, arg_j, m, n, ...)`` so the stationary</span>
+<span class="sd">    combination ``m*φ_i - n*φ_j`` is tested. For 1:1 (n==m) it is a no-op.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wrapped</span><span class="p">(</span><span class="n">arg_i</span><span class="p">,</span> <span class="n">arg_j</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">metric_fn</span><span class="p">(</span><span class="n">arg_i</span><span class="p">,</span> <span class="n">arg_j</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="n">_wrapped</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">metric_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;_canonical&quot;</span>
+    <span class="n">_wrapped</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">_wrapped</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">_wrapped</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Canonical (Tass-convention) variant of :func:`</span><span class="si">{</span><span class="n">metric_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` — &quot;</span>
+        <span class="s2">&quot;swaps (n, m) so the genuine n:m mode-lock is tested with the legacy ratio kernels.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_wrapped</span>
+
+
+<span class="n">nm_pli_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_pli</span><span class="p">)</span>
+<span class="n">nm_wpli_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_wpli</span><span class="p">)</span>
+<span class="n">nm_rrci_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_rrci</span><span class="p">)</span>
+<span class="n">nm_wpli_complex_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_wpli_complex</span><span class="p">)</span>
+<span class="n">nm_rho_entropy_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_rho_entropy</span><span class="p">)</span>
+<span class="n">nm_conditional_prob_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_conditional_prob</span><span class="p">)</span>
+<span class="n">nm_phase_mi_canonical</span> <span class="o">=</span> <span class="n">_canonical</span><span class="p">(</span><span class="n">nm_phase_mi</span><span class="p">)</span>
+
+
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_plv&quot;</span><span class="p">,</span> <span class="n">nm_plv</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_pli&quot;</span><span class="p">,</span> <span class="n">nm_pli</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_wpli&quot;</span><span class="p">,</span> <span class="n">nm_wpli</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_rrci&quot;</span><span class="p">,</span> <span class="n">nm_rrci</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_plv_canonical&quot;</span><span class="p">,</span> <span class="n">nm_plv_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_wpli_complex&quot;</span><span class="p">,</span> <span class="n">nm_wpli_complex</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;analytic&quot;</span><span class="p">)</span>
+<span class="c1"># canonical variants for the 0-lag-robust / amplitude-weighted metrics (Study 39 fix)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_pli_canonical&quot;</span><span class="p">,</span> <span class="n">nm_pli_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_wpli_canonical&quot;</span><span class="p">,</span> <span class="n">nm_wpli_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_rrci_canonical&quot;</span><span class="p">,</span> <span class="n">nm_rrci_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_wpli_complex_canonical&quot;</span><span class="p">,</span> <span class="n">nm_wpli_complex_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;analytic&quot;</span><span class="p">)</span>
+<span class="c1"># all-moment n:m indices (Study 41: recover multimodal locks the PLV family misses)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_rho_entropy&quot;</span><span class="p">,</span> <span class="n">nm_rho_entropy</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_conditional_prob&quot;</span><span class="p">,</span> <span class="n">nm_conditional_prob</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_phase_mi&quot;</span><span class="p">,</span> <span class="n">nm_phase_mi</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_rho_entropy_canonical&quot;</span><span class="p">,</span> <span class="n">nm_rho_entropy_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_conditional_prob_canonical&quot;</span><span class="p">,</span> <span class="n">nm_conditional_prob_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">register_coupling_metric</span><span class="p">(</span><span class="s2">&quot;nm_phase_mi_canonical&quot;</span><span class="p">,</span> <span class="n">nm_phase_mi_canonical</span><span class="p">,</span> <span class="n">arity</span><span class="o">=</span><span class="s2">&quot;pairwise_symmetric&quot;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
