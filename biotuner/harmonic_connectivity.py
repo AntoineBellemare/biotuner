@@ -564,8 +564,8 @@ class harmonic_connectivity(object):
         coupling_metric_params=None,
         ratio_kernel="binary",
         ratio_kernel_params=None,
-        bandwidth=1.0,
-        aggregate="mean",
+        bandwidth=3.0,
+        aggregate="max",
         FREQ_BANDS=None,
         graph=True,
         save=False,
@@ -593,10 +593,17 @@ class harmonic_connectivity(object):
         ratio_kernel_params : dict, optional
             Kwargs for the ratio kernel; defaults to
             ``{'max_nm': 3, 'tolerance': 0.05, 'fallback_to_1_1': True}``.
-        bandwidth : float, default=1.0
-            Hz width of the bandpass filter applied around each peak.
-        aggregate : {'mean', 'max', 'sum'}, default='mean'
-            How to reduce the per-peak-pair scalars to one number per electrode pair.
+        bandwidth : float, default=3.0
+            Hz width of the bandpass filter applied around each peak. Must be wide
+            enough to capture the oscillation's instantaneous-frequency
+            excursions: a too-narrow window (e.g. 1 Hz) corrupts the Hilbert phase
+            on non-stationary signals and collapses all coupling toward 0. ~3 Hz
+            is a robust default; widen further for strongly drifting rhythms.
+        aggregate : {'mean', 'max', 'sum'}, default='max'
+            How to reduce the per-peak-pair scalars to one number per electrode
+            pair. ``'max'`` reports the strongest n:m coupling across peak pairs
+            and is recommended — ``'mean'`` dilutes a genuine pairwise lock among
+            the (often spurious) other peak-pair combinations.
         FREQ_BANDS : list of [low, high], optional
             Override the default frequency-band partition used by peak extraction.
         graph : bool, default=True
@@ -665,8 +672,8 @@ class harmonic_connectivity(object):
         coupling_metric_params=None,
         ratio_kernel="binary",
         ratio_kernel_params=None,
-        bandwidth=1.0,
-        coupling_aggregate="mean",
+        bandwidth=3.0,
+        coupling_aggregate="max",
         delta_lim=20,
         FREQ_BANDS=None,
         graph=True,
