@@ -2102,6 +2102,45 @@ def _cross_reduce_3flavors(
     return v1, v2, v_all
 
 
+from functools import lru_cache as _lru_cache  # noqa: E402
+
+
+@_lru_cache(maxsize=128)
+def _cached_harmonic_kernel(kernel_name, freqs_bytes, params_items):
+    """Harmonic-similarity matrix S[i,j]=kernel(freqs[i],freqs[j]). Data-independent
+    (depends only on the frequency grid + kernel), so it is memoized and reused across
+    every electrode pair and surrogate in a connectivity computation. Returned array is
+    read-only; callers that mutate must copy first."""
+    freqs = np.frombuffer(freqs_bytes, dtype=np.float64)
+    S = np.asarray(HARMONIC_KERNELS[kernel_name](freqs, freqs, **dict(params_items)), dtype=np.float64)
+    S.setflags(write=False)
+    return S
+
+
+@_lru_cache(maxsize=128)
+def _cached_ratio_kernel(kernel_name, freqs_bytes, params_items):
+    """Ratio-kernel (W, N, M) matrices over the frequency grid. Data-independent, so
+    memoized like the harmonic kernel — crucial for the ``fraction`` kernel, whose
+    Fraction.limit_denominator over an n_freqs x n_freqs grid otherwise dominates
+    connectivity runtime when recomputed per pair x surrogate. Returned arrays are
+    read-only."""
+    freqs = np.frombuffer(freqs_bytes, dtype=np.float64)
+    W, N, M = RATIO_KERNELS[kernel_name](freqs, freqs, **dict(params_items))
+    for arr in (W, N, M):
+        np.asarray(arr).setflags(write=False)
+    return W, N, M
+
+
+def _hashable_params(params):
+    """(name, value) tuple key for a kernel-params dict, or None if unhashable."""
+    try:
+        key = tuple(sorted(params.items()))
+        hash(key)
+        return key
+    except TypeError:
+        return None
+
+
 def compute_cross_resonance(
     signal1: np.ndarray,
     signal2: np.ndarray,
@@ -2194,11 +2233,19 @@ def compute_cross_resonance(
 
     n_freqs = len(freqs)
 
-    # Harmonic similarity matrix S[i,j]
-    kernel_fn = HARMONIC_KERNELS[config.harmonic_kernel]
-    S = kernel_fn(freqs, freqs, **config.harmonic_kernel_params)
-    # Legacy applies S only when freqs[j] != 0; the kernel_harmsim_legacy
-    # already does this. Match the legacy "skip f=0" by zeroing those entries.
+    # Harmonic similarity matrix S[i,j] — data-independent (depends only on `freqs`
+    # and the kernel), so fetched from a memoized cache and copied before the per-call
+    # f==0 masking. Avoids recomputing the kernel for every electrode pair / surrogate.
+    _freqs_key = np.ascontiguousarray(freqs, dtype=np.float64).tobytes()
+    _hk_params = _hashable_params(config.harmonic_kernel_params)
+    if _hk_params is not None:
+        S = _cached_harmonic_kernel(config.harmonic_kernel, _freqs_key, _hk_params).copy()
+    else:
+        S = np.asarray(
+            HARMONIC_KERNELS[config.harmonic_kernel](freqs, freqs, **config.harmonic_kernel_params),
+            dtype=np.float64,
+        )
+    # Legacy applies S only when freqs[j] != 0; match the legacy "skip f=0".
     for j, f in enumerate(freqs):
         if f == 0:
             S[:, j] = 0.0
@@ -2225,8 +2272,14 @@ def compute_cross_resonance(
         arg2_full = Zxx2
     Phi = np.zeros((n_freqs, n_freqs), dtype=np.float64)
     if config.cross_use_ratio_kernel:
-        ratio_fn = RATIO_KERNELS[config.ratio_kernel]
-        W, N_mat, M_mat = ratio_fn(freqs, freqs, **config.ratio_kernel_params)
+        # (W, N, M) depend only on `freqs` + kernel — memoized so the (expensive,
+        # for the 'fraction' kernel) grid of Fraction.limit_denominator is computed
+        # once per grid rather than per electrode pair / surrogate.
+        _rk_params = _hashable_params(config.ratio_kernel_params)
+        if _rk_params is not None:
+            W, N_mat, M_mat = _cached_ratio_kernel(config.ratio_kernel, _freqs_key, _rk_params)
+        else:
+            W, N_mat, M_mat = RATIO_KERNELS[config.ratio_kernel](freqs, freqs, **config.ratio_kernel_params)
         for i in range(n_freqs):
             for j in range(n_freqs):
                 if freqs[j] != 0 and W[i, j] > 0:
