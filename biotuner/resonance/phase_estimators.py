@@ -94,8 +94,17 @@ def hilbert_bandpass_phase(
         if hi <= lo:
             out[i] = 0.0
             continue
-        sos = butter(filter_order, [lo / nyq, hi / nyq], btype="band", output="sos")
-        band = sosfiltfilt(sos, sig)
+        # Very low / very narrow normalized passbands make a high-order Butterworth
+        # bandpass numerically singular (sosfilt_zi fails). Drop the order for such
+        # bins, and if the design is still degenerate leave the phase flat (a bin the
+        # filter cannot resolve contributes no coupling rather than crashing).
+        order = filter_order if (lo / nyq) >= 0.02 else 2
+        try:
+            sos = butter(order, [lo / nyq, hi / nyq], btype="band", output="sos")
+            band = sosfiltfilt(sos, sig)
+        except (ValueError, np.linalg.LinAlgError):
+            out[i] = 0.0
+            continue
         out[i] = np.angle(hilbert(band))
     return out
 

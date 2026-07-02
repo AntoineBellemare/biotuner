@@ -42,10 +42,15 @@ from biotuner.resonance.registry import (
 class ResonanceConfig:
     """Configuration for :func:`compute_resonance`. Plan §4.1.
 
-    Default values reproduce the legacy ``compute_global_harmonicity`` pipeline so
-    that the snapshot regression test (``tests/resonance/test_snapshot.py``) passes.
-    New code should override these to opt in to cleaner numerics (e.g. switch
-    ``psd_normalization`` to ``'prob'`` and ``legacy_self_pair_subtract`` to False).
+    Defaults implement the sound n:m recipe: the ``fraction`` ratio kernel (exact
+    rational ratios), the ``hilbert`` phase estimator (recovers n:m locking that the
+    STFT bin phase misses), and the convention-correct ``nm_plv_canonical`` coupling
+    metric. To reproduce the legacy ``compute_global_harmonicity`` numerics bit-exactly
+    (e.g. for the snapshot regression tests), pass the explicit legacy kwargs from
+    ``tests/resonance/_signals.py::legacy_default_resonance_config_kwargs`` (``binary``
+    ratio kernel, ``stft`` phase, ``nm_plv`` metric). A few numerics knobs below still
+    keep legacy defaults (``legacy_self_pair_subtract``, ``psd_normalization``); override
+    them (e.g. ``'prob'`` and ``False``) for power-independent factor-level inference.
     """
 
     # Spectral preprocessing
@@ -57,18 +62,18 @@ class ResonanceConfig:
     harmonic_kernel: str = "harmsim"
     harmonic_kernel_params: Dict[str, Any] = field(default_factory=dict)
 
-    # Ratio kernel (n:m gate)
-    ratio_kernel: str = "binary"
+    # Ratio kernel (n:m gate) — 'fraction' gives exact rational n:m ratios
+    ratio_kernel: str = "fraction"
     ratio_kernel_params: Dict[str, Any] = field(
-        default_factory=lambda: {"max_nm": 3, "tolerance": 0.05, "fallback_to_1_1": True}
+        default_factory=lambda: {"max_denom": 16, "beta": 1.0}
     )
 
-    # Phase estimation
-    phase_estimator: str = "stft"
+    # Phase estimation — 'hilbert' recovers n:m locking the STFT bin phase misses
+    phase_estimator: str = "hilbert"
     phase_estimator_params: Dict[str, Any] = field(default_factory=dict)
 
-    # Pairwise phase coupling metric (must be arity 'pairwise_*')
-    coupling_metric: str = "nm_plv"
+    # Pairwise phase coupling metric (arity 'pairwise_*'); canonical fixes the n:m convention
+    coupling_metric: str = "nm_plv_canonical"
     coupling_metric_params: Dict[str, Any] = field(default_factory=dict)
     pac_convention: Literal["row", "col", "symmetrize"] = "row"
 
