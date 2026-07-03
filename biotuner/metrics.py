@@ -1367,7 +1367,9 @@ def spectrum_complexity(values, freqs, n_peaks=5, prominence_threshold=0.5, hfd_
         "flatness": spectral_flatness(values),
         "entropy": spectral_entropy(values),
         "spread": spectral_spread(freqs, values),
-        "higuchi": higuchi_fd(values, kmax=hfd_kmax),
+        # Higuchi FD is unreliable on short vectors; the resonance spectra are only
+        # ~90 points, so gate it and return NaN rather than a noisy estimate there.
+        "higuchi": (higuchi_fd(values, kmax=hfd_kmax) if np.size(values) >= 150 else float("nan")),
         "peaks": peak_freqs,
         "peak_indices": peak_idx,
         "avg": float(np.mean(values)) if values.size else float("nan"),

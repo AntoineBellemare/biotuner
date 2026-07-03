@@ -233,6 +233,27 @@ class ResonanceResult:
         """
         return self._get_matrix("phase_coupling_matrix", "Phase-coupling")
 
+    @property
+    def phase_coupling_z(self) -> np.ndarray:
+        """Per-frequency surrogate z-score of the phase-coupling factor (``factor_z["PC"]``).
+
+        This is the recommended detector for n:m phase coupling. The composite
+        resonance ``R = H·PC`` is dominated by ``H`` and is therefore essentially
+        PSD-driven under a power-preserving null, so a surrogate test on ``R`` (or on
+        the raw, power-weighted ``PC`` spectrum) can mask a genuine coupling effect;
+        the calibrated, factor-level statistic ``PC_z`` isolates it. Populated only
+        when ``compute_resonance`` is run with a ``null_model`` (or via
+        ``with_surrogate_null``); ``factor_z["H"]`` and ``factor_z["R"]`` hold the
+        matching harmonicity and composite z-scores.
+        """
+        if self.factor_z is None or "PC" not in self.factor_z:
+            raise AttributeError(
+                "phase_coupling_z requires a surrogate null — re-run compute_resonance "
+                "with ResonanceConfig(null_model={...}) (or call with_surrogate_null) so "
+                "factor_z['PC'] is populated. PC_z, not R, is the correct n:m detector."
+            )
+        return self.factor_z["PC"]
+
 
 # ---------------------------------------------------------------------------
 # Orchestrator
