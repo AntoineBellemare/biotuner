@@ -932,7 +932,7 @@ class compute_biotuner(object):
             if hasattr(self, 'harm_tuning_scale'):
                 tuning_data = self.harm_tuning_scale
             else:
-                print("→ Computing harmonic_tuning() automatically...")
+                print("-> Computing harmonic_tuning() automatically...")
                 tuning_data = self.harmonic_tuning()  # Method will store to self.harm_tuning_scale
         
         elif tuning == 'harm_fit_tuning':
@@ -940,12 +940,12 @@ class compute_biotuner(object):
             if hasattr(self, 'harm_fit_tuning_scale'):
                 tuning_data = self.harm_fit_tuning_scale
             else:
-                print("→ Computing harmonic_fit_tuning() automatically...")
+                print("-> Computing harmonic_fit_tuning() automatically...")
                 tuning_data = self.harmonic_fit_tuning()  # Method will store to self.harm_fit_tuning_scale
         
         elif tuning == 'peaks_ratios':
             if not hasattr(self, 'peaks_ratios'):
-                print("→ Computing peaks_ratios from peaks automatically...")
+                print("-> Computing peaks_ratios from peaks automatically...")
                 from biotuner.biotuner_utils import compute_peak_ratios
                 tuning_data = compute_peak_ratios(self.peaks, rebound=True, octave=self.octave, 
                                                    sub=self.compute_sub_ratios)
@@ -958,7 +958,7 @@ class compute_biotuner(object):
             if hasattr(self, 'euler_fokker'):
                 tuning_data = self.euler_fokker
             else:
-                print("→ Computing euler_fokker_scale() automatically...")
+                print("-> Computing euler_fokker_scale() automatically...")
                 tuning_data = self.euler_fokker_scale()  # Method will store to self.euler_fokker
         
         else:
@@ -1247,19 +1247,19 @@ class compute_biotuner(object):
             if hasattr(self, 'harm_tuning_scale'):
                 return self.harm_tuning_scale
             else:
-                print("→ Computing harmonic_tuning() automatically...")
+                print("-> Computing harmonic_tuning() automatically...")
                 return self.harmonic_tuning()
         
         elif tuning == 'harm_fit_tuning':
             if hasattr(self, 'harm_fit_tuning_scale'):
                 return self.harm_fit_tuning_scale
             else:
-                print("→ Computing harmonic_fit_tuning() automatically...")
+                print("-> Computing harmonic_fit_tuning() automatically...")
                 return self.harmonic_fit_tuning()
         
         elif tuning == 'peaks_ratios':
             if not hasattr(self, 'peaks_ratios'):
-                print("→ Computing peaks_ratios from peaks automatically...")
+                print("-> Computing peaks_ratios from peaks automatically...")
                 from biotuner.biotuner_utils import compute_peak_ratios
                 tuning_data = compute_peak_ratios(self.peaks, rebound=True, octave=self.octave, 
                                                    sub=self.compute_sub_ratios)
@@ -1272,7 +1272,7 @@ class compute_biotuner(object):
             if hasattr(self, 'euler_fokker'):
                 return self.euler_fokker
             else:
-                print("→ Computing euler_fokker_scale() automatically...")
+                print("-> Computing euler_fokker_scale() automatically...")
                 return self.euler_fokker_scale()
         
         else:
@@ -1281,7 +1281,91 @@ class compute_biotuner(object):
                 "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', 'euler_fokker'"
             )
 
-    def plot_harmonic_fit(self, n_harm=None, harm_bounds=0.5, function='mult', 
+    def get_tuning(self, source="peaks_ratios", *, clean=True, **params):
+        """Return a tuning -- an array of frequency ratios -- by name.
+
+        Public dispatcher over every way this object derives a scale from the
+        signal, computing the requested one on demand. This is the single entry
+        point other layers (e.g. biocolors, sonification, ``.scl`` export) should
+        use rather than reaching for the individual ``compute_*`` methods or the
+        private ``_get_tuning_data``.
+
+        Parameters
+        ----------
+        source : str
+            One of :data:`TUNING_SOURCES`:
+
+            - ``'peaks_ratios'``     octave-rebounded ratios of the spectral peaks.
+            - ``'cons_ratios'``      the consonance-filtered subset (needs extraction
+              with a consonance limit).
+            - ``'extended_ratios'``  ratios of the harmonically extended peaks
+              (needs a prior :meth:`peaks_extension`).
+            - ``'diss_curve'``       the scale at the Sethares dissonance-curve minima.
+            - ``'HE'`` (``'harmonic_entropy'``)  the harmonic-entropy minima.
+            - ``'euler_fokker'``     an Euler-Fokker genus from the peaks.
+            - ``'harm_tuning'`` (``'harmonic_tuning'``)  a tuning from harmonic positions.
+            - ``'harm_fit_tuning'`` (``'harmonic_fit'``)  the peaks' common-harmonic tuning.
+        clean : bool
+            If True (default), return a numpy array with only finite, positive
+            ratios, and raise ``ValueError`` if the derivation is empty (harmonic
+            entropy and Euler-Fokker can be sparse). If False, return the raw
+            derivation unchanged.
+        **params
+            Passed to the underlying ``compute_*`` method (e.g. ``res=`` for
+            harmonic entropy, ``list_harmonics=`` for harmonic tuning), forcing a
+            recompute with those parameters.
+        """
+        s = source
+        if s in ("ratios", "peaks_ratios"):
+            v = getattr(self, "peaks_ratios", None)
+            if v is None:
+                from biotuner.biotuner_utils import compute_peak_ratios
+                v = compute_peak_ratios(self.peaks, rebound=True, octave=self.octave,
+                                        sub=self.compute_sub_ratios)
+                self.peaks_ratios = v
+        elif s in ("cons_ratios", "peaks_ratios_cons"):
+            v = getattr(self, "peaks_ratios_cons", None)
+            if v is None:
+                raise RuntimeError("no cons_ratios; run peaks_extraction first")
+        elif s == "extended_ratios":
+            v = getattr(self, "extended_peaks_ratios", None)
+            if v is None:
+                raise RuntimeError("no extended_ratios; run peaks_extension(...) first")
+        elif s == "diss_curve":
+            if params or not hasattr(self, "diss_scale"):
+                self.compute_diss_curve(input_type="peaks", plot=False, **params)
+            v = self.diss_scale
+        elif s in ("HE", "harmonic_entropy"):
+            if params or not hasattr(self, "HE_scale"):
+                self.compute_harmonic_entropy(input_type="peaks", plot_entropy=False,
+                                              plot_tenney=False, **params)
+            v = self.HE_scale
+        elif s in ("harm_tuning", "harmonic_tuning"):
+            v = getattr(self, "harm_tuning_scale", None)
+            if v is None or params:
+                v = self.harmonic_tuning(**params)
+        elif s in ("harm_fit_tuning", "harmonic_fit"):
+            v = getattr(self, "harm_fit_tuning_scale", None)
+            if v is None or params:
+                v = self.harmonic_fit_tuning(**params)
+        elif s == "euler_fokker":
+            v = getattr(self, "euler_fokker", None)
+            if v is None or params:
+                v = self.euler_fokker_scale(**params)
+        else:
+            raise ValueError(f"source must be one of {TUNING_SOURCES}, got {source!r}")
+        if not clean:
+            return v
+        a = np.asarray(v, float)
+        a = a[np.isfinite(a) & (a > 0)]
+        if a.size == 0:
+            raise ValueError(
+                f"tuning source {source!r} produced no usable ratios for this signal "
+                f"(it can be sparse); try 'peaks_ratios', 'diss_curve', or 'harm_fit_tuning'."
+            )
+        return a
+
+    def plot_harmonic_fit(self, n_harm=None, harm_bounds=0.5, function='mult',
                          div_mode='div', xmin=1, xmax=60, show_bands=True,
                          figsize=(16, 12), **kwargs):
         """
@@ -3453,3 +3537,36 @@ def fit_biotuner(ts, bt_dict):
 
     # Return the modified bt_dict dictionary
     return bt_dict
+
+
+#: Every tuning derivation :meth:`compute_biotuner.get_tuning` understands.
+TUNING_SOURCES = (
+    "peaks_ratios", "cons_ratios", "extended_ratios",
+    "diss_curve", "HE", "euler_fokker", "harm_tuning", "harm_fit_tuning",
+)
+
+
+def tuning_from_raw(data, sf, *, source="peaks_ratios", peaks_function="fixed",
+                    precision=0.1, n_peaks=5, min_freq=1.0, max_freq=45.0,
+                    n_harm=10, extraction=None, return_bt=False, **params):
+    """Derive a tuning (array of ratios) from a **raw time series**.
+
+    Convenience front door: builds a :class:`compute_biotuner`, runs peak
+    extraction with the chosen parameters, then returns
+    ``bt.get_tuning(source, **params)`` (see :meth:`compute_biotuner.get_tuning`
+    for the sources -- peak ratios, dissonance curve, harmonic entropy,
+    Euler-Fokker, harmonic-fit, ...). Use it for scale export, sonification,
+    analysis, or to feed :func:`biotuner.biocolors.palette_from_tuning`.
+
+    ``return_bt=True`` also returns the extracted object.
+    """
+    bt = compute_biotuner(sf=sf, peaks_function=peaks_function,
+                          precision=precision, n_harm=n_harm)
+    bt.peaks_extraction(
+        np.asarray(data, float), min_freq=min_freq, max_freq=max_freq,
+        n_peaks=n_peaks, graph=False, **(extraction or {}),
+    )
+    if source == "extended_ratios":
+        bt.peaks_extension(method="harmonic_fit", n_harm=n_harm)
+    scale = bt.get_tuning(source, **params)
+    return (scale, bt) if return_bt else scale

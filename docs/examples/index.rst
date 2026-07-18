@@ -69,3 +69,10 @@ Harmonic geometry — media (chord-driven response operators)
    harmonic_geometry_media/03_parametric_and_transport
    harmonic_geometry_media/04_morphogenetic
 
+Bio-colour (deriving colour from a biosignal)
+=============================================
+.. toctree::
+   :maxdepth: 2
+
+   biocolors/biocolors
+

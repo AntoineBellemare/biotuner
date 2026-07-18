@@ -3,6 +3,7 @@
 root: index
 entries:
 - file: examples/index
+- file: biocolors_methods
 - file: getting_started/index
   entries:
   - file: getting_started/basic_usage
