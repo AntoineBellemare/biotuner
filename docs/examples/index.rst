@@ -76,3 +76,10 @@ Bio-colour (deriving colour from a biosignal)
 
    biocolors/biocolors
 
+Bio-elements (biosignals, the periodic table, and materials)
+============================================================
+.. toctree::
+   :maxdepth: 2
+
+   bioelements/bioelements
+
