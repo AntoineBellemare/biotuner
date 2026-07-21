@@ -31,7 +31,12 @@ def load_elements(table: str = "air") -> pd.DataFrame:
     """Load (and cache) a NIST line table by name (``"air"`` or ``"vacuum"``)."""
     if table not in _TABLES:
         raise ValueError(f"unknown table {table!r}; choose from {sorted(_TABLES)}")
-    with resources.files("biotuner.bioelements.data").joinpath(_TABLES[table]).open("rb") as fh:
+    # Reference the parent package (a real package with __init__.py) and navigate
+    # into data/. On Python 3.9, resources.files() of the data/ *namespace* package
+    # (no __init__.py) crashes because spec.origin is None; the parent package has a
+    # valid origin. joinpath is chained (single-arg) for 3.9 compatibility.
+    data = resources.files("biotuner.bioelements").joinpath("data")
+    with data.joinpath(_TABLES[table]).open("rb") as fh:
         df = pd.read_csv(fh, compression="gzip")
     # normalise dtypes: wavelength/intensity numeric, drop unusable rows
     df["wavelength"] = pd.to_numeric(df["wavelength"], errors="coerce")

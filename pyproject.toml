@@ -75,6 +75,7 @@ include = ["biotuner*"]
 # Ship non-Python data files that live inside the package tree.
 [tool.setuptools.package-data]
 "biotuner.harmonic_timbre.exporters" = ["*.json"]
+"biotuner.bioelements" = ["data/*.csv.gz"]   # NIST line tables (data/ is not a package)
 
 [tool.black]
 line-length = 128
