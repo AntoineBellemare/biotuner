@@ -19,6 +19,7 @@ MATERIAL_CLASSES = (
     "elemental", "molecular", "ionic-salt", "covalent-network", "metallic",
     "organic-polymer", "biomineral-composite", "composite-fluid", "amorphous-glass",
     "gas-mixture", "colloid-suspension", "plasma-energetic", "ice-volatile", "void",
+    "amorphous-carbon", "molten-silicate", "mineral-ash", "crystalline-allotrope",
 )
 DOMAINS = (
     "geosphere", "hydrosphere", "atmosphere", "biosphere", "cosmosphere",
@@ -61,14 +62,14 @@ Vacuum = material("Vacuum", kind="element", material_class="void",
 # ======================================================================= #
 Water = material("Water", {"Hydrogen": 2, "Oxygen": 1}, kind="compound",
                  material_class="molecular", domain="hydrosphere",
-                 archetype="water", formula="H2O")
+                 archetype="water", formula="H2O", order=0.50)
 CarbonDioxide = material("CarbonDioxide", {"Carbon": 1, "Oxygen": 2}, kind="compound",
                          material_class="molecular", domain="atmosphere", formula="CO2")
 Halite = material("Halite", {"Sodium": 1, "Chlorine": 1}, kind="compound",
                   material_class="ionic-salt", domain="geosphere", formula="NaCl")
 Quartz = material("Quartz", {"Silicon": 1, "Oxygen": 2}, kind="compound",
                   material_class="covalent-network", domain="geosphere",
-                  archetype="earth", formula="SiO2")
+                  archetype="earth", formula="SiO2", order=0.95)
 Cellulose = material("Cellulose", {"Carbon": 6, "Hydrogen": 10, "Oxygen": 5},
                      kind="compound", material_class="organic-polymer",
                      domain="biosphere", formula="(C6H10O5)n")
@@ -84,10 +85,10 @@ Chlorophyll = material("Chlorophyll",
                        domain="biosphere", formula="C55H72MgN4O5")
 SilicaGlass = material("SilicaGlass", {"Silicon": 1, "Oxygen": 2}, kind="compound",
                        material_class="amorphous-glass", domain="technosphere",
-                       formula="SiO2 (amorphous)")
+                       formula="SiO2 (amorphous)", order=0.35)
 WaterIce = material("WaterIce", {"Hydrogen": 2, "Oxygen": 1}, kind="compound",
                     material_class="ice-volatile", domain="hydrosphere",
-                    formula="H2O (solid)", state="ice")
+                    formula="H2O (solid)", state="ice", order=0.82)
 EuropiumPhosphor = material("EuropiumPhosphor", {"Europium": 2, "Oxygen": 3},
                             kind="compound", material_class="ionic-salt",
                             domain="technosphere", formula="Eu2O3",
@@ -224,6 +225,73 @@ InterstellarDust = material("InterstellarDust",
                             domain="cosmosphere", note="silicate + carbonaceous grains")
 CometIce = material("CometIce", {WaterIce: 80.0, CarbonDioxide: 15.0, Ammonia: 5.0},
                     kind="structure", material_class="ice-volatile", domain="cosmosphere")
+
+# ======================================================================= #
+# Extended — symbolic & evocative materials (tar, lava, the charged ones)
+# ======================================================================= #
+# compounds
+Cinnabar = material("Cinnabar", {"Mercury": 1, "Sulfur": 1}, kind="compound",
+                    material_class="ionic-salt", domain="geosphere", archetype="alchemy",
+                    formula="HgS", note="mercury bound to sulfur — the alchemists' vermilion")
+Amber = material("Amber", {"Carbon": 10, "Hydrogen": 16, "Oxygen": 1}, kind="compound",
+                 material_class="organic-polymer", domain="biosphere", archetype="time",
+                 formula="~C10H16O", note="fossil resin — sunlight and time, hardened")
+Beeswax = material("Beeswax", {"Carbon": 46, "Hydrogen": 92, "Oxygen": 2}, kind="compound",
+                   material_class="organic-polymer", domain="biosphere", archetype="light",
+                   formula="~C46H92O2", note="the comb's long-chain esters")
+Lazurite = material("Lazurite",
+                    {"Sodium": 3, "Calcium": 1, "Aluminum": 3, "Silicon": 3, "Oxygen": 12, "Sulfur": 1},
+                    kind="compound", material_class="covalent-network", domain="geosphere",
+                    archetype="heaven", formula="Na3Ca(Al3Si3O12)S",
+                    note="the blue of lapis lazuli — ground into ultramarine")
+
+# structures (allotropes + the molten)
+Diamond = material("Diamond", {"Carbon": 1}, kind="structure",
+                   material_class="crystalline-allotrope", domain="geosphere", archetype="permanence",
+                   formula="C (cubic)", note="carbon under pressure — same atom as graphite, re-ordered", order=0.98)
+Graphite = material("Graphite", {"Carbon": 1}, kind="structure",
+                    material_class="crystalline-allotrope", domain="geosphere", archetype="shadow",
+                    formula="C (hexagonal)", note="diamond's dark, layered twin — identical spectrum, different order", order=0.72)
+Lava = material("Lava",
+                {MATERIALS["Quartz"]: 48.0, MATERIALS["Corundum"]: 15.0, MATERIALS["Hematite"]: 12.0,
+                 "Calcium": 9.0, "Magnesium": 7.0, "Sodium": 3.0, "Potassium": 1.0},
+                kind="structure", material_class="molten-silicate", domain="energetic-process",
+                archetype="fire", basis="basalt-mass-approx", note="molten rock — the earth's blood")
+
+# mixtures
+Tar = material("Tar", {"Carbon": 83.0, "Hydrogen": 10.0, "Sulfur": 5.0, "Nitrogen": 1.0, "Oxygen": 1.0},
+               kind="mixture", material_class="amorphous-carbon", domain="geosphere", archetype="depth",
+               basis="bitumen-mass-approx", note="heavy hydrocarbons — the tar pit, the black that keeps")
+Charcoal = material("Charcoal",
+                    {"Carbon": 90.0, "Hydrogen": 3.0, "Oxygen": 5.0, "Potassium": 1.0, "Calcium": 1.0},
+                    kind="mixture", material_class="amorphous-carbon", domain="energetic-process",
+                    archetype="ember", basis="mass-approx", note="wood's carbon skeleton — fire's memory", order=0.15)
+Ash = material("Ash",
+               {"Calcium": 25.0, "Potassium": 15.0, "Magnesium": 8.0, "Phosphorus": 5.0,
+                "Sodium": 3.0, "Carbon": 6.0, "Oxygen": 38.0},
+               kind="mixture", material_class="mineral-ash", domain="energetic-process",
+               archetype="ending", basis="wood-ash-mass-approx", note="what the fire leaves — the phoenix bed")
+Clay = material("Clay",
+                {MATERIALS["Kaolinite"]: 60.0, MATERIALS["Water"]: 25.0, MATERIALS["Quartz"]: 15.0},
+                kind="mixture", material_class="composite-fluid", domain="geosphere", archetype="creation",
+                basis="mass-approx", note="earth and water — the potter's, the golem's, Adam's")
+Obsidian = material("Obsidian",
+                    {MATERIALS["Quartz"]: 75.0, MATERIALS["Corundum"]: 13.0, "Sodium": 4.0,
+                     "Potassium": 4.0, MATERIALS["Hematite"]: 2.0},
+                    kind="mixture", material_class="amorphous-glass", domain="geosphere", archetype="mirror",
+                    basis="rhyolitic-glass-approx", note="volcanic glass — the black mirror, the sharpest blade")
+Pearl = material("Pearl",
+                 {MATERIALS["Calcite"]: 95.0, MATERIALS["Collagen"]: 4.0, MATERIALS["Water"]: 1.0},
+                 kind="mixture", material_class="biomineral-composite", domain="hydrosphere", archetype="purity",
+                 basis="nacre-approx", note="aragonite and protein — grief layered into a jewel")
+Honey = material("Honey",
+                 {MATERIALS["Glucose"]: 80.0, MATERIALS["Water"]: 18.0, "Calcium": 1.0, "Potassium": 1.0},
+                 kind="mixture", material_class="composite-fluid", domain="biosphere", archetype="sweetness",
+                 basis="mass-approx", note="flower-sugar and water — the incorruptible")
+Ochre = material("Ochre",
+                 {MATERIALS["Hematite"]: 60.0, MATERIALS["Kaolinite"]: 35.0, MATERIALS["Water"]: 5.0},
+                 kind="mixture", material_class="composite-fluid", domain="geosphere", archetype="first-mark",
+                 basis="mass-approx", note="iron and clay — red earth, the first pigment on the cave wall")
 
 
 # ======================================================================= #

@@ -141,6 +141,24 @@ def test_match_materials_ranks():
     assert (ranked["affinity"].values[:-1] >= ranked["affinity"].values[1:]).all()
 
 
+def test_match_balance_debiases_sparse_elements():
+    """`balance='f1'` neutralises the recall ceiling that lets line-sparse
+    elements (few lines → saturate) dominate; it must differ from recall and stay
+    in [0,1]. A sparse element that saturates recall should lose ground under f1."""
+    from biotuner.bioelements.matching import _match_score
+    from biotuner.bioelements import element_spectrum
+    sig = np.array([7.83, 14.3, 20.8, 27.3, 33.8])
+    rec = match_elements(sig, top=40, tol_cents=60, balance="recall")
+    f1 = match_elements(sig, top=40, tol_cents=60, balance="f1")
+    assert (f1["score"] >= 0).all() and (f1["score"] <= 1).all()
+    assert list(rec["element"].head(5)) != list(f1["element"].head(5))   # reranks
+    # a 4-line element (Astatine) saturates recall but its f1 is capped by precision
+    ast = element_spectrum("Astatine", top=40, normalise=True)
+    r = _match_score(sig, ast, tol_cents=60, band=be.units.OPTICAL_BAND_ANGSTROM, balance="recall")
+    f = _match_score(sig, ast, tol_cents=60, band=be.units.OPTICAL_BAND_ANGSTROM, balance="f1")
+    assert f <= r + 1e-9
+
+
 # --------------------------------------------------------------------------- #
 # bridges
 # --------------------------------------------------------------------------- #

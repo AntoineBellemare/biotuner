@@ -38,7 +38,7 @@ Every name from the old flat ``bioelements.py`` is re-exported, so
 # --- submodules ---------------------------------------------------------- #
 from biotuner.bioelements import (
     units, tables, spectrum, composition, materials, matching, affinity, bridges,
-    periodic, plotting, legacy,
+    periodic, plotting, dynamics, tuning_match, legacy,
 )
 
 # --- new API ------------------------------------------------------------- #
@@ -61,6 +61,16 @@ from biotuner.bioelements.affinity import material_affinity, match_materials
 from biotuner.bioelements.bridges import (
     material_tuning, material_chord, material_palette, material_biocolors_palette,
     material_geometry, element_flame_color, material_flame_palette,
+)
+# --- dynamics (Phase 1: state & coherence) ------------------------------- #
+from biotuner.bioelements.dynamics import (
+    MaterialState, element_state, state_from_signal, coherence,
+    compositional_level, material_state, material_order, plot_material_state,
+)
+# --- tuning matching (ratio-structure, transposition-invariant) ---------- #
+from biotuner.bioelements.tuning_match import (
+    tuning_vector, spectrum_tuning, element_tuning, material_tuning_vector, tuning_cosine,
+    match_tuning, match_elements_by_tuning, match_materials_by_tuning,
 )
 
 # --- legacy surface (back-compat) --------------------------------------- #
@@ -87,6 +97,12 @@ __all__ = [
     # units
     "angstrom_to_hertz", "hertz_to_angstrom", "nm_to_hertz", "hertz_to_nm",
     "hertz_to_volt", "spectrum_region", "fold_to_optical", "SPECTRUM_NM",
+    # dynamics (state & coherence)
+    "MaterialState", "element_state", "state_from_signal", "coherence",
+    "compositional_level", "material_state", "material_order", "plot_material_state",
+    # tuning matching (ratio structure)
+    "tuning_vector", "spectrum_tuning", "element_tuning", "material_tuning_vector",
+    "tuning_cosine", "match_tuning", "match_elements_by_tuning", "match_materials_by_tuning",
     # legacy back-compat
     "Angstrom_to_hertz", "find_matching_spectral_lines", "plot_type_proportions",
     "compute_ratios_df", "spectrum_nm", "spectrum_Angstrom", "spectrum_hertz",
