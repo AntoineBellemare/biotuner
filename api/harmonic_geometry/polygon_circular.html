@@ -1,0 +1,811 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Polygon &amp; Circular &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/harmonic_geometry/polygon_circular';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Fractal" href="fractal.html" />
+    <link rel="prev" title="Harmonograph" href="harmonograph.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../harmonic_geometry.html">Harmonic Geometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/api/harmonic_geometry/polygon_circular.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Polygon & Circular</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.star_polygon"><code class="docutils literal notranslate"><span class="pre">star_polygon()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.times_table_circle"><code class="docutils literal notranslate"><span class="pre">times_table_circle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.times_table_from_input"><code class="docutils literal notranslate"><span class="pre">times_table_from_input()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.tuning_circle"><code class="docutils literal notranslate"><span class="pre">tuning_circle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.rose_curve"><code class="docutils literal notranslate"><span class="pre">rose_curve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.epicycloid"><code class="docutils literal notranslate"><span class="pre">epicycloid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.hypocycloid"><code class="docutils literal notranslate"><span class="pre">hypocycloid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.interval_vector_diagram"><code class="docutils literal notranslate"><span class="pre">interval_vector_diagram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.polygon_chord_pattern"><code class="docutils literal notranslate"><span class="pre">polygon_chord_pattern()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.consonance_polygon"><code class="docutils literal notranslate"><span class="pre">consonance_polygon()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-biotuner.harmonic_geometry.polygon_circular">
+<span id="polygon-circular"></span><h1>Polygon &amp; Circular<a class="headerlink" href="#module-biotuner.harmonic_geometry.polygon_circular" title="Link to this heading">#</a></h1>
+<p>Polygon and circular geometric structures.</p>
+<p>Phase 2 implements the basic ratio-driven shapes. Phase 4 adds the
+biotuner-metric-driven variants: <code class="docutils literal notranslate"><span class="pre">interval_vector_diagram</span></code>,
+<code class="docutils literal notranslate"><span class="pre">polygon_chord_pattern</span></code>, and <code class="docutils literal notranslate"><span class="pre">consonance_polygon</span></code>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.star_polygon">
+<span class="sig-name descname"><span class="pre">star_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#star_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.star_polygon" title="Link to this definition">#</a></dt>
+<dd><p>Schläfli star polygon <code class="docutils literal notranslate"><span class="pre">{n/k}</span></code>.</p>
+<p>Vertices are placed on a circle of given <code class="docutils literal notranslate"><span class="pre">radius</span></code>. Edges connect
+vertex <code class="docutils literal notranslate"><span class="pre">i</span></code> to vertex <code class="docutils literal notranslate"><span class="pre">(i</span> <span class="pre">+</span> <span class="pre">k)</span> <span class="pre">mod</span> <span class="pre">n</span></code>. When <code class="docutils literal notranslate"><span class="pre">gcd(n,</span> <span class="pre">k)</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> the
+figure decomposes into <code class="docutils literal notranslate"><span class="pre">gcd(n,</span> <span class="pre">k)</span></code> disjoint compound polygons; the
+return type is then <code class="docutils literal notranslate"><span class="pre">polygon_set</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of vertices on the circle, <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&gt;=</span> <span class="pre">3</span></code>.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Step size, <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;=</span> <span class="pre">k</span> <span class="pre">&lt;</span> <span class="pre">n</span></code>.</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>GeometryData</em> –</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">geom_type='polygon'</span></code> when <code class="docutils literal notranslate"><span class="pre">gcd(n,</span> <span class="pre">k)</span> <span class="pre">==</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geom_type='polygon_set'</span></code> when <code class="docutils literal notranslate"><span class="pre">gcd(n,</span> <span class="pre">k)</span> <span class="pre">&gt;</span> <span class="pre">1</span></code></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.times_table_circle">
+<span class="sig-name descname"><span class="pre">times_table_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#times_table_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.times_table_circle" title="Link to this definition">#</a></dt>
+<dd><p>Modular-multiplication “times-table” pattern on a circle.</p>
+<p><code class="docutils literal notranslate"><span class="pre">n_points</span></code> points are placed evenly on a circle of given <code class="docutils literal notranslate"><span class="pre">radius</span></code>.
+For each <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">∈</span> <span class="pre">[0,</span> <span class="pre">n_points)</span></code>, an edge is drawn from <code class="docutils literal notranslate"><span class="pre">i</span></code> to
+<code class="docutils literal notranslate"><span class="pre">int(round(i</span> <span class="pre">*</span> <span class="pre">multiplier))</span> <span class="pre">mod</span> <span class="pre">n_points</span></code>. Self-loops (the i==j case)
+are dropped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_points</strong> (<em>int, must be &gt;= 2</em>)</p></li>
+<li><p><strong>multiplier</strong> (<em>float</em>) – Modular multiplier. Integer multipliers produce the classic
+Mardi-Gras patterns; non-integer values produce richer textures.</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='graph'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.times_table_from_input">
+<span class="sig-name descname"><span class="pre">times_table_from_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ratio'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#times_table_from_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.times_table_from_input" title="Link to this definition">#</a></dt>
+<dd><p>Chord-driven times-table: one edge family per harmonic ratio.</p>
+<p>Each component of <code class="docutils literal notranslate"><span class="pre">input</span></code> contributes its own multiplier; all edge
+families share the same <code class="docutils literal notranslate"><span class="pre">n_points</span></code>-vertex circle and are returned in
+a single <code class="xref py py-class docutils literal notranslate"><span class="pre">GeometryData</span></code> so they can be drawn as overlaid colour
+layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=360</em>) – Number of points on the circle.  360 is a convenient default
+because most rational chord ratios give clean modular periods.</p></li>
+<li><p><strong>mode</strong> (<em>{‘ratio’, ‘pitch_class’, ‘integer’}, default=’ratio’</em>) – How each ratio is converted into a multiplier:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'ratio'</span></code> — multiplier = <code class="docutils literal notranslate"><span class="pre">ratio</span></code> (float).
+<code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">→</span> <span class="pre">int(round(i</span> <span class="pre">*</span> <span class="pre">ratio))</span> <span class="pre">mod</span> <span class="pre">n_points</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'pitch_class'</span></code> — multiplier = <code class="docutils literal notranslate"><span class="pre">round(n_points</span> <span class="pre">*</span> <span class="pre">log2(ratio))</span></code>.
+One “octave” wraps the circle once.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'integer'</span></code> — multiplier = <code class="docutils literal notranslate"><span class="pre">Fraction(ratio).limit_denominator(32).numerator</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='graph'</span></code>.  <code class="docutils literal notranslate"><span class="pre">edges</span></code> carries every edge across all
+ratio families; <code class="docutils literal notranslate"><span class="pre">metadata['ratio_index']</span></code> is an int array
+aligned with <code class="docutils literal notranslate"><span class="pre">edges</span></code> mapping each edge to the originating ratio
+index (so a renderer can colour each family separately).
+<code class="docutils literal notranslate"><span class="pre">metadata['multipliers']</span></code> lists the resolved multiplier per
+ratio.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.tuning_circle">
+<span class="sig-name descname"><span class="pre">tuning_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#tuning_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.tuning_circle" title="Link to this definition">#</a></dt>
+<dd><p>Place input components on a circle by their log-equave pitch class.</p>
+<p>For each ratio <code class="docutils literal notranslate"><span class="pre">r</span></code>, the angle is <code class="docutils literal notranslate"><span class="pre">2π</span> <span class="pre">·</span> <span class="pre">log_equave(r)</span></code>, wrapped into
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2π)</span></code>. Amplitudes are exposed as per-point weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='point_cloud_2d'</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n_components,</span> <span class="pre">2)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">weights</span></code> of length <code class="docutils literal notranslate"><span class="pre">n_components</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.rose_curve">
+<span class="sig-name descname"><span class="pre">rose_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#rose_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.rose_curve" title="Link to this definition">#</a></dt>
+<dd><p>Polar rose: <code class="docutils literal notranslate"><span class="pre">r(θ)</span> <span class="pre">=</span> <span class="pre">radius</span> <span class="pre">·</span> <span class="pre">cos((p/q)</span> <span class="pre">·</span> <span class="pre">θ)</span></code>.</p>
+<p>For coprime <code class="docutils literal notranslate"><span class="pre">(p,</span> <span class="pre">q)</span></code>, the curve closes after:
+- <code class="docutils literal notranslate"><span class="pre">θ</span> <span class="pre">∈</span> <span class="pre">[0,</span> <span class="pre">q</span> <span class="pre">·</span> <span class="pre">π]</span></code> if <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">+</span> <span class="pre">q</span></code> is even,
+- <code class="docutils literal notranslate"><span class="pre">θ</span> <span class="pre">∈</span> <span class="pre">[0,</span> <span class="pre">2</span> <span class="pre">·</span> <span class="pre">q</span> <span class="pre">·</span> <span class="pre">π]</span></code> if <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">+</span> <span class="pre">q</span></code> is odd.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">n_periods</span></code> is given, the curve is sampled over <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">n_periods</span> <span class="pre">·</span> <span class="pre">π]</span></code>
+explicitly; otherwise the closure-aware default above is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>Fraction, int, float, or (int, int)</em>)</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=2000</em>)</p></li>
+<li><p><strong>n_periods</strong> (<em>int, optional</em>) – Override the auto-computed sampling range (in units of π).</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.epicycloid">
+<span class="sig-name descname"><span class="pre">epicycloid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#epicycloid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.epicycloid" title="Link to this definition">#</a></dt>
+<dd><p>Epicycloid traced by a point on a small circle rolling outside a large one.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">ratio</span> <span class="pre">=</span> <span class="pre">R</span> <span class="pre">/</span> <span class="pre">r</span> <span class="pre">=</span> <span class="pre">p</span> <span class="pre">/</span> <span class="pre">q</span></code> (coprime), the curve has <code class="docutils literal notranslate"><span class="pre">p</span></code> cusps and
+closes after the small circle completes <code class="docutils literal notranslate"><span class="pre">q</span></code> revolutions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>Fraction, int, float, or (int, int)</em>) – Ratio of fixed circle radius to rolling circle radius, <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">/</span> <span class="pre">r</span></code>.</p></li>
+<li><p><strong>R</strong> (<em>float, default=1.0</em>) – Radius of the fixed (large) circle.</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=2000</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.hypocycloid">
+<span class="sig-name descname"><span class="pre">hypocycloid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Fraction</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#hypocycloid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.hypocycloid" title="Link to this definition">#</a></dt>
+<dd><p>Hypocycloid traced by a point on a small circle rolling inside a large one.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">ratio</span> <span class="pre">=</span> <span class="pre">R</span> <span class="pre">/</span> <span class="pre">r</span> <span class="pre">=</span> <span class="pre">p</span> <span class="pre">/</span> <span class="pre">q</span></code> (coprime, <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">q</span></code>), the curve has
+<code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">-</span> <span class="pre">q</span></code> cusps. For <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">q</span></code> the trace is a degenerate point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ratio</strong> (<em>Fraction, int, float, or (int, int)</em>) – <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">/</span> <span class="pre">r</span></code>. Must satisfy <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">&gt;</span> <span class="pre">r</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> for a non-degenerate curve;
+i.e., the coprime form must have <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">q</span></code>.</p></li>
+<li><p><strong>R</strong> (<em>float, default=1.0</em>)</p></li>
+<li><p><strong>n_points</strong> (<em>int, default=2000</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='curve_2d'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.interval_vector_diagram">
+<span class="sig-name descname"><span class="pre">interval_vector_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_cents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#interval_vector_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.interval_vector_diagram" title="Link to this definition">#</a></dt>
+<dd><p>Graph of pairwise intervals binned into cents-classes.</p>
+<p>Nodes are placed on the tuning circle. For each pair <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code>,
+the interval in cents is computed (modulo equave). Intervals are
+bucketed in <code class="docutils literal notranslate"><span class="pre">bin_cents</span></code>-wide classes; an edge’s weight is the
+<em>interval-class count</em> — how many other pairs share that bucket.
+Edges thus highlight the chord’s interval-vector multiplicities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+<li><p><strong>bin_cents</strong> (<em>float, default=50.0</em>) – Bucket width for grouping intervals into classes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='graph'</span></code> with <code class="docutils literal notranslate"><span class="pre">edges</span></code> of shape <code class="docutils literal notranslate"><span class="pre">(E,</span> <span class="pre">2)</span></code> and
+per-edge <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.polygon_chord_pattern">
+<span class="sig-name descname"><span class="pre">polygon_chord_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dyad_similarity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#polygon_chord_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.polygon_chord_pattern" title="Link to this definition">#</a></dt>
+<dd><p>Chord-pattern graph weighted by a biotuner harmonicity metric.</p>
+<p>Nodes are placed on the tuning circle. Every pair of distinct
+components has an edge weighted by <code class="docutils literal notranslate"><span class="pre">metric(ratio_j</span> <span class="pre">/</span> <span class="pre">ratio_i)</span></code>
+(after rebounding the quotient into <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">∞)</span></code>). Optionally
+threshold to keep only the strongest pairs — yields the polygonal
+“chord skeleton” of the most consonant relationships.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>metric</strong> (<em>str or callable, default=’dyad_similarity’</em>) – Either a single-ratio biotuner metric name (one of
+<code class="docutils literal notranslate"><span class="pre">'dyad_similarity'</span></code>, <code class="docutils literal notranslate"><span class="pre">'compute_consonance'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'tenneyHeight'</span></code>, <code class="docutils literal notranslate"><span class="pre">'log_distance'</span></code>) or a callable
+<code class="docutils literal notranslate"><span class="pre">ratio</span> <span class="pre">-&gt;</span> <span class="pre">score</span></code>. <code class="docutils literal notranslate"><span class="pre">tenneyHeight</span></code> is sign-flipped so higher
+always means “more consonant” downstream.</p></li>
+<li><p><strong>threshold</strong> (<em>float, optional</em>) – Drop edges with weight below <code class="docutils literal notranslate"><span class="pre">threshold</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> keeps all.</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='graph'</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.harmonic_geometry.polygon_circular.consonance_polygon">
+<span class="sig-name descname"><span class="pre">consonance_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><span class="pre">HarmonicInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dyad_similarity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="geometry_data.html#biotuner.harmonic_geometry.geometry_data.GeometryData" title="biotuner.harmonic_geometry.geometry_data.GeometryData"><span class="pre">GeometryData</span></a></span></span><a class="reference internal" href="../../_modules/biotuner/harmonic_geometry/polygon_circular.html#consonance_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.harmonic_geometry.polygon_circular.consonance_polygon" title="Link to this definition">#</a></dt>
+<dd><p>Convex polygon whose vertex angles encode each ratio’s consonance share.</p>
+<p>Each component’s “consonance share” is the sum of pairwise
+<code class="docutils literal notranslate"><span class="pre">metric</span></code> scores against all other components. Vertices are then
+placed at cumulative-angle positions: the polygon’s angular density
+spikes around the most-connected ratios and thins around outliers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>HarmonicInput</em>)</p></li>
+<li><p><strong>metric</strong> (<em>str or callable, default=’dyad_similarity’</em>)</p></li>
+<li><p><strong>radius</strong> (<em>float, default=1.0</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>GeometryData</em> – <code class="docutils literal notranslate"><span class="pre">geom_type='polygon'</span></code> with <code class="docutils literal notranslate"><span class="pre">weights</span></code> carrying the per-vertex
+consonance share. The first vertex is placed at angle 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="harmonograph.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonograph</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="fractal.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Fractal</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.star_polygon"><code class="docutils literal notranslate"><span class="pre">star_polygon()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.times_table_circle"><code class="docutils literal notranslate"><span class="pre">times_table_circle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.times_table_from_input"><code class="docutils literal notranslate"><span class="pre">times_table_from_input()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.tuning_circle"><code class="docutils literal notranslate"><span class="pre">tuning_circle()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.rose_curve"><code class="docutils literal notranslate"><span class="pre">rose_curve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.epicycloid"><code class="docutils literal notranslate"><span class="pre">epicycloid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.hypocycloid"><code class="docutils literal notranslate"><span class="pre">hypocycloid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.interval_vector_diagram"><code class="docutils literal notranslate"><span class="pre">interval_vector_diagram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.polygon_chord_pattern"><code class="docutils literal notranslate"><span class="pre">polygon_chord_pattern()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.harmonic_geometry.polygon_circular.consonance_polygon"><code class="docutils literal notranslate"><span class="pre">consonance_polygon()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

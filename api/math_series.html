@@ -1,0 +1,1012 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Math Series &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/math_series';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Harmonic Geometry" href="harmonic_geometry.html" />
+    <link rel="prev" title="Harmonic Sequence" href="harmonic_sequence.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Math Series</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api/math_series.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Math Series</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.fibonacci"><code class="docutils literal notranslate"><span class="pre">fibonacci()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.lucas"><code class="docutils literal notranslate"><span class="pre">lucas()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.padovan"><code class="docutils literal notranslate"><span class="pre">padovan()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.pell"><code class="docutils literal notranslate"><span class="pre">pell()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.jacobsthal"><code class="docutils literal notranslate"><span class="pre">jacobsthal()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.mersenne"><code class="docutils literal notranslate"><span class="pre">mersenne()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.hofstadter_q"><code class="docutils literal notranslate"><span class="pre">hofstadter_q()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.harmonics"><code class="docutils literal notranslate"><span class="pre">harmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.subharmonics"><code class="docutils literal notranslate"><span class="pre">subharmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.triangular"><code class="docutils literal notranslate"><span class="pre">triangular()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.farey"><code class="docutils literal notranslate"><span class="pre">farey()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.SERIES_FUNCS"><code class="docutils literal notranslate"><span class="pre">SERIES_FUNCS</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.series_ratio_pairs"><code class="docutils literal notranslate"><span class="pre">series_ratio_pairs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series"><code class="docutils literal notranslate"><span class="pre">math_series</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.ratios"><code class="docutils literal notranslate"><span class="pre">math_series.ratios</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_scores"><code class="docutils literal notranslate"><span class="pre">math_series.series_scores</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.best_series"><code class="docutils literal notranslate"><span class="pre">math_series.best_series</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.analyze"><code class="docutils literal notranslate"><span class="pre">math_series.analyze()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.summary"><code class="docutils literal notranslate"><span class="pre">math_series.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_scale"><code class="docutils literal notranslate"><span class="pre">math_series.series_scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_mode"><code class="docutils literal notranslate"><span class="pre">math_series.series_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.scale_cents"><code class="docutils literal notranslate"><span class="pre">math_series.scale_cents()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_proportions"><code class="docutils literal notranslate"><span class="pre">math_series.plot_proportions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_ratio_pairs"><code class="docutils literal notranslate"><span class="pre">math_series.plot_ratio_pairs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_octave_wheel"><code class="docutils literal notranslate"><span class="pre">math_series.plot_octave_wheel()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_cents_ruler"><code class="docutils literal notranslate"><span class="pre">math_series.plot_cents_ruler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_fit_landscape"><code class="docutils literal notranslate"><span class="pre">math_series.plot_fit_landscape()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_simplicity_bubbles"><code class="docutils literal notranslate"><span class="pre">math_series.plot_simplicity_bubbles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_series_comb"><code class="docutils literal notranslate"><span class="pre">math_series.plot_series_comb()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="math-series">
+<h1>Math Series<a class="headerlink" href="#math-series" title="Link to this heading">#</a></h1>
+<p>Match a biosignal’s peak ratios against classic mathematical sequences
+(Fibonacci, Lucas, harmonics, Farey, …) to find which is most present, and
+derive scales from the best match. Walkthrough: <a class="reference internal" href="../examples/math_series/math_series.html"><span class="doc">Matching biosignals to mathematical series</span></a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-biotuner.math_series">biotuner.math_series — match biosignal ratios to mathematical sequences.</p>
+<p>Module type: Object</p>
+<p>Generate ratio sets from classic integer sequences (Fibonacci, Lucas,
+Padovan, Pell, Jacobsthal, Mersenne, Hofstadter-Q, harmonics, subharmonics,
+triangular, Farey), score how present each series is in a biosignal’s peak
+ratios, and derive musical structures (scales and consonance-selected modes)
+from the matched subset of a series.</p>
+<p>The entry point is the <a class="reference internal" href="#biotuner.math_series.math_series" title="biotuner.math_series.math_series"><code class="xref py py-class docutils literal notranslate"><span class="pre">math_series</span></code></a> pipeline, which accepts <strong>either</strong>
+a fitted <a class="reference internal" href="biotuner_object.html#biotuner.biotuner_object.compute_biotuner" title="biotuner.biotuner_object.compute_biotuner"><code class="xref py py-class docutils literal notranslate"><span class="pre">compute_biotuner</span></code></a> instance <strong>or</strong> a
+<a class="reference internal" href="harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a> descriptor, normalises it to a
+single list of octave-folded peak ratios, and compares those against each
+series. Matching conservatism is controlled by <code class="docutils literal notranslate"><span class="pre">maxdenom</span></code> (the maximum
+denominator of the rational approximation used to decide whether two ratios
+are “the same”): a low <code class="docutils literal notranslate"><span class="pre">maxdenom</span></code> collapses nearby ratios onto simple
+fractions (lenient matching), a high <code class="docutils literal notranslate"><span class="pre">maxdenom</span></code> keeps fine distinctions
+(strict matching).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.fibonacci">
+<span class="sig-name descname"><span class="pre">fibonacci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#fibonacci"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.fibonacci" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> Fibonacci numbers.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">[0, 1, 1, 2, 3, 5, 8, 13]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.lucas">
+<span class="sig-name descname"><span class="pre">lucas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(2,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#lucas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.lucas" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> terms of a Lucas-type sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> (<em>int</em>) – Number of terms to return.</p></li>
+<li><p><strong>seed</strong> (<em>sequence of int, default=(2, 1)</em>) – The two starting values. <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">1)</span></code> is the classic Lucas sequence.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lucas</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">[2, 1, 3, 4, 7, 11, 18]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.padovan">
+<span class="sig-name descname"><span class="pre">padovan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#padovan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.padovan" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> Padovan numbers.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">padovan</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">[1, 1, 1, 2, 2, 3, 4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.pell">
+<span class="sig-name descname"><span class="pre">pell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#pell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.pell" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> Pell numbers.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pell</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 5, 12, 29]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.jacobsthal">
+<span class="sig-name descname"><span class="pre">jacobsthal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#jacobsthal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.jacobsthal" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> Jacobsthal numbers.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jacobsthal</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">[0, 1, 1, 3, 5, 11]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.mersenne">
+<span class="sig-name descname"><span class="pre">mersenne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#mersenne"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.mersenne" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> Mersenne numbers <code class="docutils literal notranslate"><span class="pre">2**i</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mersenne</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[0, 1, 3, 7, 15]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.hofstadter_q">
+<span class="sig-name descname"><span class="pre">hofstadter_q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#hofstadter_q"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.hofstadter_q" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> terms of the Hofstadter Q sequence.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hofstadter_q</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">[1, 1, 2, 3, 3, 4, 5, 5]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.harmonics">
+<span class="sig-name descname"><span class="pre">harmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#harmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.harmonics" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> terms of the harmonic series.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">harmonics</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[1, 2, 3, 4, 5]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.subharmonics">
+<span class="sig-name descname"><span class="pre">subharmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#subharmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.subharmonics" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> terms of the subharmonic series.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subharmonics</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[1.0, 0.5, 0.3333333333333333, 0.25]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.triangular">
+<span class="sig-name descname"><span class="pre">triangular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#triangular"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.triangular" title="Link to this definition">#</a></dt>
+<dd><p>Generate the first <code class="docutils literal notranslate"><span class="pre">order</span></code> triangular numbers.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">triangular</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[1, 3, 6, 10, 15]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.farey">
+<span class="sig-name descname"><span class="pre">farey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#farey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.farey" title="Link to this definition">#</a></dt>
+<dd><p>Generate the Farey sequence of a given <code class="docutils literal notranslate"><span class="pre">order</span></code> as <code class="docutils literal notranslate"><span class="pre">(num,</span> <span class="pre">den)</span></code> pairs.</p>
+<p>Unlike the integer sequences, each Farey term is already a fraction in
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>; the returned <code class="docutils literal notranslate"><span class="pre">(num,</span> <span class="pre">den)</span></code> pairs are treated directly as
+ratios (<code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">/</span> <span class="pre">den</span></code>) by <a class="reference internal" href="#biotuner.math_series.series_ratio_pairs" title="biotuner.math_series.series_ratio_pairs"><code class="xref py py-func docutils literal notranslate"><span class="pre">series_ratio_pairs()</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">farey</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[(0, 1), (1, 4), (1, 3), (1, 2), (2, 3), (3, 4), (1, 1)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="biotuner.math_series.SERIES_FUNCS">
+<span class="sig-name descname"><span class="pre">SERIES_FUNCS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'farey':</span> <span class="pre">&lt;function</span> <span class="pre">farey&gt;,</span> <span class="pre">'fibonacci':</span> <span class="pre">&lt;function</span> <span class="pre">fibonacci&gt;,</span> <span class="pre">'harmonics':</span> <span class="pre">&lt;function</span> <span class="pre">harmonics&gt;,</span> <span class="pre">'hofstadter_q':</span> <span class="pre">&lt;function</span> <span class="pre">hofstadter_q&gt;,</span> <span class="pre">'jacobsthal':</span> <span class="pre">&lt;function</span> <span class="pre">jacobsthal&gt;,</span> <span class="pre">'lucas':</span> <span class="pre">&lt;function</span> <span class="pre">lucas&gt;,</span> <span class="pre">'mersenne':</span> <span class="pre">&lt;function</span> <span class="pre">mersenne&gt;,</span> <span class="pre">'padovan':</span> <span class="pre">&lt;function</span> <span class="pre">padovan&gt;,</span> <span class="pre">'pell':</span> <span class="pre">&lt;function</span> <span class="pre">pell&gt;,</span> <span class="pre">'subharmonics':</span> <span class="pre">&lt;function</span> <span class="pre">subharmonics&gt;,</span> <span class="pre">'triangular':</span> <span class="pre">&lt;function</span> <span class="pre">triangular&gt;}</span></em><a class="headerlink" href="#biotuner.math_series.SERIES_FUNCS" title="Link to this definition">#</a></dt>
+<dd><p>Mapping of series name -&gt; generator. Add a row here to register a series.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biotuner.math_series.series_ratio_pairs">
+<span class="sig-name descname"><span class="pre">series_ratio_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lucas_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(2,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#series_ratio_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.series_ratio_pairs" title="Link to this definition">#</a></dt>
+<dd><p>Build the octave-folded ratio set of a series, keeping pair provenance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – A key of <a class="reference internal" href="#biotuner.math_series.SERIES_FUNCS" title="biotuner.math_series.SERIES_FUNCS"><code class="xref py py-data docutils literal notranslate"><span class="pre">SERIES_FUNCS</span></code></a>.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Number of terms (or, for <code class="docutils literal notranslate"><span class="pre">&quot;farey&quot;</span></code>, the Farey order).</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2.0</em>) – Period the ratios are folded into (<code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">octave)</span></code>).</p></li>
+<li><p><strong>which</strong> (<em>{‘both’, ‘high/low’, ‘low/high’}, default=’both’</em>) – For integer sequences, whether to keep ratios where the first element
+is larger (<code class="docutils literal notranslate"><span class="pre">high/low</span></code>), smaller (<code class="docutils literal notranslate"><span class="pre">low/high</span></code>), or both. Ignored for
+<code class="docutils literal notranslate"><span class="pre">&quot;farey&quot;</span></code> (whose terms are already fractions).</p></li>
+<li><p><strong>lucas_seed</strong> (<em>sequence of int, default=(2, 1)</em>) – Starting pair forwarded to <a class="reference internal" href="#biotuner.math_series.lucas" title="biotuner.math_series.lucas"><code class="xref py py-func docutils literal notranslate"><span class="pre">lucas()</span></code></a> when <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">==</span> <span class="pre">&quot;lucas&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of (float, (float, float))</em> – Each entry is <code class="docutils literal notranslate"><span class="pre">(folded_ratio,</span> <span class="pre">(element_1,</span> <span class="pre">element_2))</span></code>. The pair is
+kept unfolded so it can be plotted on the element/element scatter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">math_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratios_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'peaks_ratios'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">series_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdenom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">octave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lucas_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(2,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Identify which mathematical series best matches a biosignal’s ratios.</p>
+<p>Accepts a fitted <a class="reference internal" href="biotuner_object.html#biotuner.biotuner_object.compute_biotuner" title="biotuner.biotuner_object.compute_biotuner"><code class="xref py py-class docutils literal notranslate"><span class="pre">compute_biotuner</span></code></a>
+instance or a <a class="reference internal" href="harmonic_geometry/inputs.html#biotuner.harmonic_geometry.inputs.HarmonicInput" title="biotuner.harmonic_input.HarmonicInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">HarmonicInput</span></code></a>, extracts a
+list of octave-folded peak ratios, and scores each candidate series by the
+proportion of biosignal ratios it reproduces (under a max-denominator
+rational match). The matched subset of the best series can then be turned
+into a scale (<a class="reference internal" href="#biotuner.math_series.math_series.series_scale" title="biotuner.math_series.math_series.series_scale"><code class="xref py py-meth docutils literal notranslate"><span class="pre">series_scale()</span></code></a>) or a consonance-selected mode
+(<a class="reference internal" href="#biotuner.math_series.math_series.series_mode" title="biotuner.math_series.math_series.series_mode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">series_mode()</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>compute_biotuner or HarmonicInput, optional</em>) – The biosignal descriptor. Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">ratios</span></code>.</p></li>
+<li><p><strong>ratios</strong> (<em>list of float, optional</em>) – Peak ratios supplied directly (mainly for testing). Used when
+<code class="docutils literal notranslate"><span class="pre">source</span></code> is None.</p></li>
+<li><p><strong>ratios_source</strong> (<em>str, default=’peaks_ratios’</em>) – Which scale to read off <code class="docutils literal notranslate"><span class="pre">source</span></code>. For a <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> this is
+an attribute name (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;peaks_ratios&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;extended_peaks_ratios&quot;</span></code>). For a <code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code> it is looked up
+in <code class="docutils literal notranslate"><span class="pre">ratios_alternates</span></code>, falling back to the canonical ratios.</p></li>
+<li><p><strong>series_names</strong> (<em>sequence of str, optional</em>) – Series to compare. Defaults to <code class="xref py py-data docutils literal notranslate"><span class="pre">DEFAULT_SERIES</span></code>.</p></li>
+<li><p><strong>order</strong> (<em>int, default=20</em>) – Number of terms generated per series (Farey order for <code class="docutils literal notranslate"><span class="pre">&quot;farey&quot;</span></code>).</p></li>
+<li><p><strong>maxdenom</strong> (<em>int, default=24</em>) – Maximum denominator of the rational match. Lower = more lenient
+(nearby ratios collapse onto simple fractions), higher = stricter.
+Useful discrimination typically lives in roughly <code class="docutils literal notranslate"><span class="pre">16</span></code>–<code class="docutils literal notranslate"><span class="pre">48</span></code>: below
+that the small fraction grid saturates (every series matches), above
+it full-precision peak ratios rarely snap onto any simple fraction.</p></li>
+<li><p><strong>octave</strong> (<em>float, default=2.0</em>) – Period the ratios are folded into.</p></li>
+<li><p><strong>which</strong> (<em>{‘both’, ‘high/low’, ‘low/high’}, default=’both’</em>) – Pair direction passed to <a class="reference internal" href="#biotuner.math_series.series_ratio_pairs" title="biotuner.math_series.series_ratio_pairs"><code class="xref py py-func docutils literal notranslate"><span class="pre">series_ratio_pairs()</span></code></a>.</p></li>
+<li><p><strong>lucas_seed</strong> (<em>sequence of int, default=(2, 1)</em>) – Starting pair for the Lucas series.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.ratios">
+<span class="sig-name descname"><span class="pre">ratios</span></span><a class="headerlink" href="#biotuner.math_series.math_series.ratios" title="Link to this definition">#</a></dt>
+<dd><p>The extracted biosignal peak ratios (octave-folded, in <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">octave)</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.series_scores">
+<span class="sig-name descname"><span class="pre">series_scores</span></span><a class="headerlink" href="#biotuner.math_series.math_series.series_scores" title="Link to this definition">#</a></dt>
+<dd><p>Per-series result dict (populated by <a class="reference internal" href="#biotuner.math_series.math_series.analyze" title="biotuner.math_series.math_series.analyze"><code class="xref py py-meth docutils literal notranslate"><span class="pre">analyze()</span></code></a>). Keys per series:
+<code class="docutils literal notranslate"><span class="pre">proportion</span></code>, <code class="docutils literal notranslate"><span class="pre">proportion_normalized</span></code>, <code class="docutils literal notranslate"><span class="pre">n_matched</span></code>, <code class="docutils literal notranslate"><span class="pre">n_target</span></code>,
+<code class="docutils literal notranslate"><span class="pre">n_series_ratios</span></code>, <code class="docutils literal notranslate"><span class="pre">matched_keys</span></code>, <code class="docutils literal notranslate"><span class="pre">matched_series_pairs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">matched_target_ratios</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.best_series">
+<span class="sig-name descname"><span class="pre">best_series</span></span><a class="headerlink" href="#biotuner.math_series.math_series.best_series" title="Link to this definition">#</a></dt>
+<dd><p>Name of the series with the highest raw proportion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ms</span> <span class="o">=</span> <span class="n">math_series</span><span class="p">(</span><span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.333</span><span class="p">],</span> <span class="n">series_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fibonacci&quot;</span><span class="p">,</span> <span class="s2">&quot;harmonics&quot;</span><span class="p">],</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ms</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span><span class="o">.</span><span class="n">best_series</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;fibonacci&quot;</span><span class="p">,</span> <span class="s2">&quot;harmonics&quot;</span><span class="p">}</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.analyze">
+<span class="sig-name descname"><span class="pre">analyze</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#biotuner.math_series.math_series" title="biotuner.math_series.math_series"><span class="pre">math_series</span></a></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.analyze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.analyze" title="Link to this definition">#</a></dt>
+<dd><p>Score every candidate series against the biosignal ratios.</p>
+<p>Populates <a class="reference internal" href="#biotuner.math_series.math_series.series_scores" title="biotuner.math_series.math_series.series_scores"><code class="xref py py-attr docutils literal notranslate"><span class="pre">series_scores</span></code></a> and <a class="reference internal" href="#biotuner.math_series.math_series.best_series" title="biotuner.math_series.math_series.best_series"><code class="xref py py-attr docutils literal notranslate"><span class="pre">best_series</span></code></a>. Returns
+<code class="docutils literal notranslate"><span class="pre">self</span></code> so calls can be chained (<code class="docutils literal notranslate"><span class="pre">math_series(bt).analyze()</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.summary" title="Link to this definition">#</a></dt>
+<dd><p>Return a per-series score table sorted by raw proportion (descending).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.series_scale">
+<span class="sig-name descname"><span class="pre">series_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unison</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.series_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.series_scale" title="Link to this definition">#</a></dt>
+<dd><p>Return the matched subset of a series as a sorted scale in <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">octave)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str, optional</em>) – Series to use. Defaults to <a class="reference internal" href="#biotuner.math_series.math_series.best_series" title="biotuner.math_series.math_series.best_series"><code class="xref py py-attr docutils literal notranslate"><span class="pre">best_series</span></code></a>.</p></li>
+<li><p><strong>include_unison</strong> (<em>bool, default=True</em>) – Prepend <code class="docutils literal notranslate"><span class="pre">1.0</span></code> (the unison) if absent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of float</em> – Sorted, de-duplicated ratios of the matched series subset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.series_mode">
+<span class="sig-name descname"><span class="pre">series_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'subset'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">compute_consonance&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.series_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.series_mode" title="Link to this definition">#</a></dt>
+<dd><p>Reduce a series scale to an <code class="docutils literal notranslate"><span class="pre">n_steps</span></code> consonance-selected mode.</p>
+<p>Wraps the house mode-selection helpers
+<a class="reference internal" href="scale_construction.html#biotuner.scale_construction.create_mode" title="biotuner.scale_construction.create_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_mode()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">method=&quot;subset&quot;</span></code>)
+and <a class="reference internal" href="scale_construction.html#biotuner.scale_construction.tuning_reduction" title="biotuner.scale_construction.tuning_reduction"><code class="xref py py-func docutils literal notranslate"><span class="pre">tuning_reduction()</span></code></a>
+(<code class="docutils literal notranslate"><span class="pre">method=&quot;pairwise&quot;</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str, optional</em>) – Series to use. Defaults to <a class="reference internal" href="#biotuner.math_series.math_series.best_series" title="biotuner.math_series.math_series.best_series"><code class="xref py py-attr docutils literal notranslate"><span class="pre">best_series</span></code></a>.</p></li>
+<li><p><strong>n_steps</strong> (<em>int, default=7</em>) – Number of steps in the reduced mode (capped at the scale size).</p></li>
+<li><p><strong>method</strong> (<em>{‘subset’, ‘pairwise’}, default=’subset’</em>) – Selection strategy. <code class="docutils literal notranslate"><span class="pre">&quot;subset&quot;</span></code> searches all step combinations
+(best for small scales); <code class="docutils literal notranslate"><span class="pre">&quot;pairwise&quot;</span></code> greedily adds the most
+consonant pairs.</p></li>
+<li><p><strong>function</strong> (<em>callable, default=compute_consonance</em>) – Consonance metric. One of
+<a class="reference internal" href="metrics.html#biotuner.metrics.compute_consonance" title="biotuner.metrics.compute_consonance"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_consonance()</span></code></a>,
+<a class="reference internal" href="metrics.html#biotuner.metrics.dyad_similarity" title="biotuner.metrics.dyad_similarity"><code class="xref py py-func docutils literal notranslate"><span class="pre">dyad_similarity()</span></code></a>,
+<a class="reference internal" href="metrics.html#biotuner.metrics.metric_denom" title="biotuner.metrics.metric_denom"><code class="xref py py-func docutils literal notranslate"><span class="pre">metric_denom()</span></code></a> (or pass the string name).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of float</em> – The mode, sorted ascending.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.scale_cents">
+<span class="sig-name descname"><span class="pre">scale_cents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.scale_cents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.scale_cents" title="Link to this definition">#</a></dt>
+<dd><p>Return <a class="reference internal" href="#biotuner.math_series.math_series.series_scale" title="biotuner.math_series.math_series.series_scale"><code class="xref py py-meth docutils literal notranslate"><span class="pre">series_scale()</span></code></a> expressed in cents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_proportions">
+<span class="sig-name descname"><span class="pre">plot_proportions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_proportions'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_proportions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_proportions" title="Link to this definition">#</a></dt>
+<dd><p>Bar chart of the match proportion per series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalized</strong> (<em>bool, default=True</em>) – Plot proportions normalised to sum to 1 (across the compared
+series) rather than raw proportions.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes, optional</em>) – Draw onto an existing axis (for composing multi-panel figures).
+A new figure is created when omitted.</p></li>
+<li><p><strong>plot</strong> (<em>bool, default=True</em>) – Call <code class="docutils literal notranslate"><span class="pre">plt.show()</span></code> (ignored when <code class="docutils literal notranslate"><span class="pre">ax</span></code> is supplied).</p></li>
+<li><p><strong>save</strong> (<em>bool, default=False</em>) – Save the figure to <code class="docutils literal notranslate"><span class="pre">&lt;savename&gt;.png</span></code>.</p></li>
+<li><p><strong>savename</strong> (<em>str, default=’series_proportions’</em>) – File stem used when <code class="docutils literal notranslate"><span class="pre">save</span></code> is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>matplotlib.figure.Figure</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_ratio_pairs">
+<span class="sig-name descname"><span class="pre">plot_ratio_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_ratio_pairs'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_ratio_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_ratio_pairs" title="Link to this definition">#</a></dt>
+<dd><p>Log-log scatter of sequence element pairs, matched pairs highlighted.</p>
+<p>Each series’ pairs are drawn as small translucent dots; the pairs whose
+folded ratio matches a biosignal ratio are overdrawn large with a dark
+edge (the figure from the notebook).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<em>sequence of str, optional</em>) – Series to draw. Defaults to all compared series.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes, optional</em>) – Draw onto an existing axis (for composing multi-panel figures).
+A new figure is created when omitted.</p></li>
+<li><p><strong>plot, save, savename</strong> – As in <a class="reference internal" href="#biotuner.math_series.math_series.plot_proportions" title="biotuner.math_series.math_series.plot_proportions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_proportions()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>matplotlib.figure.Figure</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_octave_wheel">
+<span class="sig-name descname"><span class="pre">plot_octave_wheel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_octave_wheel'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_octave_wheel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_octave_wheel" title="Link to this definition">#</a></dt>
+<dd><p>Octave wrapped to a circle (angle = cents): a ratio-ring per series,
+the signal peaks as spokes, and a filled dot where a spoke matches.</p>
+<p><code class="docutils literal notranslate"><span class="pre">order</span></code> overrides the instance order for display only (thins the rings).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_cents_ruler">
+<span class="sig-name descname"><span class="pre">plot_cents_ruler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_cents_ruler'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_cents_ruler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_cents_ruler" title="Link to this definition">#</a></dt>
+<dd><p>Each series as a lane of ratio-ticks on a 0-1200 cents axis (bold =
+matched); guide lines drop from each signal peak.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_fit_landscape">
+<span class="sig-name descname"><span class="pre">plot_fit_landscape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_fit'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_fit_landscape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_fit_landscape" title="Link to this definition">#</a></dt>
+<dd><p>For each signal peak, the cents distance to the nearest ratio of each
+series (lower = the series hugs the spectrum more tightly).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_simplicity_bubbles">
+<span class="sig-name descname"><span class="pre">plot_simplicity_bubbles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_simplicity_bubbles'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_simplicity_bubbles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_simplicity_bubbles" title="Link to this definition">#</a></dt>
+<dd><p>Each series ratio as a bubble sized by simplicity (bigger = smaller
+denominator); outlined bubbles are matched. Shows whether the signal
+peaks land on simple rungs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biotuner.math_series.math_series.plot_series_comb">
+<span class="sig-name descname"><span class="pre">plot_series_comb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">45.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series_comb'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/biotuner/math_series.html#math_series.plot_series_comb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biotuner.math_series.math_series.plot_series_comb" title="Link to this definition">#</a></dt>
+<dd><p>Each series as an across-octave frequency comb (scaled to best fit the
+signal); the signal peaks (Hz) snap onto the nearest comb step, and each
+lane is labelled with the mean miss in cents.</p>
+<p>Needs peak frequencies: uses <code class="xref py py-attr docutils literal notranslate"><span class="pre">peaks_hz</span></code> (captured from a
+biotuner / HarmonicInput) or an explicit <code class="docutils literal notranslate"><span class="pre">peaks_hz</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="harmonic_sequence.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonic Sequence</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="harmonic_geometry.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Harmonic Geometry</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.fibonacci"><code class="docutils literal notranslate"><span class="pre">fibonacci()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.lucas"><code class="docutils literal notranslate"><span class="pre">lucas()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.padovan"><code class="docutils literal notranslate"><span class="pre">padovan()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.pell"><code class="docutils literal notranslate"><span class="pre">pell()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.jacobsthal"><code class="docutils literal notranslate"><span class="pre">jacobsthal()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.mersenne"><code class="docutils literal notranslate"><span class="pre">mersenne()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.hofstadter_q"><code class="docutils literal notranslate"><span class="pre">hofstadter_q()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.harmonics"><code class="docutils literal notranslate"><span class="pre">harmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.subharmonics"><code class="docutils literal notranslate"><span class="pre">subharmonics()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.triangular"><code class="docutils literal notranslate"><span class="pre">triangular()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.farey"><code class="docutils literal notranslate"><span class="pre">farey()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.SERIES_FUNCS"><code class="docutils literal notranslate"><span class="pre">SERIES_FUNCS</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.series_ratio_pairs"><code class="docutils literal notranslate"><span class="pre">series_ratio_pairs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series"><code class="docutils literal notranslate"><span class="pre">math_series</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.ratios"><code class="docutils literal notranslate"><span class="pre">math_series.ratios</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_scores"><code class="docutils literal notranslate"><span class="pre">math_series.series_scores</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.best_series"><code class="docutils literal notranslate"><span class="pre">math_series.best_series</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.analyze"><code class="docutils literal notranslate"><span class="pre">math_series.analyze()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.summary"><code class="docutils literal notranslate"><span class="pre">math_series.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_scale"><code class="docutils literal notranslate"><span class="pre">math_series.series_scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.series_mode"><code class="docutils literal notranslate"><span class="pre">math_series.series_mode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.scale_cents"><code class="docutils literal notranslate"><span class="pre">math_series.scale_cents()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_proportions"><code class="docutils literal notranslate"><span class="pre">math_series.plot_proportions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_ratio_pairs"><code class="docutils literal notranslate"><span class="pre">math_series.plot_ratio_pairs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_octave_wheel"><code class="docutils literal notranslate"><span class="pre">math_series.plot_octave_wheel()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_cents_ruler"><code class="docutils literal notranslate"><span class="pre">math_series.plot_cents_ruler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_fit_landscape"><code class="docutils literal notranslate"><span class="pre">math_series.plot_fit_landscape()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_simplicity_bubbles"><code class="docutils literal notranslate"><span class="pre">math_series.plot_simplicity_bubbles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#biotuner.math_series.math_series.plot_series_comb"><code class="docutils literal notranslate"><span class="pre">math_series.plot_series_comb()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

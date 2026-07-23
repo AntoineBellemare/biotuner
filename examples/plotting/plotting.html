@@ -1,0 +1,1569 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Plotting and visualization with biotuner &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/plotting/plotting';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/plotting/plotting.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Plotting and visualization with biotuner</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-synthetic-signals">1. Setup and synthetic signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-analysis-plots">2. Peak analysis plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuning-visualization">3. Tuning visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-fit-diagnostics">4. Harmonic-fit diagnostics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-channel-dissonance-curve">5. Multi-channel dissonance curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#group-analysis-plots">6. Group analysis plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-group-heatmaps">7. 3D group heatmaps</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="plotting-and-visualization-with-biotuner">
+<h1>Plotting and visualization with biotuner<a class="headerlink" href="#plotting-and-visualization-with-biotuner" title="Link to this heading">#</a></h1>
+<p>This notebook walks through the biotuner plotting API on rich synthetic signals
+that produce well-populated, “garnished” figures. We cover single-series peak
+analysis, tuning visualization, harmonic-fit diagnostics, multi-channel
+dissonance curves, and group-level plots on a <code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code>.</p>
+<section id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Setup and synthetic signals</p></li>
+<li><p>Peak analysis plots</p></li>
+<li><p>Tuning visualization</p></li>
+<li><p>Harmonic-fit diagnostics</p></li>
+<li><p>Multi-channel dissonance curve</p></li>
+<li><p>Group analysis plots (BiotunerGroup)</p></li>
+<li><p>3D group heatmaps (trials × channels)</p></li>
+</ol>
+</section>
+<section id="setup-and-synthetic-signals">
+<h2>1. Setup and synthetic signals<a class="headerlink" href="#setup-and-synthetic-signals" title="Link to this heading">#</a></h2>
+<p>We build three synthetic signals chosen to highlight different aspects of
+the plotting API:</p>
+<ul class="simple">
+<li><p><strong>Signal A — harmonic stack.</strong> A clean fundamental at 5 Hz with octave and
+inner harmonics (5, 10, 15, 20, 25, 30, 40 Hz). Yields tight ratios and rich
+dissonance curves.</p></li>
+<li><p><strong>Signal B — just-intonation chord.</strong> A 4:5:6:7:8:10 chord centered around
+6 Hz. Highlights septimal intervals.</p></li>
+<li><p><strong>Signal C — EEG-like multi-band.</strong> Theta + alpha + beta + gamma with
+realistic noise. Produces a busier spectrum and broader peak distribution.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_biotuner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiotunerGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.plot_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_biotuner_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.vizs</span><span class="w"> </span><span class="kn">import</span> <span class="n">diss_curve_multi</span>
+
+<span class="n">set_biotuner_style</span><span class="p">()</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sf</span> <span class="o">*</span> <span class="n">duration</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_signal</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">amps</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sig</span> <span class="o">+</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+
+<span class="c1"># A — dense harmonic stack</span>
+<span class="n">sig_A</span> <span class="o">=</span> <span class="n">make_signal</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># B — just-intonation chord (4:5:6:7:8:10) on a 6 Hz base</span>
+<span class="n">base</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">sig_B</span> <span class="o">=</span> <span class="n">make_signal</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">base</span> <span class="o">*</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="o">/</span><span class="mi">4</span><span class="p">)],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># C — EEG-like</span>
+<span class="n">sig_C</span> <span class="o">=</span> <span class="n">make_signal</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sig_A: </span><span class="si">{</span><span class="n">sig_A</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, sig_B: </span><span class="si">{</span><span class="n">sig_B</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, sig_C: </span><span class="si">{</span><span class="n">sig_C</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sig_A: (8000,), sig_B: (8000,), sig_C: (8000,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We instantiate three <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> objects, extract peaks, compute
+metrics, and pre-compute the dissonance and harmonic-entropy curves so every
+downstream plot has its data ready.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_bt</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;harmonic_recurrence&quot;</span><span class="p">,</span>
+             <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span>
+        <span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span>
+        <span class="n">peaks_function</span><span class="o">=</span><span class="n">peaks_function</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">n_harm</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span>
+        <span class="n">signal</span><span class="p">,</span>
+        <span class="n">min_freq</span><span class="o">=</span><span class="n">min_freq</span><span class="p">,</span>
+        <span class="n">max_freq</span><span class="o">=</span><span class="n">max_freq</span><span class="p">,</span>
+        <span class="n">n_peaks</span><span class="o">=</span><span class="n">n_peaks</span><span class="p">,</span>
+        <span class="n">min_harms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">ratios_extension</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">compute_peaks_metrics</span><span class="p">()</span>
+    <span class="c1"># extend peaks so the dissonance curve is densely populated</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;harmonic_fit&quot;</span><span class="p">,</span> <span class="n">n_harm</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                       <span class="n">cons_limit</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ratios_extension</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;extended_peaks&quot;</span><span class="p">,</span>
+                          <span class="n">denom</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">,)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">&gt;22s</span><span class="si">}</span><span class="s2">  peaks = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bt</span>
+
+
+<span class="n">bt_A</span> <span class="o">=</span> <span class="n">build_bt</span><span class="p">(</span><span class="n">sig_A</span><span class="p">,</span> <span class="s2">&quot;A — harmonic stack&quot;</span><span class="p">)</span>
+<span class="n">bt_B</span> <span class="o">=</span> <span class="n">build_bt</span><span class="p">(</span><span class="n">sig_B</span><span class="p">,</span> <span class="s2">&quot;B — JI chord&quot;</span><span class="p">)</span>
+<span class="n">bt_C</span> <span class="o">=</span> <span class="n">build_bt</span><span class="p">(</span><span class="n">sig_C</span><span class="p">,</span> <span class="s2">&quot;C — EEG-like&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    A — harmonic stack  peaks = [ 2.5   5.    3.   10.   15.    8.25 20.  ]
+          B — JI chord  peaks = [ 3.75  2.75  7.5   6.    9.   10.5  16.5 ]
+          C — EEG-like  peaks = [ 3.5   6.   12.   10.   30.   18.25 15.  ]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="peak-analysis-plots">
+<h2>2. Peak analysis plots<a class="headerlink" href="#peak-analysis-plots" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">plot_peaks(show_matrix=True)</span></code> returns a 3-panel figure: power-spectrum
+with peak markers, peak amplitudes (with note labels), and the peak harmonicity
+matrix. This is the most informative single view of a biotuner object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_peaks</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show_matrix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:1138: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../../_images/282419bbd0a084ee55e164ec368c24cc58de239d67d6984e32832cb24b17120c.png" src="../../_images/282419bbd0a084ee55e164ec368c24cc58de239d67d6984e32832cb24b17120c.png" />
+</div>
+</div>
+<p>Same plot for the JI chord and the EEG-like signal:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_B</span><span class="o">.</span><span class="n">plot_peaks</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show_matrix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:1138: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../../_images/8153cb93ea55bdb997e2ae808166ff57d31bfeb028f70fdb3b079862df25b652.png" src="../../_images/8153cb93ea55bdb997e2ae808166ff57d31bfeb028f70fdb3b079862df25b652.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_C</span><span class="o">.</span><span class="n">plot_peaks</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">show_matrix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:1138: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../../_images/d8b6a6d7341704876fec10c5356f617f54c17597d41ad8ab36f2d174e50a64d3.png" src="../../_images/d8b6a6d7341704876fec10c5356f617f54c17597d41ad8ab36f2d174e50a64d3.png" />
+</div>
+</div>
+<p>The individual panels are also exposed as standalone methods, useful for
+embedding a single panel in a custom layout.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># spectrum-only view</span>
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_peaks_spectrum</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># amplitude bars with musical-note labels</span>
+<span class="n">bt_B</span><span class="o">.</span><span class="n">plot_peaks_amplitude</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># harmonicity matrix between peak pairs</span>
+<span class="n">bt_C</span><span class="o">.</span><span class="n">plot_peaks_matrix</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/94843b190dadd9abd8fddf3c6c93e854a6c69c068e3d80b87a594258d4ac70ac.png" src="../../_images/94843b190dadd9abd8fddf3c6c93e854a6c69c068e3d80b87a594258d4ac70ac.png" />
+<img alt="../../_images/ffcfe2748b99083f036ebc6e413f123ff1da65027d66f3496c6fbec6f9ad8f7d.png" src="../../_images/ffcfe2748b99083f036ebc6e413f123ff1da65027d66f3496c6fbec6f9ad8f7d.png" />
+<img alt="../../_images/67b96ba08a885f9130faad52d55b17be98065bef001be726470d38d6e8035a6f.png" src="../../_images/67b96ba08a885f9130faad52d55b17be98065bef001be726470d38d6e8035a6f.png" />
+</div>
+</div>
+</section>
+<section id="tuning-visualization">
+<h2>3. Tuning visualization<a class="headerlink" href="#tuning-visualization" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">plot_tuning()</span></code> is the workhorse for scale visualization. With
+<code class="docutils literal notranslate"><span class="pre">panels=4,</span> <span class="pre">show_source_curve=True</span></code> it produces a four-panel summary: source
+curve at the top, then scale steps, consonance matrix, and step-size intervals.
+The <code class="docutils literal notranslate"><span class="pre">tuning</span></code> argument selects which scale to display
+(<code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code>, <code class="docutils literal notranslate"><span class="pre">diss_curve</span></code>, <code class="docutils literal notranslate"><span class="pre">harm_tuning</span></code>, <code class="docutils literal notranslate"><span class="pre">harm_fit_tuning</span></code>,
+<code class="docutils literal notranslate"><span class="pre">euler_fokker</span></code>, <code class="docutils literal notranslate"><span class="pre">HE</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">,</span>
+                 <span class="n">panels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">show_source_curve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2348: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2497: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2571: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2724: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../../_images/41785c6393341668a497cd45e5e36369a03a46ffb462f7946502816fdffb6f35.png" src="../../_images/41785c6393341668a497cd45e5e36369a03a46ffb462f7946502816fdffb6f35.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_B</span><span class="o">.</span><span class="n">plot_tuning</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">,</span>
+                 <span class="n">panels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">show_source_curve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2348: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2497: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2571: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:2724: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../../_images/06673bf448a47d831bcd7b6b54345a0b792dce924639b9dea6b14c2296570a57.png" src="../../_images/06673bf448a47d831bcd7b6b54345a0b792dce924639b9dea6b14c2296570a57.png" />
+</div>
+</div>
+<p>Each panel is also available individually:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_scale</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_matrix</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_intervals</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_consonance_profile</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/37add221f18fcd4ce05b7285d0fd6a854f8305f245509ae29e14a535b3befe70.png" src="../../_images/37add221f18fcd4ce05b7285d0fd6a854f8305f245509ae29e14a535b3befe70.png" />
+<img alt="../../_images/9b2a46b04d42024672208cbbdab04610edaa98868764590e0ae39740317d4b2d.png" src="../../_images/9b2a46b04d42024672208cbbdab04610edaa98868764590e0ae39740317d4b2d.png" />
+<img alt="../../_images/4441fd1d47b2e1b3edab8002e00fae1ce1edf9316707c261aa2055d7605a8d49.png" src="../../_images/4441fd1d47b2e1b3edab8002e00fae1ce1edf9316707c261aa2055d7605a8d49.png" />
+<img alt="../../_images/e0d27f23d1b4f46a34a57ad6a8917d77e77d8236e95f6bb285a2e4375bf6fbf5.png" src="../../_images/e0d27f23d1b4f46a34a57ad6a8917d77e77d8236e95f6bb285a2e4375bf6fbf5.png" />
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">plot_tuning_curve</span></code> renders the underlying source curve (dissonance or
+harmonic entropy) with detected minima highlighted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_curve</span><span class="p">(</span><span class="n">curve_type</span><span class="o">=</span><span class="s2">&quot;dissonance&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_B</span><span class="o">.</span><span class="n">plot_tuning_curve</span><span class="p">(</span><span class="n">curve_type</span><span class="o">=</span><span class="s2">&quot;dissonance&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/7911f8f45db86b3ae6a2056a8c589dcc967fe2a941515b0af74bed0e3a0184ed.png" src="../../_images/7911f8f45db86b3ae6a2056a8c589dcc967fe2a941515b0af74bed0e3a0184ed.png" />
+<img alt="../../_images/01d10d3eee4ae868fea9931e2c07a7f46e4d303aa715c8dd17971631eed9fa7a.png" src="../../_images/01d10d3eee4ae868fea9931e2c07a7f46e4d303aa715c8dd17971631eed9fa7a.png" />
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">plot_tuning_interval_table</span></code> annotates each scale step with the closest
+named just-intonation interval, within a tolerance you set.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_tuning_interval_table</span><span class="p">(</span><span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;diss_curve&quot;</span><span class="p">,</span>
+                                <span class="n">max_denom</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">tolerance_cents</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/48933f86c9246dcc1a8d4cc7ed963b97cd29f72608f73d286654d013d0355fcd.png" src="../../_images/48933f86c9246dcc1a8d4cc7ed963b97cd29f72608f73d286654d013d0355fcd.png" />
+</div>
+</div>
+</section>
+<section id="harmonic-fit-diagnostics">
+<h2>4. Harmonic-fit diagnostics<a class="headerlink" href="#harmonic-fit-diagnostics" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">plot_harmonic_fit()</span></code> produces a 2×2 panel showing how well the spectral
+peaks fit a shared harmonic series. Top-left: PSD with peak markers and
+extension positions; top-right: harmonic positions per peak; bottom-left:
+harmonic-fit network (which harmonic of which peak coincides with which other
+peak); bottom-right: connectivity matrix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_harmonic_fit</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">harm_bounds</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:3884: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:3990: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:4221: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:4366: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout(rect=[0, 0, 1, 0.96])
+c:\Users\skite\miniconda3\envs\biotuner_env\Lib\site-packages\IPython\core\pylabtools.py:170: UserWarning: Glyph 8733 (\N{PROPORTIONAL TO}) missing from font(s) Arial.
+  fig.canvas.print_figure(bytes_io, **kw)
+</pre></div>
+</div>
+<img alt="../../_images/b6f27bd6d4e41165473cc7ca31a4196350f89717403a1b5f7992e02933c79245.png" src="../../_images/b6f27bd6d4e41165473cc7ca31a4196350f89717403a1b5f7992e02933c79245.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_B</span><span class="o">.</span><span class="n">plot_harmonic_fit</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">harm_bounds</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:3884: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:3990: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:4221: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:4366: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout(rect=[0, 0, 1, 0.96])
+c:\Users\skite\miniconda3\envs\biotuner_env\Lib\site-packages\IPython\core\pylabtools.py:170: UserWarning: Glyph 8733 (\N{PROPORTIONAL TO}) missing from font(s) Arial.
+  fig.canvas.print_figure(bytes_io, **kw)
+</pre></div>
+</div>
+<img alt="../../_images/a0e869148c495daff6f5dc5298cf1452e7289b151aade865a6cbefe3d308e9d2.png" src="../../_images/a0e869148c495daff6f5dc5298cf1452e7289b151aade865a6cbefe3d308e9d2.png" />
+</div>
+</div>
+<p>Each subview is exposed as its own method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt_A</span><span class="o">.</span><span class="n">plot_harmonic_fit_network</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">harm_bounds</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_harmonic_fit_matrix</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">harm_bounds</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_harmonic_fit_positions</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">harm_bounds</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">bt_A</span><span class="o">.</span><span class="n">plot_harmonic_position_mappings</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/5cec1f06fa25e0a8e80a8d071dd14225c094886a5914fc11956ac4f1ffd1edd9.png" src="../../_images/5cec1f06fa25e0a8e80a8d071dd14225c094886a5914fc11956ac4f1ffd1edd9.png" />
+<img alt="../../_images/04166b3a1f10be8511c748784b8313d4eeef313ca7c19b7cbb6863eea831c6d4.png" src="../../_images/04166b3a1f10be8511c748784b8313d4eeef313ca7c19b7cbb6863eea831c6d4.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\plot_utils.py:4221: UserWarning: Glyph 8733 (\N{PROPORTIONAL TO}) missing from font(s) Arial.
+  plt.tight_layout()
+c:\Users\skite\miniconda3\envs\biotuner_env\Lib\site-packages\IPython\core\pylabtools.py:170: UserWarning: Glyph 8733 (\N{PROPORTIONAL TO}) missing from font(s) Arial.
+  fig.canvas.print_figure(bytes_io, **kw)
+</pre></div>
+</div>
+<img alt="../../_images/1588f60622a1ed98d3a9bdceaa32de7a7db4daaa225221973e6dc35803a2a94d.png" src="../../_images/1588f60622a1ed98d3a9bdceaa32de7a7db4daaa225221973e6dc35803a2a94d.png" />
+<img alt="../../_images/5b62042d44ca96455aa4c00b544ae2e9df56eb783cfe3dfcdde735a1dd50b05f.png" src="../../_images/5b62042d44ca96455aa4c00b544ae2e9df56eb783cfe3dfcdde735a1dd50b05f.png" />
+</div>
+</div>
+</section>
+<section id="multi-channel-dissonance-curve">
+<h2>5. Multi-channel dissonance curve<a class="headerlink" href="#multi-channel-dissonance-curve" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">diss_curve_multi</span></code> overlays dissonance curves from multiple sources on a
+single axis and marks shared minima — useful when looking for tunings that are
+consistent across channels or trials.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">freqs_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">bt_A</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">bt_B</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="n">bt_C</span><span class="o">.</span><span class="n">peaks</span><span class="p">]</span>
+<span class="n">amps_list</span>  <span class="o">=</span> <span class="p">[</span><span class="n">bt_A</span><span class="o">.</span><span class="n">amps</span><span class="p">,</span>  <span class="n">bt_B</span><span class="o">.</span><span class="n">amps</span><span class="p">,</span>  <span class="n">bt_C</span><span class="o">.</span><span class="n">amps</span><span class="p">]</span>
+<span class="n">labels</span>     <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Harmonic stack&quot;</span><span class="p">,</span> <span class="s2">&quot;JI chord&quot;</span><span class="p">,</span> <span class="s2">&quot;EEG-like&quot;</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">diss_curve_multi</span><span class="p">(</span>
+    <span class="n">freqs_list</span><span class="p">,</span> <span class="n">amps_list</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+    <span class="n">denom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">n_tet_grid</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;Scenario&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 1600x700 with 0 Axes&gt;
+</pre></div>
+</div>
+<img alt="../../_images/bdf2b0a8b982d1ba74b6906e3078a7e5ef62531079343133aedd3f4e97837d92.png" src="../../_images/bdf2b0a8b982d1ba74b6906e3078a7e5ef62531079343133aedd3f4e97837d92.png" />
+</div>
+</div>
+</section>
+<section id="group-analysis-plots">
+<h2>6. Group analysis plots<a class="headerlink" href="#group-analysis-plots" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code> orchestrates biotuner across many time series and exposes
+group-level plots. We build a 24-trial dataset split into two conditions
+(harmonic vs inharmonic) so condition-aware plots have something to compare.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">harmonic_trials</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="n">make_signal</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">5</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
+         <span class="mi">10</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+         <span class="mi">15</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+         <span class="mi">20</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span>
+         <span class="mi">30</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="n">inharmonic_trials</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="n">make_signal</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">4</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+         <span class="mi">9</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span>
+         <span class="mi">13</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+         <span class="mi">19</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+         <span class="mi">27</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">group_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">harmonic_trials</span><span class="p">,</span> <span class="n">inharmonic_trials</span><span class="p">])</span>  <span class="c1"># (24, 8000)</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;harmonic&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;inharmonic&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group data: </span><span class="si">{</span><span class="n">group_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Group data: (24, 8000)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span>
+    <span class="n">group_data</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span>
+    <span class="n">axis_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trial&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;EMD&quot;</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                  <span class="n">min_harms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">()</span>
+<span class="n">btg</span><span class="o">.</span><span class="n">compute_diss_curve</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;peaks&quot;</span><span class="p">,</span> <span class="n">denom</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">max_ratio</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">btg</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+Warning: 1 peaks were removed because they exceeded the maximum frequency of 50 Hz
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\metrics.py:946: RuntimeWarning: divide by zero encountered in scalar divide
+  harm_temp.append(1 / delta_norm)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>trial</th>
+      <th>series_idx</th>
+      <th>condition</th>
+      <th>n_peaks</th>
+      <th>peak_freq_mean</th>
+      <th>peak_amp_mean</th>
+      <th>peak_freq_std</th>
+      <th>peak_amp_std</th>
+      <th>peak_freq_median</th>
+      <th>peak_amp_median</th>
+      <th>...</th>
+      <th>harm_pos_std</th>
+      <th>harm_pos_median</th>
+      <th>harm_pos_min</th>
+      <th>harm_pos_max</th>
+      <th>harm_pos_sem</th>
+      <th>subharm_tension</th>
+      <th>scale_dissonance</th>
+      <th>scale_diss_harm_sim</th>
+      <th>scale_diss_n_steps</th>
+      <th>common_harm_pos</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>harmonic</td>
+      <td>4</td>
+      <td>9.250000</td>
+      <td>-6.819295</td>
+      <td>6.743052</td>
+      <td>7.603799</td>
+      <td>7.625</td>
+      <td>-3.556057</td>
+      <td>...</td>
+      <td>3.136877</td>
+      <td>4.0</td>
+      <td>1.0</td>
+      <td>10.0</td>
+      <td>1.402854</td>
+      <td>0.024486</td>
+      <td>0.449587</td>
+      <td>6.318150</td>
+      <td>3</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>harmonic</td>
+      <td>4</td>
+      <td>8.062500</td>
+      <td>-8.153656</td>
+      <td>4.874599</td>
+      <td>10.155705</td>
+      <td>7.500</td>
+      <td>-3.625093</td>
+      <td>...</td>
+      <td>3.300000</td>
+      <td>5.5</td>
+      <td>1.0</td>
+      <td>11.0</td>
+      <td>1.043552</td>
+      <td>0.0</td>
+      <td>0.510659</td>
+      <td>26.809599</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>2</td>
+      <td>harmonic</td>
+      <td>4</td>
+      <td>13.500000</td>
+      <td>-10.594103</td>
+      <td>6.351673</td>
+      <td>14.275383</td>
+      <td>14.625</td>
+      <td>-3.601809</td>
+      <td>...</td>
+      <td>2.847696</td>
+      <td>4.5</td>
+      <td>1.0</td>
+      <td>10.0</td>
+      <td>1.006813</td>
+      <td>0.010381</td>
+      <td>0.784228</td>
+      <td>3.835054</td>
+      <td>3</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3</td>
+      <td>harmonic</td>
+      <td>3</td>
+      <td>11.666667</td>
+      <td>-2.682947</td>
+      <td>6.371595</td>
+      <td>1.633655</td>
+      <td>9.750</td>
+      <td>-2.450868</td>
+      <td>...</td>
+      <td>1.247219</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0.720082</td>
+      <td>0.025528</td>
+      <td>0.264729</td>
+      <td>4.796640</td>
+      <td>3</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>4</td>
+      <td>harmonic</td>
+      <td>4</td>
+      <td>13.875000</td>
+      <td>-11.281537</td>
+      <td>6.718677</td>
+      <td>12.805146</td>
+      <td>14.875</td>
+      <td>-4.127662</td>
+      <td>...</td>
+      <td>2.680951</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>8.0</td>
+      <td>1.340476</td>
+      <td>0.020523</td>
+      <td>0.794818</td>
+      <td>9.734093</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 32 columns</p>
+</div></div></div>
+</div>
+<p><strong>Aggregated PSD with individual traces.</strong> <code class="docutils literal notranslate"><span class="pre">plot_group_peaks</span></code> shows the
+mean spectrum across trials with per-trial overlays and detected peak
+markers.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_group_peaks</span><span class="p">(</span><span class="n">show_individual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/a7b14d1f50c7a07b2e393e593fe549c3769ab63d06d3cc4a454c43458d2bf5cf.png" src="../../_images/a7b14d1f50c7a07b2e393e593fe549c3769ab63d06d3cc4a454c43458d2bf5cf.png" />
+</div>
+</div>
+<p><strong>Peak frequency distribution</strong> across all trials, with band shading.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_peak_distribution</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/069f96efc379a8d653db89f51edca678fbf61cd0956f4fb4680a01098f36d301.png" src="../../_images/069f96efc379a8d653db89f51edca678fbf61cd0956f4fb4680a01098f36d301.png" />
+</div>
+</div>
+<p><strong>Metric distributions split by condition.</strong> Violin plots for several
+harmonicity metrics, colored by the <code class="docutils literal notranslate"><span class="pre">condition</span></code> metadata column.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;harmsim&quot;</span><span class="p">,</span> <span class="s2">&quot;cons&quot;</span><span class="p">,</span> <span class="s2">&quot;tenney&quot;</span><span class="p">]:</span>
+    <span class="n">btg</span><span class="o">.</span><span class="n">plot_metric_distribution</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="s2">&quot;condition&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;violin&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\biotuner_group.py:1420: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.violinplot(data=self.results, x=groupby, y=metric, ax=ax, palette=palette, **kwargs)
+</pre></div>
+</div>
+<img alt="../../_images/09f743baf458ab0653f126e006b6a646f2fa2d746e95237dc8928b81652d4a65.png" src="../../_images/09f743baf458ab0653f126e006b6a646f2fa2d746e95237dc8928b81652d4a65.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\biotuner_group.py:1420: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.violinplot(data=self.results, x=groupby, y=metric, ax=ax, palette=palette, **kwargs)
+</pre></div>
+</div>
+<img alt="../../_images/3fb1f01f5f7ddc0b0076756898b8d50d751856fabbdd2e8f6b0fb61f1160bf7c.png" src="../../_images/3fb1f01f5f7ddc0b0076756898b8d50d751856fabbdd2e8f6b0fb61f1160bf7c.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\biotuner_group.py:1420: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.violinplot(data=self.results, x=groupby, y=metric, ax=ax, palette=palette, **kwargs)
+</pre></div>
+</div>
+<img alt="../../_images/833ed72ab0b88493d983e63ff1a6fbdae2764afa5434bf2fe6c117c654f7c0c9.png" src="../../_images/833ed72ab0b88493d983e63ff1a6fbdae2764afa5434bf2fe6c117c654f7c0c9.png" />
+</div>
+</div>
+<p><strong>Interval histogram</strong> across all derived scales — here using the
+dissonance-curve scale. <code class="docutils literal notranslate"><span class="pre">show_common=True</span></code> overlays vertical lines at common
+just-intonation ratios.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_interval_histogram</span><span class="p">(</span><span class="s2">&quot;diss_scale&quot;</span><span class="p">,</span> <span class="n">show_common</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_denom</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/bfa467cdff089602186cda3b46eeaf8acbfa07dcacd95b683b51489032a3fdfb.png" src="../../_images/bfa467cdff089602186cda3b46eeaf8acbfa07dcacd95b683b51489032a3fdfb.png" />
+</div>
+</div>
+<p><strong>Distribution of scale sizes</strong> (number of steps per scale).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_scale_size_distribution</span><span class="p">(</span><span class="s2">&quot;diss_scale&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/bfd15bf11209675d7f42f9881eb8c8ddbac568b51a7f9ab92fdd2407d23dd49b.png" src="../../_images/bfd15bf11209675d7f42f9881eb8c8ddbac568b51a7f9ab92fdd2407d23dd49b.png" />
+</div>
+</div>
+<p><strong>Top 15 most frequent intervals</strong> across the group.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_common_intervals</span><span class="p">(</span><span class="s2">&quot;diss_scale&quot;</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/59af43e3c2bbf77685648ec504f81a4680f7dd527e5f53b42b98ba6f048c7402.png" src="../../_images/59af43e3c2bbf77685648ec504f81a4680f7dd527e5f53b42b98ba6f048c7402.png" />
+</div>
+</div>
+<p><strong>Side-by-side scale comparison</strong> for a subset of trials — each row is
+one trial’s tuning, with steps drawn as vertical ticks on a log axis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg</span><span class="o">.</span><span class="n">plot_tuning_comparison</span><span class="p">(</span><span class="s2">&quot;diss_scale&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/809f295050479b9747fde61906febcf9baeaf7b662383513bb2354cb5f4a2244.png" src="../../_images/809f295050479b9747fde61906febcf9baeaf7b662383513bb2354cb5f4a2244.png" />
+</div>
+</div>
+</section>
+<section id="d-group-heatmaps">
+<h2>7. 3D group heatmaps<a class="headerlink" href="#d-group-heatmaps" title="Link to this heading">#</a></h2>
+<p>When the input is 3D (<code class="docutils literal notranslate"><span class="pre">trials</span> <span class="pre">×</span> <span class="pre">channels</span> <span class="pre">×</span> <span class="pre">samples</span></code>), <code class="docutils literal notranslate"><span class="pre">BiotunerGroup</span></code>
+exposes <code class="docutils literal notranslate"><span class="pre">plot_metric_matrix</span></code>, which renders metric values as a heatmap.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_trials</span><span class="p">,</span> <span class="n">n_ch</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span>
+<span class="n">data_3d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span>
+        <span class="n">make_signal</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">5</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+             <span class="mi">10</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+             <span class="mi">20</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+            <span class="n">noise</span><span class="o">=</span><span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">tr</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ch</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3D data: </span><span class="si">{</span><span class="n">data_3d</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">btg3</span> <span class="o">=</span> <span class="n">BiotunerGroup</span><span class="p">(</span>
+    <span class="n">data_3d</span><span class="p">,</span> <span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span>
+    <span class="n">axis_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;trial&quot;</span><span class="p">,</span> <span class="s2">&quot;channel&quot;</span><span class="p">],</span>
+    <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;harmonic_recurrence&quot;</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">btg3</span><span class="o">.</span><span class="n">compute_peaks</span><span class="p">(</span><span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                   <span class="n">min_harms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">btg3</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">()</span>
+<span class="n">btg3</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3D data: (8, 6, 8000)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\biotuner\metrics.py:946: RuntimeWarning: divide by zero encountered in scalar divide
+  harm_temp.append(1 / delta_norm)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>trial</th>
+      <th>channel</th>
+      <th>series_idx</th>
+      <th>n_peaks</th>
+      <th>peak_freq_mean</th>
+      <th>peak_amp_mean</th>
+      <th>peak_freq_std</th>
+      <th>peak_amp_std</th>
+      <th>peak_freq_median</th>
+      <th>peak_amp_median</th>
+      <th>...</th>
+      <th>harm_pos_sem</th>
+      <th>subharm_tension</th>
+      <th>n_harmonic_recurrence</th>
+      <th>common_harm_pos</th>
+      <th>common_harm_pos_mean</th>
+      <th>common_harm_pos_std</th>
+      <th>common_harm_pos_median</th>
+      <th>common_harm_pos_min</th>
+      <th>common_harm_pos_max</th>
+      <th>common_harm_pos_sem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>12.25</td>
+      <td>-26.493944</td>
+      <td>6.496153</td>
+      <td>21.793078</td>
+      <td>9.75</td>
+      <td>-42.435883</td>
+      <td>...</td>
+      <td>1.171771</td>
+      <td>0.019481</td>
+      <td>21</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>5</td>
+      <td>8.90</td>
+      <td>-26.447676</td>
+      <td>2.866182</td>
+      <td>21.615260</td>
+      <td>8.00</td>
+      <td>-43.653405</td>
+      <td>...</td>
+      <td>0.964203</td>
+      <td>0.014328</td>
+      <td>22</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>5</td>
+      <td>13.35</td>
+      <td>-26.588977</td>
+      <td>14.084211</td>
+      <td>21.891383</td>
+      <td>8.25</td>
+      <td>-41.786047</td>
+      <td>...</td>
+      <td>1.030776</td>
+      <td>0.0</td>
+      <td>25</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>5</td>
+      <td>8.95</td>
+      <td>-26.379970</td>
+      <td>3.508561</td>
+      <td>21.781310</td>
+      <td>8.50</td>
+      <td>-43.721270</td>
+      <td>...</td>
+      <td>1.030776</td>
+      <td>0.03544</td>
+      <td>25</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>4</td>
+      <td>4</td>
+      <td>5</td>
+      <td>9.35</td>
+      <td>-35.251479</td>
+      <td>5.791373</td>
+      <td>18.684407</td>
+      <td>8.00</td>
+      <td>-43.279380</td>
+      <td>...</td>
+      <td>1.006813</td>
+      <td>0.002496</td>
+      <td>27</td>
+      <td>5.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 36 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btg3</span><span class="o">.</span><span class="n">plot_metric_matrix</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="s2">&quot;harmsim&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">btg3</span><span class="o">.</span><span class="n">plot_metric_matrix</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cons&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/0e9633dab62821fe5aa4ce8c3e1ae92a459401d0c887d683dfe5ec9f230b00e3.png" src="../../_images/0e9633dab62821fe5aa4ce8c3e1ae92a459401d0c887d683dfe5ec9f230b00e3.png" />
+<img alt="../../_images/da184b483bb1e14c4b7dbc9c2f6af7b3fe67bcbc8416ce50bb5a05c3be390139.png" src="../../_images/da184b483bb1e14c4b7dbc9c2f6af7b3fe67bcbc8416ce50bb5a05c3be390139.png" />
+</div>
+</div>
+<hr class="docutils" />
+<p>This walk-through covers the public plotting surface of biotuner. For the
+underlying analysis (peak extraction, tuning derivation, dissonance curve
+computation), see the <a class="reference internal" href="../peaks_extraction/peaks_extraction.html"><span class="std std-doc">Peaks extraction</span></a>,
+<a class="reference internal" href="../scale_construction/scale_construction.html"><span class="std std-doc">Scale construction</span></a>, and
+<a class="reference internal" href="#../../biotuner_group.md"><span class="xref myst">BiotunerGroup</span></a> docs.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-synthetic-signals">1. Setup and synthetic signals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-analysis-plots">2. Peak analysis plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuning-visualization">3. Tuning visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonic-fit-diagnostics">4. Harmonic-fit diagnostics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-channel-dissonance-curve">5. Multi-channel dissonance curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#group-analysis-plots">6. Group analysis plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-group-heatmaps">7. 3D group heatmaps</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

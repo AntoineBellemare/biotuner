@@ -1,0 +1,1010 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Deriving colour from a biosignal: a perceptual, metric-driven approach &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'biocolors_methods';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/biocolors_methods.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Deriving colour from a biosignal: a perceptual, metric-driven approach</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#abstract">Abstract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-three-century-old-problem-still-missing-its-metric">A three-century-old problem, still missing its metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-naive-maps-fail">Why the naïve maps fail</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-psychophysical-stance">A psychophysical stance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fechner-s-programme-and-why-everything-is-a-logarithm">Fechner’s programme, and why everything is a logarithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#perceptual-uniformity-trichromacy-and-the-closed-circle">Perceptual uniformity, trichromacy, and the closed circle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#critical-band-consonance-behind-every-consonance-axis">Critical-band consonance behind every “consonance” axis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-octave-of-light-the-hinge-that-forces-the-fold">One octave of light: the hinge that forces the fold</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shepard-s-relational-reading-of-the-arbitrary-hue-result">Shepard’s relational reading of the arbitrary-hue result</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-modal-correspondence-and-categorical-perception-as-a-constraint">Cross-modal correspondence, and categorical perception as a constraint</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-colour-the-pipeline">From signal to colour: the pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#amplitudes-are-decibels-and-decibels-are-already-fechnerian">Amplitudes are decibels, and decibels are already Fechnerian</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representation-levels-and-why-palette-width-is-not-a-knob">Representation levels, and why palette width is not a knob</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-step-metrics-versus-per-signal-descriptors">Per-step metrics versus per-signal descriptors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data-flow">The data flow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-colour-layer-as-an-observer-model">The colour layer as an observer model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-oklch-and-not-hsv-cam16-or-jzazbz">Why OKLCh, and not HSV, CAM16, or Jzazbz</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lightness-as-a-fechnerian-nonlinearity">Lightness as a Fechnerian nonlinearity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cusp-where-trichromacy-and-the-display-bite">The cusp: where trichromacy and the display bite</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cusp-preserving-gamut-mapping-and-the-spectral-locus">Cusp-preserving gamut mapping, and the spectral locus</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-ok-and-its-interpretable-scale">ΔE_OK and its interpretable scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-observer-model-is-where-naive-implementations-fail">The observer model is where naive implementations fail</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#six-ways-to-derive-colour">Six ways to derive colour</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-literal-cross-modal-transcription">Physical: literal cross-modal transcription</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relational-a-similarity-map-onto-the-hue-circle">Relational: a similarity map onto the hue circle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-hue-as-a-direction-in-a-calibrated-fingerprint">Statistical: hue as a direction in a calibrated fingerprint</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-colourspaces-hue-that-names-a-quantity">Declarative colourspaces: hue that names a quantity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learned-axes-discovered-in-the-data">Learned: axes discovered in the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interval-and-tuning-forms-colouring-a-sound-s-own-structure">Interval and tuning forms: colouring a sound’s own structure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-a-hand-tuned-constant-cannot-be-right">Why a hand-tuned constant cannot be right</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#percentile-normalisation-as-an-ecology-model">Percentile normalisation as an ecology model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informativeness-weighting">Informativeness weighting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-calibrations-and-per-level-routing">Three calibrations and per-level routing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tuning-fields">TUNING_FIELDS</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-tensions">Three tensions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stability-versus-separation">Stability versus separation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#separation-versus-interpretability">Separation versus interpretability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-versus-statistical-grounding">Physical versus statistical grounding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation">Evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-corpus-and-what-0-failures-does-and-does-not-mean">The corpus and what “0 failures” does and does not mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variety-by-method">Variety by method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arbitrary-absolute-hue-confirms-a-relational-thesis">Arbitrary absolute hue confirms a relational thesis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#not-a-sleep-classifier">Not a sleep classifier</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#availability">Availability</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="deriving-colour-from-a-biosignal-a-perceptual-metric-driven-approach">
+<h1>Deriving colour from a biosignal: a perceptual, metric-driven approach<a class="headerlink" href="#deriving-colour-from-a-biosignal-a-perceptual-metric-driven-approach" title="Link to this heading">#</a></h1>
+<section id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Link to this heading">#</a></h2>
+<p>Turning a biosignal into colour is not a display problem but a cross-modal psychophysics problem, and it has a three-century history. Newton bent the linear spectrum into a closed circle and mapped it onto the diatonic scale; Castel’s ocular harpsichord and Scriabin’s <em>clavier à lumières</em> made the analogy audible and visible. What all of them lacked was a perceptual metric: a principled account of when two colours are the same, when they differ, and by how much. We supply that metric and build a biosignal-to-colour module around it. The engineering rests on three psychophysical commitments: a perceptually uniform working space (OKLCh) used as an explicit observer model, so that Euclidean ΔE approximates perceived difference; a critical-band consonance model in the Helmholtz–Plomp–Levelt–Sethares lineage, so that “consonance” as a colour axis names a property of the ear; and a preference for relational over absolute representation, following Shepard, so that the meaningful quantity is the distance between signals rather than any signal’s absolute hue. We contribute a dependency-free perceptual colour layer, a mapping registry spanning six families and eight methods, a percentile-calibration layer, and an explicit account of three design tensions, demonstrated on the HMC sleep-EEG corpus (subject SN001).</p>
+</section>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<section id="a-three-century-old-problem-still-missing-its-metric">
+<h3>A three-century-old problem, still missing its metric<a class="headerlink" href="#a-three-century-old-problem-still-missing-its-metric" title="Link to this heading">#</a></h3>
+<p>The idea that sound and colour belong to a single sensory continuum is old and recurrent. In the <em>Opticks</em> (1704), Newton did two things that still structure every attempt in this lineage. First, he bent the linear spectrum into a closed <strong>colour circle</strong>, joining red to violet — an act of perceptual closure with no physical basis, since red and violet are not spectral neighbours. Second, he mapped the visible bands onto the notes of the diatonic scale. Both moves are psychophysical claims dressed as observations: that colour experience is circular, and that pitch and hue can be placed in correspondence. The eighteenth and nineteenth centuries built instruments on the same intuition — Castel’s <em>clavecin oculaire</em>, later Scriabin’s <em>clavier à lumières</em> in <em>Prometheus</em> — machines that played light alongside sound.</p>
+<p>These are the aesthetic ancestors of any biosignal-to-colour system, and they share a single deficiency. None of them had a <strong>perceptual metric</strong>. They could assert that a note corresponds to a colour, but not measure whether two colours are perceptually the same, nor how far apart two signals lie in the space of possible appearances. Analogy is not measurement. The thesis of this paper is that the missing ingredient has always been psychophysical, and that it is now available: a perceptually uniform colour space that functions as an <strong>observer model</strong>, a <strong>critical-band</strong> model of consonance, and a commitment to <strong>relational rather than absolute</strong> representation. Read this way, the engineering choices in our module are not ad hoc conveniences; they are instances of established psychophysical principles, and we frame them throughout as such.</p>
+</section>
+<section id="why-the-naive-maps-fail">
+<h3>Why the naïve maps fail<a class="headerlink" href="#why-the-naive-maps-fail" title="Link to this heading">#</a></h3>
+<p>The temptation is to reach for the obvious pipeline: take a spectral feature, run it through a colour formula, and read off a hue. This fails for reasons that are conceptual before they are technical, and each failure points to the principle that repairs it.</p>
+<p><strong>The octave-of-light asymmetry.</strong> Human hearing spans roughly ten octaves; human vision spans a frequency ratio near 2:1 — about <em>one</em> octave of light. Audition is a ten-octave analyser and vision a one-octave analyser of frequency. Any pitch-to-hue map therefore compresses a wide frequency range into a single visible octave, and one octave of frequency corresponds to one full traversal of the visible band. Because every EEG epoch carries a low-frequency delta peak that folds to green, every physically grounded palette opens on the same green. This is not an implementation defect to be patched away; it is the octave-of-light asymmetry made visible, and any honest map must own it.</p>
+<p><strong>A single scalar cannot separate.</strong> Mapping one descriptor to hue produces a readable axis but a crowded wheel. A biosignal’s identity is multidimensional; collapsing it to a scalar guarantees that distinct signals collide. The declarative colourspaces — which name one descriptor for each of lightness, chroma, and hue precisely so the axis <em>means</em> something — separate least of the eight methods, while the separation-oriented methods spread signals nearly twice as far, a trade we quantify later. The scalar’s interpretability is bought with separation, and no formula recovers what the projection discarded.</p>
+<p><strong>HSV is not an observer model.</strong> The deeper failure is choosing a colour space that encodes nothing about the human observer. Equal steps in HSV, or in CIE <em>xy</em> chromaticity, are perceptually unequal — MacAdam’s discrimination ellipses showed this directly. A colour distance is meaningful only if it is a <strong>psychological</strong> distance, a model of the observer rather than a property of light. This is the tradition CIELAB opened and OKLab (Ottosson) refines; ΔE in such a space approximates perceived difference. Our colour layer works in OKLCh throughout and treats chroma as <strong>cusp-relative</strong> — a fraction of what the observer-plus-display can actually realize — because the realizable-chroma ceiling varies sharply around the wheel. Requesting saturated red at high lightness asks for a colour that does not exist; the space must know this, and HSV does not.</p>
+</section>
+<section id="contributions">
+<h3>Contributions<a class="headerlink" href="#contributions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>A <strong>dependency-free perceptual colour layer</strong> (<code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/color/</span></code>) that imports nothing from the rest of the package and is testable against reference colour science, with legacy behaviour held bit-exact.</p></li>
+<li><p>A <strong>metric-driven mapping registry</strong> of eight methods across six families — physical, relational, statistical, declarative, learned, and interval/tuning forms — each a different answer to what a biosignal’s colour should <em>mean</em>, evaluated on separation, stability, and interpretability.</p></li>
+<li><p>A <strong>percentile-calibration layer</strong> that normalises each spectral descriptor against a corpus and learns per-descriptor weights, with per-level routing across three calibrations to keep signals spread across the wheel rather than pinned into a sliver of it.</p></li>
+<li><p>An explicit account of <strong>three tensions</strong> — stability versus separation, separation versus interpretability, and physical versus statistical grounding — that we argue are structural to the problem rather than defects of any one design.</p></li>
+</ul>
+<p>We ground the exposition in the <strong>HMC sleep-EEG corpus</strong> (subject SN001: 7.12 h at 256 Hz, four channels, 854 expert-scored 30 s epochs across stages W/N1/N2/N3/R), using it not as a classification target — sleep stages overlap heavily in this feature space and are not separable epoch by epoch — but as a demanding, real-world stream of biosignals against which each mapping’s promises can be measured.</p>
+</section>
+</section>
+<section id="a-psychophysical-stance">
+<h2>A psychophysical stance<a class="headerlink" href="#a-psychophysical-stance" title="Link to this heading">#</a></h2>
+<p>Supplying a metric is what separates a measurement from an analogy, and it is the whole content of the engineering here. The claim of this section is that the module’s design choices are not ad hoc software decisions but instances of established psychophysical principle, and that reading them that way is the only way to see which choices are forced and which are conventional. Each principle below recurs in a later section, doing different work with different facts.</p>
+<section id="fechner-s-programme-and-why-everything-is-a-logarithm">
+<h3>Fechner’s programme, and why everything is a logarithm<a class="headerlink" href="#fechner-s-programme-and-why-everything-is-a-logarithm" title="Link to this heading">#</a></h3>
+<p>Psychophysics, as Fechner defined it in the <em>Elemente</em>, is the study of the quantitative relation between a physical stimulus and the sensation it evokes. This module is a psychophysics artefact in exactly that sense: it ingests a physical spectrum and emits a perceptual response, a colour. Weber’s law states that the just-noticeable difference is proportional to the magnitude of the stimulus; the Weber–Fechner integration makes sensation grow with the <em>logarithm</em> of the stimulus, and Stevens’ power law refines this to a compressive power function for continua such as brightness. The consequences are not decorative. Pitch is heard in octaves and cents — log frequency. Loudness is measured in decibels — log power. Perceived lightness rises through a compressive nonlinearity. The module reasons about intervals in log-frequency, treats amplitudes as decibels, and places lightness in a log-like perceptual coordinate for exactly these reasons.</p>
+<p>This is where the prototype’s most instructive bug lived. Spectral amplitudes are decibels — <code class="docutils literal notranslate"><span class="pre">10*log10(PSD)</span></code> — and 26 % of them are negative. The prototype shifted these values additively to make them positive, a scale-inconsistent operation on a logarithmic quantity: it deforms the ratios that carry the perceptual information. The symptom was stark: two N2 epochs with <em>identical</em> peak structure landed 122° apart on the hue wheel. The fix was to respect the domain — invert the log with <code class="docutils literal notranslate"><span class="pre">10**(dB/10)</span></code> before combining. A Fechnerian encoding error is not a rounding nuisance; it silently destroys the very structure the map is supposed to preserve.</p>
+</section>
+<section id="perceptual-uniformity-trichromacy-and-the-closed-circle">
+<h3>Perceptual uniformity, trichromacy, and the closed circle<a class="headerlink" href="#perceptual-uniformity-trichromacy-and-the-closed-circle" title="Link to this heading">#</a></h3>
+<p>The colour layer rests entirely on a perceptually uniform space, and such a space is a <em>psychological</em> construct, not a physical one. MacAdam’s discrimination ellipses showed that CIE <em>xy</em> chromaticity is badly non-uniform; CIELAB was an attempt to build a space in which Euclidean distance approximates perceived difference; OKLab is a modern refinement of the same aim. The module’s reliance on ΔE_OK and on cusp-relative chroma is a commitment to this stance: distance in the space is a <em>model of the observer</em>, not a property of light. Trichromacy — the Young–Helmholtz insight that colour vision rests on three cone classes — is why colour experience is three-dimensional at all, and why the realizable colours form a bounded solid whose boundary (the sRGB gamut) bites at the cusp. Asking for chroma relative to what the observer-plus-display can realize is trichromacy taken seriously. And Newton’s circle is itself a psychophysical act: joining red to violet is perceptual closure with no basis in the wavelength axis, inherited every time the module treats hue as an angle so that difference is angular distance.</p>
+</section>
+<section id="critical-band-consonance-behind-every-consonance-axis">
+<h3>Critical-band consonance behind every “consonance” axis<a class="headerlink" href="#critical-band-consonance-behind-every-consonance-axis" title="Link to this heading">#</a></h3>
+<p>Several of the module’s colourspaces put “consonance” on an axis, and that word is not a folk quantity here. Helmholtz grounded consonance in the absence of beating and roughness between partials. Plomp and Levelt tied consonance and dissonance to <em>critical bandwidth</em>: roughness peaks when two partials fall within a critical band of the cochlea, modelled as a bank of overlapping auditory filters (the Fletcher and Zwicker tradition, and the Bark scale). Sethares turned this into a dissonance <em>curve</em> computed directly from a sound’s measured partials — tuning-independent, timbre-dependent. The module’s dissonance curve and consonance metrics implement exactly this critical-band roughness psychophysics, so when a colourspace sends consonance to hue, the axis is a model of the ear rather than an arbitrary index.</p>
+</section>
+<section id="one-octave-of-light-the-hinge-that-forces-the-fold">
+<h3>One octave of light: the hinge that forces the fold<a class="headerlink" href="#one-octave-of-light-the-hinge-that-forces-the-fold" title="Link to this heading">#</a></h3>
+<p>Two facts about the senses set the terms of the whole enterprise. Audition is a ten-octave analyser of frequency; vision is a one-octave analyser. Mapping sound onto colour is therefore an intrinsically lossy dimensional compression, and the compression ratio is fixed by physiology, not by any software decision. This is the hinge on which the physical mapping turns, and it guarantees that method’s limitation as tightly as its virtue. The auditory side has its own circle, and it rhymes with the colour circle: octave equivalence — tones a 2:1 apart heard as the same pitch class — is a robust cross-cultural phenomenon, and Shepard modelled pitch as a helix, monotonic height plus a circular pitch-class dimension. The closed hue circle and the closed pitch-class circle are the same kind of object, which is why folding one onto the other is natural even though it discards height.</p>
+</section>
+<section id="shepard-s-relational-reading-of-the-arbitrary-hue-result">
+<h3>Shepard’s relational reading of the arbitrary-hue result<a class="headerlink" href="#shepard-s-relational-reading-of-the-arbitrary-hue-result" title="Link to this heading">#</a></h3>
+<p>The module’s most consequential finding sounds at first like a failure: in the statistical and learned methods, the absolute hue assigned to a signal is a convention. Shepard’s universal law of generalization holds that perceived similarity falls off exponentially with distance in an internal psychological space, and — the deeper point — that the mind traffics in <em>relations and structure</em>, not absolute coordinates. A representation that fixes pairwise distances while leaving the absolute frame free is precisely a structural representation. The arbitrariness of the absolute anchor hue is the map declining to invent an absolute code it has no grounds to assert, while faithfully preserving the structure it can measure. We develop this in the Evaluation as the paper’s central result.</p>
+</section>
+<section id="cross-modal-correspondence-and-categorical-perception-as-a-constraint">
+<h3>Cross-modal correspondence, and categorical perception as a constraint<a class="headerlink" href="#cross-modal-correspondence-and-categorical-perception-as-a-constraint" title="Link to this heading">#</a></h3>
+<p>If absolute hue is arbitrary in the statistical methods, why is it ever legitimate to <em>declare</em> that a hue means a particular quantity? The answer is cross-modal correspondence. As Spence’s review and the earlier work of Marks document, there are systematic, largely involuntary associations between dimensions of different senses; the most robust here is that higher pitch is matched to brighter or lighter. Sound symbolism — Köhler’s <em>takete</em> and <em>maluma</em>, later <em>bouba/kiki</em> — shows even shape-sound mappings are shared and non-arbitrary. A colourspace that routes pitch to lightness honours a measured bias rather than inventing one. One caution follows from the same literature. Both colour, in Berlin and Kay’s basic-colour-term work, and musical pitch are perceived and named <em>categorically</em>; language warps the continuum. A viewer will categorize whatever palette we hand them, so a hue difference below a category boundary may be read as “the same.” This is why the module’s temperament machinery is careful about <em>where</em> on the wheel it spends its range: warm hues at mid lightness are inherently muted — at L = 0.60, hue 30° reads as rust, 60° as ochre, 90° as olive — and 62 % of extended-peak EEG anchors fall into that warm-green region. The auto temperament sets a coherent single-temperature arc (45° + 130° × normalised harmonic spread); the opt-in <code class="docutils literal notranslate"><span class="pre">aurora</span></code> option instead opens a 250° arc from warm through cool, keeping all eight test signals perceptually balanced at a measured separation cost of 0.124 mean palette ΔE_OK. Managing categorical perception is a live design constraint, not an afterthought.</p>
+</section>
+</section>
+<section id="from-signal-to-colour-the-pipeline">
+<h2>From signal to colour: the pipeline<a class="headerlink" href="#from-signal-to-colour-the-pipeline" title="Link to this heading">#</a></h2>
+<p>A biosignal arrives as a time series, and the first act of the pipeline is to turn it into a spectrum: a set of peak frequencies and the amplitudes at those peaks, produced by a spectral peak-extraction step. Everything downstream is a transformation of that spectral description into channels of a perceptual colour space — a sequence of physical-to-perceptual transductions, each answerable to a psychophysical law rather than to convenience.</p>
+<section id="amplitudes-are-decibels-and-decibels-are-already-fechnerian">
+<h3>Amplitudes are decibels, and decibels are already Fechnerian<a class="headerlink" href="#amplitudes-are-decibels-and-decibels-are-already-fechnerian" title="Link to this heading">#</a></h3>
+<p>The single most consequential detail at the front of the pipeline is that the amplitudes are decibels — <code class="docutils literal notranslate"><span class="pre">10*log10(PSD)</span></code> — not linear power. Spectral tooling has internalised the Weber–Fechner form so thoroughly that it hands you the log without announcing it; the amplitude column is a sensation scale, not an intensity scale. The hazard is that any stage which treats a dB value as though it were linear power applies arithmetic to a quantity that already lives in log space. The remedy is to invert the encoding — recover linear power as <code class="docutils literal notranslate"><span class="pre">10**(dB/10)</span></code> — before any operation that assumes proportional magnitudes, and the effect of getting this right is not cosmetic: it raised the PCA two-dimensional coverage of the descriptor space from 66.9 % to 79.9 % and lifted the standard deviation of spectral entropy from 0.018 to 0.123, unfreezing a descriptor that had been nearly constant. A quantity that is silently logarithmic and a step that silently assumes linearity is the general shape of the failure; naming the encoding is the general fix.</p>
+</section>
+<section id="representation-levels-and-why-palette-width-is-not-a-knob">
+<h3>Representation levels, and why palette width is not a knob<a class="headerlink" href="#representation-levels-and-why-palette-width-is-not-a-knob" title="Link to this heading">#</a></h3>
+<p>Between “a spectrum” and “the numbers we colour” sits a choice of representation level, and there are five. <code class="docutils literal notranslate"><span class="pre">peaks</span></code> is the raw spectral maxima; <code class="docutils literal notranslate"><span class="pre">extended</span></code> adds harmonic multiples of those peaks; <code class="docutils literal notranslate"><span class="pre">ratios</span></code> and <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> reduce the spectrum to the frequency <em>ratios</em> between components; <code class="docutils literal notranslate"><span class="pre">cons_ratios</span></code> keeps the consonant subset of those ratios. Each level is a different claim about what in the spectrum is worth representing. A direct consequence, easy to miss, is that palette width follows the representation level rather than being a parameter the caller sets: you do not ask for an eight-swatch palette, you ask for <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> and receive as many swatches as the signal has extended ratios. The level is the substantive decision and the width is its shadow.</p>
+<p>The level interacts with the mapping in ways that are not free to ignore. The physical mapping folds frequency onto the single visible octave, so octave-related components land on the same wavelength; harmonically extended peaks — whose 2×/4×/8× multiples <em>are</em> octaves — are therefore actively destructive there, and the physical mapping must be fed <code class="docutils literal notranslate"><span class="pre">level=peaks</span></code>. The lesson generalises: a representation level encodes a commitment about equivalence, and that commitment has to agree with the equivalence the colour space already imposes.</p>
+</section>
+<section id="per-step-metrics-versus-per-signal-descriptors">
+<h3>Per-step metrics versus per-signal descriptors<a class="headerlink" href="#per-step-metrics-versus-per-signal-descriptors" title="Link to this heading">#</a></h3>
+<p>The pipeline computes at two granularities. <em>Per-step</em> metrics are computed for each element of the representation — each peak, each ratio. Sethares-style local consonance is the canonical example: a per-step consonance value, derived from critical-band roughness, that a declarative colourspace can send to hue so each swatch’s colour <em>means</em> the consonance of its own component. <em>Per-signal</em> descriptors summarise the whole spectrum into the fixed-length fingerprint — for a spectrum, eleven descriptors: harmonicity, harmonic spread, spectral flatness, spectral centroid, spectral spread, spectral entropy, n_peaks, fundamental, octave span, complexity, and Tenney height. A tuning, being a set of designed intervals with no amplitudes, makes four of these constant (spectral flatness, spectral entropy, and complexity pin to 1; fundamental to 0), so the tuning fingerprint drops to seven fields. The width of the fingerprint is dictated by what the domain can actually vary, not by a schema.</p>
+</section>
+<section id="the-data-flow">
+<h3>The data flow<a class="headerlink" href="#the-data-flow" title="Link to this heading">#</a></h3>
+<p><strong>Signal → Descriptors → Channels → ColorSpec → Render.</strong></p>
+<ul class="simple">
+<li><p><strong>Signal → Descriptors.</strong> The peak-extraction step yields peaks and dB amplitudes; the log encoding is inverted where linear magnitudes are needed; the level fixes what is described; per-step metrics and the per-signal fingerprint are computed. <em>Commitment:</em> the dB amplitudes are a Fechnerian sensation scale.</p></li>
+<li><p><strong>Descriptors → Channels.</strong> Descriptors and per-step metrics are assigned to lightness, chroma, and hue — by a declarative colourspace, a calibrated PCA direction, or the physical fold. <em>Commitment:</em> the channels are the three dimensions of trichromatic colour experience, and mapping a critical-band consonance value or a pitch onto one honours an auditory psychophysics or a measured cross-modal correspondence.</p></li>
+<li><p><strong>Channels → ColorSpec.</strong> Channel values become coordinates in OKLCh, with chroma requested relative to the local gamut cusp. <em>Commitment:</em> a perceptually uniform space is an observer model, so distances in it are psychological distances.</p></li>
+<li><p><strong>ColorSpec → Render.</strong> Gamut mapping brings every coordinate into sRGB by reducing chroma toward the cusp while preserving hue exactly. <em>Commitment:</em> the render respects the physiological-and-device boundary rather than clipping through it, so hue — the dimension chosen to carry meaning — survives the trip to the display intact.</p></li>
+</ul>
+<p>The 122° error is the standing reminder of the cost of forgetting this: it was not a colour-space failure at all, but an arithmetic operation performed in the wrong sensory scale, one step before colour ever entered the picture.</p>
+</section>
+</section>
+<section id="the-colour-layer-as-an-observer-model">
+<h2>The colour layer as an observer model<a class="headerlink" href="#the-colour-layer-as-an-observer-model" title="Link to this heading">#</a></h2>
+<p>The colour layer makes a single foundational commitment: colour is treated not as a physical property of light but as a <em>response</em> of a specific viewer. All colour arithmetic happens in OKLCh — the cylindrical form of OKLab — and when the module computes ΔE_OK as a plain Euclidean distance it is not measuring light but querying a model of the observer. That distinction organises the entire layer.</p>
+<section id="why-oklch-and-not-hsv-cam16-or-jzazbz">
+<h3>Why OKLCh, and not HSV, CAM16, or Jzazbz<a class="headerlink" href="#why-oklch-and-not-hsv-cam16-or-jzazbz" title="Link to this heading">#</a></h3>
+<p>HSV is convenient and it is not an observer model: its hue, saturation, and value are algebraic reshufflings of sRGB coordinates with no claim on perceived lightness or perceived difference. Using it to place a biosignal on a colour wheel would silently smuggle the display’s gamma curve and primaries into what is supposed to be a perceptual statement. At the other extreme sit the appearance models — CAM16, and spaces such as Jzazbz — which encode viewing conditions and are more faithful in absolute terms. But the target here is sRGB output on ordinary displays, and within that regime OKLab is a deliberate trade: it captures the perceptual-uniformity properties that matter while remaining cheap, invertible, and free of viewing-condition parameters we cannot pin down for an unknown reader on an unknown screen. That fidelity is checkable: the sRGB → OKLab → sRGB round trip is exact to a maximum error of 4.45×10⁻¹⁴, against 1.56×10⁻⁶ in the prototype — a lossless re-encoding of the display gamut, not a lossy approximation of it.</p>
+</section>
+<section id="lightness-as-a-fechnerian-nonlinearity">
+<h3>Lightness as a Fechnerian nonlinearity<a class="headerlink" href="#lightness-as-a-fechnerian-nonlinearity" title="Link to this heading">#</a></h3>
+<p>Equal increments of physical luminance are not equal increments of seen lightness, and the mismatch is worst in the dark tones — the Weber–Fechner and Stevens reading of brightness as a compressive continuum. The colour layer honours this by carrying lightness in Oklrab’s <code class="docutils literal notranslate"><span class="pre">L_r</span></code>, a perceptual toe applying exactly that compressive nonlinearity, and only then converting to OKLab’s <code class="docutils literal notranslate"><span class="pre">L</span></code>. The toe is a genuine transform, exactly invertible: the round trip closes to 2.2×10⁻¹⁶. A linear lightness axis would place perceptually crowded dark colours too far apart and sparse bright ones too close — precisely the non-uniformity the observer model exists to correct.</p>
+</section>
+<section id="the-cusp-where-trichromacy-and-the-display-bite">
+<h3>The cusp: where trichromacy and the display bite<a class="headerlink" href="#the-cusp-where-trichromacy-and-the-display-bite" title="Link to this heading">#</a></h3>
+<p>Only a bounded volume of colours is physically realizable, and OKLCh does not respect that boundary for free. At each lightness and hue there is a maximum chroma the sRGB gamut can hold — the cusp — and the critical empirical fact is how violently that ceiling moves: across the wheel it varies <strong>6.1×</strong>, from <code class="docutils literal notranslate"><span class="pre">max_chroma</span> <span class="pre">=</span> <span class="pre">0.048</span></code> at (L = 0.90, h = 270°) to <code class="docutils literal notranslate"><span class="pre">0.296</span></code> at (L = 0.60, h = 315°). No fixed chroma value can be safe: a naive fixed rectangle in (L, C) is simultaneously <strong>3× over budget</strong> at some hues and <strong>wastes 25 %</strong> of the available chroma at others. The module therefore requests chroma as a fraction of <code class="docutils literal notranslate"><span class="pre">max_chroma(L,</span> <span class="pre">h)</span></code> — trichromacy made operational. This also dissolves a category of impossible colours: <strong>saturated red at high lightness does not exist</strong>. At L ≈ 0.88 the red-hue ceiling is about 0.064, so a request for chroma 0.22 there is 3.4× over budget and can only resolve by desaturating toward white. The gamut has no room for a bright vivid red; the cusp is where that fact becomes visible in the numbers.</p>
+</section>
+<section id="cusp-preserving-gamut-mapping-and-the-spectral-locus">
+<h3>Cusp-preserving gamut mapping, and the spectral locus<a class="headerlink" href="#cusp-preserving-gamut-mapping-and-the-spectral-locus" title="Link to this heading">#</a></h3>
+<p>When a request falls outside the gamut, the module reduces chroma toward the cusp while <strong>preserving hue exactly</strong>, on the psychophysical judgement that a viewer tolerates a less saturated colour far more readily than a wrong hue. This moves in-gamut coverage from <strong>28.4 % to 100 %</strong>, hue held fixed, and it is cheap: <code class="docutils literal notranslate"><span class="pre">gamut_map</span></code> processes 20 000 colours in 362 ms (18 µs each), and <code class="docutils literal notranslate"><span class="pre">srgb_to_oklab</span></code> converts 100 000 colours in 37 ms. Where the pipeline needs a wavelength-to-colour map, the observer model reappears in the choice of spectral locus: the default uses the CIE 1931 colour-matching functions via the Wyman–Sloan–Shirley analytic fit, a direct model of the standard observer’s cone-integrated response. The tempting shortcut, Bruton’s approximation, is kept only as an option because it distorts where the observer is most sensitive: it collapses the entire 645–750 nm band (105 nm, 28.4 % of the visible span) onto a single hue at 29.23°, where CIE 1931’s worst plateau is 73 nm (19.7 %). Preferring the colour-matching functions is the same principle as preferring OKLab over HSV: stay faithful to the measured observer, and refuse to let an approximation invent perceptual identities that are not there.</p>
+</section>
+<section id="e-ok-and-its-interpretable-scale">
+<h3>ΔE_OK and its interpretable scale<a class="headerlink" href="#e-ok-and-its-interpretable-scale" title="Link to this heading">#</a></h3>
+<p>Because distance in this space is a psychological quantity, it comes with an interpretable scale: ΔE_OK below 0.02 is imperceptible, below 0.05 reads as the same colour, around 0.10 is comfortably distinct, and above 0.20 obviously different. Every separation claim in this paper is denominated in these units, which is legitimate only because OKLab is an observer model. The same model extends to viewers whose observer differs from the standard: colour-vision deficiency is simulated via the Machado <em>et al.</em> (2009) model, and under deuteranopia red and green collapse to a ΔE_OK of roughly 0.22 — a pair obviously different to a typical viewer becoming barely distinct to a dichromat. That is not a rendering artefact; it is the observer model correctly reporting a different observer.</p>
+</section>
+<section id="the-observer-model-is-where-naive-implementations-fail">
+<h3>The observer model is where naive implementations fail<a class="headerlink" href="#the-observer-model-is-where-naive-implementations-fail" title="Link to this heading">#</a></h3>
+<p>Three prototype bugs are evidence for the paper’s central methodological claim: audio-to-colour code goes silently wrong precisely where it disrespects the observer model. First, the prototype’s gamut fit was <strong>dead code</strong> — colours were clipped to the display before the fit was consulted, so out-of-gamut requests were resolved by naive channel clipping, which shifts hue; the hue-preservation guarantee existed only on paper. Second, a long-standing complaint that “bright red comes out pink” had been <strong>misdiagnosed</strong> as a hue error: sRGB red sits at OKLCh hue 29.23° (magenta is near 328°), so the hue was never wrong. The real cause was the chroma request of 0.22 at L = 0.88 above, forcing a desaturation toward white; the bug was invisible until the cusp was modelled. Third, <code class="docutils literal notranslate"><span class="pre">srgb_to_oklab</span></code> was <strong>silently wrong on batched input</strong> — a 0.024 error at index (3,3), a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> on other shapes — the most dangerous kind of failure, because it corrupts perceptual distances in bulk without announcing itself; the rewrite is exact at any batch size. Legacy behaviour, by contrast, is held bit-exact: <code class="docutils literal notranslate"><span class="pre">wavelength_to_rgb(475)</span></code> still returns <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">213,</span> <span class="pre">255)</span></code>. Each failure lived in the gap between what the display does and what the viewer sees, and closing that gap is what it means to treat the colour layer as an observer model rather than a coordinate convenience.</p>
+</section>
+</section>
+<section id="six-ways-to-derive-colour">
+<h2>Six ways to derive colour<a class="headerlink" href="#six-ways-to-derive-colour" title="Link to this heading">#</a></h2>
+<p>A biosignal is a spectrum; a colour is a point in a three-dimensional perceptual space. Any map between them must decide <em>what about the spectrum the colour is supposed to mean</em>, and that decision is a psychophysical commitment. The module registers eight mapping methods across six families, distinguished not by their code but by the kind of meaning they assign to hue.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Family</p></th>
+<th class="head"><p>What hue encodes</p></th>
+<th class="head"><p>Psychophysical reading</p></th>
+<th class="head"><p>Strength</p></th>
+<th class="head"><p>Cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spectral</span></code></p></td>
+<td><p>Physical</p></td>
+<td><p>folded wavelength of a peak frequency</p></td>
+<td><p>octave-of-light transcription (Newton)</p></td>
+<td><p>absolute, corpus-free, immune to calibration failure</p></td>
+<td><p>weak separation; every palette opens green</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mds</span></code></p></td>
+<td><p>Relational</p></td>
+<td><p>position in an MDS embedding of the pairwise consonance matrix</p></td>
+<td><p>Shepard relational structure; Plomp–Levelt affinity</p></td>
+<td><p>highest palette variety</p></td>
+<td><p>absolute placement is a free convention</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">anchored</span></code></p></td>
+<td><p>Statistical</p></td>
+<td><p>direction in a calibrated multi-descriptor PCA</p></td>
+<td><p>Shepard: relations, not absolute coordinates</p></td>
+<td><p>strongest, widest-arc separation</p></td>
+<td><p>absolute hue arbitrary; needs the right corpus</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tonotopic</span></code></p></td>
+<td><p>Declarative</p></td>
+<td><p>a named pitch descriptor</p></td>
+<td><p>cross-modal correspondence (higher pitch → lighter)</p></td>
+<td><p>readable axis</p></td>
+<td><p>separates weakly</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">consonance</span></code></p></td>
+<td><p>Declarative</p></td>
+<td><p>critical-band consonance</p></td>
+<td><p>Helmholtz–Plomp–Levelt–Sethares ear model</p></td>
+<td><p>readable; hue monotone in consonance</p></td>
+<td><p>separates weakly</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">harmonic</span></code></p></td>
+<td><p>Declarative</p></td>
+<td><p>a named harmonic descriptor</p></td>
+<td><p>harmonic-structure axis</p></td>
+<td><p>readable, invertible</p></td>
+<td><p>separates least</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tenney</span></code></p></td>
+<td><p>Declarative</p></td>
+<td><p>Tenney height</p></td>
+<td><p>interval-complexity axis</p></td>
+<td><p>readable, invertible</p></td>
+<td><p>separates weakly</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">derived</span></code></p></td>
+<td><p>Learned</p></td>
+<td><p>direction in the data’s own top principal components</p></td>
+<td><p>Shepard relational; data-derived structure</p></td>
+<td><p>strong, self-scaling separation</p></td>
+<td><p>absolute hue not interpretable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="physical-literal-cross-modal-transcription">
+<h3>Physical: literal cross-modal transcription<a class="headerlink" href="#physical-literal-cross-modal-transcription" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">spectral</span></code> method is Newton’s descendant: it takes a peak frequency, folds it by octaves onto the visible band, reads the resulting wavelength through the CIE 1931 colour-matching functions, and converts to sRGB. Hue <em>is</em> folded wavelength; no fingerprint, calibration, or corpus enters, so a given frequency yields the same hue in any dataset, on any day. Its strength is absolute, corpus-free meaning; its cost is separation, and the cost is the octave-of-light asymmetry made concrete. Over the 1–45 Hz EEG range — 5.5 octaves — the visible band repeats five to six times, two peaks an octave apart share a colour, and the ubiquitous ~1 Hz delta peak folds to ~532 nm, so every spectral palette opens green: hue occupancy is only 6–8 % of the wheel against 25 % for the fingerprint. The fold is well-behaved locally — a +0.25 Hz shift moves hue about 8.6°, and the 8–12 Hz band wraps cleanly — and precision is the lever that recovers separation. Rounding peaks to 0.25 Hz leaves a minimum pairwise ΔE_OK of 0.010 and 69 % distinct hues; tightening to 0.10 Hz raises those to 0.038 and 87 %, and doubles the fraction of peaks landing on physically distinct wavelengths from 28 % to 56 %. One combination must be avoided: harmonically extended peaks, whose octave multiples fold onto one wavelength — on one N2 epoch, eleven extended peaks collapsed to six.</p>
+</section>
+<section id="relational-a-similarity-map-onto-the-hue-circle">
+<h3>Relational: a similarity map onto the hue circle<a class="headerlink" href="#relational-a-similarity-map-onto-the-hue-circle" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">mds</span></code> method computes the pairwise consonance matrix over a signal’s steps and embeds it by classical multidimensional scaling onto the hue circle, so consonant steps land near one another. This is Shepard’s psychology made visible: an embedding that discards absolute position and keeps the geometry of similarity, driven by a consonance grounded in Plomp–Levelt critical-band roughness. Its strength is the highest palette variety of any method; its cost is that, as with every relational representation, the absolute placement is a convention and only the pattern of near-and-far carries meaning.</p>
+</section>
+<section id="statistical-hue-as-a-direction-in-a-calibrated-fingerprint">
+<h3>Statistical: hue as a direction in a calibrated fingerprint<a class="headerlink" href="#statistical-hue-as-a-direction-in-a-calibrated-fingerprint" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">anchored</span></code> method summarises each spectrum as the eleven-descriptor fingerprint, percentile-normalises each descriptor against a reference corpus, weights them, and projects through a stored two-dimensional PCA; hue is the angle of that projection, <code class="docutils literal notranslate"><span class="pre">atan2(pc2,</span> <span class="pre">pc1)</span></code>, and chroma scales with the percentile-ranked magnitude. This is the method that separates best, and the honesty the rest of the paper turns on lives here: the absolute anchor hue is arbitrary, corpus-dependent, and the method failed twice before it worked (both failures are dissected under Calibration). Its strength is separation; its costs are corpus-dependence and an absolute hue that means nothing. <code class="docutils literal notranslate"><span class="pre">anchored</span></code> answers <em>are these signals different, and by how much?</em> — not <em>what colour is this signal?</em></p>
+</section>
+<section id="declarative-colourspaces-hue-that-names-a-quantity">
+<h3>Declarative colourspaces: hue that names a quantity<a class="headerlink" href="#declarative-colourspaces-hue-that-names-a-quantity" title="Link to this heading">#</a></h3>
+<p>The declarative family refuses the trade the previous two make. Here the analyst <em>names</em> the axes: this descriptor drives lightness, that one chroma, this one hue, so a reader who knows the convention can invert the colour back to the measurement. The module ships four — <code class="docutils literal notranslate"><span class="pre">tonotopic</span></code>, <code class="docutils literal notranslate"><span class="pre">consonance</span></code>, <code class="docutils literal notranslate"><span class="pre">harmonic</span></code>, and <code class="docutils literal notranslate"><span class="pre">tenney</span></code>. The justification is cross-modal correspondence: routing pitch to lightness honours the robust <em>higher pitch → lighter</em> bias, and when <code class="docutils literal notranslate"><span class="pre">consonance</span></code> drives hue the axis is a critical-band model of the ear in the Helmholtz–Plomp–Levelt–Sethares lineage. That the mapping is genuinely readable can be shown directly: in <code class="docutils literal notranslate"><span class="pre">consonance</span></code>-space hue is monotone in the named quantity, sweeping from 250° to 30° as consonance rises from 4.8 to 42 — you can read the number off the colour. The cost is separation, and it is structural: because hue is pinned to a descriptor scale shared across all signals, signals that share a descriptor value share a hue whether or not they differ elsewhere. This is the interpretability tax, a defensible trade rather than a defect.</p>
+</section>
+<section id="learned-axes-discovered-in-the-data">
+<h3>Learned: axes discovered in the data<a class="headerlink" href="#learned-axes-discovered-in-the-data" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">derived</span></code> method lets the data choose its axes, taking the top three principal components of a per-step feature matrix as L, C, and h. Psychophysically this is the same relational stance as <code class="docutils literal notranslate"><span class="pre">mds</span></code> — a data-driven internal space in which position encodes structure — and it inherits the same caveat: a rotation of the eigenbasis is as valid as any other, so absolute hue carries no fixed meaning. Its strength is a strong, self-scaling separation obtained without committing to a named descriptor; its cost is that, like every learned embedding, it tells you that two signals differ and roughly along what latent contrast, but not what the colour <em>is</em>.</p>
+</section>
+<section id="interval-and-tuning-forms-colouring-a-sound-s-own-structure">
+<h3>Interval and tuning forms: colouring a sound’s own structure<a class="headerlink" href="#interval-and-tuning-forms-colouring-a-sound-s-own-structure" title="Link to this heading">#</a></h3>
+<p>The sixth family turns inward. <code class="docutils literal notranslate"><span class="pre">dyad_field</span></code> assigns hue by interval class, completing one full turn of the wheel per octave with lightness carrying consonance — a direct visual analogue of the pitch helix, where the circular dimension is pitch class and the 2:1 octave is read as sameness. <code class="docutils literal notranslate"><span class="pre">consonance_spectrum</span></code> colours a signal’s own Sethares dissonance curve, so the valleys of consonance and peaks of roughness become visible bands. The psychophysical content here is the most concrete in the module, because the object being coloured <em>is</em> a psychophysical function. The strength of this family is fidelity to a single sound’s own perceptual structure; its cost is precisely that it makes no cross-signal claim. These are forms for looking <em>into</em> a signal, not for telling two signals apart.</p>
+</section>
+</section>
+<section id="calibration">
+<h2>Calibration<a class="headerlink" href="#calibration" title="Link to this heading">#</a></h2>
+<section id="why-a-hand-tuned-constant-cannot-be-right">
+<h3>Why a hand-tuned constant cannot be right<a class="headerlink" href="#why-a-hand-tuned-constant-cannot-be-right" title="Link to this heading">#</a></h3>
+<p>The prototype normalised the consonance descriptor by dividing by a fixed constant of 55. A single constant encodes an assumption about a descriptor’s range, and that assumption was wrong for the data. On 30 EEG-like signals mean consonance spans 0.318 to 4.957; dividing by 55 maps every one into the bottom 9 % of the hue wheel, with a median adjacent gap of 0.20° and 242 of 435 pairs falling within 5° of each other. On 60 real EEG epochs the same constant yields a median hue gap of 1.26°, with only 7 % of pairs separated by more than 5°. The failure is not a poorly chosen constant; it is the idea of a constant. A just-noticeable difference proportional to stimulus magnitude — Weber’s law — cannot be honoured by a linear rescaling that treats the whole range uniformly.</p>
+</section>
+<section id="percentile-normalisation-as-an-ecology-model">
+<h3>Percentile normalisation as an ecology model<a class="headerlink" href="#percentile-normalisation-as-an-ecology-model" title="Link to this heading">#</a></h3>
+<p>The fix replaces the constant with a <strong>percentile normalisation against a reference corpus</strong>: each descriptor is ranked against the distribution it actually takes across a large body of signals, and the hue and chroma scales derive from that rank. A perceptually uniform colour space is already a model of the observer; percentile normalisation extends the same stance one layer out, fitting the map to the population of stimuli the observer will encounter, so the available perceptual range is spent where signals actually differ. Against the EEG corpus, replacing the constant with the fingerprint normalisation raised the median hue gap from 1.26° to 3.95° and lifted wheel occupancy from 47 % to 78 %.</p>
+</section>
+<section id="informativeness-weighting">
+<h3>Informativeness weighting<a class="headerlink" href="#informativeness-weighting" title="Link to this heading">#</a></h3>
+<p>Not every descriptor carries information on every corpus. Calibration therefore learns a <strong>per-descriptor weight equal to 1 minus the modal-bin fraction</strong>: a descriptor whose values pile into a single histogram bin is nearly constant and is down-weighted. On the EEG spectra, <code class="docutils literal notranslate"><span class="pre">n_peaks</span></code> and <code class="docutils literal notranslate"><span class="pre">complexity</span></code> collapse to weights of 0.003–0.004 — degenerate — and are suppressed, so they cannot inject spurious hue rotation. This is the same discipline as the amplitude fix upstream: a quantity that does not vary should not be allowed to speak.</p>
+</section>
+<section id="three-calibrations-and-per-level-routing">
+<h3>Three calibrations and per-level routing<a class="headerlink" href="#three-calibrations-and-per-level-routing" title="Link to this heading">#</a></h3>
+<p>A calibration is a fitted object, valid only on the domain it was fitted to. The module ships three: <code class="docutils literal notranslate"><span class="pre">eeg_sleep_v1</span></code>, learned from spectra; <code class="docutils literal notranslate"><span class="pre">tuning_v1</span></code>, learned from 532 designed scales (n-TET, just intonation, harmonic and subharmonic, inharmonic, stretched); and <code class="docutils literal notranslate"><span class="pre">tuning_eeg_v1</span></code>, learned from 6821 EEG-derived tunings. These are not interchangeable. Scoring a designed tuning against the EEG spectrum corpus saturates 64–91 % of the descriptors and pins all four sleep stages to a single hue of 69° with a minimum gap of zero — even though the raw projection angles were 348°, 335°, 36°, and 1° apart. The remedy is <strong>per-level routing</strong>: each of the five representation levels is sent to the calibration fitted for its domain. The gap is stark — <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> scored on <code class="docutils literal notranslate"><span class="pre">tuning_v1</span></code> spans 60° (median gap 19.6°, mean ΔE_OK 0.098); scored on <code class="docutils literal notranslate"><span class="pre">tuning_eeg_v1</span></code> it spans 270° (median gap 92.5°, mean ΔE_OK 0.205).</p>
+</section>
+<section id="tuning-fields">
+<h3>TUNING_FIELDS<a class="headerlink" href="#tuning-fields" title="Link to this heading">#</a></h3>
+<p>Because a tuning has no amplitudes, four of the eleven fingerprint descriptors are constant on any scale (<code class="docutils literal notranslate"><span class="pre">spectral_flatness</span></code> = 1, <code class="docutils literal notranslate"><span class="pre">spectral_entropy</span></code> = 1, <code class="docutils literal notranslate"><span class="pre">complexity</span></code> = 1, <code class="docutils literal notranslate"><span class="pre">fundamental</span></code> = 0), and feeding constants into a fit is the degeneracy problem in its purest form. Dropping them to a seven-field descriptor set (<code class="docutils literal notranslate"><span class="pre">TUNING_FIELDS</span></code>) moves the anchor by at most 0.11° — the constants carried no information to lose — while raising tuning PCA coverage to 86.5 % / 72.3 % and dropping descriptor saturation on designed scales from 18–45 % to 0 %. Calibration, in the end, is not a knob to be turned but a fit to be matched: to the right population, with the right descriptors, evaluated on the right domain.</p>
+</section>
+</section>
+<section id="three-tensions">
+<h2>Three tensions<a class="headerlink" href="#three-tensions" title="Link to this heading">#</a></h2>
+<p>The eight methods do not form a quality ranking; they occupy a design space governed by three tensions, and every method is a particular resolution of them. Naming the tensions is the paper’s organising claim: there is no free lunch to be found by tuning, because the trade-offs are structural.</p>
+<section id="stability-versus-separation">
+<h3>Stability versus separation<a class="headerlink" href="#stability-versus-separation" title="Link to this heading">#</a></h3>
+<p>A stateless map gives the same signal the same palette every time — <code class="docutils literal notranslate"><span class="pre">spectral</span></code>, in particular, sends a given frequency to a given hue in any dataset, immune to every calibration failure above. That stability is exactly what precludes optimal separation, because knowing how far apart to push two palettes requires knowing about <em>the other signals</em>. The module exposes the choice directly: <code class="docutils literal notranslate"><span class="pre">mode=absolute</span></code> returns the stable, context-free colour; <code class="docutils literal notranslate"><span class="pre">palette_set(mode=separated)</span></code> spends context to pull a set of signals apart. A colour that means the same thing everywhere cannot also be the colour that best distinguishes this particular set, because the second property is a property of the set, not of the signal.</p>
+</section>
+<section id="separation-versus-interpretability">
+<h3>Separation versus interpretability<a class="headerlink" href="#separation-versus-interpretability" title="Link to this heading">#</a></h3>
+<p>The clearest reading of this tension comes from Shepard: the mind traffics in <strong>relations and structure, not absolute coordinates</strong>. The methods split precisely along this line, which the Evaluation quantifies. The separation-oriented methods (<code class="docutils literal notranslate"><span class="pre">mds</span></code>, <code class="docutils literal notranslate"><span class="pre">spectral</span></code>, <code class="docutils literal notranslate"><span class="pre">anchored</span></code>) top the variety table; the declarative colourspaces sit at the bottom — not from a defect but as the direct cost of interpretability. In a declarative colourspace hue <em>means</em> a named descriptor, so hue is pinned to a scale shared across all signals and cannot be spent freely to separate them. The statistical anchor does the reverse, and pays for maximal separation with absolute interpretability. Four equally valid conventions — an eigenvector sign flip, a PC1↔PC2 swap, a reference rotation — give different absolute anchor hues but <em>identical</em> pairwise angular distances (46°, 102°, 176° preserved across all four). Bootstrap resamples move the anchors about 2° of circular standard deviation, reproducibly — but reproducible is not meaningful, and only the angular distance between signals is corpus-independent. Read through Shepard, the arbitrary absolute hue is not a bug: it is the system correctly representing structure rather than inventing an absolute code the perception does not warrant. The declarative map makes the opposite bet, buying a nameable axis at the price of relational reach.</p>
+</section>
+<section id="physical-versus-statistical-grounding">
+<h3>Physical versus statistical grounding<a class="headerlink" href="#physical-versus-statistical-grounding" title="Link to this heading">#</a></h3>
+<p>The last tension is about where the map’s authority comes from. <code class="docutils literal notranslate"><span class="pre">spectral</span></code> is physically grounded — Hz octave-folded on wavelength, through the CIE 1931 functions to sRGB — needing no corpus, and it is bulletproof for exactly that reason; its cost is the octave-of-light compression that confines it to one colour family. <code class="docutils literal notranslate"><span class="pre">anchored</span></code>, the statistical map, separates far better but draws its authority from a corpus, and failed twice when it lacked the right one. Physical grounding buys immunity at the cost of reach; statistical grounding buys reach at the cost of a dependency that can, and did, break. The three tensions do not resolve to a winner: a method is a stance on all three at once, and the right choice is a property not of the module but of the question.</p>
+</section>
+</section>
+<section id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Link to this heading">#</a></h2>
+<section id="the-corpus-and-what-0-failures-does-and-does-not-mean">
+<h3>The corpus and what “0 failures” does and does not mean<a class="headerlink" href="#the-corpus-and-what-0-failures-does-and-does-not-mean" title="Link to this heading">#</a></h3>
+<p>Every quantitative claim is measured on the HMC sleep-staging database, subject SN001: 7.12 h at 256 Hz across four EEG channels, segmented into 854 expert-scored 30 s epochs. Crossed with channels this yields 3416 signals, and the pipeline extracted a fingerprint and a colour for all 3416 with <strong>0 failures</strong>. That number is a robustness claim, not an accuracy claim: it says the extraction path is numerically total over a realistic range of neural spectra, not that the resulting colours are correct in any absolute sense. We evaluate colour assignments with falsifiable metrics — mean and minimum pairwise ΔE_OK, hue occupancy, and collisions below a perceptual threshold — which are meaningful only because the working space is an observer model. A claim like “these two epochs are the same colour” is therefore checkable against a number, not asserted.</p>
+</section>
+<section id="variety-by-method">
+<h3>Variety by method<a class="headerlink" href="#variety-by-method" title="Link to this heading">#</a></h3>
+<p>Across 10 sleep-EEG chunks (extended peaks, 0.10 Hz precision), mean pairwise palette ΔE_OK orders the methods:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Family</p></th>
+<th class="head"><p>Mean pairwise ΔE_OK</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mds</span></code></p></td>
+<td><p>relational</p></td>
+<td><p>0.182</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spectral</span></code></p></td>
+<td><p>physical</p></td>
+<td><p>0.179</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">anchored</span></code></p></td>
+<td><p>statistical</p></td>
+<td><p>0.153</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">derived</span></code></p></td>
+<td><p>learned</p></td>
+<td><p>0.147</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tonotopic</span></code></p></td>
+<td><p>declarative</p></td>
+<td><p>0.121</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">consonance</span></code></p></td>
+<td><p>declarative</p></td>
+<td><p>0.118</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tenney</span></code></p></td>
+<td><p>declarative</p></td>
+<td><p>0.094</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">harmonic</span></code></p></td>
+<td><p>declarative</p></td>
+<td><p>0.080</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The separation-oriented methods score highest and the declarative colourspaces lowest — the interpretability tax quantified. When a colourspace sends “consonance” to hue, the axis is a psychophysical model of the ear in the Helmholtz–Plomp–Levelt–Sethares lineage: critical-band roughness computed from the signal’s own partials, not an arbitrary index. The interpretability the low ΔE_OK appears to “cost” is exactly what that axis buys.</p>
+</section>
+<section id="arbitrary-absolute-hue-confirms-a-relational-thesis">
+<h3>Arbitrary absolute hue confirms a relational thesis<a class="headerlink" href="#arbitrary-absolute-hue-confirms-a-relational-thesis" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">anchored</span></code> and <code class="docutils literal notranslate"><span class="pre">derived</span></code> methods raise a result that would be a scandal if colour were meant to be an absolute code: the absolute hue is a convention, fixed only up to a free rotation, while the pairwise angular distances are invariant and corpus-independent. We read this as confirmation, not caveat. Shepard’s universal law of generalization holds that the mind represents relations and structure rather than absolute coordinates, and that perceived similarity is a function of distance in an internal space. A representation whose absolute origin is free while its pairwise distances are invariant is precisely a structural representation. The <code class="docutils literal notranslate"><span class="pre">anchored</span></code> method therefore answers a question about structure — <em>are these signals different, and by how much?</em> — and honestly declines to answer <em>what colour, in itself, is this signal?</em>, because that question presupposes an absolute code the data do not contain.</p>
+</section>
+<section id="not-a-sleep-classifier">
+<h3>Not a sleep classifier<a class="headerlink" href="#not-a-sleep-classifier" title="Link to this heading">#</a></h3>
+<p>A tempting misreading of a sleep-EEG corpus is that the colours should sort by sleep stage. They do not. In fingerprint space the five stages overlap heavily; individual 30 s epochs are not separable by stage, and within-stage variability is large — the anchor’s circular standard deviation inside N2 alone is 150° at 30 s. Per-stage palettes are legible only after aggregating on the order of 500+ epochs, at which point the palette describes a stage’s central tendency rather than classifying any epoch. The module produces a perceptual coordinate for a spectrum; the overlap is a property of the neural signal, not a failure of the colour map.</p>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<p><strong>Single subject, single extractor.</strong> The calibrations rest on narrow ground: <code class="docutils literal notranslate"><span class="pre">eeg_sleep_v1</span></code> is built from one subject, each calibration fit with a single extraction configuration. Percentile normalisation and the stored PCA are corpus-statistics, so cross-subject and cross-montage transfer is unestablished. The 0-failure result speaks to numerical totality over one recording, not generality across people or hardware.</p>
+<p><strong>Absolute hue is arbitrary for the statistical and learned methods.</strong> <code class="docutils literal notranslate"><span class="pre">anchored</span></code> and <code class="docutils literal notranslate"><span class="pre">derived</span></code> carry no absolute colour meaning; their hue is fixed only up to a free rotation. We reframe this as principled rather than apologise for it, but a reader who wants a colour to <em>name</em> a signal in isolation must use a physical or declarative method instead, knowingly.</p>
+<p><strong>Octave collapse in the physical map.</strong> Hearing spans ~10 octaves, vision ~1; mapping the former onto the latter is lossy compression, so octave-equivalent peaks share a colour and every palette opens green. Precision partly offsets this, but harmonically extended peaks must never be combined with the fold. This is a fact about the two senses, not a bug to be patched.</p>
+<p><strong>Calibration-domain sensitivity.</strong> Using the wrong calibration degrades silently into meaninglessness rather than erroring — a designed tuning scored against the EEG corpus pinned all four sleep stages to a single hue — which is why per-level routing and the tuning-appropriate field set are load-bearing, not cosmetic. A statistical method needs the right corpus, and there is no corpus that is right for everything.</p>
+<p><strong>Several strong results arrived only after a confident wrong guess.</strong> The dead-code gamut fit, the “bright red is pink” misdiagnosis, the batched <code class="docutils literal notranslate"><span class="pre">srgb_to_oklab</span></code> error, and the dB scale error each improved a headline number once fixed, but each was preceded by a plausible, confident, wrong hypothesis. The honest reading is that the perceptual metric is what made the errors visible: without a uniform space and a ΔE_OK threshold, “close enough” hides them.</p>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>The taxonomy is the deliverable, and it is a toolbox, not a ranking. Read through psychophysics, the three tensions are one question asked three ways, and the answer is that there is no single right colour for a biosignal — there is a right colour for a <em>question</em>. If the question is physical identity (“what frequency is this?”), the octave-fold gives an absolute, corpus-free hue in Newton’s tradition of bending the spectrum into a circle. If the question is relational structure (“how do these signals differ?”), the statistical and learned methods give invariant pairwise distances, and their arbitrary absolute hue is Shepard’s law made visible: perception traffics in relations, not absolute codes. If the question is a readable quantity (“how consonant is this?”), a declarative colourspace maps a named psychophysical axis — critical-band roughness, Tenney height, tonotopic pitch — directly to a perceptual dimension, honouring cross-modal correspondences rather than inventing them. The audio-to-colour project is three centuries old, from Newton’s diatonic spectrum through Castel’s and Scriabin’s instruments; what those attempts lacked was a perceptual metric. Supplying one — a uniform colour space as an observer model, a critical-band consonance model as an ear, and Fechnerian log encoding throughout — is what turns the analogy into a measurement. The colour you should derive from a biosignal depends on which question you want it to answer, and the contribution here is a module that lets you choose, and tells you what each choice costs.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Berlin, B. &amp; Kay, P. — <em>Basic Color Terms</em> (1969).</p></li>
+<li><p>Castel, L.-B. — <em>clavecin oculaire</em> (ocular harpsichord).</p></li>
+<li><p>CIE — CIELAB colour space (1976).</p></li>
+<li><p>Fechner, G. — <em>Elemente der Psychophysik</em> (1860).</p></li>
+<li><p>Fletcher, H. — critical bands of hearing.</p></li>
+<li><p>Helmholtz, H. von — <em>On the Sensations of Tone</em> (1863).</p></li>
+<li><p>Köhler, W. — <em>takete/maluma</em> (sound symbolism); later <em>bouba/kiki</em>.</p></li>
+<li><p>Krumhansl, C. — probe-tone studies of tonal hierarchy.</p></li>
+<li><p>MacAdam, D. — discrimination ellipses (1942).</p></li>
+<li><p>Marks, L. — cross-modal correspondence.</p></li>
+<li><p>Newton, I. — <em>Opticks</em> (1704).</p></li>
+<li><p>Ottosson, B. — OKLab colour space (2020).</p></li>
+<li><p>Plomp, R. &amp; Levelt, W. — tonal consonance and critical bandwidth (1965).</p></li>
+<li><p>Scriabin, A. — <em>clavier à lumières</em> (<em>Prometheus</em>).</p></li>
+<li><p>Sethares, W. — <em>Local consonance</em> (1993); <em>Tuning, Timbre, Spectrum, Scale</em> (1998).</p></li>
+<li><p>Shepard, R. — circular/helical model of pitch (1964); universal law of generalization (<em>Science</em>, 1987).</p></li>
+<li><p>Spence, C. — cross-modal correspondences: a review (2011).</p></li>
+<li><p>Stevens, S. S. — the power law of sensation (1957).</p></li>
+<li><p>Weber, E. H. — Weber’s law (the just-noticeable difference).</p></li>
+<li><p>Young, T. &amp; Helmholtz, H. von — trichromatic theory of colour vision.</p></li>
+<li><p>Zwicker, E. — the Bark critical-band scale.</p></li>
+</ul>
+</section>
+<section id="availability">
+<h2>Availability<a class="headerlink" href="#availability" title="Link to this heading">#</a></h2>
+<p>The module is available as <code class="docutils literal notranslate"><span class="pre">biotuner.biocolors</span></code>, with the perceptual colour layer under <code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/color/</span></code> importing nothing from the rest of the package and testable against reference colour science. All empirical results are computed on the HMC sleep-EEG corpus, subject SN001.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#abstract">Abstract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-three-century-old-problem-still-missing-its-metric">A three-century-old problem, still missing its metric</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-naive-maps-fail">Why the naïve maps fail</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-psychophysical-stance">A psychophysical stance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fechner-s-programme-and-why-everything-is-a-logarithm">Fechner’s programme, and why everything is a logarithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#perceptual-uniformity-trichromacy-and-the-closed-circle">Perceptual uniformity, trichromacy, and the closed circle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#critical-band-consonance-behind-every-consonance-axis">Critical-band consonance behind every “consonance” axis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-octave-of-light-the-hinge-that-forces-the-fold">One octave of light: the hinge that forces the fold</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shepard-s-relational-reading-of-the-arbitrary-hue-result">Shepard’s relational reading of the arbitrary-hue result</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-modal-correspondence-and-categorical-perception-as-a-constraint">Cross-modal correspondence, and categorical perception as a constraint</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-colour-the-pipeline">From signal to colour: the pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#amplitudes-are-decibels-and-decibels-are-already-fechnerian">Amplitudes are decibels, and decibels are already Fechnerian</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representation-levels-and-why-palette-width-is-not-a-knob">Representation levels, and why palette width is not a knob</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-step-metrics-versus-per-signal-descriptors">Per-step metrics versus per-signal descriptors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data-flow">The data flow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-colour-layer-as-an-observer-model">The colour layer as an observer model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-oklch-and-not-hsv-cam16-or-jzazbz">Why OKLCh, and not HSV, CAM16, or Jzazbz</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lightness-as-a-fechnerian-nonlinearity">Lightness as a Fechnerian nonlinearity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cusp-where-trichromacy-and-the-display-bite">The cusp: where trichromacy and the display bite</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cusp-preserving-gamut-mapping-and-the-spectral-locus">Cusp-preserving gamut mapping, and the spectral locus</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-ok-and-its-interpretable-scale">ΔE_OK and its interpretable scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-observer-model-is-where-naive-implementations-fail">The observer model is where naive implementations fail</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#six-ways-to-derive-colour">Six ways to derive colour</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-literal-cross-modal-transcription">Physical: literal cross-modal transcription</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relational-a-similarity-map-onto-the-hue-circle">Relational: a similarity map onto the hue circle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-hue-as-a-direction-in-a-calibrated-fingerprint">Statistical: hue as a direction in a calibrated fingerprint</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#declarative-colourspaces-hue-that-names-a-quantity">Declarative colourspaces: hue that names a quantity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learned-axes-discovered-in-the-data">Learned: axes discovered in the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interval-and-tuning-forms-colouring-a-sound-s-own-structure">Interval and tuning forms: colouring a sound’s own structure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-a-hand-tuned-constant-cannot-be-right">Why a hand-tuned constant cannot be right</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#percentile-normalisation-as-an-ecology-model">Percentile normalisation as an ecology model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informativeness-weighting">Informativeness weighting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-calibrations-and-per-level-routing">Three calibrations and per-level routing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tuning-fields">TUNING_FIELDS</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-tensions">Three tensions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stability-versus-separation">Stability versus separation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#separation-versus-interpretability">Separation versus interpretability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-versus-statistical-grounding">Physical versus statistical grounding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation">Evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-corpus-and-what-0-failures-does-and-does-not-mean">The corpus and what “0 failures” does and does not mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variety-by-method">Variety by method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arbitrary-absolute-hue-confirms-a-relational-thesis">Arbitrary absolute hue confirms a relational thesis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#not-a-sleep-classifier">Not a sleep classifier</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#availability">Availability</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

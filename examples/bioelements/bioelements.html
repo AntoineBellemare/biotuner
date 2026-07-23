@@ -1,0 +1,965 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>bioelements — from biosignals to the periodic table, and to materials &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/bioelements/bioelements';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="API Reference" href="../../api/index.html" />
+    <link rel="prev" title="biocolors — deriving colour from a biosignal" href="../biocolors/biocolors.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/bioelements/bioelements.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>bioelements — from biosignals to the periodic table, and to materials</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-element-is-a-spectrum-is-a-chord-is-a-tuning">An element is a spectrum is a chord is a tuning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matter-is-compositions-of-atoms">Matter is compositions of atoms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#composition-is-recursive-a-cloud-is-water-air">Composition is recursive: a cloud is water + air</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dictionary-spans-matter-a-measured-claim">The dictionary spans matter — a measured claim</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-biosignal-resonates-with-materials-not-just-atoms">A biosignal resonates with materials, not just atoms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#every-material-affords-a-palette-its-flame-colours">Every material affords a palette — its flame colours</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#and-a-tuning-a-chord-a-form">And a tuning, a chord, a form</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-compositional-hierarchy">The compositional hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applied-a-night-of-sleep-read-as-changing-matter">Applied: a night of sleep, read as changing matter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-materials-does-each-sleep-stage-resonate-with">Which materials does each sleep stage resonate with?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-elemental-type-signature-of-each-stage">The elemental <em>type</em> signature of each stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-periodic-table-itself-lit-by-resonance">The periodic table itself, lit by resonance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-whole-night-continuously-the-resonance-river">A whole night, continuously — the resonance river</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="bioelements-from-biosignals-to-the-periodic-table-and-to-materials">
+<h1>bioelements — from biosignals to the periodic table, and to materials<a class="headerlink" href="#bioelements-from-biosignals-to-the-periodic-table-and-to-materials" title="Link to this heading">#</a></h1>
+<p>Every atom emits light at a characteristic set of wavelengths — its emission
+spectrum. <code class="docutils literal notranslate"><span class="pre">bioelements</span></code> octave-folds a biosignal’s peaks into the optical band and
+asks which elements’ lines they land on: the same octave-transpose <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> uses
+to send a frequency to a <em>colour</em>, <code class="docutils literal notranslate"><span class="pre">bioelements</span></code> uses to send it to the <em>periodic
+table</em>.</p>
+<p>The expansion lifts this from <strong>atoms</strong> to <strong>materials</strong>. A <code class="docutils literal notranslate"><span class="pre">Composition</span></code> is a
+weighted bag of elements — or of other compositions — so water, air, wood, a cloud,
+any composition of matter, has its own composite spectrum, and therefore its own
+chord, tuning, palette, geometry, and biosignal affinity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner</span><span class="w"> </span><span class="kn">import</span> <span class="n">bioelements</span> <span class="k">as</span> <span class="n">be</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">load_elements</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1"> NIST emission lines across </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s1"> elements&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;element categories:&#39;</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">unique</span><span class="p">())))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\.claude\worktrees\epic-morse-ded0d5\biotuner\biotuner_object.py:11: DeprecationWarning: 
+The `fooof` package is being deprecated and replaced by the `specparam` (spectral parameterization) package.
+This version of `fooof` (1.1) is fully functional, but will not be further updated.
+New projects are recommended to update to using `specparam` (see Changelog for details).
+  from fooof import FOOOF
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>21,896 NIST emission lines across 99 elements
+element categories: Actinides, Alkali Metals, Alkaline Earth Metals, Halogens, Lanthanides, Metalloids, Noble Gases, Nonmetals, Post-transition Metals, Transition Metals
+</pre></div>
+</div>
+</div>
+</div>
+<section id="an-element-is-a-spectrum-is-a-chord-is-a-tuning">
+<h2>An element is a spectrum is a chord is a tuning<a class="headerlink" href="#an-element-is-a-spectrum-is-a-chord-is-a-tuning" title="Link to this heading">#</a></h2>
+<p>The atom is already a first-class harmonic object. Take hydrogen’s strongest lines,
+fold them to audio, reduce to ratios — a <strong>material tuning</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">element_spectrum</span><span class="p">(</span><span class="s1">&#39;Hydrogen&#39;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hydrogen — strongest folded ratios:&#39;</span><span class="p">,</span> <span class="n">be</span><span class="o">.</span><span class="n">material_tuning</span><span class="p">(</span><span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">],</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;an element leaf spectrum:&#39;</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>hydrogen — strongest folded ratios: [1.0, 1.08, 1.12, 1.35, 1.4286, 1.512]
+an element leaf spectrum: Spectrum(&#39;Hydrogen&#39;, 12 lines, dominant: Hydrogen 100%)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="matter-is-compositions-of-atoms">
+<h2>Matter is compositions of atoms<a class="headerlink" href="#matter-is-compositions-of-atoms" title="Link to this heading">#</a></h2>
+<p>Water is H₂O. The composite spectrum is the weighted superposition of its elements’
+spectra — but each element must be <strong>budget-normalised</strong> first, or line-rich elements
+(oxygen has 3× hydrogen’s lines) would dominate regardless of stoichiometry. With
+budget-normalisation, water is 2/3 hydrogen, 1/3 oxygen <em>by design</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">water</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;water.elements()      &#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">water</span><span class="o">.</span><span class="n">elements</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spectral dominance    &#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">water</span><span class="o">.</span><span class="n">dominant</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;air.elements()        &#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s2">&quot;Air&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">3</span><span class="p">]})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>water.elements()       {&#39;Hydrogen&#39;: 0.667, &#39;Oxygen&#39;: 0.333}
+spectral dominance     {&#39;Hydrogen&#39;: 0.667, &#39;Oxygen&#39;: 0.333}
+air.elements()         {&#39;Nitrogen&#39;: 0.78, &#39;Oxygen&#39;: 0.21, &#39;Argon&#39;: 0.009}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="composition-is-recursive-a-cloud-is-water-air">
+<h2>Composition is recursive: a cloud is water + air<a class="headerlink" href="#composition-is-recursive-a-cloud-is-water-air" title="Link to this heading">#</a></h2>
+<p>A <strong>structure</strong>’s parts are themselves materials, so composition bottoms out at
+element leaves through any depth.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cloud</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s1">&#39;Cloud&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cloud.elements()&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">cloud</span><span class="o">.</span><span class="n">elements</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">5</span><span class="p">]})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cloud composite spectrum:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cloud</span><span class="o">.</span><span class="n">spectrum</span><span class="p">()),</span> <span class="s1">&#39;lines&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cloud.elements() {&#39;Nitrogen&#39;: 0.741, &#39;Oxygen&#39;: 0.216, &#39;Hydrogen&#39;: 0.033, &#39;Argon&#39;: 0.009, &#39;Carbon&#39;: 0.0}
+cloud composite spectrum: 280 lines
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-dictionary-spans-matter-a-measured-claim">
+<h2>The dictionary spans matter — a measured claim<a class="headerlink" href="#the-dictionary-spans-matter-a-measured-claim" title="Link to this heading">#</a></h2>
+<p>Materials are tagged on four axes (compositional level · material class · natural
+domain · element category). <code class="docutils literal notranslate"><span class="pre">coverage_report()</span></code> is a build gate: every class and
+domain represented, and the falsifiable metric — ≥ 8 of the 10 NIST element
+categories exercised.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rep</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">coverage_report</span><span class="p">(</span><span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bioelements coverage — 153 materials
+  kinds:            {&#39;element&#39;: 100, &#39;compound&#39;: 32, &#39;mixture&#39;: 16, &#39;structure&#39;: 5}
+  classes  14/14: missing none
+  domains  7/7: missing none
+  element categories 10/10 (gate &gt;=8): PASS
+      have:    [&#39;Actinides&#39;, &#39;Alkali Metals&#39;, &#39;Alkaline Earth Metals&#39;, &#39;Halogens&#39;, &#39;Lanthanides&#39;, &#39;Metalloids&#39;, &#39;Noble Gases&#39;, &#39;Nonmetals&#39;, &#39;Post-transition Metals&#39;, &#39;Transition Metals&#39;]
+      missing: none
+  OVERALL: PASS
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-biosignal-resonates-with-materials-not-just-atoms">
+<h2>A biosignal resonates with materials, not just atoms<a class="headerlink" href="#a-biosignal-resonates-with-materials-not-just-atoms" title="Link to this heading">#</a></h2>
+<p>Fold a signal’s peaks to the optical band and score them against every material’s
+composite lines (relative, cents-based tolerance). A biosignal now has a graded
+affinity to <em>water</em>, <em>wood</em>, <em>iron</em> — the materials it most resonates with.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.83</span><span class="p">,</span> <span class="mf">14.3</span><span class="p">,</span> <span class="mf">20.8</span><span class="p">,</span> <span class="mf">27.3</span><span class="p">,</span> <span class="mf">33.8</span><span class="p">])</span>   <span class="c1"># a Schumann-like signal</span>
+<span class="n">ranked</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">match_materials</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">tol_cents</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ranked</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        material  affinity     kind archetype
+          Galena  0.559888 compound          
+          Pyrite  0.539446 compound          
+          Quartz  0.475108 compound     earth
+     SilicaGlass  0.475108 compound          
+    UraniumGlass  0.453835 compound          
+         Granite  0.445107  mixture          
+          Halite  0.444207 compound          
+InterstellarDust  0.441789  mixture          
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="every-material-affords-a-palette-its-flame-colours">
+<h2>Every material affords a palette — its flame colours<a class="headerlink" href="#every-material-affords-a-palette-its-flame-colours" title="Link to this heading">#</a></h2>
+<p>Each element burns with a characteristic colour (how chemists identify them by flame:
+Na→amber, Cu→green, K→violet, Li→crimson…). A material’s palette is the flame colours
+of its dominant elements, weighted by composition — so water (H/O) reads nothing like a
+copper alloy (green) or table salt (amber+green).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">,</span><span class="s1">&#39;Fire&#39;</span><span class="p">,</span><span class="s1">&#39;Wood&#39;</span><span class="p">,</span><span class="s1">&#39;Air&#39;</span><span class="p">,</span><span class="s1">&#39;Blood&#39;</span><span class="p">,</span><span class="s1">&#39;Halite&#39;</span><span class="p">,</span><span class="s1">&#39;Bronze&#39;</span><span class="p">,</span><span class="s1">&#39;Chlorophyll&#39;</span><span class="p">,</span><span class="s1">&#39;Quartz&#39;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mats</span><span class="p">):</span>
+    <span class="n">pal</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">material_flame_palette</span><span class="p">(</span><span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">hexc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pal</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">hexc</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">row</span> <span class="o">+</span> <span class="mf">0.45</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mats</span><span class="p">));</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;material flame-colour palettes — each element by how it burns&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/8787c2e592ca02dafbfb75c26473d8b34b39fe345a787a19bf71e2c5f93ba671.png" src="../../_images/8787c2e592ca02dafbfb75c26473d8b34b39fe345a787a19bf71e2c5f93ba671.png" />
+</div>
+</div>
+</section>
+<section id="and-a-tuning-a-chord-a-form">
+<h2>And a tuning, a chord, a form<a class="headerlink" href="#and-a-tuning-a-chord-a-form" title="Link to this heading">#</a></h2>
+<p>The same composite spectrum reduces to a material scale, sounds as a material chord,
+and hands off to <code class="docutils literal notranslate"><span class="pre">harmonic_geometry</span></code> as a <code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code> for a material’s <em>shape</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">,</span><span class="s1">&#39;Fire&#39;</span><span class="p">,</span><span class="s1">&#39;Iron&#39;</span><span class="p">]:</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s1">6s</span><span class="si">}</span><span class="s1"> tuning=</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">tuning</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">gi</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">water.geometry() -&gt;&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">gi</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;with&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">gi</span><span class="o">.</span><span class="n">peaks</span><span class="p">),</span> <span class="s1">&#39;partials&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Water  tuning=[1.0, 1.08, 1.12, 1.35, 1.4286, 1.512]
+Fire   tuning=[1.0, 1.0083, 1.0456, 1.0468, 1.0531, 1.0618]
+Iron   tuning=[1.004, 1.0057, 1.0366, 1.0387, 1.0425, 1.0429]
+
+water.geometry() -&gt; HarmonicInput with 2 partials
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-compositional-hierarchy">
+<h2>The compositional hierarchy<a class="headerlink" href="#the-compositional-hierarchy" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  Element     H, O, C, N, Fe …            leaf spectra (NIST lines)
+     |  stoichiometry
+  Compound    H2O, NaCl, CO2, cellulose   fixed atom ratios
+     |  proportion
+  Mixture     air, wood, tissue, blood    blends of compounds/elements
+     |  arrangement
+  Structure   cloud, fire, lightning      compositions of materials (-&gt; geometry)
+</pre></div>
+</div>
+<p>One recursive operation — <em>superpose the component spectra, weighted, each
+budget-normalised</em> — carries all four levels. Everything a material affords is a
+transform of that one composite spectrum.</p>
+</section>
+<section id="applied-a-night-of-sleep-read-as-changing-matter">
+<h2>Applied: a night of sleep, read as changing matter<a class="headerlink" href="#applied-a-night-of-sleep-read-as-changing-matter" title="Link to this heading">#</a></h2>
+<p>The affinity is not a still image. Run it across a <strong>real night of sleep</strong> (Sleep-EDF
+SC4012, EEG Fpz-Cz, 12 real 30-second epochs per stage) and the matter a biosignal
+resonates with <strong>shifts with sleep depth</strong> — the same recording, read as a changing
+composition of matter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">welch</span><span class="p">,</span> <span class="n">find_peaks</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;sleep_stages.npz&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span> <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;docs/examples/bioelements/sleep_stages.npz&#39;</span><span class="p">)</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">stages</span><span class="p">,</span> <span class="n">sf</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="s1">&#39;epochs&#39;</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="s1">&#39;stages&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="s1">&#39;sf&#39;</span><span class="p">])</span>
+<span class="n">ORDER</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;W&#39;</span><span class="p">,</span><span class="s1">&#39;N1&#39;</span><span class="p">,</span><span class="s1">&#39;N2&#39;</span><span class="p">,</span><span class="s1">&#39;N3&#39;</span><span class="p">,</span><span class="s1">&#39;REM&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real sleep epochs:&#39;</span><span class="p">,</span> <span class="n">epochs</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
+      <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="nb">int</span><span class="p">((</span><span class="n">stages</span><span class="o">==</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ORDER</span><span class="p">})</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">epoch_peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">pxx</span> <span class="o">=</span> <span class="n">welch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sf</span><span class="o">*</span><span class="mi">4</span><span class="p">));</span> <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="n">f</span><span class="o">&gt;=</span><span class="n">fmin</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">f</span><span class="o">&lt;=</span><span class="n">fmax</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">db</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">pxx</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">+</span><span class="mf">1e-30</span><span class="p">)</span>
+    <span class="n">idx</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">db</span><span class="p">)]])</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="n">idx</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">n</span><span class="p">]])]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>real sleep epochs: (60, 3000) | {&#39;W&#39;: 12, &#39;N1&#39;: 12, &#39;N2&#39;: 12, &#39;N3&#39;: 12, &#39;REM&#39;: 12}
+</pre></div>
+</div>
+</div>
+</div>
+<section id="which-materials-does-each-sleep-stage-resonate-with">
+<h3>Which materials does each sleep stage resonate with?<a class="headerlink" href="#which-materials-does-each-sleep-stage-resonate-with" title="Link to this heading">#</a></h3>
+<p>Per-epoch affinity to a curated set of materials, averaged within each stage — shown
+<strong>relative per material</strong> (z-scored across stages) so a stage reads as resonating
+<em>above</em> or <em>below</em> that material’s own average, rather than being swamped by
+line-dense species that match almost anything.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MATS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Water&#39;</span><span class="p">,</span><span class="s1">&#39;Air&#39;</span><span class="p">,</span><span class="s1">&#39;Fire&#39;</span><span class="p">,</span><span class="s1">&#39;Wood&#39;</span><span class="p">,</span><span class="s1">&#39;Blood&#39;</span><span class="p">,</span><span class="s1">&#39;Seawater&#39;</span><span class="p">,</span><span class="s1">&#39;Quartz&#39;</span><span class="p">,</span><span class="s1">&#39;Calcite&#39;</span><span class="p">,</span><span class="s1">&#39;Bone&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Chlorophyll&#39;</span><span class="p">,</span><span class="s1">&#39;Cloud&#39;</span><span class="p">,</span><span class="s1">&#39;Lightning&#39;</span><span class="p">,</span><span class="s1">&#39;Methane&#39;</span><span class="p">,</span><span class="s1">&#39;Glucose&#39;</span><span class="p">,</span><span class="s1">&#39;StellarPlasma&#39;</span><span class="p">]</span>
+<span class="n">aff</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ORDER</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">st</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">stages</span><span class="p">):</span>
+    <span class="n">pk</span> <span class="o">=</span> <span class="n">epoch_peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">)</span>
+    <span class="n">aff</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">st</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">be</span><span class="o">.</span><span class="n">material_affinity</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">be</span><span class="o">.</span><span class="n">MATERIALS</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">tol_cents</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">MATS</span><span class="p">])</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">aff</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ORDER</span><span class="p">])</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>   <span class="c1"># per-material: which stages sit above/below average</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MATS</span><span class="p">)));</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">MATS</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ORDER</span><span class="p">)));</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ORDER</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;sleep stage&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;relative material affinity per sleep stage (per-material z-score) — Sleep-EDF SC4012&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;below  →  above average&#39;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2eedba4330f50a687fbcc35e7e89500372f420c6cda67b81edf0bf4618e09bcf.png" src="../../_images/2eedba4330f50a687fbcc35e7e89500372f420c6cda67b81edf0bf4618e09bcf.png" />
+</div>
+</div>
+</section>
+<section id="the-elemental-type-signature-of-each-stage">
+<h3>The elemental <em>type</em> signature of each stage<a class="headerlink" href="#the-elemental-type-signature-of-each-stage" title="Link to this heading">#</a></h3>
+<p>Summing <code class="docutils literal notranslate"><span class="pre">match_elements</span></code> by periodic <strong>category</strong> gives each stage a fingerprint over
+the kinds of matter — a stacked profile that shifts as the night deepens.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.bioelements.tables</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_CATEGORIES</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cm</span>
+<span class="n">cat_mix</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ORDER</span><span class="p">:</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="n">stages</span><span class="o">==</span><span class="n">s</span><span class="p">]</span>
+    <span class="n">ff</span><span class="p">,</span> <span class="n">pp</span> <span class="o">=</span> <span class="n">welch</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sf</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sf</span><span class="o">*</span><span class="mi">4</span><span class="p">));</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span> <span class="n">acc</span> <span class="o">+=</span> <span class="n">welch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sf</span><span class="o">*</span><span class="mi">4</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="n">ff</span><span class="o">&gt;=</span><span class="mf">1.5</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">ff</span><span class="o">&lt;=</span><span class="mi">30</span><span class="p">);</span> <span class="n">fb</span><span class="p">,</span> <span class="n">db</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">acc</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-30</span><span class="p">)</span>
+    <span class="n">idx</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span> <span class="n">top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="n">idx</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">6</span><span class="p">]])</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">match_elements</span><span class="p">(</span><span class="n">fb</span><span class="p">[</span><span class="n">top</span><span class="p">],</span> <span class="n">top</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tol_cents</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="n">me</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">cat_mix</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bc</span><span class="o">/</span><span class="n">bc</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">));</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ORDER</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">,</span> <span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">)))):</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">cat_mix</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ORDER</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">ORDER</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">);</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">vals</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;share of element-match&#39;</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;elemental category signature per sleep stage&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e5d203ece08b302030efa8b09caeefcb82bce2b8799b862e269404c7369c7015.png" src="../../_images/e5d203ece08b302030efa8b09caeefcb82bce2b8799b862e269404c7369c7015.png" />
+</div>
+</div>
+</section>
+<section id="the-periodic-table-itself-lit-by-resonance">
+<h3>The periodic table itself, lit by resonance<a class="headerlink" href="#the-periodic-table-itself-lit-by-resonance" title="Link to this heading">#</a></h3>
+<p>Full granularity: score every one of the 99 elements (<code class="docutils literal notranslate"><span class="pre">match_elements</span></code>) and paint the
+result <strong>onto the periodic table</strong>. Each stage lights a different region of the table —
+the resonance has structure across the whole of chemistry, not just a top-few list.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.bioelements</span><span class="w"> </span><span class="kn">import</span> <span class="n">periodic</span> <span class="k">as</span> <span class="n">P</span>
+<span class="n">PT_STAGES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;N2&#39;</span><span class="p">,</span> <span class="s1">&#39;N3&#39;</span><span class="p">,</span> <span class="s1">&#39;REM&#39;</span><span class="p">]</span>
+<span class="n">pt_scores</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">PT_STAGES</span><span class="p">:</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">epochs</span><span class="p">[</span><span class="n">stages</span> <span class="o">==</span> <span class="n">s</span><span class="p">];</span> <span class="n">acc</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="n">me</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">match_elements</span><span class="p">(</span><span class="n">epoch_peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">),</span> <span class="n">top</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tol_cents</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;element&#39;</span><span class="p">)[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">me</span> <span class="k">if</span> <span class="n">acc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">acc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">me</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pt_scores</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_pt</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="ow">or</span> <span class="mf">1e-6</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">NAMES</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">element_position</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">pos</span><span class="p">;</span> <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">/</span> <span class="n">vmax</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">),</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">magma</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="mf">0.46</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span> <span class="o">+</span> <span class="mf">0.46</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">0.55</span> <span class="k">else</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">18</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">PT_STAGES</span><span class="p">):</span> <span class="n">draw_pt</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">pt_scores</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;stage </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;element resonance across the periodic table, per sleep stage — Sleep-EDF SC4012&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b9534e33d30da498bc627b47d0ab6e534dd99da0f4361979995c8783133f90ea.png" src="../../_images/b9534e33d30da498bc627b47d0ab6e534dd99da0f4361979995c8783133f90ea.png" />
+</div>
+</div>
+</section>
+<section id="a-whole-night-continuously-the-resonance-river">
+<h3>A whole night, continuously — the resonance river<a class="headerlink" href="#a-whole-night-continuously-the-resonance-river" title="Link to this heading">#</a></h3>
+<p>Not five averages but <strong>139 contiguous epochs</strong> across ~9 hours: each folded to the
+optical band and scored by element category, stacked over time under the hypnogram.
+The composition of matter the EEG resonates with <strong>flows</strong> as the night unfolds.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.bioelements.tables</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_CATEGORIES</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cm</span>
+<span class="n">nx</span><span class="p">,</span> <span class="n">nstg</span><span class="p">,</span> <span class="n">nt</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="s1">&#39;night_epochs&#39;</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="s1">&#39;night_stages&#39;</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="s1">&#39;night_times_h&#39;</span><span class="p">]</span>
+<span class="n">riv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">nx</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">be</span><span class="o">.</span><span class="n">match_elements</span><span class="p">(</span><span class="n">epoch_peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sf</span><span class="p">),</span> <span class="n">top</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tol_cents</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="n">me</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">riv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bc</span> <span class="o">/</span> <span class="p">(</span><span class="n">bc</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">))</span><span class="o">.</span><span class="n">values</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">axr</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">6.2</span><span class="p">),</span>
+                               <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">]},</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sy</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;REM&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;N1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;N2&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;N3&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="p">[</span><span class="n">sy</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">nstg</span><span class="p">],</span> <span class="n">drawstyle</span><span class="o">=</span><span class="s1">&#39;steps-post&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#444&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">axh</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sy</span><span class="o">.</span><span class="n">values</span><span class="p">()));</span> <span class="n">axh</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sy</span><span class="o">.</span><span class="n">keys</span><span class="p">()));</span> <span class="n">axh</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">)</span>
+<span class="n">axh</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;a night of sleep, read as a continuous resonance with matter — Sleep-EDF SC4012&#39;</span><span class="p">)</span>
+<span class="n">axr</span><span class="o">.</span><span class="n">stackplot</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">riv</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">),</span>
+              <span class="n">colors</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ELEMENT_CATEGORIES</span><span class="p">))))</span>
+<span class="n">axr</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time (hours)&#39;</span><span class="p">);</span> <span class="n">axr</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;element-category share&#39;</span><span class="p">)</span>
+<span class="n">axr</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">axr</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">nt</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">nt</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+<span class="n">axr</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/0ffa67940cc31695d112f566e5526231c43c7d46c6b6a43bcd46fe4a6a451a9c.png" src="../../_images/0ffa67940cc31695d112f566e5526231c43c7d46c6b6a43bcd46fe4a6a451a9c.png" />
+</div>
+</div>
+<p>As the sleeper descends wake → N1 → N2 → slow-wave N3 and back through REM, the
+elements and materials the EEG most resonates with move across the periodic table —
+a biosignal’s affinity with matter is <strong>stateful</strong>, tracking the brain’s own rhythms.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../biocolors/biocolors.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">biocolors — deriving colour from a biosignal</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../api/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-element-is-a-spectrum-is-a-chord-is-a-tuning">An element is a spectrum is a chord is a tuning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matter-is-compositions-of-atoms">Matter is compositions of atoms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#composition-is-recursive-a-cloud-is-water-air">Composition is recursive: a cloud is water + air</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dictionary-spans-matter-a-measured-claim">The dictionary spans matter — a measured claim</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-biosignal-resonates-with-materials-not-just-atoms">A biosignal resonates with materials, not just atoms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#every-material-affords-a-palette-its-flame-colours">Every material affords a palette — its flame colours</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#and-a-tuning-a-chord-a-form">And a tuning, a chord, a form</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-compositional-hierarchy">The compositional hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applied-a-night-of-sleep-read-as-changing-matter">Applied: a night of sleep, read as changing matter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-materials-does-each-sleep-stage-resonate-with">Which materials does each sleep stage resonate with?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-elemental-type-signature-of-each-stage">The elemental <em>type</em> signature of each stage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-periodic-table-itself-lit-by-resonance">The periodic table itself, lit by resonance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-whole-night-continuously-the-resonance-river">A whole night, continuously — the resonance river</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

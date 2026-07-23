@@ -1,0 +1,912 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Matching biosignals to mathematical series &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/math_series/math_series';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="From Spectral Peaks to Harmonic Spectrum Analysis" href="../harmonic_spectrum/harmonic_spectrum.html" />
+    <link rel="prev" title="Harmonicity metrics" href="../harmonicity_metrics/harmonicity_metrics.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/math_series/math_series.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Matching biosignals to mathematical series</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-peaks-and-ratios-from-the-eeg">1. Extract peaks and ratios from the EEG</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-mathematical-series-is-present">2. Which mathematical series is present?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peaks-vs-extended-peaks">Peaks vs. extended peaks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-do-the-peaks-sit-the-ratio-pairs-scatter">Where do the peaks sit? — the ratio-pairs scatter</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#across-the-whole-montage">3. Across the whole montage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derive-musical-structures">4. Derive musical structures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creative-views-where-the-extended-peaks-sit-among-the-series">5. Creative views — where the (extended) peaks sit among the series</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cents-ruler-the-ratio-lattice">Cents ruler — the ratio lattice</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-tightly-each-series-fits">How tightly each series fits</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplicity-bubbles">Simplicity bubbles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#across-octave-frequency-comb-the-series-as-canvas">Across-octave frequency comb (the series as canvas)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effect-of-order-on-matching">6. Effect of <code class="docutils literal notranslate"><span class="pre">order</span></code> on matching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-to-control">7. Parameters to control</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="matching-biosignals-to-mathematical-series">
+<h1>Matching biosignals to mathematical series<a class="headerlink" href="#matching-biosignals-to-mathematical-series" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">biotuner.math_series</span></code> asks a simple question: <strong>which classic mathematical
+sequence — Fibonacci, Lucas, harmonics, Farey, … — is most present in a
+biosignal’s peak-ratio structure?</strong> It takes a fitted <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code>
+object (or a <code class="docutils literal notranslate"><span class="pre">HarmonicInput</span></code>), compares its peak ratios (or <em>extended</em>-peak
+ratios) against the ratios generated by each series, and reports the match
+proportions. The matched subset of the winning series can then be turned into
+a scale or a consonance-selected mode.</p>
+<p>This notebook walks through the full workflow on a real EEG recording.</p>
+<section id="extract-peaks-and-ratios-from-the-eeg">
+<h2>1. Extract peaks and ratios from the EEG<a class="headerlink" href="#extract-peaks-and-ratios-from-the-eeg" title="Link to this heading">#</a></h2>
+<p>We load an example recording (104 channels × 4000 samples &#64; 1000 Hz), pick one
+channel, and extract its spectral <strong>peaks</strong> and the harmonically <strong>extended</strong>
+peaks. Both yield octave-reduced peak ratios in <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2)</span></code> — the input the
+matcher works on.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_biotuner</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;../data/EEG_example.npy&quot;</span><span class="p">)</span>   <span class="c1"># (104 channels, 4000 samples)</span>
+<span class="n">sf</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;FOOOF&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">bt</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">bt</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">n_harm</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;peaks (Hz):          &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;peak ratios:         &quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n extended ratios:   &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">extended_peaks_ratios</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>peaks (Hz):           [10.42 20.41 25.76 23.05 29.7   7.82]
+peak ratios:          [1.106, 1.118, 1.129, 1.153, 1.236, 1.262, 1.289, 1.305, 1.332, 1.425, 1.455, 1.474, 1.647, 1.899, 1.959]
+n extended ratios:    21
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="which-mathematical-series-is-present">
+<h2>2. Which mathematical series is present?<a class="headerlink" href="#which-mathematical-series-is-present" title="Link to this heading">#</a></h2>
+<p>Feed the fitted object to <code class="docutils literal notranslate"><span class="pre">math_series</span></code>. <code class="docutils literal notranslate"><span class="pre">analyze()</span></code> scores every series; the
+<code class="docutils literal notranslate"><span class="pre">summary()</span></code> table ranks them by the proportion of the EEG’s peak ratios each
+one reproduces.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.math_series</span><span class="w"> </span><span class="kn">import</span> <span class="n">math_series</span>
+
+<span class="n">ms</span> <span class="o">=</span> <span class="n">math_series</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">ratios_source</span><span class="o">=</span><span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best-matching series:&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">best_series</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Best-matching series: lucas 
+
+      series  proportion  ...  n_target  n_series_ratios
+0      lucas    0.866667  ...        15              120
+1  harmonics    0.666667  ...        15               83
+2  fibonacci    0.600000  ...        15               87
+3      farey    0.533333  ...        15               64
+
+[4 rows x 6 columns]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms</span><span class="o">.</span><span class="n">plot_proportions</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/fb46f2d50a9d43b343c83ab42f61e2c5d27a912b45b9d53140b51fd399059354.png" src="../../_images/fb46f2d50a9d43b343c83ab42f61e2c5d27a912b45b9d53140b51fd399059354.png" />
+</div>
+</div>
+<section id="peaks-vs-extended-peaks">
+<h3>Peaks vs. extended peaks<a class="headerlink" href="#peaks-vs-extended-peaks" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ratios_source</span></code> switches between the raw spectral peak ratios and the
+harmonically extended ones — they can favour different series.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span> <span class="o">=</span> <span class="n">math_series</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">ratios_source</span><span class="o">=</span><span class="s2">&quot;extended_peaks_ratios&quot;</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;peaks    -&gt; best:&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">best_series</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;extended -&gt; best:&quot;</span><span class="p">,</span> <span class="n">ms_ext</span><span class="o">.</span><span class="n">best_series</span><span class="p">)</span>
+<span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_proportions</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>peaks    -&gt; best: lucas
+extended -&gt; best: lucas
+</pre></div>
+</div>
+<img alt="../../_images/bfda654f5a941a7e64857e459bc6f13634e0c59e7c4c8d557458f016c9ac7a3f.png" src="../../_images/bfda654f5a941a7e64857e459bc6f13634e0c59e7c4c8d557458f016c9ac7a3f.png" />
+</div>
+</div>
+</section>
+<section id="where-do-the-peaks-sit-the-ratio-pairs-scatter">
+<h3>Where do the peaks sit? — the ratio-pairs scatter<a class="headerlink" href="#where-do-the-peaks-sit-the-ratio-pairs-scatter" title="Link to this heading">#</a></h3>
+<p>Each small dot is a pair of series elements; the large dots are the pairs whose
+ratio matches one of the EEG’s peak ratios.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms</span><span class="o">.</span><span class="n">plot_ratio_pairs</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/bb9b51c820181982ca75ede5b783046692e5b941df25550b43c3b4b90909f2ad.png" src="../../_images/bb9b51c820181982ca75ede5b783046692e5b941df25550b43c3b4b90909f2ad.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="across-the-whole-montage">
+<h2>3. Across the whole montage<a class="headerlink" href="#across-the-whole-montage" title="Link to this heading">#</a></h2>
+<p>Running the matcher on every channel answers the population question: which
+series dominates this recording’s peak-ratio structure?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_counts</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">series_names</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">bt_ch</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;FOOOF&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">bt_ch</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ch</span><span class="p">],</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">math_series</span><span class="p">(</span><span class="n">bt_ch</span><span class="p">,</span> <span class="n">ratios_source</span><span class="o">=</span><span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span>
+        <span class="n">best_counts</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">best_series</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best series per channel:&quot;</span><span class="p">,</span> <span class="n">best_counts</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.plot_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_biotuner_style</span><span class="p">,</span> <span class="n">get_color_palette</span>
+<span class="n">set_biotuner_style</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">best_counts</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">best_counts</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">get_color_palette</span><span class="p">(</span><span class="s2">&quot;biotuner_gradient&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">best_counts</span><span class="p">)))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;channels where it wins&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Most-present series across the montage&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Best series per channel: {&#39;fibonacci&#39;: 19, &#39;lucas&#39;: 78, &#39;farey&#39;: 0, &#39;harmonics&#39;: 6}
+</pre></div>
+</div>
+<img alt="../../_images/ba179b481a8a21c23468ade34b8b6294bd16853271ae1e8d4dec38f3727f914e.png" src="../../_images/ba179b481a8a21c23468ade34b8b6294bd16853271ae1e8d4dec38f3727f914e.png" />
+</div>
+</div>
+</section>
+<section id="derive-musical-structures">
+<h2>4. Derive musical structures<a class="headerlink" href="#derive-musical-structures" title="Link to this heading">#</a></h2>
+<p>The matched subset of the winning series is a scale; <code class="docutils literal notranslate"><span class="pre">series_mode</span></code> reduces it
+to a consonance-selected mode.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scale from best series:&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">series_scale</span><span class="p">()])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;7-note mode (pairwise):&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">series_mode</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pairwise&quot;</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scale in cents:        &quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">scale_cents</span><span class="p">()])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scale from best series: [1.0, 1.103, 1.103, 1.106, 1.118, 1.121, 1.131, 1.234, 1.236, 1.236, 1.236, 1.236, 1.236, 1.236, 1.236, 1.236, 1.263, 1.285, 1.286, 1.286, 1.287, 1.304, 1.306, 1.332, 1.333, 1.431, 1.455, 1.474, 1.474, 1.646, 1.958, 1.965, 1.972]
+7-note mode (pairwise): [1.236, 1.236, 1.236, 1.286, 1.287, 1.474, 1.474]
+Scale in cents:         [0.0, 169.2, 170.4, 173.7, 193.2, 197.8, 212.6, 364.1, 366.5, 366.8, 366.9, 366.9, 366.9, 366.9, 366.9, 367.1, 404.4, 434.0, 435.1, 436.1, 436.8, 459.9, 461.6, 496.4, 498.0, 620.3, 648.7, 671.3, 671.8, 863.3, 1163.6, 1169.8, 1175.2]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creative-views-where-the-extended-peaks-sit-among-the-series">
+<h2>5. Creative views — where the (extended) peaks sit among the series<a class="headerlink" href="#creative-views-where-the-extended-peaks-sit-among-the-series" title="Link to this heading">#</a></h2>
+<p>These are built-in <code class="docutils literal notranslate"><span class="pre">math_series</span></code> methods. We build a matcher on the
+<em>extended</em>-peak ratios and call each visualization. <code class="docutils literal notranslate"><span class="pre">order=</span></code> thins the
+lattice for legibility without changing the matching settings.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span> <span class="o">=</span> <span class="n">math_series</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">ratios_source</span><span class="o">=</span><span class="s2">&quot;extended_peaks_ratios&quot;</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;best (extended):&quot;</span><span class="p">,</span> <span class="n">ms_ext</span><span class="o">.</span><span class="n">best_series</span><span class="p">)</span>
+<span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_octave_wheel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">13</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>best (extended): lucas
+</pre></div>
+</div>
+<img alt="../../_images/dcfddf60a07e525947cf07d7980015824220ade6d38d06a6987d439491db2a21.png" src="../../_images/dcfddf60a07e525947cf07d7980015824220ade6d38d06a6987d439491db2a21.png" />
+</div>
+</div>
+<section id="cents-ruler-the-ratio-lattice">
+<h3>Cents ruler — the ratio lattice<a class="headerlink" href="#cents-ruler-the-ratio-lattice" title="Link to this heading">#</a></h3>
+<p>Each series as a lane of ratio-ticks on a 0–1200 cents axis (bold = matched);
+guide lines drop from each signal peak.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_cents_ruler</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">13</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/125a88c2d09a0cce5545ecf16a40ada3c8fe91db6abefb9e5669cf62c92f3860.png" src="../../_images/125a88c2d09a0cce5545ecf16a40ada3c8fe91db6abefb9e5669cf62c92f3860.png" />
+</div>
+</div>
+</section>
+<section id="how-tightly-each-series-fits">
+<h3>How tightly each series fits<a class="headerlink" href="#how-tightly-each-series-fits" title="Link to this heading">#</a></h3>
+<p>For every extended peak, the cents distance to the <em>nearest</em> ratio of each
+series (lower = closer). A density-aware view — note Farey is dense yet does
+not fit tightest, so this is not just a density effect.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_fit_landscape</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e68edaf57998c07f4a2313df414ce744f9280a0c010f8f01791bad60dbb66e44.png" src="../../_images/e68edaf57998c07f4a2313df414ce744f9280a0c010f8f01791bad60dbb66e44.png" />
+</div>
+</div>
+</section>
+<section id="simplicity-bubbles">
+<h3>Simplicity bubbles<a class="headerlink" href="#simplicity-bubbles" title="Link to this heading">#</a></h3>
+<p>Each series ratio as a bubble sized by simplicity (bigger = simpler fraction).
+Do the signal peaks land on the simple rungs? Outlined bubbles are matched.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_simplicity_bubbles</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">13</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b6078bf32a49783455121d6e5689dfd5a2bae25ad711e1a6caceeb0b708e869f.png" src="../../_images/b6078bf32a49783455121d6e5689dfd5a2bae25ad711e1a6caceeb0b708e869f.png" />
+</div>
+</div>
+</section>
+<section id="across-octave-frequency-comb-the-series-as-canvas">
+<h3>Across-octave frequency comb (the series as canvas)<a class="headerlink" href="#across-octave-frequency-comb-the-series-as-canvas" title="Link to this heading">#</a></h3>
+<p>Flip it around: each series, tiled across octaves and scaled to best fit the
+signal, becomes a frequency grid; the signal peaks (Hz) snap onto the nearest
+step, with each lane’s mean miss in cents.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ms_ext</span><span class="o">.</span><span class="n">plot_series_comb</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">7</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2114cbcc5a5778997a18e089ad11924ec837ef75ac191b700e033fdc89bdfac0.png" src="../../_images/2114cbcc5a5778997a18e089ad11924ec837ef75ac191b700e033fdc89bdfac0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="effect-of-order-on-matching">
+<h2>6. Effect of <code class="docutils literal notranslate"><span class="pre">order</span></code> on matching<a class="headerlink" href="#effect-of-order-on-matching" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">order</span></code> sets how many terms each series generates — more terms means a denser
+ratio set, which trivially matches more peaks. So the absolute proportions rise
+with <code class="docutils literal notranslate"><span class="pre">order</span></code> and then saturate. The practical lesson: <strong>keep <code class="docutils literal notranslate"><span class="pre">order</span></code> fixed when
+comparing series</strong> — only proportions computed at the same <code class="docutils literal notranslate"><span class="pre">order</span></code> (and
+<code class="docutils literal notranslate"><span class="pre">maxdenom</span></code>) are comparable. The <em>ranking</em> is usually far more stable than the
+absolute values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.plot_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_color_palette</span>
+
+<span class="n">orders</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">series</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">series_names</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">get_color_palette</span><span class="p">(</span><span class="s2">&quot;biotuner_gradient&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">))))</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="n">math_series</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">ratios_source</span><span class="o">=</span><span class="s2">&quot;peaks_ratios&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">o</span><span class="p">,</span> <span class="n">maxdenom</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+             <span class="o">.</span><span class="n">analyze</span><span class="p">()</span><span class="o">.</span><span class="n">series_scores</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;proportion&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">orders</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orders</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;order (terms generated per series)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;match proportion — peak ratios&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Effect of `order` on matching (keep it fixed when comparing series)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/4b8f044fd159511f51c11fcc9af6bb9d7f10ad1ba996c72cd09bf46e1598e9a7.png" src="../../_images/4b8f044fd159511f51c11fcc9af6bb9d7f10ad1ba996c72cd09bf46e1598e9a7.png" />
+</div>
+</div>
+</section>
+<section id="parameters-to-control">
+<h2>7. Parameters to control<a class="headerlink" href="#parameters-to-control" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Controls</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ratios_source</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;peaks_ratios&quot;</span></code></p></td>
+<td><p>Which EEG ratios to analyse: raw peaks vs <code class="docutils literal notranslate"><span class="pre">&quot;extended_peaks_ratios&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">maxdenom</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">24</span></code></p></td>
+<td><p><strong>Matching strictness.</strong> Ratios match if their <code class="docutils literal notranslate"><span class="pre">limit_denominator(maxdenom)</span></code> fractions agree. Lower (≈12–16) = lenient, higher (≈40–60) = strict. Useful range ≈16–48.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">series_names</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[&quot;fibonacci&quot;,</span> <span class="pre">&quot;lucas&quot;,</span> <span class="pre">&quot;farey&quot;,</span> <span class="pre">&quot;harmonics&quot;]</span></code></p></td>
+<td><p>Which series to compare (also available: <code class="docutils literal notranslate"><span class="pre">padovan,</span> <span class="pre">pell,</span> <span class="pre">jacobsthal,</span> <span class="pre">mersenne,</span> <span class="pre">hofstadter_q,</span> <span class="pre">subharmonics,</span> <span class="pre">triangular</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">order</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">20</span></code></p></td>
+<td><p>Terms generated per series (Farey order for <code class="docutils literal notranslate"><span class="pre">farey</span></code>); higher = denser. Keep fixed when comparing signals.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">octave</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2.0</span></code></p></td>
+<td><p>Period the ratios fold into.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">series_mode()</span></code> adds <code class="docutils literal notranslate"><span class="pre">n_steps</span></code>, <code class="docutils literal notranslate"><span class="pre">method</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;subset&quot;</span></code> exhaustive vs <code class="docutils literal notranslate"><span class="pre">&quot;pairwise&quot;</span></code> greedy) and <code class="docutils literal notranslate"><span class="pre">function</span></code> (consonance metric).</p>
+<p><strong>Rule of thumb:</strong> the two dials you’ll actually turn are <code class="docutils literal notranslate"><span class="pre">ratios_source</span></code>
+(peaks vs extended) and <code class="docutils literal notranslate"><span class="pre">maxdenom</span></code> (how forgiving the match is). Keep <code class="docutils literal notranslate"><span class="pre">order</span></code>
+and <code class="docutils literal notranslate"><span class="pre">maxdenom</span></code> fixed across signals when comparing series — proportions are
+only comparable under the same settings.</p>
+<p>All of these visualizations are methods on <code class="docutils literal notranslate"><span class="pre">math_series</span></code> — <code class="docutils literal notranslate"><span class="pre">plot_proportions</span></code>,
+<code class="docutils literal notranslate"><span class="pre">plot_ratio_pairs</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_octave_wheel</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_cents_ruler</span></code>,
+<code class="docutils literal notranslate"><span class="pre">plot_fit_landscape</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_simplicity_bubbles</span></code>, and <code class="docutils literal notranslate"><span class="pre">plot_series_comb</span></code> — so you
+can call them on any biotuner object. See the <code class="docutils literal notranslate"><span class="pre">biotuner.math_series</span></code> API page
+for the full reference.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../harmonicity_metrics/harmonicity_metrics.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonicity metrics</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../harmonic_spectrum/harmonic_spectrum.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">From Spectral Peaks to Harmonic Spectrum Analysis</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-peaks-and-ratios-from-the-eeg">1. Extract peaks and ratios from the EEG</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-mathematical-series-is-present">2. Which mathematical series is present?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peaks-vs-extended-peaks">Peaks vs. extended peaks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-do-the-peaks-sit-the-ratio-pairs-scatter">Where do the peaks sit? — the ratio-pairs scatter</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#across-the-whole-montage">3. Across the whole montage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derive-musical-structures">4. Derive musical structures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creative-views-where-the-extended-peaks-sit-among-the-series">5. Creative views — where the (extended) peaks sit among the series</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cents-ruler-the-ratio-lattice">Cents ruler — the ratio lattice</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-tightly-each-series-fits">How tightly each series fits</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplicity-bubbles">Simplicity bubbles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#across-octave-frequency-comb-the-series-as-canvas">Across-octave frequency comb (the series as canvas)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effect-of-order-on-matching">6. Effect of <code class="docutils literal notranslate"><span class="pre">order</span></code> on matching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-to-control">7. Parameters to control</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

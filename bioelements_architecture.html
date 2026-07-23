@@ -1,0 +1,1107 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>bioelements expansion — architecture plan &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'bioelements_architecture';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/bioelements_architecture.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>bioelements expansion — architecture plan</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-intuition-and-the-expansion">1. The intuition, and the expansion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-the-current-module">2. Verdict on the current module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#broken-confirmed">Broken (confirmed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-blocks-the-expansion">Messy (blocks the expansion)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#keep">Keep</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-compositional-model-the-heart">3. The compositional model (the heart)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-weighting-problem-this-module-s-calibration">4. The weighting problem (this module’s “calibration”)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-methodology-spanning-the-space-of-materials">4.5 Coverage methodology — spanning the space of materials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-layout">5. Module layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-a-material-affords">6. What a material affords</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-material-dictionary">7. The material dictionary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tagged-starter-dictionary">The tagged starter dictionary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#public-api">8. Public API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-order">9. Build order</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-for-you">10. Open questions for you</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-the-numbers">Reproducing the numbers</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="bioelements-expansion-architecture-plan">
+<h1>bioelements expansion — architecture plan<a class="headerlink" href="#bioelements-expansion-architecture-plan" title="Link to this heading">#</a></h1>
+<p>Status: proposal. Grounded in a working proof-of-concept; numbers below are measured
+against <code class="docutils literal notranslate"><span class="pre">data/air_elements.csv</span></code> (NIST emission lines, 21 896 lines, 99 elements)
+on pandas 2.3.3.</p>
+<p>The goal: take the module from <em>“which atoms does a biosignal resonate with?”</em> to
+<em>“which <strong>materials</strong> does it resonate with, and can I build material structures from
+biosignals?”</em> — where a material is a composition of elements, and a structure is a
+composition of materials.</p>
+<hr class="docutils" />
+<section id="the-intuition-and-the-expansion">
+<h2>1. The intuition, and the expansion<a class="headerlink" href="#the-intuition-and-the-expansion" title="Link to this heading">#</a></h2>
+<p><strong>What bioelements does today.</strong> Every atom emits light at a characteristic set of
+wavelengths — its emission spectrum. <code class="docutils literal notranslate"><span class="pre">bioelements</span></code> treats those lines as a chord: it
+octave-folds a biosignal’s peaks into the optical band and asks which elements’ lines
+they land on. The same octave-transpose that <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> uses to send a frequency to a
+<em>colour</em>, <code class="docutils literal notranslate"><span class="pre">bioelements</span></code> uses to send it to the <em>periodic table</em>. It already renders each
+element as a 7-step tuning (<code class="docutils literal notranslate"><span class="pre">data/Elemental_tunings/*.scl</span></code>), built from that element’s
+most intense lines.</p>
+<p>So the atom is already a first-class harmonic object: <strong>element = a spectrum = a chord =
+a tuning</strong>.</p>
+<p><strong>The expansion.</strong> Matter is not made of bare atoms; it is made of <em>compositions</em> of
+them. Water is H₂O, wood is mostly cellulose (C₆H₁₀O₅)ₙ, air is a mixture of N₂/O₂/Ar/CO₂,
+tissue is a biomolecular blend, a cloud is water suspended in air, fire is a combustion
+process. If an element has a spectrum, then a <strong>composition of elements has a composite
+spectrum</strong> — the weighted superposition of its constituents — and therefore its own chord,
+its own tuning, its own colour, its own geometry. A biosignal can then resonate not just
+with oxygen but with <em>water</em>, not just with carbon but with <em>wood</em>.</p>
+<p>The compositional hierarchy is the whole plan:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  Element     H, O, C, N, Fe …            leaf spectra (NIST lines)
+     │  stoichiometry
+  Compound    H₂O, NaCl, CO₂, cellulose   fixed atom ratios
+     │  proportion
+  Mixture     air, wood, tissue, cloud    blends of compounds/elements
+     │  arrangement
+  Structure   layered/spatial materials   compositions of materials (→ geometry)
+</pre></div>
+</div>
+<p>Each level is a <strong>weighted composition of the level below</strong>, and one recursive operation —
+“superpose the component spectra, weighted” — carries all four. That operation is the core
+of the expansion.</p>
+</section>
+<hr class="docutils" />
+<section id="verdict-on-the-current-module">
+<h2>2. Verdict on the current module<a class="headerlink" href="#verdict-on-the-current-module" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">biotuner/bioelements.py</span></code> is 145 lines of loose functions. The idea is sound; the
+implementation needs consolidation before it can carry composites.</p>
+<section id="broken-confirmed">
+<h3>Broken (confirmed)<a class="headerlink" href="#broken-confirmed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">compute_ratios_df</span></code> does not run on pandas ≥ 2.0.</strong> It calls <code class="docutils literal notranslate"><span class="pre">DataFrame.append</span></code>, removed
+in pandas 2.0; measured failure: <code class="docutils literal notranslate"><span class="pre">AttributeError:</span> <span class="pre">'DataFrame'</span> <span class="pre">object</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">attribute</span> <span class="pre">'append'</span></code>. Any element-internal ratio analysis is currently dead. (Rewrite with
+<code class="docutils literal notranslate"><span class="pre">pd.concat</span></code> / vectorised ratio computation.)</p></li>
+<li><p><strong>The matcher’s tolerance model is unusable.</strong> <code class="docutils literal notranslate"><span class="pre">find_matching_spectral_lines</span></code> takes an
+<em>absolute</em> wavelength tolerance and defaults to <code class="docutils literal notranslate"><span class="pre">1e-9</span></code>. Across a line table spanning
+56–46 525 Å, an absolute tolerance is meaningless — a 1 Å window is 0.002% at the red end
+and 1.8% at the blue end. Measured: a plausible EEG-like peak set returns <strong>0 matches</strong> at
+tolerance 1.0. Matching must be <strong>relative</strong> (cents, or a fractional/ppm window), the same
+discipline <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> uses for ratios.</p></li>
+</ul>
+</section>
+<section id="messy-blocks-the-expansion">
+<h3>Messy (blocks the expansion)<a class="headerlink" href="#messy-blocks-the-expansion" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Data lives outside the package.</strong> The line tables are in repo-root <code class="docutils literal notranslate"><span class="pre">data/air_elements.csv</span></code>
+and <code class="docutils literal notranslate"><span class="pre">data/vacuum_elements.csv</span></code>; scripts load them by hardcoded <code class="docutils literal notranslate"><span class="pre">../data/...</span></code> paths. Compare
+<code class="docutils literal notranslate"><span class="pre">biocolors</span></code>, which ships its calibrations inside <code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/data/*.npz</span></code> and loads
+them by name. The element tables (and the material dictionary) should live in
+<code class="docutils literal notranslate"><span class="pre">biotuner/bioelements/data/</span></code>.</p></li>
+<li><p><strong>One file, many concerns.</strong> Unit conversions (Å/Hz/nm/eV), EM-spectrum regions, the
+matcher, <code class="docutils literal notranslate"><span class="pre">compute_ratios_df</span></code>, and plotting are all in one module. The composite layer needs
+a clean separation: data access, the spectrum object, composition, and the biotuner bridges.</p></li>
+<li><p><strong>No object.</strong> Everything is a bare function over a DataFrame. A composite material needs to
+be a <em>thing</em> you can pass around, tune, colour, and compose — an object, as <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> has
+<code class="docutils literal notranslate"><span class="pre">Palette</span></code> and <code class="docutils literal notranslate"><span class="pre">ColorSpec</span></code>.</p></li>
+</ul>
+</section>
+<section id="keep">
+<h3>Keep<a class="headerlink" href="#keep" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The <strong>NIST line tables</strong> themselves (element, wavelength Å, intensity, persistence, type,
+spectrum_region) — 99 elements, with <strong>intensity</strong>, which is the amplitude analogue and the
+key to weighting.</p></li>
+<li><p>The <strong>octave-fold-to-optical</strong> idea and the <strong>element → tuning</strong> reduction
+(<code class="docutils literal notranslate"><span class="pre">create_elemental_tunings.py</span></code>): the composite layer reuses both, unchanged in spirit.</p></li>
+<li><p>The unit conversions (<code class="docutils literal notranslate"><span class="pre">Angstrom_to_hertz</span></code>, <code class="docutils literal notranslate"><span class="pre">nm_to_hertz</span></code>, <code class="docutils literal notranslate"><span class="pre">hertz_to_volt</span></code>, …) — move them
+into a <code class="docutils literal notranslate"><span class="pre">units</span></code> submodule.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-compositional-model-the-heart">
+<h2>3. The compositional model (the heart)<a class="headerlink" href="#the-compositional-model-the-heart" title="Link to this heading">#</a></h2>
+<p>A single dataclass and a single operation carry every level of the hierarchy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Composition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An element, or a weighted bag of sub-compositions.</span>
+
+<span class="sd">    Every material carries its position on all four coverage axes (§4.5) as</span>
+<span class="sd">    tags, so the dictionary is auditable: a missing category is a query, not a</span>
+<span class="sd">    hunch. Element-category coverage (axis 4) is *derived* from the constituent</span>
+<span class="sd">    elements&#39; NIST type, not stored — you cannot tag it wrong.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">parts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="s2">&quot;Composition&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>    <span class="c1"># component -&gt; weight</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;compound&quot;</span>                      <span class="c1"># AXIS 1  element|compound|mixture|structure</span>
+    <span class="n">material_class</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>                    <span class="c1"># AXIS 2  molecular|ionic|metallic|…</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>                            <span class="c1"># AXIS 3  geosphere|hydrosphere|…</span>
+    <span class="n">archetype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>                         <span class="c1"># cross-check: earth|water|air|fire|wood|metal|ether|&quot;&quot;</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>    <span class="c1"># free-form (state, formula, source, citation)</span>
+</pre></div>
+</div>
+<p>Every shipped material must set <code class="docutils literal notranslate"><span class="pre">kind</span></code>, <code class="docutils literal notranslate"><span class="pre">material_class</span></code>, and <code class="docutils literal notranslate"><span class="pre">domain</span></code>; <code class="docutils literal notranslate"><span class="pre">archetype</span></code>
+is optional (only the classical/Wu-Xing set uses it). The registry refuses a
+material missing a required tag, so the axes cannot silently rot as the dictionary
+grows.</p>
+<ul class="simple">
+<li><p>An <strong>element</strong> is a leaf: <code class="docutils literal notranslate"><span class="pre">parts</span></code> empty, its spectrum read straight from the NIST table.</p></li>
+<li><p>A <strong>compound</strong> weights elements by stoichiometry: <code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">=</span> <span class="pre">Composition(&quot;Water&quot;,</span> <span class="pre">{&quot;Hydrogen&quot;:</span> <span class="pre">2,</span> <span class="pre">&quot;Oxygen&quot;:</span> <span class="pre">1})</span></code>.</p></li>
+<li><p>A <strong>mixture</strong> weights compounds/elements by proportion: <code class="docutils literal notranslate"><span class="pre">air</span> <span class="pre">=</span> <span class="pre">Composition(&quot;Air&quot;,</span> <span class="pre">{&quot;Nitrogen&quot;:</span> <span class="pre">78,</span> <span class="pre">&quot;Oxygen&quot;:</span> <span class="pre">21,</span> <span class="pre">&quot;Argon&quot;:</span> <span class="pre">1})</span></code>.</p></li>
+<li><p>A <strong>structure</strong> weights materials: <code class="docutils literal notranslate"><span class="pre">cloud</span> <span class="pre">=</span> <span class="pre">Composition(&quot;Cloud&quot;,</span> <span class="pre">{water:</span> <span class="pre">0.05,</span> <span class="pre">air:</span> <span class="pre">0.95})</span></code>
+— note the key is another <code class="docutils literal notranslate"><span class="pre">Composition</span></code>, so composition is <strong>recursive</strong>.</p></li>
+</ul>
+<p>The spectrum of any composition is the weighted superposition of its parts’ spectra:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  spectrum(comp) = Σ_i  w_i · normalise( spectrum(part_i) )
+</pre></div>
+</div>
+<p>evaluated recursively down to element leaves. That one function produces, for water, air,
+wood, tissue, salt — measured in the proof-of-concept — a composite line list and, folded,
+a <strong>material tuning</strong>. Everything a material <em>affords</em> (§6) is a transform of this composite
+spectrum.</p>
+</section>
+<hr class="docutils" />
+<section id="the-weighting-problem-this-module-s-calibration">
+<h2>4. The weighting problem (this module’s “calibration”)<a class="headerlink" href="#the-weighting-problem-this-module-s-calibration" title="Link to this heading">#</a></h2>
+<p>The proof-of-concept exposed the one decision that governs whether composites are meaningful,
+exactly as the <code class="docutils literal notranslate"><span class="pre">/55</span></code> constant did for <code class="docutils literal notranslate"><span class="pre">biocolors</span></code>.</p>
+<p>Weighting each element’s lines by <code class="docutils literal notranslate"><span class="pre">atom_count</span> <span class="pre">×</span> <span class="pre">line_intensity</span></code> <strong>over-weights line-rich
+elements</strong>. Measured: water came out <strong>81% Oxygen / 19% Hydrogen</strong> by summed weighted
+intensity — because oxygen contributes 136 NIST lines to hydrogen’s 44, so O dominates even
+though H₂O is 2:1 H:O by <em>atom count</em>. Air, by contrast, came out <strong>N 61% / O 36% / Ar 3%</strong>,
+which is close to reality — but that is luck, because N and O have comparable line counts.</p>
+<p>The fix is to make the per-element contribution <strong>budget-normalised</strong> before applying the
+stoichiometric weight:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  spectrum(comp) = Σ_i  w_i · ( spectrum(elem_i) / Σ intensity(elem_i) )
+</pre></div>
+</div>
+<p>so each element contributes a unit of “presence” scaled by its weight <code class="docutils literal notranslate"><span class="pre">w_i</span></code>, independent of
+how many lines NIST happens to list for it. Under this rule water is 2/3 H, 1/3 O by design,
+and the line-count artefact disappears. This normalisation is the analogue of percentile
+calibration in <code class="docutils literal notranslate"><span class="pre">biocolors</span></code>: <strong>a raw physical quantity (line intensity) must be normalised
+against the population it lives in before it can be compared across elements.</strong></p>
+<p>Two further weighting choices should be exposed, not hardcoded, because they change what a
+“material” <em>is</em>:</p>
+<ul class="simple">
+<li><p><strong>stoichiometry basis</strong> — atom count vs mass fraction vs mole fraction. Water is 2:1 by
+atoms but 1:8 by mass (O is 16×). Different bases answer different questions (“how many
+atoms resonate” vs “how much mass resonates”); default to atom count, expose the rest.</p></li>
+<li><p><strong>line selection</strong> — top-N by intensity, or an intensity threshold, or persistence-filtered.
+The tuning reduction is sensitive to this (the PoC’s material tunings clustered near 1.0–1.2
+because the strongest lines cluster in wavelength); the <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> lesson applies —
+octave-rebound and reduce with care.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="coverage-methodology-spanning-the-space-of-materials">
+<h2>4.5 Coverage methodology — spanning the space of materials<a class="headerlink" href="#coverage-methodology-spanning-the-space-of-materials" title="Link to this heading">#</a></h2>
+<p>Hand-picking materials misses whole classes of matter, and the gap is measurable.
+The naïve set (water, wood, air, fire, tissue, cloud + salt) touches only <strong>4 of the
+10</strong> NIST element categories — it never uses a Transition Metal (29 elements,
+including iron with the richest spectra in the table), an Alkaline Earth Metal
+(Ca, Mg — bone, chlorophyll), or a Metalloid (Si — rock, most of Earth’s crust).
+So the dictionary is not enumerated by taste; it is enumerated by <strong>axes</strong>, filled
+into a grid, and cross-checked by independent taxonomies so a gap in one shows up
+in another.</p>
+<p>Four coverage axes, each catching what the others miss:</p>
+<ol class="arabic simple">
+<li><p><strong>Compositional level</strong> (<code class="docutils literal notranslate"><span class="pre">kind</span></code>): element → compound → mixture → structure.
+<em>Rule:</em> exemplars at every level (the recursive spine of §3).</p></li>
+<li><p><strong>Material class</strong> (<code class="docutils literal notranslate"><span class="pre">material_class</span></code>): molecular · ionic-salt · covalent-network
+· metallic · organic-polymer · composite · amorphous/glass · gas-mixture ·
+colloid/suspension · plasma/energetic · ice/volatile · void. <em>Rule:</em> ≥1 exemplar
+per class. This axis is what surfaces the missing metals, glass, and plasma.</p></li>
+<li><p><strong>Natural domain</strong> (<code class="docutils literal notranslate"><span class="pre">domain</span></code>): geosphere · hydrosphere · atmosphere · biosphere ·
+cosmosphere · technosphere · energetic-process. <em>Rule:</em> every sphere represented.</p></li>
+<li><p><strong>Element-category coverage</strong> (derived): the union of NIST <code class="docutils literal notranslate"><span class="pre">type</span></code> across every
+material’s elements. <em>Rule, testable:</em> the dictionary must exercise <strong>≥ 8 of the
+10</strong> element categories. This is the falsifiable metric — an empty category is a
+failing assertion, not an opinion.</p></li>
+</ol>
+<p>Plus a <strong>cross-cultural archetype checklist</strong> as a completeness heuristic and the
+poetic layer: classical four (earth/water/air/fire), Wu Xing (wood/fire/earth/<strong>metal</strong>/water),
+Pañca Bhūta (earth/water/fire/air/<strong>ether</strong>). Their union — earth, water, air, fire,
+wood, metal, ether/void — independently flags the same gaps the data check finds
+(<strong>metal</strong>, earth-as-mineral, <strong>ether/void</strong>), and ether/void maps onto the
+<code class="docutils literal notranslate"><span class="pre">vacuum_elements</span></code> table. Two independent taxonomies converging on the same missing
+pieces is the cross-check working.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">coverage_report(MATERIALS)</span></code> function makes this a build gate: it prints the grid
+(which axis values are filled, which cells empty), the element-category tally, and
+whether the ≥8/10 assertion passes. Phase 2 does not exit until it does.</p>
+</section>
+<section id="module-layout">
+<h2>5. Module layout<a class="headerlink" href="#module-layout" title="Link to this heading">#</a></h2>
+<p>Mirror the <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> package structure — the refactor that made that module extensible.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>biotuner/bioelements/
+├── __init__.py          # re-exports + back-compat shims for the current flat API
+├── legacy.py            # today&#39;s bioelements.py, frozen, deprecated
+├── units.py             # Å ↔ Hz ↔ nm ↔ eV, EM-spectrum regions
+├── tables.py            # load/cache the NIST line tables from data/, by name
+├── spectrum.py          # ElementSpectrum: lines, intensities, normalise, fold-to-optical
+├── composition.py       # Composition dataclass + recursive weighted superposition
+├── materials.py         # the material dictionary (compounds, mixtures) + registry
+├── matching.py          # relative-tolerance (cents) biosignal ↔ element/material matcher
+├── affinity.py          # graded biosignal → material affinity scoring
+├── bridges.py           # material → tuning / palette / geometry (biotuner integrations)
+└── data/
+    ├── air_elements.npz         # repackaged NIST tables (compressed, in-package)
+    ├── vacuum_elements.npz
+    └── materials_v1.yaml        # the shipped material dictionary
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">materials.py</span></code> uses a <strong>registry</strong> (<code class="docutils literal notranslate"><span class="pre">&#64;material</span></code>) so a user can add “granite” or “myelin”
+without editing core, exactly as <code class="docutils literal notranslate"><span class="pre">biocolors</span></code> registers descriptors and mappings.</p>
+</section>
+<hr class="docutils" />
+<section id="what-a-material-affords">
+<h2>6. What a material affords<a class="headerlink" href="#what-a-material-affords" title="Link to this heading">#</a></h2>
+<p>Because a <code class="docutils literal notranslate"><span class="pre">Composition</span></code> produces a composite spectrum, it plugs straight into the rest of
+biotuner. This is the payoff — the expansion is not a silo, it is a hub.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>affordance</p></th>
+<th class="head"><p>via</p></th>
+<th class="head"><p>result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>tuning</strong></p></td>
+<td><p>fold composite lines → <code class="docutils literal notranslate"><span class="pre">compute_peak_ratios</span></code> → <code class="docutils literal notranslate"><span class="pre">tuning_reduction</span></code></p></td>
+<td><p>a material scale (<code class="docutils literal notranslate"><span class="pre">.scl</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>colour</strong></p></td>
+<td><p>composite lines → <code class="docutils literal notranslate"><span class="pre">biocolors.wavelength_to_srgb</span></code> / <code class="docutils literal notranslate"><span class="pre">palette_from_signal</span></code></p></td>
+<td><p>a material palette</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>chord / sound</strong></p></td>
+<td><p>composite lines → <code class="docutils literal notranslate"><span class="pre">harmonic_spectrum</span></code></p></td>
+<td><p>a material chord to sonify</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>geometry</strong></p></td>
+<td><p>material tuning/chord → <code class="docutils literal notranslate"><span class="pre">harmonic_geometry</span></code></p></td>
+<td><p>a material’s form (Chladni, Lissajous)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>affinity</strong></p></td>
+<td><p>signal peaks folded, scored vs composite lines</p></td>
+<td><p>graded biosignal → material match</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Concretely: <code class="docutils literal notranslate"><span class="pre">water.palette()</span></code>, <code class="docutils literal notranslate"><span class="pre">wood.tuning()</span></code>, <code class="docutils literal notranslate"><span class="pre">fire.chord()</span></code>, <code class="docutils literal notranslate"><span class="pre">cloud.geometry()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">material_affinity(eeg_peaks,</span> <span class="pre">tissue)</span></code> all become one-liners over the same composite spectrum.
+A biosignal can be <strong>rendered as the material it most resonates with</strong> — its colour, its scale,
+its shape.</p>
+</section>
+<hr class="docutils" />
+<section id="the-material-dictionary">
+<h2>7. The material dictionary<a class="headerlink" href="#the-material-dictionary" title="Link to this heading">#</a></h2>
+<p>The first-class deliverable of the expansion: a curated, cited dictionary of materials as
+<code class="docutils literal notranslate"><span class="pre">Composition</span></code>s. Three tiers, matching the hierarchy.</p>
+<p><strong>Compounds (fixed stoichiometry).</strong> water H₂O, carbon dioxide CO₂, table salt NaCl, quartz
+SiO₂, cellulose C₆H₁₀O₅, calcium phosphate (bone) Ca₅(PO₄)₃OH, chlorophyll, haemoglobin
+(Fe-centred).</p>
+<p><strong>Mixtures (proportioned blends).</strong></p>
+<ul class="simple">
+<li><p><strong>air</strong> — N₂ 78% / O₂ 21% / Ar 0.9% / CO₂ 0.04% (mole fractions).</p></li>
+<li><p><strong>wood</strong> — cellulose ~50% / lignin ~25% / hemicellulose ~20% / water + minerals.</p></li>
+<li><p><strong>soft tissue</strong> — by atomic %: H 63 / O 26 / C 9 / N 1.4 / trace P, S, Ca (ICRP-style).</p></li>
+<li><p><strong>seawater</strong>, <strong>soil</strong>, <strong>blood</strong> — analogous blends.</p></li>
+</ul>
+<p><strong>Process / archetype materials.</strong> Two of the user’s targets are not compounds; they are
+processes or suspensions, and the model handles both:</p>
+<ul class="simple">
+<li><p><strong>fire</strong> — combustion is a <em>process</em>, not a formula. Model it as a hot C/H/O plasma whose
+emission is dominated by specific radiators: the sodium D lines (yellow), the C₂ Swan bands
+and CH/OH bands, over a thermal continuum. Represent as a <code class="docutils literal notranslate"><span class="pre">Composition</span></code> of {C, H, O, Na}
+with an emission-weighting that favours the visible radiators, plus an optional blackbody
+continuum term (temperature → Planck curve). Fire is where the module meets thermal physics.</p></li>
+<li><p><strong>cloud</strong> — a suspension: water droplets in air. <code class="docutils literal notranslate"><span class="pre">cloud</span> <span class="pre">=</span> <span class="pre">Composition({water:</span> <span class="pre">p,</span> <span class="pre">air:</span> <span class="pre">1-p})</span></code>
+— a <em>structure</em> whose parts are themselves materials. This is the recursive case that proves
+the model: cloud is literally “water and air as building blocks,” exactly as the brief asks.</p></li>
+</ul>
+<p>There is a poetic bridge worth naming: <strong>water, air, fire, wood</strong> are also the classical and
+Wu-Xing archetypal elements. The dictionary can ship these as named archetypes, giving the
+module a foot in both modern chemistry (the periodic table) and the elemental-archetype
+vocabulary that suits biotuner’s world — without mysticism, since each archetype resolves to a
+concrete, cited composite spectrum.</p>
+<section id="the-tagged-starter-dictionary">
+<h3>The tagged starter dictionary<a class="headerlink" href="#the-tagged-starter-dictionary" title="Link to this heading">#</a></h3>
+<p>Each entry carries its tags across all four axes; the grid is the coverage audit. This set
+lights up transition metals (Fe, Cu), alkaline earths (Ca, Mg) and metalloids (Si) — the
+categories the naïve set missed — while keeping the biosphere/atmosphere core.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>material</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">kind</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">material_class</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">domain</span></code></p></th>
+<th class="head"><p>archetype</p></th>
+<th class="head"><p>key elements</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>water H₂O</p></td>
+<td><p>compound</p></td>
+<td><p>molecular</p></td>
+<td><p>hydrosphere</p></td>
+<td><p>water</p></td>
+<td><p>H, O</p></td>
+</tr>
+<tr class="row-odd"><td><p>carbon dioxide CO₂</p></td>
+<td><p>compound</p></td>
+<td><p>molecular</p></td>
+<td><p>atmosphere</p></td>
+<td><p>—</p></td>
+<td><p>C, O</p></td>
+</tr>
+<tr class="row-even"><td><p>halite NaCl</p></td>
+<td><p>compound</p></td>
+<td><p>ionic-salt</p></td>
+<td><p>geosphere</p></td>
+<td><p>—</p></td>
+<td><p>Na, Cl</p></td>
+</tr>
+<tr class="row-odd"><td><p>quartz SiO₂</p></td>
+<td><p>compound</p></td>
+<td><p>covalent-network</p></td>
+<td><p>geosphere</p></td>
+<td><p>earth</p></td>
+<td><p><strong>Si</strong>, O</p></td>
+</tr>
+<tr class="row-even"><td><p>iron / bronze</p></td>
+<td><p>element / mixture</p></td>
+<td><p>metallic</p></td>
+<td><p>geosphere/technosphere</p></td>
+<td><p>metal</p></td>
+<td><p><strong>Fe</strong>, Cu, Sn</p></td>
+</tr>
+<tr class="row-odd"><td><p>bone Ca₅(PO₄)₃OH</p></td>
+<td><p>compound</p></td>
+<td><p>biomineral-composite</p></td>
+<td><p>biosphere</p></td>
+<td><p>—</p></td>
+<td><p><strong>Ca</strong>, P, O, H</p></td>
+</tr>
+<tr class="row-even"><td><p>cellulose (wood)</p></td>
+<td><p>mixture</p></td>
+<td><p>organic-polymer/composite</p></td>
+<td><p>biosphere</p></td>
+<td><p>wood</p></td>
+<td><p>C, H, O</p></td>
+</tr>
+<tr class="row-odd"><td><p>chlorophyll</p></td>
+<td><p>compound</p></td>
+<td><p>organic-polymer</p></td>
+<td><p>biosphere</p></td>
+<td><p>—</p></td>
+<td><p><strong>Mg</strong>, C, H, N</p></td>
+</tr>
+<tr class="row-even"><td><p>haemoglobin / blood</p></td>
+<td><p>mixture</p></td>
+<td><p>organic-polymer/fluid</p></td>
+<td><p>biosphere</p></td>
+<td><p>—</p></td>
+<td><p><strong>Fe</strong>, C, H, O, N</p></td>
+</tr>
+<tr class="row-odd"><td><p>soft tissue</p></td>
+<td><p>mixture</p></td>
+<td><p>composite/fluid</p></td>
+<td><p>biosphere</p></td>
+<td><p>—</p></td>
+<td><p>H, O, C, N</p></td>
+</tr>
+<tr class="row-even"><td><p>air (dry)</p></td>
+<td><p>mixture</p></td>
+<td><p>gas-mixture</p></td>
+<td><p>atmosphere</p></td>
+<td><p>air</p></td>
+<td><p>N, O, Ar</p></td>
+</tr>
+<tr class="row-odd"><td><p>cloud</p></td>
+<td><p>structure</p></td>
+<td><p>colloid/suspension</p></td>
+<td><p>atmosphere</p></td>
+<td><p>—</p></td>
+<td><p>(water + air)</p></td>
+</tr>
+<tr class="row-even"><td><p>fire</p></td>
+<td><p>structure</p></td>
+<td><p>plasma/energetic</p></td>
+<td><p>energetic-process</p></td>
+<td><p>fire</p></td>
+<td><p>C, H, O, Na</p></td>
+</tr>
+<tr class="row-odd"><td><p>lightning</p></td>
+<td><p>structure</p></td>
+<td><p>plasma/energetic</p></td>
+<td><p>atmosphere/energetic</p></td>
+<td><p>—</p></td>
+<td><p>N, O</p></td>
+</tr>
+<tr class="row-even"><td><p>stellar plasma</p></td>
+<td><p>mixture</p></td>
+<td><p>plasma/energetic</p></td>
+<td><p>cosmosphere</p></td>
+<td><p>—</p></td>
+<td><p>H, He</p></td>
+</tr>
+<tr class="row-odd"><td><p>water ice / dry ice</p></td>
+<td><p>compound</p></td>
+<td><p>ice/volatile</p></td>
+<td><p>hydrosphere/cosmosphere</p></td>
+<td><p>—</p></td>
+<td><p>H, O / C, O</p></td>
+</tr>
+<tr class="row-even"><td><p>silica glass</p></td>
+<td><p>compound</p></td>
+<td><p>amorphous/glass</p></td>
+<td><p>technosphere</p></td>
+<td><p>—</p></td>
+<td><p>Si, O</p></td>
+</tr>
+<tr class="row-odd"><td><p>vacuum</p></td>
+<td><p>element</p></td>
+<td><p>void</p></td>
+<td><p>cosmosphere</p></td>
+<td><p>ether</p></td>
+<td><p>— (vacuum table)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Fifteen-plus materials, every <code class="docutils literal notranslate"><span class="pre">material_class</span></code> filled, every domain represented, and — by the
+<code class="docutils literal notranslate"><span class="pre">key</span> <span class="pre">elements</span></code> column — all ten NIST element categories reachable once the rare-earth/actinide
+edge cases (a lanthanide phosphor, uranium glass) are added. <code class="docutils literal notranslate"><span class="pre">cloud</span></code>, <code class="docutils literal notranslate"><span class="pre">fire</span></code>, and <code class="docutils literal notranslate"><span class="pre">lightning</span></code>
+sit at the <strong>structure</strong> level, exercising the recursion; <code class="docutils literal notranslate"><span class="pre">vacuum</span></code> is the <code class="docutils literal notranslate"><span class="pre">ether</span></code> archetype and
+the one material that reads from the vacuum line table.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="public-api">
+<h2>8. Public API<a class="headerlink" href="#public-api" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.bioelements</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Composition</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">MATERIALS</span><span class="p">,</span>        <span class="c1"># the model + registry</span>
+    <span class="n">load_elements</span><span class="p">,</span> <span class="n">element_spectrum</span><span class="p">,</span>         <span class="c1"># data access</span>
+    <span class="n">composite_spectrum</span><span class="p">,</span>                      <span class="c1"># the core operation</span>
+    <span class="n">match_elements</span><span class="p">,</span> <span class="n">match_materials</span><span class="p">,</span>         <span class="c1"># biosignal -&gt; {element|material} affinity</span>
+    <span class="n">coverage_report</span><span class="p">,</span>                         <span class="c1"># audit the dictionary across the four axes</span>
+<span class="p">)</span>
+
+<span class="n">coverage_report</span><span class="p">(</span><span class="n">MATERIALS</span><span class="p">)</span>   <span class="c1"># grid of filled/empty cells + the &gt;=8/10 element-category gate</span>
+
+<span class="n">water</span> <span class="o">=</span> <span class="n">MATERIALS</span><span class="p">[</span><span class="s2">&quot;water&quot;</span><span class="p">]</span>
+<span class="n">water</span><span class="o">.</span><span class="n">spectrum</span><span class="p">()</span>            <span class="c1"># composite line list (wavelength, intensity, source)</span>
+<span class="n">water</span><span class="o">.</span><span class="n">tuning</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>     <span class="c1"># material scale, reduced</span>
+<span class="n">water</span><span class="o">.</span><span class="n">palette</span><span class="p">(</span><span class="n">fund</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>     <span class="c1"># via biocolors</span>
+<span class="n">water</span><span class="o">.</span><span class="n">affinity</span><span class="p">(</span><span class="n">eeg_peaks</span><span class="p">)</span>   <span class="c1"># how strongly this signal resonates with water</span>
+
+<span class="n">cloud</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="s2">&quot;cloud&quot;</span><span class="p">,</span> <span class="p">{</span><span class="n">MATERIALS</span><span class="p">[</span><span class="s2">&quot;water&quot;</span><span class="p">]:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">MATERIALS</span><span class="p">[</span><span class="s2">&quot;air&quot;</span><span class="p">]:</span> <span class="mf">0.95</span><span class="p">},</span>
+                    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;structure&quot;</span><span class="p">)</span>
+<span class="n">cloud</span><span class="o">.</span><span class="n">tuning</span><span class="p">()</span>              <span class="c1"># recursion: water+air spectra superposed, folded, reduced</span>
+
+<span class="c1"># rank a biosignal against the whole dictionary</span>
+<span class="n">ranked</span> <span class="o">=</span> <span class="n">match_materials</span><span class="p">(</span><span class="n">eeg_peaks</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="s2">&quot;atom&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="s2">&quot;budget&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="build-order">
+<h2>9. Build order<a class="headerlink" href="#build-order" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>phase</p></th>
+<th class="head"><p>contents</p></th>
+<th class="head"><p>testable at exit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>0. Solidify</strong></p></td>
+<td><p>package <code class="docutils literal notranslate"><span class="pre">bioelements/</span></code>; move data in-package (<code class="docutils literal notranslate"><span class="pre">.npz</span></code>); fix <code class="docutils literal notranslate"><span class="pre">compute_ratios_df</span></code> (pandas 2); relative-tolerance matcher; <code class="docutils literal notranslate"><span class="pre">ElementSpectrum</span></code> object; back-compat shims</p></td>
+<td><p>element tunings reproduce; matcher returns sensible hits on a known line; legacy imports unchanged</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>1. Composition</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Composition</span></code> + recursive budget-normalised superposition; the weighting knobs (§4)</p></td>
+<td><p>water = 2/3 H, 1/3 O by design; air ≈ real; composite spectrum finite, sorted, sourced</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>2. Material dictionary</strong></p></td>
+<td><p>the tagged grid (§7); the registry (rejects untagged materials); <code class="docutils literal notranslate"><span class="pre">materials_v1.yaml</span></code>; <code class="docutils literal notranslate"><span class="pre">coverage_report</span></code></p></td>
+<td><p>every material yields a finite tuning + palette; <code class="docutils literal notranslate"><span class="pre">match_materials</span></code> ranks a signal; <strong><code class="docutils literal notranslate"><span class="pre">coverage_report</span></code> passes ≥8/10 element categories and every class/domain filled</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>3. Bridges</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">material.tuning/palette/chord/geometry</span></code>; <code class="docutils literal notranslate"><span class="pre">affinity</span></code></p></td>
+<td><p>a material round-trips to a <code class="docutils literal notranslate"><span class="pre">.scl</span></code>, a <code class="docutils literal notranslate"><span class="pre">Palette</span></code>, a <code class="docutils literal notranslate"><span class="pre">harmonic_geometry</span></code> form</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>4. Structures</strong></p></td>
+<td><p>recursive material-of-materials; layered/spatial arrangements → geometry</p></td>
+<td><p>cloud (water+air) and a layered structure render; docs notebook</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Phase 0 is worth doing on its own — it fixes a real bug and packages the data — even if the
+composite layer never ships. Phase 1 is where the vision becomes real. Phases 3–4 are pure
+integration, because the composite spectrum already speaks every biotuner dialect.</p>
+</section>
+<hr class="docutils" />
+<section id="open-questions-for-you">
+<h2>10. Open questions for you<a class="headerlink" href="#open-questions-for-you" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Default weighting.</strong> Atom count is the natural default, but “how much <em>mass</em> resonates”
+(mass fraction) is a defensible alternative and gives very different materials (water becomes
+O-dominated by mass). Ship atom-count default with the others exposed, or pick a different
+default?</p></li>
+<li><p><strong>Fire’s continuum.</strong> Do you want fire (and hot materials generally) to carry a blackbody
+<em>continuum</em> term (temperature → Planck), or stay purely line-based like the cold materials?
+The continuum is physically right for incandescence but adds a temperature parameter and a
+different kind of spectrum.</p></li>
+<li><p><strong>Air vs vacuum tables.</strong> There are two NIST tables (air- and vacuum-wavelength). Air is the
+right default for terrestrial materials; should vacuum be an option (for astrophysical
+signals), or dropped?</p></li>
+<li><p><strong>How curated should the dictionary be?</strong> A tight, cited set (~15 materials: the classical
+archetypes + common biomaterials) is defensible and maintainable. A large auto-generated set
+(every common compound) is more impressive but harder to keep honest. Which?</p></li>
+<li><p><strong>Archetype framing.</strong> Lean into water/air/fire/wood as named classical/Wu-Xing archetypes
+(evocative, fits biotuner), or keep the vocabulary strictly chemical (compounds/mixtures)?</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="reproducing-the-numbers">
+<h2>Reproducing the numbers<a class="headerlink" href="#reproducing-the-numbers" title="Link to this heading">#</a></h2>
+<p>Measured on pandas 2.3.3 against <code class="docutils literal notranslate"><span class="pre">data/air_elements.csv</span></code>:</p>
+<ul class="simple">
+<li><p>Broken <code class="docutils literal notranslate"><span class="pre">compute_ratios_df</span></code>, 0-match tolerance, composite dominance (water 81% O, air N 61%/O
+36%/Ar 3%), material tunings, and the biosignal→material affinity proof-of-concept:
+<code class="docutils literal notranslate"><span class="pre">scripts/bioelements_composite_poc.py</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-intuition-and-the-expansion">1. The intuition, and the expansion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-the-current-module">2. Verdict on the current module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#broken-confirmed">Broken (confirmed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-blocks-the-expansion">Messy (blocks the expansion)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#keep">Keep</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-compositional-model-the-heart">3. The compositional model (the heart)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-weighting-problem-this-module-s-calibration">4. The weighting problem (this module’s “calibration”)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-methodology-spanning-the-space-of-materials">4.5 Coverage methodology — spanning the space of materials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-layout">5. Module layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-a-material-affords">6. What a material affords</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-material-dictionary">7. The material dictionary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tagged-starter-dictionary">The tagged starter dictionary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#public-api">8. Public API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-order">9. Build order</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-for-you">10. Open questions for you</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-the-numbers">Reproducing the numbers</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

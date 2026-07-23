@@ -1,0 +1,1366 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>biocolors expansion — architecture &#8212; Biotuner 0.4.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=a3cf13c8"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'biocolors_architecture';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.4.1 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.4.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/biocolors_architecture.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>biocolors expansion — architecture</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-exists-now">0. What exists now</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-building-it-on-real-data-changed">What building it on real data changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-figures-honestly-do-not-show">What the figures honestly do not show</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-biocolors-plus-py">1. Verdict on <code class="docutils literal notranslate"><span class="pre">biocolors_plus.py</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#keep">Keep</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#broken-empirically-confirmed">Broken (empirically confirmed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#misdiagnosed">Misdiagnosed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-is-a-non-issue">Performance is a non-issue</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">2. Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexibility">3. Flexibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colourspace-mapping">4. Colourspace mapping</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gamut-fix">The gamut fix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-locus">Spectral locus</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checks-that-make-nice-falsifiable">Checks that make “nice” falsifiable</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#palette-diversity">5. Palette diversity</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#name-the-tradeoff-stability-vs-separation">Name the tradeoff: stability vs separation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fingerprint-root-fix">The fingerprint (root fix)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-killing-the-55">Calibration — killing the <code class="docutils literal notranslate"><span class="pre">/55</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-embedding">The embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#separated-mode">Separated mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#measurement-the-claim-must-be-falsifiable">Measurement — the claim must be falsifiable</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-palette-diversity">Within-palette diversity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#public-api">6. Public API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#migration-compatibility">7. Migration &amp; compatibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-order">8. Build order</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions">9. Open questions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-the-numbers">Reproducing the numbers</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biocolors-expansion-architecture">
+<h1>biocolors expansion — architecture<a class="headerlink" href="#biocolors-expansion-architecture" title="Link to this heading">#</a></h1>
+<p>Status: <strong>built and calibrated on real data.</strong> Supersedes the <code class="docutils literal notranslate"><span class="pre">biocolors_plus.py</span></code> handoff.</p>
+<p>All numbers below are measured, not asserted. Reproduce with the scripts noted at the end.</p>
+<hr class="docutils" />
+<section id="what-exists-now">
+<h2>0. What exists now<a class="headerlink" href="#what-exists-now" title="Link to this heading">#</a></h2>
+<p>Built as <code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/</span></code> (was <code class="docutils literal notranslate"><span class="pre">biocolors.py</span></code>, now <code class="docutils literal notranslate"><span class="pre">biocolors/legacy.py</span></code>, re-exported so every
+existing import keeps working — verified: <code class="docutils literal notranslate"><span class="pre">wavelength_to_rgb(475)</span></code> still returns <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">213,</span> <span class="pre">255)</span></code>).</p>
+<p>Calibrated on <strong>HMC sleep staging DB, subject SN001</strong>: 7.12 h, 256 Hz, 4 EEG channels, 854
+expert-scored 30 s epochs across W/N1/N2/N3/R → <strong>3 416 signals, 0 extraction failures</strong>. Shipped as
+<code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/data/eeg_sleep_v1.npz</span></code>.</p>
+<p>Figures in <code class="docutils literal notranslate"><span class="pre">docs/img/biocolors/</span></code>, all generated from that recording:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>figure</p></th>
+<th class="head"><p>shows</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">01_stage_palettes</span></code></p></td>
+<td><p>the five sleep stages as palettes, from stage-median spectra</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">02_within_stage_variability</span></code></p></td>
+<td><p>eight individual N2 epochs — one stage is <em>not</em> one colour</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">03_temperament_range</span></code></p></td>
+<td><p>one signal under ten characters (earthy … pastel … vivid)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">04_night_ribbon</span></code></p></td>
+<td><p>7.1 h as colour, 30 s vs 150 s windows</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">05_diversity_vs_prototype</span></code></p></td>
+<td><p>60 real epochs: prototype anchor vs fingerprint anchor</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">06_colorspace</span></code></p></td>
+<td><p>the cusp, gamut mapping, Bruton vs CIE 1931</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">07_mapping_variants</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">anchored</span></code> / <code class="docutils literal notranslate"><span class="pre">spectral</span></code> / <code class="docutils literal notranslate"><span class="pre">mds</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">08_fingerprint_space</span></code></p></td>
+<td><p>the PCA domain the hue is read off, with stage labels</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">09_forms</span></code></p></td>
+<td><p>ramps, dyad field, consonance spectra</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">10_audit</span></code></p></td>
+<td><p>CVD simulation + absolute vs separated mode</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="what-building-it-on-real-data-changed">
+<h3>What building it on real data changed<a class="headerlink" href="#what-building-it-on-real-data-changed" title="Link to this heading">#</a></h3>
+<p>Three things only real EEG could have told us:</p>
+<ol class="arabic simple">
+<li><p><strong>Amplitudes are dB, and rectifying them by shifting is wrong.</strong>
+<code class="docutils literal notranslate"><span class="pre">peaks_extraction.py:324</span></code> does <code class="docutils literal notranslate"><span class="pre">psd</span> <span class="pre">=</span> <span class="pre">10*log10(psd)</span></code>, so every Welch-based extractor returns dB;
+26% of values in this corpus are negative. The first implementation shifted them to positive,
+which is scale-inconsistent — 74% of epochs have no negative value and so were left alone.
+Measured consequence: two N2 epochs with <strong>identical peaks</strong> <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">3.5,</span> <span class="pre">7.5,</span> <span class="pre">14.2,</span> <span class="pre">28.5]</span></code> received
+anchor hues <strong>122° apart</strong>. Fixed by inverting the log (<code class="docutils literal notranslate"><span class="pre">10**(dB/10)</span></code>) under an explicit
+<code class="docutils literal notranslate"><span class="pre">amps_scale</span></code> parameter, recorded in the calibration and warned about on mismatch. This single fix
+took the PCA’s 2-D coverage from <strong>66.9% → 79.9%</strong> and turned the spectral descriptors from
+near-useless to the most informative in the set (<code class="docutils literal notranslate"><span class="pre">spectral_entropy</span></code> std 0.018 → 0.123).</p></li>
+<li><p><strong>Percentile calibration needs a degeneracy guard.</strong> On this corpus <code class="docutils literal notranslate"><span class="pre">n_peaks</span></code> is 5 for ~98% of
+epochs and <code class="docutils literal notranslate"><span class="pre">complexity</span></code> (Higuchi FD over five amplitudes) is mostly 0. Percentile-normalising a
+degenerate descriptor stretches quantisation noise across the full range and injects it into hue
+as if it were signal. <code class="docutils literal notranslate"><span class="pre">Calibration</span></code> now learns a per-descriptor weight (<code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">modal_bin_fraction</span></code>)
+from the corpus; both collapse to <strong>0.003</strong> and are suppressed automatically. A descriptor useless
+here can still earn weight on a corpus where it varies — the calibration adapts, the field list
+is not hardcoded.</p></li>
+<li><p><strong>The prototype’s diversity failure is real but smaller than synthetics implied.</strong> On synthetic
+EEG-like signals the <code class="docutils literal notranslate"><span class="pre">/55</span></code> anchor gave a 0.20° median hue gap and 56% of pairs within 5°. On <em>real</em>
+epochs it gives <strong>1.26°</strong> and <strong>7%</strong> — bad, not catastrophic, because real <code class="docutils literal notranslate"><span class="pre">fixed</span></code>-extracted peaks
+include a ~1 Hz fundamental that lifts consonance into a wider range (7.4–60.4, not 0.3–5). The
+fingerprint anchor gives <strong>3.95°</strong> and <strong>2%</strong>, with wheel occupancy <strong>47% → 78%</strong>. Worth stating
+plainly rather than quoting the synthetic number.</p></li>
+</ol>
+</section>
+<section id="what-the-figures-honestly-do-not-show">
+<h3>What the figures honestly do not show<a class="headerlink" href="#what-the-figures-honestly-do-not-show" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Sleep stages overlap heavily in fingerprint space</strong> (<code class="docutils literal notranslate"><span class="pre">08</span></code>). Wake leans right, REM left, but
+individual epochs are not separable by stage. The per-stage palettes in <code class="docutils literal notranslate"><span class="pre">01</span></code> work because averaging
+500+ epochs recovers the mean difference. This is a faithful map of spectra, not a sleep classifier,
+and it is not marketed as one.</p></li>
+<li><p><strong>Within-stage variability is large</strong> (<code class="docutils literal notranslate"><span class="pre">02</span></code>): anchor circular std inside N2 is <strong>150°</strong> at 30 s.
+Longer windows help only partly (median consecutive shift 61° → 35° at 150 s) and do not make sleep
+architecture legible in the ribbon (<code class="docutils literal notranslate"><span class="pre">04</span></code>). That is the honest cost of <code class="docutils literal notranslate"><span class="pre">mode=&quot;absolute&quot;</span></code>.</p></li>
+<li><p><strong>W and N1 aggregate palettes collide</strong> (min gap 10.9°, palette ΔE 0.041). N1 is transitional wake;
+similar spectra <em>should</em> give similar colour. <code class="docutils literal notranslate"><span class="pre">mode=&quot;separated&quot;</span></code> is the answer when they must be
+told apart.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="verdict-on-biocolors-plus-py">
+<h2>1. Verdict on <code class="docutils literal notranslate"><span class="pre">biocolors_plus.py</span></code><a class="headerlink" href="#verdict-on-biocolors-plus-py" title="Link to this heading">#</a></h2>
+<section id="keep">
+<h3>Keep<a class="headerlink" href="#keep" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>The OKLab matrices.</strong> Verified against a dense random sRGB grid: max round-trip error
+<code class="docutils literal notranslate"><span class="pre">1.56e-06</span></code> (0.0004 / 255), mean <code class="docutils literal notranslate"><span class="pre">1.46e-07</span></code>. They are correct. Carry them forward verbatim.</p></li>
+<li><p><strong>Working in OKLCh at all.</strong> The current <code class="docutils literal notranslate"><span class="pre">biocolors.viz_scale_colors</span></code> does HSV with a hardcoded
+<code class="docutils literal notranslate"><span class="pre">hsv[2]</span> <span class="pre">=</span> <span class="pre">200</span></code>. Moving to a perceptual space is the right instinct.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cons_matrix_to_hue</span></code></strong> — classical MDS of the consonance matrix onto the hue circle. Genuinely
+novel and worth keeping: it makes hue mean <em>harmonic relatedness</em> rather than pitch.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">diss_curve</span></code>-driven per-signal spectra.</strong> Real signal content, real differentiation.</p></li>
+<li><p><strong>Folding on wavelength</strong> rather than only multiplying frequency up.</p></li>
+</ul>
+</section>
+<section id="broken-empirically-confirmed">
+<h3>Broken (empirically confirmed)<a class="headerlink" href="#broken-empirically-confirmed" title="Link to this heading">#</a></h3>
+<p><strong>1. The gamut fit is dead code.</strong>
+<code class="docutils literal notranslate"><span class="pre">_linear_to_srgb</span></code> (line 103) clips to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> <em>before returning</em>, so the out-of-gamut test at
+line 139 (<code class="docutils literal notranslate"><span class="pre">rgb.min()</span> <span class="pre">&lt;</span> <span class="pre">-1e-6</span> <span class="pre">or</span> <span class="pre">rgb.max()</span> <span class="pre">&gt;</span> <span class="pre">1</span> <span class="pre">+</span> <span class="pre">1e-6</span></code>) can never fire.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>OKLCh requested</p></th>
+<th class="head"><p>unclipped sRGB</p></th>
+<th class="head"><p>after the clip</p></th>
+<th class="head"><p>search fired?</p></th>
+<th class="head"><p>result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>L=0.6 C=0.4 h=150</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[-0.550,</span> <span class="pre">0.703,</span> <span class="pre">-0.319]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0.703,</span> <span class="pre">0]</span></code></p></td>
+<td><p><strong>False</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">179,</span> <span class="pre">0)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>L=0.5 C=0.5 h=260</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0.113,</span> <span class="pre">-0.433,</span> <span class="pre">1.476]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0.113,</span> <span class="pre">0,</span> <span class="pre">1.0]</span></code></p></td>
+<td><p><strong>False</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(29,</span> <span class="pre">0,</span> <span class="pre">255)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>L=0.85 C=0.35 h=120</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0.714,</span> <span class="pre">0.903,</span> <span class="pre">-0.538]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0.714,</span> <span class="pre">0.903,</span> <span class="pre">0]</span></code></p></td>
+<td><p><strong>False</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(182,</span> <span class="pre">230,</span> <span class="pre">0)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Every out-of-gamut colour is silently <strong>clipped</strong>, which shifts hue — destroying the perceptual
+guarantee the module exists to provide. The 24-iteration bisection has never run.</p>
+<p><strong>2. <code class="docutils literal notranslate"><span class="pre">srgb_to_oklab</span></code> is silently wrong on batched input.</strong>
+<code class="docutils literal notranslate"><span class="pre">r,</span> <span class="pre">g,</span> <span class="pre">b</span> <span class="pre">=</span> <span class="pre">_srgb_to_linear(np.asarray(rgb,</span> <span class="pre">float))</span></code> unpacks the <em>first</em> axis, so an <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code> array
+is read with <strong>pixels treated as channels</strong>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code> input: returns a wrong answer <strong>without raising</strong> — max deviation <code class="docutils literal notranslate"><span class="pre">0.0240</span></code> from the
+per-row reference.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">3)</span></code> input: <code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">too</span> <span class="pre">many</span> <span class="pre">values</span> <span class="pre">to</span> <span class="pre">unpack</span> <span class="pre">(expected</span> <span class="pre">3)</span></code>.</p></li>
+<li><p>Only a single <code class="docutils literal notranslate"><span class="pre">(3,)</span></code> colour is correct.</p></li>
+</ul>
+<p>Any attempt to vectorize will corrupt colours quietly.</p>
+<p><strong>3. The <code class="docutils literal notranslate"><span class="pre">/55</span></code> normalisation is calibrated to the wrong distribution. This is the diversity killer.</strong></p>
+<p>On 30 synthetic EEG-like signals (theta/alpha/beta peaks with jitter), mean consonance spans
+<strong>0.318 – 4.957</strong>, so <code class="docutils literal notranslate"><span class="pre">avg</span> <span class="pre">/</span> <span class="pre">55</span> <span class="pre">∈</span> <span class="pre">[0.006,</span> <span class="pre">0.09]</span></code> — the bottom 9% of the hue budget:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>anchor hue span : 16.7° – 42.0°   (25° of 360)
+std             : 7.61°
+median gap between adjacent signals : 0.20°
+pairs within 5° (same hue family)   : 242 / 435  (56%)
+</pre></div>
+</div>
+<p><strong>Every realistic EEG signal gets the same orange-red.</strong> The diversity goal fails completely on the
+actual target domain. It also saturates at the top: harmonic series 1–8 has mean consonance 59.55 →
+<code class="docutils literal notranslate"><span class="pre">59.55/55</span> <span class="pre">=</span> <span class="pre">1.083</span></code> → clipped → hue exactly <code class="docutils literal notranslate"><span class="pre">315.00</span></code>; harmonic 1–12 sits at <code class="docutils literal notranslate"><span class="pre">0.994</span></code>.</p>
+<p>Even on hand-picked <em>maximally different</em> synthetic signals it collides:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>stretched  vs  two_cluster      hue gap 0.62°   palette dE_OK 0.0326   &lt;- perceptually identical
+golden     vs  inharmonic_rand  hue gap 2.43°   palette dE_OK 0.0484   &lt;- perceptually identical
+</pre></div>
+</div>
+<p>(<code class="docutils literal notranslate"><span class="pre">dE_OK</span> <span class="pre">&lt;</span> <span class="pre">0.05</span></code> ≈ “the same palette”.) A stretched harmonic series and two tight clusters are not
+remotely the same signal; they collide because they happen to share a mean-consonance value
+(7.749 vs 7.635). <strong>A single scalar cannot separate signals.</strong></p>
+<p><strong>4. The visible-band clamp silently falsifies musically central steps.</strong>
+JI major on <code class="docutils literal notranslate"><span class="pre">fund=30</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ratio</span><span class="o">=</span><span class="mf">1.3333</span>  <span class="n">f</span><span class="o">=</span><span class="mf">40.00</span><span class="n">Hz</span>  <span class="n">nm</span><span class="o">=</span><span class="mf">426.03</span>  <span class="n">n_oct</span><span class="o">=</span><span class="mi">44</span>
+<span class="n">ratio</span><span class="o">=</span><span class="mf">1.5000</span>  <span class="n">f</span><span class="o">=</span><span class="mf">45.00</span><span class="n">Hz</span>  <span class="n">nm</span><span class="o">=</span><span class="mf">750.00</span>  <span class="n">n_oct</span><span class="o">=</span><span class="mi">43</span>   <span class="o">&lt;--</span> <span class="n">CLAMPED</span> <span class="n">to</span> <span class="n">the</span> <span class="n">band</span> <span class="n">edge</span>
+<span class="n">ratio</span><span class="o">=</span><span class="mf">1.6667</span>  <span class="n">f</span><span class="o">=</span><span class="mf">50.00</span><span class="n">Hz</span>  <span class="n">nm</span><span class="o">=</span><span class="mf">681.65</span>  <span class="n">n_oct</span><span class="o">=</span><span class="mi">43</span>
+</pre></div>
+</div>
+<p>The fold seam lands <strong>on the perfect fifth</strong>, which gets clamped to exactly 750.00 nm. Only 1.88% of
+frequencies in 1–1000 Hz hit the clamp, but it is structural, not random — the seam has to land
+somewhere, and the clamp hides it rather than handling it.</p>
+<p><strong>5. Bruton’s <code class="docutils literal notranslate"><span class="pre">wavelength_to_rgb</span></code> collapses 28.4% of the visible band to one hue.</strong>
+Measured over 380–750 nm: the entire <strong>645–750 nm band (105 nm wide) maps to OKLCh hue 29.23°</strong> —
+only lightness varies. Consequence, directly observed: ratio 3/2 (nm 750.00) and ratio 5/3
+(nm 681.65) both receive hue 29.23°. The JI major scale yields only <strong>6 unique hues from 8 steps</strong>.
+The red end of the module’s own spectral map has zero hue resolution.</p>
+</section>
+<section id="misdiagnosed">
+<h3>Misdiagnosed<a class="headerlink" href="#misdiagnosed" title="Link to this heading">#</a></h3>
+<p><strong>“Bright red is pink — in OKLab hue 0 is the magenta axis.”</strong>
+Wrong on the fact, accidentally right on the observation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sRGB red     (255,0,0) -&gt; L=0.6280  C=0.2577  h= 29.23°
+sRGB magenta (255,0,255)-&gt; L=0.7017  C=0.3225  h=328.36°
+OKLCh hue 0 at L=0.63,C=0.15 renders as (207, 93, 133)  -- a dusty rose
+</pre></div>
+</div>
+<p>Hue 0 is the <strong>+a axis</strong>, not the magenta axis (magenta is at 328°), and red is 29° away from it.</p>
+<p><strong>The real cause is the dead gamut fit meeting the chroma cusp.</strong> The sRGB chroma ceiling at red’s
+hue collapses as lightness rises:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>L</p></th>
+<th class="head"><p>max chroma at h=0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.60</p></td>
+<td><p>0.243</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.80</p></td>
+<td><p>0.125</p></td>
+</tr>
+<tr class="row-even"><td><p>0.90</p></td>
+<td><p><strong>0.056</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The proposal’s defaults ask for <code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">0.22</span></code> at <code class="docutils literal notranslate"><span class="pre">L</span> <span class="pre">=</span> <span class="pre">0.88</span></code> — roughly <strong>3× the ceiling</strong>. The gamut fit
+never fires, so it clips, which desaturates toward white: <strong>pink</strong>. <code class="docutils literal notranslate"><span class="pre">encode=&quot;chroma&quot;</span></code> works only
+because pinning <code class="docutils literal notranslate"><span class="pre">L</span></code> to <code class="docutils literal notranslate"><span class="pre">(0.50,</span> <span class="pre">0.66)</span></code> happens to sit near the cusp where the ceiling is ~0.20–0.24.
+It is a workaround that dodges the bug, not a fix. Fix the gamut mapping and the <code class="docutils literal notranslate"><span class="pre">encode=&quot;lightness&quot;</span></code>
+path becomes usable and the <code class="docutils literal notranslate"><span class="pre">L_range</span></code> restriction lifts.</p>
+<p><strong>“NaN per-step values from <code class="docutils literal notranslate"><span class="pre">tuning_cons_matrix</span></code>.”</strong> Refuted for the path actually used. With
+<code class="docutils literal notranslate"><span class="pre">ratio_type=&quot;all&quot;</span></code> (what the module passes), <code class="docutils literal notranslate"><span class="pre">per_step</span> <span class="pre">=</span> <span class="pre">[42.99,</span> <span class="pre">21.05,</span> <span class="pre">31.56,</span> <span class="pre">…]</span></code> — <strong>no NaN</strong> — and
+<code class="docutils literal notranslate"><span class="pre">full_matrix</span></code> has <strong>0 NaN of 64</strong> with a <code class="docutils literal notranslate"><span class="pre">0.0</span></code> diagonal. The docstring’s NaN example is
+<code class="docutils literal notranslate"><span class="pre">ratio_type=&quot;pos_harm&quot;</span></code>. The <code class="docutils literal notranslate"><span class="pre">nan_to_num</span></code> guard in <code class="docutils literal notranslate"><span class="pre">_norm</span></code> is dead code here (and its logic is
+inverted anyway: it evaluates <code class="docutils literal notranslate"><span class="pre">np.nanmin(x)</span></code> as a fill value on the pre-fill array).</p>
+<p><strong>“Black swatches from <code class="docutils literal notranslate"><span class="pre">audible2visible</span></code>.”</strong> Partly. The bug is real at a <strong>7.2% rate</strong> (216/3000
+swept frequencies produce out-of-band nm → <code class="docutils literal notranslate"><span class="pre">(0,0,0)</span></code>), but the implied example does not reproduce:
+<code class="docutils literal notranslate"><span class="pre">audible2visible(390)</span></code> → nm 699.13 → <code class="docutils literal notranslate"><span class="pre">(203,0,0)</span></code>, and the new <code class="docutils literal notranslate"><span class="pre">audible_to_nm(390)</span></code> returns the
+<em>identical</em> 699.13.</p>
+</section>
+<section id="performance-is-a-non-issue">
+<h3>Performance is a non-issue<a class="headerlink" href="#performance-is-a-non-issue" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">dyad_field(n=12)</span></code> <strong>8.0 ms</strong>, <code class="docutils literal notranslate"><span class="pre">palette_ramp(n=256)</span></code> <strong>13.5 ms</strong>, <code class="docutils literal notranslate"><span class="pre">curve_palette(n=512)</span></code> <strong>22.7 ms</strong>,
+<code class="docutils literal notranslate"><span class="pre">dyad_field(n=24)</span></code> <strong>31.5 ms</strong>. The python loops are fine — <em>because the gamut search never runs</em>.
+Fixing it multiplies that path ~24×. Vectorize then, not before.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="architecture">
+<h2>2. Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<p>Follows the <code class="docutils literal notranslate"><span class="pre">harmonic_geometry</span></code> precedent already established in this repo: <strong>pure data out,
+rendering is a downstream concern.</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>biotuner/biocolors/
+├── __init__.py          # re-exports + back-compat shims for every legacy name
+├── legacy.py            # today&#39;s biocolors.py, frozen, deprecated
+├── color/               # LAYER 1 — colour science. ZERO biotuner imports.
+│   ├── spaces.py        # sRGB &lt;-&gt; linear &lt;-&gt; OKLab &lt;-&gt; OKLCh, vectorized (..., 3)
+│   ├── gamut.py         # cusp table, cusp-aware chroma map
+│   ├── spectral.py      # wavelength -&gt; XYZ (CIE 1931) -&gt; sRGB; Bruton kept as an option
+│   ├── difference.py    # deltaE_OK, CVD simulation
+│   └── palette.py       # farthest-point sampling, constrained construction
+├── descriptors.py       # LAYER 2 — signal -&gt; Fingerprint (registry)
+├── mapping.py           # LAYER 3 — Fingerprint/steps -&gt; ColorSpec (registry)
+├── calibration.py       # LAYER 4 — reference distributions. Kills /55.
+├── palettes.py          # LAYER 5 — the 5 public entry points
+├── render.py            # matplotlib/PIL helpers (optional import)
+└── data/
+    └── calibration_eeg_v1.npz
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Signal (peaks, amps) ──┐
+Tuning (scale, fund) ──┤
+                       ▼
+              ┌─────────────────┐
+              │  descriptors    │  registry: consonance, harmsim, tenney,
+              │                 │  flatness, spread, entropy, HFD, n_peaks,
+              └────────┬────────┘  subharm_tension, ...
+                       │ Fingerprint (per-signal) + per-step metrics
+                       ▼
+              ┌─────────────────┐
+              │  calibration    │  percentile-rank against a reference corpus
+              └────────┬────────┘  -&gt; every channel in [0,1]
+                       ▼
+              ┌─────────────────┐
+              │    mapping      │  normalised channels -&gt; (L, C, h)
+              └────────┬────────┘  hue anchor + arc | MDS | wavelength
+                       ▼
+              ┌─────────────────┐
+              │   ColorSpec     │  L, C, h arrays + provenance
+              └────────┬────────┘
+                       ▼
+              ┌─────────────────┐
+              │  color/gamut    │  cusp-aware fit -&gt; guaranteed in gamut
+              └────────┬────────┘
+                       ▼
+                 PaletteData
+          (rgb, oklch, spec, fingerprint, parameters, metadata)
+                       │
+                       ▼
+              render.py / engine / user
+</pre></div>
+</div>
+<p>The load-bearing structural point: <strong><code class="docutils literal notranslate"><span class="pre">color/</span></code> imports nothing from biotuner.</strong> It is the layer that
+is currently broken, it is testable against <code class="docutils literal notranslate"><span class="pre">colour-science</span></code> as ground truth with no harmonic
+machinery in the way, and it is independently useful.</p>
+</section>
+<hr class="docutils" />
+<section id="flexibility">
+<h2>3. Flexibility<a class="headerlink" href="#flexibility" title="Link to this heading">#</a></h2>
+<p>A registry per extension point. Not decoration — each has ≥3 real implementations today.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># descriptors.py</span>
+<span class="n">DESCRIPTORS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Descriptor</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">descriptor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">range_hint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;kind: &#39;per_step&#39; | &#39;per_signal&#39; | &#39;matrix&#39; | &#39;curve&#39;&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="n">DESCRIPTORS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Descriptor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">range_hint</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fn</span>
+    <span class="k">return</span> <span class="n">deco</span>
+
+<span class="nd">@descriptor</span><span class="p">(</span><span class="s2">&quot;harmsim&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;per_step&quot;</span><span class="p">,</span> <span class="n">range_hint</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_harmsim</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ratios2harmsim</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">scale</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+
+<span class="nd">@descriptor</span><span class="p">(</span><span class="s2">&quot;spectral_flatness&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;per_signal&quot;</span><span class="p">,</span> <span class="n">range_hint</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatness</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">spectral_flatness</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">harmonicity_values</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A user adds one without touching core:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biocolors.descriptors</span><span class="w"> </span><span class="kn">import</span> <span class="n">descriptor</span>
+
+<span class="nd">@descriptor</span><span class="p">(</span><span class="s2">&quot;my_metric&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;per_signal&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_metric</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">peaks</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">peaks</span><span class="p">))</span>
+
+<span class="n">pal</span> <span class="o">=</span> <span class="n">palette_from_signal</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">chroma_from</span><span class="o">=</span><span class="s2">&quot;my_metric&quot;</span><span class="p">)</span>   <span class="c1"># usable immediately</span>
+</pre></div>
+</div>
+<p>Same shape for the other axes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@colorspace</span><span class="p">(</span><span class="s2">&quot;oklch&quot;</span><span class="p">)</span>  <span class="k">class</span><span class="w"> </span><span class="nc">OKLCh</span><span class="p">:</span>  <span class="n">channels</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">);</span> <span class="n">to_srgb</span><span class="p">;</span> <span class="n">from_srgb</span>
+<span class="nd">@colorspace</span><span class="p">(</span><span class="s2">&quot;cam16&quot;</span><span class="p">)</span>  <span class="k">class</span><span class="w"> </span><span class="nc">CAM16UCS</span><span class="p">:</span> <span class="o">...</span>
+<span class="nd">@mapping</span><span class="p">(</span><span class="s2">&quot;anchored_arc&quot;</span><span class="p">)</span> <span class="k">def</span><span class="w"> </span><span class="nf">anchored_arc</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpec</span>
+<span class="nd">@mapping</span><span class="p">(</span><span class="s2">&quot;mds_hue&quot;</span><span class="p">)</span>      <span class="k">def</span><span class="w"> </span><span class="nf">mds_hue</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpec</span>
+</pre></div>
+</div>
+<p>Fully dict-configurable, so <code class="docutils literal notranslate"><span class="pre">engine/backend</span></code> can drive it from JSON:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pal</span> <span class="o">=</span> <span class="n">palette_from_signal</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;hue&quot;</span><span class="p">:</span>    <span class="p">{</span><span class="s2">&quot;mapping&quot;</span><span class="p">:</span> <span class="s2">&quot;anchored_arc&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor&quot;</span><span class="p">:</span> <span class="s2">&quot;fingerprint_pc1&quot;</span><span class="p">,</span> <span class="s2">&quot;arc&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">},</span>
+    <span class="s2">&quot;chroma&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;from&quot;</span><span class="p">:</span> <span class="s2">&quot;consonance&quot;</span><span class="p">,</span> <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="s2">&quot;cusp_relative&quot;</span><span class="p">,</span> <span class="s2">&quot;frac&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">)},</span>
+    <span class="s2">&quot;light&quot;</span><span class="p">:</span>  <span class="p">{</span><span class="s2">&quot;from&quot;</span><span class="p">:</span> <span class="s2">&quot;amplitude&quot;</span><span class="p">,</span> <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)},</span>
+    <span class="s2">&quot;space&quot;</span><span class="p">:</span>  <span class="s2">&quot;oklch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;calibration&quot;</span><span class="p">:</span> <span class="s2">&quot;eeg_v1&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>Provenance is what makes the registry load-bearing.</strong> Every swatch can explain itself:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pal</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">step 3  ratio=4/3  freq=40.0 Hz</span>
+<span class="go">  hue    = 187.4°  &lt;- anchored_arc(anchor=112.0° from fingerprint_pc1=0.62, arc=90°, t=0.84)</span>
+<span class="go">  chroma = 0.141   &lt;- consonance=25.42 -&gt; pct=0.38 -&gt; 0.62 * cusp(L=0.58, h=187.4)=0.227</span>
+<span class="go">  light  = 0.580   &lt;- amplitude=0.60 -&gt; pct=0.55</span>
+<span class="go">  gamut  : requested C=0.141, cusp=0.227 -&gt; in gamut, no clip</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="colourspace-mapping">
+<h2>4. Colourspace mapping<a class="headerlink" href="#colourspace-mapping" title="Link to this heading">#</a></h2>
+<p><strong>Working space: OKLCh.</strong> Keep it, for empirical rather than fashionable reasons. The matrices
+round-trip at <code class="docutils literal notranslate"><span class="pre">1.56e-06</span></code>, the implementation is ~40 lines, and the alternatives cost more than they
+return here: CAM16-UCS requires a viewing-condition model (surround, adapting luminance, background)
+that a library emitting palettes for unknown displays cannot honestly supply; Jzazbz is built for
+HDR/absolute luminance, irrelevant at sRGB; HCT is OKLab chroma + CAM16 hue and adds a dependency.
+OKLab’s known weakness — a hue shift on the blue–purple axis under large lightness changes — is real
+but small at palette chroma levels. Revisit only if it shows up in practice.</p>
+<p>Add <strong>Oklrab lightness</strong> (<code class="docutils literal notranslate"><span class="pre">toe</span></code> / <code class="docutils literal notranslate"><span class="pre">toe_inv</span></code>) for the <em>interface</em>: OKLab’s <code class="docutils literal notranslate"><span class="pre">L</span></code> is not perceptually
+uniform against sRGB mid-grey. Users reason in <code class="docutils literal notranslate"><span class="pre">L_r</span></code>; convert to <code class="docutils literal notranslate"><span class="pre">L</span></code> internally.</p>
+<section id="the-gamut-fix">
+<h3>The gamut fix<a class="headerlink" href="#the-gamut-fix" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Split clipping out of conversion.</strong> <code class="docutils literal notranslate"><span class="pre">oklab_to_srgb(lab,</span> <span class="pre">clip=False)</span></code> returns unclipped values so
+callers can <em>see</em> out-of-gamut. The clip inside <code class="docutils literal notranslate"><span class="pre">_linear_to_srgb</span></code> is exactly what killed the search.</p></li>
+<li><p><strong>Replace the 24-iteration bisection with an analytic cusp lookup.</strong> Precompute the (L, C) cusp per
+hue once, then chroma-clip toward it: O(1), no loop, and yields the <em>true</em> maximum rather than a
+bisection approximation.</p></li>
+<li><p><strong>Make ranges cusp-relative.</strong> <code class="docutils literal notranslate"><span class="pre">C_range=(&quot;cusp&quot;,</span> <span class="pre">0.35,</span> <span class="pre">0.95)</span></code> = “35–95% of what is achievable at
+this (L, h)”.</p></li>
+</ol>
+<p>Why (3) matters — the measured sRGB chroma ceiling varies <strong>5.4×</strong> across the wheel:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>L \ h</p></th>
+<th class="head"><p>0</p></th>
+<th class="head"><p>45</p></th>
+<th class="head"><p>90</p></th>
+<th class="head"><p>135</p></th>
+<th class="head"><p>180</p></th>
+<th class="head"><p>225</p></th>
+<th class="head"><p>270</p></th>
+<th class="head"><p>315</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.30</p></td>
+<td><p>0.122</p></td>
+<td><p>0.086</p></td>
+<td><p>0.061</p></td>
+<td><p>0.088</p></td>
+<td><p>0.054</p></td>
+<td><p>0.057</p></td>
+<td><p>0.197</p></td>
+<td><p>0.148</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.45</p></td>
+<td><p>0.182</p></td>
+<td><p>0.129</p></td>
+<td><p>0.092</p></td>
+<td><p>0.131</p></td>
+<td><p>0.082</p></td>
+<td><p>0.085</p></td>
+<td><p><strong>0.295</strong></p></td>
+<td><p>0.222</p></td>
+</tr>
+<tr class="row-even"><td><p>0.60</p></td>
+<td><p>0.243</p></td>
+<td><p>0.172</p></td>
+<td><p>0.123</p></td>
+<td><p>0.175</p></td>
+<td><p>0.109</p></td>
+<td><p>0.114</p></td>
+<td><p>0.217</p></td>
+<td><p><strong>0.296</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>0.70</p></td>
+<td><p>0.210</p></td>
+<td><p>0.200</p></td>
+<td><p>0.143</p></td>
+<td><p>0.204</p></td>
+<td><p>0.127</p></td>
+<td><p>0.133</p></td>
+<td><p>0.156</p></td>
+<td><p>0.233</p></td>
+</tr>
+<tr class="row-even"><td><p>0.80</p></td>
+<td><p>0.125</p></td>
+<td><p>0.122</p></td>
+<td><p>0.163</p></td>
+<td><p>0.234</p></td>
+<td><p>0.145</p></td>
+<td><p>0.136</p></td>
+<td><p>0.100</p></td>
+<td><p>0.148</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.90</p></td>
+<td><p>0.056</p></td>
+<td><p>0.056</p></td>
+<td><p>0.128</p></td>
+<td><p><strong>0.241</strong></p></td>
+<td><p>0.155</p></td>
+<td><p>0.065</p></td>
+<td><p><strong>0.048</strong></p></td>
+<td><p>0.071</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A fixed <code class="docutils literal notranslate"><span class="pre">C_range=(0.02,</span> <span class="pre">0.22)</span></code> rectangle is ~3× over budget at L=0.90/h=270 (ceiling 0.048) and
+leaves 25% of the available chroma unused at L=0.60/h=315 (ceiling 0.296). It cannot be right
+everywhere. Cusp-relative ranges are what make palettes <em>look</em> good rather than merely be computed.</p>
+</section>
+<section id="spectral-locus">
+<h3>Spectral locus<a class="headerlink" href="#spectral-locus" title="Link to this heading">#</a></h3>
+<p><strong>Replace Bruton as the default.</strong> It collapses 28.4% of the band (645–750 nm) to hue 29.23°. Ship a
+CIE 1931 path using the <strong>Wyman–Sloan–Shirley (2013)</strong> analytic multi-lobe Gaussian fit to the colour
+matching functions — ~15 lines, no data table, no new dependency — then XYZ → linear sRGB (D65) →
+gamut map. Keep <code class="docutils literal notranslate"><span class="pre">spectral=&quot;bruton&quot;</span></code> for byte-compatibility with existing output; default to
+<code class="docutils literal notranslate"><span class="pre">spectral=&quot;cie1931&quot;</span></code>.</p>
+</section>
+<section id="checks-that-make-nice-falsifiable">
+<h3>Checks that make “nice” falsifiable<a class="headerlink" href="#checks-that-make-nice-falsifiable" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">deltaE_ok(a,</span> <span class="pre">b)</span></code> — euclidean in OKLab (the entire point of the space).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulate_cvd(rgb,</span> <span class="pre">kind,</span> <span class="pre">severity)</span></code> — Machado et al. (2009), ~20 lines of constants.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">palette_report(pal)</span></code> → min pairwise ΔE, min ΔE <em>under</em> deuteranopia/protanopia/tritanopia,
+gamut-clip count, lightness range. Failing a threshold becomes a <strong>test failure</strong>, not an
+aesthetic opinion.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="palette-diversity">
+<h2>5. Palette diversity<a class="headerlink" href="#palette-diversity" title="Link to this heading">#</a></h2>
+<section id="name-the-tradeoff-stability-vs-separation">
+<h3>Name the tradeoff: stability vs separation<a class="headerlink" href="#name-the-tradeoff-stability-vs-separation" title="Link to this heading">#</a></h3>
+<p>They are not simultaneously satisfiable from a stateless function, and the proposal pretends
+otherwise.</p>
+<ul class="simple">
+<li><p><strong>Stability</strong> — same signal → same palette, always, with no reference to other signals.
+Needed for: reproducible figures, streaming/online use, comparability across papers.</p></li>
+<li><p><strong>Separation</strong> — different signals → far-apart palettes. <em>Requires</em> knowing the other signals or
+their distribution. Needed for: multi-subject plots, legends, “these 8 conditions must be
+tellable apart”.</p></li>
+</ul>
+<p>The API exposes both, explicitly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">palette_from_signal</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;absolute&quot;</span><span class="p">,</span> <span class="n">calibration</span><span class="o">=</span><span class="s2">&quot;eeg_v1&quot;</span><span class="p">)</span>  <span class="c1"># stable</span>
+<span class="n">palette_set</span><span class="p">([</span><span class="n">sig1</span><span class="p">,</span> <span class="n">sig2</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;separated&quot;</span><span class="p">,</span> <span class="n">min_delta_e</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>       <span class="c1"># separated</span>
+</pre></div>
+</div>
+</section>
+<section id="the-fingerprint-root-fix">
+<h3>The fingerprint (root fix)<a class="headerlink" href="#the-fingerprint-root-fix" title="Link to this heading">#</a></h3>
+<p>Replace the single mean-consonance scalar with a vector:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Fingerprint</span><span class="p">:</span>
+    <span class="n">harmonicity</span><span class="p">:</span>       <span class="nb">float</span>   <span class="c1"># mean dyad_similarity over the tuning</span>
+    <span class="n">harmonic_spread</span><span class="p">:</span>   <span class="nb">float</span>   <span class="c1"># std of per-step consonance</span>
+    <span class="n">spectral_flatness</span><span class="p">:</span> <span class="nb">float</span>   <span class="c1"># metrics.spectral_flatness</span>
+    <span class="n">spectral_spread</span><span class="p">:</span>   <span class="nb">float</span>   <span class="c1"># metrics.spectral_spread</span>
+    <span class="n">spectral_entropy</span><span class="p">:</span>  <span class="nb">float</span>   <span class="c1"># metrics.spectral_entropy</span>
+    <span class="n">n_peaks</span><span class="p">:</span>           <span class="nb">int</span>
+    <span class="n">fundamental</span><span class="p">:</span>       <span class="nb">float</span>   <span class="c1"># log-scaled</span>
+    <span class="n">complexity</span><span class="p">:</span>        <span class="nb">float</span>   <span class="c1"># higuchi_fd / spectrum_complexity</span>
+    <span class="n">subharm_tension</span><span class="p">:</span>   <span class="nb">float</span>   <span class="c1"># compute_subharmonic_tension</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span>   <span class="c1"># percentile-mapped, each in [0,1]</span>
+</pre></div>
+</div>
+<p>Both measured collisions are resolved by one extra dimension. <code class="docutils literal notranslate"><span class="pre">stretched</span></code> vs <code class="docutils literal notranslate"><span class="pre">two_cluster</span></code> collide at
+0.62° because they share mean consonance (7.749 vs 7.635) — but their <strong>harmonic_spread</strong> and
+<strong>spectral_spread</strong> differ enormously (a smooth stretched series vs two tight clusters).
+<code class="docutils literal notranslate"><span class="pre">golden</span></code> vs <code class="docutils literal notranslate"><span class="pre">inharmonic_rand</span></code> separate on <strong>flatness</strong>.</p>
+</section>
+<section id="calibration-killing-the-55">
+<h3>Calibration — killing the <code class="docutils literal notranslate"><span class="pre">/55</span></code><a class="headerlink" href="#calibration-killing-the-55" title="Link to this heading">#</a></h3>
+<p>The magic number is a symptom of having no model of what these metrics do on real data. Fix with a
+shipped percentile table:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Calibration</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>                                <span class="c1"># &quot;eeg_v1&quot;</span>
+    <span class="n">percentiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>       <span class="c1"># metric -&gt; 101 quantiles from a reference corpus</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="n">metric</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Percentile ranking is the correct normaliser because it is <strong>distribution-matched by construction</strong>:
+it spends hue budget where signals actually differ. Measured: EEG-like mean consonance spans
+0.318–4.957; <code class="docutils literal notranslate"><span class="pre">/55</span></code> compresses that into 4.5% of the wheel, while a percentile map spreads it across
+the full range <em>by definition</em>.</p>
+<p>Built by <code class="docutils literal notranslate"><span class="pre">build_calibration(corpus)</span></code> and versioned in <code class="docutils literal notranslate"><span class="pre">data/calibration_eeg_v1.npz</span></code>.
+Escape hatches: <code class="docutils literal notranslate"><span class="pre">calibration=&quot;none&quot;</span></code> reproduces raw-value behaviour;
+<code class="docutils literal notranslate"><span class="pre">calibration=Calibration.from_signals(my_corpus)</span></code> fits to the user’s own data.</p>
+</section>
+<section id="the-embedding">
+<h3>The embedding<a class="headerlink" href="#the-embedding" title="Link to this heading">#</a></h3>
+<p>Normalised 9-D fingerprint → 2-D via a <strong>fixed, shipped</strong> projection (PCA fit on the reference corpus
+and stored <em>with</em> the calibration — refitting per call would destroy stability), then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hue</span>          <span class="o">=</span> <span class="n">atan2</span><span class="p">(</span><span class="n">pc2</span><span class="p">,</span> <span class="n">pc1</span><span class="p">)</span>        <span class="c1"># direction in fingerprint space</span>
+<span class="n">chroma_scale</span> <span class="o">=</span> <span class="n">clip</span><span class="p">(</span><span class="o">|</span><span class="n">pc</span><span class="o">|</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>        <span class="c1"># distance from centroid: typical -&gt; muted, unusual -&gt; vivid</span>
+</pre></div>
+</div>
+<p>Strictly better than the scalar anchor: it cannot collapse two signals unless they agree on <strong>all
+nine</strong> descriptors, and “unusual signal → vivid palette” falls out for free.</p>
+</section>
+<section id="separated-mode">
+<h3>Separated mode<a class="headerlink" href="#separated-mode" title="Link to this heading">#</a></h3>
+<p>Compute fingerprints, then farthest-point-sample / Lloyd-relax the anchor hues under a <code class="docutils literal notranslate"><span class="pre">min_delta_e</span></code>
+constraint <strong>while minimising displacement from each signal’s absolute anchor</strong>. Separation is
+guaranteed; meaning is preserved as far as the constraint allows. Report the displacement so the
+user knows what was traded.</p>
+</section>
+<section id="measurement-the-claim-must-be-falsifiable">
+<h3>Measurement — the claim must be falsifiable<a class="headerlink" href="#measurement-the-claim-must-be-falsifiable" title="Link to this heading">#</a></h3>
+<p>Ship the diagnostic:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">diversity_report</span><span class="p">(</span><span class="n">palettes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span>
+    <span class="s2">&quot;mean_pairwise_de&quot;</span><span class="p">:</span>  <span class="mf">0.186</span><span class="p">,</span>
+    <span class="s2">&quot;min_pairwise_de&quot;</span><span class="p">:</span>   <span class="mf">0.033</span><span class="p">,</span>   <span class="c1"># the failure measured today</span>
+    <span class="s2">&quot;n_collisions&quot;</span><span class="p">:</span>      <span class="mi">2</span><span class="p">,</span>       <span class="c1"># pairs under the perceptual threshold</span>
+    <span class="s2">&quot;hue_occupancy&quot;</span><span class="p">:</span>     <span class="mf">0.44</span><span class="p">,</span>    <span class="c1"># fraction of the wheel used</span>
+    <span class="s2">&quot;within_palette_de&quot;</span><span class="p">:</span> <span class="mf">0.071</span><span class="p">,</span>   <span class="c1"># internal contrast</span>
+    <span class="s2">&quot;min_de_under_cvd&quot;</span><span class="p">:</span>  <span class="mf">0.021</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>with a regression test asserting <code class="docutils literal notranslate"><span class="pre">min_pairwise_de</span> <span class="pre">&gt;</span> <span class="pre">0.05</span></code> and <code class="docutils literal notranslate"><span class="pre">n_collisions</span> <span class="pre">==</span> <span class="pre">0</span></code> on a fixed
+benchmark set of ≥8 signals <strong>including realistic EEG peak sets</strong>, not only maximally-different
+synthetics. <strong>That test fails today</strong> — min 0.033 with 2 collisions on synthetics, and
+catastrophically on EEG (242/435 pairs within 5° hue).</p>
+</section>
+<section id="within-palette-diversity">
+<h3>Within-palette diversity<a class="headerlink" href="#within-palette-diversity" title="Link to this heading">#</a></h3>
+<p>Measured mean distance-to-centroid <strong>0.062–0.095</strong> — palettes are internally flat, because a narrow
+arc plus a narrow <code class="docutils literal notranslate"><span class="pre">L_range</span></code> leaves nothing to vary. The narrow-arc rule was a workaround for the
+octave-hue-turn problem; once a fingerprint anchor carries separation duty, the arc is freed to
+carry <em>internal contrast</em>. Let the arc widen when <code class="docutils literal notranslate"><span class="pre">harmonic_spread</span></code> says the signal is internally
+varied, and drive lightness from a per-step metric instead of pinning it.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="public-api">
+<h2>6. Public API<a class="headerlink" href="#public-api" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>function / class</p></th>
+<th class="head"><p>signature</p></th>
+<th class="head"><p>returns</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">palette_from_tuning</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(scale,</span> <span class="pre">fund=None,</span> <span class="pre">*,</span> <span class="pre">config=None,</span> <span class="pre">calibration=&quot;eeg_v1&quot;,</span> <span class="pre">**overrides)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PaletteData</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">palette_from_signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(peaks,</span> <span class="pre">amps,</span> <span class="pre">*,</span> <span class="pre">mode=&quot;absolute&quot;,</span> <span class="pre">config=None,</span> <span class="pre">calibration=&quot;eeg_v1&quot;,</span> <span class="pre">**overrides)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PaletteData</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">palette_set</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(signals,</span> <span class="pre">*,</span> <span class="pre">mode=&quot;separated&quot;,</span> <span class="pre">min_delta_e=0.15,</span> <span class="pre">**kw)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[PaletteData]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dyad_field</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(scale,</span> <span class="pre">*,</span> <span class="pre">metric=&quot;consonance&quot;,</span> <span class="pre">**kw)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FieldData</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">consonance_spectrum</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(peaks,</span> <span class="pre">amps,</span> <span class="pre">*,</span> <span class="pre">max_ratio=2.0,</span> <span class="pre">**kw)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SpectrumData</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PaletteData</span></code></p></td>
+<td><p>dataclass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.rgb</span> <span class="pre">.oklch</span> <span class="pre">.spec</span> <span class="pre">.fingerprint</span> <span class="pre">.parameters</span> <span class="pre">.metadata</span></code> + <code class="docutils literal notranslate"><span class="pre">.explain(i)</span> <span class="pre">.to_hex()</span> <span class="pre">.ramp(n)</span> <span class="pre">.report()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Fingerprint</span></code></p></td>
+<td><p>dataclass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.vector()</span> <span class="pre">.normalized(cal)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Calibration</span></code></p></td>
+<td><p>dataclass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.normalize()</span> <span class="pre">.from_signals()</span> <span class="pre">.load(name)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">descriptor</span></code> / <code class="docutils literal notranslate"><span class="pre">mapping</span></code> / <code class="docutils literal notranslate"><span class="pre">colorspace</span></code></p></td>
+<td><p>decorators</p></td>
+<td><p>registry registration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">color.*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">srgb_to_oklab,</span> <span class="pre">oklab_to_srgb,</span> <span class="pre">oklch_to_srgb,</span> <span class="pre">cusp,</span> <span class="pre">gamut_map,</span> <span class="pre">deltaE_ok,</span> <span class="pre">simulate_cvd,</span> <span class="pre">spectral_to_srgb</span></code></p></td>
+<td><p>arrays</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diversity_report</span></code> / <code class="docutils literal notranslate"><span class="pre">palette_report</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(palettes)</span></code> / <code class="docutils literal notranslate"><span class="pre">(palette)</span></code></p></td>
+<td><p>dict</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>5 entry points, down from the proposal’s 12 flat functions.</strong>
+<code class="docutils literal notranslate"><span class="pre">scale_to_perceptual_colors</span></code>, <code class="docutils literal notranslate"><span class="pre">palette_ramp</span></code>, <code class="docutils literal notranslate"><span class="pre">curve_palette</span></code>, <code class="docutils literal notranslate"><span class="pre">signal_spectrum_palette</span></code> and
+<code class="docutils literal notranslate"><span class="pre">signal_anchored_spectrum</span></code> collapse into <code class="docutils literal notranslate"><span class="pre">palette_from_*</span></code> plus a <code class="docutils literal notranslate"><span class="pre">.ramp()</span></code> method.
+<code class="docutils literal notranslate"><span class="pre">harmonic_hue_anchor</span></code> becomes internal (it is the thing being replaced). <code class="docutils literal notranslate"><span class="pre">per_step_metric</span></code> becomes
+the descriptor registry. <code class="docutils literal notranslate"><span class="pre">audible_to_nm</span></code> moves to <code class="docutils literal notranslate"><span class="pre">color.spectral</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="migration-compatibility">
+<h2>7. Migration &amp; compatibility<a class="headerlink" href="#migration-compatibility" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">biotuner/biocolors.py</span></code> → <code class="docutils literal notranslate"><span class="pre">biotuner/biocolors/legacy.py</span></code></strong>, re-imported verbatim by
+<code class="docutils literal notranslate"><span class="pre">biocolors/__init__.py</span></code>. Every legacy name stays importable at its current path:
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_rgb</span></code>, <code class="docutils literal notranslate"><span class="pre">Hz2nm</span></code>, <code class="docutils literal notranslate"><span class="pre">nm2Hz</span></code>, <code class="docutils literal notranslate"><span class="pre">Hz2THz</span></code>, <code class="docutils literal notranslate"><span class="pre">THz2Hz</span></code>, <code class="docutils literal notranslate"><span class="pre">audible2visible</span></code>, <code class="docutils literal notranslate"><span class="pre">scale2freqs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">wavelength_to_frequency</span></code>, <code class="docutils literal notranslate"><span class="pre">viz_scale_colors</span></code>, <code class="docutils literal notranslate"><span class="pre">animate_colors</span></code>.</p></li>
+<li><p><strong>Real consumers exist and must not break:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">engine/backend/services/color_service.py:16</span></code> — <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">biotuner.biocolors</span> <span class="pre">import</span> <span class="pre">audible2visible,</span> <span class="pre">scale2freqs,</span> <span class="pre">wavelength_to_rgb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biotuner/harmonic_timbre/cross_modal.py</span></code> — references the biocolors integration
+Both are satisfied by re-export.</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">viz_scale_colors</span></code> is already broken</strong> — <code class="docutils literal notranslate"><span class="pre">biocolors.py:285</span></code> unpacks two values from
+<code class="docutils literal notranslate"><span class="pre">tuning_cons_matrix</span></code>, which returns three. It raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> against current metrics. Fix in
+place as a bug fix, deprecate, point at <code class="docutils literal notranslate"><span class="pre">palette_from_tuning</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">biocolors_plus.py</span></code> does not ship as-is.</strong> Good parts land in the new layers; the dead gamut fit,
+the batched-conversion trap and the <code class="docutils literal notranslate"><span class="pre">/55</span></code> are not carried forward. No <code class="docutils literal notranslate"><span class="pre">_plus</span></code> name is ever
+exported — that suffix is a migration smell.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="build-order">
+<h2>8. Build order<a class="headerlink" href="#build-order" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>phase</p></th>
+<th class="head"><p>contents</p></th>
+<th class="head"><p>testable at exit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>1. <code class="docutils literal notranslate"><span class="pre">color/</span></code></strong> (no biotuner)</p></td>
+<td><p>spaces (vectorized <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>), gamut (cusp + map), difference (ΔE, CVD), spectral (CIE + Bruton)</p></td>
+<td><p>round-trip &lt; 1e-6 on a dense grid; every <code class="docutils literal notranslate"><span class="pre">gamut_map</span></code> output in <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code> <em>and</em> its preimage out; cusp matches bisection to 1e-4; Bruton-vs-CIE ΔE reported</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>2. descriptors</strong></p></td>
+<td><p>registry, 9 descriptors wired to existing metrics, <code class="docutils literal notranslate"><span class="pre">Fingerprint.vector()</span></code></p></td>
+<td><p>all descriptors finite on the benchmark set; ranges match <code class="docutils literal notranslate"><span class="pre">range_hint</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>3. calibration</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">build_calibration</span></code>, percentile normalise, ship <code class="docutils literal notranslate"><span class="pre">eeg_v1</span></code></p></td>
+<td><p>normalised descriptors ~uniform on the reference corpus — assert it</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>4. mapping + PaletteData</strong></p></td>
+<td><p>anchored_arc, mds_hue, wavelength; <code class="docutils literal notranslate"><span class="pre">explain()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">diversity_report</span></code> passes <code class="docutils literal notranslate"><span class="pre">min_pairwise_de</span> <span class="pre">&gt;</span> <span class="pre">0.05</span></code>, <code class="docutils literal notranslate"><span class="pre">n_collisions</span> <span class="pre">==</span> <span class="pre">0</span></code> — <strong>the test that fails today</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>5. palettes.py + separated mode</strong></p></td>
+<td><p>public API, farthest-point separation</p></td>
+<td><p>separated mode guarantees <code class="docutils literal notranslate"><span class="pre">min_delta_e</span></code>; displacement reported</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>6. render + shims</strong></p></td>
+<td><p>matplotlib/PIL helpers, legacy re-exports, deprecations</p></td>
+<td><p>existing consumers import unchanged; <code class="docutils literal notranslate"><span class="pre">viz_scale_colors</span></code> no longer raises</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Phases 1–2 are independently valuable and unblock everything else. <strong>Phase 1 fixes the actual bugs</strong>
+and is worth doing even if nothing else ships. <strong>Phase 3 is where the diversity fix lands.</strong></p>
+</section>
+<hr class="docutils" />
+<section id="open-questions">
+<h2>9. Open questions<a class="headerlink" href="#open-questions" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Calibration corpus.</strong> <code class="docutils literal notranslate"><span class="pre">eeg_v1</span></code> needs real data to be honest. Is there a corpus to fit
+percentiles on (which dataset, what preprocessing), or do we ship a synthetic prior for v1 and
+refit later? This decides whether the diversity claim is real or aspirational.</p></li>
+<li><p><strong>Is octave-equivalent colour a feature or a bug?</strong> Measured: ratio 1 and ratio 2 both land on
+568.04 nm — the same colour. Elegant (octave equivalence in hue), but a palette then cannot
+distinguish a fundamental from its octave.</p></li>
+<li><p><strong>Bruton default or opt-in?</strong> Switching to CIE 1931 changes every existing colour output.
+<code class="docutils literal notranslate"><span class="pre">engine/</span></code> has an API surface with a frontend that may have colours baked into expectations. Is a
+visual break acceptable, or does CIE hide behind a flag until an engine version bump?</p></li>
+<li><p><strong>Dependency stance.</strong> numpy/scipy are already hard deps. <code class="docutils literal notranslate"><span class="pre">colour-science</span></code> would delete ~300 lines
+of <code class="docutils literal notranslate"><span class="pre">color/</span></code> and provide ground-truth conversions. Numpy-only was a <em>proposal</em> constraint, not a
+repo constraint — is it a real one?</p></li>
+<li><p><strong>Subpackage or flat?</strong> <code class="docutils literal notranslate"><span class="pre">biocolors/</span></code> mirrors <code class="docutils literal notranslate"><span class="pre">harmonic_geometry/</span></code>, but it is a bigger refactor
+than a single file. Worth it, or keep <code class="docutils literal notranslate"><span class="pre">biocolors.py</span></code> + <code class="docutils literal notranslate"><span class="pre">biocolors_color.py</span></code> flat?</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="reproducing-the-numbers">
+<h2>Reproducing the numbers<a class="headerlink" href="#reproducing-the-numbers" title="Link to this heading">#</a></h2>
+<p>Measured on Python 3.10.9, numpy &lt;2.0, against this worktree. The three scripts below are the seed of
+the Phase 1 / Phase 4 test suites and should move into <code class="docutils literal notranslate"><span class="pre">tests/biocolors/</span></code> when work starts.</p>
+<p>Currently at
+<code class="docutils literal notranslate"><span class="pre">%LOCALAPPDATA%/Temp/claude/C--Users-skite-Documents-Github-biotuner--claude-worktrees-epic-morse-ded0d5/a65cb825-1795-455c-be54-c0d8102646f8/scratchpad/</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>script</p></th>
+<th class="head"><p>establishes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">test_color.py</span></code></p></td>
+<td><p>gamut fit is dead code; red at h=29.23° / magenta at 328.36°; round-trip 1.56e-06; batched-input corruption; the cusp table</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">test_biotuner.py</span></code></p></td>
+<td><p>no NaN under <code class="docutils literal notranslate"><span class="pre">ratio_type=&quot;all&quot;</span></code>; hue span; the 750 nm clamp; the 8-signal diversity/collision measurement; timings; the handoff validation snippet</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">test_focus.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/55</span></code> saturation; 1.88% clamp rate; Bruton’s 105 nm hue plateau; the 30-signal EEG-like collapse (median gap 0.20°, 242/435 pairs within 5°)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-exists-now">0. What exists now</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-building-it-on-real-data-changed">What building it on real data changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-figures-honestly-do-not-show">What the figures honestly do not show</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-biocolors-plus-py">1. Verdict on <code class="docutils literal notranslate"><span class="pre">biocolors_plus.py</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#keep">Keep</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#broken-empirically-confirmed">Broken (empirically confirmed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#misdiagnosed">Misdiagnosed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-is-a-non-issue">Performance is a non-issue</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">2. Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flexibility">3. Flexibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#colourspace-mapping">4. Colourspace mapping</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gamut-fix">The gamut fix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-locus">Spectral locus</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checks-that-make-nice-falsifiable">Checks that make “nice” falsifiable</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#palette-diversity">5. Palette diversity</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#name-the-tradeoff-stability-vs-separation">Name the tradeoff: stability vs separation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fingerprint-root-fix">The fingerprint (root fix)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-killing-the-55">Calibration — killing the <code class="docutils literal notranslate"><span class="pre">/55</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-embedding">The embedding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#separated-mode">Separated mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#measurement-the-claim-must-be-falsifiable">Measurement — the claim must be falsifiable</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#within-palette-diversity">Within-palette diversity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#public-api">6. Public API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#migration-compatibility">7. Migration &amp; compatibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-order">8. Build order</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions">9. Open questions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-the-numbers">Reproducing the numbers</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
