@@ -1,0 +1,1425 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.mos.fourier &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/mos/fourier';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/mos.html">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.mos.fourier</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Fourier scratching -- playing a scale by manipulating a DFT.</span>
+
+<span class="sd">Milne et al. (2011) §5 close the scale labyrinth with a performance technique.</span>
+<span class="sd">A virtual robot with ``n`` fingers strikes a *continuous* circular keyboard at a</span>
+<span class="sd">fixed pulse.  Finger ``k`` is described by one complex number</span>
+
+<span class="sd">.. math::  f_k = r_k \\, e^{i t_k}</span>
+
+<span class="sd">whose magnitude ``r_k`` is how hard it strikes (loudness) and whose phase</span>
+<span class="sd">``t_k`` is *where* on the circle it strikes (pitch).  The whole performance</span>
+<span class="sd">state is therefore a single vector :math:`f \\in \\mathbb{C}^n`.</span>
+
+<span class="sd">The point of the technique is that the performer never edits ``f``.  They edit</span>
+<span class="sd">its discrete Fourier transform and let the inverse transform put the fingers</span>
+<span class="sd">back on the keyboard -- &quot;scratching&quot; one Fourier coefficient nudges *every*</span>
+<span class="sd">finger at once, in a way that is coherent rather than arbitrary.  A single</span>
+<span class="sd">coefficient&#39;s phase is a rigid rotation of a whole interval cycle; its</span>
+<span class="sd">magnitude is that cycle&#39;s depth.  That is what makes the gesture playable:</span>
+<span class="sd">one continuous control, ``n`` coordinated voices.</span>
+
+<span class="sd">Two consequences the paper leans on, both checked in ``tests/mos/test_fourier.py``:</span>
+
+<span class="sd">* The *elementary* play states -- the paper&#39;s &quot;pure partials&quot;, here</span>
+<span class="sd">  :func:`partial` -- are the states whose spectrum is a single unit impulse.</span>
+<span class="sd">  Partial ``k`` spreads the fingers evenly around the circle in ``k`` turns.</span>
+<span class="sd">* Changing the number of fingers is a spectral edit too: grow by</span>
+<span class="sd">  :meth:`PlayState.zero_pad`, shrink by :meth:`PlayState.prune`, which deletes</span>
+<span class="sd">  &quot;the Fourier coefficients with minimal energy&quot; exactly as §5 prescribes.</span>
+
+<span class="sd">The keyboard is *continuous*, so a phase only becomes a note once it is</span>
+<span class="sd">quantised against a scale.  :func:`keyboard_sectors` does that, following Fig. 8:</span>
+<span class="sd">key widths are &quot;proportional to the sizes of the step intervals above each</span>
+<span class="sd">tone&quot;, so a scale tone sits at the *lower* edge of its own key and the key</span>
+<span class="sd">extends up to the next tone.  Quantising is therefore rounding **down** to the</span>
+<span class="sd">nearest scale tone, not rounding to nearest -- which has a real musical</span>
+<span class="sd">consequence, documented on :func:`keyboard_sectors` and measured in the tests.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Milne, A.J., Carlé, M., Sethares, W.A., Noll, T., Holland, S. (2011).</span>
+<span class="sd">Scratching the Scale Labyrinth. In *Mathematics and Computation in Music*,</span>
+<span class="sd">LNAI 6726, 180--195. https://doi.org/10.1007/978-3-642-21590-2_14</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;PlayState&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NoteEvent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;partial&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;keyboard_sectors&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;phase_to_degree&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_events&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_frequencies&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scratch_sequence&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">TWO_PI</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+
+<span class="c1">#: Radians below a key boundary that still count as *on* that boundary.</span>
+<span class="c1">#:</span>
+<span class="c1">#: Quantising rounds **down**, so a finger that ought to sit exactly on a scale</span>
+<span class="c1">#: tone but lands one ulp below it drops a whole scale step.  That is not a</span>
+<span class="c1">#: hypothetical: ``exp``/``angle`` round-tripping a finger and multiplying a</span>
+<span class="c1">#: degree by ``2*pi`` are different computations, and for an equal division</span>
+<span class="c1">#: (a degenerate MOS, ``L == s``, where every finger sits exactly on a tone)</span>
+<span class="c1">#: they disagree in the last ulp for most cardinalities.  The same thing at the</span>
+<span class="c1">#: wrap point puts a finger in the *top* key instead of the root&#39;s.</span>
+<span class="c1">#:</span>
+<span class="c1">#: 1e-12 rad is 2e-10 cents in a 2/1 period -- some 200x the worst observed</span>
+<span class="c1">#: round-trip error, and far below both audibility and the narrowest key any</span>
+<span class="c1">#: real scale has.</span>
+<span class="n">_PHASE_EPS</span> <span class="o">=</span> <span class="mf">1e-12</span>
+
+<span class="c1">#: Attribute names :func:`scratch_sequence` may sweep.</span>
+<span class="n">_SCRATCH_ATTRS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;magnitude&quot;</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="s2">&quot;rotate&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># The play state</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="PlayState">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlayState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``n`` fingers of the robot, as one complex vector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : array_like</span>
+<span class="sd">        1-D, coerced to ``complex128`` and copied read-only, so a</span>
+<span class="sd">        :class:`PlayState` really is immutable rather than merely frozen at the</span>
+<span class="sd">        attribute level.  ``f[k]`` is finger ``k``: ``abs(f[k])`` its loudness,</span>
+<span class="sd">        ``angle(f[k])`` its position on the circular keyboard.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The spectrum convention here is ``fft(f) / n``, so coefficient magnitudes</span>
+<span class="sd">    are on the same scale as finger magnitudes: :func:`partial` has a unit</span>
+<span class="sd">    coefficient, not a coefficient of ``n``.  :meth:`from_spectrum` undoes it.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; s = PlayState.from_polar([1.0, 0.5], [0.0, math.pi])</span>
+<span class="sd">    &gt;&gt;&gt; s.n</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; [round(float(m), 6) for m in s.magnitudes]</span>
+<span class="sd">    [1.0, 0.5]</span>
+<span class="sd">    &gt;&gt;&gt; [round(float(p), 6) for p in s.phases]</span>
+<span class="sd">    [0.0, 3.141593]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;a play state is a 1-D vector of finger states; got an array &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;of shape </span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;a play state needs at least one finger; got an empty array&quot;</span>
+            <span class="p">)</span>
+        <span class="n">arr</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Constructors</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="PlayState.from_polar">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.from_polar">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polar</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">magnitudes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">phases</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from loudnesses and keyboard positions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        magnitudes, phases : array_like</span>
+<span class="sd">            Same length.  ``phases`` are radians and need not be reduced.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; PlayState.from_polar([1, 1, 1], [0, TWO_PI / 3, 2 * TWO_PI / 3]).n</span>
+<span class="sd">        3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;magnitudes and phases must have the same shape; got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PlayState.from_spectrum">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.from_spectrum">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_spectrum</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">complex</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resynthesise a play state from its Fourier coefficients.</span>
+
+<span class="sd">        Exact inverse of :attr:`spectrum`: since that is ``fft(f) / n``, this is</span>
+<span class="sd">        ``n * ifft(a)``.  The number of fingers is ``len(a)``, which is what</span>
+<span class="sd">        makes :meth:`zero_pad` and :meth:`prune` able to change it.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = PlayState([1 + 2j, -3j, 0.5])</span>
+<span class="sd">        &gt;&gt;&gt; bool(np.allclose(PlayState.from_spectrum(s.spectrum).f, s.f))</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;a spectrum is a non-empty 1-D vector of Fourier &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;coefficients; got shape </span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Views</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of fingers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">magnitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``|f_k|`` -- how hard each finger strikes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">phases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``arg(f_k)`` reduced to ``[0, 2*pi)`` -- where each finger strikes.</span>
+
+<span class="sd">        ``numpy`` returns angles in ``(-pi, pi]``; reducing modulo ``2*pi``</span>
+<span class="sd">        pushes a hair-negative angle up against ``2*pi``, which is the far side</span>
+<span class="sd">        of the keyboard from where it belongs.  Anything within</span>
+<span class="sd">        ``_PHASE_EPS`` of a full turn is therefore snapped back to ``0``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span> <span class="o">%</span> <span class="n">TWO_PI</span>
+        <span class="n">ph</span><span class="p">[</span><span class="n">TWO_PI</span> <span class="o">-</span> <span class="n">ph</span> <span class="o">&lt;=</span> <span class="n">_PHASE_EPS</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">ph</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fourier coefficients, ``fft(f) / n`` -- what the performer edits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``sum |f_k|^2``.</span>
+
+<span class="sd">        Parseval ties this to the spectrum: ``energy == n * sum |a_p|^2``, which</span>
+<span class="sd">        is why &quot;delete the minimal-energy coefficients&quot; (:meth:`prune`) is the</span>
+<span class="sd">        least destructive way to drop a finger.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = PlayState([3, 4j])</span>
+<span class="sd">        &gt;&gt;&gt; round(s.energy, 9)</span>
+<span class="sd">        25.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Comparison</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PlayState</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">f</span><span class="p">))</span>
+
+    <span class="fm">__hash__</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore[assignment]</span>
+
+<div class="viewcode-block" id="PlayState.allclose">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.allclose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allclose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">,</span> <span class="n">rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Numerical equality -- what round-trip checks actually want.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = PlayState([1, 1j, -1])</span>
+<span class="sd">        &gt;&gt;&gt; PlayState.from_spectrum(s.spectrum).allclose(s)</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover - cosmetic</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;PlayState(n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">, energy=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Scratching</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Fourier coefficient index must be an integer, got </span><span class="si">{</span><span class="n">k</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Fourier coefficient index </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is out of range for a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">-finger play state; valid indices are &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">..</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+<div class="viewcode-block" id="PlayState.scratch">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.scratch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scratch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">magnitude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">phase</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rotate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Edit Fourier coefficient ``k`` and resynthesise.</span>
+
+<span class="sd">        The performer&#39;s single gesture.  Every finger moves, but coherently:</span>
+<span class="sd">        rotating coefficient ``k`` by ``d`` advances the ``k``-th interval cycle</span>
+<span class="sd">        by ``d`` without disturbing any other cycle.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : int</span>
+<span class="sd">            Coefficient index.  Negative indices count from the end, as for a</span>
+<span class="sd">            list, so ``-1`` is the highest coefficient.</span>
+<span class="sd">        magnitude : float, optional</span>
+<span class="sd">            **Set** ``|a_k|`` to this.  Must be non-negative.</span>
+<span class="sd">        scale : float, optional</span>
+<span class="sd">            **Multiply** ``|a_k|`` by this.  A negative factor is allowed and</span>
+<span class="sd">            flips the coefficient&#39;s phase by ``pi``.</span>
+<span class="sd">        phase : float, optional</span>
+<span class="sd">            **Set** ``arg(a_k)`` to this, in radians.</span>
+<span class="sd">        rotate : float, optional</span>
+<span class="sd">            **Add** this to ``arg(a_k)``, in radians.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the absolute and the relative form of the *same* attribute are</span>
+<span class="sd">            combined (``magnitude`` with ``scale``, or ``phase`` with</span>
+<span class="sd">            ``rotate``): there is no sensible order in which to apply both.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Rotating a pure partial&#39;s own coefficient just slides every finger</span>
+<span class="sd">        round the keyboard by the same angle:</span>
+
+<span class="sd">        &gt;&gt;&gt; p = partial(4, 1)</span>
+<span class="sd">        &gt;&gt;&gt; q = p.scratch(1, rotate=math.pi / 2)</span>
+<span class="sd">        &gt;&gt;&gt; [round(float(x), 6) for x in (q.phases - p.phases) % TWO_PI]</span>
+<span class="sd">        [1.570796, 1.570796, 1.570796, 1.570796]</span>
+
+<span class="sd">        Damping a coefficient to nothing removes that cycle entirely:</span>
+
+<span class="sd">        &gt;&gt;&gt; [round(float(abs(z)), 9) for z in p.scratch(1, magnitude=0.0).f]</span>
+<span class="sd">        [0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_index</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">magnitude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;magnitude= sets |a_k| and scale= multiplies it; passing both &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;is ambiguous (got magnitude=</span><span class="si">{</span><span class="n">magnitude</span><span class="si">!r}</span><span class="s2">, scale=</span><span class="si">{</span><span class="n">scale</span><span class="si">!r}</span><span class="s2">). &quot;</span>
+                <span class="s2">&quot;Use one or the other.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rotate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;phase= sets arg(a_k) and rotate= adds to it; passing both is &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ambiguous (got phase=</span><span class="si">{</span><span class="n">phase</span><span class="si">!r}</span><span class="s2">, rotate=</span><span class="si">{</span><span class="n">rotate</span><span class="si">!r}</span><span class="s2">). &quot;</span>
+                <span class="s2">&quot;Use one or the other.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span>
+        <span class="n">mag</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="n">ang</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">magnitude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;magnitude= sets an absolute |a_k| and must be &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;non-negative, got </span><span class="si">{</span><span class="n">magnitude</span><span class="si">!r}</span><span class="s2">; for a phase inversion &quot;</span>
+                    <span class="s2">&quot;use scale=-1 or rotate=math.pi&quot;</span>
+                <span class="p">)</span>
+            <span class="n">mag</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mag</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ang</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rotate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ang</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rotate</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">ang</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PlayState</span><span class="o">.</span><span class="n">from_spectrum</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Changing the number of fingers</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="PlayState.zero_pad">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.zero_pad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zero_pad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Grow to ``m`` fingers by appending zero Fourier coefficients.</span>
+
+<span class="sd">        Milne et al. §5 change dimension &quot;by zero-padding the DFT of the current</span>
+<span class="sd">        play state&quot;.  Padding at the top of the coefficient list keeps every</span>
+<span class="sd">        existing coefficient at its own index, so a partial stays the same</span>
+<span class="sd">        partial and any control the performer had mapped to coefficient ``k``</span>
+<span class="sd">        still points at it: ``partial(n, k).zero_pad(m)`` is ``partial(m, k)``</span>
+<span class="sd">        up to floating-point round-off (hence :meth:`allclose`, not ``==``, in</span>
+<span class="sd">        the check below -- the two go through different FFT lengths).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; partial(4, 1).zero_pad(8).allclose(partial(8, 1))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; [round(float(abs(z)), 9) for z in PlayState([1, 0, 0]).zero_pad(5).spectrum]</span>
+<span class="sd">        [0.333333333, 0.333333333, 0.333333333, 0.0, 0.0]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;zero_pad only grows a play state; got m=</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> for a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">-finger state. Use prune() or truncate() to shrink.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span>
+        <span class="k">return</span> <span class="n">PlayState</span><span class="o">.</span><span class="n">from_spectrum</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep the ``keep_count`` highest-energy coefficients, in index order.</span>
+
+<span class="sd">        Ties go to the *lower* index.  ``argsort(..., kind=&#39;stable&#39;)`` would do</span>
+<span class="sd">        the opposite here -- it puts the lower index earlier in the ascending</span>
+<span class="sd">        order, i.e. first in line to be dropped -- so the secondary key is</span>
+<span class="sd">        ``-index``, which drops the higher index of a tied pair first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># primary key last: ascending energy, then descending index</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="n">energies</span><span class="p">))</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">order</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">keep_count</span> <span class="p">:])</span>
+        <span class="k">return</span> <span class="n">PlayState</span><span class="o">.</span><span class="n">from_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="p">[</span><span class="n">keep</span><span class="p">])</span>
+
+<div class="viewcode-block" id="PlayState.prune">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.prune">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drop the ``m`` lowest-energy Fourier coefficients, leaving ``n - m``.</span>
+
+<span class="sd">        The paper&#39;s way of *shrinking* the robot&#39;s hand: &quot;deleting the Fourier</span>
+<span class="sd">        coefficients with minimal energy&quot; throws away the least of the sound.</span>
+<span class="sd">        Survivors keep their relative order but are re-indexed, so coefficient</span>
+<span class="sd">        identity is *not* preserved -- unlike :meth:`zero_pad`.  Equal-energy</span>
+<span class="sd">        coefficients are broken toward the *lower* index: the higher one is</span>
+<span class="sd">        dropped first.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = PlayState.from_spectrum([3, 0.1, 2, 0.2])</span>
+<span class="sd">        &gt;&gt;&gt; q = s.prune(2)</span>
+<span class="sd">        &gt;&gt;&gt; q.n, [round(float(abs(z)), 9) for z in q.spectrum]</span>
+<span class="sd">        (2, [3.0, 2.0])</span>
+
+<span class="sd">        The tie-break, made visible by two coefficients of equal magnitude but</span>
+<span class="sd">        different phase -- the ``1`` survives, not the ``1j``:</span>
+
+<span class="sd">        &gt;&gt;&gt; [complex(z) for z in PlayState.from_spectrum([1, 1j, 0, 0]).truncate(1).spectrum]</span>
+<span class="sd">        [(1+0j)]</span>
+
+<span class="sd">        A partial&#39;s one loud coefficient always survives, so pruning a partial</span>
+<span class="sd">        just shortens the hand:</span>
+
+<span class="sd">        &gt;&gt;&gt; partial(6, 2).prune(2).n</span>
+<span class="sd">        4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;can drop between 0 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">-finger &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;state&#39;s coefficients, got m=</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlayState.truncate">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.truncate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">truncate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep only the ``m`` highest-energy Fourier coefficients.</span>
+
+<span class="sd">        The complement of :meth:`prune`: ``truncate(m)`` and ``prune(n - m)``</span>
+<span class="sd">        are the same edit, and share the same tie-breaking.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = PlayState([1, 2, 3, 4])</span>
+<span class="sd">        &gt;&gt;&gt; s.truncate(2).allclose(s.prune(2))</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;can keep between 1 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2"> of a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">-finger &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;state&#39;s coefficients, got m=</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep</span><span class="p">(</span><span class="n">m</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Whole-hand gestures</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="PlayState.rotate_all">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.rotate_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotate_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slide every finger ``delta`` radians round the keyboard.</span>
+
+<span class="sd">        Transposition on a continuous keyboard.  In the spectrum this is a</span>
+<span class="sd">        single global factor ``exp(i*delta)`` on *all* coefficients, so it is</span>
+<span class="sd">        the one gesture that is as simple in either domain.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; p = partial(5, 1).rotate_all(math.pi)</span>
+<span class="sd">        &gt;&gt;&gt; [round(float(x), 5) for x in p.phases]</span>
+<span class="sd">        [3.14159, 4.39823, 5.65487, 0.62832, 1.88496]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PlayState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="PlayState.interpolate">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.PlayState.interpolate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PlayState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Blend toward ``other``, linearly in the Fourier domain.</span>
+
+<span class="sd">        ``t = 0`` is ``self``, ``t = 1`` is ``other``; values outside ``[0, 1]``</span>
+<span class="sd">        extrapolate.  Because the DFT is linear this coincides exactly with</span>
+<span class="sd">        interpolating the finger vectors -- the point of phrasing it spectrally</span>
+<span class="sd">        is that the Fourier coefficients are the performer&#39;s coordinates, so a</span>
+<span class="sd">        morph specified there is a morph they can hear themselves making.  For</span>
+<span class="sd">        a *non*-linear morph (constant-loudness rotation of a cycle, say) use</span>
+<span class="sd">        :func:`scratch_sequence` on one coefficient instead.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a, b = partial(4, 1), partial(4, 2)</span>
+<span class="sd">        &gt;&gt;&gt; mid = a.interpolate(b, 0.5)</span>
+<span class="sd">        &gt;&gt;&gt; [round(float(abs(z)), 9) for z in mid.spectrum]</span>
+<span class="sd">        [0.0, 0.5, 0.5, 0.0]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;interpolation needs matching finger counts; got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">. Use zero_pad() to bring the smaller one up first.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PlayState</span><span class="o">.</span><span class="n">from_spectrum</span><span class="p">(</span>
+            <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">spectrum</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Elementary play states</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="partial">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.partial">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">partial</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlayState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``k``-th elementary play state on ``n`` fingers -- a &quot;pure partial&quot;.</span>
+
+<span class="sd">    ``f_j = exp(2*pi*i*j*k/n)``: all fingers strike equally hard, and their</span>
+<span class="sd">    positions wind ``k`` times round the keyboard.  Its spectrum is a unit</span>
+<span class="sd">    impulse at ``k``, so these are the basis Milne et al. Fig. 8 draws and the</span>
+<span class="sd">    thing every other play state is a superposition of.</span>
+
+<span class="sd">    Note that ``k`` and ``k + n`` give the same state, and that the *set* of</span>
+<span class="sd">    finger positions is the same for every ``k`` -- only the order in which the</span>
+<span class="sd">    fingers visit them changes, which is why :func:`to_events` is where ``k``</span>
+<span class="sd">    starts to matter musically.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of fingers, ``&gt;= 1``.</span>
+<span class="sd">    k : int</span>
+<span class="sd">        Partial index, taken modulo ``n``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PlayState</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; [round(float(abs(z)), 9) for z in partial(4, 1).spectrum]</span>
+<span class="sd">    [0.0, 1.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; [round(float(p), 6) for p in partial(4, 3).phases]</span>
+<span class="sd">    [0.0, 4.712389, 3.141593, 1.570796]</span>
+<span class="sd">    &gt;&gt;&gt; partial(4, 5) == partial(4, 1)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Fingers that land back on the root land there *exactly*, because the</span>
+<span class="sd">    ``j*k mod n`` below is integer arithmetic.  Doing the reduction in floats</span>
+<span class="sd">    instead leaves ``exp(2*pi*i*j*k/n)`` a hair off 1, and a hair-negative angle</span>
+<span class="sd">    reads as the *top* key rather than the root -- a whole scale step of error:</span>
+
+<span class="sd">    &gt;&gt;&gt; sorted(set(round(float(p), 9) for p in partial(12, 3).phases))</span>
+<span class="sd">    [0.0, 1.570796327, 3.141592654, 4.71238898]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a play state needs at least one finger, got n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">))</span> <span class="o">%</span> <span class="n">n</span>
+    <span class="k">return</span> <span class="n">PlayState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">2</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">/</span> <span class="n">n</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># The circular keyboard</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_degrees</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull validated period fractions off an :class:`MOSScale` or :class:`Mode`.&quot;&quot;&quot;</span>
+    <span class="n">degs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">,</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">degs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;expected an MOSScale or a Mode -- anything exposing a .degrees &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;sequence of period fractions -- got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">degs</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the scale has no degrees; expected at least one&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;scale degrees must start at 0 (the root sits at angle 0 on the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;keyboard); got degrees[0] = </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;scale degrees must be strictly ascending period fractions in &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[0, 1); degrees[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">!r}</span><span class="s2"> is not below &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;degrees[</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;scale degrees must be period fractions in [0, 1); got &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;degrees[-1] = </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<div class="viewcode-block" id="keyboard_sectors">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.keyboard_sectors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keyboard_sectors</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The angular key each scale degree owns, as ``[start, end)`` in radians.</span>
+
+<span class="sd">    Milne et al. Fig. 8 gives the circular keyboard &quot;key widths which are</span>
+<span class="sd">    proportional to the sizes of the step intervals above each tone&quot;.  So a tone</span>
+<span class="sd">    sits at the *bottom* edge of its own key and the key runs up to the next</span>
+<span class="sd">    tone: degree ``i`` owns ``[2*pi*d_i, 2*pi*d_{i+1})``, and the last degree&#39;s</span>
+<span class="sd">    key closes the circle at ``2*pi``.  Keys are therefore unequal -- wide above</span>
+<span class="sd">    a large step, narrow above a small one -- and they tile ``[0, 2*pi)`` exactly.</span>
+
+<span class="sd">    The asymmetry is load-bearing.  Because a tone sits on its key&#39;s *lower*</span>
+<span class="sd">    edge, :func:`phase_to_degree` rounds a phase **down** to the nearest scale</span>
+<span class="sd">    tone rather than to the nearest tone in either direction.  Whether a set of</span>
+<span class="sd">    evenly spaced fingers then lands one-per-key depends on the *mode*, not just</span>
+<span class="sd">    on the tuning: it happens exactly in the mode whose step pattern is the</span>
+<span class="sd">    Christoffel word ``theory.christoffel_word(n_large, n_small)``, since that</span>
+<span class="sd">    word is by construction the floor-quantisation of the equal division.  See</span>
+<span class="sd">    :func:`to_events` for what that means in practice.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mode_or_scale : MOSScale or Mode</span>
+<span class="sd">        Anything exposing ``.degrees`` as ascending period fractions in</span>
+<span class="sd">        ``[0, 1)`` starting at ``0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of (float, float)</span>
+<span class="sd">        One ``(start, end)`` pair per degree, in ascending pitch order.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Diatonic in 12-EDO: five wide keys of a whole tone, two narrow of a</span>
+<span class="sd">    semitone, in the order of the scale&#39;s own word ``LLLsLLs``.</span>
+
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; secs = keyboard_sectors(MOSScale.from_signature(5, 2, tuning=12))</span>
+<span class="sd">    &gt;&gt;&gt; [round(hi - lo, 4) for lo, hi in secs]</span>
+<span class="sd">    [1.0472, 1.0472, 1.0472, 0.5236, 1.0472, 1.0472, 0.5236]</span>
+<span class="sd">    &gt;&gt;&gt; round(secs[0][0], 9), abs(secs[-1][1] - TWO_PI) &lt; 1e-12</span>
+<span class="sd">    (0.0, True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">_degrees</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">TWO_PI</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">TWO_PI</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">edges</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))]</span></div>
+
+
+
+<div class="viewcode-block" id="phase_to_degree">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.phase_to_degree">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">phase_to_degree</span><span class="p">(</span><span class="n">phase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mode_or_scale</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Which key a finger&#39;s phase lands on.</span>
+
+<span class="sd">    Consistent with :func:`keyboard_sectors` by construction: the phase is</span>
+<span class="sd">    reduced into ``[0, 2*pi)`` and the key whose half-open sector contains it is</span>
+<span class="sd">    returned, so a phase sitting exactly on a boundary belongs to the key</span>
+<span class="sd">    *above* it.</span>
+
+<span class="sd">    Boundaries are matched to within :data:`_PHASE_EPS` rather than exactly.</span>
+<span class="sd">    Rounding down turns &quot;one ulp short of a boundary&quot; into a whole scale step of</span>
+<span class="sd">    error, and a finger *is* one ulp short of its tone whenever the scale is an</span>
+<span class="sd">    equal division -- ``exp``/``angle`` and ``2*pi*d`` are different</span>
+<span class="sd">    computations of the same angle.  Without the tolerance,</span>
+<span class="sd">    ``to_events(partial(3, 1), MOSScale.from_signature(1, 2, tuning=12))``</span>
+<span class="sd">    returns ``[0, 1, 1]``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phase : float</span>
+<span class="sd">        Radians; any value, reduced modulo ``2*pi``.</span>
+<span class="sd">    mode_or_scale : MOSScale or Mode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Degree index into ``mode_or_scale.degrees``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Probing the middle of each 12-EDO semitone shows the rounding-down: the</span>
+<span class="sd">    semitone above a scale tone still reads as that tone.</span>
+
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; d = MOSScale.from_signature(5, 2, tuning=12)</span>
+<span class="sd">    &gt;&gt;&gt; [phase_to_degree(TWO_PI * (x + 0.5) / 12, d) for x in range(12)]</span>
+<span class="sd">    [0, 0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6]</span>
+
+<span class="sd">    A hair below the root wraps into the top key, not the root&#39;s own -- but</span>
+<span class="sd">    &quot;a hair&quot; means audibly so, not one ulp:</span>
+
+<span class="sd">    &gt;&gt;&gt; phase_to_degree(0.0, d), phase_to_degree(-1e-6, d)</span>
+<span class="sd">    (0, 6)</span>
+<span class="sd">    &gt;&gt;&gt; phase_to_degree(-1e-15, d)</span>
+<span class="sd">    0</span>
+
+<span class="sd">    An exact equal division quantises to the identity, ulps notwithstanding:</span>
+
+<span class="sd">    &gt;&gt;&gt; edo = MOSScale.from_signature(1, 2, tuning=12)   # 3-EDO, L == s</span>
+<span class="sd">    &gt;&gt;&gt; [phase_to_degree(p, edo) for p in partial(3, 1).phases]</span>
+<span class="sd">    [0, 1, 2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">_degrees</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">%</span> <span class="n">TWO_PI</span>
+    <span class="c1"># A hair below zero reduces to a hair below 2*pi (or, once rounded, to</span>
+    <span class="c1"># exactly 2*pi): both are the root, not the top key.</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">TWO_PI</span> <span class="o">-</span> <span class="n">_PHASE_EPS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">TWO_PI</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1"># ...and a hair below any *other* boundary is on that boundary.</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">edges</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">edges</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">_PHASE_EPS</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">i</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Rendering a play state as notes</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="NoteEvent">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.NoteEvent">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoteEvent</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One finger&#39;s strike, resolved against a scale.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    index : int</span>
+<span class="sd">        Which finger.  Fingers strike in index order, so this is also the</span>
+<span class="sd">        event&#39;s position in the pulse.</span>
+<span class="sd">    degree : int</span>
+<span class="sd">        Scale degree the finger&#39;s phase quantised to.</span>
+<span class="sd">    ratio : float</span>
+<span class="sd">        That degree as a frequency ratio against the root.</span>
+<span class="sd">    cents : float</span>
+<span class="sd">        That degree in cents above the root.</span>
+<span class="sd">    loudness : float</span>
+<span class="sd">        ``|f_index|``.</span>
+<span class="sd">    phase : float</span>
+<span class="sd">        The finger&#39;s raw position in ``[0, 2*pi)``, before quantisation --</span>
+<span class="sd">        kept because the keyboard is continuous and the residual is audible</span>
+<span class="sd">        information the degree alone throws away.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">degree</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">cents</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">loudness</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="to_events">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.to_events">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_events</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">PlayState</span><span class="p">,</span> <span class="n">mode_or_scale</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NoteEvent</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a play state into one note per finger, in striking order.</span>
+
+<span class="sd">    The finger count and the scale cardinality are independent -- a 5-finger</span>
+<span class="sd">    robot can play a 12-note scale -- but they coincide in the case Milne et al.</span>
+<span class="sd">    Fig. 8 illustrates, and that is where the paper&#39;s claim about partials</span>
+<span class="sd">    lives.</span>
+
+<span class="sd">    The claim, and what is actually true</span>
+<span class="sd">    ------------------------------------</span>
+<span class="sd">    Fig. 8 shows the first partial sweeping every tone of the scale exactly</span>
+<span class="sd">    once, in ascending scalar order, and higher partials with ``k`` coprime to</span>
+<span class="sd">    ``n`` generating complete generic interval cycles.  Under the Fig. 8 key</span>
+<span class="sd">    layout (:func:`keyboard_sectors`) that is a statement about a *mode*, not</span>
+<span class="sd">    about a scale:</span>
+
+<span class="sd">    * It holds exactly when the mode&#39;s step pattern is the Christoffel word</span>
+<span class="sd">      ``theory.christoffel_word(n_large, n_small)`` -- for ``5L2s`` that is</span>
+<span class="sd">      ``sLLsLLL`` (Locrian), for ``2L3s`` it is ``ssLsL``.  Propriety is</span>
+<span class="sd">      sufficient but far from necessary: sweeping the whole coherent generator</span>
+<span class="sd">      range -- endpoints ``R = 1`` and ``R = 2`` included -- of every signature</span>
+<span class="sd">      up to 12 notes, the Christoffel mode never fails, and ``5L2s`` keeps</span>
+<span class="sd">      working out past ``R = 6``.  There is no sharper threshold to quote,</span>
+<span class="sd">      because the cut-off depends on the signature and not on ``R`` alone --</span>
+<span class="sd">      ``5L2s`` still works above ``R = 6`` where ``4L5s`` has already broken at</span>
+<span class="sd">      ``R = 3.25``.</span>
+<span class="sd">    * In any other mode it fails, and the failure is not subtle: in the</span>
+<span class="sd">      brightest mode of 12-EDO ``5L2s`` the first partial yields degrees</span>
+<span class="sd">      ``[0, 0, 1, 2, 3, 4, 5]`` -- the root is struck twice and the leading tone</span>
+<span class="sd">      never.  Finger 0 sits at phase 0, which is the *bottom* edge of key 0, and</span>
+<span class="sd">      key 0 is a whole tone wide while the fingers are only ``1/7`` of a turn</span>
+<span class="sd">      apart, so key 0 catches two of them.</span>
+
+<span class="sd">    Both branches are asserted in ``tests/mos/test_fourier.py``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlayState</span>
+<span class="sd">    mode_or_scale : MOSScale or Mode</span>
+<span class="sd">        Uses ``.ratios`` and ``.cents`` when present.  If only one is present</span>
+<span class="sd">        the other is derived from it (``cents = 1200*log2(ratio)``), so the two</span>
+<span class="sd">        fields of a :class:`NoteEvent` always agree.  If neither is, both come</span>
+<span class="sd">        from ``.degrees`` against ``.period`` if the object has one and a 2/1</span>
+<span class="sd">        period otherwise.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of NoteEvent</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; locrian = MOSScale.from_signature(5, 2, tuning=12).mode(6)</span>
+<span class="sd">    &gt;&gt;&gt; locrian.word</span>
+<span class="sd">    &#39;sLLsLLL&#39;</span>
+<span class="sd">    &gt;&gt;&gt; ev = to_events(partial(7, 1), locrian)</span>
+<span class="sd">    &gt;&gt;&gt; [e.degree for e in ev]</span>
+<span class="sd">    [0, 1, 2, 3, 4, 5, 6]</span>
+<span class="sd">    &gt;&gt;&gt; [round(e.cents) for e in ev]</span>
+<span class="sd">    [0, 100, 300, 500, 600, 800, 1000]</span>
+
+<span class="sd">    The third partial reorders the same seven tones into a cycle of thirds:</span>
+
+<span class="sd">    &gt;&gt;&gt; [e.degree for e in to_events(partial(7, 3), locrian)]</span>
+<span class="sd">    [0, 3, 6, 2, 5, 1, 4]</span>
+
+<span class="sd">    A non-octave period is carried through, because ``.ratios``/``.cents`` come</span>
+<span class="sd">    from the scale rather than from a hardcoded 2/1:</span>
+
+<span class="sd">    &gt;&gt;&gt; tritave = MOSScale.from_signature(5, 2, tuning=12, period=3.0).mode(6)</span>
+<span class="sd">    &gt;&gt;&gt; [round(e.cents, 2) for e in to_events(partial(7, 1), tritave)]</span>
+<span class="sd">    [0.0, 158.5, 475.49, 792.48, 950.98, 1267.97, 1584.96]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">_degrees</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">,</span> <span class="s2">&quot;ratios&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">cents</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">,</span> <span class="s2">&quot;cents&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">ratios</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">]</span>
+    <span class="n">cents</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">cents</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cents</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ratios</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cents</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># No pitch data at all: fall back to the degrees against whatever</span>
+        <span class="c1"># period the object declares, or a 2/1 if it declares none.</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mode_or_scale</span><span class="p">,</span> <span class="s2">&quot;period&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">period</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;a period must be a ratio above 1/1; got period=</span><span class="si">{</span><span class="n">period</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="n">period</span><span class="o">**</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+        <span class="n">cents</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1200.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">period</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">cents</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;scale ratios must be positive; got </span><span class="si">{</span><span class="n">ratios</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">cents</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1200.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratios</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">ratios</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span> <span class="o">**</span> <span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="mf">1200.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cents</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">cents</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;scale exposes </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2"> degrees but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span><span class="si">}</span><span class="s2"> ratios and &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cents</span><span class="p">)</span><span class="si">}</span><span class="s2"> cents; these must agree&quot;</span>
+        <span class="p">)</span>
+    <span class="n">mags</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">magnitudes</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">phases</span>
+    <span class="n">out</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">NoteEvent</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">phases</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">phase_to_degree</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">mode_or_scale</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">NoteEvent</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                <span class="n">degree</span><span class="o">=</span><span class="n">deg</span><span class="p">,</span>
+                <span class="n">ratio</span><span class="o">=</span><span class="n">ratios</span><span class="p">[</span><span class="n">deg</span><span class="p">],</span>
+                <span class="n">cents</span><span class="o">=</span><span class="n">cents</span><span class="p">[</span><span class="n">deg</span><span class="p">],</span>
+                <span class="n">loudness</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">mags</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                <span class="n">phase</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="to_frequencies">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.to_frequencies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_frequencies</span><span class="p">(</span><span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">NoteEvent</span><span class="p">],</span> <span class="n">fund</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">250.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sound the events against a fundamental, in hertz.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    events : iterable of NoteEvent</span>
+<span class="sd">    fund : float, default 250.0</span>
+<span class="sd">        Frequency of the scale root.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; ev = to_events(partial(5, 1), MOSScale.from_signature(2, 3, tuning=12))</span>
+<span class="sd">    &gt;&gt;&gt; [round(f, 3) for f in to_frequencies(ev, fund=200.0)]</span>
+<span class="sd">    [200.0, 224.492, 251.984, 299.661, 336.359]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">float</span><span class="p">(</span><span class="n">fund</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># not `&lt;= 0`: that lets NaN through</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fundamental frequency must be positive, got </span><span class="si">{</span><span class="n">fund</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">fund</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">ratio</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">events</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="scratch_sequence">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.fourier.scratch_sequence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scratch_sequence</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">PlayState</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PlayState</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A trajectory of play states: ``scratch(k, **{attr: v})`` for each ``v``.</span>
+
+<span class="sd">    Every state is scratched from the *same* base ``state``, not from its</span>
+<span class="sd">    predecessor, so ``values`` is a path through the control&#39;s absolute range</span>
+<span class="sd">    and the trajectory is reproducible from any frame -- what an animation or a</span>
+<span class="sd">    scrubbable UI needs.  With ``attr=&#39;rotate&#39;`` that means passing already</span>
+<span class="sd">    cumulative offsets (``np.linspace(0, 2*pi, 60)``), not per-frame deltas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlayState</span>
+<span class="sd">    k : int</span>
+<span class="sd">        Coefficient to scratch.</span>
+<span class="sd">    values : iterable of float</span>
+<span class="sd">    attr : {&#39;phase&#39;, &#39;magnitude&#39;, &#39;scale&#39;, &#39;rotate&#39;}, default &#39;phase&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of PlayState</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Sweeping one coefficient&#39;s phase through a full turn returns to the start:</span>
+
+<span class="sd">    &gt;&gt;&gt; p = partial(4, 1)</span>
+<span class="sd">    &gt;&gt;&gt; traj = scratch_sequence(p, 1, [0.0, math.pi, TWO_PI])</span>
+<span class="sd">    &gt;&gt;&gt; len(traj), traj[0].allclose(traj[-1])</span>
+<span class="sd">    (3, True)</span>
+<span class="sd">    &gt;&gt;&gt; [round(float(x), 6) for x in traj[1].phases]</span>
+<span class="sd">    [3.141593, 4.712389, 0.0, 1.570796]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_SCRATCH_ATTRS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;attr must be one of </span><span class="si">{</span><span class="n">_SCRATCH_ATTRS</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">attr</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">scratch</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">attr</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)})</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

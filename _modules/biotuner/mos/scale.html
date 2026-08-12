@@ -1,0 +1,1146 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.mos.scale &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/mos/scale';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/mos.html">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.mos.scale</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The :class:`MOSScale` object -- one well-formed scale, fully specified.</span>
+
+<span class="sd">An MOS scale is pinned down by three things: how many large and small steps it</span>
+<span class="sd">has, where its generator sits inside the valid range for that signature, and</span>
+<span class="sd">what the period is.  Everything else -- degrees, cents, step sizes, landmarks,</span>
+<span class="sd">propriety, modes, inverse, embedding family -- follows, and is exposed here as</span>
+<span class="sd">derived properties rather than as parallel lists.</span>
+
+<span class="sd">The abstract structure (``5L 2s``) and the concrete tuning (generator = 702</span>
+<span class="sd">cents) are deliberately kept as separate coordinates, because that is exactly</span>
+<span class="sd">the two-part selection the scale labyrinth affords: &quot;the scale labyrinth allows</span>
+<span class="sd">a musician to choose, simultaneously, a scale structure (number of small and</span>
+<span class="sd">large steps) and its tuning (the sizes of its period and generator)&quot;</span>
+<span class="sd">(Milne et al., 2011, §1).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos</span><span class="w"> </span><span class="kn">import</span> <span class="n">theory</span> <span class="k">as</span> <span class="n">T</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.theory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Landmarks</span><span class="p">,</span>
+    <span class="n">PERIOD_CENTS</span><span class="p">,</span>
+    <span class="n">generator_fraction</span><span class="p">,</span>
+    <span class="n">mediant</span><span class="p">,</span>
+    <span class="n">noble_mediant</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.modes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mode</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MOSScale&quot;</span><span class="p">,</span> <span class="s2">&quot;mos&quot;</span><span class="p">,</span> <span class="s2">&quot;mos_family&quot;</span><span class="p">]</span>
+
+<span class="c1">#: Accepted spellings for :meth:`MOSScale.from_signature`&#39;s ``tuning``.</span>
+<span class="n">TuningSpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_tuning</span><span class="p">(</span>
+    <span class="n">n_large</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_small</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tuning</span><span class="p">:</span> <span class="n">TuningSpec</span><span class="p">,</span> <span class="n">bright</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn a tuning spec into a concrete generator fraction inside the range.&quot;&quot;&quot;</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">signature_ranges</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">)[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">bright</span> <span class="k">else</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">lm</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_landmarks</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="n">bright</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tuning</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tuning</span> <span class="o">==</span> <span class="s2">&quot;noble&quot;</span><span class="p">:</span>
+        <span class="c1"># The φ-weighted mediant: the point furthest from every simple</span>
+        <span class="c1"># rational, so the scale never collapses into an equal temperament.</span>
+        <span class="k">return</span> <span class="n">noble_mediant</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tuning</span> <span class="o">==</span> <span class="s2">&quot;equalized&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">lm</span><span class="o">.</span><span class="n">equalized</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tuning</span> <span class="o">==</span> <span class="s2">&quot;central&quot;</span><span class="p">:</span>
+            <span class="c1"># Middle of the coherent sub-range: safely proper, never degenerate.</span>
+            <span class="n">c_lo</span><span class="p">,</span> <span class="n">c_hi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">coherence_range</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="n">bright</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">c_lo</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">c_hi</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">if</span> <span class="n">tuning</span> <span class="o">==</span> <span class="s2">&quot;middle&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lo</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">hi</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;tuning must be a generator fraction, an EDO integer, a Fraction, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;or one of &#39;noble&#39;/&#39;central&#39;/&#39;middle&#39;/&#39;equalized&#39;; got </span><span class="si">{</span><span class="n">tuning</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuning</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="c1"># An EDO: pick the step count whose n/EDO lands inside the range.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The range is closed at both ends, but only one end is habitable. At</span>
+        <span class="c1"># the equalized landmark L == s: the scale flattens to an equal</span>
+        <span class="c1"># temperament but still has all its notes, and that is frequently the</span>
+        <span class="c1"># scale being asked for -- 5L7s in 12-EDO *is* the chromatic scale, and</span>
+        <span class="c1"># it sits exactly there. At the other end a step size reaches zero and</span>
+        <span class="c1"># the notes either side of it collide, so the object would claim a</span>
+        <span class="c1"># signature it does not have: 4L3s in 12-EDO would come back with four</span>
+        <span class="c1"># distinct pitches out of seven and infinite hardness.</span>
+        <span class="n">collapsed</span> <span class="o">=</span> <span class="p">{</span><span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes</span><span class="p">,</span> <span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes</span><span class="p">}</span>
+        <span class="n">cands</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">lo</span> <span class="o">&lt;=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">hi</span> <span class="ow">and</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">collapsed</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cands</span><span class="p">:</span>
+            <span class="n">degenerate</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span> <span class="ow">in</span> <span class="n">collapsed</span>
+                <span class="ow">and</span> <span class="n">lo</span> <span class="o">&lt;=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">tuning</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">hi</span>
+            <span class="p">]</span>
+            <span class="n">extra</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;; its only candidate </span><span class="si">{</span><span class="n">degenerate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> is the landmark where a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;step size vanishes, which would collapse the scale&quot;</span>
+                <span class="k">if</span> <span class="n">degenerate</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tuning</span><span class="si">}</span><span class="s2">-EDO contains no generator inside the valid range &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">lo</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">hi</span><span class="si">}</span><span class="s2">) of </span><span class="si">{</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s</span><span class="si">{</span><span class="n">extra</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Closest to the middle of the coherent region.</span>
+        <span class="n">c_lo</span><span class="p">,</span> <span class="n">c_hi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">coherence_range</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="n">bright</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">c_lo</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">c_hi</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">cands</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">-</span> <span class="n">target</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">tuning</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MOSScale">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MOSScale</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A moment-of-symmetry (well-formed) scale.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_large, n_small : int</span>
+<span class="sd">        Counts of large and small steps per period.  Always co-prime for a</span>
+<span class="sd">        genuine MOS (Milne et al. §2, &quot;Co-prime step numbers&quot;).</span>
+<span class="sd">    generator : float</span>
+<span class="sd">        The generator as a *fraction of the period*, in ``(0, 1)``.  Use</span>
+<span class="sd">        :meth:`from_generator` to build one from a frequency ratio.</span>
+<span class="sd">    period : float, default 2.0</span>
+<span class="sd">        The period as a frequency ratio.  ``2.0`` is the octave; anything else</span>
+<span class="sd">        is a pseudo-octave, which the labyrinth supports natively.</span>
+<span class="sd">    validate : bool, default True</span>
+<span class="sd">        Check that ``generator`` really does produce ``n_large L, n_small s``.</span>
+<span class="sd">        Turn off only when constructing degenerate or deliberately mistuned</span>
+<span class="sd">        scales.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The diatonic scale in Pythagorean tuning:</span>
+
+<span class="sd">    &gt;&gt;&gt; d = MOSScale.from_generator(3 / 2, 7)</span>
+<span class="sd">    &gt;&gt;&gt; d.signature</span>
+<span class="sd">    &#39;5L2s&#39;</span>
+<span class="sd">    &gt;&gt;&gt; d.word</span>
+<span class="sd">    &#39;LLLsLLs&#39;</span>
+<span class="sd">    &gt;&gt;&gt; [round(c, 1) for c in d.cents]</span>
+<span class="sd">    [0.0, 203.9, 407.8, 611.7, 702.0, 905.9, 1109.8]</span>
+
+<span class="sd">    Pythagorean tuning sits *outside* the diatonic&#39;s coherent range of</span>
+<span class="sd">    ``4/7 .. 7/12`` (685.7 .. 700 cents), so it is improper -- its major third</span>
+<span class="sd">    is wider than its diminished fourth:</span>
+
+<span class="sd">    &gt;&gt;&gt; round(d.hardness, 3), d.is_proper</span>
+<span class="sd">    (2.26, False)</span>
+
+<span class="sd">    Flatten the fifth into meantone and coherence returns:</span>
+
+<span class="sd">    &gt;&gt;&gt; m = MOSScale.from_signature(5, 2, tuning=31)</span>
+<span class="sd">    &gt;&gt;&gt; round(m.generator_cents, 2), round(m.hardness, 3), m.is_proper</span>
+<span class="sd">    (696.77, 1.667, True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_large</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">n_small</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_large</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;both step counts must be &gt;= 1, got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;an MOS signature must be co-prime (Milne et al. §2); &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s has &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;gcd = </span><span class="si">{</span><span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;generator must be a period fraction in (0, 1), got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="si">!r}</span><span class="s2">; use MOSScale.from_generator() for a &quot;</span>
+                <span class="s2">&quot;frequency ratio&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;period ratio must exceed 1, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">:</span>
+            <span class="n">got</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">got</span> <span class="o">!=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">):</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuning_range</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;generator fraction </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> produces &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">got</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="n">got</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">s at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="si">}</span><span class="s2"> notes, not &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s. Valid range for &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s is (</span><span class="si">{</span><span class="n">lo</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">hi</span><span class="si">}</span><span class="s2">) &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;= (</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">lo</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="p">)</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Constructors</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="MOSScale.from_generator">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.from_generator">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_generator</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">generator</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a generator *frequency ratio* and a note count.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        generator : float</span>
+<span class="sd">            Frequency ratio, e.g. ``3/2``.  Reduced into the period.</span>
+<span class="sd">        cardinality : int</span>
+<span class="sd">            Must be one of the generator&#39;s MOS cardinalities; a helpful error</span>
+<span class="sd">            lists the valid ones if it is not.</span>
+<span class="sd">        period : float, default 2.0</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_generator(3 / 2, 12).signature</span>
+<span class="sd">        &#39;5L7s&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">generator_fraction</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_fraction</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.from_fraction">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.from_fraction">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_fraction</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a generator *period fraction* and a note count.&quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span>
+        <span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_signature</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.from_signature">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.from_signature">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_signature</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">n_large</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_small</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">tuning</span><span class="p">:</span> <span class="n">TuningSpec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">bright</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from an abstract signature, choosing a tuning inside its range.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_large, n_small : int</span>
+<span class="sd">        tuning : float, int, Fraction or str, optional</span>
+<span class="sd">            Where to sit inside the valid generator range:</span>
+
+<span class="sd">            - ``None`` / ``&#39;noble&#39;`` (default) -- the φ-weighted mediant, the</span>
+<span class="sd">              generator furthest from every equal temperament.</span>
+<span class="sd">            - ``&#39;central&#39;`` -- middle of the *coherent* sub-range; always proper.</span>
+<span class="sd">            - ``&#39;middle&#39;`` -- middle of the full valid range.</span>
+<span class="sd">            - ``&#39;equalized&#39;`` -- the equal temperament where L and s coincide</span>
+<span class="sd">              (degenerate, but sometimes what you want).</span>
+<span class="sd">            - an ``int`` -- read the generator off that EDO.</span>
+<span class="sd">            - a ``float`` -- an explicit generator fraction.</span>
+<span class="sd">            - a ``Fraction`` -- an explicit rational generator.</span>
+<span class="sd">        period : float, default 2.0</span>
+<span class="sd">        bright : bool, default True</span>
+<span class="sd">            Take the generator above ``1/2`` (the fifth rather than the fourth).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Stacking always starts from the root, so the scale as built is the</span>
+<span class="sd">        brightest mode -- Lydian, not Ionian.  Use :meth:`mode` to rotate.</span>
+
+<span class="sd">        &gt;&gt;&gt; [round(c, 3) for c in MOSScale.from_signature(5, 2, tuning=12).cents]</span>
+<span class="sd">        [0.0, 200.0, 400.0, 600.0, 700.0, 900.0, 1100.0]</span>
+<span class="sd">        &gt;&gt;&gt; round(MOSScale.from_signature(5, 2, tuning=31).generator_cents, 2)</span>
+<span class="sd">        696.77</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_resolve_tuning</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">tuning</span><span class="p">,</span> <span class="n">bright</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.from_edo">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.from_edo">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_edo</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">edo</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build from a generator of ``steps`` degrees of ``edo``-EDO.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_edo(31, 18, 7).signature      # 31-EDO meantone diatonic</span>
+<span class="sd">        &#39;5L2s&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_fraction</span><span class="p">(</span><span class="n">Fraction</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">edo</span><span class="p">),</span> <span class="n">cardinality</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Identity</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cardinality</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total notes per period.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_large</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compact signature, e.g. ``&#39;5L2s&#39;``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="si">}</span><span class="s2">L</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="si">}</span><span class="s2">s&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_bright</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True when the generator lies above half the period.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">&gt;</span> <span class="mf">0.5</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_degenerate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True when large and small steps have collapsed to the same size.&quot;&quot;&quot;</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">step_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">large</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover - cosmetic</span>
+        <span class="n">per</span> <span class="o">=</span> <span class="s2">&quot;octave&quot;</span> <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;MOSScale(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2">, generator=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">c, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;period=</span><span class="si">{</span><span class="n">per</span><span class="si">}</span><span class="s2">, R=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hardness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, proper&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">is_proper</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;, improper&#39;</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Tuning</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">period_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Size of the period in cents (1200 for an octave).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PERIOD_CENTS</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The generator as a frequency ratio.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The generator in cents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale degrees as period fractions in ``[0, 1)``, ascending.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">degrees_from_generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ratios</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale degrees as frequency ratios in ``[1, period)``, ascending.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="o">**</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale degrees in cents, ascending, starting at 0.&quot;&quot;&quot;</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d</span> <span class="o">*</span> <span class="n">pc</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">word</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step pattern of the scale as tuned, e.g. ``&#39;LLLsLLs&#39;``.</span>
+
+<span class="sd">        Read off the actual stacked scale, so it is the rotation rooted on the</span>
+<span class="sd">        generator chain&#39;s origin -- not necessarily the Christoffel word (see</span>
+<span class="sd">        :func:`~biotuner.mos.theory.mos_word`), and not necessarily the</span>
+<span class="sd">        brightest mode either.  The chain origin is the brightest mode only</span>
+<span class="sd">        when stacking darkens; see</span>
+<span class="sd">        :func:`~biotuner.mos.modes.stacking_brightens`.  For the brightest</span>
+<span class="sd">        mode&#39;s pattern, use ``scale.mode(0).word``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">word_from_generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``(large, small)`` step sizes in cents.&quot;&quot;&quot;</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">step_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span>
+        <span class="k">return</span> <span class="n">large</span> <span class="o">*</span> <span class="n">pc</span><span class="p">,</span> <span class="n">small</span> <span class="o">*</span> <span class="n">pc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hardness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Blackwood&#39;s ``R = L / s`` -- how uneven the two steps are.</span>
+
+<span class="sd">        ``1`` at the equalized tuning, ``2`` at the embedding EDO (the edge of</span>
+<span class="sd">        propriety), and unbounded as the small step vanishes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">step_sizes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">small</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">large</span> <span class="o">/</span> <span class="n">small</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Position in the labyrinth</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">landmarks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Landmarks</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The three landmark equal temperaments bounding this MOS pair.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_landmarks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bright</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tuning_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator fractions between which the scale keeps its identity.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">signature_ranges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">)[</span>
+            <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bright</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coherence_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator fractions over which the scale is coherent (``R &lt; 2``).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">coherence_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bright</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_proper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True when the scale is coherent: every generic interval well-ordered.</span>
+
+<span class="sd">        Equivalent to ``hardness &lt;= 2`` for a well-formed scale (Milne et al.</span>
+<span class="sd">        §2); :func:`biotuner.mos.metrics.is_proper` verifies it directly from</span>
+<span class="sd">        the interval matrix instead, and the two agree.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hardness</span> <span class="o">&lt;=</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="mf">1e-12</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sb_node</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">SBNode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This scale&#39;s node on the Stern-Brocot path of its generator.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">sb_node_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">edo</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The EDO this scale *is*, when the generator is exactly rational.</span>
+
+<span class="sd">        ``None`` for a generic tuning.  The denominator cap matters: allowed to</span>
+<span class="sd">        run to a million, ``limit_denominator`` approximates an irrational</span>
+<span class="sd">        generator to within 1e-12 and every scale looks like some absurd equal</span>
+<span class="sd">        division.  Ten thousand keeps genuine EDOs exact while leaving an</span>
+<span class="sd">        irrational generator visibly irrational.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">)</span><span class="o">.</span><span class="n">limit_denominator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-13</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">denominator</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Relatives</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The scale with large and small steps swapped (Milne et al. §2).</span>
+
+<span class="sd">        Realised at the mirror-image generator across the equalized landmark,</span>
+<span class="sd">        keeping the same distance from it -- so the diatonic&#39;s inverse is an</span>
+<span class="sd">        anti-diatonic just as far from 7-EDO as the original.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_generator(3 / 2, 7).inverse.signature</span>
+<span class="sd">        &#39;2L5s&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">landmarks</span><span class="o">.</span><span class="n">equalized</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">eq</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span>
+        <span class="k">return</span> <span class="n">MOSScale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;MOSScale&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The next *smaller* MOS in this generator&#39;s family, or ``None``.&quot;&quot;&quot;</span>
+        <span class="n">cards</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_cardinalities</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span> <span class="n">include_trivial</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">smaller</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cards</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">smaller</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">MOSScale</span><span class="o">.</span><span class="n">from_fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="n">smaller</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MOSScale.child">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.child">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;MOSScale&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``steps``-th *larger* MOS in this generator&#39;s family.&quot;&quot;&quot;</span>
+        <span class="n">cards</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_cardinalities</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">16</span><span class="p">,</span> <span class="n">include_trivial</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">bigger</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cards</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bigger</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">steps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">MOSScale</span><span class="o">.</span><span class="n">from_fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="n">bigger</span><span class="p">[</span><span class="n">steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``(cardinality, tuning)`` of the lowest-cardinality embedding scale.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_generator(3 / 2, 7).embedding</span>
+<span class="sd">        (12, Fraction(7, 12))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">T</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bright</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MOSScale.family">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.family">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">family</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">53</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;MOSScale&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Every MOS this generator produces, smallest first.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; [s.signature for s in MOSScale.from_generator(3 / 2, 7).family(17)]</span>
+<span class="sd">        [&#39;2L1s&#39;, &#39;2L3s&#39;, &#39;5L2s&#39;, &#39;5L7s&#39;, &#39;12L5s&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">mos_family</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generator_ratio</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="n">max_cardinality</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.retune">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.retune">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tuning</span><span class="p">:</span> <span class="n">TuningSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Same structure, different generator inside the valid range.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; round(MOSScale.from_generator(3 / 2, 7).retune(19).generator_cents, 4)</span>
+<span class="sd">        694.7368</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_resolve_tuning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="n">tuning</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bright</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MOSScale</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Modes</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="MOSScale.mode">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.mode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Mode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``index``-th mode, ordered brightest (0) to darkest.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.modes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mode</span>
+
+        <span class="k">return</span> <span class="n">Mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.modes">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.modes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Mode&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All ``cardinality`` modes, brightest first.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)]</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Interop</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="MOSScale.to_scala">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.to_scala">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_scala</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render as a Scala ``.scl`` file body.</span>
+
+<span class="sd">        Uses biotuner&#39;s own :func:`~biotuner.biotuner_utils.create_SCL`, so the</span>
+<span class="sd">        output matches every other tuning the toolbox exports.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_SCL</span>
+
+        <span class="n">scale</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">create_SCL</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span> <span class="n">write</span><span class="o">=</span><span class="n">write</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.to_dict">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flat, JSON-friendly summary -- handy for tables and provenance.&quot;&quot;&quot;</span>
+        <span class="n">lm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">landmarks</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuning_range</span>
+        <span class="n">c_lo</span><span class="p">,</span> <span class="n">c_hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coherence_range</span>
+        <span class="n">large_c</span><span class="p">,</span> <span class="n">small_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_cents</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span>
+            <span class="s2">&quot;n_large&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span>
+            <span class="s2">&quot;n_small&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_small</span><span class="p">,</span>
+            <span class="s2">&quot;cardinality&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span>
+            <span class="s2">&quot;generator&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span>
+            <span class="s2">&quot;generator_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span>
+            <span class="s2">&quot;generator_ratio&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_ratio</span><span class="p">,</span>
+            <span class="s2">&quot;period&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">,</span>
+            <span class="s2">&quot;period_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span><span class="p">,</span>
+            <span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">word</span><span class="p">,</span>
+            <span class="s2">&quot;step_large_cents&quot;</span><span class="p">:</span> <span class="n">large_c</span><span class="p">,</span>
+            <span class="s2">&quot;step_small_cents&quot;</span><span class="p">:</span> <span class="n">small_c</span><span class="p">,</span>
+            <span class="s2">&quot;hardness&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hardness</span><span class="p">,</span>
+            <span class="s2">&quot;is_proper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_proper</span><span class="p">,</span>
+            <span class="s2">&quot;is_degenerate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_degenerate</span><span class="p">,</span>
+            <span class="s2">&quot;tuning_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lo</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">hi</span><span class="p">)),</span>
+            <span class="s2">&quot;coherence_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c_lo</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">c_hi</span><span class="p">)),</span>
+            <span class="s2">&quot;equalized_edo&quot;</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">equalized_edo</span><span class="p">,</span>
+            <span class="s2">&quot;small_vanishes_edo&quot;</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes_edo</span><span class="p">,</span>
+            <span class="s2">&quot;large_vanishes_edo&quot;</span><span class="p">:</span> <span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes_edo</span><span class="p">,</span>
+            <span class="s2">&quot;embedding_cardinality&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MOSScale.summary">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.MOSScale.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multi-line human-readable description.&quot;&quot;&quot;</span>
+        <span class="n">lm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">landmarks</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuning_range</span>
+        <span class="n">c_lo</span><span class="p">,</span> <span class="n">c_hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coherence_range</span>
+        <span class="n">large_c</span><span class="p">,</span> <span class="n">small_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_cents</span>
+        <span class="n">emb_n</span><span class="p">,</span> <span class="n">emb_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="si">}</span><span class="s2"> notes)   </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  generator      </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="si">:</span><span class="s2">8.3f</span><span class="si">}</span><span class="s2"> c  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(ratio </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_ratio</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, g = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  period         </span><span class="si">{</span><span class="n">pc</span><span class="si">:</span><span class="s2">8.3f</span><span class="si">}</span><span class="s2"> c  (ratio </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  steps          L = </span><span class="si">{</span><span class="n">large_c</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c,  s = </span><span class="si">{</span><span class="n">small_c</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c,  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;R = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hardness</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  valid range    </span><span class="si">{</span><span class="n">lo</span><span class="si">}</span><span class="s2"> .. </span><span class="si">{</span><span class="n">hi</span><span class="si">}</span><span class="s2">   &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">lo</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pc</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> .. </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pc</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> c)&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  coherent over  </span><span class="si">{</span><span class="n">c_lo</span><span class="si">}</span><span class="s2"> .. </span><span class="si">{</span><span class="n">c_hi</span><span class="si">}</span><span class="s2">   &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;-&gt; </span><span class="si">{</span><span class="s1">&#39;proper&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">is_proper</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;IMPROPER at this tuning&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  landmarks      equalized </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">equalized</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">equalized_edo</span><span class="si">}</span><span class="s2">-EDO,  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;s-&gt;0 at </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes_edo</span><span class="si">}</span><span class="s2">-EDO,  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;L-&gt;0 at </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes_edo</span><span class="si">}</span><span class="s2">-EDO&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  inverse        </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  embedded in    </span><span class="si">{</span><span class="n">emb_n</span><span class="si">}</span><span class="s2"> notes (equal at </span><span class="si">{</span><span class="n">emb_t</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Module-level conveniences</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="mos">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.mos">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mos</span><span class="p">(</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MOSScale</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shorthand for :meth:`MOSScale.from_generator`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; mos(3 / 2, 7).signature</span>
+<span class="sd">    &#39;5L2s&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">MOSScale</span><span class="o">.</span><span class="n">from_generator</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mos_family">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.scale.mos_family">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mos_family</span><span class="p">(</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">max_cardinality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">53</span><span class="p">,</span>
+    <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">min_cardinality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">MOSScale</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Every MOS scale a generator produces, smallest first.</span>
+
+<span class="sd">    This is the corrected replacement for</span>
+<span class="sd">    :func:`biotuner.scale_construction.find_MOS`: exact rather than</span>
+<span class="sd">    brute-forced, honouring ``period`` throughout, and returning scale objects</span>
+<span class="sd">    instead of a dict of parallel lists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    generator : float</span>
+<span class="sd">        Generator as a frequency ratio.</span>
+<span class="sd">    max_cardinality : int, default 53</span>
+<span class="sd">    period : float, default 2.0</span>
+<span class="sd">    min_cardinality : int, default 3</span>
+<span class="sd">        Skip the musically empty 2-note MOS by default.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; [s.signature for s in mos_family(3 / 2, 12)]</span>
+<span class="sd">    [&#39;2L1s&#39;, &#39;2L3s&#39;, &#39;5L2s&#39;, &#39;5L7s&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; [s.cardinality for s in mos_family(2 ** (316 / 1200), 19)]</span>
+<span class="sd">    [3, 4, 7, 11, 15, 19]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">generator_fraction</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">MOSScale</span><span class="p">(</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">card</span><span class="p">,</span> <span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">mos_series</span><span class="p">(</span>
+            <span class="n">g</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="n">max_cardinality</span><span class="p">,</span> <span class="n">include_trivial</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">card</span> <span class="o">&gt;=</span> <span class="n">min_cardinality</span>
+    <span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

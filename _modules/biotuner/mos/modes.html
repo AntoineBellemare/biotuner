@@ -1,0 +1,983 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.mos.modes &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/mos/modes';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/mos.html">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.mos.modes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Modes of a well-formed scale, and the ℤ² lattice they live in.</span>
+
+<span class="sd">A scale presupposes periodicity, so all its rotations are the same scale.  A</span>
+<span class="sd">*mode* is what you get by choosing a fundamental domain for that period -- a</span>
+<span class="sd">finalis.  Milne et al. (2011) §4 describe the modal universe of a well-formed</span>
+<span class="sd">scale as &quot;freely generated from two basic and commuting transformations and</span>
+<span class="sd">… therefore isomorphic to the free commutative group ℤ² of rank 2&quot;:</span>
+
+<span class="sd">``σ`` (:meth:`Mode.rotate`)</span>
+<span class="sd">    *Common origin.*  Keeps the pitch collection, moves the finalis up one</span>
+<span class="sd">    scale degree.  C-Ionian → D-Dorian.</span>
+
+<span class="sd">``τ`` (:meth:`Mode.brighten`)</span>
+<span class="sd">    *Common finalis.*  Keeps the finalis, moves the origin one generator</span>
+<span class="sd">    sharpwards.  C-Ionian → C-Lydian.</span>
+
+<span class="sd">Adjacent modes in the brightness order are *parsimonious*: they differ by a</span>
+<span class="sd">single tone, displaced by the augmented prime (the chroma, ``L - s``).  That</span>
+<span class="sd">claim is checked directly in the test suite.</span>
+
+<span class="sd">The lattice itself (Milne et al. Fig. 7) is exposed by</span>
+<span class="sd">:meth:`Mode.lattice_coords`, which places each scale degree at integer</span>
+<span class="sd">coordinates in the (generator, period) basis.  The zig-zag those points trace</span>
+<span class="sd">out is the mode&#39;s fundamental frame; ``σ`` and ``τ`` are its vertical and</span>
+<span class="sd">horizontal shifts.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.theory</span><span class="w"> </span><span class="kn">import</span> <span class="n">PERIOD_CENTS</span><span class="p">,</span> <span class="n">christoffel_word</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">MOSScale</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Mode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DIATONIC_MODE_NAMES&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mode_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wf_number&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;chain_order&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mode_lattice&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;christoffel_mode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parsimony_chain&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1">#: The seven church modes, brightest first -- the order ``τ`` walks.</span>
+<span class="n">DIATONIC_MODE_NAMES</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Lydian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ionian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Mixolydian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Dorian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Aeolian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Phrygian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Locrian&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">#: Signatures for which conventional mode names exist.  Everything else gets</span>
+<span class="c1">#: a generic ``&quot;mode k of 4L3s&quot;`` label rather than an invented name.</span>
+<span class="n">_NAMED_SIGNATURES</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">DIATONIC_MODE_NAMES</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="chain_order">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.chain_order">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chain_order</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sorted-degree index of each generator-chain position.</span>
+
+<span class="sd">    ``chain_order(g, N)[i]`` is where the ``i``-th stacked generator lands once</span>
+<span class="sd">    the scale is sorted.  The inverse mapping -- which chain position each</span>
+<span class="sd">    sorted degree came from -- is what :func:`wf_number` reads.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Stacking fifths gives C G D A E B F♯; sorted, those are degrees</span>
+<span class="sd">    0 4 1 5 2 6 3:</span>
+
+<span class="sd">    &gt;&gt;&gt; chain_order(math.log2(3 / 2), 7)</span>
+<span class="sd">    [0, 4, 1, 5, 2, 6, 3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pitches</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cardinality</span><span class="p">)]</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">cardinality</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">pitches</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cardinality</span>
+    <span class="k">for</span> <span class="n">sorted_pos</span><span class="p">,</span> <span class="n">chain_pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+        <span class="n">rank</span><span class="p">[</span><span class="n">chain_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_pos</span>
+    <span class="k">return</span> <span class="n">rank</span></div>
+
+
+
+<div class="viewcode-block" id="wf_number">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.wf_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wf_number</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Carey&#39;s ``g`` in ``WF(N, g)`` -- generator order → scale step order.</span>
+
+<span class="sd">    The factor that converts generator order into scale step order, mod ``N``</span>
+<span class="sd">    (Carey 1998; quoted in Milne et al. §1).  Equivalently: taking one step up</span>
+<span class="sd">    the scale advances you ``wf_number`` places along the generator chain.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The diatonic scale and its inverse belong to ``WF(7, 2)``, the chromatic</span>
+<span class="sd">    scale to ``WF(12, 7)``:</span>
+
+<span class="sd">    &gt;&gt;&gt; wf_number(math.log2(3 / 2), 7)</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; wf_number(math.log2(3 / 2), 12)</span>
+<span class="sd">    7</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pitches</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cardinality</span><span class="p">)]</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">cardinality</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">pitches</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">cardinality</span></div>
+
+
+
+<div class="viewcode-block" id="mode_names">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.mode_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mode_names</span><span class="p">(</span><span class="n">n_large</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_small</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Conventional mode names for a signature, brightest first, or ``None``.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_NAMED_SIGNATURES</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">n_large</span><span class="p">,</span> <span class="n">n_small</span><span class="p">))</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stacking_brightens</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;True when stacking the generator upward yields successively *brighter* modes.</span>
+
+<span class="sd">    A generator and its complement build the same scale but walk its modes in</span>
+<span class="sd">    opposite directions, and which of the two a given ``MOSScale`` holds is not</span>
+<span class="sd">    determined by whether it exceeds half the period -- the two coincide for</span>
+<span class="sd">    ``5L2s`` and disagree for its inverse ``2L5s``.  So the direction is</span>
+<span class="sd">    measured rather than assumed: compare the brightness of the mode on the</span>
+<span class="sd">    root with the mode one generator up.</span>
+
+<span class="sd">    Everything that indexes modes by brightness goes through this, which is</span>
+<span class="sd">    what keeps ``mode(0)`` the brightest mode for *every* signature.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; stacking_brightens(MOSScale.from_signature(5, 2, tuning=12))</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; stacking_brightens(MOSScale.from_signature(2, 5, tuning=&#39;central&#39;))</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">degrees</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">generator</span> <span class="o">%</span> <span class="mf">1.0</span>
+    <span class="n">at_root</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">degrees</span><span class="p">)</span>
+    <span class="n">at_generator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">d</span> <span class="o">-</span> <span class="n">root</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">degrees</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">at_generator</span> <span class="o">&gt;</span> <span class="n">at_root</span>
+
+
+<div class="viewcode-block" id="Mode">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One mode of a :class:`~biotuner.mos.scale.MOSScale`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scale : MOSScale</span>
+<span class="sd">    index : int</span>
+<span class="sd">        Brightness rank, ``0`` = brightest.  Mode ``k`` is rooted on the</span>
+<span class="sd">        ``k``-th note of the generator chain, so each increment darkens the</span>
+<span class="sd">        scale by one generator.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; d = MOSScale.from_signature(5, 2, tuning=12)</span>
+<span class="sd">    &gt;&gt;&gt; [m.name for m in d.modes()]</span>
+<span class="sd">    [&#39;Lydian&#39;, &#39;Ionian&#39;, &#39;Mixolydian&#39;, &#39;Dorian&#39;, &#39;Aeolian&#39;, &#39;Phrygian&#39;, &#39;Locrian&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; d.mode(1).word</span>
+<span class="sd">    &#39;LLsLLLs&#39;</span>
+<span class="sd">    &gt;&gt;&gt; [round(c) for c in d.mode(1).cents]</span>
+<span class="sd">    [0, 200, 400, 500, 700, 900, 1100]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">cardinality</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;mode index must lie in [0, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">) for a </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">-note scale, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Identity</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cardinality</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">cardinality</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Conventional name where one exists, else ``&#39;mode k of 4L3s&#39;``.&quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">mode_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">n_small</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover - cosmetic</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Mode(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">word</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Pitches</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chain_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;How many generators up the chain this mode&#39;s finalis sits.</span>
+
+<span class="sd">        Brightness indices run brightest-first, but the generator chain runs</span>
+<span class="sd">        that way only when stacking *darkens* (see :func:`stacking_brightens`);</span>
+<span class="sd">        otherwise the chain is walked in reverse.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stacking_brightens</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_chain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">,</span> <span class="n">chain</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Mode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the mode whose finalis is ``chain`` generators up.&quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">cardinality</span>
+        <span class="n">chain</span> <span class="o">%=</span> <span class="n">n</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chain</span><span class="p">)</span> <span class="k">if</span> <span class="n">stacking_brightens</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="k">else</span> <span class="n">chain</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">index</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">root_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Position of this mode&#39;s finalis within the parent scale, in ``[0, 1)``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_position</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Degrees as period fractions in ``[0, 1)``, rooted at 0.&quot;&quot;&quot;</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_degree</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">((</span><span class="n">d</span> <span class="o">-</span> <span class="n">root</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">degrees</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ratios</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Degrees as frequency ratios in ``[1, period)``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">period</span><span class="o">**</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">period_cents</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d</span> <span class="o">*</span> <span class="n">pc</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">word</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step pattern of this mode, e.g. ``&#39;LLsLLLs&#39;`` for Ionian.&quot;&quot;&quot;</span>
+        <span class="n">degs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span> <span class="o">+</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">degs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">degs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)]</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">steps</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;L&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;L&quot;</span> <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">mid</span> <span class="k">else</span> <span class="s2">&quot;s&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum of the mode&#39;s degrees -- higher is brighter.</span>
+
+<span class="sd">        Strictly decreasing in :attr:`index`, which is what makes the index a</span>
+<span class="sd">        brightness rank.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chroma</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The augmented prime ``L - s`` in cents.</span>
+
+<span class="sd">        The interval by which a single tone moves when stepping between</span>
+<span class="sd">        adjacent modes (Milne et al. §4).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">large</span><span class="p">,</span> <span class="n">small</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">step_cents</span>
+        <span class="k">return</span> <span class="n">large</span> <span class="o">-</span> <span class="n">small</span>
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># The two transformations</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="Mode.brighten">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.brighten">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">brighten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Mode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``τ^-k``: same finalis, origin ``k`` generators sharpwards.</span>
+
+<span class="sd">        Chromatic transposition.  Brightening by one is the paper&#39;s</span>
+<span class="sd">        &quot;transformation of a C-Ionian mode into the common finalis mode</span>
+<span class="sd">        C-Lydian&quot;.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_signature(5, 2, tuning=12).mode(1).brighten().name</span>
+<span class="sd">        &#39;Lydian&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mode.darken">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.darken">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">darken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Mode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``τ^k``: same finalis, origin ``k`` generators flatwards.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">brighten</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mode.rotate">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.rotate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Mode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``σ^k``: same pitch collection, finalis ``k`` scale steps higher.</span>
+
+<span class="sd">        Diatonic transposition.  Rotating C-Ionian by one gives D-Dorian --</span>
+<span class="sd">        the same white keys, a new home.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">        &gt;&gt;&gt; MOSScale.from_signature(5, 2, tuning=12).mode(1).rotate().name</span>
+<span class="sd">        &#39;Dorian&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># One scale step advances a fixed number of places along the generator</span>
+        <span class="c1"># chain -- Carey&#39;s g -- so the shift is applied in chain space.</span>
+        <span class="n">wf</span> <span class="o">=</span> <span class="n">wf_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Mode</span><span class="o">.</span><span class="n">_from_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_position</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">wf</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># The ℤ² lattice (Milne et al. Fig. 7)</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="Mode.lattice_coords">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.lattice_coords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lattice_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``(width, height)`` lattice coordinates of each degree.</span>
+
+<span class="sd">        Every pitch reachable by stacking is ``height`` periods plus ``width``</span>
+<span class="sd">        generators away from the *finalis*.  Listing them in generator-chain</span>
+<span class="sd">        order traces the zig-zag that Milne et al. Fig. 7 calls the mode&#39;s</span>
+<span class="sd">        *fundamental frame*: the width axis is spanned by the augmented prime,</span>
+<span class="sd">        the height axis by the pseudo-octave.</span>
+
+<span class="sd">        Widths run negative for the notes below the finalis in the chain, which</span>
+<span class="sd">        is exactly what distinguishes one mode&#39;s frame from another&#39;s -- Lydian</span>
+<span class="sd">        sits entirely above its finalis, Locrian entirely below.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">        &gt;&gt;&gt; d = MOSScale.from_signature(5, 2, tuning=12)</span>
+<span class="sd">        &gt;&gt;&gt; d.mode(0).lattice_coords()          # Lydian: all above</span>
+<span class="sd">        [(0, 0), (1, 0), (2, -1), (3, -1), (4, -2), (5, -2), (6, -3)]</span>
+<span class="sd">        &gt;&gt;&gt; d.mode(6).lattice_coords()          # Locrian: all below</span>
+<span class="sd">        [(-6, 4), (-5, 3), (-4, 3), (-3, 2), (-2, 2), (-1, 1), (0, 0)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator</span>
+        <span class="n">chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_position</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span><span class="p">):</span>
+            <span class="c1"># Offset of chain position j from this mode&#39;s own finalis.</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">chain</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">g</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Parsimony</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="Mode.differences">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.differences">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">differences</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale steps at which this mode and ``other`` disagree.</span>
+
+<span class="sd">        Both modes have the same number of degrees, so they are compared step</span>
+<span class="sd">        by step: entry ``(k, mine, theirs)`` means the ``k``-th degree sits at</span>
+<span class="sd">        ``mine`` cents here and ``theirs`` cents in ``other``.  Pairing by step</span>
+<span class="sd">        rather than by proximity matters -- when a tone moves by the chroma it</span>
+<span class="sd">        lands exactly halfway between its neighbours, and a nearest-value match</span>
+<span class="sd">        would tie and break arbitrarily on floating-point noise.</span>
+
+<span class="sd">        For adjacent modes in the brightness order the result has length 1 and</span>
+<span class="sd">        the two values differ by exactly the chroma: the parsimony property of</span>
+<span class="sd">        Milne et al. §4.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : Mode</span>
+<span class="sd">        tol : float, default 1e-6</span>
+<span class="sd">            Cents below which two degrees count as the same tone.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mine</span><span class="p">,</span> <span class="n">theirs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cents</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">cents</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mine</span><span class="p">,</span> <span class="n">theirs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
+        <span class="p">]</span></div>
+
+
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+    <span class="c1"># Interop</span>
+    <span class="c1"># ---------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="Mode.to_dict">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.Mode.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span>
+            <span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">word</span><span class="p">,</span>
+            <span class="s2">&quot;cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cents</span><span class="p">,</span>
+            <span class="s2">&quot;ratios&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratios</span><span class="p">,</span>
+            <span class="s2">&quot;brightness&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">brightness</span><span class="p">,</span>
+            <span class="s2">&quot;chroma_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chroma</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="christoffel_mode">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.christoffel_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">christoffel_mode</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The mode whose step pattern is the signature&#39;s Christoffel word.</span>
+
+<span class="sd">    Of the ``N`` modes, this is the one that matters for Fourier Scratching.</span>
+<span class="sd">    Milne et al. §5 claim that a coherent well-formed scale is &quot;played in</span>
+<span class="sd">    generic scalar order by the first partial play state&quot; -- ``n`` evenly</span>
+<span class="sd">    spaced fingers striking a keyboard whose keys are as wide as the steps</span>
+<span class="sd">    above their tones, each key caught exactly once.</span>
+
+<span class="sd">    That is true, but it is a property of a *mode*, not of the scale: the</span>
+<span class="sd">    Christoffel word is by construction the floor-quantisation of the equal</span>
+<span class="sd">    division of the period, so it is precisely the rotation whose key</span>
+<span class="sd">    boundaries interleave with evenly spaced fingers.  In any other mode two</span>
+<span class="sd">    fingers share a key and another key is missed.  Coherence is what makes</span>
+<span class="sd">    that mode exist; the mode is what makes the claim hold.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the scale is degenerate, where every mode has the same all-``L``</span>
+<span class="sd">        word and the Christoffel word does not single one out.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    For the diatonic that mode is Locrian, not the brightest mode:</span>
+
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; m = christoffel_mode(MOSScale.from_signature(5, 2, tuning=12))</span>
+<span class="sd">    &gt;&gt;&gt; m.name, m.word</span>
+<span class="sd">    (&#39;Locrian&#39;, &#39;sLLsLLL&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">word</span> <span class="o">=</span> <span class="n">christoffel_word</span><span class="p">(</span><span class="n">scale</span><span class="o">.</span><span class="n">n_large</span><span class="p">,</span> <span class="n">scale</span><span class="o">.</span><span class="n">n_small</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">scale</span><span class="o">.</span><span class="n">modes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">word</span> <span class="o">==</span> <span class="n">word</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mode</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scale</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">scale</span><span class="o">.</span><span class="n">generator_cents</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c has no mode with &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;the Christoffel word </span><span class="si">{</span><span class="n">word</span><span class="si">!r}</span><span class="s2"> (modes: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">({</span><span class="n">m</span><span class="o">.</span><span class="n">word</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">scale</span><span class="o">.</span><span class="n">modes</span><span class="p">()})</span><span class="si">}</span><span class="s2">). This happens for a &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;degenerate tuning, where the two step sizes coincide.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mode_lattice">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.mode_lattice">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mode_lattice</span><span class="p">(</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Mode</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A ``height × width`` patch of the modal ℤ² lattice.</span>
+
+<span class="sd">    Row ``j``, column ``i`` holds ``σ^j τ^i`` applied to mode ``base``: moving</span>
+<span class="sd">    right darkens by one generator (chromatic transposition), moving down</span>
+<span class="sd">    advances the finalis by one scale step (diatonic transposition).  The two</span>
+<span class="sd">    transformations commute, so the patch reads the same either way -- which</span>
+<span class="sd">    the test suite verifies.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; grid = mode_lattice(MOSScale.from_signature(5, 2, tuning=12), 3, 2)</span>
+<span class="sd">    &gt;&gt;&gt; [[m.name for m in row] for row in grid]</span>
+<span class="sd">    [[&#39;Lydian&#39;, &#39;Ionian&#39;, &#39;Mixolydian&#39;], [&#39;Mixolydian&#39;, &#39;Dorian&#39;, &#39;Aeolian&#39;]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">width</span><span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Mode</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span><span class="o">.</span><span class="n">brighten</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="parsimony_chain">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.modes.parsimony_chain">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parsimony_chain</span><span class="p">(</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Mode</span><span class="p">,</span> <span class="n">Mode</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Walk the brightness order, reporting what moves at each step.</span>
+
+<span class="sd">    Each entry is ``(brighter, darker, moved)``, where ``moved`` comes from</span>
+<span class="sd">    :meth:`Mode.differences`.  For a well-formed scale every step moves exactly</span>
+<span class="sd">    one tone, by exactly the chroma -- and which tone moves is different every</span>
+<span class="sd">    time, so the whole modal universe is reachable one note at a time.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">    &gt;&gt;&gt; chain = parsimony_chain(MOSScale.from_signature(5, 2, tuning=12))</span>
+<span class="sd">    &gt;&gt;&gt; all(len(moved) == 1 for _, _, moved in chain)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; [round(a - b) for _, _, moved in chain for _, a, b in moved]</span>
+<span class="sd">    [100, 100, 100, 100, 100, 100]</span>
+<span class="sd">    &gt;&gt;&gt; [k for _, _, moved in chain for k, _, _ in moved]</span>
+<span class="sd">    [3, 6, 2, 5, 1, 4]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modes</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">modes</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">modes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">modes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">modes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">differences</span><span class="p">(</span><span class="n">modes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">modes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

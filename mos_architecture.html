@@ -1,0 +1,1230 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>biotuner.mos — moment-of-symmetry scales, end to end &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'mos_architecture';</script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/mos/showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/mos/mos.html">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/mos/explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/mos_architecture.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>biotuner.mos — moment-of-symmetry scales, end to end</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-package-exists">Why this package exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-paper-contributes-and-where-each-idea-lands">What the paper contributes, and where each idea lands</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#new-biosignals-mos">New: biosignals → MOS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-directions-two-questions">Two directions, two questions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-inverse-actually-does">What the inverse actually does</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-forward-mode-does">What forward mode does</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-two-directions-meet">Where the two directions meet</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bright-half-a-convention-not-a-finding">The bright half — a convention, not a finding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#any-derivation-can-feed-the-fit">Any derivation can feed the fit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#folding-a-ratio-list-is-not-a-target-list">Folding: a ratio list is not a target list</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#underdetermined-fits-are-flagged-not-dropped">Underdetermined fits are flagged, not dropped</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moving-between-scales">Moving between scales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#layout">Layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-places-the-paper-needed-sharpening">Two places the paper needed sharpening</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-compat">Back-compat</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="biotuner-mos-moment-of-symmetry-scales-end-to-end">
+<h1><code class="docutils literal notranslate"><span class="pre">biotuner.mos</span></code> — moment-of-symmetry scales, end to end<a class="headerlink" href="#biotuner-mos-moment-of-symmetry-scales-end-to-end" title="Link to this heading">#</a></h1>
+<section id="why-this-package-exists">
+<h2>Why this package exists<a class="headerlink" href="#why-this-package-exists" title="Link to this heading">#</a></h2>
+<p>Before this work, MOS support in biotuner was three fragments that never met:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Where</p></th>
+<th class="head"><p>What</p></th>
+<th class="head"><p>Problem</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scale_construction.py</span></code> L967–1359</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">find_MOS</span></code>, <code class="docutils literal notranslate"><span class="pre">tuning_MOS_info</span></code>, <code class="docutils literal notranslate"><span class="pre">Stern_Brocot</span></code>, <code class="docutils literal notranslate"><span class="pre">tuning_range_to_MOS</span></code>, …</p></td>
+<td><p>brute-force step counting; <code class="docutils literal notranslate"><span class="pre">octave</span></code> silently ignored in several places; bare <code class="docutils literal notranslate"><span class="pre">except:</span> <span class="pre">pass</span></code>; parallel-list dict output; no scale object</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vizs.py</span></code> <code class="docutils literal notranslate"><span class="pre">plot_labyrinth</span></code></p></td>
+<td><p>polar plot</p></td>
+<td><p>not the labyrinth — radius was <code class="docutils literal notranslate"><span class="pre">sig.index(max(sig))</span> <span class="pre">+</span> <span class="pre">1</span></code>, i.e. always 1 or 2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vizs.py</span></code> <code class="docutils literal notranslate"><span class="pre">MOS_interactive</span></code></p></td>
+<td><p>ipywidgets</p></td>
+<td><p>plotted generator stacks, not the scale universe; no landmarks, arcs, or spokes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Nothing connected MOS to a biosignal. <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> had no way to ask
+<em>“which well-formed scale does this brain live in?”</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">biotuner.mos</span></code> replaces the fragments with one coherent layer built on the exact
+combinatorics of Milne, Carlé, Sethares, Noll &amp; Holland (2011), <em>Scratching the
+Scale Labyrinth</em>, LNAI 6726, 180–195.</p>
+</section>
+<section id="what-the-paper-contributes-and-where-each-idea-lands">
+<h2>What the paper contributes, and where each idea lands<a class="headerlink" href="#what-the-paper-contributes-and-where-each-idea-lands" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Paper</p></th>
+<th class="head"><p>§</p></th>
+<th class="head"><p>Implemented in</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>WF/MOS = generated, two step sizes, maximally even (Christoffel word)</p></td>
+<td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.mos_word</span></code>, <code class="docutils literal notranslate"><span class="pre">scale.MOSScale</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Stern–Brocot enumerates every MOS of a generator</p></td>
+<td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.sb_walk</span></code>, <code class="docutils literal notranslate"><span class="pre">theory.mos_cardinalities</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Three landmark tunings per MOS pair</p></td>
+<td><p>2, 3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.mos_landmarks</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Valid tuning range = bracket-to-mediant interval</p></td>
+<td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.signature_ranges</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Embedding scale has <code class="docutils literal notranslate"><span class="pre">2p</span> <span class="pre">+</span> <span class="pre">q</span></code> tones, at mediant <code class="docutils literal notranslate"><span class="pre">(2a+c)/(2b+d)</span></code></p></td>
+<td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.embedding</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Coherence ⇔ Blackwood <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">L/s</span> <span class="pre">&lt;</span> <span class="pre">2</span></code> ⇔ between equalized and embedding</p></td>
+<td><p>2, 3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">theory.coherence_range</span></code>, <code class="docutils literal notranslate"><span class="pre">metrics.is_proper</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Co-prime <code class="docutils literal notranslate"><span class="pre">(nL,</span> <span class="pre">ns)</span></code>; inverse scale swaps them</p></td>
+<td><p>2</p></td>
+<td><p>enforced in <code class="docutils literal notranslate"><span class="pre">theory</span></code>, <code class="docutils literal notranslate"><span class="pre">MOSScale.inverse</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Myhill’s property; unique interval signature per degree</p></td>
+<td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metrics.myhill_property</span></code>, <code class="docutils literal notranslate"><span class="pre">metrics.degree_signatures</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>The labyrinth: rings, angles, spokes, arcs</p></td>
+<td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plotting.plot_labyrinth</span></code>, <code class="docutils literal notranslate"><span class="pre">interactive.labyrinth_plotly</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Named temperaments / optimal-tuning lines on the labyrinth</p></td>
+<td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">temperaments.py</span></code> — computed from commas, not hardcoded</p></td>
+</tr>
+<tr class="row-even"><td><p>Modes: parsimony, height–width duality, free ℤ² of rank 2</p></td>
+<td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">modes.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fourier Scratching: play states in ℂⁿ, DFT, partials</p></td>
+<td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fourier.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Dynamic Tonality: partial pitch = α·period + β·generator</p></td>
+<td><p>6</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">timbre.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>The labyrinth as a surface to move <em>across</em> — structure and tuning chosen together, timbre following</p></td>
+<td><p>1–3, 6</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">morph.py</span></code> — <code class="docutils literal notranslate"><span class="pre">tuning_morph</span></code>, <code class="docutils literal notranslate"><span class="pre">tree_morph</span></code>, <code class="docutils literal notranslate"><span class="pre">voice_morph</span></code>, <code class="docutils literal notranslate"><span class="pre">morph_audio</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="new-biosignals-mos">
+<h2>New: biosignals → MOS<a class="headerlink" href="#new-biosignals-mos" title="Link to this heading">#</a></h2>
+<p>The piece the paper does not have. <code class="docutils literal notranslate"><span class="pre">derive.py</span></code> treats the labyrinth as a
+<em>search space</em> and asks which well-formed scale best explains a signal.</p>
+<p>The fit has three coordinates matching the labyrinth’s own choices —
+<strong>generator</strong>, <strong>cardinality</strong>, <strong>period</strong> — plus a fourth <em>nuisance</em>
+coordinate, <strong>transposition</strong>, because a scale and its transpositions are the
+same scale. That last one is not optional: a stack of fifths is the pentatonic,
+but only in one of the pentatonic’s five modes. Pin every candidate to a 1/1
+root and the answer is missed (10.6 ¢ error instead of 0.9 ¢ on the worked
+example).</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">generator_candidates</span></code> — every observed ratio, every ratio <em>between</em> ratios,
+plus a background grid. De-duplication is priority-aware and runs one way
+only: the grid is thinned against the signal so a grid point never shadows an
+exact signal-derived generator, but two signal-derived candidates are never
+thinned against each other. Which of two real proposals is better is a
+question about the fit, and nothing at the candidate stage can answer it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit_mos</span></code> — amplitude-weighted mean cents error to the nearest degree, plus a
+penalty per surplus note. The default penalty is calibrated, not guessed:
+across fourteen known scales fitted from five jittered peaks it recovers the
+true signature 12/14 times, versus 2/14 with no penalty (which overfits to a
+median of 21 notes).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MOSFit.improvement</span></code> — error relative to what a scale of that size would get
+on <em>random</em> input. A large scale always sits close to any data, so the raw
+error means little without this.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MOSFit.evidence</span></code> — the same margin below chance, in units of the standard
+error it was measured with. <code class="docutils literal notranslate"><span class="pre">improvement</span></code> still rewards a tiny target set for
+fitting exactly; <code class="docutils literal notranslate"><span class="pre">evidence</span></code> is the one that survives both failure modes, and
+it is what <code class="docutils literal notranslate"><span class="pre">compare_sources</span></code> ranks on.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward_scales</span></code> / <code class="docutils literal notranslate"><span class="pre">ForwardScale</span></code> — the other direction; see below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mos_trajectory</span></code> — a path through the labyrinth over time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_biotuner.fit_mos()</span></code> / <code class="docutils literal notranslate"><span class="pre">.compare_mos_sources()</span></code> / <code class="docutils literal notranslate"><span class="pre">.plot_labyrinth()</span></code>
+/ <code class="docutils literal notranslate"><span class="pre">.mos_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">mos_from_biotuner(bt,</span> <span class="pre">mode=…)</span></code>, and <code class="docutils literal notranslate"><span class="pre">'mos'</span></code> as a
+<code class="docutils literal notranslate"><span class="pre">get_tuning</span></code> source.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plotting.plot_forward_vs_inverse</span></code> — both directions on one labyrinth.</p></li>
+</ul>
+<section id="two-directions-two-questions">
+<h3>Two directions, two questions<a class="headerlink" href="#two-directions-two-questions" title="Link to this heading">#</a></h3>
+<p>There are two ways to put a generator and a signal in the same sentence, and
+they are not variants of one method. They ask different questions and are
+allowed to disagree.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><strong>inverse</strong> — <code class="docutils literal notranslate"><span class="pre">fit_mos</span></code>, the default</p></th>
+<th class="head"><p><strong>forward</strong> — <code class="docutils literal notranslate"><span class="pre">forward_scales</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>The generator is</p></td>
+<td><p><em>latent</em>: solved for</p></td>
+<td><p><em>given</em>: an interval the signal states</p></td>
+</tr>
+<tr class="row-odd"><td><p>Question</p></td>
+<td><p>which well-formed scale best explains these peaks?</p></td>
+<td><p>if this audible interval were the generator, what scale would the signal be playing?</p></td>
+</tr>
+<tr class="row-even"><td><p>Free parameters</p></td>
+<td><p>generator, cardinality, rotation (period too, optionally)</p></td>
+<td><p>rotation only</p></td>
+</tr>
+<tr class="row-odd"><td><p>The answer is</p></td>
+<td><p>a fit</p></td>
+<td><p>a consequence</p></td>
+</tr>
+<tr class="row-even"><td><p>Fails by</p></td>
+<td><p>overfitting</p></td>
+<td><p>explaining the signal badly</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Both score against the same targets with the same objective, so <code class="docutils literal notranslate"><span class="pre">error_cents</span></code>,
+<code class="docutils literal notranslate"><span class="pre">coverage</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code> and <code class="docutils literal notranslate"><span class="pre">evidence</span></code> mean the same thing on a <code class="docutils literal notranslate"><span class="pre">ForwardScale</span></code> as on
+a <code class="docutils literal notranslate"><span class="pre">MOSFit</span></code> and the two lists can be read against each other.
+<code class="docutils literal notranslate"><span class="pre">mos_from_biotuner(bt,</span> <span class="pre">mode='forward')</span></code> is the switch; <code class="docutils literal notranslate"><span class="pre">'inverse'</span></code> is the
+default and is unchanged.</p>
+<p><strong>When each is the right question.</strong> Ask the inverse when you want the scale and
+do not care where the generator came from — identification, comparison across
+conditions, feeding <code class="docutils literal notranslate"><span class="pre">get_tuning('mos')</span></code>. Ask the forward when the <em>provenance</em>
+of the generator is the claim: to say “this signal’s alpha-to-beta ratio,
+stacked, gives a pentatonic” is only honest if the interval you stacked is one
+the signal produced. The inverse will happily hand you a generator no pair of
+peaks states — a feature when identifying a scale, a problem when making a claim
+about what the signal contains.</p>
+<section id="what-the-inverse-actually-does">
+<h4>What the inverse actually does<a class="headerlink" href="#what-the-inverse-actually-does" title="Link to this heading">#</a></h4>
+<p>It is easy to state loosely — “find the generator whose scale contains the
+peaks” — and every clause of that is wrong. Precisely, <code class="docutils literal notranslate"><span class="pre">fit_mos</span></code>:</p>
+<ol class="arabic simple">
+<li><p><strong>Folds the inputs to pitch classes first</strong>, merging anything within
+<code class="docutils literal notranslate"><span class="pre">FOLD_TOLERANCE_CENTS</span></code> and summing the weights, so the targets it fits are
+distinct pitch classes rather than the ratios as handed in. See <em>Folding</em>
+below; the point here is only that it happens before anything else.</p></li>
+<li><p><strong>Searches (generator, cardinality, rotation) jointly</strong>, not in stages. For
+each candidate generator it enumerates that generator’s own MOS
+cardinalities — the note counts at which stacking is well-formed at all —
+builds the scale at each, and inside every one of those evaluations chooses
+the best rotation. Rotation is enumerated rather than sampled: under an
+absolute-error objective the optimal transposition always lands some target
+exactly on a degree, so the candidate set is <code class="docutils literal notranslate"><span class="pre">{tᵢ</span> <span class="pre">−</span> <span class="pre">dⱼ}</span></code> — restricted during
+the coarse scan to the <code class="docutils literal notranslate"><span class="pre">n_anchors</span></code> heaviest targets, then re-scored over
+every target for the survivors. Only afterwards are the leading generators
+refined inside their valid tuning ranges, which sharpens the tuning and
+cannot change the signature. <code class="docutils literal notranslate"><span class="pre">forward_scales</span></code> skips the shortlist
+(<code class="docutils literal notranslate"><span class="pre">n_anchors=None</span></code>) because it has far fewer readings to score, so its
+rotations are exact from the start.</p></li>
+<li><p><strong>Matches each ratio to its <em>nearest</em> degree.</strong> Containment is never
+required, in either direction: no ratio has to equal a degree, and no degree
+has to be claimed by a ratio. Fitting <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1.19,</span> <span class="pre">1.34,</span> <span class="pre">1.51,</span> <span class="pre">1.68]</span></code> returns
+<code class="docutils literal notranslate"><span class="pre">5L2s</span></code> at 699.51 ¢ and 4.17 ¢ mean error — one target sits 13.95 ¢ off its
+degree and still counts as a hit at the 15 ¢ tolerance, and two of the seven
+degrees go unused (<code class="docutils literal notranslate"><span class="pre">MOSFit.n_unmatched_degrees</span></code>).</p></li>
+<li><p><strong>Ranks by error <em>plus</em> a complexity penalty</strong>, never by error alone.
+Nearest-degree matching means a bigger scale is always at least as close, so
+raw error is a race to the largest ring allowed. On that same five-ratio
+probe, <code class="docutils literal notranslate"><span class="pre">complexity_penalty=0</span></code> returns <code class="docutils literal notranslate"><span class="pre">12L7s</span></code> — nineteen notes, 1.66 ¢ —
+where the default <code class="docutils literal notranslate"><span class="pre">1.0</span></code> returns the seven-note <code class="docutils literal notranslate"><span class="pre">5L2s</span></code> at 4.17 ¢ (score
+4.17 + 2 surplus notes = 6.17).</p></li>
+</ol>
+<p><strong>The inverse generator is latent, and need not be any interval you can point
+at.</strong> Two demonstrations, both reproducible:</p>
+<ul class="simple">
+<li><p>Take a stack of fifths, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">9/8,</span> <span class="pre">81/64,</span> <span class="pre">3/2,</span> <span class="pre">27/16]</span></code>, and <em>delete</em> <code class="docutils literal notranslate"><span class="pre">3/2</span></code>. The
+fit still returns <code class="docutils literal notranslate"><span class="pre">2L3s</span></code> at <strong>701.9550 ¢</strong> with zero error. The fifth is no
+longer one of the ratios, but 27/16 over 9/8 is a fifth, and the search has no
+reason to care about the difference.</p></li>
+<li><p>Stronger, because here the generator is not among the observed intervals at
+all: four alpha-band peaks from real EEG (S001, eyes closed — 10.07 / 15.64 /
+19.31 / 22.91 Hz), capped at six notes, fit <code class="docutils literal notranslate"><span class="pre">1L3s</span></code> at <strong>930.00 ¢</strong>, 18.44 ¢
+error, 50 % coverage. The six intervals those peaks state, folded, are 660.9,
+762.2, 835.1, 904.0, 976.9 and 1127.1 ¢. The nearest is <strong>26.0 ¢ away</strong>. The
+winning generator is not in the signal; it is the value that best organises
+it.</p></li>
+</ul>
+</section>
+<section id="what-forward-mode-does">
+<h4>What forward mode does<a class="headerlink" href="#what-forward-mode-does" title="Link to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">forward_scales</span></code> is the complement, and it refuses to invent anything. It
+enumerates the intervals the signal <em>states</em> — each ratio against the reference
+as <code class="docutils literal notranslate"><span class="pre">(r,</span> <span class="pre">1.0)</span></code>, and each unordered pair as larger-over-smaller — declares each one
+the generator, stacks it, folds it into the period, and reads off the MOS that
+falls out. Then it scores that scale against the whole target set with the same
+objective and the same transposition freedom, so the number is comparable to an
+inverse fit rather than merely adjacent to it.</p>
+<p>Nothing about the generator is optimised, and no code path could optimise it:
+across all 39 readings the four EEG peaks produce at <code class="docutils literal notranslate"><span class="pre">max_cardinality=24</span></code>,
+<code class="docutils literal notranslate"><span class="pre">scale.generator</span></code> equals the folded observed quotient to <strong>0.0</strong> — bit-identical,
+not “to within a cent”. Refining it would swap the observed interval for a nearby
+unobserved one and quietly turn the forward reading back into an inverse fit.</p>
+<p>The same four peaks, each pair taken as the generator, printed at the smallest
+scale each one supports:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>interval</p></th>
+<th class="head"><p>ratio</p></th>
+<th class="head"><p>generator</p></th>
+<th class="head"><p>scale</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>22.91 / 15.64</p></td>
+<td><p>1.465</p></td>
+<td><p>660.9 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2L3s</span></code> (5 notes)</p></td>
+</tr>
+<tr class="row-odd"><td><p>15.64 / 10.07</p></td>
+<td><p>1.553</p></td>
+<td><p>762.2 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3L2s</span></code> (5 notes)</p></td>
+</tr>
+<tr class="row-even"><td><p>19.31 / 15.64</p></td>
+<td><p>1.235</p></td>
+<td><p>835.1 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3L4s</span></code> (7 notes)</p></td>
+</tr>
+<tr class="row-odd"><td><p>22.91 / 19.31</p></td>
+<td><p>1.186</p></td>
+<td><p>904.0 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4L1s</span></code> (5 notes)</p></td>
+</tr>
+<tr class="row-even"><td><p>22.91 / 10.07</p></td>
+<td><p>2.275</p></td>
+<td><p>976.9 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1L4s</span></code> (5 notes)</p></td>
+</tr>
+<tr class="row-odd"><td><p>19.31 / 10.07</p></td>
+<td><p>1.918</p></td>
+<td><p>1127.1 ¢</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1L4s</span></code> (5 notes)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Two things that table hides. It is <em>smallest per generator</em>, not the ranking —
+<code class="docutils literal notranslate"><span class="pre">forward_scales</span></code> returns every <code class="docutils literal notranslate"><span class="pre">(generator,</span> <span class="pre">cardinality)</span></code> pair ordered by score,
+and one generator can occupy many rings at once: 1127.14 ¢ alone accounts for
+fourteen of those 39 rows. And raw frequencies need <code class="docutils literal notranslate"><span class="pre">include_ratios=False</span></code>,
+because 19.31 is a frequency rather than an interval and reading it as a
+generator means nothing; peak <em>ratios</em> are intervals, and the default is right
+for them.</p>
+<p>An empty list is a legitimate answer rather than a failure —
+<code class="docutils literal notranslate"><span class="pre">forward_scales([1,</span> <span class="pre">2,</span> <span class="pre">4])</span></code> returns <code class="docutils literal notranslate"><span class="pre">[]</span></code>, because pure octaves state no interval
+that generates anything.</p>
+<p>Proposals landing within <code class="docutils literal notranslate"><span class="pre">dedupe_cents</span></code> of each other are one reading, and the
+grouping is done on the <em>sorted</em> proposals rather than in arrival order. The
+input is conceptually a set of ratios, so permuting it must return the same
+readings in the same order with the same numbers (only <code class="docutils literal notranslate"><span class="pre">targets</span></code>,
+<code class="docutils literal notranslate"><span class="pre">assignments</span></code> and <code class="docutils literal notranslate"><span class="pre">residuals</span></code> follow the caller’s list, because they are
+defined to) — and a greedy walk in arrival order does not, because the first
+arrival gets to define its window and speak for it. On four ratios whose
+quotients state generators at 699.75 ¢ and 700.25 ¢, reversing the list used to
+swap a <code class="docutils literal notranslate"><span class="pre">7L5s</span></code> at 699.75 ¢ (16.75 ¢ error) for a <code class="docutils literal notranslate"><span class="pre">5L7s</span></code> at 700.25 ¢ (17.50 ¢) —
+same numbers, inverted signature. Each window is now represented by whichever of
+its proposals <em>scores</em> best, and every pair that proposed into it stays in
+<code class="docutils literal notranslate"><span class="pre">sources</span></code>, so <code class="docutils literal notranslate"><span class="pre">n_sources</span></code> keeps counting corroboration rather than election
+results.</p>
+</section>
+<section id="where-the-two-directions-meet">
+<h4>Where the two directions meet<a class="headerlink" href="#where-the-two-directions-meet" title="Link to this heading">#</a></h4>
+<p>They are not condemned to disagree. Raise the EEG fit’s ceiling to twelve notes
+and both land on <code class="docutils literal notranslate"><span class="pre">1L9s</span></code>: the inverse at 1127.0142 ¢ (1.03 ¢ error), the forward
+at 1127.1414 ¢ (1.29 ¢). Turn the inverse’s refinement off and it reports
+1127.1414 ¢ exactly — the forward reading <em>is</em> the inverse search’s own
+candidate, before refinement slid it 0.13 ¢ off the observed value to buy a
+quarter of a cent. Agreement like that is the interesting outcome: the latent
+generator turned out to be audible after all. Disagreement, as at the six-note
+cap above, is the ordinary one, and the size of the gap is the price of
+insisting that the generator be an interval you can point at.</p>
+</section>
+</section>
+<section id="the-bright-half-a-convention-not-a-finding">
+<h3>The bright half — a convention, not a finding<a class="headerlink" href="#the-bright-half-a-convention-not-a-finding" title="Link to this heading">#</a></h3>
+<p>A generator <code class="docutils literal notranslate"><span class="pre">g</span></code> and its complement <code class="docutils literal notranslate"><span class="pre">period</span> <span class="pre">−</span> <span class="pre">g</span></code> build <strong>the same scale</strong>. The two
+pitch-class sets are mirror images, and for a well-formed scale the mirror is
+always a <em>mode</em> of the original: <code class="docutils literal notranslate"><span class="pre">2L3s</span></code> built on 0.584963 of an octave (701.955 ¢,
+the fifth) and on 0.415037 (498.045 ¢, the fourth) differ only by rotation — the
+second is rotation #3 of the first. Since every fit here is rotation-invariant,
+<code class="docutils literal notranslate"><span class="pre">g</span></code> and <code class="docutils literal notranslate"><span class="pre">period</span> <span class="pre">−</span> <span class="pre">g</span></code> are one solution, not two.</p>
+<p>So <code class="docutils literal notranslate"><span class="pre">derive._fold_bright</span></code> folds every generator into the open bright half
+<code class="docutils literal notranslate"><span class="pre">(0.5,</span> <span class="pre">1)</span></code>, and both directions call that one function rather than
+reimplementing the rule — which is what makes their generators directly
+comparable on one axis. Two fractions generate nothing and come back as <code class="docutils literal notranslate"><span class="pre">None</span></code>:
+<code class="docutils literal notranslate"><span class="pre">0</span></code> (the unison and the bare period, which never leave the root) and <code class="docutils literal notranslate"><span class="pre">1/2</span></code>
+(which closes after two notes). Both are refused with a tolerance
+(<code class="docutils literal notranslate"><span class="pre">derive.GENERATOR_EPSILON</span></code>, 1e-9 of a period) rather than by exact comparison,
+because neither value survives the arithmetic that produces it: a half-period
+interval arrives as <code class="docutils literal notranslate"><span class="pre">log(2**0.5)</span> <span class="pre">/</span> <span class="pre">log(2)</span></code>, which is <code class="docutils literal notranslate"><span class="pre">0.5000000000000001</span></code>, and
+an exact test lets it through to build a “five-note” scale with two pitch
+classes in it.</p>
+<p>The consequence is worth stating out loud, because it looks like a result:
+<strong><code class="docutils literal notranslate"><span class="pre">fit_mos</span></code> and <code class="docutils literal notranslate"><span class="pre">forward_scales</span></code> can never report a generator below half the
+period.</strong> Build a <code class="docutils literal notranslate"><span class="pre">2L3s</span></code> explicitly on a 498.045 ¢ generator, hand its ratios to
+either function, and both answer 701.955 ¢ with zero error — the same scale, in
+its bright spelling. A labyrinth carrying markers on one side only is showing
+this convention, not a signal that avoided the other half.
+<code class="docutils literal notranslate"><span class="pre">plotting.plot_forward_vs_inverse</span></code> therefore draws the bright half alone
+(θ ∈ [180°, 360°]) rather than leaving an empty semicircle to be misread as
+absence of evidence. <code class="docutils literal notranslate"><span class="pre">fit_field</span></code>, which samples the whole circle instead of
+reporting a winner, keeps both halves — and they carry the same errors, which is
+exactly why the labyrinth picture is left–right symmetric.</p>
+</section>
+<section id="any-derivation-can-feed-the-fit">
+<h3>Any derivation can feed the fit<a class="headerlink" href="#any-derivation-can-feed-the-fit" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> turns a signal into ratios eight different ways, and they do
+not agree. Each is now a first-class input to the fit — <code class="docutils literal notranslate"><span class="pre">bt.fit_mos(source=…)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mos_from_biotuner(bt,</span> <span class="pre">source=…)</span></code>, <code class="docutils literal notranslate"><span class="pre">bt.mos_trajectory(source=…)</span></code> — and
+<code class="docutils literal notranslate"><span class="pre">compare_sources</span></code> (<code class="docutils literal notranslate"><span class="pre">bt.compare_mos_sources()</span></code>) runs the whole set and ranks it,
+so the question stops being <em>“which scale is this signal in?”</em> and becomes
+<em>“which way of asking produces a well-formed answer at all?”</em>.</p>
+<p>Measured on the notebook’s worked example — 30 s of a 5 Hz fundamental with a
+stack of fifths above it under noise, FOOOF peaks at 5.00 / 7.50 / 9.99 / 11.25
+/ 16.88 Hz, <code class="docutils literal notranslate"><span class="pre">peaks_extension</span></code> run so <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> resolves,
+<code class="docutils literal notranslate"><span class="pre">max_cardinality=16</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>source</p></th>
+<th class="head"><p>ratios → targets</p></th>
+<th class="head"><p>best fit</p></th>
+<th class="head"><p>error ¢</p></th>
+<th class="head"><p>improvement</p></th>
+<th class="head"><p><strong>evidence</strong></p></th>
+<th class="head"><p>coverage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code></p></td>
+<td><p>9 → 7</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2L3s</span></code> &#64; 702.7 ¢</p></td>
+<td><p>0.58</p></td>
+<td><p>104×</p></td>
+<td><p><strong>4.54</strong></p></td>
+<td><p>1.00</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code></p></td>
+<td><p>18 → 17</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">12L1s</span></code> &#64; 1101.5 ¢</p></td>
+<td><p>9.95</p></td>
+<td><p>2.3×</p></td>
+<td><p><strong>4.06</strong></p></td>
+<td><p>0.72</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diss_curve</span></code> †</p></td>
+<td><p>8 → 8</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7L3s</span></code> &#64; 848.6 ¢</p></td>
+<td><p>5.19</p></td>
+<td><p>5.8×</p></td>
+<td><p><strong>4.05</strong></p></td>
+<td><p>0.88</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">euler_fokker</span></code> †</p></td>
+<td><p>9 → 8</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4L7s</span></code> &#64; 881.3 ¢</p></td>
+<td><p>6.93</p></td>
+<td><p>3.9×</p></td>
+<td><p><strong>3.65</strong></p></td>
+<td><p>0.89</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HE</span></code> †</p></td>
+<td><p>5 → 5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1L8s</span></code> &#64; 1096.4 ¢</p></td>
+<td><p>4.71</p></td>
+<td><p>7.1×</p></td>
+<td><p><strong>3.33</strong></p></td>
+<td><p>0.80</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cons_ratios</span></code> †</p></td>
+<td><p>2 → 2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1L3s</span></code> &#64; 951.0 ¢</p></td>
+<td><p>0.000002</p></td>
+<td><p>3.4 × 10⁷</p></td>
+<td><p><strong>2.45</strong></p></td>
+<td><p>1.00</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">harm_fit_tuning</span></code></p></td>
+<td><p>37 → 37</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3L13s</span></code> &#64; 821.9 ¢</p></td>
+<td><p>16.28</p></td>
+<td><p>1.15×</p></td>
+<td><p><strong>1.39</strong></p></td>
+<td><p>0.54</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">harm_tuning</span></code></p></td>
+<td><p>—</p></td>
+<td><p><em><code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, reported in the</em> <code class="docutils literal notranslate"><span class="pre">reason</span></code> <em>column</em></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>† underdetermined: the winning scale has more degrees than the data had targets.</p>
+<p><strong>“Most convincing” cannot mean lowest error, and the table is the proof.</strong> The
+derivation with by far the smallest error is <code class="docutils literal notranslate"><span class="pre">cons_ratios</span></code> at two <em>millionths</em>
+of a cent — and it ranks sixth of seven. It found two ratios; four degrees can
+be rotated so that both land exactly, so the number measures the scale’s spare
+capacity rather than the signal. <code class="docutils literal notranslate"><span class="pre">improvement</span></code> does not rescue the ranking
+either: dividing by chance error puts the same two-point fit on top by seven
+orders of magnitude. <code class="docutils literal notranslate"><span class="pre">evidence</span></code> is the column that behaves, because it counts
+how much data the margin below chance was measured over —
+<code class="docutils literal notranslate"><span class="pre">sqrt(3·n_targets)·(1</span> <span class="pre">−</span> <span class="pre">error/chance)</span></code>, the number of standard errors the
+weighted mean falls below what a random ratio set would score against a scale
+that size. It self-limits at <code class="docutils literal notranslate"><span class="pre">sqrt(3n)</span></code>, so two targets can never exceed 2.45
+however exact they are, while seven exact targets reach 4.58. Rows are sorted by
+it, failures last.</p>
+<p>Read down the column and the table says something about the derivations
+themselves. <code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code> wins by recovering the structure that was planted —
+<code class="docutils literal notranslate"><span class="pre">2L3s</span></code> at 702.7 ¢ is a stack of fifths cut at five notes, the pentatonic.
+<code class="docutils literal notranslate"><span class="pre">harm_fit_tuning</span></code> has the most data and the least structure: 37 ratios form a
+ladder dense enough that the largest scale allowed still misses nearly half of
+them (coverage 0.54, improvement 1.15× — barely distinguishable from chance).
+And <code class="docutils literal notranslate"><span class="pre">harm_tuning</span></code> gets a row rather than silence. It raises here because
+<code class="docutils literal notranslate"><span class="pre">self.all_harmonics</span></code> is only measured by <code class="docutils literal notranslate"><span class="pre">peaks_extraction(peaks_function=</span> <span class="pre">'harmonic_recurrence')</span></code> and this object used FOOOF; the exception text lands in
+the <code class="docutils literal notranslate"><span class="pre">reason</span></code> column verbatim. A shorter table is not a report of a broken
+source.</p>
+<p>Two refusals are deliberate. <code class="docutils literal notranslate"><span class="pre">source='mos'</span></code> raises rather than returning a
+spectacular 0.00 ¢: <code class="docutils literal notranslate"><span class="pre">get_tuning('mos')</span></code> hands back the ratios of an earlier fit,
+so the answer is guaranteed in advance. And amplitude weighting is applied only
+where a weight vector genuinely lines up — <code class="docutils literal notranslate"><span class="pre">bt.amps</span></code> for <code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bt.extended_amps</span></code> for <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code>, each on an exact length match, nothing
+padded or resampled. On the signal above <em>no</em> source received weights, because
+five peaks give nine pairwise ratios and twenty extended peaks give eighteen
+de-duplicated ones. Rejecting is the right outcome: a vector that merely happens
+to be the right length would scramble the weighting silently.</p>
+</section>
+<section id="folding-a-ratio-list-is-not-a-target-list">
+<h3>Folding: a ratio list is not a target list<a class="headerlink" href="#folding-a-ratio-list-is-not-a-target-list" title="Link to this heading">#</a></h3>
+<p>A scale has no way to tell <code class="docutils literal notranslate"><span class="pre">1/1</span></code> from <code class="docutils literal notranslate"><span class="pre">2/1</span></code>. They are one degree, and a
+derivation that emits both has not supplied two independent facts. <code class="docutils literal notranslate"><span class="pre">fit_mos</span></code>
+therefore folds its inputs into the period and merges pitch classes within
+<code class="docutils literal notranslate"><span class="pre">FOLD_TOLERANCE_CENTS</span></code> (1.0 ¢) before fitting — one cent being large enough to
+absorb the near-duplicates a real derivation emits and more than an order of
+magnitude below the 15 ¢ default hit tolerance, so it can never merge two
+degrees the fit would otherwise distinguish. <code class="docutils literal notranslate"><span class="pre">fold=False</span></code> restores the old
+behaviour exactly.</p>
+<p>It is not an accuracy fix, and saying so matters. Merged weights are <em>summed</em>,
+not discarded, which preserves the weighted mean exactly: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">9/8,</span> <span class="pre">5/4,</span> <span class="pre">3/2,</span> <span class="pre">2]</span></code>
+fits <code class="docutils literal notranslate"><span class="pre">2L3s</span></code> at 3.2259442404033445 ¢ with folding on and with it off, the same
+float. What folding corrects is the <strong>sample size</strong> and everything computed from
+it. <code class="docutils literal notranslate"><span class="pre">euler_fokker</span></code> above lists both 1.0 and 2.0, so its 9 ratios are 8 pitch
+classes: <code class="docutils literal notranslate"><span class="pre">n_targets</span></code> 9 → 8, the surplus-note penalty 8.93 → 9.93, and evidence
+3.88 → 3.65. A 12-EDO chromatic written out with both <code class="docutils literal notranslate"><span class="pre">1/1</span></code> and <code class="docutils literal notranslate"><span class="pre">2/1</span></code> is
+thirteen numbers naming twelve pitch classes, and unfolded it scores 6.245
+instead of 6.000 — a quarter of a standard error bought from a data point that
+repeats one already counted. Three of the seven derivations that ran fold
+something on this signal (<code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code> 9 → 7, <code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> 18 → 17,
+<code class="docutils literal notranslate"><span class="pre">euler_fokker</span></code> 9 → 8), so this is routine, not a corner case.</p>
+<p>Where the error <em>does</em> move is on near-duplicates, because merging keeps the
+first occurrence’s position rather than averaging: <code class="docutils literal notranslate"><span class="pre">[1.125,</span> <span class="pre">1.12533,</span> <span class="pre">1.332,</span> <span class="pre">1.5,</span> <span class="pre">1.50044,</span> <span class="pre">1.688,</span> <span class="pre">1.998]</span></code> fits <code class="docutils literal notranslate"><span class="pre">2L3s</span></code> at 0.257 ¢ folded and <code class="docutils literal notranslate"><span class="pre">5L2s</span></code> at 0.402 ¢
+unfolded. Changing the winner is rare — across 100 trials (six signatures × four
+tunings × three ways of duplicating the octave, plus forty random six-ratio sets
+with <code class="docutils literal notranslate"><span class="pre">1/1</span></code> and <code class="docutils literal notranslate"><span class="pre">2/1</span></code> appended) the winning signature changed once — but it is
+possible, which is why <code class="docutils literal notranslate"><span class="pre">MOSFit</span></code> carries <code class="docutils literal notranslate"><span class="pre">n_merged</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code>, the ratios
+actually fitted, so <code class="docutils literal notranslate"><span class="pre">assignments</span></code> and <code class="docutils literal notranslate"><span class="pre">residuals</span></code> always have something to run
+parallel to.</p>
+</section>
+<section id="underdetermined-fits-are-flagged-not-dropped">
+<h3>Underdetermined fits are flagged, not dropped<a class="headerlink" href="#underdetermined-fits-are-flagged-not-dropped" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">fit_mos([1.5])</span></code> returns a four-note <code class="docutils literal notranslate"><span class="pre">1L3s</span></code> at 0.000 ¢ with unbounded
+improvement. One data point, a perfect fit, and nothing learned: a scale with
+spare degrees can be rotated until every target lands on some degree.
+<code class="docutils literal notranslate"><span class="pre">MOSFit.is_underdetermined</span></code> is exactly <code class="docutils literal notranslate"><span class="pre">n_targets</span> <span class="pre">&lt;</span> <span class="pre">cardinality</span></code>.</p>
+<p>Nothing is dropped, because dropping would be its own dishonesty. A five-peak
+recording cannot produce twelve targets, and a <code class="docutils literal notranslate"><span class="pre">5L7s</span></code> that genuinely describes
+the signal should still be named — the defect is in reading its error as
+evidence, not in the structure. So the fit is returned unchanged and labelled at
+every surface: <code class="docutils literal notranslate"><span class="pre">explain_fit</span></code> prints <code class="docutils literal notranslate"><span class="pre">UNDERDETERMINED</span>&#160; <span class="pre">1</span> <span class="pre">target</span> <span class="pre">for</span> <span class="pre">4</span> <span class="pre">degrees:</span> <span class="pre">a</span> <span class="pre">scale</span> <span class="pre">with</span> <span class="pre">spare</span> <span class="pre">notes</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">rotated</span> <span class="pre">onto</span> <span class="pre">any</span> <span class="pre">data,</span> <span class="pre">so</span> <span class="pre">this</span> <span class="pre">error</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">evidence</span></code>, alongside a <code class="docutils literal notranslate"><span class="pre">chance</span></code> line giving the baseline error and the evidence
+in standard errors; <code class="docutils literal notranslate"><span class="pre">compare_sources</span></code> carries it as a column; <code class="docutils literal notranslate"><span class="pre">info()</span></code> appends
+it to the MOS line.</p>
+<p>Expect to see it. Four of the seven working derivations in the table above are
+underdetermined at <code class="docutils literal notranslate"><span class="pre">max_cardinality=16</span></code>, and the default <code class="docutils literal notranslate"><span class="pre">complexity_penalty=1.0</span></code>
+is cheap enough that a scale with spare degrees often still wins. That is the
+honest reading of five peaks, not a bug — and if the ratio is unwelcome the lever
+is <code class="docutils literal notranslate"><span class="pre">complexity_penalty</span></code> or a tighter <code class="docutils literal notranslate"><span class="pre">max_cardinality</span></code>, not the flag. <code class="docutils literal notranslate"><span class="pre">evidence</span></code>
+already keeps such rows from dominating a comparison on their own.</p>
+</section>
+</section>
+<section id="moving-between-scales">
+<h2>Moving between scales<a class="headerlink" href="#moving-between-scales" title="Link to this heading">#</a></h2>
+<p>The other piece the paper points at without formalising. Its §1 describes the
+labyrinth as a surface a musician moves <em>across</em>, choosing structure and tuning
+at once. <code class="docutils literal notranslate"><span class="pre">morph.py</span></code> makes the movement itself the object, and offers three
+strategies that are genuinely different journeys rather than three spellings of
+one.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Strategy</p></th>
+<th class="head"><p>What moves</p></th>
+<th class="head"><p>Shape of the path</p></th>
+<th class="head"><p>Every frame well-formed?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tuning_morph</span></code></p></td>
+<td><p>the generator; the note count is held</p></td>
+<td><p>along a single arc</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tree_morph</span></code></p></td>
+<td><p>the structure, one legal move at a time</p></td>
+<td><p>hops between rings</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voice_morph</span></code></p></td>
+<td><p>the notes themselves</p></td>
+<td><p>leaves the map</p></td>
+<td><p>no — deliberately</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each returns a <code class="docutils literal notranslate"><span class="pre">Morph</span></code>: a sequence of <code class="docutils literal notranslate"><span class="pre">MorphStep</span></code> frames carrying degrees, the
+signature where the frame has one, and the events worth hearing (a landmark
+crossed, a note count changed, tones split or merged). One pair settles that the
+three are not the same journey drawn three ways — <code class="docutils literal notranslate"><span class="pre">5L2s</span></code> in 12-EDO to <code class="docutils literal notranslate"><span class="pre">4L3s</span></code> in
+19-EDO costs <strong>7229 ¢</strong> of total voice motion as a tuning morph, <strong>3816 ¢</strong> as a
+voice morph and <strong>1858 ¢</strong> as a tree morph, and only the tuning morph passes five
+equal temperaments and flips its signature twice (<code class="docutils literal notranslate"><span class="pre">5L2s</span> <span class="pre">→</span> <span class="pre">3L4s</span> <span class="pre">→</span> <span class="pre">4L3s</span></code>) on the
+way.</p>
+<p><strong>The signature graph is the labyrinth’s own connectivity.</strong> A signature’s
+children are <code class="docutils literal notranslate"><span class="pre">(nL,</span> <span class="pre">nL+ns)</span></code> and <code class="docutils literal notranslate"><span class="pre">(nL+ns,</span> <span class="pre">ns)</span></code> — the Stern–Brocot mediant, which is
+why <code class="docutils literal notranslate"><span class="pre">5L2s</span></code>’s child <code class="docutils literal notranslate"><span class="pre">5L7s</span></code> has exactly the twelve tones <code class="docutils literal notranslate"><span class="pre">theory.embedding</span></code>
+predicts. Its parent is the subtractive Euclidean step run backwards. One further
+edge swaps <code class="docutils literal notranslate"><span class="pre">(nL,</span> <span class="pre">ns)</span></code> for <code class="docutils literal notranslate"><span class="pre">(ns,</span> <span class="pre">nL)</span></code>, and that is a single <em>continuous</em> move
+rather than a jump, because a scale and its inverse meet at their shared
+equalized landmark. <code class="docutils literal notranslate"><span class="pre">signature_route</span></code> searches this graph best-first, and since
+shortest routes are rarely unique the tie-break is musical rather than arbitrary:
+among equally short routes take the one whose sequence of note counts is
+lexicographically smallest — the one that stays small longest and adds notes only
+when it must. Pentatonic to chromatic then reads <code class="docutils literal notranslate"><span class="pre">2L3s</span> <span class="pre">→</span> <span class="pre">3L2s</span> <span class="pre">→</span> <span class="pre">5L2s</span> <span class="pre">→</span> <span class="pre">5L7s</span></code>,
+five–five–seven–twelve, rather than the equally short <code class="docutils literal notranslate"><span class="pre">2L3s</span> <span class="pre">→</span> <span class="pre">2L5s</span> <span class="pre">→</span> <span class="pre">7L5s</span> <span class="pre">→</span> <span class="pre">5L7s</span></code>,
+which reaches twelve tones a step early and sits there.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">voice_morph</span></code> leaves the space of well-formed scales on purpose.</strong> The first
+two strategies cannot leave it: every frame is a <code class="docutils literal notranslate"><span class="pre">MOSScale</span></code> by construction. The
+third glides each tone the shorter way round the circle to its counterpart, and
+the pitch sets in between are generally not well-formed at all — <code class="docutils literal notranslate"><span class="pre">5L2s</span></code> to <code class="docutils literal notranslate"><span class="pre">4L3s</span></code>
+in 64 frames spends 62 of them off the map, straying up to 18.2 ¢ from the
+nearest well-formed scale. That distance is the measurement, not the defect:
+<code class="docutils literal notranslate"><span class="pre">MorphStep.wellformedness</span></code> records it per frame (fitted back with
+<code class="docutils literal notranslate"><span class="pre">derive.fit_mos</span></code>), and it is exactly what makes gliding the notes audibly a
+different journey from sliding a generator between the same two endpoints.</p>
+<p>Two details keep those numbers honest. The best rotation between the two pitch
+sets decides <em>which</em> tone goes where, but the path travels from the unrotated
+source, so the first frame is the start scale rather than a transposition of it;
+and the voice count is constant across the whole morph even when the two scales
+differ in size, with split tones starting coincident. <code class="docutils literal notranslate"><span class="pre">Morph.voices</span></code> records
+which degree belongs to which voice, so <code class="docutils literal notranslate"><span class="pre">trajectory()</span></code> gives every voice its own
+column and <code class="docutils literal notranslate"><span class="pre">voice_leading_distance()</span></code> measures motion the tones actually perform
+instead of charging a crossing to both of them. <code class="docutils literal notranslate"><span class="pre">morph_audio</span></code> renders the result
+as one continuous glide per voice, optionally with <code class="docutils literal notranslate"><span class="pre">timbre</span></code>-matched partials (§6)
+so the timbre tracks the tuning as it moves.</p>
+</section>
+<section id="layout">
+<h2>Layout<a class="headerlink" href="#layout" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>biotuner/mos/
+  theory.py         pure number theory (stdlib only, exact Fractions)
+  scale.py          MOSScale — the central frozen object
+  modes.py          Mode, mode lattice, ℤ² height–width duality
+  metrics.py        propriety, Myhill, evenness, JI error, harmonicity
+  temperaments.py   comma → saturated mapping → HNF → optimal generator
+  derive.py         biosignal → MOS (fit, trajectory, candidates)
+  fourier.py        Fourier Scratching play states
+  timbre.py         Dynamic Tonality partial mapping
+  plotting.py       matplotlib: labyrinth, tree, wheel, ranges, modes, fits
+  morph.py          moving between scales: tuning / tree / voice journeys
+  interactive.py    plotly + ipywidgets explorers
+</pre></div>
+</div>
+<p>Dependency order is strictly downward: <code class="docutils literal notranslate"><span class="pre">theory</span></code> → <code class="docutils literal notranslate"><span class="pre">scale</span></code> → <code class="docutils literal notranslate"><span class="pre">modes</span></code>/<code class="docutils literal notranslate"><span class="pre">metrics</span></code> →
+everything else. <code class="docutils literal notranslate"><span class="pre">theory.py</span></code> imports only the standard library, so its
+correctness is testable in isolation.</p>
+</section>
+<section id="two-places-the-paper-needed-sharpening">
+<h2>Two places the paper needed sharpening<a class="headerlink" href="#two-places-the-paper-needed-sharpening" title="Link to this heading">#</a></h2>
+<p>Both were found by testing its claims rather than assuming them.</p>
+<p><strong>Fig. 8’s coverage claim is about a mode, not a scale.</strong> The paper says a
+coherent well-formed scale “will be played in generic scalar order by the first
+partial play state” — <em>n</em> evenly spaced fingers on a keyboard whose keys are as
+wide as the steps above their tones, each key struck once. That holds only in
+the rotation whose step pattern is the Christoffel word, which is the
+floor-quantisation of the equal division. In any other mode two fingers share a
+key and another is missed. <code class="docutils literal notranslate"><span class="pre">modes.christoffel_mode</span></code> returns the right one, and
+<code class="docutils literal notranslate"><span class="pre">tests/mos/test_fourier.py</span></code> verifies coverage across every proper signature,
+swept end to end through the coherent range.</p>
+<p><strong>POTE is not “constrain the period, then least-squares”.</strong> <code class="docutils literal notranslate"><span class="pre">temperaments.py</span></code>
+exposes both: <code class="docutils literal notranslate"><span class="pre">generator_cents</span></code> holds the period pure from the outset (CTE) and
+<code class="docutils literal notranslate"><span class="pre">pote_generator_cents</span></code> optimises freely then rescales to a pure octave, which is
+what published tables quote. They agree to a fraction of a cent for accurate
+temperaments and diverge by several for inaccurate ones — meantone is 697.21 ¢
+under CTE and 696.24 ¢ under POTE. Labyrinth overlays default to POTE so they
+can be cross-checked against the literature.</p>
+</section>
+<section id="back-compat">
+<h2>Back-compat<a class="headerlink" href="#back-compat" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">scale_construction</span></code>’s MOS functions keep working unchanged.
+<code class="docutils literal notranslate"><span class="pre">vizs.plot_labyrinth</span></code> and <code class="docutils literal notranslate"><span class="pre">vizs.MOS_interactive</span></code> now delegate to the corrected
+implementations, keeping their signatures.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-package-exists">Why this package exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-paper-contributes-and-where-each-idea-lands">What the paper contributes, and where each idea lands</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#new-biosignals-mos">New: biosignals → MOS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-directions-two-questions">Two directions, two questions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-inverse-actually-does">What the inverse actually does</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-forward-mode-does">What forward mode does</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-two-directions-meet">Where the two directions meet</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bright-half-a-convention-not-a-finding">The bright half — a convention, not a finding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#any-derivation-can-feed-the-fit">Any derivation can feed the fit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#folding-a-ratio-list-is-not-a-target-list">Folding: a ratio list is not a target list</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#underdetermined-fits-are-flagged-not-dropped">Underdetermined fits are flagged, not dropped</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moving-between-scales">Moving between scales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#layout">Layout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-places-the-paper-needed-sharpening">Two places the paper needed sharpening</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-compat">Back-compat</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

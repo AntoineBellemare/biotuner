@@ -1,0 +1,1652 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>biotuner.mos.temperaments &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/biotuner/mos/temperaments';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/index.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/mos.html">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/mos/explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for biotuner.mos.temperaments</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Named rank-2 temperaments, with every generator derived from its comma.</span>
+
+<span class="sd">Milne et al. §4 overlay the interactive scale labyrinth with named regular</span>
+<span class="sd">temperaments -- meantone, srutal, magic, hanson, ... -- drawn as radial lines</span>
+<span class="sd">whose angle is that temperament&#39;s optimal generator/period ratio.  This module</span>
+<span class="sd">supplies those angles.</span>
+
+<span class="sd">Nothing here is a remembered table of cents.  A temperament is entered as the</span>
+<span class="sd">comma it tempers out (81/80 for meantone) and the rest is computed:</span>
+
+<span class="sd">* the **mapping** -- how many periods and generators each prime is worth -- is a</span>
+<span class="sd">  *saturated* integer basis of the comma&#39;s annihilator lattice, put into Hermite</span>
+<span class="sd">  normal form so that it is canonical and not merely correct;</span>
+<span class="sd">* the **generator** is the Tenney-weighted least-squares fit to the just primes,</span>
+<span class="sd">  with the period held exactly pure.</span>
+
+<span class="sd">Because the numbers are derived, the module checks itself: ``mapping @ monzo``</span>
+<span class="sd">is exactly ``(0, 0)`` in integer arithmetic for every named comma, and</span>
+<span class="sd">``periods_per_octave`` is read off the mapping rather than declared.</span>
+
+<span class="sd">Saturation matters</span>
+<span class="sd">------------------</span>
+<span class="sd">The annihilator of a comma is obtained here by an iterative extended-Euclid on</span>
+<span class="sd">the monzo&#39;s entries, each step a unimodular ``2 x 2`` row operation on an</span>
+<span class="sd">accumulating matrix ``U``.  When ``U @ m == (gcd, 0, ..., 0)``, rows ``1..`` of</span>
+<span class="sd">``U`` span *exactly* ``{v : v . m == 0}`` -- every integer val that tempers the</span>
+<span class="sd">comma out, not just a finite-index sublattice of them.  A rational nullspace</span>
+<span class="sd">with denominators cleared afterwards can silently land on such a sublattice</span>
+<span class="sd">(e.g. give ``2`` periods per octave where the temperament really has ``1``), and</span>
+<span class="sd">then every downstream cent value is wrong in a way that still looks plausible.</span>
+
+<span class="sd">Tuning convention</span>
+<span class="sd">-----------------</span>
+<span class="sd">Three choices are free in a rank-2 mapping and are pinned down as follows.</span>
+
+<span class="sd">1. *Hermite normal form.*  Pivots are positive, the second row is cleared out of</span>
+<span class="sd">   the octave column (``mapping[1][0] == 0``, so the period is a pure fraction</span>
+<span class="sd">   of the octave), and the first row is reduced modulo the second&#39;s pivot.  For</span>
+<span class="sd">   meantone this yields the familiar ``[[1, 0, -4], [0, 1, 4]]`` -- prime 5 is</span>
+<span class="sd">   four generators up -- available as :attr:`Rank2Temperament.hermite_mapping`.</span>
+
+<span class="sd">2. *Sign.*  ``mapping[1]`` and its negation describe the same temperament with</span>
+<span class="sd">   generators running in opposite directions.  The sign is fixed by requiring</span>
+<span class="sd">   the unreduced generator to be a **positive** interval.  This is what makes</span>
+<span class="sd">   porcupine come out as ~163 c rather than ~-163 c.</span>
+
+<span class="sd">3. *Octave reduction.*  The generator is then folded into ``[0, period)`` by</span>
+<span class="sd">   adding multiples of ``mapping[1]`` to ``mapping[0]``, which leaves</span>
+<span class="sd">   ``periods_per_octave`` untouched.  Meantone&#39;s twelfth becomes its fifth and</span>
+<span class="sd">   the stored mapping becomes ``[[1, 1, 0], [0, 1, 4]]``, so that</span>
+<span class="sd">   ``prime_errors`` is consistent with the generator actually reported.</span>
+
+<span class="sd">Octave-locked</span>
+<span class="sd">-------------</span>
+<span class="sd">Every quantity here is measured in octaves and then scaled by</span>
+<span class="sd">``theory.PERIOD_CENTS``: the period is ``1 / periods_per_octave`` octaves, the</span>
+<span class="sd">period ratio is ``2 ** (1 / periods_per_octave)``, and each prime&#39;s error is</span>
+<span class="sd">measured against ``log2(p)``.  That is only coherent when the first prime *is*</span>
+<span class="sd">2, so :class:`Rank2Temperament` refuses any other basis.  A no-twos subgroup</span>
+<span class="sd">such as ``(3, 5, 7)`` would otherwise report a 1200-cent period for an equave</span>
+<span class="sd">of 3, a 702-cent error on its own equave, and a generator with no meaning --</span>
+<span class="sd">all without raising.  Supporting one would mean replacing those octave</span>
+<span class="sd">constants with the equave, not relabelling them.</span>
+
+<span class="sd">A generator ``g`` and its complement ``period - g`` build precisely the same</span>
+<span class="sd">scales (Milne et al. §4), so steps 2--3 are cosmetic: they choose which of two</span>
+<span class="sd">mirror-image radial lines gets drawn.  Published tables sometimes choose the</span>
+<span class="sd">other one: father and bug, among others, are normally quoted as this</span>
+<span class="sd">convention&#39;s *complement*.  Hence :attr:`Rank2Temperament.complement_cents`,</span>
+<span class="sd">and hence :func:`nearest_temperaments` matching against both.</span>
+
+<span class="sd">Which optimum</span>
+<span class="sd">-------------</span>
+<span class="sd">The period is held exactly pure at ``1 / periods_per_octave`` octaves and the</span>
+<span class="sd">generator minimises the Tenney-weighted squared error of the remaining primes.</span>
+<span class="sd">That is the *constrained* Tenney-Euclidean tuning (CTE).  It is not the same as</span>
+<span class="sd">the POTE tuning quoted on the Xenharmonic wiki, which optimises period and</span>
+<span class="sd">generator together and *then* rescales the result to a pure octave; the two</span>
+<span class="sd">agree to a fraction of a cent for accurate temperaments and diverge by several</span>
+<span class="sd">cents for wildly inaccurate ones.  Both are available --</span>
+<span class="sd">:attr:`Rank2Temperament.generator_cents` is CTE,</span>
+<span class="sd">:attr:`Rank2Temperament.pote_generator_cents` is POTE.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Milne, A.J., Carlé, M., Sethares, W.A., Noll, T., Holland, S. (2011).</span>
+<span class="sd">Scratching the Scale Labyrinth. In *Mathematics and Computation in Music*,</span>
+<span class="sd">LNAI 6726, 180--195.</span>
+
+<span class="sd">Smith, G.W. / Breed, G.  Regular temperament theory: vals, monzos, Hermite</span>
+<span class="sd">normal form and Tenney-Euclidean tunings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fractions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.theory</span><span class="w"> </span><span class="kn">import</span> <span class="n">PERIOD_CENTS</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">MOSScale</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;PRIMES_5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PRIMES_7&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;monzo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;saturated_annihilator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hermite_normal_form&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Rank2Temperament&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rank2_from_comma&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TEMPERAMENTS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;temperament&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;all_temperaments&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nearest_temperaments&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1">#: The 5-limit primes -- the plane the classical comma names live in.</span>
+<span class="n">PRIMES_5</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">#: The 7-limit primes.  A rank-2 temperament here needs *two* commas; pass the</span>
+<span class="c1">#: second through ``rank2_from_comma(..., extra_commas=[...])``.</span>
+<span class="n">PRIMES_7</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+<span class="n">RatioLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Prime bases</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trial division; the bases in play here are tiny.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">while</span> <span class="n">f</span> <span class="o">*</span> <span class="n">f</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">f</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_prime_basis</span><span class="p">(</span><span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a prime basis and return it as a tuple of ``int``.</span>
+
+<span class="sd">    A monzo is only well defined over a strictly increasing sequence of genuine</span>
+<span class="sd">    primes.  Over ``(2, 3, 3)`` the factorisation loop puts every factor of 3</span>
+<span class="sd">    into the first slot and reports the second as zero; over ``(2, 4)`` the</span>
+<span class="sd">    exponents are not unique at all.  Either way the resulting &quot;temperament&quot;</span>
+<span class="sd">    is self-consistent nonsense, so both are rejected here rather than later.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ps</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the prime basis is empty; at least one prime is needed&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_prime</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the prime basis </span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s2"> contains </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">, which is not prime; &quot;</span>
+                <span class="s2">&quot;a monzo over a composite basis is not unique&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">ps</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the prime basis </span><span class="si">{</span><span class="n">ps</span><span class="si">}</span><span class="s2"> must be strictly increasing; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> does not exceed </span><span class="si">{</span><span class="n">ps</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ps</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Monzos</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="monzo">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.monzo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">monzo</span><span class="p">(</span><span class="n">ratio</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span> <span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PRIMES_5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prime-exponent vector of a rational interval.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratio : int, Fraction or str</span>
+<span class="sd">        The interval, exactly.  Floats are refused: ``81 / 80`` as a float is</span>
+<span class="sd">        not ``Fraction(81, 80)``, and the resulting monzo would be nonsense</span>
+<span class="sd">        rather than an error.</span>
+<span class="sd">    primes : sequence of int, default :data:`PRIMES_5`</span>
+<span class="sd">        The prime basis: strictly increasing, and every entry genuinely prime.</span>
+<span class="sd">        Every prime factor of ``ratio`` must appear in it.  Both conditions are</span>
+<span class="sd">        checked, because a monzo over a repeated or composite basis is not</span>
+<span class="sd">        unique -- ``(2, 3, 3)`` would silently send all of prime 3 into the</span>
+<span class="sd">        first of the two slots and report the second as untouched.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of int</span>
+<span class="sd">        ``m`` such that ``ratio == prod(p ** e for p, e in zip(primes, m))``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``ratio`` has a prime factor outside ``primes``, or if ``primes`` is</span>
+<span class="sd">        not a strictly increasing sequence of primes.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(81, 80))</span>
+<span class="sd">    (-4, 4, -1)</span>
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(3, 2))</span>
+<span class="sd">    (-1, 1, 0)</span>
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(64, 63), PRIMES_7)</span>
+<span class="sd">    (6, -2, 0, -1)</span>
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(7, 5))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: 7/5 is not 5-limit over primes (2, 3, 5): 7/1 is left over</span>
+
+<span class="sd">    A basis that is not strictly increasing primes is refused rather than</span>
+<span class="sd">    silently producing a non-unique monzo:</span>
+
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(9, 8), (2, 3, 3))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: the prime basis (2, 3, 3) must be strictly increasing; 3 does not exceed 3</span>
+<span class="sd">    &gt;&gt;&gt; monzo(Fraction(4, 1), (2, 4))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: the prime basis (2, 4) contains 4, which is not prime; a monzo over a composite basis is not unique</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;monzo() needs an exact ratio, got the float </span><span class="si">{</span><span class="n">ratio</span><span class="si">!r}</span><span class="s2">; &quot;</span>
+            <span class="s2">&quot;write Fraction(81, 80) rather than 81 / 80&quot;</span>
+        <span class="p">)</span>
+    <span class="n">fr</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fr</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;a ratio must be positive, got </span><span class="si">{</span><span class="n">ratio</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">primes</span> <span class="o">=</span> <span class="n">_check_prime_basis</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">den</span> <span class="o">=</span> <span class="n">fr</span><span class="o">.</span><span class="n">numerator</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">denominator</span>
+    <span class="n">exponents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">:</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">num</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">num</span> <span class="o">//=</span> <span class="n">p</span>
+            <span class="n">e</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">den</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">den</span> <span class="o">//=</span> <span class="n">p</span>
+            <span class="n">e</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">exponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">den</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2"> is not </span><span class="si">{</span><span class="n">primes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">-limit over primes </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">den</span><span class="si">}</span><span class="s2"> is left over&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">exponents</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_primitive</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;True when the entries of ``m`` share no common factor (and ``m != 0``).&quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">g</span> <span class="o">==</span> <span class="mi">1</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Integer linear algebra</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ext_gcd</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;``(g, s, t)`` with ``g == s * x + t * y`` and ``g == gcd(|x|, |y|) &gt;= 0``.&quot;&quot;&quot;</span>
+    <span class="n">old_r</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+    <span class="n">old_s</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">old_t</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">r</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">old_r</span> <span class="o">//</span> <span class="n">r</span>
+        <span class="n">old_r</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="p">,</span> <span class="n">old_r</span> <span class="o">-</span> <span class="n">q</span> <span class="o">*</span> <span class="n">r</span>
+        <span class="n">old_s</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">,</span> <span class="n">old_s</span> <span class="o">-</span> <span class="n">q</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">old_t</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="n">old_t</span> <span class="o">-</span> <span class="n">q</span> <span class="o">*</span> <span class="n">t</span>
+    <span class="k">if</span> <span class="n">old_r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">old_r</span><span class="p">,</span> <span class="n">old_s</span><span class="p">,</span> <span class="n">old_t</span> <span class="o">=</span> <span class="o">-</span><span class="n">old_r</span><span class="p">,</span> <span class="o">-</span><span class="n">old_s</span><span class="p">,</span> <span class="o">-</span><span class="n">old_t</span>
+    <span class="k">return</span> <span class="n">old_r</span><span class="p">,</span> <span class="n">old_s</span><span class="p">,</span> <span class="n">old_t</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unimodular_reduce</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unimodular ``U`` with ``U @ values == (gcd, 0, ..., 0)``.</span>
+
+<span class="sd">    Built as a product of ``2 x 2`` row operations of determinant ``+1``: each</span>
+<span class="sd">    step replaces rows ``(0, i)`` by ``(s*r0 + t*ri, -(v_i/g)*r0 + (v_0/g)*ri)``</span>
+<span class="sd">    where ``g = s*v_0 + t*v_i``.  Determinant ``s*v_0/g + t*v_i/g == 1``, so the</span>
+<span class="sd">    whole product is unimodular and rows ``1..`` of ``U`` are a *basis* of the</span>
+<span class="sd">    annihilator of ``values``, not merely a spanning set of a sublattice.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Rotation, not a swap: a swap has determinant -1.</span>
+            <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span>
+            <span class="k">continue</span>
+        <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">_ext_gcd</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">//</span> <span class="n">g</span><span class="p">),</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">g</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+        <span class="n">U</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span>
+        <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">U</span>
+
+
+<div class="viewcode-block" id="saturated_annihilator">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.saturated_annihilator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saturated_annihilator</span><span class="p">(</span>
+    <span class="n">monzos</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A saturated integer basis of ``{v : v . m == 0 for every m}``.</span>
+
+<span class="sd">    &quot;Saturated&quot; means the returned rows generate *every* integer vector</span>
+<span class="sd">    orthogonal to the given monzos, not a finite-index sublattice of them.  That</span>
+<span class="sd">    is the whole point: a sublattice basis still satisfies ``v . m == 0`` and</span>
+<span class="sd">    still looks like a mapping, but it multiplies the apparent number of periods</span>
+<span class="sd">    per octave and silently corrupts every tuning derived from it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    monzos : sequence of int vectors</span>
+<span class="sd">        All of the same length, and linearly independent.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of list of int</span>
+<span class="sd">        ``len(monzos[0]) - len(monzos)`` rows.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The rows annihilate the comma exactly, in integer arithmetic:</span>
+
+<span class="sd">    &gt;&gt;&gt; basis = saturated_annihilator([monzo(Fraction(81, 80))])</span>
+<span class="sd">    &gt;&gt;&gt; len(basis)</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; [sum(x * y for x, y in zip(row, monzo(Fraction(81, 80)))) for row in basis]</span>
+<span class="sd">    [0, 0]</span>
+
+<span class="sd">    And the lattice they span is the canonical meantone mapping:</span>
+
+<span class="sd">    &gt;&gt;&gt; hermite_normal_form(basis)</span>
+<span class="sd">    [[1, 0, -4], [0, 1, 4]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">monzos</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ms</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;saturated_annihilator() needs at least one monzo&quot;</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;all monzos must have the same length; got lengths &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">({</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">ms</span><span class="p">})</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># Rows of ``basis`` are coordinates in the original dual space; they start</span>
+    <span class="c1"># as all of Z^n and lose one dimension per comma.</span>
+    <span class="n">basis</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">bi</span> <span class="o">*</span> <span class="n">mi</span> <span class="k">for</span> <span class="n">bi</span><span class="p">,</span> <span class="n">mi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">basis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;monzo </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> is already tempered out by the commas before it, so &quot;</span>
+                <span class="s2">&quot;it removes no further dimension; the commas are dependent&quot;</span>
+            <span class="p">)</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">_unimodular_reduce</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="nb">sum</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">basis</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
+        <span class="p">]</span>
+    <span class="k">return</span> <span class="n">basis</span></div>
+
+
+
+<div class="viewcode-block" id="hermite_normal_form">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.hermite_normal_form">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hermite_normal_form</span><span class="p">(</span><span class="n">rows</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Row-style Hermite normal form over the integers.</span>
+
+<span class="sd">    Echelon shape, every pivot positive, every entry *above* a pivot reduced</span>
+<span class="sd">    into ``[0, pivot)``, zero rows dropped.  Two bases of the same lattice have</span>
+<span class="sd">    the same Hermite normal form, which is what makes a mapping comparable with</span>
+<span class="sd">    a published one.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; hermite_normal_form([[-1, -1, 0], [0, 1, 4]])</span>
+<span class="sd">    [[1, 0, -4], [0, 1, 4]]</span>
+
+<span class="sd">    Rank deficiency shows up as a shorter result rather than as an error:</span>
+
+<span class="sd">    &gt;&gt;&gt; hermite_normal_form([[2, 4], [3, 6]])</span>
+<span class="sd">    [[1, 2]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;all rows must have the same length; got lengths &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">({</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">m</span><span class="p">})</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="n">pivots</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pivot</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pivot</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pivot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">]]</span>
+                <span class="k">continue</span>
+            <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">_ext_gcd</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">col</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">col</span><span class="p">])</span>
+            <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">//</span> <span class="n">g</span><span class="p">),</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">//</span> <span class="n">g</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+            <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span>
+        <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="n">pivot</span><span class="p">]]</span>
+        <span class="n">pivots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pivot</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+        <span class="n">pivot</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># Reduce above the pivots, left to right: a later pivot&#39;s row is zero in all</span>
+    <span class="c1"># earlier pivot columns, so this never undoes an earlier reduction.</span>
+    <span class="k">for</span> <span class="n">row_i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pivots</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">row_i</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row_i</span><span class="p">):</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">//</span> <span class="n">p</span>  <span class="c1"># floor division leaves the remainder in [0, p)</span>
+            <span class="k">if</span> <span class="n">q</span><span class="p">:</span>
+                <span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="n">row_i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">m</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Tunings</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tenney_weights</span><span class="p">(</span><span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;``(log2(p), 1 / log2(p) ** 2)`` per prime.</span>
+
+<span class="sd">    Weighting the squared *absolute* error by ``1 / log2(p) ** 2`` is the same</span>
+<span class="sd">    as minimising the squared *relative* error, which is what Tenney weighting</span>
+<span class="sd">    means: a cent of error on prime 7 is cheaper than a cent on prime 3 because</span>
+<span class="sd">    7 is a longer interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">l</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">l</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cte_generator</span><span class="p">(</span>
+    <span class="n">mapping</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generator in octaves for a pure period of ``1 / mapping[0][0]`` octaves.</span>
+
+<span class="sd">    Closed form of the one-parameter Tenney-weighted normal equation</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        G = \\frac{\\sum_i w_i b_i (l_i - a_i P)}{\\sum_i w_i b_i^2},</span>
+<span class="sd">        \\qquad w_i = 1 / l_i^2,\\; l_i = \\log_2 p_i .</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mapping</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">,</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">_tenney_weights</span><span class="p">(</span><span class="n">primes</span><span class="p">)):</span>
+        <span class="n">num</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">bi</span> <span class="o">*</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">ai</span> <span class="o">*</span> <span class="n">period</span><span class="p">)</span>
+        <span class="n">den</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">bi</span> <span class="o">*</span> <span class="n">bi</span>
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;the generator row </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2"> is all zeros, so no generator can be &quot;</span>
+            <span class="s2">&quot;fitted; the mapping is rank 1, not rank 2&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_te_tuning</span><span class="p">(</span>
+    <span class="n">mapping</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;``(period, generator)`` in octaves, both free -- the unconstrained TE fit.</span>
+
+<span class="sd">    Two-parameter Tenney-weighted least squares.  The octave comes out slightly</span>
+<span class="sd">    tempered; :attr:`Rank2Temperament.pote_generator_cents` rescales it pure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mapping</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">saa</span> <span class="o">=</span> <span class="n">sab</span> <span class="o">=</span> <span class="n">sbb</span> <span class="o">=</span> <span class="n">sal</span> <span class="o">=</span> <span class="n">sbl</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">,</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">_tenney_weights</span><span class="p">(</span><span class="n">primes</span><span class="p">)):</span>
+        <span class="n">saa</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">ai</span> <span class="o">*</span> <span class="n">ai</span>
+        <span class="n">sab</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">ai</span> <span class="o">*</span> <span class="n">bi</span>
+        <span class="n">sbb</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">bi</span> <span class="o">*</span> <span class="n">bi</span>
+        <span class="n">sal</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">ai</span> <span class="o">*</span> <span class="n">l</span>
+        <span class="n">sbl</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">bi</span> <span class="o">*</span> <span class="n">l</span>
+    <span class="n">det</span> <span class="o">=</span> <span class="n">saa</span> <span class="o">*</span> <span class="n">sbb</span> <span class="o">-</span> <span class="n">sab</span> <span class="o">*</span> <span class="n">sab</span>
+    <span class="k">if</span> <span class="n">det</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;mapping rows </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2"> are Tenney-collinear, so &quot;</span>
+            <span class="s2">&quot;period and generator cannot be fitted independently&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">sbb</span> <span class="o">*</span> <span class="n">sal</span> <span class="o">-</span> <span class="n">sab</span> <span class="o">*</span> <span class="n">sbl</span><span class="p">)</span> <span class="o">/</span> <span class="n">det</span><span class="p">,</span> <span class="p">(</span><span class="n">saa</span> <span class="o">*</span> <span class="n">sbl</span> <span class="o">-</span> <span class="n">sab</span> <span class="o">*</span> <span class="n">sal</span><span class="p">)</span> <span class="o">/</span> <span class="n">det</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># The temperament object</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="Rank2Temperament">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rank2Temperament</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rank-2 regular temperament: a period, a generator, and a prime mapping.</span>
+
+<span class="sd">    Constructing one canonicalises the mapping (Hermite normal form, then the</span>
+<span class="sd">    sign and octave-reduction conventions described in the module docstring), so</span>
+<span class="sd">    any basis of the right lattice gives the same object.  The commas are</span>
+<span class="sd">    re-checked against the canonical rows in exact integer arithmetic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">    comma : Fraction</span>
+<span class="sd">        The comma this temperament tempers out.</span>
+<span class="sd">    primes : tuple of int</span>
+<span class="sd">        Prime basis, e.g. :data:`PRIMES_5`.  Strictly increasing, and it must</span>
+<span class="sd">        start at 2 -- see the *Octave-locked* note in the module docstring.</span>
+<span class="sd">    mapping : 2 x len(primes) integers</span>
+<span class="sd">        Row 0 counts periods per prime, row 1 counts generators per prime.  Any</span>
+<span class="sd">        basis of the annihilator lattice will do; it is canonicalised.</span>
+<span class="sd">    extra_commas : tuple of Fraction, optional</span>
+<span class="sd">        Further commas, needed once the prime limit exceeds 5 (a rank-2</span>
+<span class="sd">        temperament in an ``n``-prime basis tempers out ``n - 2`` of them).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; mt = temperament(&quot;meantone&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; mt.mapping</span>
+<span class="sd">    ((1, 1, 0), (0, 1, 4))</span>
+<span class="sd">    &gt;&gt;&gt; mt.periods_per_octave, round(mt.period_cents, 1)</span>
+<span class="sd">    (1, 1200.0)</span>
+<span class="sd">    &gt;&gt;&gt; round(mt.generator_cents, 3)</span>
+<span class="sd">    697.214</span>
+
+<span class="sd">    Prime 3 is one generator up, prime 5 is four -- the syntonic comma is gone:</span>
+
+<span class="sd">    &gt;&gt;&gt; mt.hermite_mapping</span>
+<span class="sd">    ((1, 0, -4), (0, 1, 4))</span>
+<span class="sd">    &gt;&gt;&gt; [round(e, 3) for e in mt.prime_errors]</span>
+<span class="sd">    [0.0, -4.741, 2.544]</span>
+
+<span class="sd">    The classical POTE figure, for comparison with published tables:</span>
+
+<span class="sd">    &gt;&gt;&gt; round(mt.pote_generator_cents, 3)</span>
+<span class="sd">    696.239</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">comma</span><span class="p">:</span> <span class="n">Fraction</span>
+    <span class="n">primes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">mapping</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
+    <span class="n">extra_commas</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Canonicalisation</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">primes</span> <span class="o">=</span> <span class="n">_check_prime_basis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">primes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the prime basis must start at 2, got </span><span class="si">{</span><span class="n">primes</span><span class="si">}</span><span class="s2">: every period &quot;</span>
+                <span class="s2">&quot;and generator in this class is measured in octaves &quot;</span>
+                <span class="s2">&quot;(PERIOD_CENTS / periods_per_octave, 2 ** (1 / &quot;</span>
+                <span class="s2">&quot;periods_per_octave), log2 of each prime), so a basis whose &quot;</span>
+                <span class="s2">&quot;equave is not 2 would report a 1200-cent period, a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;nonzero error on prime </span><span class="si">{</span><span class="n">primes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> and a meaningless &quot;</span>
+                <span class="s2">&quot;generator rather than raising&quot;</span>
+            <span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;primes&quot;</span><span class="p">,</span> <span class="n">primes</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;comma&quot;</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comma</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;extra_commas&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">Fraction</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_commas</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;a rank-2 mapping needs exactly 2 rows, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">primes</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;every mapping row needs one entry per prime &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">primes</span><span class="si">}</span><span class="s2">), got a row of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="n">hnf</span> <span class="o">=</span> <span class="n">hermite_normal_form</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hnf</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;mapping rows </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2"> are &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;linearly dependent, so they span rank </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">hnf</span><span class="p">)</span><span class="si">}</span><span class="s2">, not rank 2&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">hnf</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the octave column of the mapping is empty (</span><span class="si">{</span><span class="n">hnf</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> periods &quot;</span>
+                <span class="s2">&quot;per octave); prime 2 cannot be tempered out&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comma</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_commas</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">monzo</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">primes</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">hnf</span><span class="p">:</span>
+                <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">dot</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;val </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not temper out </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;(monzo </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">): the dot product is </span><span class="si">{</span><span class="n">dot</span><span class="si">}</span><span class="s2">, not 0&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">hnf</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">list</span><span class="p">(</span><span class="n">hnf</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">_cte_generator</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">primes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gen</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="c1"># Same temperament, generator running the other way.</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">b</span><span class="p">]</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="o">-</span><span class="n">gen</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">):</span>
+            <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">gen</span> <span class="o">&lt;</span> <span class="n">period</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">gen</span> <span class="o">/</span> <span class="n">period</span><span class="p">))</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">ai</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">bi</span> <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">bi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">_cte_generator</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">primes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover - unreachable for finite generators</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;could not fold the generator </span><span class="si">{</span><span class="n">gen</span><span class="si">}</span><span class="s2"> into [0, </span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s2">) for &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mapping&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Structure</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">commas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Fraction</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Every comma tempered out, primary first.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comma</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_commas</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">periods_per_octave</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;How many equal periods the octave is cut into.</span>
+
+<span class="sd">        Read off ``mapping[0][0]``: prime 2 is worth exactly that many periods</span>
+<span class="sd">        and no generators, which is what makes the period a pure fraction of a</span>
+<span class="sd">        pure octave.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hermite_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mapping before the sign and octave-reduction conventions.</span>
+
+<span class="sd">        Same lattice, canonical Hermite form -- this is the shape published</span>
+<span class="sd">        tables usually print.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hnf</span> <span class="o">=</span> <span class="n">hermite_normal_form</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">hnf</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">hnf</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Tuning</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">period_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Period size in cents; the octave is exactly pure by construction.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PERIOD_CENTS</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">period_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Period as a frequency ratio, ``2 ** (1 / periods_per_octave)``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">2.0</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_octaves</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator in octaves -- the raw quantity everything else scales.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_cte_generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator in cents, pure-period Tenney-weighted least squares (CTE).</span>
+
+<span class="sd">        Lies in ``[0, period_cents)``.  See the module docstring on how this</span>
+<span class="sd">        differs from the POTE figures in published tables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PERIOD_CENTS</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_octaves</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator as a frequency ratio.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">2.0</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_octaves</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">complement_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;``period_cents - generator_cents``.</span>
+
+<span class="sd">        Builds exactly the same scales as :attr:`generator_cents` (Milne et al.</span>
+<span class="sd">        §4), and is the figure some tables quote instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span>
+
+<div class="viewcode-block" id="Rank2Temperament.generator_fraction">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament.generator_fraction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generator_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator as a fraction of the *period*, in ``(0, 1)``.</span>
+
+<span class="sd">        This is the labyrinth coordinate: feed it to</span>
+<span class="sd">        :func:`biotuner.mos.theory.sb_walk` or</span>
+<span class="sd">        :meth:`biotuner.mos.scale.MOSScale.from_fraction` directly.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; round(temperament(&quot;meantone&quot;).generator_fraction(), 6)</span>
+<span class="sd">        0.581012</span>
+<span class="sd">        &gt;&gt;&gt; round(temperament(&quot;srutal&quot;).generator_fraction(), 6)</span>
+<span class="sd">        0.175227</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_octaves</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pote_generator_cents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generator under the classical POTE tuning, for comparison.</span>
+
+<span class="sd">        Period and generator are fitted together (so the octave comes out</span>
+<span class="sd">        tempered), then everything is rescaled until the octave is pure.  This</span>
+<span class="sd">        is the number the Xenharmonic wiki lists; :attr:`generator_cents`</span>
+<span class="sd">        instead holds the octave pure *during* the fit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">period_te</span><span class="p">,</span> <span class="n">gen_te</span> <span class="o">=</span> <span class="n">_te_tuning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">)</span>
+        <span class="n">octave</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span> <span class="o">*</span> <span class="n">period_te</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">gen_te</span> <span class="o">/</span> <span class="n">octave</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span>
+        <span class="n">gen</span> <span class="o">-=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">gen</span> <span class="o">/</span> <span class="n">period</span><span class="p">)</span> <span class="o">*</span> <span class="n">period</span>
+        <span class="k">return</span> <span class="n">PERIOD_CENTS</span> <span class="o">*</span> <span class="n">gen</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prime_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cents by which each prime is mistuned, in ``primes`` order.</span>
+
+<span class="sd">        Positive means sharp.  The first entry is exactly ``0.0``: the octave is</span>
+<span class="sd">        pure by construction, which is the &quot;PO&quot; in POTE.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; [round(e, 3) for e in temperament(&quot;schismatic&quot;).prime_errors]</span>
+<span class="sd">        [0.0, -0.236, -0.063]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_octaves</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">PERIOD_CENTS</span> <span class="o">*</span> <span class="p">(</span><span class="n">ai</span> <span class="o">*</span> <span class="n">period</span> <span class="o">+</span> <span class="n">bi</span> <span class="o">*</span> <span class="n">gen</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Largest absolute prime error, in cents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prime_errors</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rms_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Root-mean-square prime error in cents, over all primes.</span>
+
+<span class="sd">        Prime 2 is included and contributes exactly zero, so this is a little</span>
+<span class="sd">        lower than an RMS over the tempered primes alone; it is comparable</span>
+<span class="sd">        across temperaments of the same prime limit, which is what it is for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prime_errors</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">errs</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">errs</span><span class="p">))</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Scales</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+<div class="viewcode-block" id="Rank2Temperament.mos_family">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament.mos_family">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mos_family</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;MOSScale&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Every MOS this temperament&#39;s optimal generator produces, per period.</span>
+
+<span class="sd">        Cardinalities count notes *per period*, so a temperament with several</span>
+<span class="sd">        periods per octave produces that many times as many notes per octave.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of :class:`~biotuner.mos.scale.MOSScale`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Meantone walks up to the diatonic and on into chromatic territory:</span>
+
+<span class="sd">        &gt;&gt;&gt; [s.signature for s in temperament(&quot;meantone&quot;).mos_family(12)]</span>
+<span class="sd">        [&#39;2L1s&#39;, &#39;2L3s&#39;, &#39;5L2s&#39;, &#39;7L5s&#39;]</span>
+
+<span class="sd">        Hanson&#39;s minor-third generator gives the Kleismic series instead:</span>
+
+<span class="sd">        &gt;&gt;&gt; [s.cardinality for s in temperament(&quot;hanson&quot;).mos_family(19)]</span>
+<span class="sd">        [3, 4, 7, 11, 15, 19]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.mos.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">mos_family</span> <span class="k">as</span> <span class="n">_mos_family</span>
+
+        <span class="n">period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_ratio</span>
+        <span class="k">return</span> <span class="n">_mos_family</span><span class="p">(</span>
+            <span class="n">period</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_fraction</span><span class="p">(),</span>
+            <span class="n">max_cardinality</span><span class="o">=</span><span class="n">max_cardinality</span><span class="p">,</span>
+            <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rank2Temperament.supports">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament.supports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="s2">&quot;MOSScale&quot;</span><span class="p">,</span> <span class="n">tol_cents</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether ``scale`` is this temperament at (near enough) its optimum.</span>
+
+<span class="sd">        Both the period and the generator must match within ``tol_cents``.  The</span>
+<span class="sd">        generator is compared against :attr:`complement_cents` too, since a</span>
+<span class="sd">        generator and its complement build the same scale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scale : MOSScale</span>
+<span class="sd">        tol_cents : float, default 5.0</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        31-EDO&#39;s diatonic is meantone; 12-EDO&#39;s is close enough; Pythagorean</span>
+<span class="sd">        tuning is not:</span>
+
+<span class="sd">        &gt;&gt;&gt; from biotuner.mos.scale import MOSScale</span>
+<span class="sd">        &gt;&gt;&gt; mt = temperament(&quot;meantone&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; mt.supports(MOSScale.from_signature(5, 2, tuning=31))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; mt.supports(MOSScale.from_signature(5, 2, tuning=12))</span>
+<span class="sd">        True</span>
+
+<span class="sd">        Pythagorean tuning is 4.7 cents sharp of the meantone optimum, so it</span>
+<span class="sd">        squeaks inside the default tolerance and fails a tighter one:</span>
+
+<span class="sd">        &gt;&gt;&gt; mt.supports(MOSScale.from_generator(3 / 2, 7))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; mt.supports(MOSScale.from_generator(3 / 2, 7), tol_cents=2.0)</span>
+<span class="sd">        False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">scale</span><span class="o">.</span><span class="n">period_cents</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol_cents</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">generator_cents</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">gen</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gen</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">complement_cents</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="n">tol_cents</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Interop</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover - cosmetic</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Rank2Temperament(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, comma=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comma</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;period=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">c x</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;generator=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">c, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;max_error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_error</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">c)&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Rank2Temperament.to_dict">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flat, JSON-friendly summary -- one row of a temperament table.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;comma&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comma</span><span class="p">),</span>
+            <span class="s2">&quot;extra_commas&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_commas</span><span class="p">],</span>
+            <span class="s2">&quot;primes&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">),</span>
+            <span class="s2">&quot;mapping&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">],</span>
+            <span class="s2">&quot;hermite_mapping&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hermite_mapping</span><span class="p">],</span>
+            <span class="s2">&quot;periods_per_octave&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span><span class="p">,</span>
+            <span class="s2">&quot;period_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span><span class="p">,</span>
+            <span class="s2">&quot;generator_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span>
+            <span class="s2">&quot;complement_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">complement_cents</span><span class="p">,</span>
+            <span class="s2">&quot;pote_generator_cents&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pote_generator_cents</span><span class="p">,</span>
+            <span class="s2">&quot;generator_fraction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_fraction</span><span class="p">(),</span>
+            <span class="s2">&quot;prime_errors&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prime_errors</span><span class="p">),</span>
+            <span class="s2">&quot;max_error&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_error</span><span class="p">,</span>
+            <span class="s2">&quot;rms_error&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_error</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Rank2Temperament.summary">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.Rank2Temperament.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multi-line human-readable description.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; print(temperament(&quot;porcupine&quot;).summary())</span>
+<span class="sd">        porcupine   tempers out 250/243</span>
+<span class="sd">          mapping        &lt;1 2 3|   &lt;0 -3 -5|   (primes 2.3.5)</span>
+<span class="sd">          period           1200.000 c  x1 per octave</span>
+<span class="sd">          generator         164.166 c  (0.136805 of the period)</span>
+<span class="sd">          also             1035.834 c complement,  163.950 c POTE</span>
+<span class="sd">          prime errors   2: +0.000,  3: +5.547,  5: -7.143 c</span>
+<span class="sd">          max 7.143 c,  rms 5.222 c</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">errs</span> <span class="o">=</span> <span class="s2">&quot;,  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prime_errors</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="s2">&quot;   &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">   tempers out &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commas</span><span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;  mapping        </span><span class="si">{</span><span class="n">rows</span><span class="si">}</span><span class="s2">   &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(primes </span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  period         </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">period_cents</span><span class="si">:</span><span class="s2">10.3f</span><span class="si">}</span><span class="s2"> c  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">periods_per_octave</span><span class="si">}</span><span class="s2"> per octave&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  generator      </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_cents</span><span class="si">:</span><span class="s2">10.3f</span><span class="si">}</span><span class="s2"> c  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">generator_fraction</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> of the period)&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  also           </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">complement_cents</span><span class="si">:</span><span class="s2">10.3f</span><span class="si">}</span><span class="s2"> c complement,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pote_generator_cents</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c POTE&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  prime errors   </span><span class="si">{</span><span class="n">errs</span><span class="si">}</span><span class="s2"> c&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  max </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_error</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c,  rms </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rms_error</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> c&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Construction from commas</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<div class="viewcode-block" id="rank2_from_comma">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.rank2_from_comma">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rank2_from_comma</span><span class="p">(</span>
+    <span class="n">comma</span><span class="p">:</span> <span class="n">RatioLike</span><span class="p">,</span>
+    <span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PRIMES_5</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_commas</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">RatioLike</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank2Temperament</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the rank-2 temperament that tempers out ``comma``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    comma : Fraction</span>
+<span class="sd">        Must be *primitive*: the entries of its monzo share no common factor.</span>
+<span class="sd">        ``(81/80) ** 2`` defines the same temperament as ``81/80`` but is not a</span>
+<span class="sd">        comma, and accepting it would quietly hide the squaring.</span>
+<span class="sd">    primes : sequence of int, default :data:`PRIMES_5`</span>
+<span class="sd">        Strictly increasing primes starting at 2; see the *Octave-locked* note</span>
+<span class="sd">        in the module docstring for why the equave is not free.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Defaults to the comma itself.</span>
+<span class="sd">    extra_commas : sequence of Fraction, optional</span>
+<span class="sd">        Required above the 5-limit: ``len(primes) - 2`` commas in total pin a</span>
+<span class="sd">        rank-2 temperament down.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Rank2Temperament</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; t = rank2_from_comma(Fraction(81, 80))</span>
+<span class="sd">    &gt;&gt;&gt; t.name, t.mapping, round(t.generator_cents, 3)</span>
+<span class="sd">    (&#39;81/80&#39;, ((1, 1, 0), (0, 1, 4)), 697.214)</span>
+
+<span class="sd">    Septimal meantone needs a second comma, and then prime 7 joins in:</span>
+
+<span class="sd">    &gt;&gt;&gt; sm = rank2_from_comma(Fraction(81, 80), PRIMES_7, &quot;septimal meantone&quot;,</span>
+<span class="sd">    ...                       extra_commas=[Fraction(126, 125)])</span>
+<span class="sd">    &gt;&gt;&gt; sm.mapping</span>
+<span class="sd">    ((1, 1, 0, -3), (0, 1, 4, 10))</span>
+<span class="sd">    &gt;&gt;&gt; round(sm.generator_cents, 3)</span>
+<span class="sd">    696.952</span>
+
+<span class="sd">    A non-primitive comma is refused rather than silently accepted:</span>
+
+<span class="sd">    &gt;&gt;&gt; rank2_from_comma(Fraction(6561, 6400))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: comma 6561/6400 has monzo (-8, 8, -2), whose entries share the factor 2; use its primitive root 81/80 instead</span>
+
+<span class="sd">    So is a no-twos subgroup, whose equave this octave-locked module cannot</span>
+<span class="sd">    represent:</span>
+
+<span class="sd">    &gt;&gt;&gt; rank2_from_comma(Fraction(245, 243), (3, 5, 7))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: the prime basis must start at 2, got (3, 5, 7): every period and generator in this class is measured in octaves (PERIOD_CENTS / periods_per_octave, 2 ** (1 / periods_per_octave), log2 of each prime), so a basis whose equave is not 2 would report a 1200-cent period, a nonzero error on prime 3 and a meaningless generator rather than raising</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">commas</span> <span class="o">=</span> <span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="n">comma</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">Fraction</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">extra_commas</span><span class="p">]</span>
+    <span class="n">monzos</span> <span class="o">=</span> <span class="p">[</span><span class="n">monzo</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">primes</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">commas</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">commas</span><span class="p">,</span> <span class="n">monzos</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;comma </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> has the all-zero monzo, so it tempers nothing out&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_primitive</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">g</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">primes</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+                <span class="n">root</span> <span class="o">*=</span> <span class="n">Fraction</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">e</span> <span class="o">//</span> <span class="n">g</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;comma </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> has monzo </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">, whose entries share the factor </span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;use its primitive root </span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s2"> instead&quot;</span>
+            <span class="p">)</span>
+    <span class="n">basis</span> <span class="o">=</span> <span class="n">saturated_annihilator</span><span class="p">(</span><span class="n">monzos</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">commas</span><span class="p">)</span><span class="si">}</span><span class="s2"> comma(s) over </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span><span class="si">}</span><span class="s2"> leave a rank-&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span><span class="si">}</span><span class="s2"> temperament; rank 2 needs exactly &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2"> comma(s) -- pass the rest as extra_commas&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Rank2Temperament</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">commas</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">comma</span><span class="o">=</span><span class="n">commas</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">primes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">),</span>
+        <span class="n">mapping</span><span class="o">=</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+        <span class="n">extra_commas</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">commas</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># The named catalogue</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1">#: 5-limit rank-2 temperaments by name, each stored as the comma it tempers out.</span>
+<span class="c1">#: The mapping, period and generator of each are *computed* from the comma --</span>
+<span class="c1">#: see :func:`temperament`.</span>
+<span class="n">TEMPERAMENTS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Fraction</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;meantone&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">81</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span>
+    <span class="s2">&quot;augmented&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">125</span><span class="p">),</span>
+    <span class="s2">&quot;diminished&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">648</span><span class="p">,</span> <span class="mi">625</span><span class="p">),</span>
+    <span class="s2">&quot;blackwood&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">243</span><span class="p">),</span>
+    <span class="s2">&quot;dicot&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+    <span class="s2">&quot;srutal&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">2025</span><span class="p">),</span>
+    <span class="s2">&quot;magic&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">3125</span><span class="p">,</span> <span class="mi">3072</span><span class="p">),</span>
+    <span class="s2">&quot;hanson&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">15625</span><span class="p">,</span> <span class="mi">15552</span><span class="p">),</span>
+    <span class="s2">&quot;porcupine&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">243</span><span class="p">),</span>
+    <span class="s2">&quot;tetracot&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">19683</span><span class="p">),</span>
+    <span class="s2">&quot;negri&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">16875</span><span class="p">,</span> <span class="mi">16384</span><span class="p">),</span>
+    <span class="s2">&quot;wuerschmidt&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">393216</span><span class="p">,</span> <span class="mi">390625</span><span class="p">),</span>
+    <span class="s2">&quot;schismatic&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">32805</span><span class="p">,</span> <span class="mi">32768</span><span class="p">),</span>
+    <span class="s2">&quot;mavila&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+    <span class="s2">&quot;father&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+    <span class="s2">&quot;bug&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+    <span class="s2">&quot;amity&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">1600000</span><span class="p">,</span> <span class="mi">1594323</span><span class="p">),</span>
+    <span class="s2">&quot;sensipent&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">78732</span><span class="p">,</span> <span class="mi">78125</span><span class="p">),</span>
+    <span class="s2">&quot;ripple&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">6561</span><span class="p">,</span> <span class="mi">6250</span><span class="p">),</span>
+    <span class="s2">&quot;compton&quot;</span><span class="p">:</span> <span class="n">Fraction</span><span class="p">(</span><span class="mi">531441</span><span class="p">,</span> <span class="mi">524288</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank2Temperament</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cached construction, keyed on the *normalised* name.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">rank2_from_comma</span><span class="p">(</span><span class="n">TEMPERAMENTS</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">PRIMES_5</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="temperament">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.temperament">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">temperament</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Rank2Temperament</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The named 5-limit temperament, built from its comma and cached.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; temperament(&quot;srutal&quot;).periods_per_octave</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; round(temperament(&quot;srutal&quot;).period_cents, 1)</span>
+<span class="sd">    600.0</span>
+<span class="sd">    &gt;&gt;&gt; temperament(&quot;magic&quot;).mapping</span>
+<span class="sd">    ((1, 0, 2), (0, 5, 1))</span>
+
+<span class="sd">    The name is normalised before the cache is consulted, so spelling variants</span>
+<span class="sd">    share one object:</span>
+
+<span class="sd">    &gt;&gt;&gt; temperament(&quot;Meantone&quot;) is temperament(&quot;meantone&quot;)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Unknown names list what is available rather than raising a bare KeyError:</span>
+
+<span class="sd">    &gt;&gt;&gt; temperament(&quot;meantime&quot;)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    ValueError: unknown temperament &#39;meantime&#39;; did you mean &#39;meantone&#39;?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TEMPERAMENTS</span><span class="p">:</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">TEMPERAMENTS</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">[:</span><span class="mi">4</span><span class="p">])]</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;; did you mean </span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">close</span><span class="p">)</span><span class="si">}</span><span class="s2">?&quot;</span>
+            <span class="k">if</span> <span class="n">close</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;; known names are </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">TEMPERAMENTS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown temperament </span><span class="si">{</span><span class="n">name</span><span class="si">!r}{</span><span class="n">hint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_build</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="all_temperaments">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.all_temperaments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_temperaments</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Rank2Temperament</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Every named temperament, built and cached.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ts = all_temperaments()</span>
+<span class="sd">    &gt;&gt;&gt; len(ts)</span>
+<span class="sd">    20</span>
+<span class="sd">    &gt;&gt;&gt; sorted(n for n, t in ts.items() if t.periods_per_octave &gt; 1)</span>
+<span class="sd">    [&#39;augmented&#39;, &#39;blackwood&#39;, &#39;compton&#39;, &#39;diminished&#39;, &#39;srutal&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">temperament</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">TEMPERAMENTS</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="nearest_temperaments">
+<a class="viewcode-back" href="../../../api/mos.html#biotuner.mos.temperaments.nearest_temperaments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nearest_temperaments</span><span class="p">(</span>
+    <span class="n">generator_cents</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">period_cents</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">PERIOD_CENTS</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">max_distance_cents</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">25.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Rank2Temperament</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Named temperaments whose optimal generator sits near a given one.</span>
+
+<span class="sd">    This is the labyrinth&#39;s reverse lookup: the user lands somewhere on the</span>
+<span class="sd">    disc, and this reports which radial lines (Milne et al. §4) they are close</span>
+<span class="sd">    to.  Only temperaments with a matching period are considered -- a 600-cent</span>
+<span class="sd">    period is a different disc from a 1200-cent one.  Distances are measured to</span>
+<span class="sd">    the generator *and* to its complement, because those draw mirror-image lines</span>
+<span class="sd">    that build identical scales.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    generator_cents : float</span>
+<span class="sd">        Reduced into ``[0, period_cents)`` before comparing.</span>
+<span class="sd">    period_cents : float, default 1200.0</span>
+<span class="sd">    n : int, default 3</span>
+<span class="sd">        Most that will be returned.</span>
+<span class="sd">    max_distance_cents : float, default 25.0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of (name, Rank2Temperament, distance_cents)</span>
+<span class="sd">        Nearest first; ``distance_cents`` is unsigned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; [(n, round(d, 3)) for n, _, d in nearest_temperaments(696.6)]</span>
+<span class="sd">    [(&#39;meantone&#39;, 0.614), (&#39;schismatic&#39;, 5.119), (&#39;mavila&#39;, 19.455)]</span>
+
+<span class="sd">    Nothing named lives near 640 cents:</span>
+
+<span class="sd">    &gt;&gt;&gt; nearest_temperaments(640.0)</span>
+<span class="sd">    []</span>
+
+<span class="sd">    Half-octave periods are searched separately:</span>
+
+<span class="sd">    &gt;&gt;&gt; [n for n, _, _ in nearest_temperaments(105.0, period_cents=600.0)]</span>
+<span class="sd">    [&#39;srutal&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">period_cents</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;period_cents must be positive, got </span><span class="si">{</span><span class="n">period_cents</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">generator_cents</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">generator_cents</span> <span class="o">/</span> <span class="n">period_cents</span><span class="p">)</span> <span class="o">*</span> <span class="n">period_cents</span>
+    <span class="n">out</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Rank2Temperament</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">all_temperaments</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">temp</span><span class="o">.</span><span class="n">period_cents</span> <span class="o">-</span> <span class="n">period_cents</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-2</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">query</span> <span class="o">-</span> <span class="n">temp</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">query</span> <span class="o">-</span> <span class="n">temp</span><span class="o">.</span><span class="n">complement_cents</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="n">max_distance_cents</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">distance</span><span class="p">))</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

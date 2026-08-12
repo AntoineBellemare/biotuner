@@ -1,0 +1,2477 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Moment-of-symmetry scales, and finding them in a biosignal &#8212; Biotuner 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/example_gallery_styles.css?v=df915669" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=e4e9a439"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/mos/mos';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The MOS explorers, old and new" href="explorers.html" />
+    <link rel="prev" title="Moment-of-symmetry scales — the short tour" href="showcase.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Biotuner 0.5.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Biotuner 0.5.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Menu:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started with Biotuner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite_us.html">Cite us</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../peaks_extraction/peaks_extraction.html">Peaks extraction methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../plotting/plotting.html">Plotting and visualization with biotuner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonicity_metrics/harmonicity_metrics.html">Harmonicity metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biotuner_MNE/biotuner_MNE.html">Harmonicity Metrics Computation on MNE Epochs File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_spectrum/harmonic_spectrum.html">From Spectral Peaks to Harmonic Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math_series/math_series.html">Matching biosignals to mathematical series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resonance_cookbook/resonance_cookbook.html">Resonance &amp; Connectivity Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_amplitude_coupling/phase_amplitude_coupling.html">Phase-Amplitude Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scale_construction/scale_construction.html">Constructing musical tunings with biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="showcase.html">Moment-of-symmetry scales — the short tour</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Moment-of-symmetry scales, and finding them in a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorers.html">The MOS explorers, old and new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spectral_chords/spectral_chords.html">Deriving spectral chords from biosignals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rhythm_construction/rhythm_construction.html">Constructing euclidian rhythms from biotunings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/01_lissajous_and_harmonograph.html">Lissajous and harmonograph curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/02_chladni_and_spherical_harmonics.html">Chladni plates and spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/03_circular_patterns.html">Tuning circles, polygons, and cycloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/04_fractal_and_generative.html">Fractal layouts and generative L-systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/05_three_dimensional.html">3-D harmonic geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/06_metrics_and_transitions.html">Geometry metrics and chord transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry/07_chladni_cymatics.html">Chladni cymatics — chord-driven nodal patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/01_media_protocol_and_pipelines.html">The <code class="docutils literal notranslate"><span class="pre">media</span></code> subpackage: medium protocol, domains, pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/02_eigenmode_and_wave_field.html">Eigenmode and wave-field media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/03_parametric_and_transport.html">Parametric and transport media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../harmonic_geometry_media/04_morphogenetic.html">Morphogenetic media — pattern growth shaped by chords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biocolors/biocolors.html">biocolors — deriving colour from a biosignal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bioelements/bioelements.html">bioelements — from biosignals to the periodic table, and to materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_notebook/toolbox_paper_notebook.html">Biotuner Paper Design and Implementation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toolbox_paper_result_notebook/toolbox_paper_result_notebook.html">Biotuner Toolbox Paper Results Figures</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_object.html">Biotuner object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_group.html">BiotunerGroup (BETA)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_connectivity.html">Harmonic connectivity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/transitional_harmony.html">Transitional Harmony</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence.html">Harmonic Sequence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/math_series.html">Math Series</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_geometry.html">Harmonic Geometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/inputs.html">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_data.html">Geometry Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/lissajous.html">Lissajous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/chladni.html">Chladni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/harmonograph.html">Harmonograph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/polygon_circular.html">Polygon &amp; Circular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/generative.html">Generative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/geometry_3d.html">Geometry 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/metrics.html">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/harmonic_geometry/plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/mos.html">Moment of Symmetry (MOS)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/resonance.html">Resonance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extraction.html">Peaks Extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/peaks_extension.html">Peaks Extension</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/metrics.html">Harmonicity Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/scale_construction.html">Scale construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/rhythm_construction.html">Rhythm construction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_spectrum.html">Harmonic spectrum</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/biotuner_mne.html">Biotuner MNE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/stats.html">Stats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/surrogates.html">Surrogates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_utils.html">Plot Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/plot_config.html">Plot Config</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/harmonic_sequence_viz.html">Harmonic Sequence Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/utils.html">Biotuner utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/examples/mos/mos.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Moment-of-symmetry scales, and finding them in a biosignal</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-labyrinth">1. The labyrinth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zooming-in-on-the-diatonic">Zooming in on the diatonic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tree-underneath">2. The tree underneath</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-generator-s-family">3. A generator’s family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-scale-up-close">4. One scale, up close</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#landmarks-how-the-two-steps-trade-off">5. Landmarks: how the two steps trade off</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes-and-why-exactly-one-note-moves">6. Modes, and why exactly one note moves</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#named-temperaments">7. Named temperaments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-labyrinth-approximates-just-intonation">8. Where the labyrinth approximates just intonation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-biosignal-to-a-scale">9. From a biosignal to a scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-path-through-the-labyrinth">10. A path through the labyrinth</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-derivation-ask-all-of-them">11. Which derivation? Ask all of them</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fourier-scratching">12. Fourier Scratching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-tonality-matching-the-timbre-to-the-scale">13. Dynamic Tonality: matching the timbre to the scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-exploration">14. Interactive exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-look-next">Where to look next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="moment-of-symmetry-scales-and-finding-them-in-a-biosignal">
+<h1>Moment-of-symmetry scales, and finding them in a biosignal<a class="headerlink" href="#moment-of-symmetry-scales-and-finding-them-in-a-biosignal" title="Link to this heading">#</a></h1>
+<p>A <strong>moment of symmetry</strong> (MOS), equivalently a <strong>well-formed</strong> scale, is built by
+stacking a single generating interval and reducing by a period. It has exactly two
+step sizes, large and small, distributed as evenly as two sizes can be. Almost every
+scale anyone actually plays is one — the pentatonic, the diatonic, the chromatic —
+plus a large microtonal hinterland ordinary keyboards cannot reach.</p>
+<p>This notebook works through <code class="docutils literal notranslate"><span class="pre">biotuner.mos</span></code>, which implements</p>
+<blockquote>
+<div><p>Milne, A.J., Carlé, M., Sethares, W.A., Noll, T., Holland, S. (2011).
+<em>Scratching the Scale Labyrinth.</em> In Mathematics and Computation in Music,
+LNAI 6726, 180–195.</p>
+</div></blockquote>
+<p>— the combinatorics, the labyrinth visualisation, the modal algebra, the Fourier
+Scratching performance technique and the Dynamic Tonality timbre matching — and then
+goes past the paper to the question it does not ask: <strong>given a biosignal’s spectral
+peaks, which well-formed scale best explains them?</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Render figures inline whatever backend the environment picked. A docs</span>
+<span class="c1"># build with MPLBACKEND=Agg makes plt.show() a no-op, which drops every</span>
+<span class="c1"># figure out of this notebook and leaves the prose describing nothing.</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotuner.mos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">M</span>
+
+<span class="n">FIFTH</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\Documents\Github\biotuner\.claude\worktrees\epic-morse-ded0d5\biotuner\biotuner_object.py:11: DeprecationWarning: 
+The `fooof` package is being deprecated and replaced by the `specparam` (spectral parameterization) package.
+This version of `fooof` (1.1) is fully functional, but will not be further updated.
+New projects are recommended to update to using `specparam` (see Changelog for details).
+  from fooof import FOOOF
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-labyrinth">
+<h2>1. The labyrinth<a class="headerlink" href="#the-labyrinth" title="Link to this heading">#</a></h2>
+<p>The whole universe of well-formed scales, drawn at once. Reading it (Milne et al. §4):</p>
+<ul class="simple">
+<li><p><strong>angle</strong> is the generator as a fraction of the period. Zero is at the top, ½ at the
+bottom, so a 700-cent generator against a 1200-cent period sits at 7/12 of the way round.</p></li>
+<li><p><strong>ring</strong> is cardinality. Ring <em>N</em> carries every <em>N</em>-note MOS.</p></li>
+<li><p><strong>spokes</strong> are equal temperaments. Each runs inward from the rim and <em>touches without
+crossing</em> the ring giving its note count.</p></li>
+<li><p><strong>arcs</strong> are valid tuning ranges — the generators over which a scale keeps its identity.
+The thick inner band is where it is also <em>coherent</em> (proper).</p></li>
+</ul>
+<p>The picture is left–right symmetric because a generator and its complement within the
+period build the same scale.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_labyrinth</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/3274c3ff47e51a938d2fec68e6607bc510e97a9aca59fba8526f9eb98ef11888.png" src="../../_images/3274c3ff47e51a938d2fec68e6607bc510e97a9aca59fba8526f9eb98ef11888.png" />
+</div>
+</div>
+<section id="zooming-in-on-the-diatonic">
+<h3>Zooming in on the diatonic<a class="headerlink" href="#zooming-in-on-the-diatonic" title="Link to this heading">#</a></h3>
+<p>Milne et al. Fig. 6 zooms on the 700-cent region to read off one scale’s structure.
+On ring 7, the arc runs from 600 ¢ (=1/2) to 720 ¢ (=3/5), and the 7-EDO spoke at
+685.7 ¢ (=4/7) meets it without crossing — that is where the diatonic meets its
+inverse, the anti-diatonic.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_labyrinth</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">generator_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.47</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/d6d3a8ff8ed00ef8092d4852643cd92368e46c45ba8e2f19ed0b7670f68435a6.png" src="../../_images/d6d3a8ff8ed00ef8092d4852643cd92368e46c45ba8e2f19ed0b7670f68435a6.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="the-tree-underneath">
+<h2>2. The tree underneath<a class="headerlink" href="#the-tree-underneath" title="Link to this heading">#</a></h2>
+<p>The labyrinth is a Stern–Brocot tree bent into a circle. Every node is the mediant of
+the pair bracketing it, and its denominator is the cardinality of the MOS whose two step
+sizes equalise there. Tracing a generator’s path down the tree enumerates its entire
+scale family — exactly, with no search.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_stern_brocot</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">highlight_generator</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/71945144763f7d9fe566989046eaf3aa3c41a46c2f677a4c8382b35b2d07a457.png" src="../../_images/71945144763f7d9fe566989046eaf3aa3c41a46c2f677a4c8382b35b2d07a457.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">generator_fraction</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;path down the tree:&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">sb_path</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">53</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MOS cardinalities: &quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">mos_cardinalities</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="n">include_trivial</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>path down the tree: RLLRRLLL
+MOS cardinalities:  [2, 3, 5, 7, 12, 17, 29, 41, 53]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Those cardinalities — 2, 3, 5, 7, 12, 17, 29, 41, 53 — are the semiconvergent
+denominators of <code class="docutils literal notranslate"><span class="pre">log2(3/2)</span></code>, and they are exactly the numbers of notes at which a stack
+of fifths has only two step sizes. They are also the historically important divisions of
+the octave, which is not a coincidence.</p>
+</section>
+<section id="a-generator-s-family">
+<h2>3. A generator’s family<a class="headerlink" href="#a-generator-s-family" title="Link to this heading">#</a></h2>
+<p>Each scale in a family is a subset of the next one down: they are all the same generator
+chain, cut at different lengths.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">family</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mos_family</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">29</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span>
+        <span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">word</span><span class="p">,</span>
+        <span class="s2">&quot;L ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">step_cents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;s ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">step_cents</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">hardness</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;proper&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">is_proper</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">family</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>notes</th>
+      <th>signature</th>
+      <th>word</th>
+      <th>L ¢</th>
+      <th>s ¢</th>
+      <th>R</th>
+      <th>proper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3</td>
+      <td>2L1s</td>
+      <td>sLL</td>
+      <td>498.04</td>
+      <td>203.91</td>
+      <td>2.442</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5</td>
+      <td>2L3s</td>
+      <td>ssLsL</td>
+      <td>294.13</td>
+      <td>203.91</td>
+      <td>1.442</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7</td>
+      <td>5L2s</td>
+      <td>LLLsLLs</td>
+      <td>203.91</td>
+      <td>90.22</td>
+      <td>2.260</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12</td>
+      <td>5L7s</td>
+      <td>LsLsLssLsLss</td>
+      <td>113.69</td>
+      <td>90.22</td>
+      <td>1.260</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>17</td>
+      <td>12L5s</td>
+      <td>sLLsLLsLLLsLLsLLL</td>
+      <td>90.22</td>
+      <td>23.46</td>
+      <td>3.846</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>29</td>
+      <td>12L17s</td>
+      <td>ssLsLssLsLssLsLsLssLsLssLsLsL</td>
+      <td>66.76</td>
+      <td>23.46</td>
+      <td>2.846</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_mos_family</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/4cb2f21fecb8eac9b6b5505f701334d26fb775b72fab2d9ff0585c7cdd3f028f.png" src="../../_images/4cb2f21fecb8eac9b6b5505f701334d26fb775b72fab2d9ff0585c7cdd3f028f.png" />
+</div>
+</div>
+</section>
+<section id="one-scale-up-close">
+<h2>4. One scale, up close<a class="headerlink" href="#one-scale-up-close" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">MOSScale</span></code> keeps the abstract structure (<code class="docutils literal notranslate"><span class="pre">5L2s</span></code>) and the concrete tuning (a 702-cent
+generator) as separate coordinates — the two-part choice the labyrinth affords.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mos</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5L2s  (7 notes)   LLLsLLs
+  generator       701.955 c  (ratio 1.500000, g = 0.584963)
+  period         1200.000 c  (ratio 2.000000)
+  steps          L = 203.910 c,  s = 90.225 c,  R = 2.2600
+  valid range    4/7 .. 3/5   (685.7 .. 720.0 c)
+  coherent over  4/7 .. 7/12   -&gt; IMPROPER at this tuning
+  landmarks      equalized 4/7 = 7-EDO,  s-&gt;0 at 3/5 = 5-EDO,  L-&gt;0 at 1/2 = 2-EDO
+  inverse        2L5s
+  embedded in    12 notes (equal at 7/12)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note the last two lines of that summary. Pythagorean tuning is <strong>improper</strong>: its
+generator, 702 ¢, is outside the diatonic’s coherent range of 4/7 … 7/12 (685.7 … 700 ¢).
+Concretely, the Pythagorean major third is wider than the diminished fourth, so generic
+and specific interval sizes stop agreeing. Flatten the fifth into meantone and coherence
+returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;tuning&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;generator ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;L ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">step_cents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;s ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">step_cents</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;R = L/s&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">hardness</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;proper&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">is_proper</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;7-EDO (equalized)&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;equalized&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;19-EDO&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">19</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;31-EDO (meantone)&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">31</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;12-EDO&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">12</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;Pythagorean&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">mos</span><span class="p">(</span><span class="n">FIFTH</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;5-EDO (s vanishes)&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;middle&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">retune</span><span class="p">(</span><span class="mf">0.5999</span><span class="p">)),</span>
+    <span class="p">]</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tuning</th>
+      <th>generator ¢</th>
+      <th>L ¢</th>
+      <th>s ¢</th>
+      <th>R = L/s</th>
+      <th>proper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7-EDO (equalized)</td>
+      <td>685.714</td>
+      <td>171.43</td>
+      <td>171.43</td>
+      <td>1.000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>19-EDO</td>
+      <td>694.737</td>
+      <td>189.47</td>
+      <td>126.32</td>
+      <td>1.500</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>31-EDO (meantone)</td>
+      <td>696.774</td>
+      <td>193.55</td>
+      <td>116.13</td>
+      <td>1.667</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12-EDO</td>
+      <td>700.000</td>
+      <td>200.00</td>
+      <td>100.00</td>
+      <td>2.000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Pythagorean</td>
+      <td>701.955</td>
+      <td>203.91</td>
+      <td>90.22</td>
+      <td>2.260</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5-EDO (s vanishes)</td>
+      <td>719.880</td>
+      <td>239.76</td>
+      <td>0.60</td>
+      <td>399.600</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_scale_wheel</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">31</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2296130906c2cc14b297a74109e1c6891a8d1c632c3333a77c41a87939484877.png" src="../../_images/2296130906c2cc14b297a74109e1c6891a8d1c632c3333a77c41a87939484877.png" />
+</div>
+</div>
+<p>The keyboard is drawn with key widths proportional to the step above each tone
+(Milne et al. Fig. 8), so the maximally even distribution of large and small steps is
+visible directly.</p>
+</section>
+<section id="landmarks-how-the-two-steps-trade-off">
+<h2>5. Landmarks: how the two steps trade off<a class="headerlink" href="#landmarks-how-the-two-steps-trade-off" title="Link to this heading">#</a></h2>
+<p>As the generator moves, the two step sizes co-vary, always summing to the period, and
+they pass through three distinguished tunings (Milne et al. §2, “Landmark equal
+tunings”). One where they become equal — where the scale meets its inverse — and one on
+each side where a step size shrinks to zero.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_step_covariation</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/50c1ac818ea08273c8938a31619b0a584015f13547b0e94b312631f6a5010ccd.png" src="../../_images/50c1ac818ea08273c8938a31619b0a584015f13547b0e94b312631f6a5010ccd.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lm</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mos_landmarks</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;equalized      </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">equalized</span><span class="si">}</span><span class="s2">  = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">equalized_edo</span><span class="si">}</span><span class="s2">-EDO&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;small vanishes </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes</span><span class="si">}</span><span class="s2">  = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">small_vanishes_edo</span><span class="si">}</span><span class="s2">-EDO&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;large vanishes </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes</span><span class="si">}</span><span class="s2">  = </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">large_vanishes_edo</span><span class="si">}</span><span class="s2">-EDO&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;embedded in    </span><span class="si">{</span><span class="n">M</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> notes at </span><span class="si">{</span><span class="n">M</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;coherent over  </span><span class="si">{</span><span class="n">M</span><span class="o">.</span><span class="n">coherence_range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> … </span><span class="si">{</span><span class="n">M</span><span class="o">.</span><span class="n">coherence_range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>equalized      4/7  = 7-EDO
+small vanishes 3/5  = 5-EDO
+large vanishes 1/2  = 2-EDO
+embedded in    12 notes at 7/12
+coherent over  4/7 … 7/12
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="modes-and-why-exactly-one-note-moves">
+<h2>6. Modes, and why exactly one note moves<a class="headerlink" href="#modes-and-why-exactly-one-note-moves" title="Link to this heading">#</a></h2>
+<p>A scale presupposes periodicity, so all its rotations are the same scale. A <em>mode</em> is a
+choice of finalis. The modes of a well-formed scale are <strong>parsimonious</strong>: neighbouring
+modes in the brightness order differ by a single tone, displaced by the chroma <code class="docutils literal notranslate"><span class="pre">L</span> <span class="pre">−</span> <span class="pre">s</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d12</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_modes</span><span class="p">(</span><span class="n">d12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/857f2df3496b153c46544293d86f870e78e9ea517a504ae54895e2a4d870027a.png" src="../../_images/857f2df3496b153c46544293d86f870e78e9ea517a504ae54895e2a4d870027a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">brighter</span><span class="p">,</span> <span class="n">darker</span><span class="p">,</span> <span class="n">moved</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">parsimony_chain</span><span class="p">(</span><span class="n">d12</span><span class="p">):</span>
+    <span class="n">step</span><span class="p">,</span> <span class="n">mine</span><span class="p">,</span> <span class="n">theirs</span> <span class="o">=</span> <span class="n">moved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brighter</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">11s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">darker</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">11s</span><span class="si">}</span><span class="s2">   degree </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2"> : &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mine</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2"> ¢ -&gt; </span><span class="si">{</span><span class="n">theirs</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2"> ¢   (</span><span class="si">{</span><span class="n">mine</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">theirs</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> ¢)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lydian      -&gt; Ionian        degree 3 :   600.0 ¢ -&gt;   500.0 ¢   (+100.0 ¢)
+Ionian      -&gt; Mixolydian    degree 6 :  1100.0 ¢ -&gt;  1000.0 ¢   (+100.0 ¢)
+Mixolydian  -&gt; Dorian        degree 2 :   400.0 ¢ -&gt;   300.0 ¢   (+100.0 ¢)
+Dorian      -&gt; Aeolian       degree 5 :   900.0 ¢ -&gt;   800.0 ¢   (+100.0 ¢)
+Aeolian     -&gt; Phrygian      degree 1 :   200.0 ¢ -&gt;   100.0 ¢   (+100.0 ¢)
+Phrygian    -&gt; Locrian       degree 4 :   700.0 ¢ -&gt;   600.0 ¢   (+100.0 ¢)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Milne et al. §4 formalise this as a free commutative group ℤ² of rank 2, generated by two
+commuting transformations: <strong>σ</strong> (diatonic transposition — same notes, finalis one step
+higher) and <strong>τ</strong> (chromatic transposition — same finalis, origin one generator
+sharpwards). Each mode occupies a fundamental frame in that lattice.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_mode_lattice</span><span class="p">(</span><span class="n">d12</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/6dec8d7f52f80a6cc04d779b7e7edf3b8447e765c461eaea6f2e560daaa3cae5.png" src="../../_images/6dec8d7f52f80a6cc04d779b7e7edf3b8447e765c461eaea6f2e560daaa3cae5.png" />
+</div>
+</div>
+</section>
+<section id="named-temperaments">
+<h2>7. Named temperaments<a class="headerlink" href="#named-temperaments" title="Link to this heading">#</a></h2>
+<p>Milne et al. §4 overlay named rank-2 temperaments on the labyrinth as radial lines at
+their optimal generators. Here those generators are <em>computed</em> from each temperament’s
+comma — find the saturated integer mapping that annihilates the comma, reduce it to
+Hermite normal form, then solve a Tenney-weighted least squares — so the numbers are
+derived rather than copied, and can be checked against published tables.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temps</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">all_temperaments</span><span class="p">()</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;comma&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">comma</span><span class="p">),</span>
+        <span class="s2">&quot;periods/oct&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">periods_per_octave</span><span class="p">,</span>
+        <span class="s2">&quot;period ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">period_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;POTE gen ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">pote_generator_cents</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;max prime error ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">max_error</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temps</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;max prime error ¢&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>comma</th>
+      <th>periods/oct</th>
+      <th>period ¢</th>
+      <th>POTE gen ¢</th>
+      <th>max prime error ¢</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>schismatic</td>
+      <td>32805/32768</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>701.736</td>
+      <td>0.236</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>amity</td>
+      <td>1600000/1594323</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>339.519</td>
+      <td>0.359</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>hanson</td>
+      <td>15625/15552</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>317.007</td>
+      <td>1.021</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>sensipent</td>
+      <td>78732/78125</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>756.942</td>
+      <td>1.081</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>wuerschmidt</td>
+      <td>393216/390625</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>812.201</td>
+      <td>1.420</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>compton</td>
+      <td>531441/524288</td>
+      <td>12</td>
+      <td>100.0</td>
+      <td>84.882</td>
+      <td>1.955</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>tetracot</td>
+      <td>20000/19683</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>176.160</td>
+      <td>2.158</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>srutal</td>
+      <td>2048/2025</td>
+      <td>2</td>
+      <td>600.0</td>
+      <td>104.898</td>
+      <td>3.414</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>meantone</td>
+      <td>81/80</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>696.239</td>
+      <td>4.741</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>magic</td>
+      <td>3125/3072</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>380.058</td>
+      <td>5.814</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>porcupine</td>
+      <td>250/243</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>163.950</td>
+      <td>7.143</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>ripple</td>
+      <td>6561/6250</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>100.838</td>
+      <td>7.668</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>negri</td>
+      <td>16875/16384</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>125.755</td>
+      <td>10.126</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>diminished</td>
+      <td>648/625</td>
+      <td>4</td>
+      <td>300.0</td>
+      <td>99.507</td>
+      <td>10.670</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>augmented</td>
+      <td>128/125</td>
+      <td>3</td>
+      <td>400.0</td>
+      <td>306.638</td>
+      <td>13.686</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>blackwood</td>
+      <td>256/243</td>
+      <td>5</td>
+      <td>240.0</td>
+      <td>159.594</td>
+      <td>18.045</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>mavila</td>
+      <td>135/128</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>679.806</td>
+      <td>24.810</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>dicot</td>
+      <td>25/24</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>348.594</td>
+      <td>31.649</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>bug</td>
+      <td>27/25</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>939.612</td>
+      <td>32.523</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>father</td>
+      <td>16/15</td>
+      <td>1</td>
+      <td>1200.0</td>
+      <td>743.986</td>
+      <td>76.218</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_labyrinth</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">temperaments</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/2297153ab4aef3f392412de8db6e3204d88dc62c062808352902d14b2f99cd4b.png" src="../../_images/2297153ab4aef3f392412de8db6e3204d88dc62c062808352902d14b2f99cd4b.png" />
+</div>
+</div>
+</section>
+<section id="where-the-labyrinth-approximates-just-intonation">
+<h2>8. Where the labyrinth approximates just intonation<a class="headerlink" href="#where-the-labyrinth-approximates-just-intonation" title="Link to this heading">#</a></h2>
+<p>Milne et al. §1 point at this use directly. Each cell is the mean cents error from a
+5-limit just interval to the nearest degree of the MOS at that (generator, cardinality);
+grey means there is no MOS there at all, which is most of the plane.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_ji_landscape</span><span class="p">(</span><span class="n">max_cardinality</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">1600</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e3c605d28718204c2c9a019ebda62276fa62b133a8462922cc37840b7da931af.png" src="../../_images/e3c605d28718204c2c9a019ebda62276fa62b133a8462922cc37840b7da931af.png" />
+</div>
+</div>
+</section>
+<section id="from-a-biosignal-to-a-scale">
+<h2>9. From a biosignal to a scale<a class="headerlink" href="#from-a-biosignal-to-a-scale" title="Link to this heading">#</a></h2>
+<p>Everything above is music theory. This is the part the paper does not have.</p>
+<p>The labyrinth is a <em>search space</em> with three coordinates — generator, cardinality and
+period — and <code class="docutils literal notranslate"><span class="pre">fit_mos</span></code> searches it. Candidate generators come from the signal itself
+(every observed ratio, and every ratio between ratios), plus a background grid. Only the
+cardinalities that are genuinely MOS for a given generator are considered. The objective
+is amplitude-weighted mean cents error from each peak ratio to its nearest scale degree,
+plus a penalty for surplus notes — without which the biggest scale allowed would always
+win by brute coverage.</p>
+<p>There is a fourth, nuisance coordinate too: each candidate scale is free to <em>transpose</em>
+itself onto the data. A scale and its transpositions are the same scale, so this is the
+right comparison — and it matters. A stack of fifths is the pentatonic, but only in one
+of the pentatonic’s five modes; pin every candidate to a 1/1 root and the answer is
+missed.</p>
+<p>Start with a signal whose peaks really are a stack of fifths, buried in noise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">sf</span> <span class="o">=</span> <span class="mf">1000.0</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sf</span><span class="p">)</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="n">partials</span> <span class="o">=</span> <span class="p">[</span><span class="n">base</span><span class="p">,</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">2.25</span><span class="p">,</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">3.375</span><span class="p">,</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="n">amps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">]</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">amps</span><span class="p">,</span> <span class="n">partials</span><span class="p">))</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotuner.biotuner_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_biotuner</span>
+
+<span class="n">bt</span> <span class="o">=</span> <span class="n">compute_biotuner</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span> <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;FOOOF&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">bt</span><span class="o">.</span><span class="n">peaks_extraction</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_freq</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;peaks (Hz):&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ratios:    &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>peaks (Hz): [ 5.    7.5   9.99 11.25 16.88]
+ratios:     [1.125   1.12533 1.12613 1.332   1.5     1.50044 1.688   1.68969 1.998  ]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span> <span class="o">=</span> <span class="n">bt</span><span class="o">.</span><span class="n">fit_mos</span><span class="p">(</span><span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">explain_fit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2L3s  (5 notes)   ssLsL
+  generator       702.727 c  (ratio 1.500669, g = 0.585606)
+  period         1200.000 c  (ratio 2.000000)
+  steps          L = 291.820 c,  s = 205.453 c,  R = 1.4204
+  valid range    1/2 .. 3/5   (600.0 .. 720.0 c)
+  coherent over  4/7 .. 3/5   -&gt; proper
+  landmarks      equalized 3/5 = 5-EDO,  s-&gt;0 at 1/2 = 2-EDO,  L-&gt;0 at 2/3 = 3-EDO
+  inverse        3L2s
+  embedded in    7 notes (equal at 4/7)
+  fit            error 0.577 c (weighted mean), max 1.149 c, rms 0.681 c
+  chance         60.000 c for 5 degrees;  improvement 103.92x;  evidence 4.54 SE below chance
+  coverage       100.0% of weight within tolerance;  7 targets, 0 unused degrees;  score 0.577
+  folded         2 ratio(s) merged into a pitch class already present (an octave is not a second target)
+  targets        each ratio and where it landed
+       1.125000 -&gt; degree  4 (  908.18 c,   -0.58 c)
+       1.126126 -&gt; degree  4 (  908.18 c,   +1.15 c)
+       1.332000 -&gt; degree  0 (    0.00 c,   +0.00 c)
+       1.500000 -&gt; degree  1 (  205.45 c,   +0.19 c)
+       1.688000 -&gt; degree  2 (  410.91 c,   -0.84 c)
+       1.689690 -&gt; degree  2 (  410.91 c,   +0.89 c)
+       1.998000 -&gt; degree  3 (  702.73 c,   -0.77 c)
+</pre></div>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">improvement</span></code> is the number worth reading. A scale with many notes will always sit close
+to any set of ratios, so the error alone means little; <code class="docutils literal notranslate"><span class="pre">improvement</span></code> divides it by the
+error a <em>random</em> set of ratios would get against a scale of that size. A value near 1 is
+no better than chance.</p>
+<p>It is not the last word, though: a derivation that yields only two ratios can post
+an enormous <code class="docutils literal notranslate"><span class="pre">improvement</span></code> for no good reason, which section 11 takes apart. With
+seven targets against a five-note scale, nothing here is being flattered.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span>
+        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span>
+        <span class="s2">&quot;generator ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;error ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">error_cents</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;chance ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">chance_error_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="s2">&quot;improvement&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">improvement</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">improvement</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;exact&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">mos_fits</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rank</th>
+      <th>signature</th>
+      <th>notes</th>
+      <th>generator ¢</th>
+      <th>error ¢</th>
+      <th>chance ¢</th>
+      <th>improvement</th>
+      <th>score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>2L3s</td>
+      <td>5</td>
+      <td>702.73</td>
+      <td>0.577</td>
+      <td>60.00</td>
+      <td>103.9</td>
+      <td>0.577</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>5L2s</td>
+      <td>7</td>
+      <td>702.63</td>
+      <td>0.577</td>
+      <td>42.86</td>
+      <td>74.2</td>
+      <td>0.577</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>5L4s</td>
+      <td>9</td>
+      <td>951.36</td>
+      <td>0.577</td>
+      <td>33.33</td>
+      <td>57.7</td>
+      <td>2.577</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>7L3s</td>
+      <td>10</td>
+      <td>848.66</td>
+      <td>0.577</td>
+      <td>30.00</td>
+      <td>52.0</td>
+      <td>3.577</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>1L9s</td>
+      <td>10</td>
+      <td>1099.72</td>
+      <td>2.373</td>
+      <td>30.00</td>
+      <td>12.6</td>
+      <td>5.373</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">bt</span><span class="o">.</span><span class="n">plot_labyrinth</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/bedf7fb97f7d2ecbc463c4d55e950f4402d9c83be0b129b5f5744e8b46bb3807.png" src="../../_images/bedf7fb97f7d2ecbc463c4d55e950f4402d9c83be0b129b5f5744e8b46bb3807.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_mos_fit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/788878e1187ec79e1f3d0655105345faa43b48efdb252657bf80e65c657ecdc1.png" src="../../_images/788878e1187ec79e1f3d0655105345faa43b48efdb252657bf80e65c657ecdc1.png" />
+</div>
+</div>
+<p>The fitted scale is a tuning like any other, so it flows into the rest of the toolbox:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fitted structure :&quot;</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">signature</span><span class="p">,</span> <span class="s2">&quot;at&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;¢&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;transposed by    :&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">offset</span> <span class="o">*</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;¢  -&gt; mode:&quot;</span><span class="p">,</span>
+      <span class="n">fit</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">fit</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">&quot;(not a scale tone)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;as a tuning      :&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">get_tuning</span><span class="p">(</span><span class="s2">&quot;mos&quot;</span><span class="p">),</span> <span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>fitted structure : 2L3s at 702.73 ¢
+transposed by    : 496.31 ¢  -&gt; mode: mode 3 of 2L3s
+as a tuning      : [1.      1.126   1.33274 1.50067 1.68976]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">to_scala</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">400</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>! Scale produced by Biotuner. For tuning yoshimi or zynaddsubfx,
+! only include the portion below the final &#39;!&#39;
+!
+2L3s
+  5
+!
+205.45329
+410.90658
+702.72665
+908.17994
+1200.00000
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-path-through-the-labyrinth">
+<h2>10. A path through the labyrinth<a class="headerlink" href="#a-path-through-the-labyrinth" title="Link to this heading">#</a></h2>
+<p>Fit each window of a recording independently and the result is a <em>trajectory</em>: the scale
+structure drifting, or holding, as the signal evolves. Here is a signal that deliberately
+changes its harmonic structure halfway through.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">half</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">seg_a</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">t</span><span class="p">[:</span><span class="n">half</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">amps</span><span class="p">,</span> <span class="n">partials</span><span class="p">))</span>
+<span class="c1"># Second half: a stack of ~316-cent minor thirds instead of fifths.</span>
+<span class="n">third</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">316</span> <span class="o">/</span> <span class="mi">1200</span><span class="p">)</span>
+<span class="n">partials_b</span> <span class="o">=</span> <span class="p">[</span><span class="n">base</span> <span class="o">*</span> <span class="n">third</span><span class="o">**</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">seg_b</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">t</span><span class="p">[</span><span class="n">half</span><span class="p">:])</span>
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">amps</span><span class="p">,</span> <span class="n">partials_b</span><span class="p">))</span>
+<span class="n">switching</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">seg_a</span><span class="p">,</span> <span class="n">seg_b</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="n">traj</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mos_trajectory</span><span class="p">(</span>
+    <span class="n">switching</span><span class="p">,</span> <span class="n">sf</span><span class="p">,</span> <span class="n">window_sec</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">step_sec</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">peaks_function</span><span class="o">=</span><span class="s2">&quot;FOOOF&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;window&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">signature</span> <span class="k">if</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;generator ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">generator_cents</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;error ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">error_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\skite\AppData\Local\Programs\Python\Python310\lib\site-packages\scipy\signal\_spectral_py.py:790: UserWarning: nperseg = 10000 is greater than input length  = 6000, using nperseg = 6000
+  freqs, _, Pxy = _spectral_helper(x, y, fs, window, nperseg, noverlap,
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>window</th>
+      <th>signature</th>
+      <th>generator ¢</th>
+      <th>error ¢</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>2L3s</td>
+      <td>699.6</td>
+      <td>0.86</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>2L3s</td>
+      <td>702.7</td>
+      <td>2.31</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>5L2s</td>
+      <td>701.8</td>
+      <td>0.84</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>2L3s</td>
+      <td>701.7</td>
+      <td>1.69</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>8L3s</td>
+      <td>759.5</td>
+      <td>6.68</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>4L3s</td>
+      <td>883.4</td>
+      <td>1.38</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6</td>
+      <td>4L3s</td>
+      <td>883.8</td>
+      <td>1.65</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>4L3s</td>
+      <td>883.7</td>
+      <td>2.40</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>8</td>
+      <td>4L3s</td>
+      <td>882.8</td>
+      <td>2.31</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_mos_trajectory</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/a8c7d2ebf72bd0d51b40d66f6b798740f6e9a4957bea76e8035d56b606aed4f9.png" src="../../_images/a8c7d2ebf72bd0d51b40d66f6b798740f6e9a4957bea76e8035d56b606aed4f9.png" />
+</div>
+</div>
+</section>
+<section id="which-derivation-ask-all-of-them">
+<h2>11. Which derivation? Ask all of them<a class="headerlink" href="#which-derivation-ask-all-of-them" title="Link to this heading">#</a></h2>
+<p>Section 9 fitted the peak ratios. But <code class="docutils literal notranslate"><span class="pre">compute_biotuner</span></code> turns a signal into ratios
+eight different ways — peak ratios, consonant ratios, extended peaks, dissonance-curve
+minima, harmonic-entropy minima, an Euler-Fokker genus, a common-harmonic tuning, a
+harmonic fit — and they do not agree with each other. Every one of them can feed the
+fit, through <code class="docutils literal notranslate"><span class="pre">source=</span></code> on <code class="docutils literal notranslate"><span class="pre">bt.fit_mos</span></code>, <code class="docutils literal notranslate"><span class="pre">bt.mos_trajectory</span></code> and
+<code class="docutils literal notranslate"><span class="pre">M.mos_from_biotuner</span></code>; <code class="docutils literal notranslate"><span class="pre">bt.compare_mos_sources()</span></code> runs the whole set at once so they
+can be read side by side.</p>
+<p><code class="docutils literal notranslate"><span class="pre">extended_ratios</span></code> is the one source that needs a precursor — <code class="docutils literal notranslate"><span class="pre">peaks_extension</span></code> — so
+run that first. Everything else is derived on demand.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bt</span><span class="o">.</span><span class="n">peaks_extension</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;harmonic_fit&quot;</span><span class="p">,</span> <span class="n">harm_function</span><span class="o">=</span><span class="s2">&quot;mult&quot;</span><span class="p">,</span> <span class="n">cons_limit</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">comparison</span> <span class="o">=</span> <span class="n">bt</span><span class="o">.</span><span class="n">compare_mos_sources</span><span class="p">(</span><span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">comparison</span><span class="p">[[</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;n_ratios&quot;</span><span class="p">,</span> <span class="s2">&quot;n_targets&quot;</span><span class="p">,</span> <span class="s2">&quot;n_merged&quot;</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">,</span> <span class="s2">&quot;cardinality&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;error_cents&quot;</span><span class="p">,</span> <span class="s2">&quot;chance_error_cents&quot;</span><span class="p">,</span> <span class="s2">&quot;improvement&quot;</span><span class="p">,</span> <span class="s2">&quot;evidence&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;coverage&quot;</span><span class="p">,</span> <span class="s2">&quot;underdetermined&quot;</span><span class="p">,</span>
+<span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>source</th>
+      <th>n_ratios</th>
+      <th>n_targets</th>
+      <th>n_merged</th>
+      <th>signature</th>
+      <th>cardinality</th>
+      <th>error_cents</th>
+      <th>chance_error_cents</th>
+      <th>improvement</th>
+      <th>evidence</th>
+      <th>coverage</th>
+      <th>underdetermined</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>peaks_ratios</td>
+      <td>9.0</td>
+      <td>7.0</td>
+      <td>2.0</td>
+      <td>2L3s</td>
+      <td>5.0</td>
+      <td>0.577</td>
+      <td>60.000</td>
+      <td>1.039200e+02</td>
+      <td>4.538</td>
+      <td>1.000</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>extended_ratios</td>
+      <td>18.0</td>
+      <td>17.0</td>
+      <td>1.0</td>
+      <td>12L1s</td>
+      <td>13.0</td>
+      <td>9.949</td>
+      <td>23.077</td>
+      <td>2.320000e+00</td>
+      <td>4.063</td>
+      <td>0.722</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>diss_curve</td>
+      <td>8.0</td>
+      <td>8.0</td>
+      <td>0.0</td>
+      <td>7L3s</td>
+      <td>10.0</td>
+      <td>5.192</td>
+      <td>30.000</td>
+      <td>5.779000e+00</td>
+      <td>4.051</td>
+      <td>0.875</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>euler_fokker</td>
+      <td>9.0</td>
+      <td>8.0</td>
+      <td>1.0</td>
+      <td>4L7s</td>
+      <td>11.0</td>
+      <td>6.932</td>
+      <td>27.273</td>
+      <td>3.934000e+00</td>
+      <td>3.654</td>
+      <td>0.889</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>HE</td>
+      <td>5.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>1L8s</td>
+      <td>9.0</td>
+      <td>4.707</td>
+      <td>33.333</td>
+      <td>7.082000e+00</td>
+      <td>3.326</td>
+      <td>0.800</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>cons_ratios</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>3L1s</td>
+      <td>4.0</td>
+      <td>0.000</td>
+      <td>75.000</td>
+      <td>5.158593e+07</td>
+      <td>2.449</td>
+      <td>1.000</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>harm_fit_tuning</td>
+      <td>37.0</td>
+      <td>37.0</td>
+      <td>0.0</td>
+      <td>3L13s</td>
+      <td>16.0</td>
+      <td>16.285</td>
+      <td>18.750</td>
+      <td>1.151000e+00</td>
+      <td>1.385</td>
+      <td>0.541</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>harm_tuning</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Read the <strong><code class="docutils literal notranslate"><span class="pre">evidence</span></code></strong> column, not <code class="docutils literal notranslate"><span class="pre">error_cents</span></code>.</p>
+<p>The smallest error in the table belongs to <code class="docutils literal notranslate"><span class="pre">cons_ratios</span></code>, at a few millionths of a
+cent — and it sits near the bottom of the ranking. It derived only two ratios, and a
+four-note scale has enough spare degrees to be rotated until both land exactly; that
+number measures the scale’s slack, not the signal. <code class="docutils literal notranslate"><span class="pre">improvement</span></code> does not rescue the
+ranking either, since dividing by the chance error puts the same two-point fit on top
+by seven orders of magnitude.</p>
+<p><code class="docutils literal notranslate"><span class="pre">evidence</span></code> is the one that counts how much data the margin below chance was measured
+over: <code class="docutils literal notranslate"><span class="pre">sqrt(3</span> <span class="pre">*</span> <span class="pre">n_targets)</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">-</span> <span class="pre">error</span> <span class="pre">/</span> <span class="pre">chance)</span></code>, the number of standard errors the
+weighted mean falls below what random ratios would score against a scale of that size.
+It self-limits at <code class="docutils literal notranslate"><span class="pre">sqrt(3n)</span></code>, so two targets can never beat 2.45 however exact they
+are, while seven exact targets reach 4.58.</p>
+<p>At the other end sits <code class="docutils literal notranslate"><span class="pre">harm_fit_tuning</span></code>: the most data in the table and the least
+structure, a ladder dense enough that even the largest scale allowed misses nearly
+half of it. And a source that <em>raises</em> is not quietly dropped — it keeps its row, with
+the exception in <code class="docutils literal notranslate"><span class="pre">reason</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">comparison</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;source&quot;</span><span class="p">],</span> <span class="s2">&quot;cons_ratios&quot;</span><span class="p">):</span>
+    <span class="n">fit_src</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">mos_from_biotuner</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;----- </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">explain_fit</span><span class="p">(</span><span class="n">fit_src</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>harm_tuning:
+  ValueError: harmonic_tuning() needs harmonic positions and this object has none: self.all_harmonics is only measured by peaks_extraction(peaks_function=&#39;harmonic_recurrence&#39;), and peaks_function is &#39;FOOOF&#39;. Either pass them explicitly (list_harmonics=[1, 2, 3, ...]), re-extract with peaks_function=&#39;harmonic_recurrence&#39;, or use harmonic_fit_tuning() / get_tuning(&#39;harm_fit_tuning&#39;), which derives harmonic positions from the peaks themselves.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----- peaks_ratios
+2L3s  (5 notes)   ssLsL
+  generator       702.727 c  (ratio 1.500669, g = 0.585606)
+  period         1200.000 c  (ratio 2.000000)
+  steps          L = 291.820 c,  s = 205.453 c,  R = 1.4204
+  valid range    1/2 .. 3/5   (600.0 .. 720.0 c)
+  coherent over  4/7 .. 3/5   -&gt; proper
+  landmarks      equalized 3/5 = 5-EDO,  s-&gt;0 at 1/2 = 2-EDO,  L-&gt;0 at 2/3 = 3-EDO
+  inverse        3L2s
+  embedded in    7 notes (equal at 4/7)
+  fit            error 0.577 c (weighted mean), max 1.149 c, rms 0.681 c
+  chance         60.000 c for 5 degrees;  improvement 103.92x;  evidence 4.54 SE below chance
+  coverage       100.0% of weight within tolerance;  7 targets, 0 unused degrees;  score 0.577
+  folded         2 ratio(s) merged into a pitch class already present (an octave is not a second target)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----- cons_ratios
+3L1s  (4 notes)   sLLL
+  generator       849.022 c  (ratio 1.632993, g = 0.707519)
+  period         1200.000 c  (ratio 2.000000)
+  steps          L = 350.978 c,  s = 147.067 c,  R = 2.3865
+  valid range    2/3 .. 3/4   (800.0 .. 900.0 c)
+  coherent over  5/7 .. 3/4   -&gt; IMPROPER at this tuning
+  landmarks      equalized 3/4 = 4-EDO,  s-&gt;0 at 2/3 = 3-EDO,  L-&gt;0 at 1 = 1-EDO
+  inverse        1L3s
+  embedded in    7 notes (equal at 5/7)
+  fit            error 0.000 c (weighted mean), max 0.000 c, rms 0.000 c
+  chance         75.000 c for 4 degrees;  improvement 51585934.02x;  evidence 2.45 SE below chance
+  coverage       100.0% of weight within tolerance;  2 targets, 2 unused degrees;  score 2.000
+  UNDERDETERMINED  2 targets for 4 degrees: a scale with spare notes can be rotated onto any data, so this error is not evidence
+</pre></div>
+</div>
+</div>
+</div>
+<p>Two things happen to a ratio list before any scale is tried.</p>
+<p><strong>The ratios are folded into the period.</strong> A scale has no way to tell <code class="docutils literal notranslate"><span class="pre">1/1</span></code> from
+<code class="docutils literal notranslate"><span class="pre">2/1</span></code> — they are one degree — so ratios naming the same pitch class to within
+<code class="docutils literal notranslate"><span class="pre">FOLD_TOLERANCE_CENTS</span></code> (1 ¢) are merged into one target and their weights summed. The
+<code class="docutils literal notranslate"><span class="pre">n_ratios</span></code> → <code class="docutils literal notranslate"><span class="pre">n_targets</span></code> columns above show what was actually fitted: <code class="docutils literal notranslate"><span class="pre">euler_fokker</span></code>
+lists both 1.0 and 2.0, and <code class="docutils literal notranslate"><span class="pre">peaks_ratios</span></code> contains pairs half a cent apart. Because
+the weights are summed rather than dropped, the weighted mean error does not move at
+all — folding is not an accuracy fix. It corrects the <em>sample size</em>, and with it the
+surplus-note penalty and <code class="docutils literal notranslate"><span class="pre">evidence</span></code>.</p>
+<p><strong>A fit with more degrees than targets is flagged, not dropped.</strong> A scale with spare
+notes can be rotated until everything lands on something, so its error is not
+evidence of anything — but it may still be the right structure, and five peaks simply
+cannot produce twelve targets. <code class="docutils literal notranslate"><span class="pre">is_underdetermined</span></code> says so out loud instead of
+hiding the fit or hiding the problem.</p>
+<p>And <code class="docutils literal notranslate"><span class="pre">source=&quot;mos&quot;</span></code> is refused: <code class="docutils literal notranslate"><span class="pre">get_tuning(&quot;mos&quot;)</span></code> hands back the ratios of an earlier
+fit, so fitting a scale to them guarantees the answer in advance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ladder</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">9</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>      <span class="c1"># the 2/1 repeats the 1/1</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;folded (default)&quot;</span><span class="p">,</span> <span class="p">{}),</span> <span class="p">(</span><span class="s2">&quot;fold=False&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;fold&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})]:</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">fit_mos</span><span class="p">(</span><span class="n">ladder</span><span class="p">,</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">17s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">signature</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2">  targets </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">n_targets</span><span class="si">}</span><span class="s2"> (merged </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">n_merged</span><span class="si">}</span><span class="s2">)&quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;  error </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">error_cents</span><span class="si">:</span><span class="s2">.13f</span><span class="si">}</span><span class="s2"> ¢  evidence </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">evidence</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;  underdetermined </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">is_underdetermined</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">one</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">best_mos</span><span class="p">([</span><span class="mf">1.5</span><span class="p">],</span> <span class="n">max_cardinality</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">one ratio -&gt; </span><span class="si">{</span><span class="n">one</span><span class="o">.</span><span class="n">signature</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">one</span><span class="o">.</span><span class="n">error_cents</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ¢, &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;improvement </span><span class="si">{</span><span class="n">one</span><span class="o">.</span><span class="n">improvement</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">explain_fit</span><span class="p">(</span><span class="n">one</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">bt</span><span class="o">.</span><span class="n">fit_mos</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;mos&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">source=&#39;mos&#39; -&gt; ValueError: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>folded (default)  2L3s   targets 4 (merged 1)  error 3.2259449169634 ¢  evidence 3.278  underdetermined True
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>fold=False        2L3s   targets 5 (merged 0)  error 3.2259449169634 ¢  evidence 3.665  underdetermined False
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>one ratio -&gt; 1L3s at 0.000 ¢, improvement inf
+UNDERDETERMINED  1 target for 4 degrees: a scale with spare notes can be rotated onto any data, so this error is not evidence
+
+source=&#39;mos&#39; -&gt; ValueError: source=&#39;mos&#39; would fit a moment-of-symmetry scale to a moment-of-symmetry scale
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="fourier-scratching">
+<h2>12. Fourier Scratching<a class="headerlink" href="#fourier-scratching" title="Link to this heading">#</a></h2>
+<p>Milne et al. §5’s performance technique. A virtual robot has <em>n</em> fingers striking a
+continuous circular keyboard at a fixed pulse; finger <em>k</em>’s state is a complex number
+whose magnitude is loudness and whose phase is position on the circle. The player
+manipulates the <strong>DFT</strong> of that state vector rather than the fingers directly — one
+gesture reshapes the whole pattern.</p>
+<p>The elementary play states are the pure partials. Milne et al. §5 say that for a coherent
+well-formed scale the first partial plays every tone exactly once, in ascending scalar
+order — but that turns out to be a property of a particular <strong>mode</strong>, not of the scale.
+The keys are as wide as the steps above their tones, so evenly spaced fingers only land
+one-per-key in the rotation whose word is the Christoffel word. In any other mode two
+fingers share a key and another key is missed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">naive</span> <span class="o">=</span> <span class="n">d12</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>                    <span class="c1"># Lydian — the brightest mode</span>
+<span class="n">proper</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">christoffel_mode</span><span class="p">(</span><span class="n">d12</span><span class="p">)</span>       <span class="c1"># Locrian — the one Fig. 8 needs</span>
+
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;mode 0 &quot;</span> <span class="o">+</span> <span class="n">naive</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">naive</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;christoffel &quot;</span> <span class="o">+</span> <span class="n">proper</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">proper</span><span class="p">)]:</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">degree</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">to_events</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">mode</span><span class="p">)]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">24s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">word</span><span class="si">}</span><span class="s2">   degrees </span><span class="si">{</span><span class="n">degrees</span><span class="si">}</span><span class="s2">   distinct </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">degrees</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mode 0 Lydian            LLLsLLs   degrees [0, 0, 1, 2, 3, 4, 5]   distinct 6
+christoffel Locrian      sLLsLLL   degrees [0, 1, 2, 3, 4, 5, 6]   distinct 7
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">to_events</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">proper</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;degrees struck, in finger order:&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">degree</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">events</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;frequencies (Hz):&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">to_frequencies</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">fund</span><span class="o">=</span><span class="mi">250</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>degrees struck, in finger order: [0, 1, 2, 3, 4, 5, 6]
+frequencies (Hz): [250.0, 264.87, 297.3, 333.71, 353.55, 396.85, 445.45]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_play_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">proper</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/365601c911e9dd12e29dfd7bd677866ab00cff8d0f7d048e4522cfc578c2199b.png" src="../../_images/365601c911e9dd12e29dfd7bd677866ab00cff8d0f7d048e4522cfc578c2199b.png" />
+</div>
+</div>
+<p>Higher partials with an index coprime to <em>n</em> generate complete generic interval cycles —
+every tone still struck once, but in a different order.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">degree</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">to_events</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">proper</span><span class="p">)]</span>
+    <span class="n">coprime</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;partial </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">  coprime=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">coprime</span><span class="p">)</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2">  degrees </span><span class="si">{</span><span class="n">degrees</span><span class="si">}</span><span class="s2">  &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;distinct </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">degrees</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>partial 1  coprime=True   degrees [0, 1, 2, 3, 4, 5, 6]  distinct 7
+partial 2  coprime=True   degrees [0, 2, 4, 6, 1, 3, 5]  distinct 7
+partial 3  coprime=True   degrees [0, 3, 6, 2, 5, 1, 4]  distinct 7
+partial 4  coprime=True   degrees [0, 4, 1, 5, 2, 6, 3]  distinct 7
+partial 5  coprime=True   degrees [0, 5, 3, 1, 6, 4, 2]  distinct 7
+partial 6  coprime=True   degrees [0, 6, 5, 4, 3, 2, 1]  distinct 7
+partial 7  coprime=False  degrees [0, 0, 0, 0, 0, 0, 0]  distinct 1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># &quot;Scratching&quot;: move one Fourier coefficient and the whole play state responds.</span>
+<span class="n">scratched</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">scratch</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">magnitude</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">plot_play_state</span><span class="p">(</span><span class="n">scratched</span><span class="p">,</span> <span class="n">proper</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/43bde382b2266c3f9b0625833422dcf9765adf8b5edb94822ff94e3c2097074e.png" src="../../_images/43bde382b2266c3f9b0625833422dcf9765adf8b5edb94822ff94e3c2097074e.png" />
+</div>
+</div>
+</section>
+<section id="dynamic-tonality-matching-the-timbre-to-the-scale">
+<h2>13. Dynamic Tonality: matching the timbre to the scale<a class="headerlink" href="#dynamic-tonality-matching-the-timbre-to-the-scale" title="Link to this heading">#</a></h2>
+<p>Milne et al. §6. Intervals inside a dynamically tuned well-formed scale can be far from
+any low integer ratio, so a plain harmonic timbre sounds out of tune against them.
+Dynamic Tonality retunes the <em>timbre</em> instead: each partial’s pitch becomes a linear
+combination of the period and generator pitch heights, so partials of different tones
+coincide exactly as the scale’s own intervals do.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mt</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;harmonic&quot;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">harmonic</span><span class="p">,</span>
+        <span class="s2">&quot;α (periods)&quot;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="s2">&quot;β (generators)&quot;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+        <span class="s2">&quot;just&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">just_ratio</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="s2">&quot;retuned&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="s2">&quot;error ¢&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_cents</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">M</span><span class="o">.</span><span class="n">matched_partials</span><span class="p">(</span><span class="n">mt</span><span class="p">,</span> <span class="n">n_partials</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>harmonic</th>
+      <th>α (periods)</th>
+      <th>β (generators)</th>
+      <th>just</th>
+      <th>retuned</th>
+      <th>error ¢</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>1.00000</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2.0</td>
+      <td>2.00000</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3.0</td>
+      <td>2.99104</td>
+      <td>-5.18</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>2</td>
+      <td>0</td>
+      <td>4.0</td>
+      <td>4.00000</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>4</td>
+      <td>5.0</td>
+      <td>5.00226</td>
+      <td>0.78</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>2</td>
+      <td>1</td>
+      <td>6.0</td>
+      <td>5.98207</td>
+      <td>-5.18</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>-3</td>
+      <td>10</td>
+      <td>7.0</td>
+      <td>6.99562</td>
+      <td>-1.08</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8</td>
+      <td>3</td>
+      <td>0</td>
+      <td>8.0</td>
+      <td>8.00000</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>9</td>
+      <td>2</td>
+      <td>2</td>
+      <td>9.0</td>
+      <td>8.94629</td>
+      <td>-10.36</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10</td>
+      <td>1</td>
+      <td>4</td>
+      <td>10.0</td>
+      <td>10.00452</td>
+      <td>0.78</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Harmonic 3 maps to one period plus one generator, and harmonic 5 to four generators —
+which is what “meantone” means: four fifths, octave-reduced, stand in for a just major
+third.</p>
+<p>The payoff is measurable. For a scale tuned well away from 12-EDO, matched partials give
+lower total sensory dissonance than harmonic ones:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">scale</span> <span class="ow">in</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;5L2s @ 714 ¢&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="mf">0.5952</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;5L2s @ 31-EDO&quot;</span><span class="p">,</span> <span class="n">mt</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;4L3s&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;central&quot;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;7L4s&quot;</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">MOSScale</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">tuning</span><span class="o">=</span><span class="s2">&quot;central&quot;</span><span class="p">)),</span>
+<span class="p">]:</span>
+    <span class="n">adv</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">dissonance_advantage</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">n_partials</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+        <span class="s2">&quot;harmonic partials&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">adv</span><span class="p">[</span><span class="s2">&quot;harmonic&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;matched partials&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">adv</span><span class="p">[</span><span class="s2">&quot;matched&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;reduction&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">adv</span><span class="p">[</span><span class="s2">&quot;reduction&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;reduction %&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">adv</span><span class="p">[</span><span class="s2">&quot;reduction_pct&quot;</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">})</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>scale</th>
+      <th>harmonic partials</th>
+      <th>matched partials</th>
+      <th>reduction</th>
+      <th>reduction %</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5L2s @ 714 ¢</td>
+      <td>21.332</td>
+      <td>19.924</td>
+      <td>1.408</td>
+      <td>6.6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5L2s @ 31-EDO</td>
+      <td>22.451</td>
+      <td>21.704</td>
+      <td>0.747</td>
+      <td>3.3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4L3s</td>
+      <td>24.831</td>
+      <td>24.851</td>
+      <td>-0.020</td>
+      <td>-0.1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7L4s</td>
+      <td>70.877</td>
+      <td>70.900</td>
+      <td>-0.023</td>
+      <td>-0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="interactive-exploration">
+<h2>14. Interactive exploration<a class="headerlink" href="#interactive-exploration" title="Link to this heading">#</a></h2>
+<p>Two interactive surfaces, both needing <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">biotuner[interactive]</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">labyrinth_plotly</span></code> gives every arc its own hover card — signature, valid range, landmark
+EDOs, coherence, embedding — and exports to a standalone HTML file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">labyrinth_plotly</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="n">fit</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">temperaments</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="s2">&quot;labyrinth.html&quot;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mos_explorer</span></code> is the instrument Milne et al. designed the labyrinth to be. Drag the
+generator and the family recomputes, the wheel redraws, the summary updates and the fit
+against your signal is re-scored live:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="o">.</span><span class="n">mos_explorer</span><span class="p">(</span><span class="n">bt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">fit_explorer</span></code> steps through the ranked fits so a close second can be inspected rather
+than taken on trust, and <code class="docutils literal notranslate"><span class="pre">scratch_explorer</span></code> puts a slider on every Fourier coefficient:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="o">.</span><span class="n">fit_explorer</span><span class="p">(</span><span class="n">bt</span><span class="o">.</span><span class="n">peaks_ratios</span><span class="p">)</span>
+<span class="n">M</span><span class="o">.</span><span class="n">scratch_explorer</span><span class="p">(</span><span class="n">proper</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="where-to-look-next">
+<h2>Where to look next<a class="headerlink" href="#where-to-look-next" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>module</p></th>
+<th class="head"><p>contents</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mos.theory</span></code></p></td>
+<td><p>Stern–Brocot, landmarks, Christoffel words — standard library only</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mos.scale</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MOSScale</span></code>, the central object</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mos.modes</span></code></p></td>
+<td><p>modes, brightness, the ℤ² height–width lattice</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mos.metrics</span></code></p></td>
+<td><p>Myhill’s property, propriety, evenness, JI error</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mos.temperaments</span></code></p></td>
+<td><p>commas → rank-2 mappings → optimal generators</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mos.derive</span></code></p></td>
+<td><p>biosignal → MOS: fitting and trajectories</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mos.fourier</span></code></p></td>
+<td><p>Fourier Scratching play states</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mos.timbre</span></code></p></td>
+<td><p>Dynamic Tonality partial matching</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mos.plotting</span></code></p></td>
+<td><p>the labyrinth and friends</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mos.interactive</span></code></p></td>
+<td><p>Plotly and ipywidgets explorers</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="showcase.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Moment-of-symmetry scales — the short tour</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="explorers.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The MOS explorers, old and new</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-labyrinth">1. The labyrinth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zooming-in-on-the-diatonic">Zooming in on the diatonic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tree-underneath">2. The tree underneath</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-generator-s-family">3. A generator’s family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-scale-up-close">4. One scale, up close</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#landmarks-how-the-two-steps-trade-off">5. Landmarks: how the two steps trade off</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes-and-why-exactly-one-note-moves">6. Modes, and why exactly one note moves</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#named-temperaments">7. Named temperaments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-labyrinth-approximates-just-intonation">8. Where the labyrinth approximates just intonation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-biosignal-to-a-scale">9. From a biosignal to a scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-path-through-the-labyrinth">10. A path through the labyrinth</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-derivation-ask-all-of-them">11. Which derivation? Ask all of them</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fourier-scratching">12. Fourier Scratching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-tonality-matching-the-timbre-to-the-scale">13. Dynamic Tonality: matching the timbre to the scale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-exploration">14. Interactive exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-look-next">Where to look next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Antoine Bellemare & François Lespinasse. This documentation and code are licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023–2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
