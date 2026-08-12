@@ -445,9 +445,20 @@ def test_an_octave_pair_outvotes_a_single_peak():
     # of the same one: it buys a lower weighted error than one vote per class.
     assert twice.error_cents < once.error_cents
     # Exactly as if its weight had been handed in already summed.
+    #
+    # A nanocent, not a picocent, and the difference is not fussiness. The two
+    # paths do not receive bit-identical input: folding 2.84 into its pitch
+    # class gives 0.50589092972995741704 where 1.42 gives
+    # 0.50589092972995730602, one ulp apart, because log(2.84) and log(1.42)
+    # are separately rounded. That is 1.3e-13 cents of disagreement before the
+    # search starts, and the minimiser is free to amplify it. On one platform
+    # the two came out bit-identical and on CI they differed by 1.8e-12, so an
+    # abs=1e-12 assertion was testing the host's libm rather than the library.
+    # The equivalent assertion in
+    # test_folding_pays_the_parsimony_penalty_it_owes already uses 1e-9.
     by_hand = fit_mos(ratios, weights=[1.0, 1.0, 2.0, 1.0],
                       max_cardinality=9, top_n=1)[0]
-    assert twice.error_cents == pytest.approx(by_hand.error_cents, abs=1e-12)
+    assert twice.error_cents == pytest.approx(by_hand.error_cents, abs=1e-9)
     assert twice.residuals == pytest.approx(by_hand.residuals, abs=1e-9)
 
 
