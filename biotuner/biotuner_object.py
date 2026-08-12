@@ -1274,11 +1274,19 @@ class compute_biotuner(object):
             else:
                 print("-> Computing euler_fokker_scale() automatically...")
                 return self.euler_fokker_scale()
-        
+
+        elif tuning == 'mos':
+            if hasattr(self, 'mos_fit'):
+                return list(self.mos_fit.aligned_ratios)
+            else:
+                print("-> Computing fit_mos() automatically...")
+                return list(self.fit_mos().aligned_ratios)
+
         else:
             raise ValueError(
                 f"Unknown tuning type: {tuning}. Must be one of: "
-                "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', 'euler_fokker'"
+                "'diss_curve', 'HE', 'harm_tuning', 'harm_fit_tuning', 'peaks_ratios', "
+                "'euler_fokker', 'mos'"
             )
 
     def get_tuning(self, source="peaks_ratios", *, clean=True, **params):
@@ -1303,8 +1311,18 @@ class compute_biotuner(object):
             - ``'diss_curve'``       the scale at the Sethares dissonance-curve minima.
             - ``'HE'`` (``'harmonic_entropy'``)  the harmonic-entropy minima.
             - ``'euler_fokker'``     an Euler-Fokker genus from the peaks.
-            - ``'harm_tuning'`` (``'harmonic_tuning'``)  a tuning from harmonic positions.
+            - ``'harm_tuning'`` (``'harmonic_tuning'``)  a tuning from the
+              harmonic positions the peaks recur at; needs extraction with
+              ``peaks_function='harmonic_recurrence'``, or an explicit
+              ``list_harmonics=`` (:meth:`harmonic_tuning` raises a
+              ``ValueError`` saying so otherwise, and this method lets that
+              message through).
             - ``'harm_fit_tuning'`` (``'harmonic_fit'``)  the peaks' common-harmonic tuning.
+            - ``'mos'``              the best-fitting moment-of-symmetry scale,
+              transposed onto the signal (fitted on demand via :meth:`fit_mos`).
+              Readable like any other source, but not *fittable*: it is the
+              output of a fit, so :meth:`fit_mos` and :meth:`mos_trajectory`
+              refuse it as their own ``source``.
         clean : bool
             If True (default), return a numpy array with only finite, positive
             ratios, and raise ``ValueError`` if the derivation is empty (harmonic
@@ -1352,6 +1370,11 @@ class compute_biotuner(object):
             v = getattr(self, "euler_fokker", None)
             if v is None or params:
                 v = self.euler_fokker_scale(**params)
+        elif s == "mos":
+            fit = getattr(self, "mos_fit", None)
+            if fit is None or params:
+                fit = self.fit_mos(**params)
+            v = list(fit.aligned_ratios)
         else:
             raise ValueError(f"source must be one of {TUNING_SOURCES}, got {source!r}")
         if not clean:
@@ -2262,10 +2285,28 @@ class compute_biotuner(object):
         """
         Generates a tuning based on a list of harmonic positions.
 
+        Each harmonic position ``i`` is folded back into a single period, so
+        harmonic 3 becomes 3/2, harmonic 5 becomes 5/4, and so on; duplicates
+        collapse and the result is sorted.
+
         Parameters
         ----------
-        list_harmonics: List of int
-            harmonic positions to use in the scale construction
+        list_harmonics: list of int, optional
+            Harmonic positions to use in the scale construction. Defaults to
+            ``self.all_harmonics`` -- the harmonic positions at which the
+            spectral peaks were actually found to recur, which only
+            :meth:`peaks_extraction` with
+            ``peaks_function='harmonic_recurrence'`` measures. With any other
+            peak function the object holds no measured harmonic positions,
+            and this method raises :class:`ValueError` naming what to pass
+            instead of substituting something.
+
+            Substituting is the tempting option and it is the wrong one. A
+            default ladder (``range(1, n_harm)``) would return the same scale
+            for every signal, i.e. a constant dressed up as a measurement;
+            and deriving positions from the peaks by harmonic fitting is a
+            different, already-implemented method --
+            :meth:`harmonic_fit_tuning`. Neither is this method's answer.
         octave: int, default=2
             value of the period reference
         min_ratio: float, default=1
@@ -2278,19 +2319,57 @@ class compute_biotuner(object):
         ratios : List (float)
             Generated tuning.
 
+        Raises
+        ------
+        ValueError
+            If no harmonic positions are available: either ``list_harmonics``
+            was omitted and the object never measured any, or the list given
+            (or measured) is empty. The message names the three ways out --
+            pass ``list_harmonics=``, re-extract with
+            ``peaks_function='harmonic_recurrence'``, or call
+            :meth:`harmonic_fit_tuning`. ``get_tuning('harm_tuning')`` lets it
+            through unchanged, so the same message reaches every caller,
+            including the ``reason`` column of
+            :meth:`compare_mos_sources`.
+
         Attributes
         ----------
-        self.harmonic_tuning : List (float)
+        self.harm_tuning_scale : List (float)
             Generated tuning.
 
         """
-        if list_harmonics is None:
-            if self.peaks_function == "harmonic_recurrence":
-                list_harmonics = self.all_harmonics
-            else:
-                print("No list of harmonics provided")
+        defaulted = list_harmonics is None
+        if defaulted:
+            list_harmonics = getattr(self, "all_harmonics", None)
+            if list_harmonics is None:
+                raise ValueError(
+                    "harmonic_tuning() needs harmonic positions and this object "
+                    "has none: self.all_harmonics is only measured by "
+                    "peaks_extraction(peaks_function='harmonic_recurrence'), and "
+                    "peaks_function is {!r}. Either pass them explicitly "
+                    "(list_harmonics=[1, 2, 3, ...]), re-extract with "
+                    "peaks_function='harmonic_recurrence', or use "
+                    "harmonic_fit_tuning() / get_tuning('harm_fit_tuning'), which "
+                    "derives harmonic positions from the peaks themselves.".format(
+                        self.peaks_function
+                    )
+                )
+        harmonics = np.atleast_1d(np.asarray(list_harmonics)).ravel()
+        if harmonics.size == 0:
+            if defaulted:
+                raise ValueError(
+                    "harmonic_tuning() found self.all_harmonics empty: "
+                    "peaks_extraction(peaks_function='harmonic_recurrence') "
+                    "detected no recurring harmonic in this signal (try a finer "
+                    "precision, a lower min_harms, or a higher harm_limit). Pass "
+                    "list_harmonics=[...] to build a tuning regardless."
+                )
+            raise ValueError(
+                "harmonic_tuning() was given an empty list_harmonics; pass at "
+                "least one harmonic position, e.g. list_harmonics=[1, 2, 3, 5]."
+            )
         ratios = []
-        for i in list_harmonics:
+        for i in harmonics:
             ratios.append(rebound(1 * i, min_ratio, max_ratio, octave))
         ratios = list(set(ratios))
         ratios = list(np.sort(np.array(ratios)))
@@ -2328,6 +2407,226 @@ class compute_biotuner(object):
         _, harmonics, common_h, _ = harmonic_fit(self.peaks, n_harm=n_harm, bounds=bounds, n_common_harms=n_common_harms)
         self.harm_fit_tuning_scale = harmonic_tuning(common_h)  # Store to non-conflicting name
         return self.harm_fit_tuning_scale
+
+    # ------------------------------------------------------------------ #
+    # Moment-of-symmetry scales
+    # ------------------------------------------------------------------ #
+    def fit_mos(
+        self,
+        source="peaks_ratios",
+        use_amplitudes=True,
+        top_n=5,
+        **kwargs,
+    ):
+        """Find the well-formed (MOS) scale that best explains this signal.
+
+        Searches the scale labyrinth of Milne et al. (2011) for the generator,
+        cardinality and -- optionally -- period whose moment-of-symmetry scale
+        sits closest to the signal's own ratios. Unlike the other scale
+        constructions here, which build a tuning *out of* the peaks, this one
+        asks which member of a structured family the peaks already belong to.
+
+        Parameters
+        ----------
+        source : str, default 'peaks_ratios'
+            Any name :meth:`get_tuning` accepts except ``'mos'``, which is
+            refused: it would fit a moment-of-symmetry scale to a
+            moment-of-symmetry scale. Use :meth:`compare_mos_sources` to fit
+            every derivation at once and see which one yields the most
+            convincing scale.
+        use_amplitudes : bool, default True
+            Weight each ratio by its peak amplitude, so a strong peak pulls the
+            fit harder than a weak one -- where an amplitude vector genuinely
+            lines up with the source; see
+            :func:`biotuner.mos.derive.mos_from_biotuner`.
+        top_n : int, default 5
+            How many ranked alternatives to keep in ``self.mos_fits``.
+        **kwargs
+            Passed to :func:`biotuner.mos.derive.fit_mos` -- notably
+            ``max_cardinality``, ``complexity_penalty`` and ``optimize_period``.
+
+        Returns
+        -------
+        MOSFit
+            The best fit. ``.scale`` is the
+            :class:`~biotuner.mos.scale.MOSScale`; ``.error_cents`` and
+            ``.improvement`` say how much to trust it.
+
+        Attributes
+        ----------
+        self.mos_fit : MOSFit
+            The best fit.
+        self.mos_fits : list of MOSFit
+            The ranked alternatives -- worth reading, since a close second is
+            common and the ranking is only as good as its parsimony penalty.
+        self.mos_scale : MOSScale
+            Shorthand for ``self.mos_fit.scale``.
+
+        Examples
+        --------
+        >>> bt = compute_biotuner(1000, peaks_function='fixed')   # doctest: +SKIP
+        >>> bt.peaks_extraction(data)                             # doctest: +SKIP
+        >>> fit = bt.fit_mos()                                    # doctest: +SKIP
+        >>> print(fit.scale.summary())                            # doctest: +SKIP
+        """
+        from biotuner.mos.derive import mos_from_biotuner
+
+        fits = mos_from_biotuner(
+            self, source=source, use_amplitudes=use_amplitudes,
+            top_n=top_n, **kwargs
+        )
+        if not fits:
+            raise ValueError(
+                "no MOS scale could be fitted to this signal; try widening "
+                "max_cardinality or using a different tuning source"
+            )
+        self.mos_fits = fits
+        self.mos_fit = fits[0]
+        self.mos_scale = fits[0].scale
+        return self.mos_fit
+
+    def mos_trajectory(self, data=None, sf=None, window_sec=4.0, step_sec=None,
+                       source="peaks_ratios", **kwargs):
+        """Track which well-formed scale the signal occupies, window by window.
+
+        A path through the labyrinth. Each window's peaks are extracted and
+        fitted independently, so the result shows scale structure drifting or
+        holding as the signal evolves. Plot it with
+        :func:`biotuner.mos.plotting.plot_mos_trajectory`.
+
+        Parameters
+        ----------
+        data : array-like, optional
+            Defaults to ``self.data``.
+        sf : float, optional
+            Defaults to ``self.sf``.
+        window_sec : float, default 4.0
+        step_sec : float, optional
+            Defaults to half the window.
+        source : str, default 'peaks_ratios'
+            Which derivation to fit in each window -- any name
+            :meth:`get_tuning` accepts except ``'mos'``, which is refused as
+            circular. A trajectory over ``'diss_curve'`` and one over
+            ``'peaks_ratios'`` are different measurements of the same
+            recording. Windows where the source cannot be derived come back as
+            ``None`` rather than raising, so ``'extended_ratios'`` -- whose
+            precursor the per-window objects never run -- yields an all-``None``
+            path.
+        **kwargs
+            Passed to :func:`biotuner.mos.derive.mos_trajectory`, and on to
+            :func:`biotuner.mos.derive.fit_mos` -- notably ``max_cardinality``
+            and ``use_amplitudes``.
+
+        Attributes
+        ----------
+        self.mos_traj : list of MOSFit or None
+            One entry per window; ``None`` where no peaks were extractable.
+        """
+        from biotuner.mos.derive import mos_trajectory as _traj
+
+        data = self.data if data is None else data
+        sf = self.sf if sf is None else sf
+        kwargs.setdefault("peaks_function", self.peaks_function)
+        kwargs.setdefault("precision", self.precision)
+        self.mos_traj = _traj(
+            data, sf, window_sec=window_sec, step_sec=step_sec, source=source,
+            **kwargs
+        )
+        return self.mos_traj
+
+    def compare_mos_sources(self, sources=None, use_amplitudes=True, **kwargs):
+        """Fit an MOS from every tuning derivation, and rank them side by side.
+
+        :meth:`fit_mos` answers "which well-formed scale is this signal in?"
+        for one derivation. This asks the prior question -- *which way of
+        deriving a scale from this signal produces a well-formed answer at
+        all?* -- by running the same fit through every name in
+        :data:`TUNING_SOURCES` (except ``'mos'``, which would be circular) and
+        tabulating the results.
+
+        Parameters
+        ----------
+        sources : sequence of str, optional
+            Which derivations to try. Defaults to all of them but ``'mos'``.
+        use_amplitudes : bool, default True
+            Weight ratios by peak amplitude where the source has a genuinely
+            aligned amplitude vector; see :meth:`fit_mos`.
+        **kwargs
+            Passed to :func:`biotuner.mos.derive.fit_mos` -- notably
+            ``max_cardinality`` and ``complexity_penalty``.
+
+        Returns
+        -------
+        pandas.DataFrame
+            One row per source, best first. Ranked by ``evidence`` (how many
+            standard errors below chance the fit sits), not by ``error_cents``:
+            a derivation that yields two ratios reports 0.00 cents against a
+            four-note scale, so ranking by error rewards the source that
+            produced the least data. Sources that raise still get a row, with
+            the exception in ``reason`` -- a shorter table would hide a real
+            breakage.
+
+        Attributes
+        ----------
+        self.mos_sources : pandas.DataFrame
+            The table, as returned.
+
+        Examples
+        --------
+        >>> bt.compare_mos_sources(max_cardinality=14)      # doctest: +SKIP
+        """
+        from biotuner.mos.derive import compare_sources as _compare
+
+        self.mos_sources = _compare(
+            self, sources=sources, use_amplitudes=use_amplitudes, **kwargs
+        )
+        return self.mos_sources
+
+    def plot_labyrinth(self, max_cardinality=18, source="peaks_ratios",
+                       highlight_fit=True, **kwargs):
+        """Draw this signal's peaks on the scale labyrinth.
+
+        The ratios appear on the rim at the angle each occupies in the scale
+        universe; with ``highlight_fit`` the best-fitting MOS is traced through
+        the rings as well.
+
+        Parameters
+        ----------
+        max_cardinality : int, default 18
+        source : str, default 'peaks_ratios'
+        highlight_fit : bool, default True
+            Fit an MOS first (via :meth:`fit_mos`, reusing a previous fit if one
+            exists) and highlight it.
+        **kwargs
+            Passed to :func:`biotuner.mos.plotting.plot_labyrinth`.
+
+        Returns
+        -------
+        (fig, ax)
+        """
+        from biotuner.mos.plotting import plot_labyrinth as _plot
+        # Same rule the fit uses for deciding whether an amplitude vector
+        # genuinely belongs to a tuning source: right source, right length,
+        # and positive. Reading self.amps directly got all three wrong -- it
+        # attached the *peak* amplitudes to whatever source was asked for, and
+        # peak amplitudes are stored in decibels for several peaks_functions,
+        # so a negative level became a negative marker area (measured with
+        # peaks_function='EMD': sizes [-132.5, 135.0, -851.7], which matplotlib
+        # drops with 'invalid value encountered in sqrt' -- two of the three
+        # peaks silently vanish from the plot).
+        from biotuner.mos.derive import _source_weights
+
+        ratios = self.get_tuning(source)
+        amps = _source_weights(self, source, ratios)
+        weights = None if amps is None else list(amps)
+        highlight = None
+        if highlight_fit:
+            fit = getattr(self, "mos_fit", None)
+            if fit is None:
+                fit = self.fit_mos(source=source, max_cardinality=max_cardinality)
+            highlight = fit.scale
+        return _plot(max_cardinality, peaks=list(ratios), peak_weights=weights,
+                     highlight=highlight, **kwargs)
 
     def pac(
         self,
@@ -3388,7 +3687,8 @@ class compute_biotuner(object):
 
     """Generic method to fit all Biotuner methods"""
 
-    def fit_all(self, data, compute_diss=True, compute_HE=True, compute_peaks_extension=True):
+    def fit_all(self, data, compute_diss=True, compute_HE=True, compute_peaks_extension=True,
+                compute_mos=False):
         """
         Fit biotuning metrics to input data using various optional computations.
 
@@ -3402,6 +3702,27 @@ class compute_biotuner(object):
             If True, compute the harmonic entropy.
         compute_peaks_extension : bool, optional, default=True
             If True, compute the peaks extension using the multi-consonant harmonic fit method.
+        compute_mos : bool, optional, default=False
+            If True, also fit a moment-of-symmetry scale to the peak ratios
+            (:meth:`fit_mos`), leaving ``mos_fit`` / ``mos_fits`` /
+            ``mos_scale`` on the returned object.
+
+            Off by default, unlike its neighbours, and deliberately so. Its
+            answer depends on choices ``fit_all`` has no way to make --
+            ``source``, ``max_cardinality``, ``complexity_penalty`` -- and at
+            the defaults a handful of peaks usually lands on an
+            *underdetermined* fit: a five-peak signal gives ten ratios, and
+            the winning scale here had twelve degrees, more notes than the
+            data has points to pin them with (see
+            ``MOSFit.is_underdetermined``). Such a fit may still be the right
+            structure, but its error is not evidence of one, and putting that
+            number on every object produced by the batch path (see
+            :func:`fit_biotuner`) would manufacture a finding nobody chose the
+            meaning of. It is also the only entry here that *searches* rather
+            than computes -- a scan of the scale labyrinth across the whole
+            cardinality range, whose cost grows with ``max_cardinality`` and
+            is paid per signal. Ask for it here, or call :meth:`fit_mos` /
+            :meth:`compare_mos_sources` with parameters you picked.
 
         Returns
         -------
@@ -3427,6 +3748,8 @@ class compute_biotuner(object):
             )
         if compute_HE is True:
             biotuning.compute_harmonic_entropy(input_type="extended_peaks", plot_entropy=False)
+        if compute_mos is True:
+            biotuning.fit_mos()
         return biotuning
 
     def info(self, metrics=False, scales=False, whatever=False):
@@ -3436,6 +3759,25 @@ class compute_biotuner(object):
 
         else:
             print(vars(self))
+        print("MOS")
+        fit = getattr(self, "mos_fit", None)
+        if fit is None:
+            print("no fit yet; call fit_mos() or compare_mos_sources()")
+        else:
+            print(
+                "{} @ {:.1f}c  err {:.2f}c  chance {:.2f}c  coverage {:.2f}  "
+                "evidence {:.2f}  ({} targets, {} merged){}".format(
+                    fit.signature,
+                    fit.scale.generator_cents,
+                    fit.error_cents,
+                    fit.chance_error_cents,
+                    fit.coverage,
+                    fit.evidence,
+                    fit.n_targets,
+                    fit.n_merged,
+                    "  UNDERDETERMINED" if fit.is_underdetermined else "",
+                )
+            )
         return
 
     # ------------------------------------------------------------------
@@ -3543,6 +3885,7 @@ def fit_biotuner(ts, bt_dict):
 TUNING_SOURCES = (
     "peaks_ratios", "cons_ratios", "extended_ratios",
     "diss_curve", "HE", "euler_fokker", "harm_tuning", "harm_fit_tuning",
+    "mos",
 )
 
 

@@ -689,82 +689,49 @@ def viz_euler(chord: list, savefig=False) -> None:
 from biotuner.scale_construction import find_MOS, tuning_to_radians
 
 
-def plot_labyrinth(generator_intervals, max_steps=53, octave=2):
-    """
-    Plot a labyrinth of Moment of Symmetry (MOS) scales given a list of generator intervals.
+def plot_labyrinth(generator_intervals, max_steps=53, octave=2, **kwargs):
+    """Plot the scale labyrinth, with each generator interval traced through it.
 
-    This function calculates MOS scales for each generator interval and plots them on a polar
-    coordinate system. Each generator interval is represented by a different color.
+    .. deprecated::
+        This is kept for backwards compatibility and now delegates to
+        :func:`biotuner.mos.plotting.plot_labyrinth`, which draws the labyrinth
+        of Milne et al. (2011) properly -- rings for cardinality, spokes for
+        equal temperaments, arcs for valid tuning ranges, and darker banding
+        where a scale is coherent. The original implementation here plotted
+        each scale at a radius of ``sig.index(max(sig)) + 1``, which is always
+        1 or 2, so no ring structure was ever drawn.
+
+        New code should call :func:`biotuner.mos.plotting.plot_labyrinth`
+        directly; it takes a ring count rather than a list of generators, and
+        accepts ``highlight=`` for the generators to trace.  The original
+        implementation is preserved verbatim as
+        :func:`biotuner.mos.legacy.plot_labyrinth` if you want to compare.
 
     Parameters
     ----------
-    generator_intervals : list of int or float
-        A list of generator intervals for which MOS scales will be calculated.
-    max_steps : int, optional, default: 53
-        The maximum number of steps to consider for each MOS scale calculation.
-    octave : int, optional, default: 2
-        The octave size for which the MOS scales will be calculated.
+    generator_intervals : list of float
+        Generator intervals as frequency ratios, e.g. ``[4/3, 3/2, 9/5]``.
+        Each is traced with a radial line and its MOS family marked.
+    max_steps : int, default 53
+        Largest cardinality to draw, i.e. the number of rings.
+    octave : float, default 2
+        Period as a frequency ratio.
+    **kwargs
+        Forwarded to :func:`biotuner.mos.plotting.plot_labyrinth`.
 
     Returns
     -------
-    None
+    (fig, ax)
 
     Examples
     --------
-    >>> generator_intervals = [4/3, 3/2, 9/5]
-    >>> plot_labyrinth(generator_intervals)
+    >>> plot_labyrinth([4 / 3, 3 / 2, 9 / 5])   # doctest: +SKIP
     """
-    # Calculate MOS scales for each generator interval
-    MOS_by_generator = {}
-    for interval in generator_intervals:
-        MOS_by_generator[interval] = find_MOS(interval, max_steps=max_steps, octave=octave)
+    from biotuner.mos.plotting import plot_labyrinth as _plot
+    from biotuner.mos.theory import generator_fraction
 
-    # Set up plot
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={"projection": "polar"})
-    ax.set_theta_zero_location("N")
-    ax.set_theta_direction(-1)
-
-    # Define color cycle
-    color_cycle = plt.cm.Set1(np.linspace(0, 1, 10))
-
-    # Plot MOS scales for each generator interval
-    col = 0
-    scale_steps = []
-    for i, interval in enumerate(generator_intervals):
-        print(i)
-        MOS = MOS_by_generator[interval]
-        for j in range(len(MOS["tuning"])):
-            radii, angles = tuning_to_radians(interval, MOS["steps"][j])
-            signature = tuple(MOS["sig"][j])
-            radius = MOS["sig"][j].index(max(signature)) + 1
-            color = color_cycle[i]
-            ax.plot(angles, np.repeat(radius, len(angles)), color=color, alpha=0.5)
-            scale_steps.append(MOS["steps"][j])
-            col += 1
-
-    # Set title and axis labels
-    ax.set_title("Labyrinth of Moment of Symmetry Scales", fontsize=16)
-    ax.set_rlabel_position(22.5)
-    ax.set_rticks(range(1, max([MOS_by_generator[interval]["sig"][-1][0] for interval in generator_intervals]) + 1))
-    ax.set_rlim(0, max([MOS_by_generator[interval]["sig"][-1][0] for interval in generator_intervals]) + 1)
-    ax.set_xlabel("Generator Interval", labelpad=15, fontsize=12)
-
-    # Add legends
-    legend_handles_generator = []
-    legend_handles_steps = []
-    for i, interval in enumerate(generator_intervals):
-        legend_handles_generator.append(plt.Line2D([], [], color=color_cycle[i], label=str(interval)))
-    # for i in range(len(scale_steps)):
-    #    legend_handles_steps.append(plt.Line2D([], [], color=color_cycle[i], label=str(scale_steps[i])))
-
-    legend1 = ax.legend(handles=legend_handles_generator, title="Generator Interval", loc=(1.1, 0.1), fontsize=12)
-    ax.add_artist(legend1)
-    # ax.legend(handles=legend_handles_steps, title='MOS Scale Steps', loc=(1.1, 0.4), fontsize=12)
-
-    plt.xlim(-3.14, 3.14)
-    plt.ylim(-3.14, 3.14)
-
-    plt.show()
+    highlight = [generator_fraction(g, octave) for g in generator_intervals]
+    return _plot(max_steps, period=octave, highlight=highlight, **kwargs)
 
 
 def interactive_signal_with_sidebands(sample_rate=44100):
@@ -895,143 +862,39 @@ def interactive_signal_with_sidebands(sample_rate=44100):
     return display_box
 
 
-def MOS_interactive():
-    try:
-        import ipywidgets as widgets
-    except ImportError:
-        raise ImportError(
-            "The 'ipywidgets' package is required for this functionality. Install it with:\n\n"
-            "    pip install ipywidgets==8.0.4\n"
-        )
-    try:
-        from IPython.display import display, clear_output
-    except ImportError:
-        raise ImportError(
-            "The 'IPython' package is required for this functionality. Install it with:\n\n" "    pip install IPython\n"
-        )
+def MOS_interactive(bt=None, ratios=None, max_cardinality=18, **kwargs):
+    """Interactive moment-of-symmetry explorer.
 
-    def plot_MOS_labyrinth(generator_intervals, max_steps=20):
-        MOS_by_generator = {}
-        for interval in generator_intervals:
-            MOS_by_generator[interval] = find_MOS(interval, max_steps=max_steps)
+    .. deprecated::
+        Delegates to :func:`biotuner.mos.interactive.mos_explorer`, which
+        replaces the original widget. That one plotted stacked generators on a
+        polar axis; this one is the labyrinth itself -- drag the generator and
+        the scale family, wheel, summary and signal fit all follow, which is the
+        interaction Milne et al. (2011) designed the labyrinth for.
 
-        fig, ax = plt.subplots(figsize=(9, 9), subplot_kw={"projection": "polar"})
-        ax.set_theta_zero_location("N")
-        ax.set_theta_direction(-1)
+        Calling this no longer runs the original.  It is preserved verbatim as
+        :func:`biotuner.mos.legacy.MOS_interactive`, and the figure it drew as
+        :func:`biotuner.mos.legacy.plot_MOS_spiral`, so the two can be run side
+        by side.
 
-        color_cycle = plt.cm.Set2(np.linspace(0, 1, len(generator_intervals)))
+    Parameters
+    ----------
+    bt : compute_biotuner, optional
+        Overlay this object's peak ratios and seed the generator at its best fit.
+    ratios : sequence of float, optional
+        Ratios to overlay, when you do not have a biotuner object.
+    max_cardinality : int, default 18
+    **kwargs
+        Forwarded to :func:`biotuner.mos.interactive.mos_explorer`.
 
-        angle_dict = defaultdict(set)
-        shared_angles = set()
+    Returns
+    -------
+    ipywidgets.Widget
+    """
+    from biotuner.mos.interactive import mos_explorer
 
-        for i, interval in enumerate(generator_intervals):
-            MOS = MOS_by_generator[interval]
-            max_scale_steps = max(MOS["steps"])
-
-            for j in range(len(MOS["tuning"])):
-                tuning = MOS["tuning"][j]
-                steps = MOS["steps"][j]
-
-                radians, _ = tuning_to_radians(interval, steps)
-
-                for angle in radians:
-                    scale_info = (interval, steps)
-                    if angle not in angle_dict:
-                        angle_dict[angle] = set()
-                    angle_dict[angle].add(scale_info)
-
-                ax.plot(
-                    radians,
-                    np.arange(1, steps + 1),
-                    "o-",
-                    markersize=5,
-                    linewidth=1.5,
-                    color=color_cycle[i],
-                    label=f"{interval:.2f} ({steps} steps)" if steps == max_scale_steps else None,
-                )
-
-        for angle, scale_info_set in angle_dict.items():
-            intervals = set([scale_info[0] for scale_info in scale_info_set])
-            if len(intervals) > 1:
-                shared_angles.add(angle)
-
-        for angle in shared_angles:
-            ax.plot([angle, angle], [0, max_steps + 1], "black", linewidth=1, linestyle="--")
-
-        ax.set_title("Moment of Symmetry scales for different generator intervals", fontsize=16)
-        ax.set_rlabel_position(22.5)
-        ax.set_rticks(np.arange(1, max_steps + 1, 1))
-        ax.set_rlim(0, max_steps + 1)
-        ax.set_ylim(0, max_steps + 1)  # Center the labyrinth
-
-        handles, labels = ax.get_legend_handles_labels()
-        new_labels = []
-        for label in labels:
-            interval, steps = label.split("(")
-            interval = float(interval)
-            new_label = f'{interval:.2f} ({steps.rstrip(")")})'
-            if interval in generator_intervals:
-                new_labels.append(new_label)
-
-        ax.legend(handles, new_labels, title="Generator Interval (steps)", fontsize=10, loc="best")
-        plt.show()
-
-    def play_tuning(button):
-        fund = 100  # Set the fundamental frequency (e.g., A4 = 440Hz)
-        length = 500  # Set the duration for each note in milliseconds
-        active_intervals = [interval.value for interval in interval_widgets]
-        active_intervals[0]
-        print(active_intervals[0])
-        MOS = find_MOS(active_intervals[0], max_steps=max_steps_slider.value)
-
-        highest_steps_scale = MOS["tuning"][-1]
-
-        if highest_steps_scale is not None:
-            listen_scale(highest_steps_scale, fund, length)
-        else:
-            print("No MOS found for the given generator intervals.")
-
-    play_button = widgets.Button(description="Play Tuning", button_style="success", layout=widgets.Layout(width="50%"))
-    play_button.on_click(play_tuning)
-
-    warnings.filterwarnings("ignore")  # Suppress warnings
-
-    def interactive_plot(interval_1, interval_2, interval_3, interval_4, interval_5, max_steps):
-        generator_intervals = [interval_1, interval_2, interval_3, interval_4, interval_5]
-        active_intervals = [toggle.value for toggle in toggle_widgets]
-        active_generator_intervals = [interval for i, interval in enumerate(generator_intervals) if active_intervals[i]]
-        plot_MOS_labyrinth(active_generator_intervals, max_steps)
-
-    def create_interval_widget(value):
-        return widgets.FloatSlider(min=1, max=2, step=0.01, value=value, description="", layout=widgets.Layout(width="50%"))
-
-    def create_toggle_widget(description):
-        return widgets.ToggleButton(
-            value=True, description=description, button_style="info", layout=widgets.Layout(width="50%")
-        )
-
-    def update_plot(change):
-        active_intervals = [toggle.value for toggle in toggle_widgets]
-        active_generator_intervals = [interval for i, interval in enumerate(intervals) if active_intervals[i]]
-        plot_MOS_labyrinth(active_generator_intervals, max_steps_slider.value)
-
-    intervals = [1.25, 1.25, 1.25, 1.25, 1.25]
-    interval_widgets = [create_interval_widget(value) for value in intervals]
-    toggle_widgets = [create_toggle_widget(f"Interval {i+1}") for i in range(len(intervals))]
-    max_steps_slider = widgets.IntSlider(
-        min=5, max=50, step=1, value=20, description="Max Steps:", layout=widgets.Layout(width="50%")
-    )
-
-    interact_kwargs = {"interval_" + str(i + 1): interval_widgets[i] for i in range(len(intervals))}
-    interact_kwargs["max_steps"] = max_steps_slider
-
-    ui = widgets.VBox(
-        [widgets.HBox([toggle_widgets[i], interval_widgets[i]]) for i in range(len(intervals))]
-        + [max_steps_slider, play_button]
-    )
-    out = widgets.interactive_output(interactive_plot, interact_kwargs)
-    display(ui, out)
-    update_plot(None)
+    return mos_explorer(bt=bt, ratios=ratios, max_cardinality=max_cardinality,
+                        **kwargs)
 
 
 def visualize_rhythms_interactive():

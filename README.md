@@ -267,6 +267,7 @@ The biotuner package is organized by *kind* — stateful pipeline classes first,
 | Module | What it does |
 |---|---|
 | `harmonic_geometry/` | Lissajous, Chladni, harmonograph, polygon/circular, fractal, 3D point clouds & surfaces — each as a submodule |
+| `mos/` | Moment-of-symmetry (well-formed) scales: the Stern-Brocot scale labyrinth, landmarks and propriety, modes and their ℤ² lattice, rank-2 temperaments, Fourier Scratching, Dynamic Tonality timbre matching, three ways of morphing between scales (slide the generator, walk the signature tree, glide the voices) — and fitting all of it to a biosignal |
 
 ### Functions
 

@@ -29,6 +29,9 @@ Tuning
    :maxdepth: 2
    
    scale_construction/scale_construction
+   mos/showcase
+   mos/mos
+   mos/explorers
    spectral_chords/spectral_chords
 
 

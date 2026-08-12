@@ -39,6 +39,7 @@ Folders with their own internal structure; each lists its submodules.
    :maxdepth: 2
 
    harmonic_geometry
+   mos
    resonance
 
 Functions
