@@ -75,6 +75,7 @@ extensions = [
     "IPython.sphinxext.ipython_directive",
     "sphinxemoji.sphinxemoji",
     "sphinx_copybutton",
+    "sphinx_design",   # grid/card directives used by examples/index.rst
     "myst_nb",
 ]
 

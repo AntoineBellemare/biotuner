@@ -2,6 +2,7 @@ sphinx
 sphinx-book-theme
 sphinxemoji
 sphinx-copybutton
+sphinx-design
 myst-nb
 nbsphinx
 jupyter_sphinx
