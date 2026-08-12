@@ -1912,3 +1912,37 @@ def test_refinement_never_slides_onto_the_collapsing_endpoint():
         # The 4-EDO landmark of 4L3s sits at exactly 900 cents.
         if fit.scale.signature == "4L3s":
             assert abs(fit.scale.generator_cents - 900.0) > 0.5
+
+def test_a_missing_cell_is_none_whatever_pandas_decides_a_string_column_is():
+    """CI failed on this while the same code passed locally, on pandas alone.
+
+    pandas 3 infers a dedicated string dtype for a column of strings and writes
+    ``nan`` into its gaps; pandas 2 leaves the column as ``object`` and keeps
+    the ``None`` it was handed. A caller writing ``is None`` would therefore
+    work on one machine and quietly stop working on another, so the library
+    pins the answer rather than inheriting it.
+
+    ``future.infer_string`` is how pandas 2 opts into the pandas 3 behaviour,
+    which makes the future testable today.
+    """
+    import pandas as pd
+
+    from biotuner.mos.derive import trajectory_dataframe
+
+    scale = MOSScale.from_signature(5, 2, tuning=31)
+    fit = fit_mos(scale.ratios, max_cardinality=9, top_n=1)[0]
+
+    previous = pd.get_option("future.infer_string")
+    try:
+        for infer in (False, True):
+            pd.set_option("future.infer_string", infer)
+            df = trajectory_dataframe([fit, None, fit])
+            assert df["signature"].iloc[1] is None, (
+                f"future.infer_string={infer} gave "
+                f"{df['signature'].iloc[1]!r}, not None"
+            )
+            # The pandas-idiomatic test has to keep working too.
+            assert bool(df["signature"].isna().iloc[1])
+            assert df["signature"].iloc[0] == scale.signature
+    finally:
+        pd.set_option("future.infer_string", previous)

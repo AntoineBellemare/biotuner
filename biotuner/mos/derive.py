@@ -2523,6 +2523,28 @@ def mos_from_biotuner(
     return fit_mos(ratios, weights=weights, **kwargs)
 
 
+def _object_columns(df: "pd.DataFrame", columns: Sequence[str]) -> "pd.DataFrame":
+    """Hold text columns as objects, with ``None`` -- not ``nan`` -- for absent.
+
+    pandas 3 infers a dedicated string dtype for a column of strings and marks
+    its gaps with ``nan``; pandas 2 leaves the column as ``object`` and keeps
+    the ``None`` it was given.  Both are reasonable and the difference is
+    invisible until a caller writes ``is None`` and it stops being true on
+    another machine.
+
+    So the choice is made here rather than inherited.  These cells hold Python
+    objects -- a signature is a string or it is absent -- and absent is
+    ``None``.  ``.isna()`` still finds it, so the idiomatic pandas test is
+    unaffected; ``is None`` now also works, on every version.
+    """
+    for column in columns:
+        if column not in df:
+            continue
+        col = df[column].astype(object)
+        df[column] = col.where(col.notna(), None)
+    return df
+
+
 def compare_sources(
     bt,
     sources: Optional[Sequence[str]] = None,
@@ -2644,7 +2666,7 @@ def compare_sources(
         )
         rows.append(row)
 
-    df = pd.DataFrame(rows)
+    df = _object_columns(pd.DataFrame(rows), ("source", "signature", "reason"))
     # mergesort is stable, so sources that tie keep the order they were asked in.
     return df.sort_values(
         "evidence", ascending=False, na_position="last", kind="mergesort"
@@ -2824,7 +2846,7 @@ def trajectory_dataframe(
         row = {"window": i, "time": t}
         row.update(fit.to_dict())
         rows.append(row)
-    return pd.DataFrame(rows)
+    return _object_columns(pd.DataFrame(rows), ("signature", "word", "mode"))
 
 
 # --------------------------------------------------------------------------- #
