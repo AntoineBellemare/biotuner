@@ -3,6 +3,7 @@
 # pip install sphinxemoji
 
 import datetime
+import pathlib
 import os
 import re
 import sys
@@ -47,8 +48,14 @@ def get_latest_version_from_pypi(package_name):
         return "unknown"
 
 
-# Replace 'biotuner' with your package's name as registered on PyPI
-version = "0.5.0"
+# The version is written in exactly one place, biotuner/_version.py. Parse it
+# out rather than importing biotuner, so building the docs does not depend on
+# the package's runtime dependencies being installed.
+_version_file = pathlib.Path(__file__).resolve().parents[1] / "biotuner" / "_version.py"
+version = re.search(
+    r'^__version__ = "([^"]+)"', _version_file.read_text(encoding="utf-8"),
+    re.MULTILINE,
+).group(1)
 release = version
 
 # -- General configuration ---------------------------------------------------

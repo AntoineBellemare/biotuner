@@ -47,8 +47,10 @@ import platform
 __author__ = "The Biotuner development team"
 __email__ = "antoine.bellemare9@gmail.com"
 
-# Version info
-__version__ = "0.5.0"
+# Version info. The number itself lives in biotuner/_version.py, which is
+# the one place it is written; pyproject.toml and docs/conf.py read the
+# same file.
+from biotuner._version import __version__
 
 
 def version(silent=False):

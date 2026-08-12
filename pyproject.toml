@@ -4,7 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biotuner"
-version = "0.5.0"
+# Read from biotuner/_version.py, the single source of truth. setuptools
+# parses that file rather than importing it, so the build does not need
+# numpy, pandas, mne and the rest to be present just to learn the version.
+dynamic = ["version"]
 description = "Time series harmonic analysis for adaptive tuning systems and microtonal exploration"
 authors = [
     { name = "Antoine Bellemare", email = "antoine.bellemare9@gmail.com" }
@@ -70,6 +73,9 @@ gui = [
 # (biotuner.resonance, biotuner.harmonic_geometry, biotuner.harmonic_timbre, …).
 # An explicit ``packages = ["biotuner"]`` list does NOT recurse, which silently
 # dropped every subpackage from the published wheel — see the v0.4.0 packaging fix.
+[tool.setuptools.dynamic]
+version = {attr = "biotuner._version.__version__"}
+
 [tool.setuptools.packages.find]
 include = ["biotuner*"]
 
