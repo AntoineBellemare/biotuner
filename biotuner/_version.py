@@ -18,4 +18,4 @@ a computed value, a tuple joined together) defeats the static read and sends
 setuptools back to importing.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
