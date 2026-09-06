@@ -414,7 +414,7 @@ def draw_tree_2d(geom: GeometryData, ax,
     if edges.size:
         segs = coords[edges]
         ax.add_collection(LineCollection(segs, colors=color, linewidths=lw, alpha=alpha))
-    pad = 0.05 * (coords.ptp(axis=0).max() + 1e-3)
+    pad = 0.05 * (np.ptp(coords, axis=0).max() + 1e-3)
     ax.set_xlim(coords[:, 0].min() - pad, coords[:, 0].max() + pad)
     ax.set_ylim(coords[:, 1].min() - pad, coords[:, 1].max() + pad)
     axis_clean(ax)
@@ -1641,8 +1641,8 @@ def plot_metric_trajectory(metrics_dict_or_seq,
             finite = y[np.isfinite(y)]
             if finite.size == 0:
                 continue
-            if finite.ptp() > 0:
-                y = (y - finite.min()) / finite.ptp()
+            if np.ptp(finite) > 0:
+                y = (y - finite.min()) / np.ptp(finite)
             else:
                 # Zero-variance metric under normalize=True → render at 0.5
                 # (matches normalize_metrics' "consensus" semantics) and tag

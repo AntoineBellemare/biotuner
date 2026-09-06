@@ -127,7 +127,7 @@ def fig_lsystem_chord_gallery() -> Path:
         segs   = coords[edges]
         lc = LineCollection(segs, colors=color, linewidths=0.5, alpha=0.75)
         ax.add_collection(lc)
-        pad = 0.05 * (coords.ptp(axis=0).max() + 1e-3)
+        pad = 0.05 * (np.ptp(coords, axis=0).max() + 1e-3)
         ax.set_xlim(coords[:, 0].min() - pad, coords[:, 0].max() + pad)
         ax.set_ylim(coords[:, 1].min() - pad, coords[:, 1].max() + pad)
         _ax_clean(ax)
@@ -152,7 +152,7 @@ def fig_lsystem_depth_sweep() -> Path:
         segs   = coords[edges]
         lc = LineCollection(segs, colors=PALETTE["dark_blue"], linewidths=max(0.2, 0.8 - d * 0.1), alpha=0.7)
         ax.add_collection(lc)
-        pad = 0.04 * (coords.ptp(axis=0).max() + 1e-3)
+        pad = 0.04 * (np.ptp(coords, axis=0).max() + 1e-3)
         ax.set_xlim(coords[:, 0].min() - pad, coords[:, 0].max() + pad)
         ax.set_ylim(coords[:, 1].min() - pad, coords[:, 1].max() + pad)
         _ax_clean(ax)
@@ -338,7 +338,7 @@ def fig_combined_showcase() -> Path:
     coords = g.coordinates; edges = g.edges
     lc = LineCollection(coords[edges], colors=PALETTE["dark_blue"], linewidths=0.5, alpha=0.75)
     ax.add_collection(lc)
-    pad = 0.04 * (coords.ptp(axis=0).max() + 1e-3)
+    pad = 0.04 * (np.ptp(coords, axis=0).max() + 1e-3)
     ax.set_xlim(coords[:, 0].min() - pad, coords[:, 0].max() + pad)
     ax.set_ylim(coords[:, 1].min() - pad, coords[:, 1].max() + pad)
     _ax_clean(ax); ax.set_title("L-system", fontsize=8, pad=3)
